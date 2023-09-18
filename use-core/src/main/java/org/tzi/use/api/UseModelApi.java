@@ -950,7 +950,7 @@ public class UseModelApi {
 	 * @return The MAssociationEnd instance
 	 * @throws UseApiException
 	 */
-	private MAssociationEnd createAssociationEnd(String endClassName,
+	protected MAssociationEnd createAssociationEnd(String endClassName,
 			String endRoleName, String endMultiplicity, int endAggregation, boolean isOrdered, String[][] qualifier)
 					throws UseApiException {
 		if (!MAggregationKind.isValid(endAggregation)) {

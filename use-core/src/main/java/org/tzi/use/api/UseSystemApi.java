@@ -101,6 +101,15 @@ public abstract class UseSystemApi {
 		this.system = system;
 		this.modelApi = new UseModelApi(system.model());
 	}
+
+	/**
+	 * Constructs a new instance of the {@link UseSystemApi} class with the given {@link UseModelApi}.
+	 * @param api The {@link UseModelApi} instance to initialize the encapsulated {@link MSystem} with.
+	 */
+	protected UseSystemApi(UseModelApi api) {
+		this.system = new MSystem(api.getModel());
+		this.modelApi = api;
+	}
 	
 	/**
 	 * Provides access to the encapsulated {@link MSystem} instance.

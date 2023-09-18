@@ -46,48 +46,48 @@ import java.util.List;
  * @author  Mark Richters
  */
 public class ASTAssociationEnd extends ASTAnnotatable {
-    private Token fName;
-    private ASTMultiplicity fMultiplicity;
-    private Token fRolename;  // optional: may be null!
-    private boolean fOrdered;
-    private boolean isUnion = false;
+    protected Token fName;
+    protected ASTMultiplicity fMultiplicity;
+    protected Token fRolename;  // optional: may be null!
+    protected boolean fOrdered;
+    protected boolean isUnion = false;
     
     /**
      * List of subsetted association end names.
      * Initialized with an empty immutable collection
      * which is replaced at the first time of writing. 
      */
-    private List<Token> subsetsRolename = Collections.emptyList();
+    protected List<Token> subsetsRolename = Collections.emptyList();
     
     /**
      * List of redefined association end names.
      * Initialized with an empty immutable collection
      * which is replaced at the first time of writing. 
      */
-    private List<Token> redefinesRolenames = Collections.emptyList();
+    protected List<Token> redefinesRolenames = Collections.emptyList();
     
     /**
      * List of qualifiers. Initialized with an empty immutable collection
      * which is replaced at the first time of writing. 
      */
-    private List<ASTVariableDeclaration> qualifiers = Collections.emptyList();
+    protected List<ASTVariableDeclaration> qualifiers = Collections.emptyList();
     
     
     /**
      * Parameter declarations for the derive expression
      */
-    private ASTElemVarsDeclaration deriveParameter = null;
+    protected ASTElemVarsDeclaration deriveParameter = null;
     
     /**
      * AST for the optional derive expression
      */
-    private ASTExpression derivedExpression = null;
+    protected ASTExpression derivedExpression = null;
     
     /**
      * Saves the generated association end for a second
      * "compile run".
      */
-    private MAssociationEnd mAend;
+    protected MAssociationEnd mAend;
     
     public ASTAssociationEnd(Token name, ASTMultiplicity mult) {
         fName = name;
