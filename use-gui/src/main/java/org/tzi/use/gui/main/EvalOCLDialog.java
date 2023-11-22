@@ -34,8 +34,10 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.autocompletion.AutoCompletion;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TeeWriter;
+import org.tzi.use.autocompletion.SuggestionResult;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,8 +45,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A dialog for entering and evaluating OCL expressions.
@@ -54,6 +59,8 @@ import java.io.StringWriter;
 @SuppressWarnings("serial")
 class EvalOCLDialog extends JDialog {
     private MSystem fSystem;
+
+    private AutoCompletion autocompletion;
 
     private final JTextArea fTextIn;
 
@@ -215,6 +222,39 @@ class EvalOCLDialog extends JDialog {
         contentPane.add(btnPane, BorderLayout.EAST);
         getRootPane().setDefaultButton(btnEval);
 
+        Action ctrlSpaceAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingWorker<SuggestionResult, Void> worker = new SwingWorker<SuggestionResult, Void>() {
+                    @Override
+                    protected SuggestionResult doInBackground() throws Exception {
+                        return autocompletion.getSuggestions(fTextIn.getText(), true);
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            SuggestionResult suggestion = get();
+                            // Open a new window to display the results (if not empty)
+                            if (suggestion != null && !suggestion.suggestions.isEmpty()) {
+                                displayResultsWindow(suggestion, textPane);
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                };
+
+                worker.execute();
+            }
+        };
+
+        // Map the Ctrl+Space key combination to the action
+        KeyStroke ctrlSpaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, KeyEvent.CTRL_DOWN_MASK);
+        fTextIn.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlSpaceKeyStroke, "ctrlSpaceAction");
+        fTextIn.getActionMap().put("ctrlSpaceAction", ctrlSpaceAction);
+
+
         pack();
         setSize(new Dimension(500, 200));
         setLocationRelativeTo(parent);
@@ -314,5 +354,108 @@ class EvalOCLDialog extends JDialog {
             fTextOut.setText("Could not evaluate. " + e.getMessage());
         }
         return false;
+    }
+
+    /**
+     * Displays a window with autocomplete suggestions.
+     * <p>
+     * This method takes a {@code SuggestionResult} object and a {@code JPanel} where the suggestions
+     * will be displayed. The suggestions are formatted and displayed in a {@code JList} within a scrollable
+     * {@code JScrollPane}. The user can confirm a selection by pressing the Enter key.
+     * <p>
+     * The formatting includes highlighting the prefix in blue and, if the suggestion contains parentheses,
+     * highlighting the content within parentheses in orange.
+     *
+     * @param suggestion The {@code SuggestionResult} object containing the list of suggestions and the prefix.
+     * @param textPane    The {@code JPanel} where the autocomplete suggestions will be displayed.
+     */
+    private void displayResultsWindow(SuggestionResult suggestion, JPanel textPane) {
+        List<String> suggestionList = suggestion.suggestions;
+        String prefix = suggestion.prefix;
+
+        List<String> displayedList = new LinkedList<>();
+
+        for (int i = 0; i < suggestionList.size(); i++) {
+            String sugString = suggestionList.get(i);
+
+            if (sugString.contains("(")) {
+                sugString = sugString.substring(0, sugString.indexOf("(") + 1) + "<font color='orange'>" + sugString.substring(sugString.indexOf("(") + 1, sugString.indexOf(")")) + "</font>" + ")";
+            }
+
+            if (prefix != null) {
+                displayedList.add(i, "<font color='blue'>" + prefix + "</font>" + sugString);
+            } else {
+                displayedList.add(i, suggestionList.get(i));
+            }
+        }
+
+
+        JList<String> resultList = new JList<>(displayedList.toArray(new String[0]));
+        resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        resultList.setCellRenderer(new TwoColorListCellRenderer());
+
+        resultList.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmSelection");
+        resultList.getActionMap().put("confirmSelection", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedValue = suggestionList.get(resultList.getSelectedIndex());
+                if (selectedValue != null) {
+                    String currentText = fTextIn.getText();
+
+                    String newText;
+                    boolean hasParenthesis = false;
+                    if (selectedValue.endsWith(")")) {//TODO: more elegant
+                        if (selectedValue.contains("(")) {
+                            int firstIndex = selectedValue.indexOf("(");
+                            selectedValue = selectedValue.substring(0, firstIndex + 1);
+                        }
+                        newText = currentText + selectedValue + ")";
+                        hasParenthesis = true;
+                    } else if(currentText.endsWith(")")){
+                        newText = currentText.substring(0, currentText.length()-1) + selectedValue + ")";
+                        hasParenthesis = true;
+                    }else{
+                        newText = currentText + selectedValue;
+                    }
+
+                    fTextIn.setText(newText);
+                    if(hasParenthesis){
+                        fTextIn.setCaretPosition(newText.length()-1);
+                    }else{
+                        fTextIn.setCaretPosition(newText.length());
+                    }
+                }
+                textPane.remove(1);
+                fTextIn.requestFocus();
+                pack();
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(resultList);
+        textPane.add(scrollPane, 1);
+
+        resultList.requestFocus();
+        pack();
+    }
+
+    public void setAutoCompletion(AutoCompletion autocompletion) {
+        this.autocompletion = autocompletion;
+    }
+}
+
+/**
+ * Custom list cell renderer for displaying two-colored text in a {@code JList}.
+ * <p>
+ * This renderer extends {@code DefaultListCellRenderer} and overrides the
+ * {@code getListCellRendererComponent} method to display HTML-formatted text in a JLabel.
+ * The HTML formatting is used to apply two colors to the text, providing visual distinction.
+ * The text is enclosed in &lt;html&gt; tags to enable rendering of HTML-formatted content.
+ */
+class TwoColorListCellRenderer extends DefaultListCellRenderer {
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        label.setText("<html>" + value + "</html>");
+        return label;
     }
 }
