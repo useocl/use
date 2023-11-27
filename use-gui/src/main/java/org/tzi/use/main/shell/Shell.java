@@ -19,6 +19,8 @@
 
 package org.tzi.use.main.shell;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
@@ -26,6 +28,7 @@ import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.output.*;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
@@ -67,6 +70,7 @@ class NoSystemException extends Exception {
 	/**
 	 * To get rid of the warning...
 	 */
+	@Serial
 	private static final long serialVersionUID = 1L;
 }
 
@@ -90,7 +94,7 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * The session contains the system most commands act on.
 	 */
-	private Session fSession;
+	private final Session fSession;
 
 	/**
 	 * Result of last check command.
@@ -104,7 +108,9 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private boolean fStepMode = false;
 
-	private ReadlineStack fReadlineStack = null;
+	private final UserOutput userOutput;
+
+	private final ReadlineStack fReadlineStack;
 
 	/**
 	 * Actual readline that is used.
@@ -113,20 +119,20 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private static Shell fShell = null;
 
-	private IPluginShellExtensionPoint shellExtensionPoint;
-
 	private final List<PluginShellCmdContainer> pluginCommands;
 
-	private IRuntime fPluginRuntime;
+	private static final Logger log = LogManager.getLogger(Shell.class.getName());
 
 	/**
 	 * Constructs a new shell.
 	 */
-	private Shell(Session session, IRuntime pluginRuntime) {
+	private Shell(Session session, IRuntime pluginRuntime, UserOutput userOutput) {
 		fReadlineStack = new ReadlineStack();
 		// no need to listen on session changes since every command
 		// explicitly retrieves the current system
 		fSession = session;
+
+		this.userOutput = userOutput;
 
 		try {
 			system().registerPPCHandlerOverride(this);
@@ -134,22 +140,20 @@ public final class Shell implements Runnable, PPCHandler {
 			// out of luck...
 		}
 
-		this.fPluginRuntime = pluginRuntime;
-
 		// integrate plugin commands
 		if (Options.doPLUGIN) {
-			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
+			IPluginShellExtensionPoint shellExtensionPoint = (IPluginShellExtensionPoint) pluginRuntime
 					.getExtensionPoint("shell");
 
-			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(this.fSession, this);
+			this.pluginCommands = shellExtensionPoint.createPluginCmds(this.fSession, this);
 		}
 		else {
 			pluginCommands = Collections.emptyList();
 		}
 	}
 
-	public static void createInstance(Session session, IRuntime pluginRuntime) {
-		fShell = new Shell(session, pluginRuntime);
+	public static void createInstance(Session session, IRuntime pluginRuntime, UserOutput userOutput) {
+		fShell = new Shell(session, pluginRuntime, userOutput);
 	}
 
 	public static Shell getInstance() {
@@ -158,10 +162,6 @@ public final class Shell implements Runnable, PPCHandler {
 
 	public PrintStream getOut() {
 		return System.out;
-	}
-
-	public PrintStream getErr() {
-		return System.err;
 	}
 
 	/**
@@ -182,10 +182,10 @@ public final class Shell implements Runnable, PPCHandler {
 			// Include filename in "" to be able to handle spaces
 			cmdOpen("\"" + new File(Options.cmdFilename).getAbsolutePath() + "\"");
 		} else {
-			Log.verbose("Enter `help' for a list of available commands.");
+			userOutput.printlnVerbose("Enter `help' for a list of available commands.");
 
 			if (Options.doPLUGIN) {
-				Log.verbose("Enter `plugins' for a list of available plugin commands.");
+				userOutput.printlnVerbose("Enter `plugins' for a list of available plugin commands.");
 			}
 		}
 
@@ -203,7 +203,7 @@ public final class Shell implements Runnable, PPCHandler {
 			try {
 				line = readline(PROMPT);
 			} catch (IOException ex) {
-				Log.error("Cannot read line: " + ex.getMessage());
+				userOutput.printlnError("Cannot read line: " + ex.getMessage());
 			}
 			if (line != null) {
 				if (!fReadline.doEcho()) {
@@ -222,7 +222,7 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 	
 	public synchronized String readline(String prompt) throws IOException {
-		String line = null;
+		String line;
 		
 		boolean multiLine = false;
 		final StringBuilder multiSB = new StringBuilder();
@@ -280,7 +280,7 @@ public final class Shell implements Runnable, PPCHandler {
 					+ "You can turn off this warning message by using the switch -nr";
 		}
 
-		fReadline = LineInput.getUserInputReadline(GNUReadlineNotAvailable);
+		fReadline = LineInput.getUserInputReadline(this.userOutput, GNUReadlineNotAvailable);
 		fReadline.usingHistory();
 
 		// Read command history from previous sessions
@@ -299,23 +299,17 @@ public final class Shell implements Runnable, PPCHandler {
 		try {
 			processLine(line);
 		} catch (NoSystemException ex) {
-			Log.error("No System available. Please load a model before executing this command.");
+			userOutput.printlnError("No System available. Please load a model before executing this command.");
 		} catch (Exception ex) {
-			System.err.println();
-			String nl = Options.LINE_SEPARATOR;
-			System.err
-			.println("INTERNAL ERROR: An unexpected exception occured. This happened most probably"
-					+ nl
-					+ "due to an error in the program. The program will try to continue, but may"
-					+ nl
-					+ "not be able to recover from the error. Please send a bug report to"
-					+ nl
-					+ Options.SUPPORT_MAIL
-					+ nl
-					+ "with a description of your last input and include the following output:");
-			System.err.println("Program version: " + Options.RELEASE_VERSION);
-			System.err.print("Stack trace: ");
-			ex.printStackTrace(System.err);
+			userOutput.printlnError()
+					.printlnError("INTERNAL ERROR: An unexpected exception occurred. This happened most probably")
+					.printlnError( "due to an error in the program. The program will try to continue, but may")
+					.printlnError("not be able to recover from the error. Please submit a bug report at ")
+					.printlnError(Options.SUPPORT_ISSUE)
+					.printlnError("with a description of your last input and include the following output:")
+					.printError("Program version: ").printlnError(Options.RELEASE_VERSION)
+					.printlnError("Stack trace: ");
+					ex.printStackTrace(userOutput.getPrintStream(OutputLevel.ERROR));
 		}
 	}
 
@@ -323,14 +317,14 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Method is called out of the GUI to exit the command line. <br>
 	 *
 	 * (This way the command line exits after hitting return once after closing
-	 * the window. It is not the preferd solution, but so far nothing better was
+	 * the window. It is not the preferred solution, but so far nothing better was
 	 * found)
 	 */
 	public void exit() {
 		try {
 			processLine("exit");
 		} catch (NoSystemException ex) {
-			Log.error("No System available. Please load a model before executing this command.");
+			userOutput.printlnError("No System available. Please load a model before executing this command.");
 		}
 	}
 
@@ -342,23 +336,22 @@ public final class Shell implements Runnable, PPCHandler {
 		if (delay > 0) {
 			try {
 				Thread.sleep(delay);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException ignored) {}
 		}
 
 		line = (line == null ? "" : line.trim());
-		if (line.length() == 0 || line.startsWith("//") || line.startsWith("--")) {
+		if (line.isEmpty() || line.startsWith("//") || line.startsWith("--")) {
 			return;
 		}
 
 		if (fStepMode) {
-			Log.println("[step mode: `return' continues, "
-					+ "`escape' followed by `return' exits step mode.]");
+			userOutput.println("[step mode: `return' continues, `escape' followed by `return' exits step mode.]");
 			try {
 				int c = System.in.read();
 				if (c == 0x1b) {
 					fStepMode = false;
 				}
-			} catch (IOException ex) { }
+			} catch (IOException ignored) { }
 		}
 
 		if (line.startsWith("help") || line.endsWith("--help")) {
@@ -448,13 +441,15 @@ public final class Shell implements Runnable, PPCHandler {
 		} else if (line.startsWith("debug")) {
 			String[] tokens = line.split(" ");
 			if (tokens.length < 2) {
-				Log.error("Missing value [on|off] for debug");
+				userOutput.printlnError("Missing value [on|off] for debug");
 			}
 			boolean value = false;
 			if (tokens[1].equals("on")) {
 				value = true;
 			} else if (!tokens[1].equals("off")) {
-				Log.error("Invalid debug value " + StringUtil.inQuotes(tokens[1]) +". Only on or off a valid.");
+				userOutput.printError("Invalid debug value ")
+						.printHighlightedError(tokens[1], HighlightAs.OPTION)
+						.printlnError(". Only on or off a valid.");
 				return;
 			}
 			Options.setDebug(value);
@@ -475,7 +470,7 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 
 			if(cmd == null){
-				Log.error("Unknown command `" + line + "'. Try `help'.");
+				userOutput.printlnError("Unknown command `" + line + "'. Try `help'.");
 			} else {
 				String arguments;
 				if(alias){
@@ -488,42 +483,41 @@ public final class Shell implements Runnable, PPCHandler {
 				}
 				catch(Exception ex){
 					PluginModel crashedPlugin = cmd.getProxy().getDescriptor().getParent().getPluginModel();
-					System.err.println();
-					String nl = Options.LINE_SEPARATOR;
-					System.err.println("INTERNAL ERROR in Plugin "
-							+ StringUtil.inQuotes(crashedPlugin.getName()) + ":"
-							+ nl
-							+ "An unexpected exception occured. This happened most probably due to an"
-							+ nl
-							+ "error in the plugin. The program will try to continue, but may not be"
-							+ nl
-							+ "able to recover from the error. If the problem persists, please contact"
-							+ nl
-							+ "the plugin creators with a description of your last input and include"
-							+ nl
-							+ "the following output:");
-					System.err.println("USE version: " + Options.RELEASE_VERSION);
-					System.err.println("Plugin version: " + crashedPlugin.getVersion());
-					System.err.println("Plugin publisher: " + crashedPlugin.getPublisher());
-					System.err.println("Executed command: " + line);
-					System.err.print("Stack trace: ");
-					ex.printStackTrace(System.err);
+					userOutput.printlnError()
+							.printlnError("INTERNAL ERROR in Plugin ")
+							.printHighlightedError(crashedPlugin.getName(), HighlightAs.NAME)
+							.printlnError(":")
+							.printlnError("An unexpected exception occured. This happened most probably due to an")
+							.printlnError("error in the plugin. The program will try to continue, but may not be")
+							.printlnError("able to recover from the error. If the problem persists, please contact")
+							.printlnError("the plugin creators with a description of your last input and include")
+							.printlnError("the following output:")
+							.printlnError("USE version: " + Options.RELEASE_VERSION)
+							.printlnError("Plugin version: " + crashedPlugin.getVersion())
+							.printlnError("Plugin publisher: " + crashedPlugin.getPublisher())
+							.printlnError("Executed command: " + line)
+							.printlnError("Stack trace: ");
+					ex.printStackTrace(userOutput.getPrintStream(OutputLevel.ERROR));
 				}
-				
 			}
 
 		} else {
-			Log.error("Unknown command `" + line + "'. Try `help'.");
+			userOutput.printlnError("Unknown command `" + line + "'. Try `help'.");
 		}
 	}
 	
 	private void printDeprecatedCmdMessage(String enteredCmd, String replacement){
 		//TODO remove deprecated commands in Version 4.2.0 of USE, dont forget the help
-		Log.warn("The command " + StringUtil.inQuotes(enteredCmd) + " is deprecated and will be removed in the next USE release. Please replace it with the command " + StringUtil.inQuotes(replacement) + ".");
+		userOutput.printWarn("The command ")
+				.printHighlightedWarn(enteredCmd, HighlightAs.COMMAND)
+				.printlnWarn(" is deprecated and will be removed in the next USE release.")
+				.printWarn("Please replace it with the command ")
+				.printHighlightedWarn(replacement, HighlightAs.COMMAND)
+				.printlnWarn(".");
 	}
 
 	private void cmdShowPlugins() {
-		System.out.println("================== Plugin commands available ====================");
+		userOutput.println("================== Plugin commands available ====================");
 
 		for (PluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
 			System.out.println(currentCmdMapEntry.getCmd() + " : " + currentCmdMapEntry.getHelp());
@@ -532,12 +526,11 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 		}
 
-		System.out.println("=================================================================");
+		userOutput.println("=================================================================");
 	}
 	
 	/**
 	 * Runs shell coverage command.
-	 * 
 	 * Supported switches for shell 'coverage' command:
 	 * 	-sum 		(numeric sum of coverage measurement results)
 	 * 	-invariants (covers only invariants)
@@ -545,7 +538,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 *  -post 		(covers only postconditions)
 	 *  -contracts  (covers only contracts, so pre- and post-conditions)
 	 *  -total		(covers all)
-	 *  
+	 *
 	 */
 	private void cmdCoverage(String line) throws NoSystemException {
 		ShellCoverageCommandProcessor processor = new ShellCoverageCommandProcessor(system().model(), line);
@@ -559,34 +552,36 @@ public final class Shell implements Runnable, PPCHandler {
 		boolean verbose = false;
 		boolean details = false;
 		boolean all = false;
-		ArrayList<String> invNames = new ArrayList<String>();
+		ArrayList<String> invNames = new ArrayList<>();
 		StringTokenizer tokenizer = new StringTokenizer(line);
 		// skip command
 		tokenizer.nextToken();
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
-			if (token.equals("-v")) {
-				verbose = true;
-			} else if (token.equals("-d")) {
-				details = true;
-			} else if (token.equals("-a")) {
-				all = true;
-			} else {
-				MClassInvariant inv = system().model().getClassInvariant(token);
-				if (inv == null){
-					Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
-				}
-				else {
-					invNames.add(token);
+			switch (token) {
+				case "-v" -> verbose = true;
+				case "-d" -> details = true;
+				case "-a" -> all = true;
+				default -> {
+					MClassInvariant inv = system().model().getClassInvariant(token);
+					if (inv == null) {
+						userOutput.printError("Model has no invariant named ")
+								.printHighlightedError(token, HighlightAs.NAME)
+								.printlnError(".");
+					} else {
+						invNames.add(token);
+					}
 				}
 			}
 		}
 
-		PrintWriter out;
+		//TODO: New Output!!!
+		UserOutput out;
 		if (Options.quiet && !Options.quietAndVerboseConstraintCheck) {
-			out = new PrintWriter(new NullWriter());
+			out = VoidUserOutput.getInstance();
 		} else {
-			out = new PrintWriter(Log.out());
+			out = DefaultUserOutput.createSystemOutOutput();
+			Options.configureOutput(out);
 		}
 		fLastCheckResult = system().state().check(out, verbose, details, all,
 				invNames);
@@ -597,12 +592,12 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Executes a SOIL statement (started by <code>!</code> or <code>!!</code>)
 	 * @param line The command line without <code>!</code>
 	 * @param verbose If <code>true</code> detailed messages are written to the shell.
-	 * @throws NoSystemException
+	 * @throws NoSystemException If no system is present
 	 */
 	private void cmdExec(String line, boolean verbose) throws NoSystemException {
 
-		if (line == null || line.length() == 0) {
-			Log.error("ERROR: Statement expected.");
+		if (line == null || line.isEmpty()) {
+			userOutput.printlnError("ERROR: Statement expected.");
 			return;
 		}
 
@@ -613,24 +608,20 @@ public final class Shell implements Runnable, PPCHandler {
 				system.getVariableEnvironment(),
 				line,
 				"<input>",
-				new PrintWriter(System.err),
+				this.userOutput,
 				verbose);
 
 		if (statement == null) {
 			return;
 		}
 
-		if (Log.isTracing()) {
-			Log.trace(this, "--- Executing shell command: " + statement.getShellCommand());
-		}
-
 		try {
 			if ((statement instanceof MEnterOperationStatement)
 					|| (statement instanceof MExitOperationStatement)) {
 
-				system.execute(statement, false, true, true);
+				system.execute(this.userOutput, statement, false, true, true);
 			} else {
-				system.execute(statement);
+				system.execute(this.userOutput, statement);
 			}
 		} catch (MSystemException e) {
 			String message = e.getMessage();
@@ -644,7 +635,7 @@ public final class Shell implements Runnable, PPCHandler {
 				message = exception.getMessage();
 			}
 
-			Log.error(message);
+			userOutput.printlnError(message);
 		} finally {
 			fSession.evaluatedStatement(statement);
 		}
@@ -655,15 +646,17 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdExit() {
 		// clean up
-		Log.verbose("Exiting...");
+		userOutput.printlnVerbose("Exiting...");
 
 		// Write command history to file
 		if (!Options.quiet) {
 			try {
 				fReadline.writeHistory(Options.USE_HISTORY_PATH);
 			} catch (IOException ex) {
-				Log.error("Can't write history file "
-						+ Options.USE_HISTORY_PATH + " : " + ex.getMessage());
+				userOutput.printError("Can't write history file ")
+						.printHighlightedError(Options.USE_HISTORY_PATH, HighlightAs.FILE)
+						.printError(" : ")
+						.printError(ex.getMessage());
 			}
 		}
 
@@ -693,7 +686,7 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 			ModelToGraph.write(out, system.model());
 		} catch (IOException ex) {
-			Log.error(ex.getMessage());
+			userOutput.printlnError(ex.getMessage());
 		} finally {
 			if (out != null) {
 				out.flush();
@@ -720,7 +713,7 @@ public final class Shell implements Runnable, PPCHandler {
 			MMVisitor v = new MMInstanceGenerator(out);
 			system.model().processWithVisitor(v);
 		} catch (IOException ex) {
-			Log.error(ex.getMessage());
+			userOutput.printlnError(ex.getMessage());
 		} finally {
 			if (out != null) {
 				out.flush();
@@ -738,12 +731,15 @@ public final class Shell implements Runnable, PPCHandler {
 		MSystem system = system();
 		String filename = "USEMonitor.java";
 		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)))){
-			Log.verbose("writing file `" + filename + "'...");
+			userOutput.printVerbose("writing file ")
+					.printHighlightedVerbose(filename, HighlightAs.FILE)
+					.printVerbose("...");
 
 			new MonitorAspectGenerator(out, system.model()).write();
-			Log.verbose("done.");
+
+			userOutput.printlnVerbose("done.");
 		} catch (IOException ex) {
-			Log.error(ex.getMessage());
+			userOutput.printlnError(ex.getMessage());
 		}
 	}
 
@@ -751,10 +747,10 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Prints help.
 	 */
 	private void cmdHelp(String line) {
-		String cmd = "";
+		String cmd;
 
-		if (line.indexOf("--help") < 0) {
-			cmd = line.substring(4, line.length());
+		if (!line.contains("--help")) {
+			cmd = line.substring(4);
 		} else {
 			cmd = line.substring(0, line.indexOf("--help"));
 		}
@@ -768,24 +764,20 @@ public final class Shell implements Runnable, PPCHandler {
 		StringTokenizer tokenizer = new StringTokenizer(line);
 		try {
 			String subCmd = tokenizer.nextToken();
-			if (subCmd.equals("class")) {
-				String arg = tokenizer.nextToken();
-				cmdInfoClass(arg);
-			} else if (subCmd.equals("model")) {
-				cmdInfoModel();
-			} else if (subCmd.equals("state")) {
-				cmdInfoState();
-			} else if (subCmd.equals("opstack")) {
-				cmdInfoOpStack();
-			} else if (subCmd.equals("prog")) {
-				cmdInfoProg();
-			} else if (subCmd.equals("vars")) {
-				cmdInfoVars();
-			} else {
-				Log.error("Syntax error in info command. Try `help'.");
+			switch (subCmd) {
+				case "class" -> {
+					String arg = tokenizer.nextToken();
+					cmdInfoClass(arg);
+				}
+				case "model" -> cmdInfoModel();
+				case "state" -> cmdInfoState();
+				case "opstack" -> cmdInfoOpStack();
+				case "prog" -> cmdInfoProg();
+				case "vars" -> cmdInfoVars();
+				default -> userOutput.printlnError("Syntax error in info command. Try `help'.");
 			}
 		} catch (NoSuchElementException ex) {
-			Log.error("Missing argument to `info' command. Try `help'.");
+			userOutput.printlnError("Missing argument to `info' command. Try `help'.");
 		}
 	}
 
@@ -796,7 +788,7 @@ public final class Shell implements Runnable, PPCHandler {
 		MSystem system = system();
 		MClass cls = system.model().getClass(classname);
 		if (cls == null) {
-			Log.error("Class `" + classname + "' not found.");
+			userOutput.printlnError("Class `" + classname + "' not found.");
 		} else {
 			MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
 			cls.processWithVisitor(v);
@@ -827,11 +819,11 @@ public final class Shell implements Runnable, PPCHandler {
 		Deque<MOperationCall> callStack = system.getCallStack();
 		int index = callStack.size();
 		for (MOperationCall call : callStack) {
-			Log.print(index-- + ". ");
-			Log.println(call.toString() + " " + call.getCallerString());
+			userOutput.print(index-- + ". ");
+			userOutput.print(call.toString()).print(" ").println(call.getCallerString());
 		}
 		if (callStack.isEmpty()) {
-			Log.println("no active operations.");
+			userOutput.println("no active operations.");
 		}
 	}
 
@@ -842,7 +834,7 @@ public final class Shell implements Runnable, PPCHandler {
 		long total = Runtime.getRuntime().totalMemory();
 		long free = Runtime.getRuntime().freeMemory();
 		NumberFormat nf = NumberFormat.getInstance();
-		Log.println("(mem: "
+		userOutput.println("(mem: "
 				+ NumberFormat.getPercentInstance().format(
 						(double) free / (double) total) + " = "
 						+ nf.format(free) + " bytes free, " + nf.format(total)
@@ -858,7 +850,7 @@ public final class Shell implements Runnable, PPCHandler {
 		MSystemState state = system.state();
 		NumberFormat nf = NumberFormat.getInstance();
 
-		System.out.println("State: " + state.name());
+		userOutput.println("State: " + state.name());
 
 		// generate report for objects
 		Report report = new Report(3, "$l : $r $r");
@@ -926,7 +918,7 @@ public final class Shell implements Runnable, PPCHandler {
 		report.addCell(nf.format(total));
 
 		// print report
-		report.printOn(System.out);
+		report.printOn(userOutput.getPrintStream(OutputLevel.NORMAL));
 	}
 
 	/**
@@ -935,7 +927,7 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdInfoVars() throws NoSystemException {
 		MSystem system = system();
 
-		System.out.print(system.getVariableEnvironment());
+		userOutput.print(system.getVariableEnvironment().toString());
 	}
 
 	/**
@@ -943,18 +935,18 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdNet() {
 		int port = 1777;
-		Log.verbose("waiting for connection on port " + port + "...");
+		userOutput.printlnVerbose("waiting for connection on port " + port + "...");
 
 		try (ServerSocket socket = new ServerSocket(port)) {
 			Socket client = socket.accept();
 			InetAddress clientAddr = client.getInetAddress();
 
-			Log.verbose("connected to " + clientAddr.getHostName() + ":" + client.getPort());
+			userOutput.printlnVerbose("connected to " + clientAddr.getHostName() + ":" + client.getPort());
 
 			Readline readline = new SocketReadline(client, true, "net>");
 			fReadlineStack.push(readline);
 		} catch (IOException ex) {
-			Log.error("Can't bind or listen on port " + port + ".");
+			userOutput.printlnError("Can't bind or listen on port " + port + ".");
 		}
 	}
 
@@ -962,8 +954,8 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Saves pathname of the currently opened file and returns the absolute path.
 	 * All other files can be opened relative to it.
 	 */
-	private Stack<File> openFiles = new Stack<File>();
-	private Stack<String> relativeNames = new Stack<String>();
+	private final Stack<File> openFiles = new Stack<>();
+	private final Stack<String> relativeNames = new Stack<>();
 
 	public String getFilenameToOpen(String filename) {
 		return getFilenameToOpen(filename, true);
@@ -980,11 +972,11 @@ public final class Shell implements Runnable, PPCHandler {
 	 * the absolute path.</p>
 	 * <p><b>Warning:</b> No check is made if the calculated file exists.
 	 * This has to be done by the caller.</p>
-	 * @param filename A absolute or relative filename to open.
+	 * @param filename An absolute or relative filename to open.
 	 * @param useAsCurrentFile If <code>true</code>, the opened file is stored as currently opened
 	 * and is used as the starting point to calculate subsequent relative file names.
 	 * After the file is no longer the current file, i.e., it was closed or the file was not opened, {@link #setFileClosed()} must be called.
-	 * @return
+	 * @return A string containing an absolut filepath
 	 */
 	public String getFilenameToOpen(String filename, boolean useAsCurrentFile) {
 		// matches '<name>' or "<name>", not "<name>'
@@ -1034,7 +1026,7 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	private String getPathWithoutFile(String file) {
-		int lastDirSep = -1;
+		int lastDirSep;
 		lastDirSep = file.lastIndexOf("\\");
 		lastDirSep = Math.max(lastDirSep, file.lastIndexOf("/"));
 
@@ -1077,12 +1069,12 @@ public final class Shell implements Runnable, PPCHandler {
 	 *            Path and filename to be opened.
 	 */
 	private void cmdOpen(String line, boolean forcequiet) {
-		boolean doEcho = forcequiet?false:true;
+		boolean doEcho = !forcequiet;
 		StringTokenizer st = new StringTokenizer(line);
 
 		// if there is no filename and option
 		if (!st.hasMoreTokens()) {
-			Log.error("Unknown command `open " + line + "'. " + "Try `help'.");
+			userOutput.printlnError("Unknown command `open " + line + "'. " + "Try `help'.");
 			return;
 		}
 
@@ -1093,7 +1085,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 			// if there is no filename
 			if (!st.hasMoreTokens()) {
-				Log.error("Unknown command `open " + line + "'. "
+				userOutput.printlnError("Unknown command `open " + line + "'. "
 						+ "Try `help'.");
 				return;
 			}
@@ -1113,14 +1105,15 @@ public final class Shell implements Runnable, PPCHandler {
 			String firstWord = getFirstWordOfFile(filename);
 			setFileClosed();
 
-			// if getFirstWordOfFile returned with error code, than
+			// if getFirstWordOfFile returned with error code, then
 			// end this method.
 			if (firstWord != null && firstWord.equals("ERROR: -1")) {
 				return;
 			}
 			if (firstWord == null) {
-				Log.println("Nothing to do, because file `" + line + "' "
-						+ "contains no data!");
+				userOutput.print("Nothing to do, because file ")
+						.printHighlighted(line, HighlightAs.FILE)
+						.println(" contains no data!");
 				return;
 			}
 			if (firstWord.startsWith("model") || firstWord.startsWith("@")) {
@@ -1136,7 +1129,7 @@ public final class Shell implements Runnable, PPCHandler {
 			if (this.openFiles.size() <= 1) {
 				String opened;
 
-				if (this.openFiles.size() == 0) {
+				if (this.openFiles.isEmpty()) {
 					opened = filename;
 				} else {
 					opened = this.openFiles.peek().toString();
@@ -1146,7 +1139,7 @@ public final class Shell implements Runnable, PPCHandler {
 				Options.setLastDirectory(Paths.get(opened).getParent());
 			}
 		} catch (NoSystemException e) {
-			Log.error("No System available. Please load a model before "
+			userOutput.printlnError("No System available. Please load a model before "
 					+ "executing this command.");
 		}
 	}
@@ -1167,13 +1160,13 @@ public final class Shell implements Runnable, PPCHandler {
 
 		if (line.startsWith("-l")) {
 			if (recentFiles.isEmpty()) {
-				Log.println("No files were opened, yet.");
+				userOutput.println("No files were opened, yet.");
 				return;
 			}
 
 			int length = (int) Math.log10(recentFiles.size()) + 1;
 			for (int index = 0; index < recentFiles.size(); ++index) {
-				Log.println(String.format("%" + length + "d: %s", index+1, recentFiles.get(index)));
+				userOutput.println(String.format("%" + length + "d: %s", index+1, recentFiles.get(index)));
 			}
 			return;
 		}
@@ -1183,16 +1176,16 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 
 		if (recentFiles.isEmpty()) {
-			Log.error("No recent files to reopen.");
+			userOutput.printlnError("No recent files to reopen.");
 			return;
 		}
 
 		String filename;
-		if (line.equals("")) {
+		if (line.isEmpty()) {
 			try {
 				filename = recentFiles.get(0);
 			} catch (IndexOutOfBoundsException e) {
-				Log.error("No recent file available");
+				userOutput.printlnError("No recent file available");
 				return;
 			}
 		} else {
@@ -1200,20 +1193,20 @@ public final class Shell implements Runnable, PPCHandler {
 			try {
 				fileNr = Integer.parseInt(line);
 			} catch (NumberFormatException e) {
-				Log.error("Invalid argument " + line);
-				Log.println("Options: [-l] | [[-q] num]");
+				userOutput.printlnError("Invalid argument " + line);
+				userOutput.println("Options: [-l] | [[-q] num]");
 				return;
 			}
 
 			if (fileNr < 1 || fileNr > recentFiles.size()) {
-				Log.error("Invalid recent file number");
+				userOutput.printlnError("Invalid recent file number");
 				return;
 			}
 
 			filename = recentFiles.get(fileNr - 1);
 		}
 
-		Log.println(filename);
+		userOutput.println(filename);
 		cmdOpen("\"" + filename + "\"", quiet);
 	}
 
@@ -1226,21 +1219,26 @@ public final class Shell implements Runnable, PPCHandler {
 		String filename = getFilenameToOpen(file);
 
 		try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
-			Log.println("compiling specification...");
+			userOutput.println("compiling specification...");
 			handleBOM(specStream);
 			model = USECompiler.compileSpecification(specStream, filename,
-					new PrintWriter(System.err), new ModelFactory());
-			Log.println("done");
+					this.userOutput, new ModelFactory());
+			userOutput.println("done");
 		} catch (FileNotFoundException e) {
-			Log.error("File `" + filename + "' not found.");
+			userOutput.printError("File ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printlnError(" not found.");
 		} catch (IOException e) {
-			Log.error("IO error while accessing `" + filename + "': " + e.getMessage());
+			userOutput.printError("IO error while accessing ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printError(": ")
+					.printlnError(e.getMessage());
 		}
 
 		// compile ok?
 		if (model != null) {
 			// print some info about model
-			Log.println(model.getStats());
+			userOutput.println(model.getStats());
 
 			// create system
 			fSession.setSystem(new MSystem(model));
@@ -1252,47 +1250,46 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdRunTestSuite(String file) {
 		String filename = getFilenameToOpen(file);
 		MTestSuite testSuite = null;
-		MModel model = null;
+		MModel model;
 
 		try {
 			model = system().model();
 		} catch (NoSystemException e) {
-			Log.error("Cannot run test suite without a loaded model");
+			userOutput.printlnError("Cannot run test suite without a loaded model");
 			return;
 		}
 
 		try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
-			Log.verbose("compiling test suite...");
+			userOutput.printlnVerbose("compiling test suite...");
 			handleBOM(specStream);
-			testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename,
-					new PrintWriter(System.err), model);
+			testSuite = TestSuiteCompiler.compileTestSuite(specStream, filename, userOutput, model);
 		} catch (FileNotFoundException e) {
-			Log.error("File `" + filename + "' not found.");
+			userOutput.printError("File ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printlnError(" not found.");
 		} catch (IOException e) {
-			Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
+			userOutput.printError("Error accessing file ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printError(": ")
+					.printlnError(e.getMessage());
 		}
 
 		// compile ok?
 		if (testSuite != null) {
-			PrintWriter output = new PrintWriter(Log.out());
-			Log.println(testSuite.getStats());
+			userOutput.println(testSuite.getStats());
 			// create system
-			testSuite.run(output);
+			testSuite.run();
 		}
 
 		setFileClosed();
 	}
 
-	/**
-	 * Performs a query.
-	 */
-	private void cmdQuery(String line, boolean verboseEval)
-			throws NoSystemException {
-		Log.trace(this, line);
+	private CompileExpressionResult compileExpression(String line, String prefix) {
+		log.debug(line);
 
-		if (line.length() == 0) {
-			Log.error("Expression expected after `?'. Try `help'.");
-			return;
+		if (line.isEmpty()) {
+			userOutput.printlnError("Expression expected after `%s'. Try `help'.".formatted(prefix));
+			return null;
 		}
 
 		// compile query
@@ -1311,74 +1308,70 @@ public final class Shell implements Runnable, PPCHandler {
 				system.state(),
 				stream,
 				"<input>",
-				new PrintWriter(System.err),
+				this.userOutput,
 				system.varBindings());
 
+		return new CompileExpressionResult(system, expr);
+	}
+
+	private static class CompileExpressionResult {
+
+		public final MSystem system;
+		public final Expression expr;
+		public CompileExpressionResult(MSystem system, Expression expr) {
+			this.system = system;
+			this.expr = expr;
+		}
+
+	}
+	/**
+	 * Performs a query.
+	 */
+	private void cmdQuery(String line, boolean verboseEval) {
+		CompileExpressionResult result = compileExpression(line, "?");
+
 		// compile errors?
-		if (expr == null) {
+		if (result == null || result.expr == null) {
 			return;
 		}
 
 		// evaluate it with current system state
-		PrintWriter output = null;
 		Evaluator evaluator = new Evaluator(verboseEval);
+		UserOutput out;
+
 		if (verboseEval) {
-			Log.println("Detailed results of subexpressions:");
-			output = new PrintWriter(Log.out());
+			out = userOutput.createCopy();
+			out.setOutputLevel(OutputLevel.TRACE);
+			userOutput.printlnVerbose("Detailed results of subexpressions:");
+		} else {
+			out = this.userOutput;
 		}
 
 		try {
-			Value val = evaluator.eval(expr, system.state(), system
-					.varBindings(), output);
+			Value val = evaluator.eval(result.expr, result.system.state(), result.system.varBindings(), out);
+
 			// print result
-			System.out.println("-> " + val.toStringWithType());
+			out.println("-> " + val.toStringWithType());
 		} catch (MultiplicityViolationException e) {
-			System.out.println("-> " + "Could not evaluate. " + e.getMessage());
+			out.println("-> " + "Could not evaluate. " + e.getMessage());
 		}
 	}
 
 	/**
 	 * Derives the static type of an expression.
 	 */
-	private void cmdDeriveStaticType(String line) throws NoSystemException {
-		Log.trace(this, line);
-		if (line.length() == 0) {
-			Log.error("Expression expected after `?'. Try `help'.");
-			return;
-		}
+	private void cmdDeriveStaticType(String line) {
+		CompileExpressionResult result = compileExpression(line, ":");
 
-		// compile query
-		MSystem system;
-		try {
-			system = system();
-		}
-		catch (NoSystemException e) {
-			MModel model = new ModelFactory().createModel("empty model");
-			system = new MSystem(model);
-		}
-		InputStream stream = new ByteArrayInputStream(line.getBytes());
+		// Compile errors?
+		if (result == null || result.expr == null) return;
 
-		Expression expr = OCLCompiler.compileExpression(
-				system.model(),
-				system.state(),
-				stream,
-				"<input>",
-				new PrintWriter(System.err),
-				system.varBindings());
-
-
-		// compile errors?
-		if (expr == null) {
-			return;
-		}
-
-		System.out.println("-> " + expr.type());
+		userOutput.println("-> " + result.expr.type());
 	}
 
 	/**
 	 * Reads a file with commands and processes them.
 	 */
-	@SuppressWarnings("resource")
 	public void cmdRead(String filename, boolean doEcho) {
 		filename = getFilenameToOpen(filename);
 		
@@ -1397,22 +1390,27 @@ public final class Shell implements Runnable, PPCHandler {
 			fReadlineStack.push(fReadline);
 
 		} catch (FileNotFoundException e) {
-			Log.error("File `" + filename + "' not found.");
+			userOutput.printError("File ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printlnError(" not found.");
 		} catch (IOException e) {
-			Log.error("IO error accessing file " + StringUtil.inQuotes(filename) + ":" + e.getMessage());
+			userOutput.printError("IO error accessing file ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printError(":")
+					.printlnError(e.getMessage());
 		}
 	}
 
 	/**
 	 * Resets system to empty state.
 	 */
-	private void cmdReset() throws NoSystemException {
+	private void cmdReset() {
 		fSession.reset();
 	}
 
 	private void cmdReloadExtensions() {
 		ExtensionManager.getInstance().unloadExtensions();
-		ExtensionManager.getInstance().loadExtensions();
+		ExtensionManager.getInstance().loadExtensions(this.userOutput);
 	}
 
 	/**
@@ -1420,7 +1418,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdStepOn() {
 		fStepMode = true;
-		Log.println("Step mode turned on.");
+		userOutput.println("Step mode turned on.");
 	}
 
 	private void cmdSetDelay(String line) {
@@ -1428,15 +1426,15 @@ public final class Shell implements Runnable, PPCHandler {
 		delay = 0;
 
 		if (parts.length > 2) {
-			Log.error("Invalid number of arguments. Please use delay [number].");
+			userOutput.printlnError("Invalid number of arguments. Please use delay [number].");
 		} else if (parts.length == 2) {
 			try {
 				delay = Integer.parseInt(parts[1]);
 			} catch (NumberFormatException e) {
-				Log.error("Invalid delay specified. Please provide a valid number.");
+				userOutput.printlnError("Invalid delay specified. Please provide a valid number.");
 			}
 		}
-		Log.println(String.format("Delay was set to %1$d.", delay));
+		userOutput.println(String.format("Delay was set to %1$d.", delay));
 	}
 
 	/**
@@ -1444,9 +1442,9 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdUndo() throws NoSystemException {
 		try {
-			system().undoLastStatement();
+			system().undoLastStatement(this.userOutput);
 		} catch (MSystemException e) {
-			Log.error(e.getMessage());
+			userOutput.printlnError(e.getMessage());
 		}
 	}
 
@@ -1456,9 +1454,9 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdRedo() throws NoSystemException {
 		try {
-			system().redoStatement();
+			system().redoStatement(this.userOutput);
 		} catch (MSystemException e) {
-			Log.error(e.getMessage());
+			userOutput.printlnError(e.getMessage());
 		}
 	}
 
@@ -1479,7 +1477,7 @@ public final class Shell implements Runnable, PPCHandler {
 			out.println();
 			system.writeSoilStatements(out);
 		} catch (IOException ex) {
-			Log.error(ex.getMessage());
+			userOutput.printlnError(ex.getMessage());
 		} finally {
 			if (out != null) {
 				out.flush();
@@ -1496,29 +1494,32 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
 		String filename = str.trim();
-		if (filename.length() == 0) {
-			Log.error("syntax is `load FILE'");
+		if (filename.isEmpty()) {
+			userOutput.printlnError("syntax is `load FILE'");
 		} else {
 			filename = getFilenameToOpen(filename);
 			try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename))){
 				handleBOM(in);
 
-				system.loadInvariants(in, str.trim(), doEcho, new PrintWriter(getOut(), true));
+				system.loadInvariants(in, str.trim(), doEcho, this.userOutput);
 
 				setFileClosed();
 			} catch (FileNotFoundException e) {
-				Log.error("File " + StringUtil.inQuotes(filename) + " not found!");
-				return;
+				userOutput.printError("File ")
+						.printHighlightedError(filename, HighlightAs.FILE)
+						.printlnError(" not found!");
 			} catch (IOException e) {
-				Log.error("Error accessing file " + StringUtil.inQuotes(filename) + ": " + e.getMessage());
-				return;
+				userOutput.printError("Error accessing file ")
+						.printHighlightedError(filename, HighlightAs.FILE)
+						.printError(": ")
+						.printlnError(e.getMessage());
 			}
 		}
 	}
 
 	private void cmdGenUnloadInvariants(String str, MSystem system) {
 		StringTokenizer st = new StringTokenizer(str);
-		Set<String> names = new TreeSet<String>();
+		Set<String> names = new TreeSet<>();
 		try {
 			while (st.hasMoreTokens()){
 				names.add(st.nextToken());
@@ -1533,37 +1534,35 @@ public final class Shell implements Runnable, PPCHandler {
 
 			system.unloadInvariants(names, new PrintWriter(Log.out(), true));
 		} catch (NoSuchElementException e) {
-			Log.error("syntax is " + StringUtil.inQuotes("unload [invnames]"));
+			userOutput.printlnError("syntax is " + StringUtil.inQuotes("unload [invnames]"));
 		}
 	}
 
 	private void cmdGenPrintLoadedInvariants(MSystem system) {
-		system.generator().printLoadedInvariants();
+		system.generator().printLoadedInvariants(this.userOutput);
 	}
 
 	private void cmdGenResult(String str, MSystem system) {
 		str = str.trim();
 		try {
-			if (str.length() == 0) {
-				PrintWriter pw = new PrintWriter(System.out);
-				system.generator().printResult(pw);
-				pw.flush();
+			if (str.isEmpty()) {
+				system.generator().printResult(this.userOutput);
 			} else if (str.equals("inv")) {
-				system.generator().printResultStatistics();
+				system.generator().printResultStatistics(this.userOutput);
 			} else if (str.equals("accept")) {
-				system.generator().acceptResult();
+				system.generator().acceptResult(this.userOutput);
 			} else {
-				Log.error("Unknown command `result " + str + "'. Try help.");
+				userOutput.printlnError("Unknown command `result " + str + "'. Try help.");
 			}
 		} catch (GNoResultException e) {
-			Log.error("No result available.");
+			userOutput.printlnError("No result available.");
 		}
 	}
 
 	private void cmdGenInvariantFlags(String str, MSystem system) {
 		// Syntax: gen flags (invariant)* [+d|-d] [+n|-n]
 		StringTokenizer st = new StringTokenizer(str);
-		Set<String> names = new TreeSet<String>();
+		Set<String> names = new TreeSet<>();
 		Boolean disabled = null;
 		Boolean negated = null;
 		boolean error = false;
@@ -1615,12 +1614,12 @@ public final class Shell implements Runnable, PPCHandler {
 		if (names.isEmpty()) {
 			invs = system.model().classInvariants();
 		} else {
-			invs = new HashSet<MClassInvariant>();
+			invs = new HashSet<>();
 
 			for(String invName : names){
 				MClassInvariant inv = system.model().getClassInvariant(invName);
 				if(inv == null){
-					Log.error("Invariant " + StringUtil.inQuotes(invName) + " does not exist. " +
+					userOutput.printlnError("Invariant " + StringUtil.inQuotes(invName) + " does not exist. " +
 							"Ignoring " + StringUtil.inQuotes(invName) + ".");
 					error = true;
 					continue;
@@ -1630,13 +1629,13 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 
 		if (error){
-			Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
+			userOutput.printlnError("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
 		}
-		else if (disabled == null && negated == null){
-			system.generator().printInvariantFlags(invs);
+		else if (disabled == null && negated == null) {
+			system.generator().printInvariantFlags(invs, this.userOutput);
 		}
 		else {
-			system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
+			system.setClassInvariantFlags(invs, (disabled == null) ? null : !disabled, negated);
 		}
 	}
 
@@ -1654,7 +1653,7 @@ public final class Shell implements Runnable, PPCHandler {
 		args.setFilename(this.getFilenameToOpen(args.getFilename()));
 		this.setFileClosed();
 
-		system.generator().startProcedure(args.getCallString(), args);
+		system.generator().startProcedure(args.getCallString(), args, this.userOutput);
 	}
 
 	private MSystem system() throws NoSystemException {
@@ -1670,7 +1669,7 @@ public final class Shell implements Runnable, PPCHandler {
 	//***********************************************************
 	private String getFirstWordOfFile(String filename) {
 		try {
-			String result = "";
+			String result;
 			// Handle possible UTF BOM
 			Reader r = getReaderFromFilename(filename);
 			
@@ -1685,12 +1684,10 @@ public final class Shell implements Runnable, PPCHandler {
 					while (!noCase) {
 						noCase = true;
 						if (line.startsWith("--")) {
-							noCase = true;
 							cont = true;
 							continue;
 						}
 						if (line.startsWith("@")) {
-							noCase = true;
 							cont = true;
 							continue;
 						}
@@ -1699,7 +1696,7 @@ public final class Shell implements Runnable, PPCHandler {
 							isComment = true;
 							line = line.substring(line.indexOf("/*") + 2).trim();
 						}
-						if (isComment == true) {
+						if (isComment) {
 							noCase = false;
 							int index = line.indexOf("*/");
 							if (index != -1) {
@@ -1709,11 +1706,10 @@ public final class Shell implements Runnable, PPCHandler {
 							if (index == -1) {
 								noCase = true;
 								cont = true;
-								continue;
 							}
 						}
 					}
-					if (cont || line.trim().equals("")) {
+					if (cont || line.trim().isEmpty()) {
 						cont = false;
 						noCase = false;
 						continue;
@@ -1725,7 +1721,10 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 		} catch (FileNotFoundException e) {
 			// ignored
-			Log.println("Error: File `" + filename + "' could not be found!");
+			userOutput.printError("File ")
+					.printHighlightedError(filename, HighlightAs.FILE)
+					.printlnError(" could not be found!");
+
 			return "ERROR: -1";
 		} catch (IOException e) {
 			// ignored
@@ -1752,11 +1751,9 @@ public final class Shell implements Runnable, PPCHandler {
 			// we don't want to take care of openter/opexit
 			if (operationCall.getOperation().hasBody()) {
 				try {
-					ppcShell(system);
+					ppcShell();
 					throw e;
-				} catch (NoSystemException e1) {
-					throw e;
-				} catch (IOException e1) {
+				} catch (NoSystemException | IOException e1) {
 					throw e;
 				}
 			} else {
@@ -1788,11 +1785,9 @@ public final class Shell implements Runnable, PPCHandler {
 			ppcHandler.handlePostConditions(system, operationCall);
 		} catch (PostConditionCheckFailedException e) {
 			try {
-				ppcShell(system);
+				ppcShell();
 				throw e;
-			} catch (NoSystemException e1) {
-				throw e;
-			} catch (IOException e1) {
+			} catch (NoSystemException | IOException e1) {
 				throw e;
 			}
 		}
@@ -1801,23 +1796,21 @@ public final class Shell implements Runnable, PPCHandler {
 
 	@Override
 	public void handleTransitionsPre(MSystem system,
-			MOperationCall operationCall)
-					throws PreConditionCheckFailedException {
+			MOperationCall operationCall) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void handleTransitionsPost(MSystem system,
-			MOperationCall operationCall)
-					throws PostConditionCheckFailedException {
+			MOperationCall operationCall) {
 		// TODO Auto-generated method stub
 
 	}
 
 
-	private void ppcShell(MSystem system) throws NoSystemException, IOException {
-		PrintWriter output = new PrintWriter(Log.out(), true);
+	private void ppcShell() throws NoSystemException, IOException {
+		PrintWriter output = new PrintWriter(userOutput.getPrintStream(OutputLevel.NORMAL), true);
 
 		final String PROMPT = "> ";
 		final String HELP =
@@ -1832,9 +1825,6 @@ public final class Shell implements Runnable, PPCHandler {
 						" are allowed.\n" +
 						StringUtil.inQuotes("c") +
 						" continues the evaluation (i.e. unwinds the stack).\n";
-
-		//FIXME: Required?
-		// system.updateListeners();
 
 		if (!Options.testMode) {
 			output.println();
@@ -1856,6 +1846,7 @@ public final class Shell implements Runnable, PPCHandler {
 			if (input.equals("c")) {
 				return;
 			}
+
 			if (
 					input.startsWith("?") ||
 					input.startsWith(":") ||
@@ -1866,29 +1857,28 @@ public final class Shell implements Runnable, PPCHandler {
 				output.println(HELP);
 			}
 
-		} while (!input.equals("c"));
+		} while (true);
 	}
 
 	/**
 	 * Safe way to get a reader from a filename.
 	 * This operation examines a possible valid unicode BOM.
-	 * @param filename
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param filename The filename to open a reader for.
+	 * @return An open reader to the given <code>filename</code>
+	 * @throws FileNotFoundException If filename is invalid
+	 * @throws IOException If something went wrong while reading the stream.
 	 */
 	private Reader getReaderFromFilename(String filename) throws FileNotFoundException, IOException {
-		Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
-		return r;
+		return getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
 	}
 
 	/**
 	 * Safe way to get a reader from an input stream.
 	 * This operation examines a possible valid unicode BOM.
-	 * @param filename
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param in The <code>BufferedInputStream</code> to read from
+	 * @return A <code>Reader</code> with correct encoding if BOM is present.
+	 * @throws FileNotFoundException If filename is invalid
+	 * @throws IOException If something went wrong while reading the stream.
 	 */
 	private Reader getReaderFromInputStream(BufferedInputStream in) throws IOException {
 		String encoding = handleBOM(in);
@@ -1901,12 +1891,12 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	/**
-	 * Reads the first bytes of an input stream an checks for a unicode BOM.
-	 * If no BOM is present, the stream is reset. Otherwise the stream
+	 * Reads the first bytes of an input stream and checks for a unicode BOM.
+	 * If no BOM is present, the stream is reset. Otherwise, the stream
 	 * is at the beginning of the content.
-	 * @param in
-	 * @return
-	 * @throws IOException
+	 * @param in The <code>BufferedInputStream</code> to read from
+	 * @return The name of the Encoding if a BOM is present.
+	 * @throws IOException If something went wrong while reading the stream.
 	 */
 	private String handleBOM(BufferedInputStream in) throws IOException {
 		String encoding = null;

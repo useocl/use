@@ -19,36 +19,20 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import junit.framework.TestCase;
-
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MMultiplicity;
-import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.BagValue;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.SetValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Test ExpQuery and subclasses.
@@ -57,8 +41,7 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 
 public class ExpQueryTest extends TestCase {
-    static List<Value> emptyQualifierValues = Collections.emptyList();
-    
+
 	private MSystemState fState;
     private Expression fSet123;
     private Expression fEGreater1;
@@ -80,13 +63,13 @@ public class ExpQueryTest extends TestCase {
             new Expression[] {
                 new ExpVariable("e", TypeFactory.mkInteger()),
                 new ExpConstInteger(1)};
-        fEGreater1 = ExpStdOp.create(">", args2);
+        fEGreater1 = ExpStdOp.create(VoidUserOutput.getInstance(), ">", args2);
 
         Expression[] args3 =
             new Expression[] {
                 new ExpVariable("e1", TypeFactory.mkInteger()),
                 new ExpVariable("e2", TypeFactory.mkInteger())};
-        fE1NotEqualsE2 = ExpStdOp.create("<>", args3);
+        fE1NotEqualsE2 = ExpStdOp.create(VoidUserOutput.getInstance(), "<>", args3);
         e = new Evaluator();
     }
 
@@ -165,7 +148,7 @@ public class ExpQueryTest extends TestCase {
             new Expression[] {
                 new ExpVariable("e", TypeFactory.mkInteger()),
                 new ExpConstInteger(2)};
-        Expression mult2Exp = ExpStdOp.create("*", args);
+        Expression mult2Exp = ExpStdOp.create(VoidUserOutput.getInstance(), "*", args);
         Expression exp =
             new ExpCollectNested(new VarDecl("e", TypeFactory.mkInteger()), fSet123, mult2Exp);
         Value[] values =
@@ -188,7 +171,7 @@ public class ExpQueryTest extends TestCase {
             new Expression[] {
                 new ExpVariable("acc", TypeFactory.mkInteger()),
                 new ExpVariable("e", TypeFactory.mkInteger())};
-        Expression accPlusE = ExpStdOp.create("+", args2);
+        Expression accPlusE = ExpStdOp.create(VoidUserOutput.getInstance(), "+", args2);
 
         Expression exp =
             new ExpIterate(
@@ -214,12 +197,12 @@ public class ExpQueryTest extends TestCase {
             new Expression[] {
                 new ExpVariable("e1", TypeFactory.mkInteger()),
                 new ExpVariable("e2", TypeFactory.mkInteger())};
-        Expression e1Multe2 = ExpStdOp.create("*", args2);
+        Expression e1Multe2 = ExpStdOp.create(VoidUserOutput.getInstance(), "*", args2);
         args2 =
             new Expression[] {
                 new ExpVariable("acc", TypeFactory.mkInteger()),
                 e1Multe2 };
-        Expression add = ExpStdOp.create("+", args2);
+        Expression add = ExpStdOp.create(VoidUserOutput.getInstance(), "+", args2);
 
         VarDeclList elemVars = new VarDeclList(true);
         elemVars.add(new VarDecl("e1", TypeFactory.mkInteger()));
@@ -271,8 +254,8 @@ public class ExpQueryTest extends TestCase {
             MObject b1 = state.createObject(b,"B1");
             MObject b2 = state.createObject(b,"B2");
 
-            state.createLink( r, Arrays.asList( new MObject[] { a1, b1 } ), null);
-            state.createLink( r, Arrays.asList( new MObject[] { a1, b2 } ), null);
+            state.createLink(VoidUserOutput.getInstance(), r, Arrays.asList( a1, b1 ), null);
+            state.createLink(VoidUserOutput.getInstance(), r, Arrays.asList( a1, b2 ), null);
 
             VarBindings bindings = new VarBindings();
             bindings.push( "A1", new ObjectValue(a1.cls(), a1));
@@ -281,7 +264,7 @@ public class ExpQueryTest extends TestCase {
             
            
             ExpVariable expVar = new ExpVariable( "A1", a );
-            ExpNavigation nav = new ExpNavigation( expVar, ra, rb, Collections.<Expression>emptyList() );
+            ExpNavigation nav = new ExpNavigation( expVar, ra, rb, Collections.emptyList() );
             
             try {
                 e.eval(nav, state, bindings);
@@ -307,12 +290,11 @@ public class ExpQueryTest extends TestCase {
         ModelFactory f = new ModelFactory();
         MModel model =  f.createModel("Test");
         String expText = "Set{Set{42},Sequence{42},Bag{42}}";
-        
-        PrintWriter dummyWriter = new PrintWriter(new StringWriter());
+
         VarBindings bindings = new VarBindings();
                         
-        Expression exp = OCLCompiler.compileExpression(model, expText, "<junit test>", 
-                                                       dummyWriter, bindings);
+        Expression exp = OCLCompiler.compileExpression(model, expText, "<junit test>",
+                VoidUserOutput.getInstance(), bindings);
         
         assertNotNull(exp);
         
@@ -327,12 +309,11 @@ public class ExpQueryTest extends TestCase {
         ModelFactory f = new ModelFactory();
         MModel model =  f.createModel("Test");
         String expText = "Bag{Set{42},Sequence{42},Bag{42}}";
-        
-        PrintWriter dummyWriter = new PrintWriter(new StringWriter());
+
         VarBindings bindings = new VarBindings();
                         
-        Expression exp = OCLCompiler.compileExpression(model, expText, "<junit test>", 
-                                                       dummyWriter, bindings);
+        Expression exp = OCLCompiler.compileExpression(model, expText, "<junit test>",
+                VoidUserOutput.getInstance(), bindings);
         
         assertNotNull(exp);
         

@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
@@ -34,9 +35,10 @@ public final class SimpleEvalContext extends EvalContext {
 	 * @param preState
 	 * @param postState
 	 * @param globalBindings
+	 * @param output
 	 */
-	public SimpleEvalContext(MSystemState preState, MSystemState postState, VarBindings globalBindings) {
-		super(preState, postState, globalBindings, null, "");
+	public SimpleEvalContext(MSystemState preState, MSystemState postState, VarBindings globalBindings, UserOutput output) {
+		super(preState, postState, globalBindings, output, "");
 	}
 
 	@Override

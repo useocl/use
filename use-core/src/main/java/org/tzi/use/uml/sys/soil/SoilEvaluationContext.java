@@ -19,13 +19,14 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.soil.VariableEnvironment;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * This context objects comprises everything that is required to execute
@@ -37,31 +38,38 @@ import org.tzi.use.util.soil.VariableEnvironment;
  */
 public class SoilEvaluationContext {
 	
-	private MSystem fSystem;
+	private final MSystem fSystem;
 
-	private Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
+	private final Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
 	
 	private boolean fIsUndo = false;
 	
 	private boolean fIsRedo = false;
-	
+
+	private final UserOutput output;
+
 	/**
 	 * Constructs a new evaluation context for the given system.
-     * 
+     *
 	 * @param system The system of the context.
 	 */
-    public SoilEvaluationContext(MSystem system) {
+    public SoilEvaluationContext(UserOutput output, MSystem system) {
 		fSystem = system;
+		this.output = output;
 	}
-	
+
 	/**
-	 * The system the statement is evaluated on. 
+	 * The system the statement is evaluated on.
 	 * @return
 	 */
 	public MSystem getSystem() {
 		return fSystem;
 	}
-	
+
+	public UserOutput getOutput() {
+		return output;
+	}
+
 	/**
 	 * The system state the statement is evaluated on. 
      * 

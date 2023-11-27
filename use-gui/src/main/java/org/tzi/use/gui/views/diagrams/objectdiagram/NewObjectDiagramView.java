@@ -94,9 +94,9 @@ public class NewObjectDiagramView extends JPanel
 
     public void initDiagram(boolean loadDefaultLayout, ObjDiagramOptions opt) {
     	if (opt == null)
-			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter());
+			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.getUserOutput());
 		else
-			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter(), new ObjDiagramOptions(opt));
+			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.getUserOutput(), new ObjDiagramOptions(opt));
 		
 		fObjectDiagram.setStatusBar(fMainWindow.statusBar());
 		this.removeAll();

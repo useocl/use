@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
@@ -76,7 +78,9 @@ public class MSystemStateTest extends TestCase {
     public void testMemoryUsage() throws UseApiException, MSystemException {
     	final int numObjects    = 20000;
     	final int numStatements = 20000;
-    	
+
+		UserOutput out = DefaultUserOutput.createSystemOutOutput();
+
     	UseModelApi api = new UseModelApi("test");
     	MClass test = api.createClass("Test", false);
     	MClass test1 = api.createClass("Test1", false);
@@ -100,7 +104,7 @@ public class MSystemStateTest extends TestCase {
     		Expression range = new ExpressionWithValue(new SequenceValue(TypeFactory.mkInteger(), new int[]{1,numObjects}));
     		// for (Sequence{1..numObjects}) do new Object; end
     		MIterationStatement iter = new MIterationStatement("i", range, stmt);
-    		sys.getSystem().execute(iter);
+    		sys.getSystem().execute(out, iter);
     	} catch (OutOfMemoryError e) {
     		sys = null;
     		fail("Memory consumption to high!");
@@ -111,7 +115,7 @@ public class MSystemStateTest extends TestCase {
     		// Execute a statement which does not generate a new name
     		MVariableAssignmentStatement stmt = new MVariableAssignmentStatement("myVar", UndefinedValue.instance);
 	    	for (int i = 0; i < numStatements; ++i) {
-	    		sys.getSystem().execute(stmt);
+	    		sys.getSystem().execute(out, stmt);
 	    	}
     	} catch (OutOfMemoryError e) {
     		sys = null;
@@ -122,7 +126,9 @@ public class MSystemStateTest extends TestCase {
     
     @Test
     public void testNamesGeneration() throws UseApiException, MSystemException, OperationNotSupportedException {
-    	
+
+		UserOutput out = DefaultUserOutput.createSystemOutOutput();
+
     	UseModelApi api = new UseModelApi("test");
     	MClass test = api.createClass("Test", false);
     	MClass test1 = api.createClass("Test1", false);
@@ -152,7 +158,7 @@ public class MSystemStateTest extends TestCase {
 		
 		// Execute a statement which does not generate a new name
 		MVariableAssignmentStatement stmt = new MVariableAssignmentStatement("myVar", UndefinedValue.instance);
-		sys.getSystem().execute(stmt);
+		sys.getSystem().execute(out, stmt);
 		
 		obj = sys.createObjectEx(test, null);
 		assertEquals("Test3", obj.name());
@@ -168,7 +174,7 @@ public class MSystemStateTest extends TestCase {
 		assertEquals("Test14", obj.name());
 		
 		stmt = new MVariableAssignmentStatement("myVar", UndefinedValue.instance);
-		sys.getSystem().execute(stmt);
+		sys.getSystem().execute(out, stmt);
 		
 		obj = createObjects(sys, test1, 4);
 		assertEquals("Test18", obj.name());

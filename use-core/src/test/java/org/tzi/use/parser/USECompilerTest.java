@@ -22,26 +22,12 @@
  */
 package org.tzi.use.parser;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.tzi.use.config.Options;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.InternalUserOutput;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MModel;
@@ -53,6 +39,12 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.SuffixFileFilter;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *  Test USECompiler class. The TestDriver reads all files with extension ".use"
@@ -94,28 +86,6 @@ public class USECompilerTest extends TestCase {
         }
     }
 
-    // java.io has a StringWriter but we need an OutputStream for
-    // System.err
-    class StringOutputStream extends OutputStream {
-        private StringBuilder fBuffer = new StringBuilder();
-
-
-        public void write(int b) {
-            fBuffer.append((char) b);
-        }
-
-
-        public void reset() {
-            fBuffer = new StringBuilder();
-        }
-
-
-        public String toString() {
-            return fBuffer.toString();
-        }
-    }
-
-
     public void testSpecification() {
         Options.explicitVariableDeclarations = false;
 
@@ -125,33 +95,33 @@ public class USECompilerTest extends TestCase {
         assertNotNull(files);
         fileList.addAll(Arrays.asList(files));
 
-        // create a new stream for capturing output on stderr
-        StringOutputStream errStr = new StringOutputStream();
-        PrintWriter newErr = new PrintWriter(errStr);
         // compile each file and compare with expected result
         for (File specFile : fileList) {
+            // create a new stream for capturing output on stderr
+            InternalUserOutput output = new InternalUserOutput();
+
             String specFileName = specFile.getName();
             try {
-                MModel model = compileSpecification(specFile, newErr);
+                MModel model = compileSpecification(specFile, output);
                 File failFile = getFailFileFromUseFile(specFileName);
 
                 if (failFile.exists()) {
                     if (model != null) {
                         failCompileSpecSucceededButErrorsExpected(specFileName, failFile);
                     } else {
-                        if (!isErrorMessageAsExpected(failFile, errStr)) {
-                            failCompileSpecFailedFailFileDiffers(specFileName, errStr, failFile);
+                        if (!isErrorMessageAsExpected(failFile, output.getOutput())) {
+                            failCompileSpecFailedFailFileDiffers(specFileName, output.getOutput(), failFile);
                         }
                     }
                 } else {
                     if (model == null) {
-                        failCompileSpecFailedWithoutFailFile(specFileName, errStr, failFile);
+                        failCompileSpecFailedWithoutFailFile(specFileName, output.getOutput(), failFile);
                     }
                 }
                 if (VERBOSE) {
                     System.out.println(specFileName + ": PASSED.");
                 }
-                errStr.reset();
+
             } catch (FileNotFoundException e) {
                 System.err.println(e.getMessage());
             }
@@ -177,11 +147,11 @@ public class USECompilerTest extends TestCase {
                 }
                 continue;
             }
-            if (line.length() == 0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
 
-            String expStr = line;
+            StringBuilder expStr = new StringBuilder(line);
             while (true) {
                 line = in.readLine();
                 lineNr++;
@@ -193,7 +163,7 @@ public class USECompilerTest extends TestCase {
                 if (line.startsWith("-> ")) {
                     break;
                 }
-                expStr += " " + line.trim();
+                expStr.append(" ").append(line.trim());
             }
             String resultStr = line.substring(3);
 
@@ -201,14 +171,14 @@ public class USECompilerTest extends TestCase {
                 System.out.println("expression: " + expStr);
             }
 
-            InputStream stream = new ByteArrayInputStream(expStr.getBytes());
+            InputStream stream = new ByteArrayInputStream(expStr.toString().getBytes());
 
             Expression expr =
                     OCLCompiler.compileExpression(
                             model,
                             stream,
                             TEST_EXPR_FILE.toString(),
-                            new PrintWriter(System.err),
+                            DefaultUserOutput.createSystemOutOutput(),
                             new VarBindings());
             assertNotNull(expr + " compiles", expr);
 
@@ -225,15 +195,14 @@ public class USECompilerTest extends TestCase {
         // check for a failure file
         String failFileName =
                 specFileName.substring(0, specFileName.length() - 4) + ".fail";
-        File failFile = new File(TEST_PATH, failFileName);
-        return failFile;
+        return new File(TEST_PATH, failFileName);
     }
 
 
-    private void failCompileSpecFailedWithoutFailFile(String specFileName, StringOutputStream errStr, File failFile) {
+    private void failCompileSpecFailedWithoutFailFile(String specFileName, String errStr, File failFile) {
         // unexpected failure
         System.err.println("#######################");
-        System.err.print(errStr.toString());
+        System.err.print(errStr);
         System.err.println("#######################");
         fail(
                 "compilation of "
@@ -245,7 +214,7 @@ public class USECompilerTest extends TestCase {
     }
 
 
-    private void failCompileSpecFailedFailFileDiffers(String specFileName, StringOutputStream errStr, File failFile) {
+    private void failCompileSpecFailedFailFileDiffers(String specFileName, String errStr, File failFile) {
         System.err.println("Expected: #############");
 
         try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
@@ -260,7 +229,7 @@ public class USECompilerTest extends TestCase {
             System.err.println(ex.getMessage());
         }
         System.err.println("Got: ##################");
-        System.err.print(errStr.toString());
+        System.err.print(errStr);
         System.err.println("#######################");
         fail(
                 "compilation of "
@@ -280,12 +249,10 @@ public class USECompilerTest extends TestCase {
                         + ").");
     }
 
-    private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) throws FileNotFoundException {
+    private boolean isErrorMessageAsExpected(File failFile, String errStr) throws FileNotFoundException {
         // check whether error output equals expected output
-        String[] expect = errStr.toString().split("\n|(\r\n)");
-        //                        for (int i = 0; i < expect.length; i++) {
-        //                            System.out.println("[" + expect[i] + "]");
-        //                        }
+        String[] expect = errStr.split("\n|(\r\n)");
+
         int j = 0;
         boolean ok = true;
         try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
@@ -298,20 +265,17 @@ public class USECompilerTest extends TestCase {
                 ok = line.equals(expect[j]);
                 j++;
             }
-        } catch (IOException ex) {
-            ok = false;
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IOException | IndexOutOfBoundsException ex) {
             ok = false;
         }
         return ok;
     }
 
     private List<File> getFilesMatchingSuffix(String suffix, int expected) {
-        List<File> fileList = new ArrayList<File>();
         File dir = new File(TEST_PATH.toURI());
         File[] files = dir.listFiles( new SuffixFileFilter(suffix) );
         assertNotNull(files);
-        fileList.addAll(Arrays.asList(files));
+        List<File> fileList = new ArrayList<>(Arrays.asList(files));
 
         // make sure we don't silently miss the input files
         assertEquals(
@@ -324,16 +288,15 @@ public class USECompilerTest extends TestCase {
     }
 
 
-    private MModel compileSpecification(File specFile, PrintWriter newErr) throws FileNotFoundException {
+    private MModel compileSpecification(File specFile, UserOutput output) throws FileNotFoundException {
         MModel result = null;
 
         try (FileInputStream specStream = new FileInputStream(specFile)){
             result = USECompiler.compileSpecification(specStream,
-                    specFile.getName(), newErr, new ModelFactory());
-            specStream.close();
+                    specFile.getName(), output, new ModelFactory());
         } catch (IOException e) {
             // This can be ignored
-            e.printStackTrace();
+            e.printStackTrace(output.getPrintStream(OutputLevel.ERROR));
         }
 
         return result;

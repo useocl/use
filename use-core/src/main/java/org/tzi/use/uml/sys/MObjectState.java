@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.output.DefaultUserOutput;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MState;
@@ -50,17 +51,17 @@ public final class MObjectState {
     /**
      * Slots holding a value for each attribute.
      */
-    private Map<MAttribute, Value> fAttrSlots;
+    private final Map<MAttribute, Value> fAttrSlots;
 
     /**
      * Instances of the owned psm.
      */
-    private Set<MProtocolStateMachineInstance> protocolStateMachines;
+    private final Set<MProtocolStateMachineInstance> protocolStateMachines;
 
 	/**
      * owner object
      */
-    private MObject fObject;
+    private final MObject fObject;
 
     /**
      * Constructs a new object state. 
@@ -131,17 +132,15 @@ public final class MObjectState {
     	List<MAttribute> sortedAttributes = new ArrayList<>(initAttr);
     	
     	// Definition order is important for init expressions.
-    	Collections.sort(sortedAttributes, new Comparator<MAttribute>() {
-			@Override
-			public int compare(MAttribute attr1, MAttribute attr2) {
-				int position1 = attr1.getPositionInModel();
-				int position2 = attr2.getPositionInModel();
-				return Integer.compare(position1, position2);
-			}
-		});
+    	sortedAttributes.sort((attr1, attr2) -> {
+            int position1 = attr1.getPositionInModel();
+            int position2 = attr2.getPositionInModel();
+
+            return Integer.compare(position1, position2);
+        });
     	
     	for (MAttribute attr : sortedAttributes) {
-			Value v = state.evaluateInitExpression(this.fObject, attr.getInitExpression().get());
+			Value v = state.evaluateInitExpression(DefaultUserOutput.createSystemOutOutput(), this.fObject, attr.getInitExpression().get());
 			setAttributeValue(attr, v);
     	}
     }

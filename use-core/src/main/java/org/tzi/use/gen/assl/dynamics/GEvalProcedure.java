@@ -53,7 +53,7 @@ public class GEvalProcedure implements IGCaller {
                      IGCollector collector,
                      IGChecker checker,
                      GGeneratorArguments cfg) throws GEvaluationException {
-        collector.detailPrintWriter().println(new StringBuilder("evaluating `").append(fProcedure).append("'").toString());
+        collector.getUserOutput().println(new StringBuilder("evaluating `").append(fProcedure).append("'").toString());
         fChecker = checker;
         VarBindings varBindings = new VarBindings();
         Iterator<Value> valuesIt = paramValues.iterator();
@@ -64,7 +64,7 @@ public class GEvalProcedure implements IGCaller {
             varBindings.push(varName, value);
             
             if (collector.doDetailPrinting())
-            	collector.detailPrintWriter().println( varName + ":=" + value );
+            	collector.getUserOutput().println( varName + ":=" + value );
         }
         
         for (VarDecl localDecl : fProcedure.localDecls()) {
@@ -72,7 +72,7 @@ public class GEvalProcedure implements IGCaller {
             varBindings.push(localDecl.name(), value);
             
             if (collector.doDetailPrinting())
-            	collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
+            	collector.getUserOutput().println(localDecl.name() + ":=" + value);
         }
         
 		GConfiguration conf = new GConfiguration(state, varBindings, cfg);

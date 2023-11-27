@@ -19,75 +19,47 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.Subscribe;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtendedJTable;
+import org.tzi.use.output.InternalUserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.Subscribe;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.*;
 
 /** 
  * A view for showing and changing object properties (attributes).
  *  
  * @author  Mark Richters
  */
-@SuppressWarnings("serial")
 public class ObjectPropertiesView extends JPanel implements View {
     private static final String NO_OBJECTS_AVAILABLE = "(No objects available.)";
 
-    private MainWindow fMainWindow;
-    private MSystem fSystem;
+    private final MainWindow fMainWindow;
+    private final MSystem fSystem;
     private MObject fObject;
 
-    private JComboBox<String> fObjectComboBox;
-    private JTable fTable;
-    private JScrollPane fTablePane;
-    private JButton fBtnApply;
-    private JButton fBtnReset;
-    private TableModel fTableModel;
-    private ObjectComboBoxActionListener fObjectComboBoxActionListener;
+    private final JComboBox<String> fObjectComboBox;
+    private final JTable fTable;
+    private final TableModel fTableModel;
+    private final ObjectComboBoxActionListener fObjectComboBoxActionListener;
 
     private List<MAttribute> fAttributes;
     private String[] fValues;
@@ -137,12 +109,7 @@ public class ObjectPropertiesView extends JPanel implements View {
                                 
                 Collection<MAttribute> attributes = ModelBrowserSorting.getInstance().sortAttributes( fAttributeValueMap.keySet() );
                 
-                attributes = Collections2.filter(attributes, new Predicate<MAttribute>() {
-					@Override
-					public boolean apply(MAttribute input) {
-						return !input.isDerived();
-					}
-				});
+                attributes = Collections2.filter(attributes, input -> !input.isDerived());
                 
                 fAttributes = Lists.newArrayList(attributes);
                 fValues = new String[fAttributes.size()];
@@ -183,7 +150,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         fSystem.getEventBus().register(this);
 
         // create combo box with available objects
-        fObjectComboBox = new JComboBox<String>();
+        fObjectComboBox = new JComboBox<>();
         fObjectComboBoxActionListener = new ObjectComboBoxActionListener();
 
         // create table of attribute/value pairs
@@ -191,23 +158,15 @@ public class ObjectPropertiesView extends JPanel implements View {
         fTable = new ExtendedJTable(fTableModel);
         fTable.setPreferredScrollableViewportSize(new Dimension(250, 70));
         fTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        fTablePane = new JScrollPane(fTable);
+        JScrollPane fTablePane = new JScrollPane(fTable);
 
         // create buttons
-        fBtnApply = new JButton("Apply");
+        JButton fBtnApply = new JButton("Apply");
         fBtnApply.setMnemonic('A');
-        fBtnApply.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    applyChanges();
-                }
-            });
-        fBtnReset = new JButton("Reset");
+        fBtnApply.addActionListener(e -> applyChanges());
+        JButton fBtnReset = new JButton("Reset");
         fBtnReset.setMnemonic('R');
-        fBtnReset.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    update();
-                }
-            });
+        fBtnReset.addActionListener(e -> update());
 
         // layout the buttons centered from left to right
         JPanel buttonPane = new JPanel();
@@ -252,21 +211,22 @@ public class ObjectPropertiesView extends JPanel implements View {
         	String oldValue = fAttributeValueMap.get(attribute).toString();
         	
         	if (!newValue.equals(oldValue)) {
-        		
-        		StringWriter errorOutput = new StringWriter();
+
+                InternalUserOutput output = new InternalUserOutput();
+
         		Expression valueAsExpression = 
         			OCLCompiler.compileExpression(
         					fSystem.model(),
         					fSystem.state(),
         					newValue, 
         					"<input>", 
-        					new PrintWriter(errorOutput, true), 
+        					output,
         					fSystem.varBindings());
         		
         		if (valueAsExpression == null) {
         			JOptionPane.showMessageDialog(
         					fMainWindow, 
-        					errorOutput, 
+        					output.getOutput(),
         					"Error", 
         					JOptionPane.ERROR_MESSAGE);
         			error = true;
@@ -312,7 +272,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         // build list of names of currently existing objects
         MSystemState state = fSystem.state();
         Set<MObject> allObjects = state.allObjects();
-        ArrayList<String> livingObjects = new ArrayList<String>();
+        ArrayList<String> livingObjects = new ArrayList<>();
 
         for (MObject obj : allObjects) {
             if (obj.exists(state) )
@@ -330,7 +290,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         Arrays.sort(objNames);
 
         // create combo box with available objects
-        fObjectComboBox.setModel(new DefaultComboBoxModel<String>(objNames));
+        fObjectComboBox.setModel(new DefaultComboBoxModel<>(objNames));
         
         // try to keep selection
         if (haveObject() )

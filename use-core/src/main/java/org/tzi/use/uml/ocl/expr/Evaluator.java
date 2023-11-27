@@ -19,14 +19,15 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.collections.Queue;
+
+import java.util.ArrayList;
 
 /**
  * Evaluation of expressions.
@@ -35,14 +36,16 @@ import org.tzi.use.util.collections.Queue;
  */
 public final class Evaluator {
 
+    private static final Logger log = LogManager.getLogger(Evaluator.class.getName());
+
     private EvalContext fEvalContext;
     private final boolean fEnableEvalTree;
 
     /**
-     * Creates a default Evaluator without building an evaluation tree.
+     * <p>Creates a default Evaluator without building an evaluation tree.</p>
      * 
-     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
-     * The tree is used, e.g., in the evaluation browser.  
+     * <p>Turns on building an evaluation tree if <code>enableEvalTree</code> is true.
+     * The tree is used, e.g., in the evaluation browser.</p>
      *
      */
     public Evaluator() {
@@ -63,57 +66,54 @@ public final class Evaluator {
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings. 
-     * Detailed information is printed to <code>evalLog</code>, which can be <code>null</code>.
+     * Detailed information is printed to <code>output</code>, which can be <code>null</code>.
      */
     public Value eval(Expression expr, 
                       MSystemState preState,
                       MSystemState postState,
                       VarBindings bindings, 
-                      PrintWriter evalLog,
+                      UserOutput output,
                       String evalLogIndent) {
     	if (fEnableEvalTree)
-    		fEvalContext = new DetailedEvalContext(preState, postState, bindings, evalLog, evalLogIndent);
-    	else if (evalLog != null || Log.isTracing())
-    		fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+    		fEvalContext = new DetailedEvalContext(preState, postState, bindings, output, evalLogIndent);
+    	else if (output != null)
+    		fEvalContext = new EvalContext(preState, postState, bindings, output, evalLogIndent);
     	else
-    		fEvalContext = new SimpleEvalContext(preState, postState, bindings);
-    	
-        Value res = evaluate(expr);
-        if (evalLog != null )
-            evalLog.flush();
-        return res;
+    		fEvalContext = new SimpleEvalContext(preState, postState, bindings, output);
+
+        return evaluate(expr);
     }
     
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings. Detailed information
-     * is printed to evalLog.
+     * is printed to output.
      */
     public Value eval(Expression expr, 
             MSystemState preState,
             MSystemState postState,
             VarBindings bindings, 
-            PrintWriter evalLog) {
-		return this.eval(expr, preState, postState, bindings, evalLog, "  ");
+            UserOutput output) {
+		return this.eval(expr, preState, postState, bindings, output, "  ");
 	}
 
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings.
      * This evaluation method uses the provided system state for the prestate and the current state.  
-     * Detailed information is printed to evalLog.
+     * Detailed information is printed to output.
      * @param expr The expression to evaluate.
      * @param postState The system state used as the current and pre state
      * @param bindings The var bindings.
-     * @param evalLog A PrintWriter for the details.
+     * @param output A UserOutput for the details.
      * @return The result value.
      */
     public Value eval(Expression expr, 
                       MSystemState postState,
                       VarBindings bindings, 
-                      PrintWriter evalLog)
+                      UserOutput output)
     {
-        return eval(expr, postState, postState, bindings, evalLog);
+        return eval(expr, postState, postState, bindings, output);
     }
 
     /**
@@ -149,10 +149,11 @@ public final class Evaluator {
 
 
     private Value evaluate(Expression expr) {
-        if (Log.isTracing() )
-            Log.trace("Evaluator.eval expr: " + expr);
+        if ( log.isDebugEnabled() )
+            log.debug("Evaluator.eval expr: " + expr);
 
         Value res = null;
+
         try {
             res = expr.eval(fEvalContext);
         } catch (StackOverflowError ex) {
@@ -160,6 +161,7 @@ public final class Evaluator {
                                        "Stack overflow. The expression is probably nested" +
                                        " too deep or contains an infinite recursion.");
         }
+
         return res;
     }
 

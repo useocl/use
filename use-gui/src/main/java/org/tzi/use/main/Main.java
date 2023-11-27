@@ -19,10 +19,14 @@
 
 package org.tzi.use.main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.DefaultUserOutput;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
@@ -30,7 +34,6 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
 
 import javax.swing.*;
@@ -60,17 +63,23 @@ public final class Main {
 		MetalLookAndFeel.setCurrentTheme(new MyTheme());
 	}
 
-	public static void main(String args[]) {
+	private static final Logger log = LogManager.getLogger(Main.class.getName());
+
+	public static void main(String[] args) {
 		// set System.out to the OldUSEWriter to protocol the output.
 		System.setOut(USEWriter.getInstance().getOut());
 		// set System.err to the OldUSEWriter to protocol the output.
 		System.setErr(USEWriter.getInstance().getErr());
 
+		UserOutput out = DefaultUserOutput.createSystemOutOutput();
+
 		// read and set global options, setup application properties
-		Options.processArgs(args);
+		Options.processArgs(args, out);
 		if (Options.doGUI) {
 			initGUIdefaults();
 		}
+
+		Options.configureOutput(out);
 
 		Session session = new Session();
 		IRuntime pluginRuntime = null;
@@ -79,35 +88,31 @@ public final class Main {
 
 		if (!Options.disableExtensions) {
 			ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + "/oclextensions";
-			ExtensionManager.getInstance().loadExtensions();
+			ExtensionManager.getInstance().loadExtensions(out);
 		}
 		
 		// Plugin Framework
 		if (Options.doPLUGIN) {
 			// create URL from plugin directory
 			Path pluginDirURL = Options.pluginDir;
-			Log.verbose("Plugin path: [" + pluginDirURL + "]");
+			out.printlnVerbose("Plugin path: [" + pluginDirURL + "]");
 			Class<?> mainPluginRuntimeClass = null;
 			try {
-				mainPluginRuntimeClass = Class
-						.forName("org.tzi.use.runtime.MainPluginRuntime");
+				mainPluginRuntimeClass = Class.forName("org.tzi.use.runtime.MainPluginRuntime");
 			} catch (ClassNotFoundException e) {
-				Log
-						.error("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
+				out.printlnError("Could not load PluginRuntime. Probably use-runtime-...jar is missing.\n"
 								+ "Try starting use with -noplugins switch.\n"
 								+ e.getMessage());
 				System.exit(1);
 			}
 			try {
-				Method run = mainPluginRuntimeClass.getMethod("run",
-						new Class[] { Path.class });
+				Method run = mainPluginRuntimeClass.getMethod("run", Path.class, UserOutput.class);
 				pluginRuntime = (IRuntime) run.invoke(null,
-						new Object[] { pluginDirURL });
-				Log.debug("Starting plugin runtime, got class ["
-						+ pluginRuntime.getClass() + "]");
+						new Object[] { pluginDirURL, out });
+				log.debug("Starting plugin runtime, got class [" + pluginRuntime.getClass() + "]");
 			} catch (Exception e) {
-				e.printStackTrace();
-				Log.error("FATAL ERROR.");
+				log.fatal("Error running plugin", e);
+				out.printlnError("Fatal error while loading plugin runtime. Exiting now. See logs for details.");
 				System.exit(1);
 			}
 		}
@@ -115,12 +120,12 @@ public final class Main {
 		// compile spec if filename given as argument
 		if (Options.specFilename != null) {
 			try (FileInputStream specStream = new FileInputStream(Options.specFilename)){
-				Log.verbose("compiling specification...");
+				out.printlnVerbose("compiling specification...");
 				model = USECompiler.compileSpecification(specStream,
-						Options.specFilename, new PrintWriter(System.err),
+						Options.specFilename, out,
 						new ModelFactory());
 			} catch (FileNotFoundException e) {
-				Log.error("File `" + Options.specFilename + "' not found.");
+				out.printlnError("File `" + Options.specFilename + "' not found.");
 				System.exit(1);
 			} catch (IOException e1) {
 				// close failed
@@ -138,8 +143,9 @@ public final class Main {
 				Options.getRecentFiles().push(Options.specFilename);
 			
 			if (Options.compileOnly) {
-				Log.verbose("no errors.");
+				out.printlnVerbose("no errors.");
 				if (Options.compileAndPrint) {
+					//TODO: Replace System.out with new output
 					MMVisitor v = new MMPrintVisitor(new PrintWriter(
 							System.out, true));
 					model.processWithVisitor(v);
@@ -148,7 +154,7 @@ public final class Main {
 			}
 
 			// print some info about model
-			Log.verbose(model.getStats());
+			out.printlnVerbose(model.getStats());
 
 			// create system
 			system = new MSystem(model);
@@ -157,16 +163,16 @@ public final class Main {
 
 		if (Options.doGUI) {
 			if (pluginRuntime == null) {
-				Log.debug("Starting gui without plugin runtime!");
+				log.debug("Starting gui without plugin runtime!");
 				MainWindow.create(session);
 			} else {
-				Log.debug("Starting gui with plugin runtime.");
+				log.debug("Starting gui with plugin runtime.");
 				MainWindow.create(session, pluginRuntime);
 			}
 		}
 
 		// create thread for shell
-		Shell.createInstance(session, pluginRuntime);
+		Shell.createInstance(session, pluginRuntime, out);
 		Shell sh = Shell.getInstance();
 		Thread t = new Thread(sh);
 		t.start();

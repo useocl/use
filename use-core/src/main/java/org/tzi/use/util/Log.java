@@ -29,6 +29,7 @@ import java.util.Date;
  *
  * @author      Mark Richters
  */
+@Deprecated
 public final class Log {
 
     private static PrintStream fOut = System.out;
@@ -134,6 +135,7 @@ public final class Log {
     /**
      * Output routines.
      */
+    @Deprecated
     public static synchronized void println(String s) {
         if (fPrintTime ) {
             if (fDateFormat == null )
@@ -143,12 +145,14 @@ public final class Log {
         fOut.println(s);
         fDidOutput = true;
     }
-    
+
+    @Deprecated
     public static synchronized void print(String s) {
         fOut.print(s);
         fDidOutput = true;
     }
-    
+
+    @Deprecated
     public static synchronized void println() {
         fOut.println();
         fDidOutput = true;
@@ -157,6 +161,7 @@ public final class Log {
     /**
      * Print messages only if verbose flag is on.
      */
+    @Deprecated
     public static synchronized void verbose(String s) {
         if (fVerbose )
             println(s);
@@ -165,15 +170,18 @@ public final class Log {
     /**
      * Print messages only if trace flag is on.
      */
+    @Deprecated
     public static synchronized void trace(String msg) {
         if (fTrace )
             println("* " + msg);
     }
 
+    @Deprecated
     public static synchronized void trace(Object location, String msg) {
         trace(location, msg, false);
     }
 
+    @Deprecated
     public static synchronized void trace(Object location, String msg, boolean flush) {
         if (fTrace) {
             String className = location.getClass().getName();
@@ -189,11 +197,13 @@ public final class Log {
     /**
      * Print error messages.
      */
+    @Deprecated
     public static synchronized void error(String s) {
         fErr.println("Error: " + s);
         fDidOutput = true;
     }
 
+    @Deprecated
     public static synchronized void error(Object location, String msg) {
         String className = location.getClass().getName();
         String err = "error in " + className + ": " + msg;
@@ -201,6 +211,7 @@ public final class Log {
         fErr.println(err);
     }
 
+    @Deprecated
     public static synchronized void error(Exception e) {
         String className = e.getClass().getName();
         String err = "exception " + className + ": " + e.getMessage();
@@ -213,6 +224,7 @@ public final class Log {
         fDidOutput = true;
     }
 
+    @Deprecated
     public static synchronized void error(String s, Exception e) {
         String className = e.getClass().getName();
         String err = "exception " + className + ": " + s + " reason: " + e.getMessage();
@@ -226,6 +238,7 @@ public final class Log {
         fDidOutput = true;
     }
 
+    @Deprecated
 	public static synchronized void warn(String string) {
 		if (Log.isShowWarnings()) {
 			Log.println(string);
@@ -235,6 +248,7 @@ public final class Log {
     /**
      * Print debug messages.
      */
+    @Deprecated
     public static synchronized void debug(String s) {
 		if (fDebug) {
 		    fDbg.println("Debug: " + s);

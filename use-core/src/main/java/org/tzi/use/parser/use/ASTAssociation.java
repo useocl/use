@@ -34,16 +34,16 @@ import java.util.List;
  * @author  Mark Richters
  */
 public class ASTAssociation extends ASTAnnotatable {
-    private Token fKind;
+    private final Token fKind;
     
-    private Token fName;
+    private final Token fName;
     
-    private List<ASTAssociationEnd> fAssociationEnds;
+    private final List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociation(Token kind, Token name) {
         fKind = kind;
         fName = name;
-        fAssociationEnds = new ArrayList<ASTAssociationEnd>();
+        fAssociationEnds = new ArrayList<>();
     }
 
     public void addEnd(ASTAssociationEnd ae) {
@@ -95,7 +95,7 @@ public class ASTAssociation extends ASTAnnotatable {
         return assoc;
     }
 
-    // Checks and generates additional constraints on the association, e. g. subsets
+    // Checks and generates additional constraints on the association, e.g. subsets
     public void genEndConstraints(Context ctx) throws SemanticException {    	
 		AssociationEndConstraintsGenerator gen = new AssociationEndConstraintsGenerator(
 				ctx, fName.getText(), fAssociationEnds);
@@ -160,7 +160,7 @@ public class ASTAssociation extends ASTAnnotatable {
     	
 		/**
 		 * Generates possibly defined redefine constraints.
-		 * First possible associations are identified, afterwards the validity of
+		 * First possible associations are identified, afterward the validity of
 		 * redefinition is validated.
 		 * This includes checking the right association end order.  
 		 * 
@@ -187,7 +187,7 @@ public class ASTAssociation extends ASTAnnotatable {
 		 */
 		private void genRedefinesConstraints(ASTAssociationEnd aEnd)
 				throws SemanticException {			
-			if (aEnd.getRedefinesRolenames().size() > 0) {
+			if (!aEnd.getRedefinesRolenames().isEmpty()) {
 				// Get the MAssociationEnd from the name
 				MClass cls = model.getClass(aEnd.getClassName());
 				MAssociationEnd redefiningEnd = association.getAssociationEnd(cls, aEnd.getRolename(ctx));
@@ -201,7 +201,7 @@ public class ASTAssociation extends ASTAnnotatable {
 					String redefinesRolename = redefinesRolenameToken.getText();
 					List<MAssociationEnd> possibleRedefinedEnds = cls.getAssociationEnd(redefinesRolename);
 
-					if (possibleRedefinedEnds.size() == 0) {
+					if (possibleRedefinedEnds.isEmpty()) {
 						throw new SemanticException(redefinesRolenameToken, "No association end with name '" + redefinesRolename + "' to redefine.");
 					}
 					 
@@ -217,7 +217,7 @@ public class ASTAssociation extends ASTAnnotatable {
 						if (parentAssociation == null) return;
 						
 						if (!validateInheritance(association, parentAssociation, ValidationContext.REDEFINES, validationError)) {
-							if (error.length() > 0) error.append(StringUtil.NEWLINE);
+							if (!error.isEmpty()) error.append(StringUtil.NEWLINE);
 							//TODO each iteration of the for loop yields the same information in the output
 							// (leading possibly multiple to identical lines of error messages)
 							error.append("Constraint {redefines ").append(redefinesRolename) 
@@ -258,7 +258,7 @@ public class ASTAssociation extends ASTAnnotatable {
 					String subsetsRolename = subsetsRolenameToken.getText();
 					List<MAssociationEnd> possibleSubsettedEnds = cls.getAssociationEnd(subsetsRolename);
 
-					if (possibleSubsettedEnds.size() == 0) {
+					if (possibleSubsettedEnds.isEmpty()) {
 						throw new SemanticException(subsetsRolenameToken, "No association end with name '" + subsetsRolename + "' to subset.");
 					}
 					
@@ -273,14 +273,14 @@ public class ASTAssociation extends ASTAnnotatable {
 						MAssociation parentAssociation = possibleSubsettedEnd.association();
 						
 						if (!validateInheritance(association, parentAssociation, ValidationContext.SUBSETS, errorBuffer)) {
-							if (error.length() > 0) error.append(StringUtil.NEWLINE);
+							if (!error.isEmpty()) error.append(StringUtil.NEWLINE);
 							//TODO each iteration of the for loop yields the same information in the output
 							// (leading possibly multiple to identical lines of messages)
 							error.append("Constraint {subsets ").append(subsetsRolename) 
 								 .append("} on association end '").append(nSubsettingEnd.nameAsRolename()) 
 								 .append(":").append(association.name()).append("' is invalid.")
 								 .append(StringUtil.NEWLINE)
-								 .append(errorBuffer.toString());
+								 .append(errorBuffer);
 							continue;
 						}
 						
@@ -376,8 +376,9 @@ public class ASTAssociation extends ASTAnnotatable {
 					MAssociationEnd parentAssocEnd = (MAssociationEnd)parentEnd;
 					
 					if (!parentAssocEnd.multiplicity().includesMultiplicity(ourAssocEnd.multiplicity(), validationContext == ValidationContext.REDEFINES)) {
-						errorBuffer.append("A " + (validationContext == ValidationContext.REDEFINES ? " redefining " : "subsetting ") + 
-								"association end can only reduce the multiplicity of the parent association end.");
+						errorBuffer.append("A ")
+								.append(validationContext == ValidationContext.REDEFINES ? " redefining " : "subsetting ")
+								.append("association end can only reduce the multiplicity of the parent association end.");
 						return false;
 					}
 				}

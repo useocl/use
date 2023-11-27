@@ -19,26 +19,9 @@
 
 package org.tzi.use;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MMultiplicity;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
-import org.tzi.use.uml.ocl.expr.ExpConstString;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.sys.MSystem;
@@ -48,6 +31,10 @@ import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
 import org.tzi.use.util.soil.VariableEnvironment;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Helper to setup a test system.
@@ -325,6 +312,7 @@ public class TestSystem {
 		varEnv.assign("v", IntegerValue.valueOf(42));
 		
 		state.createLink(
+				DefaultUserOutput.createSystemOutOutput(),
 				getModel().getAssociation("A1"),
 				Arrays.asList(state.objectByName("O3"),
 						state.objectByName("O4")), null);

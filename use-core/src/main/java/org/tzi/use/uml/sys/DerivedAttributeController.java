@@ -19,7 +19,8 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.analysis.coverage.CoverageCalculationVisitor;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.value.Value;
@@ -39,19 +40,26 @@ import java.util.Set;
  */
 public class DerivedAttributeController implements DerivedValueController {
 
-	private MSystemState state;
+	private final MSystemState state;
 	
-	private Map<MObject, MObjectState> objectStates;
+	private final Map<MObject, MObjectState> objectStates;
+
+	private final UserOutput output;
 	
 	/**
 	 * The set of all defined derived attributes in the system.
 	 * Eases access to them.
 	 */
 	private Set<MAttribute> derivedAttributes = new HashSet<MAttribute>();
-	
-	public DerivedAttributeController(MSystemState state, Map<MObject, MObjectState> objectStates) {
+
+	public DerivedAttributeController(UserOutput output, MSystemState state, Map<MObject, MObjectState> objectStates) {
 		this.state = state;
 		this.objectStates = objectStates;
+		this.output = output;
+	}
+
+	public DerivedAttributeController(MSystemState state, Map<MObject, MObjectState> objectStates) {
+		this(DefaultUserOutput.createSystemOutOutput(), state, objectStates);
 	}
 	
 	/**
@@ -64,6 +72,7 @@ public class DerivedAttributeController implements DerivedValueController {
 		this.state = state;
 		this.objectStates = objectStates;
 		this.derivedAttributes = new HashSet<MAttribute>(derivedAttributeController.derivedAttributes);
+		this.output = derivedAttributeController.output;
 	}
 	
 	@Override
@@ -88,11 +97,6 @@ public class DerivedAttributeController implements DerivedValueController {
 			for (MAttribute att : cls.attributes()) {
 				if (att.isDerived()) {
 					derivedAttributes.add(att);
-				
-					CoverageCalculationVisitor visitor = new CoverageCalculationVisitor(true);
-					att.getDeriveExpression().processWithVisitor(visitor);
-					
-					visitor.getCoverageData();
 				}
 			}
 		}
@@ -114,7 +118,7 @@ public class DerivedAttributeController implements DerivedValueController {
 			for (MObject obj : objects) {
 				MObjectState objState = objectStates.get(obj);
 				
-				Value derivedValue = state.evaluateDeriveExpression(obj, attr);
+				Value derivedValue = state.evaluateDeriveExpression(output, obj, attr);
 				Value currentValue = objState.attributeValue(attr);
 				
 				// Nothing changed

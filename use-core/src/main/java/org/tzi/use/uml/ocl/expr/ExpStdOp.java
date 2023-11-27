@@ -23,6 +23,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.expr.operations.BooleanOperation;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -30,7 +31,6 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public final class ExpStdOp extends Expression {
     /**
      * Returns true if a standard operation exists matching <code>name</code> and <code>params</code>.
      */
-    public static boolean exists(String name, Type params[]) {
+    public static boolean exists(String name, Type[] params) {
         if (params.length == 0)
             throw new IllegalArgumentException(
                     "ExpStdOp.exists called with empty params array");
@@ -101,11 +101,11 @@ public final class ExpStdOp extends Expression {
      *
      * @throws ExpInvalidException cannot find a match for operation
      */
-    public static ExpStdOp create(String name, Expression args[])
+    public static ExpStdOp create(UserOutput out, String name, Expression[] args)
             throws ExpInvalidException {
         if (args.length == 0)
             throw new IllegalArgumentException(
-                    "ExpOperation.create called with " + "empty args array");
+                    "ExpOperation.create called with empty args array");
 
         // search by operation symbol
         List<OpGeneric> ops = opmap.get(name);
@@ -121,7 +121,7 @@ public final class ExpStdOp extends Expression {
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null) {
-            	checkTypeSystemWarnings(op, args, params, t);
+            	checkTypeSystemWarnings(out, op, args, params, t);
                 return new ExpStdOp(op, args, t);
             }
         }
@@ -131,16 +131,16 @@ public final class ExpStdOp extends Expression {
                 + opCallSignature(name, args) + "'.");
     }
 
-    private static void checkTypeSystemWarnings(OpGeneric op, Expression[] params, Type[] paramTypes, Type resultType) throws ExpInvalidException {
+    private static void checkTypeSystemWarnings(UserOutput out, OpGeneric op, Expression[] params, Type[] paramTypes, Type resultType) throws ExpInvalidException {
     	if (!Options.checkWarningsOclAnyInCollections().equals(WarningType.IGNORE))
-    		checkOclAnyCollectionsWarning(op, paramTypes, resultType, Options.checkWarningsOclAnyInCollections());
+    		checkOclAnyCollectionsWarning(out, op, paramTypes, resultType, Options.checkWarningsOclAnyInCollections());
     	
     	if (!Options.checkWarningsUnrelatedTypes().equals(WarningType.IGNORE)) {
     		String warn = op.checkWarningUnrelatedTypes(params);
     		if (warn != null) {
     			warn += StringUtil.NEWLINE + "You can change this check using the -extendedTypeSystemChecks switch.";
     			if (Options.checkWarningsUnrelatedTypes().equals(WarningType.WARN)) {
-    				Log.warn("Warning: " + warn);
+    				out.printlnWarn("Warning: " + warn);
     			} else {
     				throw new ExpInvalidException(warn);
     			}
@@ -154,12 +154,13 @@ public final class ExpStdOp extends Expression {
      * If <code>true</code> a warning is reported.
      * <p><b>Note</b>: Leaf element type means the last element type which is not a collection.</p> 
 	 * @param op The operation which is called
-	 * @param params
+	 * @param params The types of the arguments to <code>op</code>
 	 * @param resultType The <code>Type</code> of the result.
-     * @param warningType
-     * @throws ExpInvalidException 
+     * @param warningType If set to <code>error</code> an exception is thrown, Otherwise, a warning is printed to
+     *                    the output.
+     * @throws ExpInvalidException If element types are unrelated and <code>warningType</code> is error.
 	 */
-	private static void checkOclAnyCollectionsWarning(OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {
+	private static void checkOclAnyCollectionsWarning(UserOutput out, OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {
 		Type sourceType = params[0];
 		
 		if (sourceType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
@@ -197,16 +198,16 @@ public final class ExpStdOp extends Expression {
 				if (warningType.equals(WarningType.ERROR)) {
 					throw new ExpInvalidException(message);
 				} else {
-					Log.warn("Warning: " + message);
+					out.printlnWarn("Warning: " + message);
 				}
 			}
 		}
 	}
 
-	private static String opCallSignature(String name, Expression args[]) {
+	private static String opCallSignature(String name, Expression[] args) {
         // build error message with type names of arguments
         Type srcType = args[0].type();
-        StringBuffer s = new StringBuffer(srcType
+        StringBuilder s = new StringBuilder(srcType
                 + (srcType.isKindOfCollection(VoidHandling.EXCLUDE_VOID) ? "->" : ".") + name + "(");
         for (int i = 1; i < args.length; i++) {
             if (i > 1)
@@ -218,11 +219,11 @@ public final class ExpStdOp extends Expression {
     }
 
     // instance variables
-    private OpGeneric fOp;
+    private final OpGeneric fOp;
 
-    private Expression fArgs[];
+    private final Expression[] fArgs;
 
-    private ExpStdOp(OpGeneric op, Expression args[], Type t) {
+    private ExpStdOp(OpGeneric op, Expression[] args, Type t) {
         super(t);
         fOp = op;
         fArgs = args;
@@ -278,7 +279,7 @@ public final class ExpStdOp extends Expression {
         if (getOperation().isBooleanOperation()) {
             res = ((BooleanOperation) getOperation()).evalWithArgs(ctx, fArgs);
         } else {
-            final Value argValues[] = new Value[fArgs.length];
+            final Value[] argValues = new Value[fArgs.length];
             final int opKind = getOperation().kind();
             
             Value v;

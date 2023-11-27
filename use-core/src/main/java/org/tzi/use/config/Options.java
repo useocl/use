@@ -19,6 +19,8 @@
 
 package org.tzi.use.config;
 
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TypedProperties;
@@ -34,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 
 
@@ -47,10 +50,10 @@ public class Options {
     public static final String RELEASE_VERSION = "7.1.0";
 
     // the copyright
-    public static final String COPYRIGHT = "Copyright (C) 1999-2021 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2023 University of Bremen / Hamburg University of Applied Sciences";
 
     // the trained support apes
-    public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
+    public static final String SUPPORT_ISSUE = "https://github.com/useocl/use/issues";
 
     /**
      * Name of the file for user properties.
@@ -143,8 +146,42 @@ public class Options {
      * evaluated after every system state change.
      */
     private static boolean checkStateInvariants = false;
-    
-    public enum WarningType {
+
+	/**
+	 * If <code>true</code>, state invariants are
+	 * evaluated after every system state change.
+	 */
+	public static boolean isVerbose() {
+		return verbose;
+	}
+
+	public static void setVerbose(boolean verbose) {
+		Options.verbose = verbose;
+	}
+
+	/**
+	 * If <code>true</code>, more detailed ootput
+	 * is provided to the user.
+	 */
+	private static boolean verbose = false;
+
+	/**
+	 * Configures the default behavior of the user output w.r.t. the provided arguments.
+	 * Must be called after arguments are processed.
+	 * @param out The <code>UserOutput</code> to configure.
+	 */
+	public static UserOutput configureOutput(UserOutput out) {
+		if (!isVerbose()) {
+			out.setOutputLevel(OutputLevel.NORMAL);
+		}
+		if (quiet) {
+			out.setOutputLevel(OutputLevel.NONE);
+		}
+
+		return out;
+	}
+
+	public enum WarningType {
     	IGNORE("I"),
     	WARN("W"),
     	ERROR("E");
@@ -158,13 +195,13 @@ public class Options {
     		return type;
     	}
     	
-    	public static WarningType getType(String type) {
+    	public static Optional<WarningType> getType(String type) {
     		for (WarningType t : WarningType.values()) {
     			if (t.getShortName().equals(type)) {
-    				return t;
+    				return Optional.of(t);
     			}
     		}
-    		return null;
+    		return Optional.empty();
     	}
     }
 
@@ -291,7 +328,7 @@ public class Options {
      * <p>Parses command line arguments and sets options accordingly.</p>
      * <p>Calls System.exit(1) in case of errors.</p>
      */
-    public static void processArgs(String[] args) {
+    public static void processArgs(String[] args, UserOutput out) {
         // parse command options
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-") ) {
@@ -312,7 +349,7 @@ public class Options {
                 	try {
                 		homeDir = Paths.get(arg.substring(2));
                 	} catch (InvalidPathException e) {
-                		System.err.println("Invalid path " + StringUtil.inQuotes(arg.substring(2)) + " for home directory specified.");
+                		out.printlnError("Invalid path " + StringUtil.inQuotes(arg.substring(2)) + " for home directory specified.");
                 		System.exit(1);
                 	}
                 } else if (arg.equals("nr")) { 
@@ -327,17 +364,17 @@ public class Options {
                 } else if (arg.equals("t")) { 
                 	Options.testMode = true;
                 } else if (arg.equals("v")) {
-                    Log.setVerbose(true);
+                    Options.setVerbose(true);
                 } else if (arg.equals("vt")) {
-                    Log.setVerbose(true);
+					Options.setVerbose(true);
                     Log.setPrintTime(true);
                 } else if (arg.equals("V")) {
-                    System.out.println("release " + RELEASE_VERSION);
+                    out.println("release " + RELEASE_VERSION);
                     System.exit(0);
                 } else if (arg.equals("implicitTypes")) {
                     Options.explicitVariableDeclarations = false;
                 } else if (arg.equals("debug")) {
-					setDebug(true);
+					Options.setDebug(true);
                 } else if (arg.equals("p")) { 
                     Log.setPrintStackTrace(true);
                 } else if (arg.equals("h")) {
@@ -349,19 +386,12 @@ public class Options {
                     }
                 } else if (arg.startsWith("oclAnyCollectionsChecks:")) {
                 	String value = arg.substring("oclAnyCollectionsChecks:".length());
-                	WarningType wt = WarningType.getType(value);
-                	if(wt != null){
-                		checkWarningsOclAnyInCollections = wt;
-                	}
+					Options.checkWarningsOclAnyInCollections = WarningType.getType(value).orElse(Options.checkWarningsOclAnyInCollections);
                 } else if (arg.startsWith("extendedTypeSystemChecks:")) {
                 	String value = arg.substring("extendedTypeSystemChecks:".length());
-                	WarningType wt = WarningType.getType(value);
-                	if(wt != null){
-                		checkWarningsUnrelatedTypes = wt;
-                	}
+					Options.checkWarningsUnrelatedTypes = WarningType.getType(value).orElse(Options.checkWarningsUnrelatedTypes);
                 } else {
-                	System.out.println("invalid argument `" + arg
-							+ "', try `use -h' for help.");
+                	out.println("invalid argument `" + arg + "', try `use -h' for help.");
                     System.exit(1);
                 }
             } else if (specFilename == null ) {
@@ -369,7 +399,7 @@ public class Options {
             } else if (cmdFilename == null ) {
                 cmdFilename = args[i];
             } else {
-                System.err.println("extra argument `" + args[i] + "'");
+                out.printlnError("extra argument `" + args[i] + "'");
                 System.exit(1);
             }
         }
@@ -390,7 +420,7 @@ public class Options {
         }
         
         if (homeDir == null ) {
-			System.err.println("Missing path to USE installation, try `use -h' for help.");
+			out.printlnError("Missing path to USE installation, try `use -h' for help.");
             System.exit(1);
         }
         
@@ -398,18 +428,17 @@ public class Options {
 		pluginDir = homeDir.resolve("lib").resolve("plugins");
 
         if (quiet && (specFilename == null || cmdFilename == null) ) {
-			System.err
-					.println("Need specification file and command file with option -q,"
+			out.printlnError("Need specification file and command file with option -q,"
                                + LINE_SEPARATOR + "try `use -h' for help.");
             System.exit(1);
         }
         
         // load property files
-        initProperties(homeDir);
+        initProperties(homeDir, out);
 
         // args ok, print welcome message if in interactive mode
         if (!compileOnly && !quiet ) {
-			Log.println("USE version " + Options.RELEASE_VERSION + ", " + Options.COPYRIGHT);
+			out.println("USE version " + Options.RELEASE_VERSION + ", " + Options.COPYRIGHT);
         }
     }
 
@@ -435,7 +464,7 @@ public class Options {
 	 * directory is read. Next, we search for a file in the current working
 	 * directory or in the user's home directory.
 	 */
-    private static void initProperties(Path useHome) {
+    private static void initProperties(Path useHome, UserOutput out) {
         props = new TypedProperties(System.getProperties());
 
         // load the system properties
@@ -443,19 +472,19 @@ public class Options {
 		boolean isReadable = propStream != null;
 
         if (!isReadable) {
-			System.err.println("property file `etc/use.properties"
+			out.printlnError("property file `etc/use.properties"
 					+ "' not found. Use -H to set the "
 					+ "home of the use installation");
             System.exit(1);
         }
 
-        loadProperties(propStream);
+        loadProperties(propStream, out);
     
         // load user properties if found
 		Path propFile = Paths.get(props.getProperty("user.dir", null), USER_PROP_FILE);
         if ( Files.isReadable(propFile)) {
             try {
-                loadProperties(new FileInputStream(propFile.toFile()));
+                loadProperties(new FileInputStream(propFile.toFile()), out);
             } catch (FileNotFoundException e) {
                 // In microseconds gone...
             }
@@ -463,7 +492,7 @@ public class Options {
             propFile = Paths.get(props.getProperty("user.home", null), USER_PROP_FILE);
             if ( Files.isReadable(propFile) ) {
                 try {
-                    loadProperties(new FileInputStream(propFile.toFile()));
+                    loadProperties(new FileInputStream(propFile.toFile()), out);
                 } catch (FileNotFoundException e) {
                     // In microseconds gone...
                 }
@@ -505,11 +534,11 @@ public class Options {
 	 * 
 	 * @param propStream Stream to the properties.
      */
-    private static void loadProperties(InputStream propStream) {
+    private static void loadProperties(InputStream propStream, UserOutput out) {
         try (propStream) {
             props.load(propStream);
         } catch (IOException e) {
-			System.err.println("unable to load properties!");
+			out.printlnError("unable to load properties!");
             System.exit(1);
         }
     }

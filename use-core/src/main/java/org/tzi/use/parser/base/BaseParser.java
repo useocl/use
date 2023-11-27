@@ -1,28 +1,27 @@
 package org.tzi.use.parser.base;
 
-import java.io.PrintWriter;
-
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.ParseErrorHandler;
 
 public class BaseParser extends Parser {
 	
-	private PrintWriter fWarWriter = new PrintWriter(System.err);
+	private UserOutput output;
 
 	public BaseParser(TokenStream input) {
 		super(input);
-		SetTokennames();
+		setTokennames();
 	}
 
 	public BaseParser(TokenStream input, RecognizerSharedState state) {
 		super(input, state);
-		SetTokennames();
+		setTokennames();
 	}
 	
-	private void SetTokennames() {
+	private void setTokennames() {
     	/* Dirty Hack for user friendly error messages
     	 * To get a use friendly error message the internal token names
     	 * must be translated.
@@ -41,7 +40,7 @@ public class BaseParser extends Parser {
     
     public void init(ParseErrorHandler handler) {
         fParseErrorHandler = handler;
-        fWarWriter = handler.getErrorWriter();
+        this.output = handler.getOutput();
     }
 
     /* Overridden methods. */
@@ -59,7 +58,7 @@ public class BaseParser extends Parser {
     /** Parser warning-reporting function */
     public void reportWarning(String s) {
         
-    	fWarWriter.println(
+    	this.output.printlnWarn(
     			(getSourceName() == null ? "" : getSourceName() + ": ") +
     			"warning: " +
     			s);

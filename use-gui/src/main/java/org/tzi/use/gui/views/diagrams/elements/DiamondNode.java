@@ -19,15 +19,10 @@
 
 package org.tzi.use.gui.views.diagrams.elements;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
@@ -43,10 +38,13 @@ import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
 import org.w3c.dom.Element;
 
-import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
-import com.ximpleware.XPathEvalException;
-import com.ximpleware.XPathParseException;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A pseude-node representing a diamond in an n-ary association.
@@ -286,13 +284,11 @@ public class DiamondNode extends PlaceableNode {
 							if (ap.evalXPath() != -1)
 								e.restorePlacementInfo(helper, version);
 							
-						} catch (XPathEvalException ex) {
-							helper.getLog().append(ex.getMessage());
-						} catch (NavException ex) {
-							helper.getLog().append(ex.getMessage());
+						} catch (XPathEvalException | NavException ex) {
+							helper.getOutput().printlnError(ex.getMessage());
 						}
-					} catch (XPathParseException ex) {
-						helper.getLog().append(ex.getMessage());
+                    } catch (XPathParseException ex) {
+						helper.getOutput().printlnError(ex.getMessage());
 					} finally {
 						helper.getNav().pop();
 					}

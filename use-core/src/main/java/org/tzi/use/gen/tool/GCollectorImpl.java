@@ -24,15 +24,15 @@
 
 package org.tzi.use.gen.tool;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.NullPrintWriter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Collects information which can be printed using the -d and -b options
@@ -43,10 +43,9 @@ import org.tzi.use.util.NullPrintWriter;
  */
 public class GCollectorImpl implements IGCollector {
     private boolean fValidStateFound;
-    private List<MStatement> fStatements;
+    private final List<MStatement> fStatements;
     private long fLimit;
-    private PrintWriter fBasicPrintWriter;
-    private PrintWriter fDetailPrintWriter;
+    private UserOutput output;
     
     /**
      * Number of leafs, i. e., checked system states
@@ -81,15 +80,15 @@ public class GCollectorImpl implements IGCollector {
     
     private boolean isBlocked = false;
     
-    private List<GInstrBarrier> barriers = new ArrayList<GInstrBarrier>();
+    private final List<GInstrBarrier> barriers = new ArrayList<GInstrBarrier>();
     
     public GCollectorImpl(boolean doBasicPrinting, boolean doDetailPrinting) {
         fValidStateFound = false;
         fStatements = new ArrayList<MStatement>();
         fLimit = Long.MAX_VALUE;
         fLeafCount = 0;
-        fBasicPrintWriter = NullPrintWriter.getInstance();
-        fDetailPrintWriter = NullPrintWriter.getInstance();
+        output = VoidUserOutput.getInstance();
+
         fExistsInvalidMessage = false;
         fPrePostCondViolation = false;
         this.doBasicPrinting = doBasicPrinting;
@@ -116,22 +115,28 @@ public class GCollectorImpl implements IGCollector {
     	return fStatements;
     }
 
-    public PrintWriter basicPrintWriter() {
-        return fBasicPrintWriter;
-    }
-    
     public boolean doBasicPrinting() {
     	return this.doBasicPrinting;
     }
     
-    public PrintWriter detailPrintWriter() {
-        return fDetailPrintWriter;
-    }
-
     public boolean doDetailPrinting() {
     	return this.doDetailPrinting;
     }
-    
+
+    public UserOutput getUserOutput() {
+        return this.output;
+    }
+
+    /**
+     * Sets the {@link UserOutput} to write information to.
+     * This output is only used when the constructor parameter <code>doBasicPrinting</code>
+     * was set to <code>true</code>.
+     * @param output The <code>UserOutput</code> to write output to.
+     */
+    public void setUserOutput( UserOutput output ) {
+        this.output = output;
+    }
+
     public void setLimit(long limit) {
         fLimit = limit;
     }
@@ -139,30 +144,10 @@ public class GCollectorImpl implements IGCollector {
     public long limit() {
         return fLimit;
     }
-    
-    /**
-     * Sets the {@link PrintWriter} to write basic information to.
-     * This writer is only used when the constructor parameter <code>doBasicPrinting</code>
-     * was set to <code>true</code>. 
-     * @param pw
-     */
-    public void setBasicPrintWriter( PrintWriter pw ) {
-        fBasicPrintWriter = pw;
-    }
-
-    /**
-     * Sets the {@link PrintWriter} to write detailed information to.
-     * This writer is only used when the constructor parameter <code>doDetailPrinting</code>
-     * was set to <code>true</code>. 
-     * @param pw
-     */
-    public void setDetailPrintWriter( PrintWriter pw ) {
-        fDetailPrintWriter = pw;
-    }
 
     public void leaf() {
         fLeafCount++;
-        fBasicPrintWriter.print("check state (" + fLeafCount + "): ");
+        output.print("check state (" + fLeafCount + "): ");
     }
 
     public long numberOfCheckedStates() {
@@ -176,8 +161,8 @@ public class GCollectorImpl implements IGCollector {
 
     public void invalid( String str ) {
         fExistsInvalidMessage = true;
-        basicPrintWriter().println("ERROR: " + str);
-        basicPrintWriter().println("EXITING THIS CONFIGURATION NODE.");
+        this.getUserOutput().printlnError("ERROR: " + str);
+        this.getUserOutput().printlnError("EXITING THIS CONFIGURATION NODE.");
     }
     
     public void invalid( Exception e ) {

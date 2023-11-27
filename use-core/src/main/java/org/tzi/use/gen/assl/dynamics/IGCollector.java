@@ -29,10 +29,9 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import java.io.PrintWriter;
-
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 public interface IGCollector {
@@ -60,12 +59,12 @@ public interface IGCollector {
     public void setPrePostViolation();
     
     public boolean getPrePostViolation();
-    
-    public PrintWriter basicPrintWriter();
+
     public boolean doBasicPrinting();
-    
-    public PrintWriter detailPrintWriter();
+
     public boolean doDetailPrinting();
+
+	public UserOutput getUserOutput();
 
     public void invalid( String str );
     public void invalid( Exception e );

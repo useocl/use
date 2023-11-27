@@ -26,6 +26,10 @@ import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.printwriters.ColoredPrintWriter;
+import org.tzi.use.output.printwriters.NonColoredPrintWriter;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -35,7 +39,6 @@ import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.TeeWriter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,7 +46,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
@@ -259,8 +261,13 @@ class EvalOCLDialog extends JDialog {
 
         // send error output to result window and msg stream
         StringWriter msgWriter = new StringWriter();
-        PrintWriter out = new PrintWriter(new TeeWriter(
-                new TextComponentWriter(fTextOut), msgWriter), true);
+        // TODO: Create a ColoredHTMLPrintWriter!
+        ColoredPrintWriter textOut = new ColoredPrintWriter(new TextComponentWriter(fTextOut));
+        ColoredPrintWriter msgOut = new NonColoredPrintWriter(msgWriter);
+
+        DefaultUserOutput output = DefaultUserOutput.createEmptyOutput();
+        output.registerWriter(OutputLevel.NORMAL, textOut);
+        output.registerWriter(OutputLevel.NORMAL, msgOut);
 
         
         // compile query
@@ -269,11 +276,9 @@ class EvalOCLDialog extends JDialog {
         		fSystem.state(),
                 in, 
                 "Error", 
-                out, 
+                output,
                 fSystem.varBindings());
-        
-        
-        out.flush();
+
         fTextIn.requestFocus();
 
         // compile errors?

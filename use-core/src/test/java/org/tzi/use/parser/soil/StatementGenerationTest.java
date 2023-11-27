@@ -20,29 +20,13 @@
 package org.tzi.use.parser.soil;
 
 import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.TestSystem;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
-import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
-import org.tzi.use.uml.sys.soil.MConditionalExecutionStatement;
-import org.tzi.use.uml.sys.soil.MIterationStatement;
-import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
-import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
-import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
-import org.tzi.use.uml.sys.soil.MOperationCallStatement;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
-import org.tzi.use.uml.sys.soil.MRValueNewLinkObject;
-import org.tzi.use.uml.sys.soil.MRValueNewObject;
-import org.tzi.use.uml.sys.soil.MRValueOperationCall;
-import org.tzi.use.uml.sys.soil.MSequenceStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
-import org.tzi.use.util.NullPrintWriter;
+import org.tzi.use.output.VoidUserOutput;
+import org.tzi.use.uml.sys.soil.*;
 
 
 /**
@@ -492,8 +476,8 @@ public class StatementGenerationTest extends TestCase {
 				fTestSystem.getState(), 
 				fTestSystem.getVarEnv(), 
 				input, 
-				"<input>", 
-				NullPrintWriter.getInstance(), 
+				"<input>",
+				VoidUserOutput.getInstance(),
 				false);
 	}
 }

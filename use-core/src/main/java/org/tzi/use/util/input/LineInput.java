@@ -19,6 +19,8 @@
 
 package org.tzi.use.util.input;
 
+import org.tzi.use.output.UserOutput;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -43,15 +45,15 @@ public class LineInput {
      *                     GNU readline library is not available, otherwise
      *                     fail silently.
      */
-    public static Readline getUserInputReadline(String errorMessage) {
+    public static Readline getUserInputReadline(UserOutput out, String errorMessage) {
         Readline rl = null;
         try {
             System.loadLibrary("natGNUReadline");
             rl = new GNUReadline();
         } catch (UnsatisfiedLinkError ex) {
             if (errorMessage != null ) {
-                System.out.println(ex.toString());
-                System.out.println(errorMessage);
+                out.printlnWarn(ex.toString());
+                out.printlnWarn(errorMessage);
             }
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             // no echo, do protocol

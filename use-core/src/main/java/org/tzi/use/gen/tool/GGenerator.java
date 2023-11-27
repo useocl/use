@@ -24,20 +24,15 @@
 
 package org.tzi.use.gen.tool;
 
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.List;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMPrintVisitor;
@@ -47,6 +42,10 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
+
+import java.io.*;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -58,49 +57,36 @@ import org.tzi.use.util.Log;
 public class GGenerator {
 
     protected MModel fModel;
+
     protected MSystem fSystem;
     protected GResult fLastResult;
     protected GGeneratorArguments fConfig;
     
     private GCollectorImpl collector;
-    
-    private List<GProcedure> fProcedures;
-    
-    public GGenerator( MSystem system ) {
+
+    private static final Logger log = LogManager.getLogger(GGenerator.class.getName());
+
+    public GGenerator(MSystem system) {
         fSystem = system;
         fModel = system.model();
         fLastResult = null;
         fConfig = new GGeneratorArguments();
     }
 
-    protected void internalError(GEvaluationException e, long randomNr) {
-        String nl = Options.LINE_SEPARATOR;
-        try (PrintWriter pw = new PrintWriter(new FileWriter("generator_error.txt"))){
-            pw.println("Program version: " + Options.RELEASE_VERSION);
-            pw.println("Stack trace:");
-            e.printStackTrace(pw);
-            pw.close();
-            System.err.println("THE GENERATOR HAS AN INTERNAL ERROR." + nl +
-                               "PLEASE SEND THE FILE `generator_error.txt'"+nl+
-                               "TO " + Options.SUPPORT_MAIL + ".");
-            System.err.println("The random number generator was " 
-                               + "initialized with " + randomNr + ".");
-        } catch (IOException ioException) {
-            System.err.println("THE GENERATOR HAS AN INTERNAL ERROR." + nl +
-                               "PLEASE SEND THE FOLLOWING INFORMATION "+nl+
-                               "TO " + Options.SUPPORT_MAIL + ".");
-            System.err.println("Program version: " + Options.RELEASE_VERSION);
-            System.err.println("Stack trace: ");
-            e.printStackTrace();
-        }
+    protected void internalError(GEvaluationException e, long randomNr, UserOutput output) {
+        output.printlnError("THE GENERATOR HAS AN INTERNAL ERROR.")
+              .printlnError("PLEASE REPORT ERROR AND THE FOLLOWING OUTPUT AT GITHUB.")
+              .printError("The random number generator was initialized with ")
+              .printError(Long.toString(randomNr))
+              .printlnError(".")
+              .printError("Program version: ").printlnError(Options.RELEASE_VERSION)
+              .printlnError("Stack trace: ");
+        e.printStackTrace(output.getPrintStream(OutputLevel.ERROR));
     }
     
-	public void startProcedure(String callstr, GGeneratorArguments args) {
+	public void startProcedure(String caller, GGeneratorArguments args, UserOutput output) {
         fLastResult = null;
         fConfig = args;
-        
-        boolean didShowWarnigs = Log.isShowWarnings();
-        Log.setShowWarnings(false);
 
         GProcedureCall call = null;
         PrintWriter pw = null;
@@ -109,25 +95,31 @@ public class GGenerator {
         long startTime = System.currentTimeMillis();
         
         try {
-            Log.verbose("Compiling procedures from " + fConfig.getFilename() + ".");
-            fProcedures = ASSLCompiler.compileProcedures(
-                                                     fSystem.model(),
-                                                     new FileInputStream(fConfig.getFilename()),
-                                                     fConfig.getFilename(),
-                                                     new PrintWriter(System.err) );
+            log.trace("Compiling procedures from " + fConfig.getFilename() + ".");
+
+            List<GProcedure> fProcedures = ASSLCompiler.compileProcedures(
+                    fSystem.model(),
+                    new FileInputStream(fConfig.getFilename()),
+                    fConfig.getFilename(),
+                    output);
+
             if (fProcedures != null) {
-                Log.verbose("Compiling `" + callstr + "'.");
+                log.trace("Compiling `" + caller + "'.");
+
                 call = ASSLCompiler.compileProcedureCall(fSystem.model(),
                                                         fSystem.state(),
-                                                        fProcedures,
-                                                        callstr,
+                        fProcedures,
+                                                        caller,
                                                         "<input>",
-                                                        new PrintWriter(System.err)
+                                                        output
                                                         );
             }
             
             if (call == null) {
-            	Log.error( "No procedure found for call " + callstr + " in " + fConfig.getFilename() );
+                output.printError("No procedure found for call ")
+                      .printError(caller)
+                      .printError(" in ")
+                      .printlnError(fConfig.getFilename());
             } else {
                 resultPw = new PrintWriter(System.out);
                 if (fConfig.getPrintFilename() == null)
@@ -137,18 +129,17 @@ public class GGenerator {
                                          new BufferedWriter(new FileWriter(fConfig.getPrintFilename())));
 
                 collector = new GCollectorImpl(fConfig.doPrintBasics(), fConfig.doPrintDetails());
-                collector.setLimit(fConfig.getLimit().longValue());
+                collector.setLimit(fConfig.getLimit());
+
                 if (fConfig.doBasicPrinting())
-                    collector.setBasicPrintWriter(pw);
-                if (fConfig.doPrintDetails())
-                    collector.setDetailPrintWriter(pw);
+                    collector.setUserOutput(output);
 
                 if (fConfig.isCalculateBarriers()) {
                 	call.getProcedure().calculateBarriers(collector, fModel);
                 }
                 
                 GChecker checker = new GChecker(fModel, fConfig);
-                Log.verbose(call.getProcedure().toString() + " started...");
+                output.printlnVerbose(call.getProcedure().toString() + " started...");
                 
                 try {
                     GEvalProcedure evalproc = new GEvalProcedure( call.getProcedure() );
@@ -161,7 +152,7 @@ public class GGenerator {
                     long endTime = System.currentTimeMillis();
                     fLastResult = new GResult( collector,
                                                checker,
-                                               fConfig.getRandomNr().longValue(),
+                                               fConfig.getRandomNr(),
                                                endTime - startTime);
                     
                     if (collector.existsInvalidMessage()) {
@@ -178,26 +169,23 @@ public class GGenerator {
                     }
                     try {
                         if (Log.isVerbose())
-                            printResult(resultPw);
+                            printResult(output);
                     } catch (GNoResultException e) {
                         throw new RuntimeException(
                                                    "Although the generator computed a result, it"
                                                    + "is not available for printing." );
                     }                  
                 } catch (GEvaluationException e) {
-                    internalError(e, fConfig.getRandomNr().longValue());
-                    Log.error("The system state may be changed in use.");
+                    internalError(e, fConfig.getRandomNr(), output);
+                    output.printlnError("The system state may be changed in use.");
                 } catch (StackOverflowError ex) {
-                    Log.error("Evaluation aborted because of a stack " +
-                              "overflow error. Maybe there were too many "+
-                              "elements in a sequence of a for-loop.");
-                    Log.error("The system state may be changed in use.");
+                    output.printlnError("Evaluation aborted because of a stack overflow error.")
+                          .printlnError("Maybe there were too many elements in a sequence of a for-loop.")
+                          .printlnError("The system state may be changed in use.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            Log.error( e.getMessage() );
         } catch (IOException e) {
-            Log.error( e.getMessage() );
+            output.printlnError( e.getMessage() );
         } finally {
             if (pw != null ) {
                 pw.flush();
@@ -206,41 +194,39 @@ public class GGenerator {
             }
             if (resultPw != null )
                 resultPw.flush();
-            
-            Log.setShowWarnings(didShowWarnigs);
         }
     }
 
-    public void printInvariantFlags( Collection<MClassInvariant> invs ) {
+    public void printInvariantFlags( Collection<MClassInvariant> invs, UserOutput output ) {
         boolean found = false;
     
-        System.out.println("- disabled class invariants:");
+        output.println("- disabled class invariants:");
         
         for (MClassInvariant classInv : invs) {
             if (!classInv.isActive()) {
-                System.out.println(classInv.qualifiedName() + " "
+                output.println(classInv.qualifiedName() + " "
                                    + (classInv.isNegated() ? "(negated)" : "" ));
                 found = true;
             }
         }
         if (!found)
-            System.out.println("(none)");
+            output.println("(none)");
         found = false;
-        System.out.println("- enabled class invariants:");
+        output.println("- enabled class invariants:");
         	
         for (MClassInvariant classInv : invs) {
             if (classInv.isActive()) {
-                System.out.println(classInv.qualifiedName() + " "
+                output.println(classInv.qualifiedName() + " "
                                    + (classInv.isNegated() ? "(negated)" : "" ));
                 found = true;
             }
         }
         if (!found)
-            System.out.println("(none)");
+            output.println("(none)");
     }
     
-    public void printResult(PrintWriter pw) throws GNoResultException {
-    	pw.println(String.format("Random number generator was initialized with %d.",  lastResult().randomNr()));
+    public void printResult(UserOutput output) throws GNoResultException {
+    	output.println(String.format("Random number generator was initialized with %d.",  lastResult().randomNr()));
         
     	long numSnapshots = lastResult().collector().numberOfCheckedStates();
     	    	
@@ -251,10 +237,10 @@ public class GGenerator {
     		if (duration > 0) {
     			snapShotsPerSecond = (numSnapshots / duration);
     		}
-    		
-    		pw.println(String.format("Checked %,d snapshots in %,.3fs (%,.0f snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
+
+            output.println(String.format("Checked %,d snapshots in %,.3fs (%,.0f snapshots/s).", numSnapshots, duration, snapShotsPerSecond));
     	} else {
-    		pw.println(String.format("Checked %,d snapshots.", numSnapshots));
+            output.println(String.format("Checked %,d snapshots.", numSnapshots));
     	}
         
     	if (!lastResult().collector().getBarriers().isEmpty()) {
@@ -269,75 +255,73 @@ public class GGenerator {
     		}
     		
     		if (fConfig.printTimeRelatedData())
-    			pw.println(String.format("Checks including barriers: %,d (%,.0f checks/s).", overallChecks, checksPerSecond));
+                output.println(String.format("Checks including barriers: %,d (%,.0f checks/s).", overallChecks, checksPerSecond));
     		else
-    			pw.println(String.format("Checks including barriers: %,d.", overallChecks));
+                output.println(String.format("Checks including barriers: %,d.", overallChecks));
     	}
     	
         if (fConfig.useTryCuts())
-        	pw.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
+            output.println(String.format("Made %,d try cuts.", lastResult().collector().getCuts()));
         
         if (fConfig.useMinCombinations())
-        	pw.println(String.format("Ignored at least %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
+            output.println(String.format("Ignored at least %,d useless link combinations.", lastResult().collector().getIgnoredStates()));
         
         if (fConfig.isCalculateBarriers())
-        	pw.println(String.format("Added %,d barriers.", lastResult().collector().getNumCalculatedBarriers()));
-        
-        pw.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));
+            output.println(String.format("Added %,d barriers.", lastResult().collector().getNumCalculatedBarriers()));
+
+        output.println(String.format("Barriers blocked %,d times.", lastResult().collector().getBarriersHit()));
         
         if (lastResult().collector().limit() != Long.MAX_VALUE)
-            pw.println(String.format("Limit was set to %,d.", lastResult().collector().limit()));
+            output.println(String.format("Limit was set to %,d.", lastResult().collector().limit()));
         if (!lastResult().collector().validStateFound() )
-            pw.println("Result: No valid state found.");
+            output.println("Result: No valid state found.");
         else {
-            pw.println("Result: Valid state found.");
-            pw.println("Commands to produce the valid state:");
+            output.println("Result: Valid state found.");
+            output.println("Commands to produce the valid state:");
             for (MStatement statement : lastResult().collector().statements()) {
-            	pw.println(statement.getShellCommand());
+                output.println(statement.getShellCommand());
             }     
             if (lastResult().collector().statements().isEmpty())
-                pw.println("(none)");
+                output.println("(none)");
         }
     }
     
-    public void printResultStatistics() throws GNoResultException {
-        PrintWriter pw = new PrintWriter(System.out);
-        lastResult().checker().printStatistics(pw, lastResult().collector().numberOfCheckedStates());
+    public void printResultStatistics(UserOutput output) throws GNoResultException {
+        lastResult().checker().printStatistics(output, lastResult().collector().numberOfCheckedStates());
         
-        if (lastResult().collector().getBarriers().size() > 0) {
-        	pw.println();
-        	pw.println("Barrier statistics (barriers marked with * were calculated):");
-        	pw.println("        checks          valid        invalid     mul. viol.      time (ms)  Barrier");
+        if (!lastResult().collector().getBarriers().isEmpty()) {
+        	output.println();
+        	output.println("Barrier statistics (barriers marked with * were calculated):");
+        	output.println("        checks          valid        invalid     mul. viol.      time (ms)  Barrier");
         	for (GInstrBarrier barrier : lastResult().collector().getBarriers()) {
-        		pw.println(barrier.getStatistic().toStringForStatistics());
+        		output.println(barrier.getStatistic().toStringForStatistics());
         	}
         }
         
         // PrePostCondition check output
         if (collector.getPrePostViolation()) {
-        	pw.println("PrePostCondition violation occured");
+        	output.println("PrePostCondition violation occured");
         }
-        pw.flush();
     }
     
-    public void acceptResult() throws GNoResultException {
+    public void acceptResult(UserOutput output) throws GNoResultException {
         if (!lastResult().collector().validStateFound() )
-            System.out.println("No commands available.");
+            output.println("No commands available.");
         else {
             try {
                
                 for (MStatement statement : lastResult().collector().statements()) {
-                	fSystem.execute(statement);
+                	fSystem.execute(output, statement);
                 }
-                
-                System.out.println("Generated result (system state) accepted.");
+
+                output.println("Generated result (system state) accepted.");
             } catch (MSystemException e) {
-            	Log.error(e.getMessage());
+                output.printlnError(e.getMessage());
 			}
         }
     }
 
-    public void printLoadedInvariants() {
+    public void printLoadedInvariants(UserOutput output) {
         MMVisitor v = new MMPrintVisitor(new PrintWriter(System.out, true));
         Collection<MClassInvariant> loadedInvs = fModel.getLoadedClassInvariants();
         
@@ -346,7 +330,7 @@ public class GGenerator {
         }
         
         if (loadedInvs.isEmpty())
-            System.out.println("(no loaded invariants)");
+            output.println("(no loaded invariants)");
     }
 
     private GResult lastResult() throws GNoResultException {

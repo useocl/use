@@ -56,7 +56,7 @@ public class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCal
         wantedSize = 0;
         
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
+			collector.getUserOutput().println(
 					new StringBuilder("evaluating `").append(fInstr)
 							.append("'").toString());
         
@@ -113,7 +113,7 @@ public class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCal
             Value subVal = new SequenceValue(fSequence.elemType(), values);
             
 			if (collector.doDetailPrinting())
-				collector.detailPrintWriter().println(
+				collector.getUserOutput().println(
 						"`" + fInstr + "' == " + subVal);
 			
             fCaller.feedback( conf, subVal, collector );

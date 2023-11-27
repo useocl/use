@@ -19,22 +19,17 @@
 
 package org.tzi.use.parser.use;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.use.statemachines.ASTStateMachine;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -61,11 +56,11 @@ public class ASTClass extends ASTAnnotatable {
     public ASTClass(Token name, boolean isAbstract) {
         fName = name;
         fIsAbstract = isAbstract;
-        fAttributes = new ArrayList<ASTAttribute>();
-        fOperations = new ArrayList<ASTOperation>();
-        fConstraints = new ArrayList<ASTConstraintDefinition>();
-        fInvariantClauses = new ArrayList<ASTInvariantClause>();
-        stateMachines = new ArrayList<ASTStateMachine>();
+        fAttributes = new ArrayList<>();
+        fOperations = new ArrayList<>();
+        fConstraints = new ArrayList<>();
+        fInvariantClauses = new ArrayList<>();
+        stateMachines = new ArrayList<>();
     }
 
     public void addAttribute(ASTAttribute a) {
@@ -160,8 +155,8 @@ public class ASTClass extends ASTAnnotatable {
 
     private void checkForInheritanceConflicts(MClass parent) throws SemanticException {
         //check for inheritance conflicts
-        for(MClassifier otherParentC : fClass.parents()) {
-        	MClass otherParent = (MClass)otherParentC;
+        for(MClass otherParentC : fClass.parents()) {
+        	MClass otherParent = otherParentC;
             // check attributes
             for(MAttribute otherParentAttribute : otherParent.allAttributes()) {
                 

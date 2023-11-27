@@ -19,6 +19,7 @@
 package org.tzi.use.uml.sys.statemachines;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.statemachines.*;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -31,7 +32,6 @@ import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.StringUtil;
 
-import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -288,26 +288,23 @@ public class MProtocolStateMachineInstance {
 	
 	@Override
 	public String toString() {
-		StringBuilder res = new StringBuilder();
-		
-		res.append(this.getProtocolStateMachine().toString());
-		res.append(" [self: ");
-		res.append(contextObject.name());
-		res.append(", current state: ");
-		res.append(this.currentRegionsState.get(this.getProtocolStateMachine().getDefaultRegion()).name());
-		res.append("]");
-		
-		return  res.toString();
+
+        return this.getProtocolStateMachine().toString() +
+				" [self: " +
+				contextObject.name() +
+				", current state: " +
+				this.currentRegionsState.get(this.getProtocolStateMachine().getDefaultRegion()).name() +
+				"]";
 	}
 
 	/**
 	 * Validates the state invariant of all current states
 	 * of all regions.  
 	 * @param systemState The system state used to validate the state invariants.
-	 * @param errOut A PrintWriter for error reporting.
+	 * @param output A <code>UserOutput</code> for error reporting.
 	 * @return <code>true</code> if all state invariants are valid, <code>false</code> otherwise.
 	 */
-	public boolean checkStateInvariant(MSystemState systemState, @NonNull PrintWriter errOut) {
+	public boolean checkStateInvariant(MSystemState systemState, @NonNull UserOutput output) {
 		boolean valid = true;
 		Evaluator evaluator = new Evaluator();
 		VarBindings bindings = getVarBindings(systemState);
@@ -322,12 +319,12 @@ public class MProtocolStateMachineInstance {
 			
 			if (!result.isBoolean() || ((BooleanValue)result).isFalse()) {
 				valid = false;
-				errOut.print("State invariant violation in state ");
-				errOut.print(StringUtil.inQuotes(s.name()));
-				errOut.print(" of psm ");
-				errOut.print(StringUtil.inQuotes(this.stateMachine.toString()));
-				errOut.print(" for object ");
-				errOut.print(this.contextObject.toString());
+				output.printError("State invariant violation in state ");
+				output.printError(StringUtil.inQuotes(s.name()));
+				output.printError(" of psm ");
+				output.printError(StringUtil.inQuotes(this.stateMachine.toString()));
+				output.printError(" for object ");
+				output.printlnError(this.contextObject.toString());
 			}
 		}
 		
@@ -340,7 +337,7 @@ public class MProtocolStateMachineInstance {
 	 * If exactly one state invariant in a region is <code>true</code>,
 	 * the state is set as the current one in this region. 
 	 */
-	public void determineState(MSystemState systemState, PrintWriter out) {
+	public void determineState(MSystemState systemState, UserOutput out) {
 		Set<MState> possibleStates = new HashSet<MState>();
 		
 		Evaluator evaluator = new Evaluator();
@@ -362,18 +359,18 @@ public class MProtocolStateMachineInstance {
 			}
 			
 			if (possibleStates.isEmpty()) {
-				out.println("Could not find a valid state for psm "
+				out.printlnWarn("Could not find a valid state for psm "
 						+ stateMachine.toString() + " for "
 						+ contextObject.name());
 				currentRegionsState.put(r, null);
 			} else if (possibleStates.size() > 1) {
-				out.println("Found multiple valid states for psm "
+				out.printlnWarn("Found multiple valid states for psm "
 						+ stateMachine.toString() + " for "
 						+ contextObject.name());
-				out.println("Valid states:");
+				out.printlnWarn("Valid states:");
 				for (MState s : possibleStates) {
-					out.print("   ");
-					out.println(s.name());
+					out.printWarn("   ");
+					out.printlnWarn(s.name());
 				}
 				currentRegionsState.put(r, null);
 			} else {

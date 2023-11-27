@@ -20,8 +20,11 @@
 package org.tzi.use.uml.sys;
 
 import com.google.common.eventbus.EventBus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.tool.GGenerator;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
@@ -68,7 +71,7 @@ import static org.tzi.use.util.StringUtil.inQuotes;
  */
 public final class MSystem {
 	/** The model of this system. */
-	private MModel fModel;
+	private final MModel fModel;
 
 	/** The current system state. */
 	private MSystemState fCurrentState;
@@ -80,7 +83,7 @@ public final class MSystem {
 	private UniqueNameGenerator fUniqueNameGenerator;
 
 	/** Event bus for detailed events during execution **/
-	private EventBus eventBus = new EventBus("System change");
+	private final EventBus eventBus = new EventBus("System change");
 
 	/** Last called operation (used by test suite) */
 	private MOperationCall lastOperationCall;
@@ -118,11 +121,11 @@ public final class MSystem {
 	/**
 	 * Stack of variation points (system state backups) for the test suite.
 	 */
-	private Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
+	private final Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
 	/**
 	 * Stack of variation points (variable backups) for the test suite.
 	 */
-	private Stack<VariableEnvironment> variationPointsVars = new Stack<VariableEnvironment>();
+	private final Stack<VariableEnvironment> variationPointsVars = new Stack<VariableEnvironment>();
 
 	/**
 	 * Count of open GUI elements that require updates on changes with derived
@@ -136,6 +139,8 @@ public final class MSystem {
 	 */
 	private EventContext executionContext = EventContext.NORMAL_EXECUTION;
 
+	private static final Logger log = LogManager.getLogger(MSystem.class.getName());
+
 	/**
 	 * constructs a new MSystem
 	 * 
@@ -148,18 +153,18 @@ public final class MSystem {
 
 	/**
 	 * Initializes a system (used for new system instances and for
-	 * {@link #reset()})
+	 * {@link #reset()}
 	 */
 	private void init() {
-		fObjects = new HashMap<String, MObject>();
+		fObjects = new HashMap<>();
 		fUniqueNameGenerator = new UniqueNameGenerator();
 		fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
 		fGenerator = new GGenerator(this);
 		fVariableEnvironment = new VariableEnvironment(fCurrentState);
-		fStatementEvaluationResults = new ArrayDeque<StatementEvaluationResult>();
-		fCallStack = new ArrayDeque<MOperationCall>();
-		fRedoStack = new ArrayDeque<MStatement>();
-		fCurrentlyEvaluatedStatements = new ArrayDeque<StatementEvaluationResult>();
+		fStatementEvaluationResults = new ArrayDeque<>();
+		fCallStack = new ArrayDeque<>();
+		fRedoStack = new ArrayDeque<>();
+		fCurrentlyEvaluatedStatements = new ArrayDeque<>();
 	}
 
 	/**
@@ -295,7 +300,7 @@ public final class MSystem {
 		fObjects.remove(obj.name());
 	}
 
-	public void loadInvariants(InputStream in, String inputName, boolean doEcho, PrintWriter out) {
+	public void loadInvariants(InputStream in, String inputName, boolean doEcho, UserOutput out) {
 		Collection<MClassInvariant> invs = ASSLCompiler
 				.compileInvariants(fModel, in, inputName,
 						out);
@@ -311,7 +316,7 @@ public final class MSystem {
 				}
 			}
 			
-			if(invs.size() > 0){
+			if(!invs.isEmpty()){
 				fireClassInvariantsLoadedEvent(invs);
 			}
 			
@@ -341,7 +346,7 @@ public final class MSystem {
 			}
 		}
 
-		if(invs.size() > 0){
+		if(!invs.isEmpty()){
 			fireClassInvariantsUnloadedEvent(invs);
 		}
 	}
@@ -364,12 +369,12 @@ public final class MSystem {
 	 */
 	public void setClassInvariantFlags(MClassInvariant inv, Boolean active, Boolean negated) {
 		if (active != null){
-			inv.setActive(active.booleanValue());
-			fireClassInvariantChangeEvent(inv, active.booleanValue() ? InvariantStateChange.ACTIVATED : InvariantStateChange.DEACTIVATED);
+			inv.setActive(active);
+			fireClassInvariantChangeEvent(inv, active ? InvariantStateChange.ACTIVATED : InvariantStateChange.DEACTIVATED);
 		}
 		if (negated != null){
-			inv.setNegated(negated.booleanValue());
-			fireClassInvariantChangeEvent(inv, negated.booleanValue() ? InvariantStateChange.NEGATED : InvariantStateChange.DENEGATED);
+			inv.setNegated(negated);
+			fireClassInvariantChangeEvent(inv, negated ? InvariantStateChange.NEGATED : InvariantStateChange.DENEGATED);
 		}
 	}
 	
@@ -526,13 +531,14 @@ public final class MSystem {
 		// it to be shown as invalid in diagrams.
 		fCallStack.push(operationCall);
 
-		EvalContext ctx = new EvalContext(fCurrentState, fCurrentState, fVariableEnvironment.constructVarBindings(), null, "");
+		EvalContext ctx = new EvalContext(fCurrentState, fCurrentState, fVariableEnvironment.constructVarBindings(), context.getOutput(), "");
 
 		try {
 			assertPreConditions(ctx, operationCall);
 
 			if (Options.getCheckTransitions())
 				calculatePossibleTransition(ctx, operationCall);
+
 		} catch (MSystemException e) {
 			fCallStack.pop();
 			if (operationCall.requiresVariableFrameInEnvironment()) {
@@ -595,11 +601,6 @@ public final class MSystem {
 	 */
 	private void calculatePossibleTransition(EvalContext ctx, MOperationCall operationCall) throws MSystemException {
 
-		if (ctx == null) {
-			VarBindings b = fVariableEnvironment.constructVarBindings();
-			ctx = new EvalContext(null, fCurrentState, b, null, "");
-		}
-
 		MObjectState objState = operationCall.getSelf().state(fCurrentState);
 
 		for (MProtocolStateMachineInstance psm : objState.getProtocolStateMachinesInstances()) {
@@ -616,10 +617,9 @@ public final class MSystem {
 			}
 
 			if (psm.isExecutingTransition() && validOperationCall) {
-				// TODO: Put output to context
-				Log.warn("Warning: The state machine instance " + inQuotes(psm.toString()));
-				Log.warn("ignores the possible valid operation call " + inQuotes(operationCall.toString()) + ",");
-				Log.warn("because it already executes a transition.");
+				ctx.getOutput().printlnWarn("Warning: The state machine instance " + inQuotes(psm.toString()));
+				ctx.getOutput().printlnWarn("ignores the possible valid operation call " + inQuotes(operationCall.toString()) + ",");
+				ctx.getOutput().printlnWarn("because it already executes a transition.");
 			}
 
 			if (!psm.isExecutingTransition() && !possibleTransitions.isEmpty()) {
@@ -756,7 +756,7 @@ public final class MSystem {
 	 * for the defined objects by evaluating the state invariants
 	 * of each object and the corresponding state machines.
 	 */
-	public void determineStates(PrintWriter out) {
+	public void determineStates(UserOutput out) {
 		for (MObject o : this.state().allObjects()) {
 			if (o.cls().getAllOwnedProtocolStateMachines().isEmpty()) continue;
 			
@@ -1037,10 +1037,11 @@ public final class MSystem {
 	 * @param qualifierValues
 	 * @throws MSystemException
 	 */
-	public MLink createLink(StatementEvaluationResult result, MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
+	public MLink createLink(UserOutput output, StatementEvaluationResult result,
+							MAssociation association, List<MObject> participants, List<List<Value>> qualifierValues)
 			throws MSystemException {
 
-		MLink newLink = fCurrentState.createLink(association, participants, qualifierValues);
+		MLink newLink = fCurrentState.createLink(output, association, participants, qualifierValues);
 
 		result.getStateDifference().addNewLink(newLink);
 
@@ -1054,7 +1055,7 @@ public final class MSystem {
 
 		for (List<Value> qValues : qualifierValues) {
 			List<MRValue> wrappedQValues;
-			if (qValues.size() == 0) {
+			if (qValues.isEmpty()) {
 				wrappedQValues = Collections.emptyList();
 			} else {
 				wrappedQValues = new LinkedList<MRValue>();
@@ -1227,8 +1228,8 @@ public final class MSystem {
 	 * @param statement The statement to execute.
 	 * @throws MSystemException
 	 */
-	public StatementEvaluationResult execute(MStatement statement) throws MSystemException {
-		return execute(statement, true, true, true);
+	public StatementEvaluationResult execute(UserOutput output, MStatement statement) throws MSystemException {
+		return execute(output, statement, true, true, true);
 	}
 
 	/**
@@ -1242,9 +1243,11 @@ public final class MSystem {
 	 *            execution.
 	 * @throws MSystemException
 	 */
-	public StatementEvaluationResult execute(MStatement statement, boolean notifyUpdateStateListeners) throws MSystemException {
+	public StatementEvaluationResult execute(UserOutput output,
+											 MStatement statement,
+											 boolean notifyUpdateStateListeners) throws MSystemException {
 
-		return execute(statement, true, true, notifyUpdateStateListeners);
+		return execute(output, statement, true, true, notifyUpdateStateListeners);
 	}
 
 	/**
@@ -1263,14 +1266,16 @@ public final class MSystem {
 	 * @return
 	 * @throws MSystemException
 	 */
-	public StatementEvaluationResult execute(MStatement statement, boolean undoOnFailure, boolean storeResult, boolean notifyUpdateStateListeners)
+	public StatementEvaluationResult execute(UserOutput output, MStatement statement,
+											 boolean undoOnFailure, boolean storeResult,
+											 boolean notifyUpdateStateListeners)
 			throws MSystemException {
 
 		fRedoStack.clear();
 
-		StatementEvaluationResult result = execute(statement, new SoilEvaluationContext(this), undoOnFailure, storeResult, notifyUpdateStateListeners);
-
-		return result;
+		return execute(statement,
+				new SoilEvaluationContext(output, this),
+				undoOnFailure, storeResult, notifyUpdateStateListeners);
 	}
 
 	/**
@@ -1284,8 +1289,9 @@ public final class MSystem {
 	 * @param notifyUpdateStateListeners
 	 * @throws EvaluationFailedException
 	 */
-	private StatementEvaluationResult execute(MStatement statement, SoilEvaluationContext context, boolean undoOnFailure, boolean storeResult,
-			boolean notifyUpdateStateListeners) throws MSystemException {
+	private StatementEvaluationResult execute(MStatement statement,
+											  SoilEvaluationContext context, boolean undoOnFailure,
+											  boolean storeResult, boolean notifyUpdateStateListeners) throws MSystemException {
 
 		StatementEvaluationResult result = new StatementEvaluationResult(statement);
 
@@ -1318,7 +1324,7 @@ public final class MSystem {
 			if (undoOnFailure) {
 				if (storeResult)
 					fStatementEvaluationResults.pop();
-				SoilEvaluationContext ctx = new SoilEvaluationContext(this);
+				SoilEvaluationContext ctx = new SoilEvaluationContext(context.getOutput(), this);
 				ctx.setIsUndo(true);
 				execute(result.getInverseStatement(), ctx, false, false, notifyUpdateStateListeners);
 			}
@@ -1336,7 +1342,7 @@ public final class MSystem {
 	 * @return
 	 * @throws MSystemException
 	 */
-	public StatementEvaluationResult undoLastStatement() throws MSystemException {
+	public StatementEvaluationResult undoLastStatement(UserOutput output) throws MSystemException {
 
 		if (fStatementEvaluationResults.isEmpty()) {
 			throw new MSystemException("nothing to undo");
@@ -1349,15 +1355,14 @@ public final class MSystem {
 
 		fRedoStack.push(lastStatement);
 
-		if (Log.isTracing())
-			Log.trace(this, "undoing a statement");
+		if (log.isDebugEnabled()) {
+			log.debug("undoing a statement");
+		}
 
-		SoilEvaluationContext context = new SoilEvaluationContext(this);
+		SoilEvaluationContext context = new SoilEvaluationContext(output, this);
 		context.setIsUndo(true);
 
-		StatementEvaluationResult result = execute(inverseStatement, context, false, false, true);
-		
-		return result;
+        return execute(inverseStatement, context, false, false, true);
 	}
 
 	/**
@@ -1365,7 +1370,7 @@ public final class MSystem {
 	 * 
 	 * @throws MSystemException
 	 */
-	public StatementEvaluationResult redoStatement() throws MSystemException {
+	public StatementEvaluationResult redoStatement(UserOutput output) throws MSystemException {
 
 		if (fRedoStack.isEmpty()) {
 			throw new MSystemException("nothing to redo");
@@ -1373,15 +1378,14 @@ public final class MSystem {
 
 		MStatement redoStatement = fRedoStack.pop();
 
-		if (Log.isTracing())
-			Log.trace(this, "redoing a statement");
+		if (log.isDebugEnabled()) {
+			log.debug("redoing a statement");
+		}
 
-		SoilEvaluationContext context = new SoilEvaluationContext(this);
+		SoilEvaluationContext context = new SoilEvaluationContext(output,this);
 		context.setIsRedo(true);
 
-		StatementEvaluationResult result = execute(redoStatement, context, false, true, true);
-
-		return result;
+        return execute(redoStatement, context, false, true, true);
 	}
 
 	/**

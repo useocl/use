@@ -46,7 +46,7 @@ public class GEvalOCLExpression extends GEvalInstruction {
                      IGCollector collector) throws GEvaluationException {
         
 		if (collector.doDetailPrinting()) {
-			collector.detailPrintWriter().println(
+			collector.getUserOutput().println(
 					new StringBuilder("evaluating `").append(fInstr)
 							.append("'").toString());
 		}
@@ -55,7 +55,7 @@ public class GEvalOCLExpression extends GEvalInstruction {
             Value val = conf.evalExpression(fInstr.expression());
             
             if (collector.doDetailPrinting())
-            	collector.detailPrintWriter().println("`" + fInstr + "' == " + val);
+            	collector.getUserOutput().println("`" + fInstr + "' == " + val);
             
             caller.feedback( conf, val, collector );
         } catch (MultiplicityViolationException e) {

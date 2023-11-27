@@ -1,13 +1,13 @@
 package org.tzi.use.parser.testsuite;
 
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.sys.testsuite.MTestSuite;
+
+import java.util.List;
 
 public class ASTTestSuite extends AST {
 	
@@ -49,17 +49,6 @@ public class ASTTestSuite extends AST {
 	}
 	
 	public MTestSuite gen(Context ctx) throws SemanticException {
-		/*
-		if (!ctx.model().name().equals(this.getModelFile().getText())) {
-			throw new SemanticException(this.getModelFile(),
-					"The test suite is for the model `"
-							+ this.getModelFile().getText()
-							+ "' but the loaded model is `"
-							+ ctx.model().name() + "'");
-		}
-		*/
-		MTestSuite result = new MTestSuite(name, ctx.model(), setupStatements, testCases);
-				
-		return result;
+		return new MTestSuite(name, ctx.model(), setupStatements, testCases, ctx.getUserOutput());
 	}
 }

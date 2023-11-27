@@ -19,39 +19,38 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
 import org.tzi.use.gui.views.selection.objectselection.DataHolder;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.sys.MObject;
+
+import java.util.Set;
 
 /**
  * @author Quang Dung Nguyen
  */
-@SuppressWarnings("serial")
 public abstract class DiagramViewWithObjectNode extends DiagramView implements DataHolder {
 
-    public DiagramViewWithObjectNode(DiagramOptions opt, PrintWriter log) {
-	super(opt, log);
+    public DiagramViewWithObjectNode(DiagramOptions opt, UserOutput output) {
+	    super(opt, output);
     }
 
     /**
      * Show all objects contained in <code>objects</code>
 	 */
     public void showObjects(Set<MObject> objects) {
-	for (MObject o : objects) {
-		showObject(o);
-	}
+        for (MObject o : objects) {
+            showObject(o);
+        }
     }
     
     /**
 	 * Hides all objects included in <code>objects</code>
 	 */
     public void hideObjects(Set<MObject> objects) {
-	for (MObject o : objects)
-		hideObject(o);
+        for (MObject o : objects) {
+            hideObject(o);
+        }
     }
 
     public abstract void hideObject(MObject obj);
@@ -63,10 +62,8 @@ public abstract class DiagramViewWithObjectNode extends DiagramView implements D
      * @param objectsToHide A set of {@link MObject}s to hide.
      */
     public void hideElementsInDiagram( Set<MObject> objectsToHide ) {
-        Iterator<?> it = objectsToHide.iterator();
-        while ( it.hasNext() ) {
-            MObject obj = (MObject) it.next();
-            hideObject( obj );
+        for (MObject obj : objectsToHide) {
+            hideObject(obj);
         }
     }
     

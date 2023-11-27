@@ -46,7 +46,7 @@ public class GEvalIfThenElse extends GEvalInstruction
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
+			collector.getUserOutput().println(
 					new StringBuilder("evaluating `").append(fInstr)
 							.append("'").toString());
 		

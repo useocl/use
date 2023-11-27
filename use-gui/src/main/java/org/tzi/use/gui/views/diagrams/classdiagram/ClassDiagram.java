@@ -21,41 +21,10 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
-import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
-
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
-
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
@@ -69,37 +38,13 @@ import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions.ShowCoverage;
-import org.tzi.use.gui.views.diagrams.elements.AssociationName;
-import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
-import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
-import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.elements.Rolename;
-import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationClassOrObject;
-import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.NAryAssociationClassOrObjectEdge;
-import org.tzi.use.gui.views.diagrams.event.ActionHideClassDiagram;
-import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
-import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
-import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
+import org.tzi.use.gui.views.diagrams.elements.*;
+import org.tzi.use.gui.views.diagrams.elements.edges.*;
+import org.tzi.use.gui.views.diagrams.event.*;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationClassImpl;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MNamedElementComparator;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
@@ -108,10 +53,18 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
 import org.w3c.dom.Element;
 
-import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
-import com.ximpleware.XPathEvalException;
-import com.ximpleware.XPathParseException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
 /**
  * A panel drawing a UML class diagrams.
@@ -133,12 +86,12 @@ public class ClassDiagram extends DiagramView
 
 	private final DiagramInputHandling inputHandling;
 
-	ClassDiagram(ClassDiagramView parent, PrintWriter log) {
-		this(parent, log, new ClassDiagramOptions(Paths.get(parent.system().model().filename())));
+	ClassDiagram(ClassDiagramView parent, UserOutput output) {
+		this(parent, output, new ClassDiagramOptions(Paths.get(parent.system().model().filename())));
 	}
 
-	protected ClassDiagram(ClassDiagramView parent, PrintWriter log, ClassDiagramOptions opt) {
-		super(opt, log);
+	protected ClassDiagram(ClassDiagramView parent, UserOutput output, ClassDiagramOptions opt) {
+		super(opt, output);
 
 		fParent = parent;
 
@@ -1361,7 +1314,7 @@ public class ClassDiagram extends DiagramView
 	/**
 	 * Hides the given elements in this diagram.
 	 * 
-	 * @param nodesToHide
+	 * @param nodesToShow
 	 *            A set of {@link MClassifier} ({@link MClass} or
 	 *            {@link EnumType}) to hide
 	 */
@@ -1439,13 +1392,11 @@ public class ClassDiagram extends DiagramView
 					while (ap.evalXPath() != -1) {
 						handler.handleItem(helper, version);
 					}
-				} catch (XPathEvalException e) {
-					fLog.append(e.getMessage());
-				} catch (NavException e) {
-					fLog.append(e.getMessage());
+				} catch (XPathEvalException | NavException e) {
+					output.printlnError(e.getMessage());
 				}
-			} catch (XPathParseException e) {
-				fLog.append(e.getMessage());
+            } catch (XPathParseException e) {
+				output.printlnError(e.getMessage());
 			}
 			ap.resetXPath();
 			helper.getNav().pop();
@@ -1484,8 +1435,8 @@ public class ClassDiagram extends DiagramView
 							if (isHidden(helper, version))
 								hiddenAssociations.add(assoc);
 						} catch (Exception e) {
-							fLog.append("Error restoring binary edge " + StringUtil.inQuotes(assoc.name()) + ":"
-									+ e.getMessage() + "\n");
+							output.printlnError("Error restoring binary edge " + StringUtil.inQuotes(assoc.name()) + ":"
+									+ e.getMessage());
 						}
 					}
 				}
@@ -1509,7 +1460,7 @@ public class ClassDiagram extends DiagramView
 		});
 
 		// Inheritance
-		h.handle("./edge[@type='" + (version == 1 ? "Inheritance" : "Generalization") + "']", new RestoreItemHandler() {
+		h.handle("./edge[@type='Generalization']", new RestoreItemHandler() {
 			@Override
 			public void handleItem(PersistHelper helper, int version) {
 				String source = helper.getElementStringValue(LayoutTags.SOURCE);
@@ -1544,8 +1495,8 @@ public class ClassDiagram extends DiagramView
 						if (isHidden(helper, version))
 							hiddenClassifier.add(cls);
 					} catch (Exception e) {
-						fLog.append("Error restoring class node " + StringUtil.inQuotes(cls.name()) + ":"
-								+ e.getMessage() + "\n");
+						output.printlnError("Error restoring class node " + StringUtil.inQuotes(cls.name()) + ":"
+								+ e.getMessage());
 					}
 				}
 			}
@@ -1565,8 +1516,8 @@ public class ClassDiagram extends DiagramView
 						if (isHidden(helper, version))
 							hiddenClassifier.add(enumType);
 					} catch (Exception e) {
-						fLog.append("Error restoring enum node " + StringUtil.inQuotes(enumType.name()) + ":"
-								+ e.getMessage() + "\n");
+						output.printlnError("Error restoring enum node " + StringUtil.inQuotes(enumType.name()) + ":"
+								+ e.getMessage());
 					}
 				}
 			}
@@ -1587,8 +1538,8 @@ public class ClassDiagram extends DiagramView
 							if (isHidden(helper, version))
 								hiddenAssociations.add(assoc);
 						} catch (Exception e) {
-							fLog.append("Error restoring diamond node " + StringUtil.inQuotes(node.name()) + ":"
-									+ e.getMessage() + "\n");
+							output.printlnError("Error restoring diamond node " + StringUtil.inQuotes(node.name()) + ":"
+									+ e.getMessage());
 						}
 					}
 				}

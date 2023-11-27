@@ -29,31 +29,27 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
-
 import org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MStatement;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
+
 
 public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
     implements IGCaller {
-    private GInstrInsert_Assoc_Linkends fInstr;
+    private final GInstrInsert_Assoc_Linkends fInstr;
     private IGCaller fCaller;
     private ListIterator<GValueInstruction> fIterator;
     private List<String> fObjectNames;
@@ -65,11 +61,11 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
-					new StringBuilder("evaluating `").append(fInstr)
-							.append("'").toString());
-		
+
+        if (collector.doDetailPrinting()) {
+            collector.getUserOutput().printlnTrace("evaluating `" + fInstr + "'");
+        }
+
         fCaller = caller;
         fIterator = fInstr.linkEnds().listIterator();
         fObjectNames = new ArrayList<String>();
@@ -105,9 +101,8 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
 
     	MSystemState state = conf.systemState();
         MSystem system = state.system();
-        PrintWriter basicOutput = collector.basicPrintWriter();
-        //PrintWriter detailOutput = collector.detailPrintWriter();
-        
+        UserOutput output = collector.getUserOutput();
+
         MAssociation association = fInstr.association();
         List<MRValue> participants = 
         	new ArrayList<MRValue>(fObjectNames.size());
@@ -124,12 +119,13 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         
         MStatement inverseStatement;
 
-        if (collector.doBasicPrinting())
-        	basicOutput.println(statement.getShellCommand());
+        if (collector.doBasicPrinting()) {
+            output.println(statement.getShellCommand());
+        }
         
         try {
         	StatementEvaluationResult evaluationResult = 
-        		system.execute(statement, true, false, false);
+        		system.execute(output, statement, true, false, false);
         	
         	inverseStatement = evaluationResult.getInverseStatement();
 		} catch (MSystemException e) {
@@ -142,11 +138,12 @@ public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
         	collector.subsequentlyPrependStatement(statement);
         }
         
-        if (collector.doBasicPrinting())
-        	basicOutput.println("undo: " + statement.getShellCommand());
+        if (collector.doBasicPrinting()) {
+            output.println("undo: " + statement.getShellCommand());
+        }
         
         try {
-        	system.execute(inverseStatement, true, false, false);
+        	system.execute(output, inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			collector.invalid(e);
 		}

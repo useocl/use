@@ -49,7 +49,7 @@ public class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
                      IGCollector collector) throws GEvaluationException {
     	
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
+			collector.getUserOutput().println(
 					new StringBuilder("evaluating `").append(fInstr)
 							.append("'").toString());
 		
@@ -75,7 +75,7 @@ public class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
             Value subVal = new SequenceValue(seq.elemType(), values);
             
 			if (collector.doDetailPrinting())
-				collector.detailPrintWriter().println(
+				collector.getUserOutput().println(
 						"`" + fInstr + "' == " + subVal);
 			
             fCaller.feedback( conf, subVal, collector );

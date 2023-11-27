@@ -19,12 +19,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Log;
 
 /**
  * Context information used during evaluation.
@@ -33,12 +34,15 @@ import org.tzi.use.util.Log;
  */
 
 public class EvalContext {
+
+    private static final Logger log = LogManager.getLogger(EvalContext.class.getName());
+
     private final MSystemState fPreState; // required for postconditions
     private final MSystemState fPostState; // default state
     private final VarBindings fVarBindings;
     private int fNesting;   // for indentation during trace
-    
-    private final PrintWriter fEvalLog; // may be null    
+
+    private final UserOutput output;
     private final String fEvalLogIndent;
     
     private final boolean isTracing;
@@ -49,21 +53,21 @@ public class EvalContext {
      * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
      * @param postState the current <code>MSystemState</code> for the evaluation
      * @param globalBindings the global <code>VarBindings</code>
-     * @param evalLog <code>PrintWriter</code> to print evaluation informations. May be <code>null</code>
+     * @param output <code>UserOutput</code> to print warnings, errors and evaluation information. May not be <code>null</code>
      * @param evalLogIndent used indent for the output, e.g., "   "
      */
     public EvalContext(MSystemState preState,
     				   MSystemState postState,
     				   VarBindings globalBindings,
-    				   PrintWriter evalLog,
+    				   UserOutput output,
     				   String evalLogIndent) {
         fPreState = preState;
         fPostState = postState;
         fVarBindings = new VarBindings(globalBindings);
         fNesting = 0;
-        fEvalLog = evalLog;
+        this.output = output;
         fEvalLogIndent = evalLogIndent;
-        isTracing = Log.isTracing();
+        isTracing = output.getOutputLevel().covers(OutputLevel.TRACE);
     }
 
     /**
@@ -79,12 +83,18 @@ public class EvalContext {
 		fPostState = postState;
 		fVarBindings = new VarBindings(globalBindings);
 		fNesting = src.fNesting;
-		fEvalLog = src.fEvalLog;
+		output = src.output;
 		fEvalLogIndent = src.fEvalLogIndent;
 		isTracing = src.isTracing;
 	}
-    
-    public boolean isEnableEvalTree() { return false; }
+
+    public UserOutput getOutput() {
+        return output;
+    }
+
+    public boolean isEnableEvalTree() {
+        return false;
+    }
     
     /**
      * Pushes a new variable binding onto the binding stack.
@@ -146,27 +156,26 @@ public class EvalContext {
         	++fNesting;
             String ec = expr.getClass().getName();
             ec = ec.substring(ec.lastIndexOf(".") + 1);
-            Log.trace(this, indent() + "enter " + ec + " \"" + expr + "\"");
+            output.printlnTrace(indent() + "enter " + ec + " \"" + expr + "\"");
         }
     }
 
     void exit(Expression expr, Value result) {
         if (isTracing) {
         	--fNesting;
-            Log.trace(this, indent() + "exit  \"" + expr + "\" = " + result);
+            output.printlnTrace(indent() + "exit  \"" + expr + "\" = " + result);
         }
 
         // print the results sequentially from the innermost
         // subexpression to the outermost expression
-        if ( fEvalLog != null ) {
-            fEvalLog.println(fEvalLogIndent + expr + " : " + result.type() + " = " + result);
-        }
+        output.printlnTrace(fEvalLogIndent + expr + " : " + result.type() + " = " + result);
     }
 
     private String indent() {
         char[] indent = new char[fNesting];
         for (int i = 0; i < fNesting; i++)
             indent[i] = ' ';
+
         return new String(indent);
     }
 }

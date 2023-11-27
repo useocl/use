@@ -29,39 +29,24 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import org.tzi.use.gen.assl.statics.GInstrTry_AssocClass_LinkendSeqs;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
-import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
-import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
-import org.tzi.use.uml.sys.soil.MSequenceStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.NullPrintWriter;
+import org.tzi.use.uml.sys.*;
+import org.tzi.use.uml.sys.soil.*;
 import org.tzi.use.util.Pair;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 import org.tzi.use.util.collections.MinCombinationsIterator;
+
+import java.util.*;
 
 
 public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
@@ -81,11 +66,10 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
     public void eval(GConfiguration conf,
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
-		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
-					new StringBuilder("evaluating `").append(fInstr)
-							.append("'").toString());
-		
+		if (collector.doDetailPrinting()) {
+			collector.getUserOutput().printlnTrace("evaluating `" + fInstr + "'");
+		}
+
         fCaller = caller;
         fIterator = fInstr.linkendSequences().listIterator();
         fObjectLists = new ArrayList<List<MObject>>();
@@ -168,7 +152,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         this.initProgress(numLinks);
         MSystemState state = conf.systemState();
         MSystem system = state.system();
-        PrintWriter basicOutput = collector.basicPrintWriter();
+        UserOutput output = collector.getUserOutput();
         
         // for each link we need a statement to insert and delete
         List<MStatement> insertStatements = 
@@ -194,6 +178,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         // we do that as well to ensure previous test cases behave the same
         try {
         	system.execute(
+					output,
         			constructLinkChangeStatement(
         					initialConfiguration, 
         					0, 
@@ -208,7 +193,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         }
                 
         // this is the "all links exist" configuration + 1
-        long tooLarge = (1 << insertStatements.size());
+        long tooLarge = (1L << insertStatements.size());
         
         // we start with the 0000... (all links off) combination
         long oldConfiguration = 0;
@@ -233,16 +218,16 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         			deleteStatements);
         	
         	if (collector.doBasicPrinting())
-                    basicOutput.println(statement.getShellCommand());
+                    output.println(statement.getShellCommand());
 
         	try {	
-        		res = system.execute(statement, true, false, false);
+        		res = system.execute(output, statement, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
 			
         	if (conf.getArguments().useTryCuts() && conf.getArguments().checkStructure()) {
-        		continueEvaluation = system.state().checkStructure(fInstr.getAssociationClass(), NullPrintWriter.getInstance(), false);
+        		continueEvaluation = system.state().checkStructure(fInstr.getAssociationClass(), VoidUserOutput.getInstance(), false);
         		if (!continueEvaluation) {
         			++numCut;
         			collector.addCut();
@@ -288,11 +273,11 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         this.endProgress();
         
         if (collector.doBasicPrinting()) {
-	        basicOutput.print("Evaluated ");
-	        basicOutput.print(numEvaluated);
-	        basicOutput.print(" sub tress (cut ");
-	        basicOutput.print(numCut);
-	        basicOutput.println(")");
+	        output.print("Evaluated ");
+	        output.print(String.valueOf(numEvaluated));
+	        output.print(" sub tress (cut ");
+	        output.print(String.valueOf(numCut));
+	        output.println(")");
         }
         
         // transform state to the initial state if we aren't in it anyways
@@ -305,10 +290,10 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         				deleteStatements);
 
                 if (collector.doBasicPrinting())
-                    basicOutput.println(statement.getShellCommand());
+                    output.println(statement.getShellCommand());
                 
         	try {
-        		system.execute(statement, true, false, false);
+        		system.execute(output, statement, true, false, false);
         		system.getUniqueNameGenerator().popState();
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
@@ -318,14 +303,16 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
 
 	protected SetValue createResultSet(MAssociationClass association,
 			StatementEvaluationResult res) {
+
 		Value[] newObjects = new Value[res.getStateDifference().getNewObjects().size()];
 		int index = 0;
+
 		for (MObject o : res.getStateDifference().getNewObjects()) {
 			newObjects[index] = new ObjectValue(association, o);
 			index++;
 		}
-		SetValue result = new SetValue(association, newObjects);
-		return result;
+
+        return new SetValue(association, newObjects);
 	}
     
 	private long constructCreateAndDeleteStatements(
@@ -340,8 +327,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         long initConfiguration = 0;
         
         // cache for MObject -> Expression transformations
-        Map<MObject, MRValue> participantCache = 
-        	new HashMap<MObject, MRValue>();
+        Map<MObject, MRValue> participantCache = new HashMap<MObject, MRValue>();
         
         // for each possible link, construct insert and delete statements
         for (int i = 0; i < numLinks; ++i) {
@@ -371,7 +357,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         		// FIXME: Support qualifiers in generator
 				if (state.hasLink(associationClass, objects, emptyQualifiers)) {
 					// "turn on" bit i
-					initConfiguration |= (1 << i);
+					initConfiguration |= (1L << i);
 				}
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
@@ -420,7 +406,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         }
         
         collector.addIgnoredStates((long)ignoredStates);
-        PrintWriter basicOutput = collector.basicPrintWriter();
+        UserOutput output = collector.getUserOutput();
         
         do {
         	statements = new MSequenceStatement();
@@ -431,10 +417,10 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
         	}
         	
         	if (collector.doBasicPrinting())
-                basicOutput.println(statements.getShellCommand());
+                output.println(statements.getShellCommand());
         	
         	try {	
-        		res = system.execute(statements, true, false, false);
+        		res = system.execute(output, statements, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}
@@ -451,7 +437,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
             }
             
         	try {	
-        		system.execute(res.getInverseStatement(), false, false, false);
+        		system.execute(output, res.getInverseStatement(), false, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}

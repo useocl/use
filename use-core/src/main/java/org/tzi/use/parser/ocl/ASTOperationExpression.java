@@ -19,40 +19,26 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.ExpAttrOp;
-import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpNavigation;
-import org.tzi.use.uml.ocl.expr.ExpNavigationClassifierSource;
-import org.tzi.use.uml.ocl.expr.ExpObjAsSet;
-import org.tzi.use.uml.ocl.expr.ExpObjOp;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.ExpTupleSelectOp;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -74,9 +60,9 @@ import org.tzi.use.util.collections.CollectionUtil;
  * @author  Lars Hamann
  */
 public class ASTOperationExpression extends ASTExpression {
-    private Token fOp;
-    private ASTExpression fSrcExpr;
-    private List<ASTExpression> fArgs; 
+    private final Token fOp;
+    private final ASTExpression fSrcExpr;
+    private final List<ASTExpression> fArgs;
     private boolean fHasParentheses;
     private boolean fFollowsArrow;
     private Expression[] fArgExprs;
@@ -292,7 +278,7 @@ public class ASTOperationExpression extends ASTExpression {
 
         opcase += fFollowsArrow ? ARROW : DOT;
         opcase += fHasParentheses ? PARENTHESES : NO_PARENTHESES;
-        opcase += fExplicitRolenameOrQualifiers.size() > 0 ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
+        opcase += !fExplicitRolenameOrQualifiers.isEmpty() ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
 
         switch ( opcase ) {
         case SRC_SIMPLE_TYPE + DOT + NO_PARENTHESES: 
@@ -376,7 +362,7 @@ public class ASTOperationExpression extends ASTExpression {
                 fArgExprs[0] = mappedSrcExpr;
                 try {
                     // lookup collection operation
-                    res = ExpStdOp.create(opname, fArgExprs);
+                    res = ExpStdOp.create(ctx.getUserOutput(), opname, fArgExprs);
                 } catch (ExpInvalidException ex) {
                     throw new SemanticException(fOp, ex);
                 }
@@ -585,7 +571,7 @@ public class ASTOperationExpression extends ASTExpression {
         // transform c.op(...) into c->collect($e | $e.op(...))
         fArgExprs[0] = new ExpVariable("$e", elemType);
         try {
-            Expression eOp = ExpStdOp.create(opname, fArgExprs);
+            Expression eOp = ExpStdOp.create(VoidUserOutput.getInstance(), opname, fArgExprs);
             res = genImplicitCollect(srcExpr, eOp, elemType);
         } catch (ExpInvalidException ex) {
             // shouldn't fail because we already checked the
@@ -658,10 +644,9 @@ public class ASTOperationExpression extends ASTExpression {
 	public void getFreeVariables(Set<String> freeVars) {
 		if (fSrcExpr != null) {
 			fSrcExpr.getFreeVariables(freeVars);
-			Iterator<ASTExpression> it = fArgs.iterator();
-			while (it.hasNext()) {
-				it.next().getFreeVariables(freeVars);
-			}
+            for (ASTExpression fArg : fArgs) {
+                fArg.getFreeVariables(freeVars);
+            }
 		} else {
 			if (!fHasParentheses) {
 				freeVars.add(fOp.getText());

@@ -18,28 +18,19 @@
  */
 package org.tzi.use.api.impl;
 
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.output.InternalUserOutput;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.*;
+import org.tzi.use.util.StringUtil;
+
+import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.naming.OperationNotSupportedException;
-
-import org.tzi.use.api.UseApiException;
-import org.tzi.use.api.UseSystemApi;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.util.StringUtil;
 
 /**
  * This system API implementation uses the native internal 
@@ -89,8 +80,11 @@ public class UseSystemApiNative extends UseSystemApi {
 		List<List<Value>> qualifierValuesList = getQualifierValuesAsList(qualifierValues);
 		
 		try {
-			newLink = system.state().createLink(association,
+			// We save warnings in a field to allow a client to query the warnings after each call
+			InternalUserOutput output = new InternalUserOutput();
+			newLink = system.state().createLink(output, association,
 					Arrays.asList(connectedObjects), qualifierValuesList);
+
         } catch (MSystemException e) {
             throw new UseApiException("Link could not be created!", e);
         }

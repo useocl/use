@@ -19,54 +19,10 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
-import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
-
-import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.WeakHashMap;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.JWindow;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
@@ -77,45 +33,36 @@ import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationClassOrObject;
-import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.gui.views.diagrams.elements.edges.LinkEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.NAryAssociationClassOrObjectEdge;
+import org.tzi.use.gui.views.diagrams.elements.edges.*;
 import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
-import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
-import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
-import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
+import org.tzi.use.gui.views.diagrams.event.*;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationClassImpl;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MNamedElementComparator;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkEnd;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MLinkObjectImpl;
-import org.tzi.use.uml.sys.MLinkSet;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.w3c.dom.Element;
 
-import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
-import com.ximpleware.XPathEvalException;
-import com.ximpleware.XPathParseException;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.*;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
+
+import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
 /**
  * A panel drawing UML object diagrams.
@@ -205,7 +152,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		/**
 		 * Copies all data to the target object
 		 * 
-		 * @param hiddenData
+		 * @param target The <code>ObjectDiagramData</code> to copy to
 		 */
 		public void copyTo(ObjectDiagramData target) {
 			target.fBinaryLinkToEdgeMap.putAll(this.fBinaryLinkToEdgeMap);
@@ -256,12 +203,12 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	/**
 	 * Creates a new empty diagram.
 	 */
-	NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log) {
-		this(parent, log, new ObjDiagramOptions());
+	NewObjectDiagram(NewObjectDiagramView parent, UserOutput output) {
+		this(parent, output, new ObjDiagramOptions());
 	}
 
-	protected NewObjectDiagram(NewObjectDiagramView parent, PrintWriter log, ObjDiagramOptions options) {
-		super(options, log);
+	protected NewObjectDiagram(NewObjectDiagramView parent, UserOutput output, ObjDiagramOptions options) {
+		super(options, output);
 		this.getRandomNextPosition();
 
 		fParent = parent;
@@ -1645,13 +1592,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						}
 					}
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 		ap.resetXPath();
 		helper.getNav().pop();
@@ -1694,13 +1639,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						}
 					}
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 		helper.getNav().pop();
 		ap.resetXPath();
@@ -1720,13 +1663,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						if (isHidden(helper, version)) hiddenObjects.add(obj);
 					}
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 		
 		helper.getNav().pop();
@@ -1779,13 +1720,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						node.restorePlacementInfo(helper, version);
 					}   
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 		helper.getNav().pop();
 		ap.resetXPath();

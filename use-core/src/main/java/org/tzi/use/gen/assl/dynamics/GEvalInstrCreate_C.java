@@ -29,11 +29,8 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import static org.tzi.use.util.StringUtil.inQuotes;
-
-import java.io.PrintWriter;
-
 import org.tzi.use.gen.assl.statics.GInstrCreate_C;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.sys.MSystem;
@@ -43,8 +40,10 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
+import static org.tzi.use.util.StringUtil.inQuotes;
+
 public class GEvalInstrCreate_C extends GEvalInstruction {
-    private GInstrCreate_C fInstr;
+    private final GInstrCreate_C fInstr;
 
     public GEvalInstrCreate_C(GInstrCreate_C instr ) {
         fInstr = instr;
@@ -56,11 +55,11 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
         
     	MSystemState state = conf.systemState();
     	MSystem system = state.system();
-    	PrintWriter basicOutput = collector.basicPrintWriter();
-    	PrintWriter detailOutput = collector.detailPrintWriter();
-    	
-    	if (collector.doDetailPrinting())
-    		detailOutput.println("evaluating " + inQuotes(fInstr));
+    	UserOutput output = collector.getUserOutput();
+
+    	if (collector.doDetailPrinting()) {
+			output.printlnTrace("evaluating " + inQuotes(fInstr));
+		}
     			
     	MClass objectClass = fInstr.cls();
     	String objectName = state.uniqueObjectNameForClass(objectClass.name());
@@ -72,12 +71,12 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
     	MStatement inverseStatement;
     	
     	if (collector.doBasicPrinting())
-    		basicOutput.println(statement.getShellCommand());
+    		output.println(statement.getShellCommand());
     	
     	try {
     		
     		StatementEvaluationResult evaluationResult = 
-    			system.execute(statement, true, false, false);
+    			system.execute(output, statement, true, false, false);
     		
     		inverseStatement = evaluationResult.getInverseStatement();
     		
@@ -88,20 +87,22 @@ public class GEvalInstrCreate_C extends GEvalInstruction {
 		ObjectValue objectValue = 
 			new ObjectValue(objectClass, state.objectByName(objectName));
 		
-		if (collector.doDetailPrinting())
-			detailOutput.println(inQuotes(fInstr) + " == " + objectValue);
-		
+		if (collector.doDetailPrinting()) {
+			output.printlnTrace(inQuotes(fInstr) + " == " + objectValue);
+		}
+
 		caller.feedback(conf, objectValue, collector);
             
 		if (collector.expectSubsequentReporting()) {
 			collector.subsequentlyPrependStatement(statement);
 		}
 		
-		if (collector.doBasicPrinting())
-			basicOutput.println("undo: " + statement.getShellCommand());
-		
+		if (collector.doBasicPrinting()) {
+			output.println("undo: " + statement.getShellCommand());
+		}
+
 		try {
-			system.execute(inverseStatement, true, false, false);
+			system.execute(output, inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}

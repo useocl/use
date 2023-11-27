@@ -43,14 +43,14 @@ public class GEvalBarrier extends GEvalInstruction implements IGCaller {
 	@Override
 	public void eval(GConfiguration conf, IGCaller caller, IGCollector collector)
 			throws GEvaluationException {
-		collector.detailPrintWriter().println(new StringBuilder("evaluating barrier `").append(instr).append("'").toString());
+		collector.getUserOutput().println(new StringBuilder("evaluating barrier `").append(instr).append("'").toString());
         long start = System.nanoTime();
         
 		try {
             Value val = conf.evalExpression(instr.getExpression());
             
 			if (collector.doDetailPrinting())
-				collector.detailPrintWriter().println(
+				collector.getUserOutput().println(
 						"`" + instr + "' == " + val);
             
 			boolean valid = false;

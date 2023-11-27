@@ -74,9 +74,9 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	//TODO: To parent class
 	public void initDiagram(boolean loadDefaultLayout, StateMachineDiagramOptions opt) {
 		if (opt == null)
-			diagram = new StateMachineDiagram( this, parent.logWriter() );
+			diagram = new StateMachineDiagram( this, parent.getUserOutput() );
 		else
-			diagram = new StateMachineDiagram( this, parent.logWriter(), new StateMachineDiagramOptions(opt));
+			diagram = new StateMachineDiagram( this, parent.getUserOutput(), new StateMachineDiagramOptions(opt));
 		
 		diagram.setStatusBar(parent.statusBar());
 		

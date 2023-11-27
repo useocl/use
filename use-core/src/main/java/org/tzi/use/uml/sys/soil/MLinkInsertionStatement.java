@@ -19,10 +19,6 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.value.Value;
@@ -31,6 +27,10 @@ import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This statement inserts a new link into an association.
@@ -41,16 +41,16 @@ public class MLinkInsertionStatement extends MStatement {
 	/**
 	 * The association the link is created for.
 	 */
-	private MAssociation fAssociation;
+	private final MAssociation fAssociation;
 	/**
      * List of the objects that participate in the link in the same order as
      * association ends.
 	 */
-	private List<MRValue> fParticipants;
+	private final List<MRValue> fParticipants;
 	/**
 	 * List of the qualifier values for the association ends. 
 	 */
-	private List<List<MRValue>> qualifiers;
+	private final List<List<MRValue>> qualifiers;
 	/**
      * When creating an association class instance, this is the name of the
      * instance.
@@ -195,7 +195,7 @@ public class MLinkInsertionStatement extends MStatement {
 			
 		} else {
             try {
-                context.getSystem().createLink(result, fAssociation, participants, qualifierValues);
+                context.getSystem().createLink(context.getOutput(), result, fAssociation, participants, qualifierValues);
             } catch (MSystemException e) {
                 throw new EvaluationFailedException(e.getMessage());
             }

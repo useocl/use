@@ -19,10 +19,6 @@
 
 package org.tzi.use.parser.use;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -34,6 +30,10 @@ import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -230,7 +230,7 @@ public class ASTModel extends ASTAnnotatable {
         }
 
         
-        // (3c) add associationEnd specific constraints, e. g. subsets
+        // (3c) add associationEnd specific constraints, e.g. subsets
         // Role names are known and can be subset
         for (ASTAssociation a : fAssociations) {
         	try {
@@ -240,7 +240,7 @@ public class ASTModel extends ASTAnnotatable {
         	}
         }
         
-        // (3c) add associationEnd specific constraints, e. g. subsets
+        // (3c) add associationEnd specific constraints, e.g. subsets
         // Role names are known and can be subset
         for (ASTAssociationClass a : fAssociationClasses) {
         	try {

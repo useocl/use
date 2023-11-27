@@ -105,7 +105,7 @@ public class CommunicationDiagramView extends JPanel implements View,
 	 */
 	void initDiagram(boolean loadDefaultLayout,
 					 CommunicationDiagramOptions opt) {
-		comDia = CommunicationDiagram.createCommunicationDiagram(this, mainWindow.logWriter(), opt, this.visibleDataManager);
+		comDia = CommunicationDiagram.createCommunicationDiagram(this, mainWindow.getUserOutput(), opt, this.visibleDataManager);
 
 		comDia.setStatusBar(mainWindow.statusBar());
 		this.removeAll();

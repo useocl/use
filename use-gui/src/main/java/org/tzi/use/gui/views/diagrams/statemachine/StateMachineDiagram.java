@@ -18,29 +18,10 @@
  */
 package org.tzi.use.gui.views.diagrams.statemachine;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.AbstractAction;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramGraph;
@@ -52,20 +33,17 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.uml.mm.statemachines.MFinalState;
-import org.tzi.use.uml.mm.statemachines.MProtocolTransition;
-import org.tzi.use.uml.mm.statemachines.MPseudoState;
-import org.tzi.use.uml.mm.statemachines.MRegion;
-import org.tzi.use.uml.mm.statemachines.MState;
-import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.mm.statemachines.MVertex;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.uml.mm.statemachines.*;
 import org.w3c.dom.Element;
 
-import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
-import com.ximpleware.XPathEvalException;
-import com.ximpleware.XPathParseException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.*;
 
 /**
  * @author Lars Hamann
@@ -108,16 +86,16 @@ public class StateMachineDiagram extends DiagramView {
 	private int minStateNodeHeight;
 	private int minStateNodeWidth;
 	
-	public StateMachineDiagram(StateMachineDiagramView parent, PrintWriter log) {
-		this(parent, log, new StateMachineDiagramOptions(Paths.get(parent.getSystem().model().filename())));
+	public StateMachineDiagram(StateMachineDiagramView parent, UserOutput output) {
+		this(parent, output, new StateMachineDiagramOptions(Paths.get(parent.getSystem().model().filename())));
 	}
 	
 	/**
 	 * @param opt
-	 * @param log
+	 * @param output
 	 */
-	public StateMachineDiagram(StateMachineDiagramView parent, PrintWriter log, StateMachineDiagramOptions opt) {
-		super(opt, log);
+	public StateMachineDiagram(StateMachineDiagramView parent, UserOutput output, StateMachineDiagramOptions opt) {
+		super(opt, output);
 		this.parentView = parent;
 		
 		minStateNodeHeight = Integer.parseInt(System.getProperty("use.gui.view.statemachinediagram.state.minheight"));
@@ -410,13 +388,11 @@ public class StateMachineDiagram extends DiagramView {
 						node.restorePlacementInfo(helper, version);
 					}
 				}
-			} catch (XPathEvalException ex) {
-				fLog.append(ex.getMessage());
-			} catch (NavException ex) {
-				fLog.append(ex.getMessage());
+			} catch (XPathEvalException | NavException ex) {
+				output.printlnError(ex.getMessage());
 			}
-		} catch (XPathParseException ex) {
-			fLog.append(ex.getMessage());
+        } catch (XPathParseException ex) {
+			output.printlnError(ex.getMessage());
 		}
 		
 		ap.resetXPath();
@@ -488,13 +464,11 @@ public class StateMachineDiagram extends DiagramView {
 					// Move pointer to xpath position.
 					helper.getNav().pop();
 				}
-			} catch (XPathEvalException ex) {
-				fLog.append(ex.getMessage());
-			} catch (NavException ex) {
-				fLog.append(ex.getMessage());
+			} catch (XPathEvalException | NavException ex) {
+				output.printlnError(ex.getMessage());
 			}
-		} catch (XPathParseException ex) {
-			fLog.append(ex.getMessage());
+        } catch (XPathParseException ex) {
+			output.printlnError(ex.getMessage());
 		}
 		
 		ElementFactory f = new ElementFactory();

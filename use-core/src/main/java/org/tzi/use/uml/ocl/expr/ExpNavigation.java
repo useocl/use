@@ -19,9 +19,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.CollectionType;
@@ -34,6 +31,9 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.StringUtil;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Navigation expression from one class to another.
@@ -60,7 +60,7 @@ public final class ExpNavigation extends Expression {
         if (theQualifierExpressions == null) {
         	this.qualifierExpressions = new Expression[0];
         } else {
-        	this.qualifierExpressions = theQualifierExpressions.toArray(new Expression[theQualifierExpressions.size()]);
+        	this.qualifierExpressions = theQualifierExpressions.toArray(new Expression[0]);
         }
                 
         if ( !objExp.type().isKindOfClassifier(VoidHandling.EXCLUDE_VOID) )
@@ -70,7 +70,7 @@ public final class ExpNavigation extends Expression {
         
         if (!src.hasQualifiers() && qualifierExpressions.length > 0) {
         	throw new ExpInvalidException("The navigation end " + StringUtil.inQuotes(dst.nameAsRolename()) +
-        			" has no defined qualifiers, but qualifer values were provided.");
+        			" has no defined qualifiers, but qualifier values were provided.");
         }
         
         setResultType( dst.getType( objExp.type(), src, qualifierExpressions.length > 0 ) );
@@ -99,7 +99,7 @@ public final class ExpNavigation extends Expression {
             
               
             // get objects at association end
-        	List<Value> qualifierValues = new LinkedList<Value>();
+        	List<Value> qualifierValues = new LinkedList<>();
         		
     		for (Expression exp : this.qualifierExpressions) {
     			qualifierValues.add(exp.eval(ctx));
@@ -163,8 +163,9 @@ public final class ExpNavigation extends Expression {
     
     /**
      * Returns an array of defined qualifier expressions for this navigation.
-     * If no expressions where defined an empty array is returned. 
-     * @return
+     * If no expressions where defined an empty array is returned.
+     *
+     * @return An array of the defined expressions
      */
     public Expression[] getQualifierExpression(){
 		return qualifierExpressions;

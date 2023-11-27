@@ -1,11 +1,8 @@
 package org.tzi.use.parser.testsuite;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.antlr.runtime.Token;
+import org.tzi.use.output.InternalUserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -19,6 +16,11 @@ import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.testsuite.MAssert;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ASTTestCase extends AST {
 	public enum TestResult {
@@ -49,19 +51,18 @@ public class ASTTestCase extends AST {
 	public TestResult execute(MSystem system) throws SemanticException, MSystemException {
 		
 		MSystemState preState = system.state();
-				
+
 		for (AST cmd : statements) {
-			Context ctx = new Context(name.getText(), null, system.varBindings(), null);
+			InternalUserOutput out = new InternalUserOutput();
+
+			Context ctx = new Context(name.getText(), out, system.varBindings(), null);
 			ctx.setModel(system.model());
 			ctx.setIsInsideTestCase(true);
-			
-			StringWriter errors = new StringWriter();
-			ctx.setOut(new PrintWriter(errors));
 			ctx.setSystemState(system.state());
 			
 			// TODO: Generic Interface!
 			if (cmd instanceof ASTAssert) {
-				EvalContext eCtx = new EvalContext(preState, system.state(), system.varBindings(), null, "");
+				EvalContext eCtx = new EvalContext(preState, system.state(), system.varBindings(), VoidUserOutput.getInstance(), "");
 				ASTAssert ass = (ASTAssert)cmd;
 				ctx.setIsAssertExpression(true);
 				
@@ -89,7 +90,7 @@ public class ASTTestCase extends AST {
 					return TestResult.ERROR;
 				}
 				
-				system.execute(mCmd);
+				system.execute(VoidUserOutput.getInstance(), mCmd);
 				
 				if (mCmd instanceof MExitOperationStatement) {
 					// We keep track of the last pre state to allow asserts after

@@ -47,7 +47,7 @@ public class GEvalLoop extends GEvalInstruction implements IGCaller {
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
+			collector.getUserOutput().println(
 					new StringBuilder("evaluating `").append(fInstr)
 							.append("'").toString());
 		
@@ -69,7 +69,7 @@ public class GEvalLoop extends GEvalInstruction implements IGCaller {
         if (fSeqIterator!=null) {
             if (fSeqIterator.hasNext()) {
                 Value seqElem = fSeqIterator.next();
-                collector.detailPrintWriter().println(fInstr.decl().name() + ":=" + seqElem );
+                collector.getUserOutput().println(fInstr.decl().name() + ":=" + seqElem );
                 conf.varBindings().push(fInstr.decl().name(), seqElem);
                 fInstr.instructionList().createEvalInstr().eval( conf, this, collector );
                 conf.varBindings().pop();

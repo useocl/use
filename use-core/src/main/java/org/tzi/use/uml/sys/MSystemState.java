@@ -23,10 +23,14 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
+import org.tzi.use.output.InternalUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
@@ -34,7 +38,6 @@ import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.tzi.use.util.collections.Bag;
@@ -43,8 +46,6 @@ import org.tzi.use.util.collections.HashBag;
 import org.tzi.use.util.collections.Queue;
 import org.tzi.use.util.soil.StateDifference;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -62,43 +63,46 @@ public final class MSystemState {
 	/**
 	 * The name of the system state
 	 */
-	private String fName;
+	private final String fName;
 	
 	/**
 	 * The system related to this state
 	 */
-	private MSystem fSystem;
+	private final MSystem fSystem;
 
 	/**
 	 * The set of all object states.
 	 */
-	private Map<MObject, MObjectState> fObjectStates;
+	private final Map<MObject, MObjectState> fObjectStates;
 	
 	/**
 	 * The set of objects partitioned by class. Must be kept in sync with
 	 * fObjectStates.
 	 */
-	private Multimap<MClass, MObject> fClassObjects;
+	private final Multimap<MClass, MObject> fClassObjects;
 
 	/**
 	 * Mapping of object names to objects to get
 	 * objects by name faster 
 	 */
-	private Map<String, MObject> fObjectNames;
+	private final Map<String, MObject> fObjectNames;
 	
 	/**
 	 * The set of all links partitioned by association.
 	 */
-	private Map<MAssociation, MLinkSet> fLinkSets;
+	private final Map<MAssociation, MLinkSet> fLinkSets;
 
 	/**
 	 * Handles virtual links and attribute values
 	 */
-	private DerivedValueController[] derivedValuesController;
+	private final DerivedValueController[] derivedValuesController;
 	
 	private static final int DVC_DERIVED_ASSOCS = 0;
 	private static final int DVC_UNION_ASSOCS = 1;
 	private static final int DVC_DERIVED_ATTR = 2;
+
+	private static final Logger log = LogManager.getLogger(MSystemState.class.getName());
+
 	/**
 	 * Creates a new system state with no objects and links.
 	 */
@@ -136,8 +140,8 @@ public final class MSystemState {
 		fSystem = x.fSystem;
 
 		// deep copy of object states
-		fObjectStates = new HashMap<MObject, MObjectState>();
-		fObjectNames = new HashMap<String, MObject>();
+		fObjectStates = new HashMap<>();
+		fObjectNames = new HashMap<>();
 		
 		for (Map.Entry<MObject, MObjectState> e : x.fObjectStates.entrySet()) {
 			fObjectStates.put(e.getKey(), new MObjectState(e.getValue()));
@@ -161,7 +165,7 @@ public final class MSystemState {
 	}
 
 	
-	private Object  dirtyLock = new Object();
+	private final Object  dirtyLock = new Object();
 	private boolean derivedIsDirty = true;
 	
 	/**
@@ -173,9 +177,9 @@ public final class MSystemState {
 			if (!this.derivedIsDirty) return;
 			
 			if(forceUpdate || fSystem.isImmediatlyCalculateDerivedValues()) {
-				for (int i = 0; i < derivedValuesController.length; ++i) { 
-					derivedValuesController[i].updateState();
-				}
+                for (DerivedValueController derivedValueController : derivedValuesController) {
+                    derivedValueController.updateState();
+                }
 				this.derivedIsDirty = false;
 			}
 		}
@@ -200,9 +204,9 @@ public final class MSystemState {
 			this.derivedIsDirty = true;
 			
 			if(fSystem.isImmediatlyCalculateDerivedValues()){
-				for (int i = 0; i < derivedValuesController.length; ++i) {
-					derivedValuesController[i].updateState(diff);
-				}
+                for (DerivedValueController derivedValueController : derivedValuesController) {
+                    derivedValueController.updateState(diff);
+                }
 				this.derivedIsDirty = false;
 			}
 		}
@@ -288,10 +292,9 @@ public final class MSystemState {
 	 * @return Set(MObject)
 	 */
 	public Set<MObject> objectsOfClassAndSubClasses(MClass cls) {
-		Set<MObject> res = new HashSet<MObject>();
-		Set<MClass> children = CollectionUtil.downCastUnsafe(cls.allChildren());
-		
-		res.addAll(fClassObjects.get(cls));
+        Set<MClass> children = CollectionUtil.downCastUnsafe(cls.allChildren());
+
+        Set<MObject> res = new HashSet<MObject>(fClassObjects.get(cls));
 		
 		for (MClass c : children) {
 			res.addAll(fClassObjects.get(c));
@@ -437,7 +440,7 @@ public final class MSystemState {
 		
 		if (cls.isAbstract()) {
 			throw new MSystemException(
-					"Cannot create an object of an abtract class!");
+					"Cannot create an object of an abstract class!");
 		}
 		
 		// create new object and initial state
@@ -451,12 +454,12 @@ public final class MSystemState {
 		
 		objState.initialize(this);
 		
-		StringWriter err = new StringWriter();
+		InternalUserOutput err = new InternalUserOutput();
 		boolean valid = true;
 		
 		// Validate initial states of state machines
 		for (MProtocolStateMachineInstance sm : objState.getProtocolStateMachinesInstances()) {
-			valid &= sm.checkStateInvariant(this, new PrintWriter(err));
+			valid &= sm.checkStateInvariant(this, err);
 		}
 
 		if (!valid) {
@@ -465,7 +468,7 @@ public final class MSystemState {
 			fObjectNames.remove(obj.name());
 			fSystem.deleteObject(obj);
 			
-			throw new MSystemException("Object creation failed:\n" + err.toString());
+			throw new MSystemException("Object creation failed:\n" + err.getOutput());
 		}
 		
 		return obj;
@@ -594,10 +597,10 @@ public final class MSystemState {
 			
 		}
 		
-		private Set<MLink> removedLinks = new HashSet<MLink>();
-		private Set<MObject> removedObjects = new HashSet<MObject>();
-		private Set<MObjectState> removedObjectStates = new HashSet<MObjectState>();
-		private Set<ObjectStateModification> stateModifications = new HashSet<ObjectStateModification>();
+		private final Set<MLink> removedLinks = new HashSet<MLink>();
+		private final Set<MObject> removedObjects = new HashSet<MObject>();
+		private final Set<MObjectState> removedObjectStates = new HashSet<MObjectState>();
+		private final Set<ObjectStateModification> stateModifications = new HashSet<ObjectStateModification>();
 		
 		public Set<MLink> getRemovedLinks()
 		{
@@ -723,11 +726,11 @@ public final class MSystemState {
 	 * @exception MSystemException link invalid or already existing
 	 * @return the newly created link.
 	 */
-	public MLink createLink(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
+	public MLink createLink(UserOutput output, MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues)
 			throws MSystemException {
 		
 		MLink link = null;
-		StringWriter sw = new StringWriter();
+		InternalUserOutput out = new InternalUserOutput();
 
 		if(assoc.isDerived()){
 			throw new MSystemException("Cannot create link for association with derived end.");
@@ -735,8 +738,8 @@ public final class MSystemState {
 		
 		validateLinkQualifiers(assoc, qualifierValues);
 		
-		if (!validateRedefinesForLink(assoc, objects, new PrintWriter(sw))) {
-			throw new MSystemException(sw.toString());
+		if (!validateRedefinesForLink(assoc, objects, out)) {
+			throw new MSystemException(out.getOutput());
 		}
 		
 		// checks if assoc is an associationclass
@@ -774,38 +777,35 @@ public final class MSystemState {
 			fWholePartLinkGraph.add(target);
 			
 			// the link is irreflexive
-			if (wholePartLink.isReflexive())
-				Log.warn("Warning: Object `" + source.name()
-						+ "' cannot be a part of itself.");
+			if (wholePartLink.isReflexive()) {
+				output.printlnWarn("Warning: Object `%s' cannot be a part of itself.".formatted(source.name()));
+			}
 			
-			// check for SHARED OBJECT OF THE COMPOSION RELATIONSHIP
+			// check for SHARED OBJECT OF THE COMPOSITION RELATIONSHIP
 			if (assoc.aggregationKind() == MAggregationKind.COMPOSITION) {
 				// finding all edges (links) whose target is the target object
 				// of the new link
-				Iterator<MObject> sourceEdgeIter = fWholePartLinkGraph.sourceNodeSet(target).iterator();
-				
-				while (sourceEdgeIter.hasNext()) {
-					Iterator<MWholePartLink> iter = fWholePartLinkGraph.edgesBetween(target,
-							sourceEdgeIter.next()).iterator();
-					
-					while (iter.hasNext()) {
-						MLink l = iter.next();
-						if (l.association().aggregationKind() == MAggregationKind.COMPOSITION && 
-							!associationsHaveSubsetsRelation(l.association(), assoc) &&
-							!associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
-							Log.warn("Warning: Insert has resulted in two aggregates for object `"
-									 + target.name()
-									 + "'. Object `"
-									 + target.name()
-									 + "' is already component of another object.");
-						}
-					}
-				}
+
+                for (MObject mObject : fWholePartLinkGraph.sourceNodeSet(target)) {
+
+                    for (MLink l : fWholePartLinkGraph.edgesBetween(target,
+                            mObject)) {
+                        if (l.association().aggregationKind() == MAggregationKind.COMPOSITION &&
+                                !associationsHaveSubsetsRelation(l.association(), assoc) &&
+                                !associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
+                            output.printlnWarn("Warning: Insert has resulted in two aggregates for object `"
+                                    + target.name()
+                                    + "'. Object `"
+                                    + target.name()
+                                    + "' is already component of another object.");
+                        }
+                    }
+                }
 			}
 			// check for cycles that might be occurred when adding the new
 			// whole/part link
 			if (fWholePartLinkGraph.existsPath(target, source))
-				Log.warn("Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `"
+				output.printlnWarn("Warning: Insert has resulted in a cycle in the part-whole hierarchy. Object `"
 								+ source.name()
 								+ "' is a direct or indirect part of `"
 								+ target.name() + "'.");
@@ -832,7 +832,7 @@ public final class MSystemState {
 	 * that is a more specific redefinition.
 	 * The redefinition constraint must be suitable for the given list of <code>objects</code>.
 	 **/
-	private boolean validateRedefinesForLink(MAssociation assoc, List<MObject> objects, PrintWriter err) {
+	private boolean validateRedefinesForLink(MAssociation assoc, List<MObject> objects, UserOutput out) {
 		final Set<MAssociation> redefinedBy = assoc.getRedefinedByClosure();
 		
 		// Number of ends equals (checked during model creation)
@@ -858,24 +858,19 @@ public final class MSystemState {
 					continue;
 				} else if (!checkAgainstEnd.cls().equals(childEnd.cls()) && 
 					objects.get(i).cls().isSubClassOf(redefiningAssoc.associationEnds().get(i).cls() ) ) {
-					if (err != null) {
-						err.print("The link of the association ");
-						err.print(StringUtil.inQuotes(assoc));
-						err.print(" with the participants (");
-						err.print(StringUtil.fmtSeq(objects, ",", new IElementFormatter<MObject>() {
-							@Override
-							public String format(MObject element) {
-								return element.name() + ":" + element.cls().name();
-							}} ));
-						err.print(") is invalid, because the association is redefined by ");
-						err.print(StringUtil.inQuotes(redefiningAssoc.name()));
-						err.print(" with ends (");
-						err.print(StringUtil.fmtSeq(redefiningAssoc.associationEnds(), ",", new IElementFormatter<MAssociationEnd>() {
-							@Override
-							public String format(MAssociationEnd element) {
-								return element.name() + ":" + element.cls().name();
-							}} ));
-						err.print(").");
+					if (out != null) {
+						out.printError("The link of the association ");
+						out.printError(StringUtil.inQuotes(assoc));
+						out.printError(" with the participants (");
+						out.printError(StringUtil.fmtSeq(
+								objects, ",", element -> element.name() + ":" + element.cls().name()));
+						out.printError(") is invalid, because the association is redefined by ");
+						out.printError(StringUtil.inQuotes(redefiningAssoc.name()));
+						out.printError(" with ends (");
+						out.printError(StringUtil.fmtSeq(
+								redefiningAssoc.associationEnds(),
+								",", element -> element.name() + ":" + element.cls().name()));
+						out.printError(").");
 					}
 									
 					return false;
@@ -889,11 +884,12 @@ public final class MSystemState {
 	/**
 	 * Validates all links of the association if they confirm to the redefinition constraints. 
 	 * @param assoc The association to validate the redefines constraints for.
-	 * @param out PrintWriter to print error messages to. Can be <code>null</code>.
-	 * @param reportAllErrors If <code>true</code>, all errors are written to <code>out</code>. Otherwise the validation stops at the first error.
+	 * @param out UserOutput to print error messages to. Can be <code>null</code>.
+	 * @param reportAllErrors If <code>true</code>, all errors are written to <code>out</code>.
+	 *                        Otherwise, the validation stops at the first error.
 	 * @return
 	 */
-	private boolean validateRedefines(MAssociation assoc, PrintWriter out, boolean reportAllErrors) {
+	private boolean validateRedefines(MAssociation assoc, UserOutput out, boolean reportAllErrors) {
 		final Set<MAssociation> redefinedBy = assoc.getRedefinedByClosure();
 
 		if (redefinedBy.isEmpty()) {
@@ -977,7 +973,7 @@ public final class MSystemState {
 		}
 	}
 	
-	private DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = new DirectedGraphBase<MObject, MWholePartLink>();
+	private final DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = new DirectedGraphBase<MObject, MWholePartLink>();
 	
 	/**
 	 * The graph to store the information of the whole/part hierachy.
@@ -1073,9 +1069,10 @@ public final class MSystemState {
 		}
 		
 		validateLinkQualifiers(assocClass, qualifierValues);
-		StringWriter sw = new StringWriter();
-		if (!validateRedefinesForLink(assocClass, objects, new PrintWriter(sw))) {
-			throw new MSystemException(sw.toString());
+
+		InternalUserOutput out = new InternalUserOutput();
+		if (!validateRedefinesForLink(assocClass, objects, out)) {
+			throw new MSystemException(out.getOutput());
 		}
 		
 		MLinkObject linkobj = new MLinkObjectImpl(assocClass, name, objects, qualifierValues);
@@ -1094,12 +1091,12 @@ public final class MSystemState {
 
 		objState.initialize(this);
 		
-		StringWriter err = new StringWriter();
+		InternalUserOutput err = new InternalUserOutput();
 		boolean valid = true;
 		
 		// Validate initial states of state machines
 		for (MProtocolStateMachineInstance sm : objState.getProtocolStateMachinesInstances()) {
-			valid &= sm.checkStateInvariant(this, new PrintWriter(err));
+			valid &= sm.checkStateInvariant(this, err);
 		}
 
 		if (!valid) {
@@ -1107,7 +1104,7 @@ public final class MSystemState {
 			fClassObjects.remove(assocClass, linkobj);
 			fObjectNames.remove(linkobj.name());
 			
-			throw new MSystemException("Object creation failed:\n" + err.toString());
+			throw new MSystemException("Object creation failed:\n" + err.getOutput());
 		}
 
 		linkSet.add(linkobj);
@@ -1177,8 +1174,8 @@ public final class MSystemState {
 			// get link set for association
 			linkSet = fLinkSets.get(assoc);
 			
-			if (Log.isTracing())
-				Log.trace(this, "linkSet size of association `" + assoc.name() + "' = " + linkSet.size());
+			if (log.isDebugEnabled())
+				log.debug("linkSet size of association `" + assoc.name() + "' = " + linkSet.size());
 
 			// if link set is empty return empty result list	
 			if (linkSet.size() == 0)
@@ -1186,9 +1183,9 @@ public final class MSystemState {
 	
 			// select links with srcEnd == obj
 			Set<MLink> links = linkSet.select(srcEnd, obj);
-			
-			if (Log.isTracing())
-				Log.trace(this, "linkSet.select for object `" + obj + "', size = " + links.size());
+
+			if (log.isDebugEnabled())
+				log.debug("linkSet.select for object `" + obj + "', size = " + links.size());
 	
 			// project tuples to destination end component
 			for (MLink link : links) {
@@ -1249,9 +1246,10 @@ public final class MSystemState {
 		
 		// Links are computed by the union of all subsets
 		if (assoc.isUnion()) {
-			if (Log.isDebug()) {
-				Log.debug("getNavigableObjects for union [obj=" + obj + "; src=" + src + ";  dst=" + dst);
+			if (log.isDebugEnabled()) {
+				log.debug("getNavigableObjects for union [obj=" + obj + "; src=" + src + ";  dst=" + dst);
 			}
+
 			Set<MObject> tmpResult = new HashSet<MObject>();
 
 			for (MAssociation subsettingAssoc : dst.association().children()) {
@@ -1281,13 +1279,13 @@ public final class MSystemState {
 		} 
 		
 		if (assoc.isDerived()) {
-			if (Log.isDebug()) {
-				Log.debug("getNavigableObjects for derived [obj=" + obj + "; src=" + src + ";  dst=" + dst + "]");
+			if (log.isDebugEnabled()) {
+				log.debug("getNavigableObjects for derived [obj=" + obj + "; src=" + src + ";  dst=" + dst + "]");
 			}
 			res = getNavigableObjectsFromDerivedAssociation(obj, src, dst);
 		} else {
-			if (Log.isDebug()) {
-				Log.debug("getNavigableObjects normal [obj=" + obj + "; src=" + src + ";  dst=" + dst);
+			if (log.isDebugEnabled()) {
+				log.debug("getNavigableObjects normal [obj=" + obj + "; src=" + src + ";  dst=" + dst);
 			}
 			res = new ArrayList<MObject>();
 			
@@ -1295,8 +1293,8 @@ public final class MSystemState {
 			MLinkSet linkSet = linksOfAssociation(assoc);
 
 			// if link set is empty return empty result list
-			if (Log.isTracing()) {
-				Log.trace(this, "linkSet size of association `" + assoc.name() + "' = " + linkSet.size());
+			if (log.isDebugEnabled()) {
+				log.debug("linkSet size of association `" + assoc.name() + "' = " + linkSet.size());
 			}
 
 			if (linkSet.size() > 0) {
@@ -1313,9 +1311,9 @@ public final class MSystemState {
 					MAssociationEnd srcEnd = (MAssociationEnd) src;
 					// select links with srcEnd == obj
 					Set<MLink> links = linkSet.select(srcEnd, obj, qualifierValues, excludeDerivedLinks);
-	
-					if (Log.isTracing()) {
-						Log.trace(this, "linkSet.select for object `" + obj + "', size = " + links.size());
+
+					if (log.isDebugEnabled()) {
+						log.debug("linkSet.select for object `" + obj + "', size = " + links.size());
 					}
 	
 					// navigation to a linkobject
@@ -1360,7 +1358,7 @@ public final class MSystemState {
 		return res;
 	}
 
-	protected ArrayList<MObject> getNavigableObjectsFromDerivedAssociation(MObject obj, MNavigableElement src, MNavigableElement dst) {
+	private ArrayList<MObject> getNavigableObjectsFromDerivedAssociation(UserOutput output, MObject obj, MNavigableElement src, MNavigableElement dst) {
 		ArrayList<MObject> res = new ArrayList<MObject>();
 		
 		// Get all linked objects by evaluating the derive expression
@@ -1436,15 +1434,15 @@ public final class MSystemState {
 		for (MObject[] sourceObjects : toEvaluate) {
 			List<MObject> linkedObjects;
 			try {
-				linkedObjects = evaluateDeriveExpression(sourceObjects, derivedEnd);
+				linkedObjects = evaluateDeriveExpression(output, sourceObjects, derivedEnd);
 			} catch (StackOverflowError e) {
-				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a stack overflow!\nMaybe an infinite recursion is defined.");
+				output.printlnError("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a stack overflow!\nMaybe an infinite recursion is defined.");
 				continue;
 			} catch (RuntimeException e) {
-				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());
+				output.printlnError("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a runtime exception: " + e.getMessage());
 				continue;
 			} catch (MSystemException e) {
-				Log.error("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a system exception: " + e.getMessage());
+				output.printlnError("Derive expression of association end " + StringUtil.inQuotes(derivedEnd) + " let to a system exception: " + e.getMessage());
 				continue;
 			}
 			
@@ -1454,7 +1452,7 @@ public final class MSystemState {
 			} else if (dst.isDerived()) {
 				res.addAll(linkedObjects);
 			} else {
-				if (linkedObjects.size() > 0)
+				if (!linkedObjects.isEmpty())
 					res.add(sourceObjects[dstIndex]);
 			}
 		}
@@ -1462,10 +1460,10 @@ public final class MSystemState {
 		return res;
 	}
 
-	Value evaluateInitExpression(MObject self, Expression initExp) {
+	Value evaluateInitExpression(UserOutput output, MObject self, Expression initExp) {
 		// no variables in context
 		VarBindings vars = new VarBindings();
-		EvalContext ctx = new SimpleEvalContext(this, this, vars);
+		EvalContext ctx = new SimpleEvalContext(this, this, vars, output);
 		ctx.pushVarBinding("self", self.value());
 		
         Value res = null;
@@ -1478,9 +1476,9 @@ public final class MSystemState {
         return res;
 	}
 	
-	List<MObject> evaluateDeriveExpression(MObject[] source, MAssociationEnd dst) throws MSystemException {
+	List<MObject> evaluateDeriveExpression(UserOutput out, MObject[] source, MAssociationEnd dst) throws MSystemException {
 		// add the object values to the context
-		EvalContext ctx = new SimpleEvalContext(MSystemState.this, MSystemState.this, new VarBindings());
+		EvalContext ctx = new SimpleEvalContext(MSystemState.this, MSystemState.this, new VarBindings(), out);
 		List<MObject> result = new LinkedList<>();
 		
 		for (int i = 0; i < source.length; ++i) {
@@ -1522,24 +1520,26 @@ public final class MSystemState {
     	return result;
 	}
 
-	public Value evaluateDeriveExpression(final ObjectValue source, final MAttribute attribute) {
-		final EvalContext ctx = new SimpleEvalContext(this, this, system().varBindings());
+	public Value evaluateDeriveExpression(final UserOutput output, final ObjectValue source, final MAttribute attribute) {
+		final EvalContext ctx = new SimpleEvalContext(this, this, system().varBindings(), output);
     	
         ctx.pushVarBinding("self", source);
 		try {
 			return attribute.getDeriveExpression().eval(ctx);
 		} catch (StackOverflowError e) {
-			Log.error("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) + " let to a stack overflow!\nMaybe an infinite recursion is defined.");
+			output.printlnError("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) +
+					" let to a stack overflow!\nMaybe an infinite recursion is defined.");
 		} catch (RuntimeException e) {
-			Log.error("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) + " let to a runtime exception: " + e.getMessage());
+			output.printlnError("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) +
+					" let to a runtime exception: " + e.getMessage());
 		}
 		return UndefinedValue.instance;
 	}
 	
-	public Value evaluateDeriveExpression(final MObject source, final MAttribute attribute) {
+	public Value evaluateDeriveExpression(final UserOutput output, final MObject source, final MAttribute attribute) {
 		final ObjectValue objVal = new ObjectValue(source.cls(), source);
 		
-    	return evaluateDeriveExpression(objVal, attribute);
+    	return evaluateDeriveExpression(output, objVal, attribute);
 	}
 	
 	/**
@@ -1547,7 +1547,7 @@ public final class MSystemState {
 	 * all objects. Prints result of subexpressions for failing constraints to
 	 * the log if traceEvaluation is true. - Checks the whole/part hierarchy.
 	 */
-	public boolean check(PrintWriter out, boolean traceEvaluation,
+	public boolean check(UserOutput out, boolean traceEvaluation,
 			boolean showDetails, boolean allInvariants, final List<String> invNames) {
 		boolean valid = true;
 		Evaluator evaluator = new Evaluator();
@@ -1563,8 +1563,7 @@ public final class MSystemState {
 					+ " concurrent threads)...");
 		else
 			out.println("checking invariants...");
-		
-		out.flush();
+
 		int numChecked = 0;
 		int numFailed = 0;
 		long tAll = System.currentTimeMillis();
@@ -1596,8 +1595,8 @@ public final class MSystemState {
 			if (inv.isNegated()) {
 				try {
 					Expression[] args = { expr };
-					Expression expr1 = ExpStdOp.create("not", args);
-					expr = expr1;
+					expr = ExpStdOp.create(out,"not", args);
+
 				} catch (ExpInvalidException e) {
 					// This cannot happen, since in invariant is a boolean expression 
 					// (checked by MClassInvariant constructor)
@@ -1621,7 +1620,7 @@ public final class MSystemState {
 			String msg = "checking invariant (" + numChecked + ") `"
 					+ inv.cls().name() + "::" + inv.name() + "': ";
 			out.print(msg); // + inv.bodyExpression());
-			out.flush();
+
 			try {
 				Value v = (Value) resultValues.get();
 
@@ -1675,14 +1674,14 @@ public final class MSystemState {
 		out.println("checked " + numChecked + " invariant"
 				+ ((numChecked == 1) ? "" : "s") + (Options.testMode ? "" : " in " + timeStr) + ", "
 				+ numFailed + " failure" + ((numFailed == 1) ? "" : "s") + '.');
-		out.flush();
+
 		return valid;
 	}
 
 	/**
 	 * Checks the whole/part hierarchy.
 	 */
-	private boolean checkWholePartLink(PrintWriter out) {
+	private boolean checkWholePartLink(UserOutput out) {
 		boolean valid = true;
 		boolean isCyclic = false;
 		DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = getWholePartLinkGraph();
@@ -1700,7 +1699,7 @@ public final class MSystemState {
 			// the link is irreflexive
 			// ****************************************************************
 			if (wholePartLink.isReflexive()) {
-				out.println("Error: Object `" + source.name()
+				out.printlnError("Error: Object `" + source.name()
 						+ "' cannot be a part of itself.");
 				valid = false;
 			}
@@ -1721,7 +1720,7 @@ public final class MSystemState {
 							
 							if (!associationsHaveSubsetsRelation(l.association(), wholePartLink.association()) &&
 								!associationsHaveRedefinitionRelation(l.association(), wholePartLink.association())) {
-								out.println("Error: Object `" + target.name()
+								out.printlnError("Error: Object `" + target.name()
 										+ "' is shared by object `" + source.name()
 										+ "' and object `" + tmpSource.name()
 										+ "'.");
@@ -1738,7 +1737,7 @@ public final class MSystemState {
 			// ****************************************************************
 			if (!isCyclic && fWholePartLinkGraph.existsPath(target, source)) {
 				out
-						.println("Error: There is a cycle in the part-whole hierarchy. Object `"
+						.printlnError("Error: There is a cycle in the part-whole hierarchy. Object `"
 								+ source.name()
 								+ "' is a direct or indirect part of `"
 								+ target.name() + "'.");
@@ -1779,7 +1778,7 @@ public final class MSystemState {
 	 * Checks model inherent constraints, i.e., checks whether cardinalities of
 	 * association links match their declaration of multiplicities.
 	 */
-	public boolean checkStructure(PrintWriter out) {
+	public boolean checkStructure(UserOutput out) {
 		return checkStructure(out, true);
 	}
 	
@@ -1787,13 +1786,12 @@ public final class MSystemState {
 	 * Checks model inherent constraints, i.e., checks whether cardinalities of
 	 * association links match their declaration of multiplicities.
 	 */
-	public boolean checkStructure(PrintWriter out, boolean reportAllErrors) {
+	public boolean checkStructure(UserOutput out, boolean reportAllErrors) {
 		long start = System.currentTimeMillis();
 		
 		boolean res = true;
 		out.println("checking structure...");
-		out.flush();
-		
+
 		updateDerivedValues(true);
 		
 		// check the whole/part hierarchy
@@ -1808,8 +1806,6 @@ public final class MSystemState {
 			if (!reportAllErrors && !res) return false;
 		}
 
-		out.flush();
-
 		if (!Options.testMode) {
 			long duration = System.currentTimeMillis() - start;
 			out.println(String.format("checked structure in %,dms.", duration));
@@ -1823,7 +1819,7 @@ public final class MSystemState {
 	 * association links match their declaration of multiplicities.
 	 * Further, subsetting and redefine constraints are validated.
 	 */
-	public boolean checkStructure(MAssociation assoc, PrintWriter out, boolean reportAllErrors) {
+	public boolean checkStructure(MAssociation assoc, UserOutput out, boolean reportAllErrors) {
 		boolean res = true;
 		
 		res = validateRedefines(assoc, out, reportAllErrors);
@@ -1843,11 +1839,10 @@ public final class MSystemState {
 			res = validateBinaryAssociations(out, assoc, aend2, aend1, reportAllErrors) && res;
 		}
 
-		out.flush();
 		return res;
 	}
 
-	private boolean naryAssociationsAreValid(PrintWriter out, MAssociation assoc, boolean reportAllErrors) {
+	private boolean naryAssociationsAreValid(UserOutput out, MAssociation assoc, boolean reportAllErrors) {
 		boolean valid = true;
 		Set<MLink> links = linksOfAssociation(assoc).links();
 
@@ -1878,13 +1873,13 @@ public final class MSystemState {
 						++count;
 				}
 				if (!selEnd.multiplicity().contains(count)) {
-					out.println("Multiplicity constraint violation in association `"
+					out.printlnError("Multiplicity constraint violation in association `"
 									+ assoc.name() + "':");
-					out.println("  Objects `" + StringUtil.fmtSeq(tuple, ", ")
+					out.printlnError("  Objects `" + StringUtil.fmtSeq(tuple, ", ")
 							+ "' are connected to " + count + " object"
 							+ ((count == 1) ? "" : "s") + " of class `"
 							+ selEnd.cls().name() + "'");
-					out.println("  but the multiplicity is specified as `"
+					out.printlnError("  but the multiplicity is specified as `"
 							+ selEnd.multiplicity() + "'.");
 					valid = false;
 				}
@@ -1903,7 +1898,7 @@ public final class MSystemState {
 	 */
 	public Bag<MObject[]> getCrossProductOfInstanceSets(List<MClass> classes) {
 		Bag<MObject[]> bag = new HashBag<MObject[]>();
-		insertAllNMinusOneTuples(bag, classes.toArray(new MClass[classes.size()]), 0, new MObject[0]);
+		insertAllNMinusOneTuples(bag, classes.toArray(new MClass[0]), 0, new MObject[0]);
 		return bag;
 	}
 
@@ -1913,8 +1908,7 @@ public final class MSystemState {
 		if (index < classes.length) {
 			MClass next = classes[index];
 			MObject[] objects1 = new MObject[objects.length + 1];
-			for (int i = 0; i < objects.length; ++i)
-				objects1[i] = objects[i];
+            System.arraycopy(objects, 0, objects1, 0, objects.length);
 
 			for (MObject obj : objectsOfClassAndSubClasses(next)) {
 				objects1[objects.length] = obj;
@@ -1926,7 +1920,7 @@ public final class MSystemState {
 		}
 	}
 
-	private boolean validateBinaryAssociations(PrintWriter out, MAssociation assoc, 
+	private boolean validateBinaryAssociations(UserOutput out, MAssociation assoc,
 			MAssociationEnd aend1, MAssociationEnd aend2, boolean reportAllErrors) {
 		boolean valid = true;
 
@@ -1938,7 +1932,7 @@ public final class MSystemState {
 		for (MObject obj : objects) {
 			Map<List<Value>,Set<MObject>> linkedObjects = getLinkedObjects(obj, aend1, aend2);
 			
-			if (linkedObjects.size() == 0 && !aend2.multiplicity().contains(0)) {
+			if (linkedObjects.isEmpty() && !aend2.multiplicity().contains(0)) {
 				reportMultiplicityViolation(out, assoc, aend1, aend2, obj, null);
 				if (!reportAllErrors) {
 					return false;
@@ -1969,7 +1963,7 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Writes informations about a multiplicity violation to <code>out</code>.
+	 * Writes information about a multiplicity violation to <code>out</code>.
 	 * @param out <code>PrintWriter</code> to write the message to.
 	 * @param assoc The <code>MAssociation</code> the multiplicity is violated.
 	 * @param aend1 The <code>MAssociationEnd</code> at the end <code>obj</code>.
@@ -1977,31 +1971,28 @@ public final class MSystemState {
 	 * @param obj The <code>MObject</code> which is validated.
 	 * @param entry A <code>HashMap.Entry</code> with the linked objects. Can be null (no links)
 	 */
-	protected void reportMultiplicityViolation(PrintWriter out,
+	protected void reportMultiplicityViolation(UserOutput out,
 			MAssociation assoc, MAssociationEnd aend1, MAssociationEnd aend2,
 			MObject obj, Map.Entry<List<Value>, Set<MObject>> entry) {
-		
-		if (out == NullPrintWriter.getInstance()) return;
-		
+
 		int n = (entry == null ? 0 : entry.getValue().size());
 		
-		out.println("Multiplicity constraint violation in association " + 
+		out.printlnError("Multiplicity constraint violation in association " +
 				StringUtil.inQuotes(assoc.name()) + ":");
-		out.println("  Object " + StringUtil.inQuotes(obj.name()) + " of class "
+		out.printlnError("  Object " + StringUtil.inQuotes(obj.name()) + " of class "
 				+ StringUtil.inQuotes(obj.cls().name()) + " is connected to " + n
 				+ " object" + ((n == 1) ? "" : "s") + " of class "
 				+ StringUtil.inQuotes(aend2.cls().name()));
-		out.print("  at association end " + StringUtil.inQuotes(aend2.nameAsRolename()) + " ");
+		out.printError("  at association end " + StringUtil.inQuotes(aend2.nameAsRolename()) + " ");
 		if (aend1.hasQualifiers() && entry != null) {
-			out.print(" with the qualifier value");
+			out.printError(" with the qualifier value");
 			if (entry.getKey().size() > 1) out.print("s");
-			out.print(" [");
-			out.print(StringUtil.fmtSeq(entry.getKey(), ","));
-			out.println("]");
-			out.print("  ");
+			out.printError(" [");
+			out.printError(StringUtil.fmtSeq(entry.getKey(), ","));
+			out.printlnError("]");
+			out.printError("  ");
 		}
-		out.println("but the multiplicity is specified as `"
-				+ aend2.multiplicity() + "'.");
+		out.printlnError("but the multiplicity is specified as `" + aend2.multiplicity() + "'.");
 	}
 
 	/**
@@ -2013,7 +2004,7 @@ public final class MSystemState {
 	 * @param aend
 	 * @return
 	 */
-	private boolean validateSubsets(PrintWriter out, MObject obj,
+	private boolean validateSubsets(UserOutput out, MObject obj,
 			List<Value> qualifierValues, Set<MObject> linkedObjects,
 			MAssociationEnd aend) {
 		boolean valid = true;
@@ -2031,10 +2022,10 @@ public final class MSystemState {
 				// Which objects are missing?
 				linkedObjects.removeAll(parentObjectList);
 				
-				out.println("Constraint 'subsets " + subEnd1.association().name() + ":" + subEnd1.nameAsRolename() + "' on association end " + aend.nameAsRolename() + 
+				out.printlnError("Constraint 'subsets " + subEnd1.association().name() + ":" + subEnd1.nameAsRolename() + "' on association end " + aend.nameAsRolename() +
 						    ":" + aend.association().name() + " is violated on object " + obj.toString() + ":" + obj.cls().name());
 				
-				out.println("Missing linked object" + (linkedObjects.size() > 1 ? "s" : "") + ": " + StringUtil.fmtSeq(linkedObjects.iterator(), ", "));
+				out.printlnError("Missing linked object" + (linkedObjects.size() > 1 ? "s" : "") + ": " + StringUtil.fmtSeq(linkedObjects.iterator(), ", "));
 				
 				valid = false;
 			}
@@ -2066,9 +2057,9 @@ public final class MSystemState {
 	}
 
 	/**
-	 * @param out
+	 * @param out The <code>UserOutput</code> to write errors, warnings etc. to.
 	 */
-	public void checkStateInvariants(@NonNull PrintWriter out) {
+	public void checkStateInvariants(@NonNull UserOutput out) {
 		boolean error = false;
 		int checkedStateMachines = 0;
 		long start = System.currentTimeMillis();

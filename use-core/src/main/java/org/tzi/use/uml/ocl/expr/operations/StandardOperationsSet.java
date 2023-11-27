@@ -54,7 +54,13 @@ final class Op_set_union extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public ParamInfo[] {
+
+	}
+
+	public Type matches(Type[] params) {
+
+
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() && 
 			params[1].isTypeOfSet()) {

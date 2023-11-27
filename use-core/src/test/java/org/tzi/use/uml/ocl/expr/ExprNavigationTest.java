@@ -19,23 +19,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
@@ -44,12 +34,10 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.ObjectCreation;
-import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
-import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
-import org.tzi.use.uml.sys.soil.MSequenceStatement;
+import org.tzi.use.uml.sys.soil.*;
+
+import java.io.StringWriter;
+import java.util.*;
 
 
 /**
@@ -77,12 +65,12 @@ public class ExprNavigationTest extends TestCase {
         List<MAssociationEnd> assocEnds = system.model().getAssociation( "Job" ).associationEnds();
         MAssociationEnd personEnd = null;
         MAssociationEnd companyEnd = null;
-        for ( int i = 0; i < assocEnds.size(); i++ ) {
-            MAssociationEnd ae = assocEnds.get( i );
-            if ( ae.cls().name().equals( "Person" ) ) {
+
+        for (MAssociationEnd ae : assocEnds) {
+            if (ae.cls().name().equals("Person")) {
                 personEnd = ae;
             }
-            if ( ae.cls().name().equals( "Company" ) ) {
+            if (ae.cls().name().equals("Company")) {
                 companyEnd = ae;
             }
         }
@@ -91,10 +79,11 @@ public class ExprNavigationTest extends TestCase {
 
             Expression srcExpr = new ExpVariable( "p1", system.model().getClass( "Person" ) );
 
-            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.<Expression>emptyList() );
+            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.emptyList() );
+
             Value val = nav.eval( new EvalContext( null, system.state(),
-                                                   system.varBindings(), 
-                                                   null, "") );
+                    system.varBindings(),
+                    VoidUserOutput.getInstance(), "") );
 
             assertTrue( val.isObject() );
             assertEquals( "c1", ( ( ObjectValue ) val ).value().name() );
@@ -108,12 +97,12 @@ public class ExprNavigationTest extends TestCase {
         List<MAssociationEnd> assocEnds = system.model().getAssociation( "Job" ).associationEnds();
         MAssociationEnd personEnd = null;
         MAssociationEnd companyEnd = null;
-        for ( int i = 0; i < assocEnds.size(); i++ ) {
-            MAssociationEnd ae = assocEnds.get( i );
-            if ( ae.cls().name().equals( "Person" ) ) {
+
+        for (MAssociationEnd ae : assocEnds) {
+            if (ae.cls().name().equals("Person")) {
                 personEnd = ae;
             }
-            if ( ae.cls().name().equals( "Company" ) ) {
+            if (ae.cls().name().equals("Company")) {
                 companyEnd = ae;
             }
         }
@@ -122,10 +111,10 @@ public class ExprNavigationTest extends TestCase {
 
             Expression srcExpr = new ExpVariable( "p1", system.model().getClass( "Person" ) );
 
-            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.<Expression>emptyList() );
+            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, companyEnd, Collections.emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(),
-                                                   null, "" ) );
+                                                   VoidUserOutput.getInstance(), "" ) );
 
             assertTrue( val.isSet() );
             assertEquals( 4, ( ( SetValue ) val ).size() );
@@ -151,9 +140,8 @@ public class ExprNavigationTest extends TestCase {
         MAssociationClass job = system.model().getAssociationClass( "Job" );
         List<MAssociationEnd> assocEnds = job.associationEnds();
         MAssociationEnd personEnd = null;
-        for ( int i = 0; i < assocEnds.size(); i++ ) {
-            MAssociationEnd ae = assocEnds.get( i );
-            if ( ae.cls().name().equals( "Person" ) ) {
+        for (MAssociationEnd ae : assocEnds) {
+            if (ae.cls().name().equals("Person")) {
                 personEnd = ae;
             }
         }
@@ -163,10 +151,10 @@ public class ExprNavigationTest extends TestCase {
 
             Expression srcExpr = new ExpVariable( "p1", system.model().getClass( "Person" ) );
 
-            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, job, Collections.<Expression>emptyList() );
+            ExpNavigation nav = new ExpNavigation( srcExpr, personEnd, job, Collections.emptyList() );
             Value val = nav.eval( new EvalContext( null, system.state(),
                                                    system.varBindings(), 
-                                                   null, "" ) );
+                                                   VoidUserOutput.getInstance(), "" ) );
 
             assertTrue( val.isObject() );
             assertEquals( "j1", val.toString());
@@ -187,7 +175,7 @@ public class ExprNavigationTest extends TestCase {
             MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
             MModel model = system.model();
 
-            List<String> names = new ArrayList<String>();
+            List<String> names = new ArrayList<>();
             MSequenceStatement seq = new MSequenceStatement();
             
             // creation of an object (c2) of the class Company
@@ -201,7 +189,7 @@ public class ExprNavigationTest extends TestCase {
             					companyClass, 
             					name));
             }
-            system.execute(seq);
+            system.execute(VoidUserOutput.getInstance(), seq);
             seq.clear();
 
             // creation of a link between p1 and c2 of an association
@@ -209,8 +197,8 @@ public class ExprNavigationTest extends TestCase {
             names.add( "p1" );
             names.add( "c2" );
             MAssociationClass assoc = model.getAssociationClass( "Job" );
-            
-            List<MRValue> participants = new ArrayList<MRValue>();
+
+            List<MRValue> participants = new ArrayList<>();
             for (String name : names) {
             	participants.add(
             			new MRValueExpression(
@@ -218,10 +206,11 @@ public class ExprNavigationTest extends TestCase {
             }
             
             system.execute(
+                    VoidUserOutput.getInstance(),
             		new MNewLinkObjectStatement(
             				assoc, 
             				participants,
-            				Collections.<List<MRValue>>emptyList(),
+            				Collections.emptyList(),
             				"j2"), false);
 
             MAssociationClass job = system.model().getAssociationClass( "Job" );
@@ -297,7 +286,7 @@ public class ExprNavigationTest extends TestCase {
             MSystem system = ObjectCreation.getInstance().createModelWithObjects();
             MModel model = system.model();
 
-            List<String> names = new ArrayList<String>();
+            List<String> names = new ArrayList<>();
             MSequenceStatement seq = new MSequenceStatement();
             
             // creation of an object (c2) of the class Company
@@ -310,7 +299,7 @@ public class ExprNavigationTest extends TestCase {
             					companyClass, 
             					name));
             }
-            system.execute(seq);
+            system.execute(VoidUserOutput.getInstance(), seq);
             seq.clear();
 
 
@@ -318,18 +307,16 @@ public class ExprNavigationTest extends TestCase {
             names.clear();
             names.add( "p1" );
             names.add( "c2" );
-            List<MRValue> exprs = new ArrayList<MRValue>();
-            List<List<MRValue>> qualifier = new ArrayList<List<MRValue>>();
-            
-            Iterator<String> it = names.iterator();
-            
-            while (it.hasNext() ) {
-                MObject obj =  system.state().objectByName( it.next() );
-                exprs.add(new MRValueExpression(new ExpVariable( obj.name(), obj.cls() )));
+            List<MRValue> exprs = new ArrayList<>();
+            List<List<MRValue>> qualifier = new ArrayList<>();
+
+            for (String name : names) {
+                MObject obj = system.state().objectByName(name);
+                exprs.add(new MRValueExpression(new ExpVariable(obj.name(), obj.cls())));
             }
             MAssociation assoc = model.getAssociation( "Job" );
             
-            system.execute(new MLinkInsertionStatement(assoc, exprs, qualifier), true);
+            system.execute(VoidUserOutput.getInstance(), new MLinkInsertionStatement(assoc, exprs, qualifier), true);
             
             MAssociation job = system.model().getAssociation( "Job" );
             MAssociationEnd personEnd =
@@ -361,11 +348,11 @@ public class ExprNavigationTest extends TestCase {
     public void testNavigationWithNormalAssoc() {
         MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
         String expr = "p1.company->size";
-        PrintWriter pw = new PrintWriter( System.err );
+        UserOutput output = DefaultUserOutput.createEmptyOutput();
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>", output,
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -383,11 +370,11 @@ public class ExprNavigationTest extends TestCase {
     public void testNavigationFromLinkObjectToObject() {
         MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
         String expr = "j1.company->size";
-        PrintWriter pw = new PrintWriter( System.err );
+        UserOutput output = DefaultUserOutput.createEmptyOutput();
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>", output,
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -405,11 +392,11 @@ public class ExprNavigationTest extends TestCase {
     public void testNavigationFromObjectToLinkObject() {
         MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
         String expr = "c1.job->size";
-        PrintWriter pw = new PrintWriter( System.err );
+        UserOutput output = DefaultUserOutput.createEmptyOutput();
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>", output,
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -431,11 +418,11 @@ public class ExprNavigationTest extends TestCase {
         // test 1: navigation with explicit rolename
         String expr = "p1.job[boss]";
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter( sw ); //System.err );
+        UserOutput output = DefaultUserOutput.createEmptyOutput();
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>", output,
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -449,7 +436,7 @@ public class ExprNavigationTest extends TestCase {
         
         navExpr = OCLCompiler.compileExpression( system.model(),
                                                  expr,
-                                                 "<input>", pw,
+                                                 "<input>", output,
                                                  system.varBindings() );
         assertNull( navExpr );
 		String expected = "<input>:1:3: The navigation path from `Person' to `job' is ambiguous," + 
@@ -461,7 +448,7 @@ public class ExprNavigationTest extends TestCase {
         
         navExpr = OCLCompiler.compileExpression( system.model(),
                                                  expr,
-                                                 "<input>", pw,
+                                                 "<input>", output,
                                                  system.varBindings() );
 
         eval = new Evaluator();

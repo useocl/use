@@ -70,9 +70,9 @@ public class ClassDiagramView extends JPanel
 
 	public void initDiagram(boolean loadDefaultLayout, ClassDiagramOptions opt) {
 		if (opt == null)
-			fClassDiagram = new ClassDiagram( this, fMainWindow.logWriter());
+			fClassDiagram = new ClassDiagram( this, fMainWindow.getUserOutput());
 		else
-			fClassDiagram = new ClassDiagram( this, fMainWindow.logWriter(), new ClassDiagramOptions(opt));
+			fClassDiagram = new ClassDiagram( this, fMainWindow.getUserOutput(), new ClassDiagramOptions(opt));
 		
 		fClassDiagram.setStatusBar(fMainWindow.statusBar());
 		this.removeAll();

@@ -18,38 +18,20 @@
  */
 package org.tzi.use.api.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.naming.OperationNotSupportedException;
-
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.main.Session;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.output.InternalUserOutput;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
-import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
-import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
-import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.sys.*;
+import org.tzi.use.uml.sys.soil.*;
+
+import javax.naming.OperationNotSupportedException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This system API implementation uses the internal SOIL
@@ -114,9 +96,8 @@ public class UseSystemApiUndoable extends UseSystemApi {
 		} catch (MSystemException e) {
 			throw new UseApiException("Link creation failed!", e);
 		}
-		
-		MLink mlink = res.getStateDifference().getNewLinks().iterator().next();
-		return mlink;
+
+        return res.getStateDifference().getNewLinks().iterator().next();
 	}
 	
 	@Override
@@ -156,16 +137,15 @@ public class UseSystemApiUndoable extends UseSystemApi {
 			qualifierValuesList = Collections.emptyList();
 		} else {
 			qualifierValuesList = new ArrayList<List<MRValue>>(qualifierValues.length);
-			for (int iEnd = 0; iEnd < qualifierValues.length; ++iEnd) {
-				if (qualifierValues[iEnd] == null || qualifierValues[iEnd].length == 0) {
-					qualifierValuesList.add(Collections.<MRValue>emptyList());
-				} else {
-					Value[] values = qualifierValues[iEnd];
-					for (int iValue = 0; iValue < values.length; ++iValue) {
-						qualifierValuesList.get(iValue).add(new MRValueExpression(values[iValue]));
-					}
-				}
-			}
+            for (Value[] qualifierValue : qualifierValues) {
+                if (qualifierValue == null || qualifierValue.length == 0) {
+                    qualifierValuesList.add(Collections.<MRValue>emptyList());
+                } else {
+                    for (int iValue = 0; iValue < qualifierValue.length; ++iValue) {
+                        qualifierValuesList.get(iValue).add(new MRValueExpression(qualifierValue[iValue]));
+                    }
+                }
+            }
 		}
 		    	
     	try {
@@ -192,6 +172,7 @@ public class UseSystemApiUndoable extends UseSystemApi {
 				for (int iValue = 0; iValue < end.getQualifiers().size(); ++iValue) {
 					qValues.add(new MRValueExpression(link.linkEnd(end).getQualifierValues().get(iValue)));
 				}
+				qualifiers.add(qValues);
 			} else {
 				qualifiers.add(Collections.<MRValue>emptyList());
 			}
@@ -221,8 +202,15 @@ public class UseSystemApiUndoable extends UseSystemApi {
 
 	@Override
 	public void undo() throws UseApiException, OperationNotSupportedException {
+		InternalUserOutput out = new InternalUserOutput();
+
 		try {
-			system.undoLastStatement();
+			system.undoLastStatement(out);
+
+			if (out.hasOutput()) {
+				this.setLastWarningMessage(out.getOutput());
+			}
+
 		} catch (MSystemException e) {
 			throw new UseApiException("Error during undo of last statement.", e);
 		}
@@ -230,8 +218,14 @@ public class UseSystemApiUndoable extends UseSystemApi {
 	
 	@Override
 	public void redo() throws UseApiException, OperationNotSupportedException {
+		InternalUserOutput out = new InternalUserOutput();
+
 		try {
-			system.redoStatement();
+			system.redoStatement(out);
+
+			if (out.hasOutput()) {
+				this.setLastWarningMessage(out.getOutput());
+			}
 		} catch (MSystemException e) {
 			throw new UseApiException("Error during redo.", e);
 		}
@@ -239,10 +233,18 @@ public class UseSystemApiUndoable extends UseSystemApi {
 	
 	/**
      * Executes a SOIL statement on the system.
-     * @param statement
-     * @throws MSystemException
+	 *
+     * @param statement the <code>MStatement</code> to execute.
+     * @throws MSystemException If the execution produces an error.
      */
     private final StatementEvaluationResult evaluateStatement(MStatement statement) throws MSystemException {
-    	return system.execute(statement);
+		InternalUserOutput out = new InternalUserOutput();
+		StatementEvaluationResult result =  system.execute(out, statement);
+
+		if (out.hasOutput()) {
+			this.setLastWarningMessage(out.getOutput());
+		}
+
+		return result;
     }
 }

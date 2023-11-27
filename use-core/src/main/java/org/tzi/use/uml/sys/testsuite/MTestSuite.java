@@ -1,9 +1,8 @@
 package org.tzi.use.uml.sys.testsuite;
 
-import java.io.PrintWriter;
-import java.util.List;
-
 import org.antlr.runtime.Token;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.parser.testsuite.ASTTestCase;
@@ -16,32 +15,29 @@ import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
 import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
+import java.util.List;
+
 public class MTestSuite {
-	private Token name;
-	private MModel model;
+	private final Token name;
+	private final MModel model;
 	
-	private List<ASTStatement> setupStatements;
-	private List<ASTTestCase> testCases;
+	private final List<ASTStatement> setupStatements;
+	private final List<ASTTestCase> testCases;
 	
-	private PrintWriter output = null;
+	private UserOutput output = null;
 	
-	public MTestSuite(Token name, MModel model, List<ASTStatement> setup, List<ASTTestCase> testCases) {
+	public MTestSuite(Token name, MModel model, List<ASTStatement> setup, List<ASTTestCase> testCases, UserOutput output) {
 		this.name = name;
 		this.setupStatements = setup;
 		this.testCases = testCases;
 		this.model = model;
+		this.output = output;
 	}
 	
 	public String getName() {
 		return name.getText();
-	}
-	
-	public void run(PrintWriter output) {
-		this.output = output;
-		this.run();
 	}
 	
 	public void run() {
@@ -54,8 +50,8 @@ public class MTestSuite {
 			try {
 				system = setUp();
 			} catch (Exception e) {
-				System.err.println("Error during test setup:");
-				System.err.println(e.getMessage());
+				this.output.printlnError("Error during test setup:");
+				this.output.printlnError(e.getMessage());
 				return;
 			}
 			
@@ -76,8 +72,8 @@ public class MTestSuite {
 					return;
 				}
 			} catch (Exception e) {
-				System.err.println("... error");
-				System.err.println("  " + e.getMessage());
+				this.output.printlnError("... error");
+				this.output.printlnError("  " + e.getMessage());
 				return;
 			}
 			
@@ -127,18 +123,21 @@ public class MTestSuite {
 				
 			}
 		});
-		
-		Context ctx = new Context(name.getText(), output, system.varBindings(), null);
-		ctx.setOut(new PrintWriter(new NullWriter()));
+
+		//TODO: Check if  output really should be suppressed?
+		Context ctx = new Context(name.getText(), VoidUserOutput.getInstance(), system.varBindings(), null);
+
 		ctx.setModel(model);
 		ctx.setSystemState(system.state());
 		
 		for (ASTStatement cmd : this.setupStatements) {
 			MStatement c = cmd.generateStatement(ctx, system.getVariableEnvironment().constructSymbolTable());
-			if (c == null)
+
+			if (c == null) {
 				return null;
+			}
 			
-			system.execute(c);
+			system.execute(ctx.getUserOutput(), c);
 		}
 				
 		return system;
@@ -151,14 +150,12 @@ public class MTestSuite {
 	private void reportln(String s) {
 		if (output != null) {
 			output.println(s);
-			output.flush();
 		}
 	}
 	
 	private void report(String s) {
 		if (output != null) {
 			output.print(s);
-			output.flush();
 		}
 	}
 }

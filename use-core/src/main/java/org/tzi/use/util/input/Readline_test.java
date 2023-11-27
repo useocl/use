@@ -19,6 +19,8 @@
 
 package org.tzi.use.util.input;
 
+import org.tzi.use.output.DefaultUserOutput;
+
 import java.io.IOException;
 
 /**
@@ -29,7 +31,7 @@ import java.io.IOException;
 class Readline_test {
 
     public static void main(String[] args) {
-        Readline rl = LineInput.getUserInputReadline("readline library not found");
+        Readline rl = LineInput.getUserInputReadline(DefaultUserOutput.createSystemOutOutput(), "readline library not found");
         String line;
         try {
             do { 

@@ -18,10 +18,9 @@
  */
 
 package org.tzi.use.uml.ocl.expr;
-import java.util.ArrayList;
 
 import junit.framework.TestCase;
-
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
@@ -29,6 +28,8 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.collections.Queue;
+
+import java.util.ArrayList;
 
 /**
  * Test Evaluator class.
@@ -61,7 +62,7 @@ public class EvaluatorTest extends TestCase {
                 new Expression[] {
                     new ExpVariable("acc", TypeFactory.mkInteger()),
                     new ExpVariable("e", TypeFactory.mkInteger())};
-            Expression queryExp = ExpStdOp.create("+", args2);
+            Expression queryExp = ExpStdOp.create(VoidUserOutput.getInstance(), "+", args2);
 
             Expression exp =
                 new ExpIterate(

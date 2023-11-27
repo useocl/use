@@ -19,12 +19,9 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
+import org.paukov.combinatorics.CombinatoricsVector;
 import org.paukov.combinatorics.ICombinatoricsVector;
+import org.paukov.combinatorics.permutations.PermutationWithRepetitionGenerator;
 import org.tzi.use.gen.assl.statics.GInstrTry_Attribute;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.value.CollectionValue;
@@ -37,8 +34,10 @@ import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
-import org.paukov.combinatorics.CombinatoricsVector;
-import org.paukov.combinatorics.permutations.PermutationWithRepetitionGenerator;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Dynamic part of the attribute try
@@ -64,10 +63,9 @@ public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 	public void eval(GConfiguration conf, IGCaller caller, IGCollector collector)
 			throws GEvaluationException {
 
-		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
-					new StringBuilder("evaluating `").append(instr)
-							.append("'").toString());
+		if (collector.doDetailPrinting()) {
+			collector.getUserOutput().printlnTrace("evaluating `" + instr + "'");
+		}
 
 		Value rangeResult = conf.evalExpression(instr.getObjects().expression());
 
@@ -108,7 +106,7 @@ public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 		ICombinatoricsVector<Value> vector = new CombinatoricsVector<Value>(valuesList);
 		PermutationWithRepetitionGenerator<Value> gen = new PermutationWithRepetitionGenerator<Value>(
 				vector, range.size());
-		Iterator<ICombinatoricsVector<Value>> iter = gen.createIterator();
+		Iterator<ICombinatoricsVector<Value>> iter = gen.iterator();
 		MSequenceStatement assignStatements = new MSequenceStatement();
 		this.initProgress(gen.getNumberOfGeneratedObjects());
 
@@ -126,15 +124,17 @@ public class GEvalInstrTry_Attribute extends GEvalInstrTry {
 
 			for (MObject source : rangeObjects) {
 				assignStmt = new MAttributeAssignmentStatement(source, attr, currentCombination.getValue(iValue));
-				if (collector.doBasicPrinting())
-					collector.basicPrintWriter().println(assignStmt.getShellCommand());
+
+				if (collector.doBasicPrinting()) {
+					collector.getUserOutput().println(assignStmt.getShellCommand());
+				}
 
 				assignStatements.appendStatement(assignStmt);
 				++iValue;
 			}
 
 			try {
-				system.execute(assignStatements, true, false, false);
+				system.execute(collector.getUserOutput(), assignStatements, true, false, false);
 			} catch (MSystemException e) {
 				throw new GEvaluationException(e);
 			}

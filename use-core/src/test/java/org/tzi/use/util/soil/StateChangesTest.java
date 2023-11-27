@@ -20,23 +20,14 @@
 package org.tzi.use.util.soil;
 
 
-import java.util.Arrays;
-
 import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.TestModelUtil;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.sys.*;
+
+import java.util.Arrays;
 
 
 /**
@@ -76,7 +67,7 @@ public class StateChangesTest extends TestCase {
 		try {
 			fObject = state.createObject(person, "P");
 			MObject c = state.createObject(company, "C");
-			fLink = state.createLink(isBoss, Arrays.asList(fObject, fObject), null);
+			fLink = state.createLink(DefaultUserOutput.createSystemOutOutput(), isBoss, Arrays.asList(fObject, fObject), null);
 			fLinkObject = state.createLinkObject(job, "J", Arrays.asList(fObject, c), null);
 		} catch (MSystemException e) {
 			fail(e.getMessage());

@@ -1,13 +1,12 @@
 package org.tzi.use.uml.sys.testsuite;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.util.NullWriter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MAssertSingleInvariant extends MAssert {
 
@@ -24,7 +23,7 @@ public class MAssertSingleInvariant extends MAssert {
 		List<String> invs = new ArrayList<String>();
 		invs.add(invariant.toString());
 		
-		return  ctx.postState().check(new PrintWriter(new NullWriter()), 
+		return  ctx.postState().check(VoidUserOutput.getInstance(),
 				  false, 
 				  false,
 				  false, invs);

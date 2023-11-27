@@ -19,31 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-
 import org.tzi.use.gui.util.ExtendedJTable;
+import org.tzi.use.output.InternalUserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
@@ -57,6 +34,15 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.util.StringUtil;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This dialog asks the user for qualifier values
@@ -216,21 +202,22 @@ public class QualifierInputView extends JDialog {
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
-			
-			StringWriter errorOutput = new StringWriter();
+
+			InternalUserOutput output = new InternalUserOutput();
+
 			Expression valueAsExpression = 
 				OCLCompiler.compileExpression(
 						system.model(),
 						system.state(),
 						value, 
 						"<input>", 
-						new PrintWriter(errorOutput, true), 
+						output,
 						system.varBindings());
 			
 			if (valueAsExpression == null) {
 				JOptionPane.showMessageDialog(
 						this, 
-						errorOutput, 
+						output.getOutput(),
 						"Error", 
 						JOptionPane.ERROR_MESSAGE);
 				return null;

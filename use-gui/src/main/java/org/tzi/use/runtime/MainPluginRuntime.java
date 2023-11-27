@@ -1,16 +1,19 @@
 package org.tzi.use.runtime;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
+import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.output.HighlightAs;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.runtime.impl.PluginRuntime;
+import org.tzi.use.util.StringUtil;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-
-import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
-import org.tzi.use.main.runtime.IRuntime;
-import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
-import org.tzi.use.runtime.impl.PluginRuntime;
-import org.tzi.use.util.Log;
-import org.tzi.use.util.StringUtil;
 
 /**
  * This is the Plugin Runtime's main class. It will be called from the USE main
@@ -19,6 +22,8 @@ import org.tzi.use.util.StringUtil;
  * @author Roman Asendorf
  */
 public class MainPluginRuntime {
+
+	private static final Logger log = LogManager.getLogger(MainPluginRuntime.class.getName());
 
 	/**
 	 * Jar filename Filter
@@ -36,26 +41,28 @@ public class MainPluginRuntime {
 	 *            The Plugin location path
 	 * @return Array of jar-filenames
 	 */
-	private static String[] getJarFileNames(Path pluginDirURL) {
+	private static String[] getJarFileNames(Path pluginDirURL, UserOutput out) {
 
 		String[] fileNames = null;
 		File pluginDir = pluginDirURL.toFile();
 		
-		Log.debug("Searching for plugins in: [" + pluginDirURL.toString()+ "]");
-		Log.debug("Plugin path validity: [" + pluginDir.exists() + "]");
+		log.debug("Searching for plugins in: [" + pluginDirURL.toString()+ "]");
+		log.debug("Plugin path validity: [" + pluginDir.exists() + "]");
 		
 		JarFilter jarFilter = new JarFilter();
 		fileNames = pluginDir.list(jarFilter);
 		
-		if(fileNames == null){
-			Log.error("Could not read plugin directory " + StringUtil.inQuotes(pluginDir) + ".");
+		if (fileNames == null) {
+			out.printWarn("Could not read plugin directory ");
+			out.printHighlightedWarn(pluginDir.toString(), HighlightAs.FILE);
+			out.printlnWarn(".");
 			return new String[0];
 		}
 		
 		StringBuilder verboseMsg = new StringBuilder("Plugin filename(s) [");
 		StringUtil.fmtSeq(verboseMsg, fileNames, ",");
 		verboseMsg.append("]");
-		Log.verbose(verboseMsg.toString());
+		out.printlnVerbose(verboseMsg.toString());
 		
 		return fileNames;
 	}
@@ -67,24 +74,23 @@ public class MainPluginRuntime {
 	 *            The Plugin location path
 	 * @return The Plugin Runtime object
 	 */
-	public static IRuntime run(Path pluginDirURL) {
+	public static IRuntime run(Path pluginDirURL, UserOutput out) {
 
 		String[] pluginFileNames;
-		pluginFileNames = getJarFileNames(pluginDirURL);
-		Log.debug("Counted [" + pluginFileNames.length + "]"
-				+ " files in directory");
+		pluginFileNames = getJarFileNames(pluginDirURL, out);
+		log.debug("Counted " + pluginFileNames.length + " files in directory");
 
 		IPluginRuntime pluginRuntime = PluginRuntime.getInstance();
 		for (int cntFiles = 0; cntFiles < pluginFileNames.length;) {
 			String pluginFilename = pluginFileNames[cntFiles];
-			Log.debug("Current plugin filename [" + pluginFilename + "]");
+			log.debug("Current plugin filename [" + pluginFilename + "]");
 			try {
 				pluginRuntime.registerPlugin(pluginFilename, pluginDirURL.toUri().toURL());
 			} catch (MalformedURLException e) {
-				Log.error("Could not convert filepath " + StringUtil.inQuotes(pluginDirURL) + ". Skipping plugin.");
+				out.printlnWarn("Could not convert filepath " + StringUtil.inQuotes(pluginDirURL) + ". Skipping plugin.");
 				continue;
 			}
-			Log.debug("ClassLoader of runtime ["
+			log.debug("ClassLoader of runtime ["
 					+ Thread.currentThread().getContextClassLoader().toString()
 					+ "]");
 			cntFiles++;
@@ -96,14 +102,14 @@ public class MainPluginRuntime {
 		IPluginShellExtensionPoint shellExtensionPoint = (IPluginShellExtensionPoint) pluginRuntime
 				.getExtensionPoint("shell");
 
-		Log.debug("Registered [" + pluginRuntime.getPlugins().size() + "] plugins");
+		log.debug("Registered [" + pluginRuntime.getPlugins().size() + "] plugins");
 		
 		for (IPluginDescriptor currentPluginDescriptor : pluginRuntime.getPlugins().values()) {
-			Log.debug("Main: Registering services");
+			log.debug("Main: Registering services");
 			pluginRuntime.registerServices(currentPluginDescriptor);
-			Log.debug("Main: Registering actions");
+			log.debug("Main: Registering actions");
 			actionExtensionPoint.registerActions(currentPluginDescriptor);
-			Log.debug("Main: Registering commands");
+			log.debug("Main: Registering commands");
 			shellExtensionPoint.registerCmds(currentPluginDescriptor);
 		}
 		return pluginRuntime;

@@ -19,30 +19,15 @@
 
 package org.tzi.use.parser.soil;
 
+import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.tzi.use.output.VoidUserOutput;
+import org.tzi.use.parser.soil.ast.*;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.tzi.use.parser.soil.ast.ASTAttributeAssignmentStatement;
-import org.tzi.use.parser.soil.ast.ASTConditionalExecutionStatement;
-import org.tzi.use.parser.soil.ast.ASTIterationStatement;
-import org.tzi.use.parser.soil.ast.ASTLinkDeletionStatement;
-import org.tzi.use.parser.soil.ast.ASTLinkInsertionStatement;
-import org.tzi.use.parser.soil.ast.ASTNewLinkObjectStatement;
-import org.tzi.use.parser.soil.ast.ASTNewObjectStatement;
-import org.tzi.use.parser.soil.ast.ASTObjectDestructionStatement;
-import org.tzi.use.parser.soil.ast.ASTOperationCallStatement;
-import org.tzi.use.parser.soil.ast.ASTRValueExpressionOrOpCall;
-import org.tzi.use.parser.soil.ast.ASTRValueNewLinkObject;
-import org.tzi.use.parser.soil.ast.ASTRValueNewObject;
-import org.tzi.use.parser.soil.ast.ASTSequenceStatement;
-import org.tzi.use.parser.soil.ast.ASTStatement;
-import org.tzi.use.parser.soil.ast.ASTVariableAssignmentStatement;
-import org.tzi.use.util.NullPrintWriter;
 
 
 /**
@@ -386,8 +371,8 @@ public class ASTConstructionTest extends TestCase {
 	private ASTStatement constructAST(String input) {
 		return SoilCompiler.constructAST(
 				new ByteArrayInputStream(input.getBytes()), 
-				"<input>", 
-				NullPrintWriter.getInstance(),
+				"<input>",
+				VoidUserOutput.getInstance(),
 				false);
 	}
 }

@@ -24,15 +24,12 @@
 
 package org.tzi.use.gen.tool;
 
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-
 import org.tzi.use.gen.assl.dynamics.IGChecker;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.tool.statistics.GInvariantStatistic;
 import org.tzi.use.gen.tool.statistics.GStatistic;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -40,7 +37,10 @@ import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.NullPrintWriter;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 
 
 /**
@@ -50,7 +50,7 @@ import org.tzi.use.util.NullPrintWriter;
  * @author  Joern Bohling
  */
 public class GChecker implements IGChecker {
-    private boolean fCheckStructure;
+    private final boolean fCheckStructure;
     
     private final GInvariantStatistic[] fInvariantStatistics;
     private final int fSize;
@@ -108,7 +108,7 @@ public class GChecker implements IGChecker {
         boolean valid;
         Value value;
         
-        for (int k = 0; k < fSize && result; k++) {
+        for (int k = 0; k < fSize; k++) {
             GInvariantStatistic stat = fInvariantStatistics[k];
             if (stat.getInvariant().isActive() && !stat.isCheckedByBarrier() ) {
             	
@@ -122,16 +122,17 @@ public class GChecker implements IGChecker {
 	                stat.registerResult(valid, System.nanoTime() - start);
 	                
 	                if (!valid) {
-	                	if (collector.doBasicPrinting())
-	                		collector.basicPrintWriter().println(stat.getInvariant().toString() + " invalid.");
+	                	if (collector.doBasicPrinting()) {
+                            collector.getUserOutput().println(stat.getInvariant().toString() + " invalid.");
+                        }
 	                	 
 	                    result = false;
 	                    break;
 	                }
 	            } catch (MultiplicityViolationException e) {
 	            	if (collector.doDetailPrinting()) {
-	            		collector.detailPrintWriter().println("An error occured while checking an invariant:");
-	            		collector.detailPrintWriter().println(e.getMessage());
+	            		collector.getUserOutput().printlnTrace("An error occurred while checking an invariant:");
+	            		collector.getUserOutput().printlnTrace(e.getMessage());
 	            	}
 	            	stat.registerException();
 	            	return false;
@@ -142,49 +143,50 @@ public class GChecker implements IGChecker {
         // checking structure
         if (result && fCheckStructure) {
         	start = System.nanoTime();
-            result = state.checkStructure(NullPrintWriter.getInstance(), false);
+            result = state.checkStructure(VoidUserOutput.getInstance(), false);
             if (!result && collector.doBasicPrinting()) {
-                collector.basicPrintWriter().println("invalid structure.");
+                collector.getUserOutput().println("invalid structure.");
             }
             fStructureStatistic.registerResult(result, System.nanoTime() - start);
         }
         
         if (result && collector.doBasicPrinting())
-        	collector.basicPrintWriter().println("valid state.");
+        	collector.getUserOutput().println("valid state.");
         
         return result;
     }
 
-    public void printStatistics(PrintWriter pw, long checkedStates) {
+    public void printStatistics(UserOutput output, long checkedStates) {
     	// Add the local data to the total 
-        for (int i = 0; i < fInvariantStatistics.length; ++i)
-        	fInvariantStatistics[i].localReset();
-        
+        for (GInvariantStatistic fInvariantStatistic : fInvariantStatistics) {
+            fInvariantStatistic.localReset();
+        }
+
     	fStructureStatistic.localReset();
     	
-        pw.println("Note: A disabled invariant has never been checked.");
-        pw.println("An enabled and negated invariant is `valid'");
-        pw.println("if it has been evaluated to false.");
-        pw.println();
-        pw.println("        checks          valid        invalid     mul. viol.      time (ms)  Invariant");
+        output.println("Note: A disabled invariant has never been checked.");
+        output.println("An enabled and negated invariant is `valid'");
+        output.println("if it has been evaluated to false.");
+        output.println();
+        output.println("        checks          valid        invalid     mul. viol.      time (ms)  Invariant");
 
-        pw.println(fStructureStatistic.toStringForStatistics());
+        output.println(fStructureStatistic.toStringForStatistics());
             
         long totalChecks = fStructureStatistic.getTotalChecks();
         
         for (int k = 0; k < fSize; k++) {
         	GInvariantStatistic s = fInvariantStatistics[k];
         	if (!s.isCheckedByBarrier()) {
-        		pw.println(s.toStringForStatistics());
+        		output.println(s.toStringForStatistics());
         		totalChecks += s.getTotalChecks();
         	}
         }
         
-        pw.println();
-        pw.print("Total checks: ");
-        pw.print(String.format("%,d", totalChecks));
-        pw.print(" Overhead (checks - states checked): ");
-        pw.println(String.format("%,d", totalChecks - checkedStates));
-        pw.println(String.format("Sorted %,d times.", sortCount));
+        output.println();
+        output.print("Total checks: ");
+        output.print(String.format("%,d", totalChecks));
+        output.print(" Overhead (checks - states checked): ");
+        output.println(String.format("%,d", totalChecks - checkedStates));
+        output.println(String.format("Sorted %,d times.", sortCount));
     }
 }

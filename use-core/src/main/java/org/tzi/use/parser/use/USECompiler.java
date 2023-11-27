@@ -19,19 +19,19 @@
 
 package org.tzi.use.parser.use;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MMultiplicity;
 import org.tzi.use.uml.mm.ModelFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /** 
  * Compiler for USE specifications, expressions, and commands. The
@@ -51,39 +51,39 @@ public class USECompiler {
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for (error) messages to the user
      * @return MModel null if there were any errors
      */
     public static MModel compileSpecification(String in, 
                                               String inName,
-                                              PrintWriter err,
+                                              UserOutput output,
                                               ModelFactory factory) {
     	
     	InputStream inStream = new ByteArrayInputStream(in.getBytes());
-    	return USECompiler.compileSpecification(inStream, inName, err, factory);
+    	return USECompiler.compileSpecification(inStream, inName, output, factory);
     }
     /**
      * Compiles a specification.
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for (error) messages to the user
      * @return MModel null if there were any errors
      */
     public static MModel compileSpecification(InputStream in, 
                                               String inName,
-                                              PrintWriter err,
+                                              UserOutput output,
                                               ModelFactory factory) {
         MModel model = null;
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         
         ANTLRInputStream aInput;
 		try {
 			aInput = new ANTLRInputStream(in);
 			aInput.name = inName;
 		} catch (IOException e1) {
-			err.println(e1.getMessage());
-			return model;
+			output.println(e1.getMessage());
+			return null;
 		}
 		
         USELexer lexer = new USELexer(aInput);
@@ -99,19 +99,18 @@ public class USECompiler {
             if (errHandler.errorCount() == 0 ) {
 
                 // Generate code
-                Context ctx = new Context(inName, err, null, factory);
+                Context ctx = new Context(inName, output, null, factory);
                 model = astModel.gen(ctx);
                 if (ctx.errorCount() > 0 )
                     model = null;
             }
         } catch (RecognitionException e) {
-            err.println(parser.getSourceName() +":" + 
+            output.println(parser.getSourceName() +":" +
                         e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
         }
-        
-        err.flush();
+
         return model;
     }
     
@@ -120,39 +119,39 @@ public class USECompiler {
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for (error) messages to the user
      * @return MModel null if there were any errors
      */
     public static MMultiplicity compileMultiplicity(String in, 
                                              String inName,
-                                             PrintWriter err,
+                                             UserOutput output,
                                              ModelFactory factory) {
     	
     	InputStream inStream = new ByteArrayInputStream(in.getBytes());
-    	return USECompiler.compileMultiplicity(inStream, inName, err, factory);
+    	return USECompiler.compileMultiplicity(inStream, inName, output, factory);
     }
     /**
      * Compiles a specification.
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for (error) messages to the user
      * @return MModel null if there were any errors
      */
     public static MMultiplicity compileMultiplicity(InputStream in, 
                                               String inName,
-                                              PrintWriter err,
+                                              UserOutput output,
                                               ModelFactory factory) {
         MMultiplicity mul = null;
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         
         ANTLRInputStream aInput;
 		try {
 			aInput = new ANTLRInputStream(in);
 			aInput.name = inName;
 		} catch (IOException e1) {
-			err.println(e1.getMessage());
-			return mul;
+			output.println(e1.getMessage());
+			return null;
 		}
 		
         USELexer lexer = new USELexer(aInput);
@@ -168,19 +167,18 @@ public class USECompiler {
             if (errHandler.errorCount() == 0 ) {
 
                 // Generate code
-                Context ctx = new Context(inName, err, null, factory);
+                Context ctx = new Context(inName, output, null, factory);
                 mul = astMul.gen(ctx);
                 if (ctx.errorCount() > 0 )
                 	mul = null;
             }
         } catch (RecognitionException e) {
-            err.println(parser.getSourceName() +":" + 
+            output.println(parser.getSourceName() +":" +
                         e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
         }
-        
-        err.flush();
+
         return mul;
     }
 }

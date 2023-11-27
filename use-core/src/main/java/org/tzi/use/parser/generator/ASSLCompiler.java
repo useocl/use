@@ -19,21 +19,12 @@
 
 package org.tzi.use.parser.generator;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GProcedureCall;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
@@ -42,6 +33,11 @@ import org.tzi.use.uml.mm.GeneratorModelFactory;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.sys.MSystemState;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 public class ASSLCompiler {
 
@@ -53,24 +49,24 @@ public class ASSLCompiler {
      * @param  model the model, which is the context of the procedure
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
-     * @return List the comiled procedures (GProcedure)
+     * @param  output output stream for error messages
+     * @return List the compiled procedures (GProcedure)
      */
     public static List<GProcedure> compileProcedures(MModel model,
                                          InputStream in,
                                          String inName,
-                                         PrintWriter err) {
+                                         UserOutput output) {
         
     	List<ASTGProcedure> astgProcList = new ArrayList<ASTGProcedure>();
         List<GProcedure> procedures = new ArrayList<GProcedure>();
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         
         ANTLRInputStream aInput;
 		try {
 			aInput = new ANTLRInputStream(in);
 			aInput.name = inName;
 		} catch (IOException e1) {
-			err.println(e1.getMessage());
+			output.printlnError(e1.getMessage());
 			return null;
 		}
 		
@@ -91,7 +87,7 @@ public class ASSLCompiler {
                 
                 // Generate signatures first, to allow procedure calls
                 while (astgproc.hasNext() && !error ) {
-                    Context ctx = new Context(inName, err, null, null);
+                    Context ctx = new Context(inName, output, null, null);
                     ctx.setModel(model);
                     ASTGProcedure astgProc = astgproc.next();
                     GProcedure proc = astgProc.genSignature(ctx);
@@ -102,7 +98,7 @@ public class ASSLCompiler {
                         Iterator<GProcedure> it = procedures.iterator();
                         while (it.hasNext())
                             if ( it.next().getSignature().equals(proc.getSignature() ) ) {
-                                err.println("Warning: Ignoring redefinition of " + proc);
+                                output.printlnWarn("Warning: Ignoring redefinition of " + proc);
                                 ignore = true;
                             }
                         if (!ignore)
@@ -112,7 +108,7 @@ public class ASSLCompiler {
                 
                 astgproc = astgProcList.iterator();
                 while (astgproc.hasNext() && !error ) {
-                	Context ctx = new Context(inName, err, null, null);
+                	Context ctx = new Context(inName, output, null, null);
                     ctx.setModel(model);
                     ctx.setProcedures(procedures);
                     ASTGProcedure astgProc = astgproc.next();
@@ -123,12 +119,12 @@ public class ASSLCompiler {
                 
             }
         } catch (RecognitionException e) {
-            err.println(parser.getSourceName() +":" + 
+            output.printlnError(parser.getSourceName() +":" +
                         e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
         }
-        err.flush();
+
         if (error)
             return null;
         else
@@ -142,7 +138,7 @@ public class ASSLCompiler {
      * @param  systemState the context of the call
      * @param  in the input source stream
      * @param  inName the name of the input source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for error messages
      * @return GProcedureCall the compiled call or null
      */
     public static GProcedureCall compileProcedureCall(MModel model,
@@ -150,9 +146,9 @@ public class ASSLCompiler {
                                                       List<GProcedure> procedures,
                                                       String in, 
                                                       String inName,
-                                                      PrintWriter err) {
+                                                      UserOutput output) {
     	InputStream stream = new ByteArrayInputStream(in.getBytes());
-    	return ASSLCompiler.compileProcedureCall(model, systemState, procedures, stream, inName, err);
+    	return ASSLCompiler.compileProcedureCall(model, systemState, procedures, stream, inName, output);
     }
     /**
      * Compiles a procedure call
@@ -161,7 +157,7 @@ public class ASSLCompiler {
      * @param  systemState the context of the call
      * @param  in the input source stream
      * @param  inName the name of the input source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for error messages
      * @return GProcedureCall the compiled call or null
      */
     public static GProcedureCall compileProcedureCall(MModel model,
@@ -169,9 +165,9 @@ public class ASSLCompiler {
                                                       List<GProcedure> procedures,
                                                       InputStream in, 
                                                       String inName,
-                                                      PrintWriter err) {
+                                                      UserOutput output) {
         GProcedureCall procCall = null;
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         try {
         	ANTLRInputStream aInput = new ANTLRInputStream(in);
             GeneratorLexer lexer = new GeneratorLexer(aInput);
@@ -186,7 +182,7 @@ public class ASSLCompiler {
             if (errHandler.errorCount() == 0 ) {
     
                 Context ctx = new Context(inName,
-                                        err,
+                                        output,
                                         systemState.system().varBindings(),
                                         null);
                 ctx.setModel(model);
@@ -200,15 +196,13 @@ public class ASSLCompiler {
                     procCall = null;
             }
         } catch (RecognitionException e) {
-            err.println(e.line + ":" +
+            output.printlnError(e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
-        } catch (SemanticException e) {
-            err.println(e.getMessage());
-        } catch (IOException e) {
-        	err.println(e.getMessage());
-		}
-        err.flush();
+        } catch (SemanticException | IOException e) {
+            output.printlnError(e.getMessage());
+        }
+
         return procCall;
     }
 
@@ -218,14 +212,14 @@ public class ASSLCompiler {
      * @param  model the model the invaraints are added to
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output stream for error messages
      * @return Collection the added invariants (MClassInvariant)
      */
     public static Collection<MClassInvariant> compileInvariants(MModel model,
                                                      InputStream in,
                                                      String inName,
-                                                     PrintWriter err) {
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+                                                     UserOutput output) {
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         Collection<MClassInvariant> addedInvs = null;
         
         try {
@@ -244,7 +238,7 @@ public class ASSLCompiler {
             
             if (errHandler.errorCount() == 0 ) {
                 Context ctx = new Context(inName,
-                                          err,
+                                          output,
                                           null,
                                           new GeneratorModelFactory());
                 ctx.setModel(model);
@@ -256,13 +250,13 @@ public class ASSLCompiler {
                 }
             }
         } catch (RecognitionException e) {
-            err.println(e.line + ":" +
+            output.println(e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
         } catch (IOException e) {
-        	err.println(e.getMessage());
+        	output.println(e.getMessage());
 		}
-        err.flush();
+
         return addedInvs;
     }
 }

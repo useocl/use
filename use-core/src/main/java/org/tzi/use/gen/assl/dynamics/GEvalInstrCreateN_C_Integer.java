@@ -29,31 +29,27 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import static org.tzi.use.util.StringUtil.inQuotes;
-
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.tzi.use.util.StringUtil.inQuotes;
+
 public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     implements IGCaller {
-    private GInstrCreateN_C_Integer fInstr;
+    private final GInstrCreateN_C_Integer fInstr;
     private IGCaller fCaller;
 
     public GEvalInstrCreateN_C_Integer(GInstrCreateN_C_Integer instr ) {
@@ -64,9 +60,7 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
-					new StringBuilder("evaluating `").append(fInstr)
-							.append("'").toString());
+			collector.getUserOutput().println("evaluating `" + fInstr + "'");
 		
         fCaller = caller;
         fInstr.integerInstr().createEvalInstr().eval(conf,this,collector);
@@ -99,9 +93,8 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         
         MSystemState state = conf.systemState();
         MSystem system = state.system();
-        PrintWriter basicOutput = collector.basicPrintWriter();
-        PrintWriter detailOutput = collector.detailPrintWriter();
-              
+        UserOutput output = collector.getUserOutput();
+
         MClass objectClass = fInstr.cls();
         
         MSequenceStatement statement = new MSequenceStatement();
@@ -120,11 +113,11 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         MStatement inverseStatement;
         
         if (collector.doBasicPrinting())
-        	basicOutput.println(statement.getShellCommand());
+        	output.println(statement.getShellCommand());
         
         try {
         	StatementEvaluationResult evaluationResult = 
-        		system.execute(statement, true, false, false);
+        		system.execute(output, statement, true, false, false);
         	
         	inverseStatement = evaluationResult.getInverseStatement();
         	
@@ -140,9 +133,10 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         
         Value objects = new SequenceValue(objectClass, objectValues);
         
-        if (collector.doDetailPrinting())
-        	detailOutput.println(inQuotes(fInstr) + " == " + objects);
-        
+        if (collector.doDetailPrinting()) {
+			output.printlnTrace(inQuotes(fInstr) + " == " + objects);
+		}
+
         fCaller.feedback(conf, objects, collector);
         if (collector.expectSubsequentReporting()) {
         	for (MStatement s : statement.getStatements()) {
@@ -152,11 +146,12 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         	}
         }
             
-        if (collector.doBasicPrinting())
-        	basicOutput.println("undo: " + statement.getShellCommand());
-        
+        if (collector.doBasicPrinting()) {
+			output.println("undo: " + statement.getShellCommand());
+		}
+
         try {
-        	system.execute(inverseStatement, true, false, false);
+        	system.execute(output, inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}

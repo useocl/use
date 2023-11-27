@@ -20,6 +20,7 @@
 package org.tzi.use.uml.ocl.expr;
 import junit.framework.TestCase;
 
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
@@ -67,20 +68,20 @@ public class ExpStdOpTest extends TestCase {
         Expression[] args;
         ExpStdOp op;
         args = new Expression[] { new ExpConstBoolean(true)};
-        op = ExpStdOp.create("not", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "not", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstBoolean(true), new ExpConstBoolean(true)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args =
             new Expression[] { new ExpConstBoolean(false), new ExpConstBoolean(false)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstBoolean(true), new ExpConstBoolean(false)};
-        op = ExpStdOp.create("<>", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "<>", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
     }
 
@@ -88,76 +89,76 @@ public class ExpStdOpTest extends TestCase {
         Expression[] args;
         ExpStdOp op;
         args = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(2)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstReal(1.2), new ExpConstReal(1.2)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstReal(2.0), new ExpConstInteger(2)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(2), new ExpConstReal(2.0)};
-        op = ExpStdOp.create("=", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "=", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(2), new ExpConstInteger(3)};
-        op = ExpStdOp.create("+", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "+", args);
         assertEquals(op.toString(), IntegerValue.valueOf(5), e.eval(op, state));
 
         args = new Expression[] { new ExpConstReal(2.6), new ExpConstInteger(3)};
-        op = ExpStdOp.create("+", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "+", args);
         assertEquals(op.toString(), new RealValue(5.6), e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(3), new ExpConstReal(2.6)};
-        op = ExpStdOp.create("+", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "+", args);
         assertEquals(op.toString(), new RealValue(5.6), e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(6), new ExpConstInteger(3)};
-        op = ExpStdOp.create("/", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "/", args);
         assertEquals(op.toString(), new RealValue(2.0), e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(7), new ExpConstInteger(2)};
-        op = ExpStdOp.create("/", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "/", args);
         assertEquals(op.toString(), new RealValue(3.5), e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(7), new ExpConstInteger(2)};
-        op = ExpStdOp.create("div", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "div", args);
         assertEquals(op.toString(), IntegerValue.valueOf(3), e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(7), new ExpConstInteger(0)};
-        op = ExpStdOp.create("div", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "div", args);
         assertEquals(
                      op.toString(),
                      UndefinedValue.instance,
                      e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(7), new ExpConstInteger(0)};
-        op = ExpStdOp.create("/", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "/", args);
         assertEquals(
                      op.toString(),
                      UndefinedValue.instance,
                      e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(3)};
-        op = ExpStdOp.create("abs", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "abs", args);
         assertEquals(op.toString(), IntegerValue.valueOf(3), e.eval(op, state));
 
         args = new Expression[] { new ExpConstInteger(-3)};
-        op = ExpStdOp.create("abs", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "abs", args);
         assertEquals(op.toString(), IntegerValue.valueOf(3), e.eval(op, state));
     }
 
     public void testSetConstruction() throws ExpInvalidException {
         Expression[] args;        
         Expression setLiteral;
-        Value values[];
+        Value[] values;
 
         args = new Expression[] {new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
         setLiteral = new ExpSetLiteral(args);
@@ -173,7 +174,7 @@ public class ExpStdOpTest extends TestCase {
     public void testSequenceConstruction() throws ExpInvalidException {
         Expression[] args;
         Expression op;
-        Value values[];
+        Value[] values;
 
         args = new Expression[] { new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
         op = new ExpSequenceLiteral(args);
@@ -189,7 +190,7 @@ public class ExpStdOpTest extends TestCase {
     public void testBagConstruction() throws ExpInvalidException {
         Expression[] args;
         Expression op;
-        Value values[];
+        Value[] values;
 
         args = new Expression[] { new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
         op = new ExpBagLiteral(args);
@@ -232,45 +233,45 @@ public class ExpStdOpTest extends TestCase {
         setValue = mkSet(new int[]{2, 3});
         args = new Expression[] { setValue };
 
-        op = ExpStdOp.create("size", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "size", args);
         assertEquals(op.toString(), IntegerValue.valueOf(2), e.eval(op, state));
 
-        op = ExpStdOp.create("isEmpty", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "isEmpty", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
 
-        op = ExpStdOp.create("notEmpty", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "notEmpty", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { setValue, new ExpConstInteger(3)};
-        op = ExpStdOp.create("includes", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "includes", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         args = new Expression[] { setValue, new ExpConstInteger(5)};
-        op = ExpStdOp.create("includes", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "includes", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
 
         args = new Expression[] { setValue, new ExpConstInteger(3)};
-        op = ExpStdOp.create("count", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "count", args);
         assertEquals(op.toString(), IntegerValue.valueOf(1), e.eval(op, state));
 
         args = new Expression[] { setValue, new ExpConstInteger(5)};
-        op = ExpStdOp.create("count", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "count", args);
         assertEquals(op.toString(), IntegerValue.valueOf(0), e.eval(op, state));
 
         setValue2 = mkSet(new int[] {2, 3});
         args = new Expression[] { setValue, setValue2 };
-        op = ExpStdOp.create("includesAll", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "includesAll", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         setValue2 = mkSet(new int[]{2});
         
         args = new Expression[] { setValue, setValue2 };
-        op = ExpStdOp.create("includesAll", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "includesAll", args);
         assertEquals(op.toString(), BooleanValue.TRUE, e.eval(op, state));
 
         setValue2 = mkSet(new int[]{2, 5});
         args = new Expression[] { setValue, setValue2 };
-        op = ExpStdOp.create("includesAll", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "includesAll", args);
         assertEquals(op.toString(), BooleanValue.FALSE, e.eval(op, state));
     }
 
@@ -279,13 +280,12 @@ public class ExpStdOpTest extends TestCase {
         ExpStdOp op;
         Expression op1;
         Expression op2;
-        Value values[];
+        Value[] values;
         op1 = mkSet(new int[]{2, 3});
-        args = new Expression[] { op1 };
-
         op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
-        op = ExpStdOp.create("union", args);
+
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "union", args);
         values =
             new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(3), IntegerValue.valueOf(5)};
         assertEquals(
@@ -295,7 +295,7 @@ public class ExpStdOpTest extends TestCase {
 
         op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
-        op = ExpStdOp.create("intersection", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "intersection", args);
         values = new Value[] { IntegerValue.valueOf(2)};
         assertEquals(
                      op.toString(),
@@ -304,7 +304,7 @@ public class ExpStdOpTest extends TestCase {
 
         op2 = mkSet(new int[]{4, 5});
         args = new Expression[] { op1, op2 };
-        op = ExpStdOp.create("intersection", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "intersection", args);
         assertEquals(
                      op.toString(),
                      new SetValue(TypeFactory.mkInteger()),
@@ -312,7 +312,7 @@ public class ExpStdOpTest extends TestCase {
 
         op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
-        op = ExpStdOp.create("-", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "-", args);
         values = new Value[] { IntegerValue.valueOf(3)};
         assertEquals(
                      op.toString(),
@@ -320,7 +320,7 @@ public class ExpStdOpTest extends TestCase {
                      e.eval(op, state));
 
         args = new Expression[] { op1, new ExpConstInteger(8)};
-        op = ExpStdOp.create("including", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "including", args);
         values =
             new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(3), IntegerValue.valueOf(8)};
         assertEquals(
@@ -329,7 +329,7 @@ public class ExpStdOpTest extends TestCase {
                      e.eval(op, state));
 
         args = new Expression[] { op1, new ExpConstInteger(3)};
-        op = ExpStdOp.create("including", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "including", args);
         values = new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(3)};
         assertEquals(
                      op.toString(),
@@ -337,7 +337,7 @@ public class ExpStdOpTest extends TestCase {
                      e.eval(op, state));
 
         args = new Expression[] { op1, new ExpConstInteger(8)};
-        op = ExpStdOp.create("excluding", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "excluding", args);
         values = new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(3)};
         assertEquals(
                      op.toString(),
@@ -345,7 +345,7 @@ public class ExpStdOpTest extends TestCase {
                      e.eval(op, state));
 
         args = new Expression[] { op1, new ExpConstInteger(3)};
-        op = ExpStdOp.create("excluding", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "excluding", args);
         values = new Value[] { IntegerValue.valueOf(2)};
         assertEquals(
                      op.toString(),
@@ -354,7 +354,7 @@ public class ExpStdOpTest extends TestCase {
 
         op2 = mkSet(new int[]{2, 5});
         args = new Expression[] { op1, op2 };
-        op = ExpStdOp.create("symmetricDifference", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "symmetricDifference", args);
         values = new Value[] { IntegerValue.valueOf(3), IntegerValue.valueOf(5)};
         assertEquals(
                      op.toString(),
@@ -366,11 +366,11 @@ public class ExpStdOpTest extends TestCase {
         Expression[] args;
         Expression op;
         Expression op1;
-        Value values[];
+        Value[] values;
         
         op1 = mkBag(new int[]{2, 3, 2});
         args = new Expression[] { op1 };
-        op = ExpStdOp.create("asSet", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "asSet", args);
         values = new Value[] { IntegerValue.valueOf(2), IntegerValue.valueOf(3)};
         assertEquals(
                      op.toString(),
@@ -388,22 +388,22 @@ public class ExpStdOpTest extends TestCase {
         op1 = new ExpressionWithValue(new SequenceValue(TypeFactory.mkInteger(), args1));
         
         args = new Expression[] { op1, new ExpConstInteger(1)};
-        op = ExpStdOp.create("at", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "at", args);
         assertEquals(op.toString(), e.eval(op, state), IntegerValue.valueOf(2));
 
         args = new Expression[] { op1, new ExpConstInteger(2)};
-        op = ExpStdOp.create("at", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "at", args);
         assertEquals(op.toString(), e.eval(op, state), IntegerValue.valueOf(3));
 
         args = new Expression[] { op1, new ExpConstInteger(0)};
-        op = ExpStdOp.create("at", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "at", args);
         assertEquals(
                      op.toString(),
                      e.eval(op, state),
                      UndefinedValue.instance);
 
         args = new Expression[] { op1, new ExpConstInteger(3)};
-        op = ExpStdOp.create("at", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "at", args);
         assertEquals(
                      op.toString(),
                      e.eval(op, state),
@@ -424,7 +424,7 @@ public class ExpStdOpTest extends TestCase {
         op1 = mkSet(args1);
         
         args = new Expression[] { op1 };
-        op = ExpStdOp.create("size", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "size", args);
         assertEquals(
                      "mkSet(0.." + SET_SIZE + ").size",
                      IntegerValue.valueOf(SET_SIZE),
@@ -436,7 +436,7 @@ public class ExpStdOpTest extends TestCase {
         op1 = new ExpressionWithValue(new SequenceValue(TypeFactory.mkInteger(), args2));
         
         args = new Expression[] { op1 };
-        op = ExpStdOp.create("size", args);
+        op = ExpStdOp.create(VoidUserOutput.getInstance(), "size", args);
         assertEquals(
                      "mkSequence(0.." + SET_SIZE + ").size",
                      IntegerValue.valueOf(SET_SIZE),

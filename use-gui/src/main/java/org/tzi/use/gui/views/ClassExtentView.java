@@ -19,48 +19,12 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
+import com.google.common.eventbus.Subscribe;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
@@ -74,15 +38,17 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
-import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent;
-import org.tzi.use.uml.sys.events.ClassInvariantsLoadedEvent;
-import org.tzi.use.uml.sys.events.ClassInvariantsUnloadedEvent;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.util.NullWriter;
+import org.tzi.use.uml.sys.events.*;
 
-import com.google.common.eventbus.Subscribe;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * A view showing all objects of a class, their properties (attributes), and
@@ -93,19 +59,19 @@ import com.google.common.eventbus.Subscribe;
 @SuppressWarnings("serial")
 public class ClassExtentView extends JPanel implements View, ActionListener {
 
-    private MSystem fSystem;
+    private final MSystem fSystem;
 
     private MClass fClass;
 
     private boolean fShowInvResults;
 
-    private JPopupMenu fPopupMenu; // context menu on right mouse click
+    private final JPopupMenu fPopupMenu; // context menu on right mouse click
 
-    private JTable fTable;
+    private final JTable fTable;
 
-    private JScrollPane fTablePane;
+    private final JScrollPane fTablePane;
 
-    private TableModel fTableModel;
+    private final TableModel fTableModel;
 
     public ClassExtentView(MainWindow parent, MSystem system) {
         super(new BorderLayout());
@@ -162,10 +128,10 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                     }
 
                     // Columns don't fill the viewport, invoke default layout
-
                     if (tcm.getTotalColumnWidth() < getParent().getWidth())
                         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-                        super.doLayout();
+
+                    super.doLayout();
                 }
 
                 setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -248,8 +214,8 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
      * Called when a class was selected in the popup menu.
      */
     public void actionPerformed(ActionEvent e) {
-        // System.err.println("*** ActionEvent = " + e.getActionCommand());
         String name = e.getActionCommand();
+
         // see if there's really a change
         if (fClass.name().equals(name))
             return;
@@ -262,33 +228,28 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         fTableModel.fireTableStructureChanged();
         fTableModel.fireTableDataChanged();
         fitWidth();
-        // TableColumn column = null;
-        // for (int i = fTableModel.getColumnCount() - 1; i >= 0; i--) {
-        // column = fTable.getColumnModel().getColumn(i);
-        // column.sizeWidthToFit();
-        // }
     }
 
     // icons used for invariant results
-    private static final Icon fTrueIcon = new ImageIcon(Options.getIconPath("InvTrue.gif").toString());
-    private static final Icon fFalseIcon = new ImageIcon(Options.getIconPath("InvFalse.gif").toString());
-    private static final Icon fNotAvailIcon = new ImageIcon(Options.getIconPath("InvNotAvail.gif").toString());
+    private static final Icon fTrueIcon = new ImageIcon(Options.getIconPath("InvTrue.gif"));
+    private static final Icon fFalseIcon = new ImageIcon(Options.getIconPath("InvFalse.gif"));
+    private static final Icon fNotAvailIcon = new ImageIcon(Options.getIconPath("InvNotAvail.gif"));
 
     /**
      * The table model.
      */
     class TableModel extends AbstractTableModel {
-        private ArrayList<String> fColumnNames;
+        private final List<String> fColumnNames;
 
-		private ArrayList<MObject> fObjects;
+		private final List<MObject> fObjects;
 
         private MAttribute[] fAttributes;
 
         private MClassInvariant[] fClassInvariants;
 
-        private Map<MObject, String[]> fObjectValueStrMap;
+        private final Map<MObject, String[]> fObjectValueStrMap;
 
-        private Map<MClassInvariant, Set<MObject>> fInvBadObjects;
+        private final Map<MClassInvariant, Set<MObject>> fInvBadObjects;
 
         // need to cache all data because getValueAt is called often.
 
@@ -316,8 +277,8 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
 
             // set columns
             fColumnNames.add(fClass.name());
-            for (int i = 0; i < fAttributes.length; i++)
-                fColumnNames.add(fAttributes[i].name());
+            for (MAttribute fAttribute : fAttributes)
+                fColumnNames.add(fAttribute.name());
 
             // get all invariants for selected class
             if (fShowInvResults) {
@@ -326,8 +287,8 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                 fClassInvariants = new MClassInvariant[n];
                 System.arraycopy(invSet.toArray(), 0, fClassInvariants, 0, n);
                 Arrays.sort(fClassInvariants);
-                for (int i = 0; i < fClassInvariants.length; i++)
-                    fColumnNames.add(fClassInvariants[i].name());
+                for (MClassInvariant fClassInvariant : fClassInvariants)
+                    fColumnNames.add(fClassInvariant.name());
             }
         }
 
@@ -347,31 +308,30 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         }
 
         void updateInvariants() {
-            if (!fSystem.state().checkStructure(
-                    new PrintWriter(new NullWriter()))) {
+            if (!fSystem.state().checkStructure(VoidUserOutput.getInstance())) {
                 // cannot evaluate on ill-formed state
-                for (int i = 0; i < fClassInvariants.length; i++) {
-                    fInvBadObjects.put(fClassInvariants[i], null);
+                for (MClassInvariant fClassInvariant : fClassInvariants) {
+                    fInvBadObjects.put(fClassInvariant, null);
                 }
             }
-            for (int i = 0; i < fClassInvariants.length; i++) {
-            	if(!fClassInvariants[i].isActive()){
-            		continue;
-            	}
+
+            for (MClassInvariant fClassInvariant : fClassInvariants) {
+                if (!fClassInvariant.isActive()) {
+                    continue;
+                }
                 try {
                     Set<MObject> badObjects = new HashSet<MObject>();
                     Evaluator evaluator = new Evaluator();
-                    Expression expr = fClassInvariants[i]
+                    Expression expr = fClassInvariant
                             .getExpressionForViolatingInstances();
                     Value v = evaluator.eval(expr, fSystem.state(),
                             new VarBindings());
 
-                    Iterator<Value> valIter = ((SetValue) v).collection().iterator();
-                    while (valIter.hasNext()) {
-                    	ObjectValue oVal = (ObjectValue) valIter.next();
+                    for (Value value : ((SetValue) v).collection()) {
+                        ObjectValue oVal = (ObjectValue) value;
                         badObjects.add(oVal.value());
                     }
-                    fInvBadObjects.put(fClassInvariants[i], badObjects);
+                    fInvBadObjects.put(fClassInvariant, badObjects);
                 } catch (Exception e) {
                     // No need to handle e.
                 }
@@ -385,9 +345,9 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                         Expression expr;
                         String invName = fTable.getColumnName(fTable
                                 .getSelectedColumn());
-                        for (int i = 0; i < fClassInvariants.length; i++) {
-                            if (fClassInvariants[i].isActive() && fClassInvariants[i].name().equals(invName)) {
-                                expr = fClassInvariants[i].expandedExpression();
+                        for (MClassInvariant fClassInvariant : fClassInvariants) {
+                            if (fClassInvariant.isActive() && fClassInvariant.name().equals(invName)) {
+                                expr = fClassInvariant.expandedExpression();
                                 Evaluator evaluator = new Evaluator(true);
                                 try {
                                     evaluator.eval(expr, fSystem.state());
@@ -398,7 +358,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                                 ExprEvalBrowser eb = ExprEvalBrowser
                                         .createPlus(
                                                 evaluator.getEvalNodeRoot(),
-                                                fSystem, fClassInvariants[i]);
+                                                fSystem, fClassInvariant);
                                 eb.setSelectionElement(fTable.getSelectedRow());
                                 break;
                             }
@@ -411,8 +371,9 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
             // till now
             MouseListener[] ml = fTable.getMouseListeners();
             boolean mouseAdapterExists = false;
-            for (int i = 0; i < ml.length; i++) {
-                if (ml[i].getClass().equals(ma.getClass())) {
+
+            for (MouseListener mouseListener : ml) {
+                if (mouseListener.getClass().equals(ma.getClass())) {
                     mouseAdapterExists = true;
                     break;
                 }
@@ -491,7 +452,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         }
 
         void sortRows() {
-            Collections.sort(fObjects, new Comparator<MObject>() {
+            fObjects.sort(new Comparator<MObject>() {
                 public int compare(MObject o1, MObject o2) {
                     return o1.toString().compareTo(o2.toString());
                 }

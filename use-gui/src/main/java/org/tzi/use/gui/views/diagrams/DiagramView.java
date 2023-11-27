@@ -40,6 +40,7 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,7 +63,6 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -77,7 +77,6 @@ import java.util.*;
  * @author Lars Hamann
  * @author (Modified for Java 9 by Andreas Kaestner)
  */
-@SuppressWarnings("serial")
 public abstract class DiagramView extends JPanel
         implements Printable {
 
@@ -86,7 +85,7 @@ public abstract class DiagramView extends JPanel
      */
     protected DiagramGraph fGraph;
 
-    protected PrintWriter fLog;
+    protected UserOutput output;
 
     protected Selection<PlaceableNode> fNodeSelection;
 
@@ -125,10 +124,10 @@ public abstract class DiagramView extends JPanel
      */
     private boolean hasUserDefinedLayout = false;
 
-    public DiagramView(DiagramOptions opt, PrintWriter log) {
+    public DiagramView(DiagramOptions opt, UserOutput log) {
         fOpt = opt;
         fGraph = new DiagramGraph();
-        fLog = log;
+        output = log;
 
         fNodeSelection = new Selection<PlaceableNode>();
         fEdgeSelection = new Selection<EdgeBase>();
@@ -402,10 +401,10 @@ public abstract class DiagramView extends JPanel
     }
 
     /**
-     * Returns the log panel.
+     * Returns the configured user output.
      */
-    public PrintWriter getLog() {
-        return fLog;
+    public UserOutput getOutput() {
+        return output;
     }
 
     /**
@@ -943,7 +942,8 @@ public abstract class DiagramView extends JPanel
     public abstract void storePlacementInfos(PersistHelper helper, Element rootElement);
 
     /**
-     * @param rootElement
+     * @param helper
+     * @param version
      */
     public abstract void restorePlacementInfos(PersistHelper helper, int version);
 
@@ -966,7 +966,7 @@ public abstract class DiagramView extends JPanel
     public void loadLayoutFromString(String layoutString) {
         PersistHelper helper = null;
         try {
-            helper = new PersistHelper(layoutString.getBytes(), fLog);
+            helper = new PersistHelper(layoutString.getBytes(), output);
         } catch (ParseException e) {
             return;
         }
@@ -977,7 +977,7 @@ public abstract class DiagramView extends JPanel
         int version = 1;
 
         if (helper.hasAttribute("version"))
-            version = Integer.valueOf(helper.getAttributeValue("version"));
+            version = Integer.parseInt(helper.getAttributeValue("version"));
 
         if (beforeRestorePlacementInfos(version)) {
             helper.toFirstChild("diagramOptions");
@@ -997,12 +997,12 @@ public abstract class DiagramView extends JPanel
 
         this.showAll();
 
-        PersistHelper helper = new PersistHelper(layoutFile, fLog);
+        PersistHelper helper = new PersistHelper(layoutFile, output);
 
         int version = 1;
 
         if (helper.hasAttribute("version"))
-            version = Integer.valueOf(helper.getAttributeValue("version"));
+            version = Integer.parseInt(helper.getAttributeValue("version"));
 
         if (beforeRestorePlacementInfos(version)) {
             helper.toFirstChild("diagramOptions");
@@ -1023,7 +1023,6 @@ public abstract class DiagramView extends JPanel
      * Called before the layout information is restored.
      * Can be used to suppress loading if version is incompatible.
      *
-     * @param options
      * @param version
      * @return
      */
@@ -1053,7 +1052,7 @@ public abstract class DiagramView extends JPanel
         docBuilder = fact.newDocumentBuilder();
         doc = docBuilder.newDocument();
 
-        PersistHelper helper = new PersistHelper(fLog);
+        PersistHelper helper = new PersistHelper(output);
         Element rootElement = doc.createElement("diagram_Layout");
         rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
         doc.appendChild(rootElement);
@@ -1104,7 +1103,7 @@ public abstract class DiagramView extends JPanel
             return;
         }
 
-        PersistHelper helper = new PersistHelper(fLog);
+        PersistHelper helper = new PersistHelper(output);
         Element rootElement = doc.createElement("diagram_Layout");
         rootElement.setAttribute("version", String.valueOf(DiagramOptions.XML_LAYOUT_VERSION));
         doc.appendChild(rootElement);
@@ -1175,7 +1174,7 @@ public abstract class DiagramView extends JPanel
             loadLayout(defaultLayoutFile);
             hasUserDefinedLayout = false;
         } catch (Exception e) {
-            fLog.println("Error loading default Layout. Using random layout. Cause: " + e.getMessage());
+            output.println("Error loading default Layout. Using random layout. Cause: " + e.getMessage());
             resetLayout();
         }
     }

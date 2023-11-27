@@ -19,13 +19,9 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import junit.framework.TestCase;
-
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
@@ -35,6 +31,10 @@ import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MRValueExpression;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The class <code>ModelCreationTest</code> tries to instantiate Objects
@@ -65,16 +65,18 @@ public class ModelCreationTest extends TestCase {
             
             MClass personClass = model.getClass("Person");
             MClass companyClass = model.getClass("Company");
-            
-            system.execute(
+
+            UserOutput output = DefaultUserOutput.createSystemOutOutput();
+
+            system.execute(output,
             		new MNewObjectStatement(
             				personClass, "p1"));
             
-            system.execute(
+            system.execute(output,
             		new MNewObjectStatement(
             				personClass, "p2"));
             
-            system.execute(
+            system.execute(output,
             		new MNewObjectStatement(
             				companyClass, "c1"));
             
@@ -97,16 +99,18 @@ public class ModelCreationTest extends TestCase {
             
             MClass personClass = model.getClass("Person");
             MClass companyClass = model.getClass("Company");
-            
-            system.execute(
+
+            UserOutput output = DefaultUserOutput.createSystemOutOutput();
+
+            system.execute(output,
             		new MNewObjectStatement(
             				personClass, "p1"));
             
-            system.execute(
+            system.execute(output,
             		new MNewObjectStatement(
             				personClass, "p2"));
             
-            system.execute(
+            system.execute(output,
             		new MNewObjectStatement(
             				companyClass, "c1"));
 
@@ -117,7 +121,7 @@ public class ModelCreationTest extends TestCase {
             participants.add(
             		new MRValueExpression(system.state().objectByName("c1")));
            
-            system.execute(
+            system.execute(output,
             		new MLinkInsertionStatement(
             				model.getAssociation("Job"), 
             				participants, null));
@@ -128,7 +132,7 @@ public class ModelCreationTest extends TestCase {
             participants.add(
             		new MRValueExpression(system.state().objectByName("p2")));
 
-            system.execute(
+            system.execute(output,
             		new MLinkInsertionStatement(
             				model.getAssociation("isBoss"), 
             				participants, null));
@@ -152,16 +156,18 @@ public class ModelCreationTest extends TestCase {
             
             MClass personClass = model.getClass("Person");
             MClass bankClass = model.getClass("Bank");
-            
-            system.execute(
+
+            UserOutput output = DefaultUserOutput.createSystemOutOutput();
+
+            system.execute(output,
             		new MNewObjectStatement(
             				personClass, "p1"));
             
-            system.execute(
+            system.execute(output,
             		new MNewObjectStatement(
             				personClass, "p2"));
             
-            system.execute(
+            system.execute(output,
             		new MNewObjectStatement(
             				bankClass, "b1"));
 
@@ -179,10 +185,10 @@ public class ModelCreationTest extends TestCase {
             participants.add(new MRValueExpression(person1));
            
             List<List<MRValue>> qualifierValues = new ArrayList<List<MRValue>>(2);            
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("123456"))));
             qualifierValues.add(null);
             
-            system.execute(
+            system.execute(output,
             		new MLinkInsertionStatement(
             				model.getAssociation("Account"), 
             				participants,
@@ -191,60 +197,60 @@ public class ModelCreationTest extends TestCase {
             // Build erroneous insertion statement equivalent to "insert (b1, p1['123456']) into Account"           
             qualifierValues.clear();            
             qualifierValues.add(null);
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("123456"))));
             
             try {
-	            system.execute(
+	            system.execute(output,
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
 	            				qualifierValues));
 	            fail("Invalid link creation not handled!");
-            } catch (MSystemException e) {}
+            } catch (MSystemException ignored) { }
             
             // Build erroneous insertion statement equivalent to "insert (b1['123456'], p1['123456']) into Account"           
             qualifierValues.clear();            
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("123456"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("123456"))));
             
             try {
-	            system.execute(
+	            system.execute(output,
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
 	            				qualifierValues));
 	            fail("Invalid link creation not handled!");
-            } catch (MSystemException e) {}
+            } catch (MSystemException ignored) {}
             
             // Build erroneous insertion statement equivalent to "insert (b1, p1) into Account"           
             qualifierValues.clear();
             try {
-	            system.execute(
+	            system.execute(output,
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
 	            				qualifierValues));
 	            fail("Invalid link creation not handled!");
-            } catch (MSystemException e) {}
+            } catch (MSystemException ignored) {}
             
             // Build erroneous insertion statement "Link already exists"           
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123456"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("123456"))));
             qualifierValues.add(null);
             try {
-	            system.execute(
+	            system.execute(output,
 	            		new MLinkInsertionStatement(
 	            				model.getAssociation("Account"), 
 	            				participants,
 	            				qualifierValues));
 	            fail("Invalid link creation not handled!");
-            } catch (MSystemException e) {}
+            } catch (MSystemException ignored) {}
             
             // Build valid insertion statement equivalent to "insert (b1['123455'], p1) into Account" -> Second account for p1           
             qualifierValues.clear();            
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("123455"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("123455"))));
             qualifierValues.add(null);
             
-	        system.execute(
+	        system.execute(output,
             		new MLinkInsertionStatement(
             				model.getAssociation("Account"), 
             				participants,
@@ -257,10 +263,10 @@ public class ModelCreationTest extends TestCase {
             participants.add(
             		new MRValueExpression(person2));
             qualifierValues.clear();            
-            qualifierValues.add(Arrays.asList((MRValue)new MRValueExpression(new StringValue("654321"))));
+            qualifierValues.add(List.of((MRValue) new MRValueExpression(new StringValue("654321"))));
             qualifierValues.add(null);
             
-            system.execute(
+            system.execute(output,
             		new MLinkInsertionStatement(
             				model.getAssociation("Account"), 
             				participants,
@@ -271,17 +277,17 @@ public class ModelCreationTest extends TestCase {
             MAssociationEnd endAccount = account.getAssociationEnd(personClass, "account");
             
             // Is bank1 linked to p1 with accountNr 123456?
-            List<MObject> linkedObjects = system.state().getNavigableObjects(bank1, endBank, endAccount, Arrays.asList((Value)new StringValue("123456")));
+            List<MObject> linkedObjects = system.state().getNavigableObjects(bank1, endBank, endAccount, List.of((Value) new StringValue("123456")));
             assertEquals(1, linkedObjects.size());
             assertEquals(person1.name(), linkedObjects.get(0).name());
             
             // Is bank1 linked to p1 with accountNr 123455?
-            linkedObjects = system.state().getNavigableObjects(bank1, endBank, endAccount, Arrays.asList((Value)new StringValue("123455")));
+            linkedObjects = system.state().getNavigableObjects(bank1, endBank, endAccount, List.of((Value) new StringValue("123455")));
             assertEquals(1, linkedObjects.size());
             assertEquals(person1.name(), linkedObjects.get(0).name());
             
             // Is bank1 linked to p2 with accountNr 654321?
-            linkedObjects = system.state().getNavigableObjects(bank1, endBank, endAccount, Arrays.asList((Value)new StringValue("654321")));
+            linkedObjects = system.state().getNavigableObjects(bank1, endBank, endAccount, List.of((Value) new StringValue("654321")));
             assertEquals(1, linkedObjects.size());
             assertEquals(person2.name(), linkedObjects.get(0).name());
             

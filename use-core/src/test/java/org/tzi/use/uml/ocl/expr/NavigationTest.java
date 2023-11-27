@@ -19,16 +19,17 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-
-import junit.framework.*;
-
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.tzi.use.output.DefaultUserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.ObjectCreation;
+
+import java.io.PrintWriter;
 
 /**
  * NavigationTest tests the navigation with an linkobject.
@@ -54,11 +55,11 @@ public class NavigationTest extends TestCase {
     public void testNavigationWithNormalAssoc() {
         MSystem system = ObjectCreation.getInstance().createModelWithManyObjects();
         String expr = "p1.company->size";
-        PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>",
+                                                            DefaultUserOutput.createSystemOutOutput(),
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -77,11 +78,11 @@ public class NavigationTest extends TestCase {
     public void testNavigationToAnAttributeWithNormalAssoc() {
         MSystem system = ObjectCreation.getInstance().createModelWithManyObjects();
         String expr = "p1.company->exists(c|c.name='IBM')";
-        PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>",
+                                                            DefaultUserOutput.createSystemOutOutput(),
                                                             system.varBindings() );
         Evaluator eval = new Evaluator();
         Value value = eval.eval( navExpr, system.state(), system.varBindings() );
@@ -97,11 +98,11 @@ public class NavigationTest extends TestCase {
     public void testNavigationToAnAttributeWithAssocClass1() {
         MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject();
         String expr = "c1.name = 'IBM'";
-        PrintWriter pw = new PrintWriter( System.err );
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>",
+                                                            DefaultUserOutput.createSystemOutOutput(),
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -119,11 +120,10 @@ public class NavigationTest extends TestCase {
         MSystem system = ObjectCreation.getInstance().createModelWithObjectsAndLinkObject2();
         String expr = "p1.boss.company.name = p1.company.name";
 
-        PrintWriter pw = new PrintWriter( System.err );
-
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>",
+                                                            DefaultUserOutput.createSystemOutOutput(),
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -145,7 +145,8 @@ public class NavigationTest extends TestCase {
 
         Expression navExpr = OCLCompiler.compileExpression( system.model(),
                                                             expr,
-                                                            "<input>", pw,
+                                                            "<input>",
+                                                            DefaultUserOutput.createSystemOutOutput(),
                                                             system.varBindings() );
 
         Evaluator eval = new Evaluator();
@@ -161,6 +162,5 @@ public class NavigationTest extends TestCase {
      */
     public static void main( String[] args ) {
         junit.textui.TestRunner.run( new TestSuite( ExprNavigationTest.class ) );
-
     }
 }

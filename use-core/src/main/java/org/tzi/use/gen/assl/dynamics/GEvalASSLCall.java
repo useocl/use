@@ -53,7 +53,7 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
             String varName = declIt.next().name();
             Value value = valuesIt.next();
             conf.varBindings().push(varName, value); 
-            collector.detailPrintWriter().println( varName + ":=" + value );
+            collector.getUserOutput().println( varName + ":=" + value );
         }
         
         declIt = proc.localDecls().iterator();
@@ -63,7 +63,7 @@ public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
             VarDecl localDecl = declIt.next();
             Value value = UndefinedValue.instance;
             conf.varBindings().push(localDecl.name(), value); 
-            collector.detailPrintWriter().println(localDecl.name() + ":=" + value);
+            collector.getUserOutput().println(localDecl.name() + ":=" + value);
         }
 		
 		// call procedure

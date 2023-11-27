@@ -19,12 +19,9 @@
 
 package org.tzi.use.uml.sys.ppcHandling;
 
-import static org.tzi.use.util.StringUtil.inQuotes;
-
-import java.io.PrintWriter;
-import java.util.Deque;
-import java.util.List;
-
+import org.tzi.use.config.Options;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -32,7 +29,11 @@ import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Log;
+
+import java.util.Deque;
+import java.util.List;
+
+import static org.tzi.use.util.StringUtil.inQuotes;
 
 
 /**
@@ -53,14 +54,14 @@ public class SoilPPCHandler implements PPCHandler {
 		return defaultHandlerToLog;
 	}
 	
-	protected PrintWriter fOutput;
+	protected UserOutput fOutput;
 	
 	/**
 	 * Private constructor for default handler.
 	 * Use getDefaultOutputHandler()
 	 */
 	private SoilPPCHandler() {
-		fOutput = new PrintWriter(Log.out(), true);
+		fOutput = Options.configureOutput(DefaultUserOutput.createSystemOutOutput());
 	}
 	
 	
@@ -69,7 +70,7 @@ public class SoilPPCHandler implements PPCHandler {
 	 * directed to <code>output</code>.
 	 * @param output
 	 */
-	public SoilPPCHandler(PrintWriter output) {
+	public SoilPPCHandler(UserOutput output) {
 		fOutput = output;
 	}
 	
@@ -85,7 +86,7 @@ public class SoilPPCHandler implements PPCHandler {
 		int numFailedPreConditions = failedPreConditions.size();
 		
 		if (numFailedPreConditions > 0) {
-			fOutput.println(
+			fOutput.printlnError(
 					"[Error] " +
 					numFailedPreConditions +
 					" precondition" +
@@ -98,7 +99,7 @@ public class SoilPPCHandler implements PPCHandler {
 		}
 		
 		for (MPrePostCondition preCondition : failedPreConditions) {
-			fOutput.println(
+			fOutput.printlnError(
 					"  " + 
 					preCondition.name() + 
 					": " + 
@@ -109,11 +110,11 @@ public class SoilPPCHandler implements PPCHandler {
 					operationCall.getPreState(), 
 					preCondition.expression());
 			
-			fOutput.println();
+			fOutput.printlnError();
 		}
 		
 		if (numFailedPreConditions > 0) {
-			fOutput.println("  call stack at the time of evaluation:");
+			fOutput.printlnError("  call stack at the time of evaluation:");
 			Deque<MOperationCall> callStack = system.getCallStack();
 			int index = callStack.size();
 			for (MOperationCall opCall : callStack) {
@@ -137,7 +138,7 @@ public class SoilPPCHandler implements PPCHandler {
 		int numFailedPostConditions = failedPostConditions.size();
 		
 		if (numFailedPostConditions > 0) {
-			fOutput.println(
+			fOutput.printlnError(
 					"[Error] " +
 					numFailedPostConditions +
 					" postcondition" +
@@ -150,7 +151,7 @@ public class SoilPPCHandler implements PPCHandler {
 		}
 		
 		for (MPrePostCondition postCondition : failedPostConditions) {
-			fOutput.println(
+			fOutput.printlnError(
 					"  " + 
 					postCondition.name() + 
 					": " + 
@@ -161,16 +162,16 @@ public class SoilPPCHandler implements PPCHandler {
 					operationCall.getPreState(), 
 					postCondition.expression());
 			
-			fOutput.println();
+			fOutput.printlnError();
 		}
 				
 		if (numFailedPostConditions > 0) {
-			fOutput.println("  call stack at the time of evaluation:");
+			fOutput.printlnError("  call stack at the time of evaluation:");
 			Deque<MOperationCall> callStack = system.getCallStack();
 			int index = callStack.size();
 			for (MOperationCall opCall : callStack) {
-				fOutput.print("    " + index-- + ". ");
-				fOutput.println(opCall + " " + opCall.getCallerString());
+				fOutput.printError("    " + index-- + ". ");
+				fOutput.printlnError(opCall + " " + opCall.getCallerString());
 			}
 			
 			throw new PostConditionCheckFailedException(operationCall);

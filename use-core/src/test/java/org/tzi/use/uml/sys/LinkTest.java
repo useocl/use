@@ -19,17 +19,17 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.output.DefaultUserOutput;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.TestModelUtil;
+
+import java.util.Iterator;
 
 
 /**
@@ -140,7 +140,7 @@ public class LinkTest extends TestCase {
                                                               objects ) );
 
             // Undo the last command (insertion of j1)
-            system.undoLastStatement();
+            system.undoLastStatement(DefaultUserOutput.createSystemOutOutput());
             
             // tests if the object j1 does not exists
             assertEquals( null, system.state().objectByName( "j1" ) );

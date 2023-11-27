@@ -47,6 +47,10 @@ import org.tzi.use.main.Session;
 import org.tzi.use.main.Session.EvaluatedStatement;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.printwriters.ColoredPrintWriter;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
@@ -101,8 +105,6 @@ public class MainWindow extends JFrame {
 
     private final LogPanel fLogPanel;
 
-    private final PrintWriter fLogWriter;
-
     private final JDesktopPane fDesk;
 
     private final JSplitPane fTopSplitPane;
@@ -129,6 +131,8 @@ public class MainWindow extends JFrame {
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
     private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
+
+    private final DefaultUserOutput output;
 
     private PageFormat fPageFormat;
 
@@ -396,8 +400,12 @@ public class MainWindow extends JFrame {
 
         // create the log panel
         fLogPanel = new LogPanel();
-        fLogWriter = new PrintWriter(new TextComponentWriter(fLogPanel
-                .getTextComponent()), true);
+
+        // TODO: Create a ColoredHTMLPrintWriter!
+        ColoredPrintWriter textOut = new ColoredPrintWriter(new TextComponentWriter(fLogPanel.getTextComponent()));
+        this.output = DefaultUserOutput.createEmptyOutput();
+        this.output.registerWriter(OutputLevel.TRACE, textOut);
+        Options.configureOutput(this.output);
 
         // create status bar
         fStatusBar = new StatusBar();
@@ -694,16 +702,15 @@ public class MainWindow extends JFrame {
         return fLogPanel;
     }
 
-    public PrintWriter logWriter() {
-        return fLogWriter;
+    public UserOutput getUserOutput() {
+        return output;
     }
 
     private void checkStructure() {
-        boolean ok = fSession.system().state().checkStructure(fLogWriter);
+        boolean ok = fSession.system().state().checkStructure(output);
         
-        fLogWriter.println("checking structure, "
+        output.println("checking structure, "
                 + ((ok) ? "ok." : "found errors."));
-        fLogWriter.flush();
     }
 
     private void createStateMachineMenuEntries(Container menu){
@@ -734,8 +741,8 @@ public class MainWindow extends JFrame {
     @Subscribe
 	public void onSystemChanged(SystemStateChangedEvent e) {
     	if (Options.getCheckStateInvariants()) {
-        	fLogWriter.println("Checking state invariants.");
-        	fSession.system().state().checkStateInvariants(fLogWriter);
+        	output.println("Checking state invariants.");
+        	fSession.system().state().checkStateInvariants(output);
         }
     }
     
@@ -985,7 +992,7 @@ public class MainWindow extends JFrame {
         	USEWriter.getInstance().protocol(
 					"[GUI] " + statement.getShellCommand().substring(1));
         	
-        	fSession.system().execute(statement);
+        	fSession.system().execute(getUserOutput(), statement);
         			
         } catch (MSystemException e) {
         	JOptionPane.showMessageDialog(
@@ -1130,20 +1137,20 @@ public class MainWindow extends JFrame {
         	fLogPanel.clear();
             showLogPanel();
             
-        	fLogWriter.println("compiling specification " + f.toString() + "...");
+        	output.println("compiling specification " + f.toString() + "...");
         	
             MModel model = null;
             try (InputStream iStream = Files.newInputStream(f)) {
                 model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(),
-                        fLogWriter, new ModelFactory());
-                fLogWriter.println("done.");
+                        output, new ModelFactory());
+                output.println("done.");
             } catch (IOException ex) {
-                fLogWriter.println("File `" + f.toAbsolutePath().toString() + "' not found.");
+                output.printlnError("File `" + f.toAbsolutePath().toString() + "' not found.");
             }
             
             final MSystem system;
             if (model != null) {
-            	fLogWriter.println(model.getStats());
+            	output.println(model.getStats());
             	// create system
             	system = new MSystem(model);
             } else {
@@ -1232,7 +1239,7 @@ public class MainWindow extends JFrame {
 			if (!filename.endsWith(".soil"))
 				filename += ".soil";
             File f = new File(path, filename);
-            Log.verbose("File " + f);
+            output.printlnVerbose("File " + f);
 
             if (f.exists()) {
                 int n = JOptionPane.showConfirmDialog(MainWindow.this,
@@ -1248,7 +1255,8 @@ public class MainWindow extends JFrame {
                         + Options.RELEASE_VERSION);
                 out.println();
                 fSession.system().writeSoilStatements(out);
-                fLogWriter.println("Wrote script " + f);
+
+                output.println("Wrote script " + f);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(MainWindow.this, ex.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -1501,7 +1509,7 @@ public class MainWindow extends JFrame {
         	}
         	
             try {
-            	fSession.system().undoLastStatement();
+            	fSession.system().undoLastStatement(getUserOutput());
             	setUndoRedoButtons();
             } catch (MSystemException ex) {
                 JOptionPane.showMessageDialog(
@@ -1549,7 +1557,7 @@ public class MainWindow extends JFrame {
 			}
 			
 			try {    	
-            	system.redoStatement();
+            	system.redoStatement(getUserOutput());
             	
             	setUndoRedoButtons();
             	
@@ -1614,7 +1622,7 @@ public class MainWindow extends JFrame {
     	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			fSession.system().state().checkStateInvariants(fLogWriter);
+			fSession.system().state().checkStateInvariants(output);
 		}
 	}
     
@@ -1625,7 +1633,7 @@ public class MainWindow extends JFrame {
     	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			fSession.system().determineStates(fLogWriter);
+			fSession.system().determineStates(output);
 		}
 	}
     

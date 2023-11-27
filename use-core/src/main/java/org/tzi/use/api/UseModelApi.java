@@ -18,6 +18,8 @@
  */
 package org.tzi.use.api;
 
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.InternalUserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.SrcPos;
@@ -37,14 +39,11 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -209,7 +208,7 @@ public class UseModelApi {
 	 */
 
 	public MClass createClass(String className, boolean isAbstract) throws UseApiException {
-		if (className == null || className.equals("")) {
+		if (className == null || className.isEmpty()) {
 			throw new UseApiException("A class must be named");
 		}
 
@@ -246,7 +245,7 @@ public class UseModelApi {
 	 */
 	public EnumType createEnumeration(String enumerationName, List<String> literals) throws UseApiException {
 
-		if (enumerationName == null || enumerationName.equals("")) {
+		if (enumerationName == null || enumerationName.isEmpty()) {
 			throw new UseApiException("A name is required for an enumeration.");
 		}
 
@@ -330,11 +329,11 @@ public class UseModelApi {
 	public MOperation createOperation(String ownerName, String operationName,
 			String[][] parameter, String returnType) throws UseApiException {
 
-		if (ownerName == null || ownerName.equals("")) {
+		if (ownerName == null || ownerName.isEmpty()) {
 			throw new UseApiException("Owner name is required!");
 		}
 
-		if (operationName == null || operationName.equals("")) {
+		if (operationName == null || operationName.isEmpty()) {
 			throw new UseApiException("Operation name is required!");
 		}
 
@@ -400,15 +399,14 @@ public class UseModelApi {
 	 * @param returnType The return type of the operation (can be <code>null</code>).
 	 * @param body The OCL-expression of the operation.
 	 * @return The created <code>MOperation</code>.
-	 * @throws UseApiException
+	 * @throws UseApiException If the query operation could not be created.
 	 */
 	public MOperation createQueryOperation(String ownerName, String operationName,
 			String[][] parameter, String returnType, String body) throws UseApiException {
 
 		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
 
-		StringWriter errBuffer = new StringWriter();
-		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		InternalUserOutput output = new InternalUserOutput();
 
 		Symtable symTable = new Symtable();
 		try {
@@ -417,12 +415,12 @@ public class UseModelApi {
 			throw new UseApiException("Could not create query operation.", e);
 		}
 
-		Expression bodyExp = OCLCompiler.compileExpression(mModel, body, "body", errorPrinter, symTable);
+		Expression bodyExp = OCLCompiler.compileExpression(mModel, body, "body", output, symTable);
 
 		if (bodyExp == null) {
 			throw new UseApiException(
 					"Compilation of body expression failed:\n"
-							+ errBuffer.toString());
+							+ output.getOutput());
 		}
 
 		try {
@@ -463,16 +461,15 @@ public class UseModelApi {
 
 		InputStream input = new ByteArrayInputStream(body.getBytes());
 
-		StringWriter errBuffer = new StringWriter();
-		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		InternalUserOutput output = new InternalUserOutput();
 
-		ASTStatement statementAst = SoilCompiler.constructAST(input, "USE Api", errorPrinter, false);
+		ASTStatement statementAst = SoilCompiler.constructAST(input, "USE Api", output, false);
 
 		if (statementAst == null) {
-			throw new UseApiException("Could not create operation. Syntax error in SOIL body:\n" + errBuffer.toString());
+			throw new UseApiException("Could not create operation. Syntax error in SOIL body:\n" + output.getOutput());
 		}
 
-		Context ctx = new Context("USE APi", errorPrinter, new VarBindings(), null);
+		Context ctx = new Context("USE APi", output, new VarBindings(), null);
 		ctx.setModel(getModel());
 		MStatement statement;
 
@@ -512,8 +509,7 @@ public class UseModelApi {
 					+ ".");
 		}
 
-		StringWriter errBuffer = new StringWriter();
-		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		InternalUserOutput output = new InternalUserOutput();
 
 		Symtable symTable = new Symtable();
 		try {
@@ -530,12 +526,12 @@ public class UseModelApi {
 		}
 
 		Expression conditionExp = OCLCompiler.compileExpression(mModel,
-				condition, "condition", errorPrinter, symTable);
+				condition, "condition", output, symTable);
 
 		if (conditionExp == null) {
 			throw new UseApiException(
 					"Compilation of condition expression failed:\n"
-							+ errBuffer.toString());
+							+ output.getOutput());
 		}
 
 		return createPrePostConditionEx(name, op, isPre, conditionExp);
@@ -699,13 +695,12 @@ public class UseModelApi {
 			throw new UseApiException("Could not add " + StringUtil.inQuotes("self") + " to symtable.", e1);
 		}
 
-		StringWriter errBuffer = new StringWriter();
-		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
+		InternalUserOutput output = new InternalUserOutput();
 
-		Expression invExp = OCLCompiler.compileExpression(mModel, invBody, "UseApi", errorPrinter, vars);
+		Expression invExp = OCLCompiler.compileExpression(mModel, invBody, "UseApi", output, vars);
 
 		if (invExp == null) {
-			throw new UseApiException(errBuffer.toString());
+			throw new UseApiException(output.getOutput());
 		}
 
 		return createInvariantEx(invName, contextName, invExp, isExistential);
@@ -734,7 +729,7 @@ public class UseModelApi {
 			Expression invBody, boolean isExistential) throws UseApiException {
 		MClass cls = getClassSafe(contextName);
 
-		MClassInvariant mClassInvariant = null;
+		MClassInvariant mClassInvariant;
 		try {
 			mClassInvariant = mFactory.createClassInvariant(invName, null,
 					cls, invBody, isExistential);
@@ -897,7 +892,7 @@ public class UseModelApi {
 	public MAssociation createAssociation(String associationName, String[] classNames, String[] roleNames,
 			String[] multiplicities, int[] aggregationKinds, boolean[] orderedInfo,
 			String[][][] qualifier) throws UseApiException {
-		if (associationName == null || associationName.equals("")) {
+		if (associationName == null || associationName.isEmpty()) {
 			throw new UseApiException("Asssociations must be named!");
 		}
 
@@ -960,20 +955,20 @@ public class UseModelApi {
 		MClass classEnd = getClassSafe(endClassName);
 
 		MMultiplicity m = USECompiler.compileMultiplicity(endMultiplicity,
-				"Use Api", NullPrintWriter.getInstance(), mFactory);
+				"Use Api", DefaultUserOutput.createEmptyOutput(), mFactory);
 
 		List<VarDecl> qualifierDecl;
 
 		if (qualifier.length > 0) {
-			qualifierDecl = new ArrayList<VarDecl>(qualifier.length);
-			for (int i = 0; i < qualifier.length; ++i) {
-				if (qualifier[i].length != 2) {
-					throw new UseApiException("Qualifiers must be defined with a name and a type");
-				}
+			qualifierDecl = new ArrayList<>(qualifier.length);
+            for (String[] strings : qualifier) {
+                if (strings.length != 2) {
+                    throw new UseApiException("Qualifiers must be defined with a name and a type");
+                }
 
-				Type t = getType(qualifier[i][1]);
-				qualifierDecl.add(new VarDecl(qualifier[i][0], t));
-			}
+                Type t = getType(strings[1]);
+                qualifierDecl.add(new VarDecl(strings[0], t));
+            }
 		} else {
 			qualifierDecl = Collections.emptyList();
 		}
@@ -1018,7 +1013,7 @@ public class UseModelApi {
 	 */
 	public Type getType(String typeExpr) throws UseApiException {
 		Type type;
-		type = OCLCompiler.compileType(mModel, typeExpr, "UseApi", NullPrintWriter.getInstance());
+		type = OCLCompiler.compileType(mModel, typeExpr, "UseApi", DefaultUserOutput.createEmptyOutput());
 
 		if (type == null) {
 			throw new UseApiException("Invalid type expression "

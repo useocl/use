@@ -19,12 +19,12 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.util.Stack;
-
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
+
+import java.util.Stack;
 
 /**
  * Extends EvalContext to construct an evaluation tree
@@ -39,9 +39,9 @@ public class DetailedEvalContext extends EvalContext {
 	public DetailedEvalContext(MSystemState preState,
 			   MSystemState postState,
 			   VarBindings globalBindings,
-			   PrintWriter evalLog,
+			   UserOutput output,
 			   String evalLogIndent) {
-		super(preState, postState, globalBindings, evalLog, evalLogIndent);
+		super(preState, postState, globalBindings, output, evalLogIndent);
 	}
 	/**
      * Returns the root node of the evaluation tree after evaluation

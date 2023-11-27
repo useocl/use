@@ -20,9 +20,11 @@ package org.tzi.use.api;
 
 import org.tzi.use.api.impl.UseSystemApiNative;
 import org.tzi.use.api.impl.UseSystemApiUndoable;
-import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.main.Session;
+import org.tzi.use.output.InternalUserOutput;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -33,12 +35,9 @@ import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -93,15 +92,42 @@ public abstract class UseSystemApi {
 	
 	protected final UseModelApi modelApi;
 
+	private String lastWarningMessage;
+
 	protected UseSystemApi(MModel model) {
 		this(new MSystem(model));
 	}
-	
+
 	protected UseSystemApi(MSystem system) {
 		this.system = system;
 		this.modelApi = new UseModelApi(system.model());
 	}
-	
+
+	/**
+	 * Returns <code>true</code> is there was a warning since the last call to {@link #consumeWarning()}.
+	 *
+	 * @return <code>true</code> is a warning was generated since the last call to {@link #consumeWarning()},
+	 *         otherwise <code>false</code>.
+	 */
+	public boolean hasWarning() {
+		return !lastWarningMessage.isEmpty();
+	}
+
+	protected void setLastWarningMessage(String lastWarningMessage) {
+		this.lastWarningMessage = lastWarningMessage;
+	}
+
+	/**
+	 * Consumes the warning by removing and returning it.
+	 * After a call, the operation {@link #hasWarning()} return <code>false</code>.
+	 *
+	 * @return The last produced warning.
+	 */
+	protected String consumeWarning() {
+		String warning = this.lastWarningMessage;
+		this.lastWarningMessage = "";
+		return warning;
+	}
 	/**
 	 * Provides access to the encapsulated {@link MSystem} instance.
 	 * @return The encapsulated {@link MSystem}.
@@ -109,7 +135,7 @@ public abstract class UseSystemApi {
 	public final MSystem getSystem() {
 		return system;
 	}
-	
+
 	/**
 	 * Returns the object (the instance) identified by <code>objectName</code>
 	 * or <code>null</code> if no such object exists.
@@ -173,7 +199,6 @@ public abstract class UseSystemApi {
 	 */
 	public final MObject createObject(String className, String objectName)
 			throws UseApiException {
-
 		return createObjects(className, new String[]{objectName})[0];
 	}
 	
@@ -199,7 +224,6 @@ public abstract class UseSystemApi {
 	public final MObject[] createObjects(
 			String className,
 			String... objectNames) throws UseApiException {
-		
 		MClass cls = modelApi.getClassSafe(className);
 
 		return createObjectsEx(cls, objectNames);
@@ -219,6 +243,7 @@ public abstract class UseSystemApi {
 	 */
 	public final MObject[] createObjectsEx(MClass objectClass,
 			String... objectNames) throws UseApiException {
+
 		MObject[] result = new MObject[objectNames.length];
 		
 		for (int i = 0; i < objectNames.length; ++i) {
@@ -245,7 +270,7 @@ public abstract class UseSystemApi {
     		String objectName, 
     		String attributeName, 
     		String valueExpression) throws UseApiException {
-    	
+
     	MObject object = getObjectSafe(objectName);
     	
     	MAttribute attribute = object.cls().attribute(attributeName, true);
@@ -287,6 +312,7 @@ public abstract class UseSystemApi {
      * @throws UseApiException
      */
 	public final MLink createLink(String associationName, String... connectedObjectNames) throws UseApiException {
+
     	MAssociation association = modelApi.getAssociationSafe(associationName);
     	
     	MObject[] objects = getObjectsSafe(connectedObjectNames);
@@ -374,7 +400,6 @@ public abstract class UseSystemApi {
 			String associationClassName, 
 			String newObjectName, 
 			String... connectedObjectNames) throws UseApiException {
-	
 		return createLinkObject(associationClassName, newObjectName, connectedObjectNames, new String[0][]);
 	}
 
@@ -416,7 +441,7 @@ public abstract class UseSystemApi {
 			MAssociationClass associationClass,
 			String newObjectName,
 			MObject[] connectedObjects) throws UseApiException {
-		
+
 		return createLinkObjectEx(associationClass, newObjectName, connectedObjects, new Value[0][]);
 	}
 	
@@ -442,7 +467,7 @@ public abstract class UseSystemApi {
      * @throws UseApiException 
      */
     public final void deleteObjects(String... objectNames) throws UseApiException {
-    	MObject[] objects = getObjectsSafe(objectNames);    	
+		MObject[] objects = getObjectsSafe(objectNames);
     	deleteObjectsEx(objects);
     }
     
@@ -452,7 +477,7 @@ public abstract class UseSystemApi {
      * @throws UseApiException 
      */
     public final void deleteObjectsEx(MObject... objects) throws UseApiException {
-    	for (MObject obj : objects) {
+		for (MObject obj : objects) {
     		deleteObjectEx(obj);
     	}
     }
@@ -484,7 +509,6 @@ public abstract class UseSystemApi {
     public final void deleteLink(
     		String associationName,
     		String[] connectedObjectNames) throws UseApiException {
-    	
     	deleteLink(associationName, connectedObjectNames, new String[0][]);
     }
     
@@ -507,7 +531,6 @@ public abstract class UseSystemApi {
     		String associationName,
     		String[] connectedObjectNames,
     		String[][] qualifierValueExpressions) throws UseApiException {
-    	
     	MAssociation association = modelApi.getAssociationSafe(associationName);
     	MObject[] connectedObjects = getObjectsSafe(connectedObjectNames);
     	Value[][] values = getQualiferValuesFromExpression(qualifierValueExpressions, association);
@@ -525,7 +548,6 @@ public abstract class UseSystemApi {
     public final void deleteLinkEx(
     		MAssociation association, 
     		MObject[] connectedObjects) throws UseApiException {
-    	
     	deleteLinkEx(association, connectedObjects, new Value[0][]);
     }
         
@@ -578,11 +600,11 @@ public abstract class UseSystemApi {
 	 * the evaluation of all defined invariants.</p> 
 	 * 
 	 * <p>This method does not provide any details about validation errors.
-	 * To retrieve a string representation of the errors use {@link #checkState(PrintWriter)}.</p>
+	 * To retrieve a string representation of the errors use {@link #checkState(UserOutput)}.</p>
 	 * @return <code>true</code> if the state of the encapsulated system is valid.
 	 */
     public boolean checkState() {
-    	return checkState(NullPrintWriter.getInstance());
+    	return checkState(VoidUserOutput.getInstance());
     }
     
     /**
@@ -596,7 +618,7 @@ public abstract class UseSystemApi {
 	 * @param error A <code>PrintWriter</code> used to report validation errors to.
 	 * @return <code>true</code> if the state of the encapsulated system is valid.
 	 */
-	public boolean checkState(PrintWriter error) {
+	public boolean checkState(UserOutput error) {
 		boolean isValid;
 		// Check structure
 		isValid = system.state().checkStructure(error);
@@ -614,25 +636,16 @@ public abstract class UseSystemApi {
 	 * @return The evaluated USE value.
 	 */
 	public Value evaluate(String expression) throws UseApiException {
-		StringWriter errBuffer = new StringWriter();
-		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
-		
-		WarningType orgWarningOclAny = Options.checkWarningsOclAnyInCollections();
-		WarningType orgWarningUnrelated = Options.checkWarningsUnrelatedTypes();
-		
-		Options.setCheckWarningsOclAnyInCollections(WarningType.IGNORE);
-		Options.setCheckWarningsUnrelatedTypes(WarningType.IGNORE);
-		
+
+		InternalUserOutput out = new InternalUserOutput(OutputLevel.ERROR);
+
 		Expression expr = OCLCompiler.compileExpression(modelApi.getModel(), expression,
-				"USE Api", errorPrinter, system.varBindings());
-		
-		Options.setCheckWarningsOclAnyInCollections(orgWarningOclAny);
-		Options.setCheckWarningsUnrelatedTypes(orgWarningUnrelated);
-		
+				"USE Api", out, system.varBindings());
+
 		if (expr == null) {
 			throw new UseApiException("Invalid expression "
 					+ StringUtil.inQuotes(expression) + "!\n"
-					+ errBuffer.toString());
+					+ out.getOutput());
 		}
 		
 		Evaluator evaluator = new Evaluator(false);
@@ -640,7 +653,7 @@ public abstract class UseSystemApi {
 		
 		try {
 			val = evaluator.eval(expr, system.state(), system.varBindings(),
-					NullPrintWriter.getInstance());
+					VoidUserOutput.getInstance());
 		} catch (MultiplicityViolationException e) {
 			throw new UseApiException("Evaluation failed due to a multiplicity violation!", e);
 		}
@@ -688,14 +701,13 @@ public abstract class UseSystemApi {
 			qualifierValuesList = Collections.emptyList();
 		} else {
 			qualifierValuesList = new ArrayList<List<Value>>(qualifierValues.length);
-			for (int iEnd = 0; iEnd < qualifierValues.length; ++iEnd) {
-				if (qualifierValues[iEnd] == null || qualifierValues[iEnd].length == 0) {
-					qualifierValuesList.add(Collections.<Value>emptyList());
-				} else {
-					Value[] values = qualifierValues[iEnd];
-					qualifierValuesList.add(Arrays.asList(values));
-				}
-			}
+            for (Value[] qualifierValue : qualifierValues) {
+                if (qualifierValue == null || qualifierValue.length == 0) {
+                    qualifierValuesList.add(Collections.emptyList());
+                } else {
+                    qualifierValuesList.add(Arrays.asList(qualifierValue));
+                }
+            }
 		}
 		return qualifierValuesList;
 	}

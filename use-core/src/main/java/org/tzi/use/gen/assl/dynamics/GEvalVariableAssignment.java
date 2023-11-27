@@ -45,7 +45,7 @@ public class GEvalVariableAssignment extends GEvalInstruction
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
+			collector.getUserOutput().println(
 					new StringBuilder("evaluating `").append(fInstr)
 							.append("'").toString());
 		
@@ -57,11 +57,11 @@ public class GEvalVariableAssignment extends GEvalInstruction
                           Value value,
                           IGCollector collector ) throws GEvaluationException {
         // value can be undefined, that's ok
-        collector.detailPrintWriter().println(fInstr.target() + ":=" + value );
+        collector.getUserOutput().println(fInstr.target() + ":=" + value );
         conf.varBindings().push(fInstr.target(), value);
         //collector.registerChange( fInstr.target() + ":=" + value );
         fCaller.feedback( conf, null, collector );
-        collector.detailPrintWriter().println("undo: " + fInstr.target() + ":=" + value );
+        collector.getUserOutput().println("undo: " + fInstr.target() + ":=" + value );
         conf.varBindings().pop();
     }
 

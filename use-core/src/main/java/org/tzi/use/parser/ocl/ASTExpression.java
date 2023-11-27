@@ -19,27 +19,17 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.expr.ExpCollect;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpNavigation;
-import org.tzi.use.uml.ocl.expr.ExpNavigationClassifierSource;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
+
+import java.util.*;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -125,7 +115,7 @@ public abstract class ASTExpression extends AST {
         Expression res = null;
         try {
             // lookup operation
-            res = ExpStdOp.create(opname, args);
+            res = ExpStdOp.create(ctx.getUserOutput(), opname, args);
         } catch (ExpInvalidException ex) {
             throw new SemanticException(token, ex);
         }

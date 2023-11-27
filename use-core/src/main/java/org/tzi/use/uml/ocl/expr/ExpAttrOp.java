@@ -70,7 +70,7 @@ public final class ExpAttrOp extends Expression {
             
             if (fAttr.isDerived()) {
             	MSystemState state = isPre() ? ctx.preState() : ctx.postState();
-            	res = state.evaluateDeriveExpression(obj, fAttr);
+            	res = state.evaluateDeriveExpression(ctx.getOutput(), obj, fAttr);
             } else {
 	            MObjectState objState = isPre() ? 
 	                obj.state(ctx.preState()) : obj.state(ctx.postState());

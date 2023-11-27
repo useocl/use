@@ -18,6 +18,16 @@
  */
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
+import org.tzi.use.output.VoidUserOutput;
+import org.tzi.use.parser.ocl.OCLCompiler;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.sys.MSystem;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -26,29 +36,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.tzi.use.parser.ocl.OCLCompiler;
-import org.tzi.use.uml.mm.Annotatable;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MElementAnnotation;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.util.NullPrintWriter;
 
 /**
  * @author Lars Hamann
@@ -96,9 +83,8 @@ public class ModelExporter {
 			MClass sourceClass = sourceModel.getClass(targetClass.name());
 			
 			// Inheritance
-			for (MClassifier sourceParentClassifier : sourceClass.parents()) {
-				MClass sourceParentClass = (MClass)sourceParentClassifier;
-				MClass targetParentClass = findMostSpecificExportedType(sourceParentClass, targetModel);
+			for (MClass sourceParentClassifier : sourceClass.parents()) {
+                MClass targetParentClass = findMostSpecificExportedType(sourceParentClassifier, targetModel);
 				
 				// Could be hidden!
 				if (targetParentClass != null) {
@@ -112,7 +98,7 @@ public class ModelExporter {
 			for (MAttribute sourceAttribute : sourceClass.attributes()) {
 				Type attType = OCLCompiler.compileType(
 						targetModel, sourceAttribute.type().toString(),
-						"Export", NullPrintWriter.getInstance());
+						"Export", VoidUserOutput.getInstance());
 				
 				// if type is not exported, don't export the attribute
 				if (attType != null) {
@@ -132,7 +118,7 @@ public class ModelExporter {
 				if (sourceOperation.hasResultType()) {
 					resultType = OCLCompiler.compileType(
 							targetModel, sourceOperation.resultType().toString(),
-							"Export", NullPrintWriter.getInstance());
+							"Export", VoidUserOutput.getInstance());
 					
 					// Result Type is not exported
 					if (resultType == null)
@@ -176,7 +162,7 @@ public class ModelExporter {
 			}
 			
 			for (MAssociationEnd sourceEnd : sourceAssoc.associationEnds()) {
-				List<VarDecl> targetQualifiers = new ArrayList<VarDecl>();
+				List<VarDecl> targetQualifiers = new ArrayList<>();
 				boolean hasErrors = false;
 				
 				for (VarDecl sourceQualifier : sourceEnd.getQualifiers()) {
@@ -234,8 +220,8 @@ public class ModelExporter {
 		if (parent != null)
 			return parent;
 		
-		for (MClassifier otherParent : sourceParentClass.parents()) {
-			parent = findMostSpecificExportedType((MClass)otherParent, targetModel); 
+		for (MClass otherParent : sourceParentClass.parents()) {
+			parent = findMostSpecificExportedType(otherParent, targetModel);
 			if (parent != null)
 				return parent;
 		}
@@ -246,7 +232,7 @@ public class ModelExporter {
 	private VarDecl cloneVarDecl(MModel targetModel, VarDecl v) {
 		Type argType = OCLCompiler.compileType(
 				targetModel, v.type().toString(),
-				"Export", NullPrintWriter.getInstance());
+				"Export", VoidUserOutput.getInstance());
 		
 		if (argType == null) {
 			return null;
@@ -256,8 +242,8 @@ public class ModelExporter {
 	}
 	
 	/**
-	 * @param sourceModel
-	 * @param targetModel
+	 * @param source The <code>Annotatable</code> element to copy annotations from
+	 * @param target The <code>Annotatable</code> element to copy annotations to
 	 */
 	private void copyAnnotations(Annotatable source, Annotatable target) {
 		for (MElementAnnotation an : source.getAllAnnotations().values()) {

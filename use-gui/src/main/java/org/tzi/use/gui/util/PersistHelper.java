@@ -19,18 +19,17 @@
 
 package org.tzi.use.gui.util;
 
-import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.util.Map;
-
+import com.ximpleware.NavException;
 import com.ximpleware.ParseException;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
+import org.tzi.use.output.UserOutput;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ximpleware.NavException;
-import com.ximpleware.VTDGen;
-import com.ximpleware.VTDNav;
+import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Provides easy to use XML methods
@@ -41,38 +40,38 @@ public class PersistHelper {
 	final VTDGen vg;
 	final VTDNav vn;
 	
-	final PrintWriter log;
+	final UserOutput output;
 	
 	protected Map<String, PlaceableNode> allNodes;
 	
-	public PersistHelper(PrintWriter log) {
+	public PersistHelper(UserOutput output) {
 		vg = null;
 		vn = null;
-		this.log = log;
+		this.output = output;
 	}
 	
 	
 	/**
 	 * Sets up a new helper for reading a document
-	 * @param file
+	 * @param fileToRead
 	 */
-	public PersistHelper(Path fileToRead, PrintWriter log) {
+	public PersistHelper(Path fileToRead, UserOutput output) {
 		vg = new VTDGen();
 		vg.parseFile(fileToRead.toAbsolutePath().toString(), false);
 		vn = vg.getNav();
-		this.log = log;
+		this.output = output;
 	}
 
 	/**
 	 * Sets up a new helper for reading a document
-	 * @param file
+	 * @param toLoad
 	 */
-	public PersistHelper(byte[] toLoad, PrintWriter log) throws ParseException {
+	public PersistHelper(byte[] toLoad, UserOutput output) throws ParseException {
 		vg = new VTDGen();
 		vg.setDoc(toLoad);
 		vg.parse(true);
 		vn = vg.getNav();
-		this.log = log;
+		this.output = output;
 	}
 	
 	/**
@@ -110,7 +109,7 @@ public class PersistHelper {
 		try {
 			return vn.toElement(VTDNav.FIRST_CHILD, childName);
 		} catch (NavException e) {
-			log.println(e.getMessage());
+			output.println(e.getMessage());
 			return false;
 		}
 	}
@@ -119,7 +118,7 @@ public class PersistHelper {
 		try {
 			return vn.toElement(VTDNav.NEXT_SIBLING, childName);
 		} catch (NavException e) {
-			log.println(e.getMessage());
+			output.println(e.getMessage());
 			return false;
 		}
 	}
@@ -128,7 +127,7 @@ public class PersistHelper {
 		try {
 			return vn.hasAttr(attrName);
 		} catch (NavException e) {
-			log.println(e.getMessage());
+			output.println(e.getMessage());
 			return false;
 		}
 	}
@@ -143,7 +142,7 @@ public class PersistHelper {
 			if (t != -1)
 				return vn.toNormalizedString(t);
 		} catch (NavException e) {
-			log.println(e.getMessage());
+			output.println(e.getMessage());
 		}
 		
 		return null;
@@ -166,7 +165,6 @@ public class PersistHelper {
 	}
 	/**
 	 * Retrieves the text of the child element with the name <code>childName</code>.
-	 * @param parent
 	 * @param childName
 	 * @return The string value of the child (empty string of no text) or <code>null</code> if child does not exists.
 	 */
@@ -184,7 +182,7 @@ public class PersistHelper {
 				return null;
 			}
 		} catch (NavException e) {
-			log.println(e.getMessage());
+			output.println(e.getMessage());
 			return null;
 		}
 		
@@ -258,12 +256,12 @@ public class PersistHelper {
 	/**
 	 * @return
 	 */
-	public PrintWriter getLog() {
-		return log;
+	public UserOutput getOutput() {
+		return output;
 	}
 
 	/**
-	 * @param collectAllNodes
+	 * @param allNodes
 	 */
 	public void setAllNodes(Map<String, PlaceableNode> allNodes) {
 		this.allNodes = allNodes;

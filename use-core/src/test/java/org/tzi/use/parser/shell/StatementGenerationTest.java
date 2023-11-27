@@ -19,22 +19,12 @@
 
 package org.tzi.use.parser.shell;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.uml.mm.MAggregationKind;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MMultiplicity;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.VoidUserOutput;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
@@ -42,12 +32,11 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.soil.MEmptyStatement;
-import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
-import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
-import org.tzi.use.uml.sys.soil.MSequenceStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.NullPrintWriter;
+import org.tzi.use.uml.sys.soil.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -61,14 +50,6 @@ public class StatementGenerationTest extends TestCase {
 	private MModel fModel;
 	
 	private MSystemState fState;
-	
-	private MObject fO1;
-	
-	private MObject fO2;
-	
-	private MObject fO3;
-	
-	private MObject fO4;
 
 	@Before
 	@Override
@@ -102,22 +83,18 @@ public class StatementGenerationTest extends TestCase {
 		assertTrue(fStatement instanceof MEnterOperationStatement);
 		
 		// wrong number of arguments
-		fStatement = null;
 		fStatement = generateStatement("openter o1 u2(43, 44)");
 		assertNull(fStatement);
 		
 		// wrong argument type
-		fStatement = null;
 		fStatement = generateStatement("openter o1 u2('42')");
 		assertNull(fStatement);
 		
 		// cannot enter soil defined operations
-		fStatement = null;
 		fStatement = generateStatement("openter o1 s1(42)");
 		assertNull(fStatement);
 		
 		// cannot enter ocl defined operations
-		fStatement = null;
 		fStatement = generateStatement("openter o1 o1('42')");
 		assertNull(fStatement);
 	}
@@ -222,20 +199,20 @@ public class StatementGenerationTest extends TestCase {
 		
 		MSystem system = new MSystem(fModel);
 		fState = system.state();
-	
-		fO1 = fState.createObject(c1, "O1");
+
+		MObject fO1 = fState.createObject(c1, "O1");
 		system.getVariableEnvironment().assign("o1", fO1.value());
-		
-		fO2 = fState.createObject(c2, "O2");
+
+		MObject fO2 = fState.createObject(c2, "O2");
 		system.getVariableEnvironment().assign("o2", fO2.value());
-		
-		fO3 = fState.createObject(c1, "O3");
+
+		MObject fO3 = fState.createObject(c1, "O3");
 		system.getVariableEnvironment().assign("o3", fO3.value());
-		
-		fO4 = fState.createObject(c2, "O4");
+
+		MObject fO4 = fState.createObject(c2, "O4");
 		system.getVariableEnvironment().assign("o4", fO4.value());
 		
-		fState.createLink(a1, Arrays.asList(fO3, fO4), null);
+		fState.createLink(DefaultUserOutput.createSystemOutOutput(), a1, Arrays.asList(fO3, fO4), null);
 	}
 
 	private MStatement generateStatement(String input) {
@@ -245,8 +222,8 @@ public class StatementGenerationTest extends TestCase {
 				fState, 
 				fState.system().getVariableEnvironment(), 
 				input, 
-				"<input>", 
-				NullPrintWriter.getInstance(), 
+				"<input>",
+				VoidUserOutput.getInstance(),
 				false);
 	}
 }

@@ -1,7 +1,5 @@
 package org.tzi.use.gen.assl.dynamics;
 
-import java.util.Iterator;
-
 import org.tzi.use.gen.assl.statics.GInstrOpEnter;
 import org.tzi.use.gen.assl.statics.GOCLExpression;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
@@ -16,6 +14,8 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
+import java.util.Iterator;
+
 public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 
 	GInstrOpEnter fInstr;
@@ -29,7 +29,10 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 	public void eval(GConfiguration conf, IGCaller caller, IGCollector collector)
 			throws GEvaluationException {
 
-		collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+		if (collector.doDetailPrinting()) {
+			collector.getUserOutput().printlnTrace("evaluating `" + fInstr + "'");
+		}
+
 		fCaller = caller;
 		fInstr.objname().createEvalInstr().eval(conf, this, collector);
 	}
@@ -38,11 +41,13 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
             Value value,
             IGCollector collector ) throws GEvaluationException {
 		// if a pre- or postcondition violation occured before skip this command and continue with ASSL evaluation
-		if (collector.getPrePostViolation()) 
+		if (collector.getPrePostViolation()) {
 			fCaller.feedback(conf, value, collector);
-		else {
+		} else {
 			// no condition violation occurred before. Generate and execute this OpEnter ASSL command
-			collector.detailPrintWriter().println("evaluating `" + fInstr + "'");
+			if (collector.doDetailPrinting()) {
+				collector.getUserOutput().printlnTrace("evaluating `" + fInstr + "'");
+			}
 
 			Expression[] argExprs;
 			Expression expr = new ExpressionWithValue( value );
@@ -70,7 +75,7 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 			StatementEvaluationResult evaluationResult = null;
 			try {
 				// execute openter command
-				evaluationResult = conf.systemState().system().execute(stmt, false, false, false);
+				evaluationResult = conf.systemState().system().execute(collector.getUserOutput(), stmt, false, false, false);
 				inverseStatement = evaluationResult.getInverseStatement();
 			} catch (MSystemException e) {
 				// Precondition violated
@@ -90,9 +95,9 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 
 			try {
 				if (!collector.getPrePostViolation())
-					conf.systemState().system().execute(inverseStatement, true, false, false);
+					conf.systemState().system().execute(collector.getUserOutput(), inverseStatement, true, false, false);
 			} catch (MSystemException e) {
-				e.printStackTrace();
+				collector.getUserOutput().printlnError(e.getMessage());
 			}
 		}
 

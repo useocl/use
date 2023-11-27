@@ -22,6 +22,7 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
@@ -35,7 +36,6 @@ import org.tzi.use.uml.sys.MSystemState;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 
 public class OCLCompiler {
 
@@ -47,21 +47,21 @@ public class OCLCompiler {
 	 * @param model the model
 	 * @param in the source to compile
 	 * @param inName name of the source stream
-	 * @param err output stream for error messages
+	 * @param output user output for error messages etc.
 	 * @param globalBindings the variable bindings
 	 * @return <code>null</code> if there were any errors
 	 */
     public static Expression compileExpression(MModel model,
 	                                           String in, 
 	                                           String inName, 
-	                                           PrintWriter err,
+	                                           UserOutput output,
 	                                           VarBindings globalBindings) {
 		
 		return compileExpression(
 				model,
 				new ByteArrayInputStream(in.getBytes()), 
-				inName, 
-				err, 
+				inName,
+				output,
 				globalBindings);
 	}
     
@@ -70,22 +70,22 @@ public class OCLCompiler {
 	 * @param model the model
 	 * @param in the source to compile
 	 * @param inName name of the source stream
-	 * @param err output stream for error messages
+	 * @param output user output for error messages etc.
 	 * @param varTable the variable bindings
 	 * @return <code>null</code> if there were any errors
 	 */
     public static Expression compileExpression(MModel model,
 	                                           String in, 
 	                                           String inName, 
-	                                           PrintWriter err,
+	                                           UserOutput output,
 	                                           Symtable varTable) {
 		
 		return compileExpression(
 				model, 
 				null,
 				new ByteArrayInputStream(in.getBytes()), 
-				inName, 
-				err, 
+				inName,
+				output,
 				null,
 				varTable);
 	}
@@ -95,22 +95,22 @@ public class OCLCompiler {
 	 * @param model the model
 	 * @param in the source to compile
 	 * @param inName name of the source stream
-	 * @param err output stream for error messages
+	 * @param output user output for error messages etc.
 	 * @param globalBindings the variable bindings
 	 * @return null if there were any errors
 	 */
     public static Expression compileExpression(MModel model,
 	                                           InputStream in, 
 	                                           String inName, 
-	                                           PrintWriter err,
+	                                           UserOutput output,
 	                                           VarBindings globalBindings) {
 		
 		return compileExpression(
 				model, 
 				null, 
 				in, 
-				inName, 
-				err, 
+				inName,
+				output,
 				globalBindings);
 	}
     
@@ -121,7 +121,7 @@ public class OCLCompiler {
 	 * @param state the system state
 	 * @param input the source to compile
 	 * @param inName name of the source stream
-	 * @param err output stream for error messages
+	 * @param output user output for error messages
 	 * @param globalBindings the variable bindings
 	 * @return null if there were any errors
 	 */
@@ -129,7 +129,7 @@ public class OCLCompiler {
     		                                   MSystemState state,
             								   String input, 
             								   String inName, 
-            								   PrintWriter err,
+            								   UserOutput output,
             								   VarBindings globalBindings)
     {
     	return OCLCompiler.compileExpression(
@@ -137,7 +137,7 @@ public class OCLCompiler {
     			state, 
     			new ByteArrayInputStream(input.getBytes()), 
     			inName, 
-    			err, 
+    			output,
     			globalBindings);
     }
     
@@ -146,16 +146,16 @@ public class OCLCompiler {
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output user output for error messages etc.
      * @return Expression null if there were any errors
      */
     public static Expression compileExpression(MModel model,
                                                MSystemState state,
                                                InputStream in, 
                                                String inName, 
-                                               PrintWriter err,
+                                               UserOutput output,
                                                VarBindings globalBindings) {
-    	return compileExpression(model, state, in, inName, err, globalBindings, null);
+    	return compileExpression(model, state, in, inName, output, globalBindings, null);
     }
     
     /**
@@ -163,26 +163,26 @@ public class OCLCompiler {
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output user output for error messages etc.
      * @return Expression null if there were any errors
      */
     private static Expression compileExpression(MModel model,
                                                MSystemState state,
                                                InputStream in, 
                                                String inName, 
-                                               PrintWriter err,
+                                               UserOutput output,
                                                VarBindings globalBindings,
                                                Symtable varTable) {
         Expression expr = null;
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         
         ANTLRInputStream aInput;
 		try {
 			aInput = new ANTLRInputStream(in);
 			aInput.name = inName;
 		} catch (IOException e1) {
-			err.println(e1.getMessage());
-			return expr;
+			output.printlnError(e1.getMessage());
+			return null;
 		}
 		
         OCLLexer lexer = new OCLLexer(aInput);
@@ -202,7 +202,7 @@ public class OCLCompiler {
             if (errHandler.errorCount() == 0 ) {
     
                 // Generate code
-                Context ctx = new Context(inName, err, globalBindings, null);
+                Context ctx = new Context(inName, output, globalBindings, null);
                 ctx.setModel(model);
                 ctx.setSystemState(state);
                 if (varTable != null)
@@ -215,19 +215,18 @@ public class OCLCompiler {
                     expr = null;
             }
         } catch (RecognitionException e) {
-            err.println(parser.getSourceName() +":" + 
+			output.printlnError(parser.getSourceName() +":" +
                         e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
         } catch (SemanticException e) {
-            err.println(e.getMessage());
+			output.printlnError(e.getMessage());
         } catch (NullPointerException e) {
         	// Only throw if not handled before
         	if (errHandler.errorCount() == 0)
         		throw e;
         }
-        
-        err.flush();
+
         return expr;
     }
 
@@ -236,16 +235,16 @@ public class OCLCompiler {
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output for error messages etc.
      * @return Type null if there were any errors
      */
     public static Type compileType(MModel model, 
     							   String in, 
                                    String inName, 
-                                   PrintWriter err) {
+                                   UserOutput output) {
     	
     	InputStream inStream = new ByteArrayInputStream(in.getBytes());
-    	return OCLCompiler.compileType(model, inStream, inName, err);
+    	return OCLCompiler.compileType(model, inStream, inName, output);
     }
     
     /**
@@ -253,27 +252,28 @@ public class OCLCompiler {
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
-     * @param  err output stream for error messages
+     * @param  output output for error messages etc.
      * @return Type null if there were any errors
      */
     public static Type compileType(MModel model, 
     							   InputStream in, 
                                    String inName, 
-                                   PrintWriter err) {
+                                   UserOutput output) {
         Type type = null;
-        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, output);
         
         ANTLRInputStream aInput;
 		try {
 			aInput = new ANTLRInputStream(in);
 		} catch (IOException e1) {
-			err.println(e1.getMessage());
-			return type;
+			output.printlnError(e1.getMessage());
+			return null;
 		}
 		
         OCLLexer lexer = new OCLLexer(aInput);
         
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+
         OCLParser parser = new OCLParser(tokenStream);
         
         lexer.init(errHandler);
@@ -286,7 +286,7 @@ public class OCLCompiler {
             if (errHandler.errorCount() == 0 ) {
     
                 // Generate code
-                Context ctx = new Context(inName, err, null, null);
+                Context ctx = new Context(inName, output, null, null);
                 ctx.setModel(model);
                 type = astType.gen(ctx);
     
@@ -295,15 +295,14 @@ public class OCLCompiler {
                     type  = null;
             }
         } catch (RecognitionException e) {
-            err.println(parser.getSourceName() +":" + 
+			output.printlnError(parser.getSourceName() +":" +
                         e.line + ":" +
                         e.charPositionInLine + ": " + 
                         e.getMessage());
         } catch (SemanticException e) {
-            err.println(e.getMessage());
+			output.printlnError(e.getMessage());
         }
-        
-        err.flush();
+
         return type;
     }
 }

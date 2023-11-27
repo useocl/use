@@ -20,14 +20,11 @@
 package org.tzi.use.parser.soil;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.soil.ast.ASTStatement;
@@ -36,6 +33,11 @@ import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 
 
 /**
@@ -73,7 +75,7 @@ public class SoilCompiler {
 	 * @param variableEnvironment holds the existing variables
 	 * @param input the string which holds the statement
 	 * @param inputName the name of the source
-	 * @param errorOutput target for error messages
+	 * @param output target for error messages
 	 * @param verbose if true, additional information is produced in case of errors
 	 * @return
 	 *   if the input was a valid soil statement, an evaluable soil statement, null else
@@ -84,7 +86,7 @@ public class SoilCompiler {
             VariableEnvironment variableEnvironment,
             String input, 
             String inputName,
-            PrintWriter errorOutput,
+            UserOutput output,
             boolean verbose) {
         
 		return SoilCompiler.compileStatement(
@@ -93,7 +95,7 @@ public class SoilCompiler {
         		variableEnvironment,
         		new ByteArrayInputStream(input.getBytes()), 
         		inputName, 
-        		errorOutput,
+        		output,
         		verbose);
 	}
 	
@@ -111,25 +113,23 @@ public class SoilCompiler {
 	 * @param variableEnvironment holds the existing variables
 	 * @param input the input source
 	 * @param inputName the name of the source
-	 * @param errorOutput target for error messages
+	 * @param output target for error messages
 	 * @param verbose if true, additional information is produced in case of errors
 	 * @return
 	 *   if the input was a valid soil statement, an evaluable soil statement, null else
 	 */
 	public static MStatement compileStatement(MModel model, MSystemState state,
 			VariableEnvironment variableEnvironment, InputStream input,
-			String inputName, PrintWriter errorOutput, boolean verbose) {
+			String inputName, UserOutput output, boolean verbose) {
 		
-		ASTStatement ast = constructAST(input, inputName, errorOutput, verbose);
+		ASTStatement ast = constructAST(input, inputName, output, verbose);
         
         if (ast == null) {
         	return null;
         }
-        
-		MStatement statement = constructStatement(ast, inputName, errorOutput,
+
+        return constructStatement(ast, inputName, output,
 				state, model, variableEnvironment, verbose);
-		
-		return statement;
 	 }
 	
 	
@@ -140,15 +140,15 @@ public class SoilCompiler {
 	 * and <code>null</code> is returned.
 	 * @param input The input stream to be parsed.
 	 * @param inputName A logical name for the input (used for error reporting). 
-	 * @param errorOutput An information sink for error messages.
-	 * @param verbose If <code>true</code>, additional information is written to <code>errorOutput</code> 
+	 * @param output An information sink for error messages.
+	 * @param verbose If <code>true</code>, additional information is written to <code>output</code>
 	 * in case of an error. 
 	 * @return The AST of the parsed statement.
 	 */
 	public static ASTStatement constructAST(
             InputStream input, 
             String inputName,
-            PrintWriter errorOutput,
+            UserOutput output,
             boolean verbose) {
 		
 		ANTLRInputStream aInput;
@@ -156,9 +156,7 @@ public class SoilCompiler {
 			aInput = new ANTLRInputStream(input);
 			aInput.name = inputName;
 		} catch (IOException e) {
-			errorOutput.println(e.getMessage());
-			errorOutput.flush();
-			
+			output.println(e.getMessage());
 			return null;
 		}
 		
@@ -170,40 +168,36 @@ public class SoilCompiler {
 		SoilParser soilParser = 
 			new SoilParser(tokenStream);
 		ParseErrorHandler errorHandler = 
-			new ParseErrorHandler(inputName, errorOutput);
+			new ParseErrorHandler(inputName, output);
 		soilLexer.init(errorHandler);
 		soilParser.init(errorHandler);
 		
 		// parse statement
-		ASTStatement statement = null;
+		ASTStatement statement;
 		try {
 			statement = soilParser.statOnly();
 		} catch(RecognitionException e) {
-			errorOutput.println(
+			output.println(
 		    		soilParser.getSourceName() + ":" + 
                     e.line                     + ":" +
                     e.charPositionInLine       + ": " + 
                     e.getMessage());
 			
 			if (verbose) {
-				e.printStackTrace(errorOutput);
+				e.printStackTrace(output.getPrintStream(OutputLevel.ERROR));
 			}
-			
-			errorOutput.flush();
-			
+
 			return null;
 		}
 			
 		if (errorHandler.errorCount() != 0) {
-			errorOutput.println("Compilation failed.");
-			
-			if (verbose) {
-				errorOutput.println("\nAST so far:");
-				statement.printTree(errorOutput);
+			output.println("Compilation failed.");
+
+			if (output.getOutputLevel().covers(OutputLevel.TRACE)) {
+				output.printlnVerbose("\nAST so far:");
+				statement.printTree(new PrintWriter(output.getPrintStream(OutputLevel.TRACE)));
 			}
-			
-			errorOutput.flush();
-			
+
 			return null;
 		}
 		
@@ -216,7 +210,7 @@ public class SoilCompiler {
 	 * 
 	 * @param statement
 	 * @param inputName
-	 * @param errorOutput
+	 * @param output
 	 * @param state
 	 * @param model
 	 * @param variableEnvironment
@@ -226,30 +220,28 @@ public class SoilCompiler {
 	public static MStatement constructStatement(
 			ASTStatement statement, 
 			String inputName,
-			PrintWriter errorOutput,
+			UserOutput output,
 			MSystemState state,
 			MModel model,
 			VariableEnvironment variableEnvironment,
 			boolean verbose) {
-	
-		// TODO: Verbose output.
-		PrintWriter verboseOutput = new PrintWriter(System.out);
-		
-		if (verbose) {	
-			verboseOutput.println();
-			verboseOutput.println("------------------");
-			verboseOutput.println("COMPILATION REPORT\n");
-			verboseOutput.println("RESULTING AST\n");
-			statement.printTree(verboseOutput);
-			verboseOutput.println();
-			verboseOutput.println("-------------\n");
-			verboseOutput.flush();
+
+		if (output.getOutputLevel().covers(OutputLevel.TRACE)) {
+			output.printlnVerbose()
+					.printlnVerbose("------------------")
+					.printlnVerbose("COMPILATION REPORT\n")
+					.printlnVerbose("RESULTING AST\n");
+
+			statement.printTree(new PrintWriter(output.getPrintStream(OutputLevel.TRACE)));
+
+			output.printlnVerbose()
+					.println("-------------\n");
 		}
 			
 		// create context
 		Context context = new Context(
 				inputName, 
-                errorOutput, 
+                output,
                 state.system().varBindings(), 
                 null);
 		context.setModel(model);
@@ -265,31 +257,24 @@ public class SoilCompiler {
 						variableEnvironment.constructSymbolTable());
 				
 		} catch (CompilationFailedException e) {
-			errorOutput.print("Error: ");
-			errorOutput.println(e.getMessage(true));
+			output.printError("Error: ");
+			output.printlnError(e.getMessage(true));
 			
 			if (verbose) {
-				errorOutput.println("-----------\n");
-				errorOutput.println("STACK TRACE\n");
-				e.printStackTrace(errorOutput);
+				output.printlnTrace("-----------\n");
+				output.printlnTrace("STACK TRACE\n");
+				e.printStackTrace(output.getPrintStream(OutputLevel.TRACE));
+
+				output.printlnVerbose("\nCOMPILATION FAILED");
+				output.printlnVerbose("------------------\n");
 			}
-			
-			errorOutput.flush();
-			
-			if (verbose) {
-				verboseOutput.println("\nCOMPILATION FAILED");
-				verboseOutput.println("------------------\n");
-				verboseOutput.flush();
-			}
-			
-			
+
 			return null;
 		}
 		
 		if (verbose) {
-			verboseOutput.println("\nCOMPILATION SUCCESSFUL");
-			verboseOutput.println("----------------------\n");
-			verboseOutput.flush();
+			output.printlnVerbose("\nCOMPILATION SUCCESSFUL")
+					.printlnVerbose("----------------------\n");
 		}
 	
         return compiledStatement;

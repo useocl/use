@@ -22,7 +22,7 @@
  */
 package org.tzi.use.parser;
 
-import java.io.PrintWriter;
+import org.tzi.use.output.UserOutput;
 
 /**
  * Used by all parsers in this package. 
@@ -33,26 +33,25 @@ import java.io.PrintWriter;
 public class ParseErrorHandler {
     private int fErrorCount = 0;
 
-    private String fFileName;
-    private PrintWriter fErrWriter;
+    private final String fFileName;
+    private final UserOutput output;
     
     /**
      * @param fileName The name of the parsed file - used for constructing
      * error strings.
-     * @param errWriter Error messages are passed through to this 
-     * writer.
+     * @param userOutput Error messages are passed through to the user output.
      */
-    public ParseErrorHandler(String fileName, PrintWriter errWriter)  {
+    public ParseErrorHandler(String fileName, UserOutput userOutput)  {
         fFileName = fileName;
-        fErrWriter = errWriter;
+        this.output = userOutput;
     }
     
     public String getFileName() {
         return fFileName;
     }
     
-    public PrintWriter getErrorWriter() {
-    	return fErrWriter;
+    public UserOutput getOutput() {
+    	return this.output;
     }
     
     public int errorCount() {
@@ -64,8 +63,7 @@ public class ParseErrorHandler {
     }
     
     public void reportError(String error) {
-        fErrWriter.println(fFileName + ":" + error);
-        fErrWriter.flush();
+        this.output.printlnError(fFileName + ":" + error);
         incErrorCount();
     }
 

@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.ocl.expr.*;
 
 import java.util.List;
@@ -179,8 +180,10 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     	
 		if(negated){
 			try {
-				return ExpStdOp.create("not", new Expression[]{ invExpr });
-			} catch (ExpInvalidException e) {}
+				return ExpStdOp.create(VoidUserOutput.getInstance(), "not", new Expression[]{ invExpr });
+			} catch (ExpInvalidException ignored) {
+                // Flipping a boolean expression...
+            }
 		}
 		
 		return invExpr;
@@ -197,7 +200,14 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
                 
         try {
             Expression allInstances = new ExpAllInstances(fClass);
-            Expression current = negated ? ExpStdOp.create("not", new Expression[]{ fBody }) : fBody ;
+            Expression current;
+
+            if (negated) {
+                current = ExpStdOp.create(VoidUserOutput.getInstance(), "not", new Expression[]{ fBody });
+            } else {
+                current = fBody;
+            }
+
             // For invariants with more than one iteration variable
             // a simple Reject does not work, because it allows only one
             // iteration variable. Therefore, we introduce the
@@ -230,7 +240,13 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     public Expression getExpressionForSatisfyingInstances() {
         try {
             Expression allInstances = new ExpAllInstances(fClass);
-            Expression current = negated ? ExpStdOp.create("not", new Expression[]{ fBody }) : fBody ;
+            Expression current;
+
+            if (negated) {
+                current = ExpStdOp.create(VoidUserOutput.getInstance(), "not", new Expression[]{fBody});
+            } else {
+                current = fBody;
+            }
             
             // For invariants with more than one iteration variable
             // a simple select does not work, because it allows only one

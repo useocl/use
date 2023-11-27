@@ -29,10 +29,9 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import java.io.PrintWriter;
-
 import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystem;
@@ -45,7 +44,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrDelete_Object extends GEvalInstruction
     implements IGCaller {
-    private GInstrDelete_Object fInstr;
+    private final GInstrDelete_Object fInstr;
     private IGCaller fCaller;
 
     public GEvalInstrDelete_Object(GInstrDelete_Object instr ) {
@@ -56,9 +55,7 @@ public class GEvalInstrDelete_Object extends GEvalInstruction
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
-					new StringBuilder("evaluating `").append(fInstr)
-							.append("'").toString());
+			collector.getUserOutput().println("evaluating `" + fInstr + "'");
 		
         fCaller = caller;
         fInstr.objectInstr().createEvalInstr().eval(conf,this,collector );
@@ -77,16 +74,16 @@ public class GEvalInstrDelete_Object extends GEvalInstruction
     	
     	MSystemState state = conf.systemState();
     	MSystem system = state.system();
-    	PrintWriter basicOutput = collector.basicPrintWriter();
+    	UserOutput output = collector.getUserOutput();
     	
     	MStatement statement = new MObjectDestructionStatement((ObjectValue)value);
     	MStatement inverseStatement;
     	
-    	basicOutput.println(statement.getShellCommand());
+    	output.println(statement.getShellCommand());
     	
     	try {
     		StatementEvaluationResult evaluationResult = 
-    			system.execute(statement, true, false, false);
+    			system.execute(output, statement, true, false, false);
     		inverseStatement = evaluationResult.getInverseStatement();
     		
 		} catch (MSystemException e) {
@@ -101,11 +98,12 @@ public class GEvalInstrDelete_Object extends GEvalInstruction
 			collector.subsequentlyPrependStatement(statement);
 		}
 		
-		if (collector.doBasicPrinting())
-			basicOutput.println("undo: " + statement.getShellCommand());
+		if (collector.doBasicPrinting()) {
+			output.println("undo: " + statement.getShellCommand());
+		}
 		
 		try {
-			system.execute(inverseStatement, true, false, false);
+			system.execute(output, inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			collector.invalid(e);
 		}

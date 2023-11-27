@@ -19,18 +19,14 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.Bag;
+
+import java.util.*;
 
 /**
  * A derived link controller which handles derived
@@ -40,13 +36,16 @@ import org.tzi.use.util.collections.Bag;
  */
 public class DerivedLinkControllerDerivedEnd extends DerivedLinkController {
 
+	private final UserOutput output;
+
 	/**
 	 * @param state
 	 * @param linkSets
 	 */
-	public DerivedLinkControllerDerivedEnd(MSystemState state,
+	public DerivedLinkControllerDerivedEnd(UserOutput output, MSystemState state,
 			Map<MAssociation, MLinkSet> linkSets) {
 		super(state, linkSets);
+		this.output = output;
 	}
 	
 	/**
@@ -54,10 +53,11 @@ public class DerivedLinkControllerDerivedEnd extends DerivedLinkController {
 	 * @param linkSets
 	 * @param derivedLinkController
 	 */
-	public DerivedLinkControllerDerivedEnd(MSystemState state,
+	public DerivedLinkControllerDerivedEnd(UserOutput output, MSystemState state,
 			Map<MAssociation, MLinkSet> linkSets,
 			DerivedLinkController derivedLinkController) {
 		super(state, linkSets, derivedLinkController);
+		this.output = output;
 	}
 
 
@@ -91,9 +91,10 @@ public class DerivedLinkControllerDerivedEnd extends DerivedLinkController {
 
 			List<MObject> linkedObjects;
 			try {
-				linkedObjects = state.evaluateDeriveExpression(objects, associationEnd);
+				linkedObjects = state.evaluateDeriveExpression(this.output, objects, associationEnd);
 			} catch (MSystemException e1) {
-				Log.error("Derive expression of association end " + StringUtil.inQuotes(associationEnd) + " let to a runtime exception: " + e1.getMessage());
+				output.printlnError("Derive expression of association end " + StringUtil.inQuotes(associationEnd) +
+						" let to a runtime exception: " + e1.getMessage());
 				continue;
 			}
 			
@@ -109,7 +110,7 @@ public class DerivedLinkControllerDerivedEnd extends DerivedLinkController {
 							Arrays.asList(linkObjects));
 					linksSink.add(link);
 				} catch (MSystemException e) {
-					e.printStackTrace();
+					output.printError("Exception while adding derived link: " + e.getMessage());
 				}
 			}
 		}

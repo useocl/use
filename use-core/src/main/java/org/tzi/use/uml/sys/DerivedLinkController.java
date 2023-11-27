@@ -46,7 +46,7 @@ public abstract class DerivedLinkController implements DerivedValueController {
 		
 	private Set<MDerivedLink> derivedLinks;
 	
-	private Map<MAssociation, MLinkSet> linkSets;
+	private final Map<MAssociation, MLinkSet> linkSets;
 	
 	public DerivedLinkController(MSystemState state, Map<MAssociation, MLinkSet> linkSets) {
 		this.state = state;

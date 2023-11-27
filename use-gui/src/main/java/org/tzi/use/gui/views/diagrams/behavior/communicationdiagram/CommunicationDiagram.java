@@ -19,31 +19,14 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.geom.Point2D;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
@@ -60,28 +43,22 @@ import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.Event;
-import org.tzi.use.uml.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.*;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
-import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
-import com.ximpleware.XPathEvalException;
-import com.ximpleware.XPathParseException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Point2D;
+import java.util.List;
+import java.util.*;
 
 /**
  * Same as class diagram and object diagram, there are also common things
@@ -132,20 +109,20 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * This method was created to prevent the usage of 'this' as a param
 	 * for initialisation of an other object in the constructor.
 	 * @param parent view
-	 * @param log to print log messages
+	 * @param output to print output messages
 	 * @param options contains property settings and colour settings
 	 * @param sharedVisibleManager manages which data is currently visible or should be set hidden
 	 * @return a new created CommunicationDiagram
 	 */
 	public static CommunicationDiagram createCommunicationDiagram(final CommunicationDiagramView parent,
-																  final PrintWriter log,
+																  final UserOutput output,
 																  final CommunicationDiagramOptions options,
 																  final VisibleDataManager sharedVisibleManager) {
 		CommunicationDiagramOptions opt = options;
 		if (opt == null) {
 			opt = new CommunicationDiagramOptions();
 		}
-		CommunicationDiagram diagram = new CommunicationDiagram(parent, log, opt, sharedVisibleManager);
+		CommunicationDiagram diagram = new CommunicationDiagram(parent, output, opt, sharedVisibleManager);
 		diagram.postConstruction();
 		return diagram;
 	}
@@ -155,12 +132,12 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Warning: Never pass 'this' to another object in the constructor,
 	 * use postConstruction for cases where 'this' as param is needed
 	 * @param parent view
-	 * @param log to print messages
+	 * @param output to print messages
 	 * @param options contains property settings and colour settings
 	 * @param sharedVisibleManager manages which data is currently visible
 	 */
-	private CommunicationDiagram(CommunicationDiagramView parent, PrintWriter log, CommunicationDiagramOptions options, VisibleDataManager sharedVisibleManager) {
-		super(options, log);
+	private CommunicationDiagram(CommunicationDiagramView parent, UserOutput output, CommunicationDiagramOptions options, VisibleDataManager sharedVisibleManager) {
+		super(options, output);
 		fParent = parent;
 		this.computeNextRandomPoint();
 		parent.setFont(getFont());
@@ -1340,13 +1317,11 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						}
 					}
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 	}
 
@@ -1385,13 +1360,11 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						}
 					}
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 	}
 
@@ -1423,13 +1396,11 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						}
 					}
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 	}
 
@@ -1452,14 +1423,12 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 					}
 					node.restorePlacementInfo(helper, version);
 				}
-			} catch (XPathEvalException e) {
-				fLog.append(e.getMessage());
-			} catch (NavException e) {
-				fLog.append(e.getMessage());
+			} catch (XPathEvalException | NavException e) {
+				output.printlnError(e.getMessage());
 			}
 
-		} catch (XPathParseException e) {
-			fLog.append(e.getMessage());
+        } catch (XPathParseException e) {
+			output.printlnError(e.getMessage());
 		}
 	}
 }

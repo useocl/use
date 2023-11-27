@@ -19,21 +19,10 @@
 
 package org.tzi.use.uml.sys.ppcHandling;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MPrePostCondition;
-import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.mm.statemachines.MProtocolTransition;
-import org.tzi.use.uml.mm.statemachines.MRegion;
-import org.tzi.use.uml.mm.statemachines.MState;
-import org.tzi.use.uml.mm.statemachines.MTransition;
+import org.tzi.use.uml.mm.statemachines.*;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MOperationCall;
@@ -41,6 +30,9 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * PPC handler for legacy openter/opexit commands.
@@ -64,13 +56,13 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 		return defaultHandlerToLog;
 	}
 	
-	private PrintWriter fOutput;
+	private UserOutput fOutput;
 	
 	/**
-	 * Constructs a handler which outputs to {@link Log#out}.
+	 * Constructs a handler which outputs to the default user output configuration (see {@link DefaultUserOutput#createSystemOutOutput()}).
 	 */
 	private OpEnterOpExitPPCHandler() {
-		fOutput = new PrintWriter(Log.out(), true);
+		fOutput = DefaultUserOutput.createSystemOutOutput();
 	}
 	
 	
@@ -78,7 +70,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 	 * Constructs a handler which outputs to <code>output</code>.
 	 * @param output
 	 */
-	public OpEnterOpExitPPCHandler(PrintWriter output) {
+	public OpEnterOpExitPPCHandler(UserOutput output) {
 		fOutput = output;
 	}
 	
@@ -98,7 +90,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 					StringUtil.inQuotes(preCondition.name()) + 
 					" is " +
 					entry.getValue());
-			allValid &= entry.getValue().booleanValue();
+			allValid &= entry.getValue();
 		}
 		
 		if (!allValid) {
@@ -134,7 +126,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 			}
 		}
 		
-		if (evaluationResults.values().contains(Boolean.FALSE)) {
+		if (evaluationResults.containsValue(Boolean.FALSE)) {
 			throw new PostConditionCheckFailedException(operationCall);
 		}
 	}
@@ -148,12 +140,12 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 		Set<MProtocolStateMachineInstance> machinesSet = selfState.getProtocolStateMachinesInstances();
 		List<MProtocolStateMachineInstance> machines = new ArrayList<>(machinesSet);
 		
-		Collections.sort(machines, new Comparator<MProtocolStateMachineInstance>() {
-			@Override
-			public int compare(MProtocolStateMachineInstance o1, MProtocolStateMachineInstance o2) {
-				return o1.getProtocolStateMachine().name().compareTo(o2.getProtocolStateMachine().name());
-			}
-		});
+		machines.sort(new Comparator<MProtocolStateMachineInstance>() {
+            @Override
+            public int compare(MProtocolStateMachineInstance o1, MProtocolStateMachineInstance o2) {
+                return o1.getProtocolStateMachine().name().compareTo(o2.getProtocolStateMachine().name());
+            }
+        });
 		
 		for (MProtocolStateMachineInstance psmInstance : machines) {
 			MProtocolStateMachine psm = psmInstance.getProtocolStateMachine(); 

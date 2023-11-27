@@ -21,34 +21,15 @@
 
 package org.tzi.use.gui.views.selection.objectselection;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
 import org.tzi.use.config.Options;
-import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.OutputLevel;
+import org.tzi.use.output.printwriters.ColoredPrintWriter;
+import org.tzi.use.output.printwriters.NonColoredPrintWriter;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -59,7 +40,15 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.TeeWriter;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * a view of OCL Selection
@@ -255,20 +244,20 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 		// clear previous results
 		fTextOut.setText(null);
 
-		WarningType backUp = Options.checkWarningsOclAnyInCollections();
-		Options.setCheckWarningsOclAnyInCollections(WarningType.IGNORE);
-		
 		// send error output to result window and msg stream
 		StringWriter msgWriter = new StringWriter();
-		PrintWriter out = new PrintWriter(new TeeWriter(
-				new TextComponentWriter(fTextOut), msgWriter), true);
+		// TODO: Create a ColoredHTMLPrintWriter!
+		ColoredPrintWriter textOut = new ColoredPrintWriter(new TextComponentWriter(fTextOut));
+		ColoredPrintWriter msgOut = new NonColoredPrintWriter(msgWriter);
+
+		DefaultUserOutput output = DefaultUserOutput.createEmptyOutput();
+		output.registerWriter(OutputLevel.NORMAL, textOut);
+		output.registerWriter(OutputLevel.NORMAL, msgOut);
 
 		// compile query
 		Expression expr = OCLCompiler.compileExpression(fSystem.model(), fSystem.state(), in, 
-														"Error", out, fSystem.varBindings());
-		
-		Options.setCheckWarningsOclAnyInCollections(backUp);
-		out.flush();
+														"Error", output, fSystem.varBindings());
+
 		fTextIn.requestFocus();
 
 		// compile errors?

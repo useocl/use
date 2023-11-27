@@ -19,24 +19,25 @@
 
 package org.tzi.use.uml.sys.ppcHandling;
 
-import static org.tzi.use.util.StringUtil.inQuotes;
-
-import java.io.PrintWriter;
-import java.util.Deque;
-import java.util.List;
-
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.Log;
+
+import java.io.PrintWriter;
+import java.util.Deque;
+import java.util.List;
+
+import static org.tzi.use.util.StringUtil.inQuotes;
 
 /**
  * PPC handler which logs to a {@link PrintWriter}.
  * The singleton instance returned by {@link #getDefaultOutputHandler()}
- * logs to {@link Log#out}.
+ * logs to {@link System#out}.
  * @author Daniel Gent
  *
  */
@@ -46,8 +47,8 @@ public class ExpressionPPCHandler implements PPCHandler {
 	
 	/**
 	 * Get the singleton default <code>ExpressionPPCHandler</code>
-	 * which outputs to <code>{@link Log#out}</code>.
-	 * @return Default handler to <code>Log.out</code> 
+	 * which outputs to <code>{@link System#out}</code>.
+	 * @return Default handler to <code>System.out</code>
 	 */
 	public static ExpressionPPCHandler getDefaultOutputHandler() {
 		if (defaultHandlerToLog == null) {
@@ -57,22 +58,22 @@ public class ExpressionPPCHandler implements PPCHandler {
 		return defaultHandlerToLog;
 	}
 	
-	private PrintWriter fOutput;
+	private final UserOutput output;
 	
 	/**
 	 * Constructs a new handler with default output to <code>output</code>.
 	 */
-	public ExpressionPPCHandler(PrintWriter output) {
-		fOutput = output;
+	public ExpressionPPCHandler(UserOutput output) {
+		this.output = output;
 	}
 	
 	
 	/**
-	 * Constructs a new handler with default output to <code>{@link Log#out}</code>.
+	 * Constructs a new handler with default output to <code>{@link System#out}</code>.
 	 * Only used by singleton instance getter.
 	 */
 	private ExpressionPPCHandler() {
-		fOutput = new PrintWriter(Log.out(), true);
+		output = DefaultUserOutput.createSystemOutOutput();
 	}
 
 	@Override
@@ -82,46 +83,8 @@ public class ExpressionPPCHandler implements PPCHandler {
 		
 		List<MPrePostCondition> failedPreConditions = 
 			operationCall.getFailedPreConditions();
-		
-		int numFailedPreConditions = failedPreConditions.size();
-		
-		if (numFailedPreConditions > 0) {
-			fOutput.println(
-					"\n[Warning] " +
-					numFailedPreConditions +
-					" precondition" +
-					(numFailedPreConditions > 1 ? "s " : " ") +
-					"in operation call " +
-					inQuotes(operationCall) +
-					" do" +
-					(numFailedPreConditions > 1 ? " " : "es ") +
-					"not hold:");
-		}
-		
-		for (MPrePostCondition preCondition : failedPreConditions) {
-			fOutput.println(
-					"  " + 
-					preCondition.name() + 
-					": " + 
-					preCondition.expression());
-			
-			printDetailedPPC(
-					system, 
-					operationCall.getPreState(), 
-					preCondition.expression());
-			
-			fOutput.println();
-		}
-		
-		if (numFailedPreConditions > 0) {
-			fOutput.println("  call stack at the time of evaluation:");
-			Deque<MOperationCall> callStack = system.getCallStack();
-			int index = callStack.size();
-			for (MOperationCall opCall : callStack) {
-				fOutput.print("    " + index-- + ". ");
-				fOutput.println(opCall + " " + opCall.getCallerString());
-			}
-		}
+
+		handleFailesConditions(failedPreConditions, "precondition", operationCall, system);
 	}
 
 	@Override
@@ -132,48 +95,52 @@ public class ExpressionPPCHandler implements PPCHandler {
 		
 		List<MPrePostCondition> failedPostConditions = 
 			operationCall.getFailedPostConditions();
-		
+
+		handleFailesConditions(failedPostConditions, "postcondition", operationCall, system);
+	}
+
+	private void handleFailesConditions(List<MPrePostCondition> failedPostConditions, String conditionType, MOperationCall operationCall, MSystem system) {
 		int numFailedPostConditions = failedPostConditions.size();
-		
+
 		if (numFailedPostConditions > 0) {
-			fOutput.println(
+			output.printlnWarn(
 					"\n[Warning] " +
-					numFailedPostConditions +
-					" postcondition" +
-					(numFailedPostConditions > 1 ? "s " : " ") +
-					"in operation call " +
-					inQuotes(operationCall) +
-					" do" +
-					(numFailedPostConditions > 1 ? " " : "es ") +
-					"not hold:");
+							numFailedPostConditions +
+							" " + conditionType +
+							(numFailedPostConditions > 1 ? "s " : " ") +
+							"in operation call " +
+							inQuotes(operationCall) +
+							" do" +
+							(numFailedPostConditions > 1 ? " " : "es ") +
+							"not hold:");
 		}
-		
+
 		for (MPrePostCondition postCondition : failedPostConditions) {
-			fOutput.println(
-					"  " + 
-					postCondition.name() + 
-					": " + 
-					postCondition.expression());
-			
+			output.printlnWarn(
+					"  " +
+							postCondition.name() +
+							": " +
+							postCondition.expression());
+
 			printDetailedPPC(
-					system, 
-					operationCall.getPreState(), 
+					system,
+					operationCall.getPreState(),
 					postCondition.expression());
-			
-			fOutput.println();
+
+			output.printlnWarn();
 		}
-				
+
 		if (numFailedPostConditions > 0) {
-			fOutput.println("  call stack at the time of evaluation:");
+			output.printlnWarn("  call stack at the time of evaluation:");
 			Deque<MOperationCall> callStack = system.getCallStack();
 			int index = callStack.size();
 			for (MOperationCall opCall : callStack) {
-				fOutput.print("    " + index-- + ". ");
-				fOutput.println(opCall + " " + opCall.getCallerString());
+				output.printWarn("    " + index-- + ". ");
+				output.printlnWarn(opCall + " " + opCall.getCallerString());
 			}
 		}
 	}
-	
+
 	private void printDetailedPPC(
 			MSystem system, 
 			MSystemState preState, 
@@ -184,8 +151,8 @@ public class ExpressionPPCHandler implements PPCHandler {
 				ppc,
 				preState,
 				system.state(), 
-				system.getVariableEnvironment().constructVarBindings(), 
-				fOutput,
+				system.getVariableEnvironment().constructVarBindings(),
+				output,
 				"    ");
 	}
 

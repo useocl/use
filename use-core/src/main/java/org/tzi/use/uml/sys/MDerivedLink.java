@@ -19,18 +19,18 @@
 
 package org.tzi.use.uml.sys;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.ocl.value.Value;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class saves information about a derived link.
  * @author Lars Hamann
  *
  */
-class MDerivedLink extends MLinkImpl {
+public class MDerivedLink extends MLinkImpl {
 	/**
      * Creates a new derived link for the given association.
      *

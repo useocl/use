@@ -19,45 +19,12 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingWorker;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
+import com.google.common.eventbus.Subscribe;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -71,9 +38,23 @@ import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent;
 import org.tzi.use.uml.sys.events.ClassInvariantsLoadedEvent;
 import org.tzi.use.uml.sys.events.ClassInvariantsUnloadedEvent;
 import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
-import org.tzi.use.util.NullWriter;
 
-import com.google.common.eventbus.Subscribe;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * A table showing invariants and their results.
@@ -644,7 +625,7 @@ public class ClassInvariantView extends JPanel implements View {
             	f.cancel(true);
             }
 
-            structureOK = systemState.checkStructure(new PrintWriter(new NullWriter()), false);
+            structureOK = systemState.checkStructure(VoidUserOutput.getInstance(), false);
             
             duration = System.currentTimeMillis() - start;
             return null;

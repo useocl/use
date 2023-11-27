@@ -20,31 +20,26 @@
 package org.tzi.use.uml.sys.soil;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.TestSystem;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.output.DefaultUserOutput;
+import org.tzi.use.output.VoidUserOutput;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
-import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.soil.VariableEnvironment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -1259,7 +1254,7 @@ public class StatementEffectTest extends TestCase {
 		// hide output
 		fTestSystem.getSystem().registerPPCHandlerOverride(
 				new SoilPPCHandler(
-						NullPrintWriter.getInstance()));
+						VoidUserOutput.getInstance()));
 		
 		boolean caughtException = false;
 		
@@ -1529,15 +1524,15 @@ public class StatementEffectTest extends TestCase {
 	}
 
 	private void undo() throws MSystemException {
-		fTestSystem.getSystem().undoLastStatement();
+		fTestSystem.getSystem().undoLastStatement(DefaultUserOutput.createSystemOutOutput());
 	}
 	
 	private void redo() throws MSystemException {
-		fTestSystem.getSystem().redoStatement();
+		fTestSystem.getSystem().redoStatement(DefaultUserOutput.createSystemOutOutput());
 	}
 
     public void evaluateStatement(String statement) throws MSystemException {
-    	systemApi.getSystem().execute(generateStatement(statement));
+    	systemApi.getSystem().execute(DefaultUserOutput.createSystemOutOutput(), generateStatement(statement));
     }
 
 	private MStatement generateStatement(String input) {
@@ -1548,7 +1543,7 @@ public class StatementEffectTest extends TestCase {
 				systemApi.getSystem().getVariableEnvironment(), 
 				input, 
 				"<input>", 
-				NullPrintWriter.getInstance(), 
+				VoidUserOutput.getInstance(),
 				false);
 	}
 }

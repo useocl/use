@@ -29,26 +29,21 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import java.io.PrintWriter;
-
 import org.tzi.use.gen.assl.statics.GAttributeAssignment;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalAttributeAssignment extends GEvalInstruction
     implements IGCaller {
-    private GAttributeAssignment fInstr;
+    private final GAttributeAssignment fInstr;
     private IGCaller fCaller;
     private String fObjectName;
 
@@ -60,10 +55,9 @@ public class GEvalAttributeAssignment extends GEvalInstruction
                      IGCaller caller,
                      IGCollector collector) throws GEvaluationException {
 
-		if (collector.doDetailPrinting())
-			collector.detailPrintWriter().println(
-					new StringBuilder("evaluating `").append(fInstr)
-							.append("'").toString());
+		if (collector.doDetailPrinting()) {
+			collector.getUserOutput().println("evaluating `" + fInstr + "'");
+		}
         
 		fCaller = caller;
         fObjectName = null;
@@ -93,7 +87,7 @@ public class GEvalAttributeAssignment extends GEvalInstruction
     	MSystem system = state.system();
     	
     	boolean doBasicOutput = collector.doBasicPrinting() || collector.doDetailPrinting();
-    	PrintWriter basicOutput = collector.basicPrintWriter();
+    	UserOutput output = collector.getUserOutput();
     	
     	MObject object = state.objectByName(fObjectName);
     	
@@ -111,12 +105,13 @@ public class GEvalAttributeAssignment extends GEvalInstruction
     	
     	MStatement inverseStatement;
     	
-    	if (doBasicOutput)
-    		basicOutput.println(statement.getShellCommand());
+    	if (doBasicOutput) {
+			output.println(statement.getShellCommand());
+		}
     	
     	try {
     		StatementEvaluationResult evaluationResult = 
-    			system.execute(statement, true, false, false);
+    			system.execute(output, statement, true, false, false);
     		inverseStatement = evaluationResult.getInverseStatement();
     		
 		} catch (MSystemException e) {
@@ -128,11 +123,12 @@ public class GEvalAttributeAssignment extends GEvalInstruction
 			collector.subsequentlyPrependStatement(statement);
 		}
         
-		if (doBasicOutput)
-			basicOutput.println("undo: " + statement.getShellCommand());
+		if (doBasicOutput) {
+			output.println("undo: " + statement.getShellCommand());
+		}
 		
 		try {
-			system.execute(inverseStatement, true, false, false);
+			system.execute(output, inverseStatement, true, false, false);
 		} catch (MSystemException e) {
 			throw new GEvaluationException(e);
 		}

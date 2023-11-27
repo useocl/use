@@ -248,7 +248,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
         }
         
         List<VarDecl> generatedQualifiers;
-        if (qualifiers.size() == 0) {
+        if (qualifiers.isEmpty()) {
         	generatedQualifiers = Collections.emptyList();
         } else {
         	generatedQualifiers = new ArrayList<VarDecl>(qualifiers.size());

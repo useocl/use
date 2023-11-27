@@ -19,14 +19,9 @@
 
 package org.tzi.use.parser;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.output.UserOutput;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -34,30 +29,35 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 
 /**
  * Context information available when walking the abstract syntax tree.
  *
- * @author  Mark Richters
+ * @author Mark Richters
+ * @author Lars Hamann
  */
 public class Context {
     private Symtable fVarTable; // declared variable names
-    private Symtable fTypeTable; // declared type names
+    private final Symtable fTypeTable; // declared type names
     // implicit context for some expressions (self or element variable
     // in iterate-based expressions)
-    private ExprContext fExprContext; 
+    private final ExprContext fExprContext;
     private int fErrorCount;
-    private String fFilename;
+    private final String fFilename;
     
-    private PrintWriter fErr;
-    private PrintWriter fOut;
-    
+    private final UserOutput output;
+
     private MModel fModel;
     private MClass fCurrentClass;
-    private ModelFactory fModelFactory;
+    private final ModelFactory fModelFactory;
     private MSystemState fSystemState;
     private boolean fInsidePostCondition;
-    private List<String> fLoopVarNames;
+    private final List<String> fLoopVarNames;
     
     private List<GProcedure> generatorProcedures;
     
@@ -67,12 +67,12 @@ public class Context {
     
     private boolean fIsInsideTestCase;
     
-    public Context(String filename, PrintWriter err, 
+    public Context(String filename, UserOutput output,
                    VarBindings globalBindings,
                    ModelFactory factory) {
+        this.output = output;
+
         fFilename = filename;
-        fErr = err;
-        fOut = err;
         fVarTable = new Symtable(globalBindings);
         fTypeTable = new Symtable();
         fExprContext = new ExprContext();
@@ -80,14 +80,6 @@ public class Context {
         fLoopVarNames = new ArrayList<String>();
      }
 
-    public void setOut(PrintWriter out) {
-    	fOut = out;
-    }
-
-    public PrintWriter getOut() {
-    	return fOut;
-    }
-    
     public List<String> loopVarNames() {
         return fLoopVarNames;
     }
@@ -117,7 +109,7 @@ public class Context {
     		// from a map (in which keys are unique), we can safely assume
     		// that we won't end up here unless someone changes the behavior
     		// of the .add method
-    		System.err.println("please check org.tzi.use.parser.Context:buildVarTable()");
+    		this.output.printlnError("Semantic exception please check org.tzi.use.parser.Context:buildVarTable()");
 		}	
     
     	fVarTable = newSymtable;
@@ -171,14 +163,18 @@ public class Context {
         return fErrorCount;
     }
 
+    public UserOutput getUserOutput() {
+        return this.output;
+    }
+
     public void reportWarning(Token t, String msg) {
-        fErr.println(fFilename + ":" + t.getLine() + ":" + 
+        this.output.printlnWarn(fFilename + ":" + t.getLine() + ":" +
                      t.getCharPositionInLine() + ": Warning: " + msg);
     }
     
     public void reportError(Token t, String msg) {
         fErrorCount++;
-        fErr.println(fFilename + ":" + t.getLine() + ":" + 
+        this.output.printlnError(fFilename + ":" + t.getLine() + ":" +
                      t.getCharPositionInLine() + ": " + msg);
     }
     
@@ -188,8 +184,7 @@ public class Context {
     
     public void reportError(SemanticException ex) {
         fErrorCount++;
-        fErr.println(ex.getMessage());
-        fErr.flush();
+        output.printlnError(ex.getMessage());
     }
 
 	public boolean isAssertExpression() {
@@ -211,7 +206,7 @@ public class Context {
 
 	/**
 	 * Sets the available procedures in an ASSL file 
-	 * @param procedures
+	 * @param procedures List of generator procedures
 	 */
 	public void setProcedures(List<GProcedure> procedures) {
 		generatorProcedures = procedures;
