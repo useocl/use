@@ -1149,6 +1149,7 @@ public class MainWindow extends JFrame {
             	fLogWriter.println(model.getStats());
             	// create system
             	system = new MSystem(model);
+                autocompletion = new AutoCompletion(model,fSession);
             } else {
             	system = null;
             }
@@ -1160,8 +1161,6 @@ public class MainWindow extends JFrame {
                     fSession.setSystem(system);
                 }
             });
-
-            autocompletion = new AutoCompletion(model,fSession);
             
             if (system != null) {
             	Options.getRecentFiles().push(f.toString());
