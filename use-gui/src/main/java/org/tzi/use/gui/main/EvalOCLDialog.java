@@ -74,6 +74,10 @@ class EvalOCLDialog extends JDialog {
     
     private final JButton btnEval;
     
+    private JList<String> autocompletionResultList;
+
+    private JScrollPane autocompletionScrollPane;
+    
     private final ChangeListener sessionChangeListener = new ChangeListener() {
 		@Override
 		public void stateChanged(ChangeEvent e) {
@@ -225,7 +229,7 @@ class EvalOCLDialog extends JDialog {
         Action ctrlSpaceAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SwingWorker<SuggestionResult, Void> worker = new SwingWorker<SuggestionResult, Void>() {
+                SwingWorker<SuggestionResult, Void> worker = new SwingWorker<>() {
                     @Override
                     protected SuggestionResult doInBackground() throws Exception {
                         return autocompletion.getSuggestions(fTextIn.getText(), true);
@@ -371,6 +375,63 @@ class EvalOCLDialog extends JDialog {
      */
     private void displayResultsWindow(SuggestionResult suggestion, JPanel textPane) {
         List<String> suggestionList = suggestion.suggestions;
+        List<String> displayedList = formatStrings(suggestion, suggestionList);
+
+        if (autocompletionScrollPane == null) {
+            autocompletionResultList = new JList<>(displayedList.toArray(new String[0]));
+            autocompletionResultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            autocompletionResultList.setCellRenderer(new TwoColorListCellRenderer());
+
+            autocompletionResultList.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmSelection");
+            autocompletionResultList.getActionMap().put("confirmSelection", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedValue = suggestionList.get(autocompletionResultList.getSelectedIndex());
+                    if (selectedValue != null) {
+                        String currentText = fTextIn.getText();
+
+                        String newText;
+                        boolean hasParenthesis = false;
+                        if (selectedValue.endsWith(")")) {
+                            if (selectedValue.contains("(")) {
+                                int firstIndex = selectedValue.indexOf("(");
+                                selectedValue = selectedValue.substring(0, firstIndex + 1);
+                            }
+                            newText = currentText + selectedValue + ")";
+                            hasParenthesis = true;
+                        } else if(currentText.endsWith(")")){
+                            newText = currentText.substring(0, currentText.length()-1) + selectedValue + ")";
+                            hasParenthesis = true;
+                        } else {
+                            newText = currentText + selectedValue;
+                        }
+
+                        fTextIn.setText(newText);
+                        if(hasParenthesis){
+                            fTextIn.setCaretPosition(newText.length()-1);
+                        } else {
+                            fTextIn.setCaretPosition(newText.length());
+                        }
+                    }
+                    autocompletionScrollPane = null;
+                    autocompletionResultList = null;
+                    textPane.remove(1);
+                    fTextIn.requestFocus();
+                    pack();
+                }
+            });
+
+            autocompletionScrollPane = new JScrollPane(autocompletionResultList);
+            textPane.add(autocompletionScrollPane, 1);
+        } else {
+            autocompletionResultList.setListData(displayedList.toArray(new String[0]));
+        }
+
+        autocompletionResultList.requestFocus();
+        pack();
+    }
+
+    private List<String> formatStrings(SuggestionResult suggestion, List<String> suggestionList) {
         String prefix = suggestion.prefix;
 
         List<String> displayedList = new LinkedList<>();
@@ -388,54 +449,7 @@ class EvalOCLDialog extends JDialog {
                 displayedList.add(i, suggestionList.get(i));
             }
         }
-
-
-        JList<String> resultList = new JList<>(displayedList.toArray(new String[0]));
-        resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        resultList.setCellRenderer(new TwoColorListCellRenderer());
-
-        resultList.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmSelection");
-        resultList.getActionMap().put("confirmSelection", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedValue = suggestionList.get(resultList.getSelectedIndex());
-                if (selectedValue != null) {
-                    String currentText = fTextIn.getText();
-
-                    String newText;
-                    boolean hasParenthesis = false;
-                    if (selectedValue.endsWith(")")) {//TODO: more elegant
-                        if (selectedValue.contains("(")) {
-                            int firstIndex = selectedValue.indexOf("(");
-                            selectedValue = selectedValue.substring(0, firstIndex + 1);
-                        }
-                        newText = currentText + selectedValue + ")";
-                        hasParenthesis = true;
-                    } else if(currentText.endsWith(")")){
-                        newText = currentText.substring(0, currentText.length()-1) + selectedValue + ")";
-                        hasParenthesis = true;
-                    }else{
-                        newText = currentText + selectedValue;
-                    }
-
-                    fTextIn.setText(newText);
-                    if(hasParenthesis){
-                        fTextIn.setCaretPosition(newText.length()-1);
-                    }else{
-                        fTextIn.setCaretPosition(newText.length());
-                    }
-                }
-                textPane.remove(1);
-                fTextIn.requestFocus();
-                pack();
-            }
-        });
-
-        JScrollPane scrollPane = new JScrollPane(resultList);
-        textPane.add(scrollPane, 1);
-
-        resultList.requestFocus();
-        pack();
+        return displayedList;
     }
 
     public void setAutoCompletion(AutoCompletion autocompletion) {
