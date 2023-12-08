@@ -99,3 +99,89 @@ All plugin-actions are by default only enabled, i.e. the menuitem and toolbar-bu
 a model is loaded. A plugin-action can change this behaviour by overriding the default method
 ```boolean shouldBeEnabled(IPluginAction pluginAction)```.
 This is especially useful, if an action does not require a model to be loaded.  
+
+## Autocompletion for OCL statements
+
+### Design
+
+```mermaid
+classDiagram
+  class Autocompletion {
+    - model: MModel
+    - state: MSystemState
+    + getSuggestions(input: String, OCLOnly boolean): SuggestionResult
+  }
+
+  class AutocompletionParser {
+    - resultType ResultTypeRoot
+    + AutoCompletionParser(model: MModel, input: String): AutoCompletionparser
+    + getResult(): ResultTypeRoot
+    + parse(model: MModel, input: String, err: PrintWriter): void
+    - processResult(): void
+  }
+
+  class ResultTypeRoot {
+    // Base class for result types
+  }
+
+  class SuggestionResult {
+    + suggestions: List<String>
+    + prefix: String
+  }
+
+  Autocompletion -- AutocompletionParser: uses
+  AutocompletionParser -- ResultTypeRoot: creates
+  AutocompletionParser --|> Suggestion: creates
+
+```
+
+The autocompletion process involves a lexer, a parser and a suggester.
+
+The 'Autocompletion' serves as the suggester, while the 'AutoCompletionParser' acts as both lexer and parser.
+
+An instance of 'Autocompletion' is held by the Main Window, ensuring only one instance exists when the GUI is active. Upon loading a new model, the existing instance is replaced with a new one.
+
+```mermaid
+sequenceDiagram
+  participant Autocompletion
+  participant AutocompletionParser
+  participant ResultTypeRoot
+  participant Suggestion
+
+  EvalOCLDialog->>Autocompletion: getSuggestions(input, OCLOnly)
+  Autocompletion->>AutocompletionParser: create instance
+  AutocompletionParser->>AutocompletionParser: parse()
+  AutocompletionParser->>AutocompletionParser: processResult()
+  AutocompletionParser-->>ResultTypeRoot: create instance
+  Autocompletion->>AutocompletionParser: getResult()
+  AutocompletionParser-->>SuggestionResult: create instance
+```
+
+In the 'getSuggestions' method of 'Autocompletion,' a new 'AutoCompletionParser' instance is created. The constructor of 'AutoCompletionParser' involves parsing the input string and processing the found types.
+
+Processing is essential as the 'parse' method only collects types found in the input string. In 'processResult,' an instance of a subtype of 'ResultTypeRoot' is created.
+
+The 'getSuggestions' method then calls 'getResult' of the 'AutoCompletionParser' object, returning a 'SuggestionResult' object containing suggestion strings and a possible prefix for colored input.
+
+### Usage in GUI
+
+The hotkey 'CTRL+SPACE' triggers autocompletion in the 'EvalOClDialog,' and 'ENTER' selects a value. Currently, these hotkeys are not customizable.
+
+### Usage in Code
+
+To obtain suggestions for an OCL statement:
+
+- Call the 'getSuggestions' method of the 'AutocompleteManager' instance.
+
+For obtaining only a subtype of 'ResultTypeRoot' without suggestions:
+- Instantiate a new 'AutocompleteParser' object.
+- Call the 'getResult' method of the new object.
+
+### Adding autocompletion support for new operation
+
+When adding a new operation for a collection type in USE these steps have to be completed:
+
+- Create a new subclass of 'OpGeneric,' e.g., 'MyOperation.'
+- Register it through the given 'registerOperation' in 'StandardOperationsMyCollection.'
+
+To add autocompletion support for 'MyOperation' no additional steps are required, as both autocompletion and the OCL compiler rely on the same data structure ('opmap' in 'ExpStdOp'). The new operation seamlessly becomes part of the suggestion list, e.g., when typing 'MyCollection{MyValues}->MyOp.'
