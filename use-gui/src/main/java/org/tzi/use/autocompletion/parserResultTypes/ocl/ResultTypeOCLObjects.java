@@ -7,7 +7,7 @@ import java.util.Objects;
  * It is used for expressions containing a completed object name.
  * It extends {@link ResultTypeOCL}.
  */
-public class ResultTypeOCLObjects extends ResultTypeOCL {
+public class ResultTypeOCLObjects implements ResultTypeOCL {
 
     public String objectName;
 

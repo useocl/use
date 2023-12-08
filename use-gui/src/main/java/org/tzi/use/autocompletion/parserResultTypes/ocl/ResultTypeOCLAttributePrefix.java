@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents the autocompletion parser's result type for OCL expressions with an attribute prefix.
  * It extends {@link ResultTypeOCL}.
  */
-public class ResultTypeOCLAttributePrefix extends ResultTypeOCL {
+public class ResultTypeOCLAttributePrefix implements ResultTypeOCL {
 
     public String objectName;
     public String operationType;

@@ -2,7 +2,7 @@ package org.tzi.use.autocompletion.parserResultTypes.ocl;
 
 import java.util.Objects;
 
-public class ResultTypeOCLCollectionsDefault extends ResultTypeOCLCollections {
+public class ResultTypeOCLCollectionsDefault implements ResultTypeOCLCollections {
     public String prefix;
 
     public String collectionType;

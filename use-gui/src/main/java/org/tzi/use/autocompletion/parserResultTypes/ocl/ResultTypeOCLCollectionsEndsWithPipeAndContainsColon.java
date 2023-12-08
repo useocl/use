@@ -7,7 +7,7 @@ import java.util.Objects;
  * It is used for expressions ending with a pipe (|) and containing a colon (:).
  * It extends {@link ResultTypeOCLCollections}.
  */
-public class ResultTypeOCLCollectionsEndsWithPipeAndContainsColon extends ResultTypeOCLCollections{
+public class ResultTypeOCLCollectionsEndsWithPipeAndContainsColon implements ResultTypeOCLCollections{
     public String className;
 
     public ResultTypeOCLCollectionsEndsWithPipeAndContainsColon(String className) {

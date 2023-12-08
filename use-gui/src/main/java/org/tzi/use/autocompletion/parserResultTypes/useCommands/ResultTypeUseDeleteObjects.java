@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents an autocompletion parser result type associated with the USE command "delete" when no object names were already given.
  * It is a subtype of {@link ResultTypeUseDelete}.
  */
-public class ResultTypeUseDeleteObjects extends ResultTypeUseDelete{
+public class ResultTypeUseDeleteObjects implements ResultTypeUseDelete{
     public String objectNames; //comma seperated list
 
     public ResultTypeUseDeleteObjects(String objectNames) {

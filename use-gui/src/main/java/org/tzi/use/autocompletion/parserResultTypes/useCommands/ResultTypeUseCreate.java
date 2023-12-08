@@ -5,5 +5,5 @@ package org.tzi.use.autocompletion.parserResultTypes.useCommands;
  * It is a subtype of {@link ResultTypeUseCommands}.
  */
 
-public abstract class ResultTypeUseCreate extends ResultTypeUseCommands{
+public interface ResultTypeUseCreate extends ResultTypeUseCommands{
 }

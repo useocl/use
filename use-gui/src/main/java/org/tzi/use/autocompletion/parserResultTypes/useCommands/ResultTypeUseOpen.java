@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents a specific autocompletion parser result type associated with the USE command "open".
  * It extends {@link ResultTypeUseCommands}.
  */
-public class ResultTypeUseOpen extends ResultTypeUseCommands{
+public class ResultTypeUseOpen implements ResultTypeUseCommands{
     public String path;
 
     public ResultTypeUseOpen(String path) {

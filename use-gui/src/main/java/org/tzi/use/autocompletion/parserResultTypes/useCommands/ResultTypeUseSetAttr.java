@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents an autocompletion parser result type associated with the USE command "set" when the object name was already given.
  * It is a subtype of {@link ResultTypeUseSet}.
  */
-public class ResultTypeUseSetAttr extends ResultTypeUseSet {
+public class ResultTypeUseSetAttr implements ResultTypeUseSet {
     public String objectName;
 
     public ResultTypeUseSetAttr(String objectName) {

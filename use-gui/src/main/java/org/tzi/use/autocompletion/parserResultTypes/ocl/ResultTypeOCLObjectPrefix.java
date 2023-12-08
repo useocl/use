@@ -7,7 +7,7 @@ import java.util.Objects;
  * It is used for expressions containing an object prefix.
  * It extends {@link ResultTypeOCL}.
  */
-public class ResultTypeOCLObjectPrefix extends ResultTypeOCL{
+public class ResultTypeOCLObjectPrefix implements ResultTypeOCL{
     public String objectPrefix;
 
     public ResultTypeOCLObjectPrefix(String objectPrefix) {

@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents an autocompletion parser result type associated with the USE command "create" when an association name was already given.
  * It is a subtype of {@link ResultTypeUseCreate}.
  */
-public class ResultTypeUseCreateAssociation extends ResultTypeUseCreate{
+public class ResultTypeUseCreateAssociation implements ResultTypeUseCreate{
     public String objectName;
     public String associationName;
 

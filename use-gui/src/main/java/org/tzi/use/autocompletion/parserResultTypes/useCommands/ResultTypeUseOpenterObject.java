@@ -6,7 +6,7 @@ import java.util.Objects;
  * Represents an autocompletion parser result type associated with the USE command "openter" when no object name was already given.
  * It is a subtype of {@link ResultTypeUseOpenter}.
  */
-public class ResultTypeUseOpenterObject extends ResultTypeUseOpenter{
+public class ResultTypeUseOpenterObject implements ResultTypeUseOpenter{
     public String objectName;
 
     public ResultTypeUseOpenterObject(String objectName) {

@@ -5,5 +5,5 @@ package org.tzi.use.autocompletion.parserResultTypes.useCommands;
  * It serves as the parent class for more specific result types related to "openter".
  * It extends {@link ResultTypeUseCommands}.
  */
-public abstract class ResultTypeUseOpenter extends ResultTypeUseCommands{
+public interface ResultTypeUseOpenter extends ResultTypeUseCommands{
 }

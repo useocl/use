@@ -7,7 +7,7 @@ import java.util.Objects;
  * It is used for iteration expressions containing a colon but not ending on "," or "|"
  * It extends {@link ResultTypeOCLCollections}.
  */
-public class ResultTypeOCLCollectionsContainsColon extends ResultTypeOCLCollections {
+public class ResultTypeOCLCollectionsContainsColon implements ResultTypeOCLCollections {
     public String className;
     public String elemType;
 

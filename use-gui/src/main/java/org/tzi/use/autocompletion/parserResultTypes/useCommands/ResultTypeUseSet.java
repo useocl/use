@@ -5,5 +5,5 @@ package org.tzi.use.autocompletion.parserResultTypes.useCommands;
  * It serves as the parent class for more specific result types related to "set".
  * It extends {@link ResultTypeUseCommands}.
  */
-public abstract class ResultTypeUseSet extends ResultTypeUseCommands{
+public interface ResultTypeUseSet extends ResultTypeUseCommands{
 }

@@ -7,7 +7,7 @@ import java.util.Objects;
  * It is used for expressions ending with a pipe (|) and containing an iteration expression identifier.
  * It extends {@link ResultTypeOCLCollections}.
  */
-public class ResultTypeOCLCollectionsEndWithPipe extends ResultTypeOCLCollections{
+public class ResultTypeOCLCollectionsEndWithPipe implements ResultTypeOCLCollections{
     public String iterExprIdentifier;
 
     public ResultTypeOCLCollectionsEndWithPipe(String iterExprIdentifier) {

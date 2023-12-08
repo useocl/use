@@ -5,7 +5,7 @@ package org.tzi.use.autocompletion.parserResultTypes.ocl;
  * It is used for expressions ending with a comma and having "forAll" as operation.
  * It extends {@link ResultTypeOCLCollections}.
  */
-public class ResultTypeOCLCollectionsEndsWithCommaAndIsForAll extends ResultTypeOCLCollections{
+public class ResultTypeOCLCollectionsEndsWithCommaAndIsForAll implements ResultTypeOCLCollections{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

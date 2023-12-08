@@ -7,7 +7,7 @@ import java.util.Objects;
  * It extends {@link ResultTypeUseCommands}.
  */
 
-public class ResultTypeUseDestroy extends ResultTypeUseCommands{
+public class ResultTypeUseDestroy implements ResultTypeUseCommands{
     public String objectNames; //comma seperated list
 
     public ResultTypeUseDestroy(String objectNames) {
