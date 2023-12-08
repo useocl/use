@@ -9,6 +9,9 @@ import org.tzi.use.parser.base.ParserHelper;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.OperationType;
 import org.tzi.use.util.input.AutoCompletionOperation;
 
@@ -20,31 +23,20 @@ import java.util.stream.Collectors;
  * The AutoCompletion class provides support for auto-completion for USE-Commands, collection operations and class members.
  * It maps class names to a list of their attributes, object names to their (inherited) classes,
  * collections to associated operations, classes to available operations, associations to related class names,
- * and classes to their instantiated objects. The auto-completion is based on the provided MModel.
+ * and classes to their instantiated objects. The auto-completion is based on the provided MModel and an MSystemState.
  * <p>
- * This class is initialized with an MModel and a Session, and it monitors the session for changes
+ * This class is initialized with an MModel, an MSystemState and a Session, and it monitors the session for changes
  * to update the auto-completion accordingly.
  * </p>
- *
  *
  * @author [Till Aul]
  */
 public class AutoCompletion {
-    //Maps classnames to a list their attributes (seperated according to their type)
-    private final Map<String, SuggestionForClassName> classToAttributeMap;
-
-    //Maps object names to their (inherited) classes
-    private final Map<String, List<String>> objectsToClassMap;
-
     private final Map<String, List<AutoCompletionOperation>> collectionToOperationsMap;
 
-    private final Map<String, List<String>> classToOperationMap;
-
-    private final Map<String, List<String>> associationToClassNamesMap;
-
-    private final Map<String, List<String>> classToObjectsMap;
-
     private final MModel model;
+
+    private final MSystemState state;
 
     /**
      * Initializes the AutoCompletion instance with the given MModel and Session.
@@ -52,14 +44,10 @@ public class AutoCompletion {
      * @param model   The MModel to be used for AutoCompletion.
      * @param session The Session to monitor for changes and update AutoCompletion.
      */
-    public AutoCompletion(MModel model, Session session) {
-        classToAttributeMap = new HashMap<>();
-        objectsToClassMap = new HashMap<>();
+    public AutoCompletion(MModel model, MSystemState state, Session session) {
         collectionToOperationsMap = new HashMap<>();
-        classToOperationMap = new HashMap<>();
-        associationToClassNamesMap = new HashMap<>();
-        classToObjectsMap = new HashMap<>();
         this.model = model;
+        this.state = state;
 
         //initialize autoCompletion after session is changed
         ChangeListener sessionChangeListener = e -> initializeAutocompletion(session);
@@ -73,32 +61,6 @@ public class AutoCompletion {
      * @param session The Session from which to gather information for auto-completion.
      */
     private void initializeAutocompletion(Session session) {
-        Collection<MClass> mClasses = session.system().model().classes();
-        //Add all classes, attributes and operations to autocompletion
-        //addOperations(String className, List<String> operations);
-        for (MClass mClass : mClasses) {
-            addClass(mClass.name());
-
-            List<String> operations = mClass.operations().stream()
-                    .map(MOperation::toString)
-                    .collect(Collectors.toList());
-            addOperations(mClass.name(), operations);
-            List<MAttribute> attributes = mClass.allAttributes();
-            for (MAttribute mAttribute : attributes) {
-                addAttributeToExistingClass(mClass.name(), mAttribute.name(), mAttribute.type().toString());
-            }
-        }
-
-        //add associations
-        Collection<MAssociation> associations = session.system().model().associations();
-        for (MAssociation mAssociation : associations) {
-            List<String> classNames = new LinkedList<>();
-            for (MClass mClass : mAssociation.associatedClasses()) {
-                classNames.add(mClass.name());
-            }
-            addAssociation(mAssociation.name(), classNames);
-        }
-
         //operations
         for (OpGeneric op : ExpStdOp.opmap.values()) {
             OperationType operationType = op.getOperationType();
@@ -141,8 +103,8 @@ public class AutoCompletion {
     /**
      * Processes and provides suggestions based on the specified 'type' for OCL expressions.
      *
-     * @param result        The result of parsing the OCL expression.
-     * @param suggestions   The existing SuggestionResult object to update with suggestions.
+     * @param result      The result of parsing the OCL expression.
+     * @param suggestions The existing SuggestionResult object to update with suggestions.
      * @return A SuggestionResult object containing suggestions based on the provided 'type'.
      */
     private SuggestionResult handleOCLTypes(ResultTypeRoot result, SuggestionResult suggestions) {
@@ -195,77 +157,6 @@ public class AutoCompletion {
             suggestions.suggestions = List.of();
         }
         return suggestions;
-    }
-
-    /**
-     * Adds the specified association and associated class names to the auto-completion map.
-     *
-     * @param association The name of the association.
-     * @param classNames  The list of class names associated with the given association.
-     */
-    public void addAssociation(String association, List<String> classNames) {
-        associationToClassNamesMap.put(association, classNames);
-    }
-
-    /**
-     * Adds a new class with an empty attribute map to the class-to-attribute mapping.
-     *
-     * @param className The name of the class to be added.
-     */
-    public void addClass(String className) {
-        classToAttributeMap.put(className, new SuggestionForClassName());
-        classToObjectsMap.put(className, new LinkedList<>());
-    }
-
-    /**
-     * Adds a list of operations to a class.
-     *
-     * @param className  The name of the class to which the operations belong.
-     * @param operations A list of maps where each map represents an operation name and its associated return value (if any).
-     */
-    public void addOperations(String className, List<String> operations) {
-        List<String> currentOperations = classToOperationMap.computeIfAbsent(className, k -> new LinkedList<>());
-
-        operations.forEach(operation -> {
-            String[] parts = operation.split("::");
-            currentOperations.add(parts[1]);
-        });
-    }
-
-    /**
-     * Adds an attribute to an existing class with the specified name and type.
-     * <p>
-     * This method associates an attribute with its name and type to an existing class identified by the provided class name.
-     * If the attribute type is "Integer" or "Real," it is treated as "Number" for consistency. The attribute is added to the
-     * class's attribute mapping, which categorizes attributes based on their types.
-     *
-     * @param className The name of the class to which the attribute will be added.
-     * @param attrName  The name of the attribute to be added.
-     * @param attrType  The type of the attribute to be added, which may be "Integer," "Real," or another type.
-     */
-    public void addAttributeToExistingClass(String className, String attrName, String attrType) {
-        if ("Integer".equals(attrType) || "Real".equals(attrType)) {
-            attrType = "Number";
-        }
-
-        Map<String, List<String>> classAttributes = classToAttributeMap.get(className);
-        List<String> classAttributesForType = classAttributes.computeIfAbsent(attrType, k -> new LinkedList<>());
-        classAttributesForType.add(attrName);
-    }
-
-    /**
-     * Adds an object to a class or creates a new class for the object if it doesn't exist.
-     * <p>
-     * This method associates an object with a class name. If the object already exists and is associated with one or more
-     * class names, the provided class name is added to the list of classes for that object. If the object doesn't exist,
-     * a new entry is created in the object-to-class mapping, associating the object with the provided class name.
-     *
-     * @param className  The name of the class to which the object will be associated.
-     * @param objectName The name of the object to be added or associated with a class.
-     */
-    public void addObject(String className, String objectName) {
-        objectsToClassMap.computeIfAbsent(objectName, key -> new LinkedList<>()).add(className);
-        classToObjectsMap.computeIfAbsent(className, key -> new LinkedList<>()).add(objectName);
     }
 
     /**
@@ -325,7 +216,7 @@ public class AutoCompletion {
      * @return A list of association names.
      */
     private List<String> getAllAssociations() {
-        return new LinkedList<>(associationToClassNamesMap.keySet());
+        return model.associations().stream().map(MNamedElement::name).collect(Collectors.toList());
     }
 
     /**
@@ -336,11 +227,27 @@ public class AutoCompletion {
      */
     private List<String> getObjectsToAssociation(String association) {
         List<String> objects = new LinkedList<>();
-        for (String className : associationToClassNamesMap.get(association)) {
-            objects.addAll(classToObjectsMap.get(className));
+        MAssociation mAssoc = stringToMAssociation(association);
+        Set<MClass> classes = mAssoc.associatedClasses();
+        List<String> classNames = classes.stream().map(MNamedElement::name).collect(Collectors.toList());
+
+        for (String className : classNames) {
+            MClass c = classNameToMClass(className);
+            if (c != null) {
+                objects.addAll(state.objectsOfClass(c).stream().map(MObject::name).collect(Collectors.toList()));
+            }
         }
         return objects;
     }
+
+    private MAssociation stringToMAssociation(String name) {
+        Optional<MAssociation> matchingAssociation = model.associations().stream()
+                .filter(assoc -> Objects.equals(assoc.name(), name))
+                .findFirst();
+
+        return matchingAssociation.orElse(null);
+    }
+
 
     /**
      * Gets a list of all classes in the auto-completion map.
@@ -348,7 +255,30 @@ public class AutoCompletion {
      * @return A list of class names.
      */
     private List<String> getAllClasses() {
-        return new ArrayList<>(classToAttributeMap.keySet());
+        List<String> result = new LinkedList<>();
+        for (MClass c : model.classes()) {
+            result.add(c.name());
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves an MClass object based on its name from the model.
+     * <p>
+     * This method searches for an MClass object within the model that has the specified class name.
+     * If a matching class is found, it is returned; otherwise, null is returned.
+     *
+     * @param className The name of the class to retrieve.
+     * @return An MClass object with the specified class name, or null if no matching class is found.
+     */
+    private MClass classNameToMClass(String className) {
+        MClass res = null;
+        for (MClass c : model.classes()) {
+            if (c.name().equals(className)) {
+                res = c;
+            }
+        }
+        return res;
     }
 
     /**
@@ -357,7 +287,7 @@ public class AutoCompletion {
      * @return A list of object names.
      */
     private List<String> getAllObjects() {
-        return new ArrayList<>(objectsToClassMap.keySet());
+        return state.allObjects().stream().map(MObject::name).collect(Collectors.toList());
     }
 
 
@@ -396,31 +326,100 @@ public class AutoCompletion {
         String objectName = parserResult.objectName;
         String operationType = parserResult.operationType;
 
-        List<String> classnames = objectsToClassMap.get(objectName);
-        List<String> attributes = new LinkedList<>();
-
         if ("Real".equals(operationType) || "Integer".equals(operationType)) {
             operationType = "Number";
         }
 
-        try {
-            for (String classname : classnames) {//all classes the object is an instance of
-                Map<String, List<String>> classAttributes = classToAttributeMap.get(classname);
-                if (operationType != null) {//if not null only a specific attribute type is needed
-                    List<String> classAttributesForType = classAttributes.get(operationType);
-                    attributes.addAll(classAttributesForType);
-                } else {//otherwise add all attributes this class has
-                    for (List<String> attrsForType : classAttributes.values()) {
-                        attributes.addAll(attrsForType);
-                    }
-                }
-            }
-            sortSuggestions(attributes);
-            return attributes;
-        } catch (NullPointerException ne) {
-            return Collections.emptyList();
-        }
+        MObject obj = state.objectByName(objectName);
+        List<MAttribute> attrs = obj.cls().allAttributes();
+        List<MOperation> ops = obj.cls().allOperations();
+
+        List<String> attributes = new LinkedList<>(filterAttributes(attrs, operationType));
+        attributes.addAll(filterOperations(ops, operationType));
+
+        sortSuggestions(attributes);
+        return attributes;
     }
+
+    /**
+     * Filters a list of MAttribute objects based on the specified operation type.
+     * <p>
+     * This method takes a list of MAttribute objects and filters them based on the provided
+     * operationType. If operationType is null or empty, all attribute names are included in the result.
+     * If operationType is specified, only attributes matching the specified type are included.
+     *
+     * @param attributes    The list of MAttribute objects to be filtered.
+     * @param operationType The type of operation to filter by (e.g., "Boolean", "Number", "String").
+     * @return A list of attribute names filtered based on the specified operationType.
+     */
+    private List<String> filterAttributes(List<MAttribute> attributes, String operationType) {
+        return attributes.stream()
+                .filter(attr -> operationType == null ||
+                        (operationType.equals("Boolean") && attr.type().isKindOfBoolean(Type.VoidHandling.EXCLUDE_VOID)) ||
+                        (operationType.equals("Number") && attr.type().isKindOfNumber(Type.VoidHandling.EXCLUDE_VOID)) ||
+                        (operationType.equals("String") && attr.type().isKindOfString(Type.VoidHandling.EXCLUDE_VOID)))
+                .map(MAttribute::name)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Filters a list of MOperation objects based on the specified operation type.
+     * <p>
+     * This method takes a list of MOperation objects and filters them based on the provided
+     * operationType. If operationType is null or empty, all operation names are included in the result.
+     * If operationType is specified, only operations returning the specified type are included.
+     * Additionally, the parameters of each operation are formatted using the {@link #formatOperationWithParameters(MOperation)}
+     * method before being added to the result list.
+     *
+     * @param operations    The list of MOperation objects to be filtered.
+     * @param operationType The type of operation to filter by (e.g., "Boolean", "Number", "String").
+     * @return A list of formatted operation names with parameters filtered based on the specified operationType.
+     * @see #formatOperationWithParameters(MOperation)
+     */
+    private List<String> filterOperations(List<MOperation> operations, String operationType) {
+        return operations.stream()
+                .filter(op -> operationType == null ||
+                        ("Boolean".equals(operationType) && op.resultType().isKindOfBoolean(Type.VoidHandling.EXCLUDE_VOID)) ||
+                        ("Number".equals(operationType) && op.resultType().isKindOfNumber(Type.VoidHandling.EXCLUDE_VOID)) ||
+                        ("String".equals(operationType) && op.resultType().isKindOfString(Type.VoidHandling.EXCLUDE_VOID)))
+                .map(this::formatOperationWithParameters)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Formats the operation name and its parameters..
+     * <p>
+     * The method takes an MOperation and extracts its name and parameter list. The parameter list is then
+     * formatted in the following way: "type identifier, type identifier, ...". The formatted parameters
+     * are appended to the operation name in the format "operationName(type identifier, type identifier, ...)".
+     *
+     * @param op The MOperation object to be formatted.
+     * @return The formatted string representing the operation name and its parameters.
+     */
+    private String formatOperationWithParameters(MOperation op) {
+        String operationName = op.name();
+        String parameterList = op.paramList().toString();
+
+        // Format the parameter list
+        StringBuilder formattedParameters = new StringBuilder();
+        String[] lines = parameterList.split("\n");
+        for (String line : lines) {
+            String[] parts = line.split(":");
+            if (parts.length == 2) {
+                String identifier = parts[0].trim();
+                String type = parts[1].trim();
+                formattedParameters.append(type).append(" ").append(identifier).append(", ");
+            }
+        }
+
+        // Remove the trailing comma and space
+        if (formattedParameters.length() > 0) {
+            formattedParameters.setLength(formattedParameters.length() - 2);
+        }
+
+        return operationName + "(" + formattedParameters + ")";
+    }
+
 
     /**
      * Retrieves a list of suggestions for operations on a collection based on its type.
@@ -459,11 +458,12 @@ public class AutoCompletion {
         } else if (parserResult instanceof ResultTypeOCLCollectionsEndsWithPipeAndContainsColon) {
             ResultTypeOCLCollectionsEndsWithPipeAndContainsColon parsedResult = (ResultTypeOCLCollectionsEndsWithPipeAndContainsColon) parserResult;
             String className = parsedResult.className;
+            Collection<MObject> objects = state.objectsOfClass(classNameToMClass(className));
 
-            if (classToObjectsMap.get(className) != null) {
-                List<String> objects = new LinkedList<>(classToObjectsMap.get(className));
-                sortSuggestions(objects);
-                return objects;
+            if (!objects.isEmpty()) {
+                List<String> objs = objects.stream().map(MObject::name).collect(Collectors.toList());
+                sortSuggestions(objs);
+                return objs;
             } else {
                 return List.of();
             }
@@ -576,7 +576,12 @@ public class AutoCompletion {
             result = getAllObjects();
         } else if (parserResult instanceof ResultTypeUseSetAttr) {
             String objectName = ((ResultTypeUseSetAttr) parserResult).objectName;
-            result = getSuggestionsObjects(new ResultTypeOCLObjects(objectName, null));
+            List<MAttribute> attrs = state.objectByName(objectName).cls().allAttributes();
+            result = new LinkedList<>();
+            for (MAttribute attr : attrs) {
+                result.add(attr.name());
+            }
+
         } else {
             result = List.of();
         }
@@ -592,7 +597,7 @@ public class AutoCompletion {
      * For "openterPartObject," it returns a list of all objects from getAllObjects().
      * For "openterPartOperation," it returns a list of operations associated with the provided object name.
      *
-     * @param parserResult    The result of parsing the USE-command openter, containing subtype and object name information due to inheritance.
+     * @param parserResult The result of parsing the USE-command openter, containing subtype and object name information due to inheritance.
      * @return A list of suggestions for opening operations or objects based on the specified subtype and object name.
      */
     private List<String> getSuggestionOpenter(ResultTypeUseOpenter parserResult) {
@@ -608,11 +613,9 @@ public class AutoCompletion {
             String objectName = parsedResult.objectName;
             String operationPrefix = parsedResult.operationPrefix;
 
-            List<String> classes = objectsToClassMap.get(objectName);
-            List<String> operations = classes.stream()
-                    .flatMap(c -> classToOperationMap.getOrDefault(c, Collections.emptyList()).stream())
-                    .filter(operation -> operationPrefix == null || operation.startsWith(operationPrefix))
-                    .map(operation -> operationPrefix == null ? operation : operation.substring(operationPrefix.length()))
+            List<String> operations = state.objectByName(objectName).cls().allOperations().stream()
+                    .filter(operation -> operationPrefix == null || operation.name().startsWith(operationPrefix))
+                    .map(operation -> operationPrefix == null ? operation.name() : operation.name().substring(operationPrefix.length()))
                     .collect(Collectors.toList());
             sortSuggestions(operations);
             return operations;
@@ -701,7 +704,8 @@ public class AutoCompletion {
     private List<String> getSuggestionsWithObjectPrefix(ResultTypeOCLObjectPrefix parserResult) {
         String objectPrefix = parserResult.objectPrefix;
 
-        Set<String> objectsAndCollectionTypes = new HashSet<>(objectsToClassMap.keySet());
+        Set<String> objectsAndCollectionTypes = new HashSet<>(state.allObjectNames());
+        objectsAndCollectionTypes.addAll(List.of("Set", "OrderedSet", "Sequence", "Bag"));
         objectsAndCollectionTypes.addAll(collectionToOperationsMap.keySet());
         List<String> result = objectsAndCollectionTypes.stream()
                 .filter(objectName -> objectName != null && objectName.startsWith(objectPrefix))
@@ -774,14 +778,10 @@ public class AutoCompletion {
      *
      * @param model The MModel used to initialize the autocomplete dictionaries.
      */
-    public AutoCompletion(MModel model) {
-        classToAttributeMap = new HashMap<>();
-        objectsToClassMap = new HashMap<>();
+    public AutoCompletion(MModel model, MSystemState state) {
         collectionToOperationsMap = new HashMap<>();
-        classToOperationMap = new HashMap<>();
-        associationToClassNamesMap = new HashMap<>();
-        classToObjectsMap = new HashMap<>();
         this.model = model;
+        this.state = state;
 
         initializeAutocompletion();
     }
@@ -795,31 +795,6 @@ public class AutoCompletion {
      * to the autocompletion dictionaries based on the provided MModel.
      */
     private void initializeAutocompletion() {
-        Collection<MClass> mClasses = this.model.classes();
-        //Add all classes, attributes and operations to autocompletion
-        for (MClass mClass : mClasses) {
-            addClass(mClass.name());
-
-            List<String> operations = mClass.operations().stream()
-                    .map(MOperation::toString)
-                    .collect(Collectors.toList());
-            addOperations(mClass.name(), operations);
-            List<MAttribute> attributes = mClass.allAttributes();
-            for (MAttribute mAttribute : attributes) {
-                addAttributeToExistingClass(mClass.name(), mAttribute.name(), mAttribute.type().toString());
-            }
-        }
-
-        //add associations
-        Collection<MAssociation> associations = this.model.associations();
-        for (MAssociation mAssociation : associations) {
-            List<String> classNames = new LinkedList<>();
-            for (MClass mClass : mAssociation.associatedClasses()) {
-                classNames.add(mClass.name());
-            }
-            addAssociation(mAssociation.name(), classNames);
-        }
-
         //operations
         for (OpGeneric op : ExpStdOp.opmap.values()) {
             OperationType operationType = op.getOperationType();
@@ -829,6 +804,5 @@ public class AutoCompletion {
         for (String opName : ParserHelper.queryIdentMap.keySet()) {
             addIterationOp(opName);
         }
-
     }
 }

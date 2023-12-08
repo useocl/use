@@ -138,7 +138,7 @@ public class TestSystem {
 
         fSystem = new MSystem(model);
 
-        autoCompletion = new AutoCompletion(model);
+        autoCompletion = new AutoCompletion(model, fSystem.state());
         initObjectsAndLinks(autoCompletion, c1, c2);
     }
 
@@ -150,16 +150,6 @@ public class TestSystem {
         MClass C2 = getModel().getClass("class2");
 
         varEnv.assign("v", IntegerValue.valueOf(42));
-
-        autoCompletion.addObject(c1.name(), "obj1");
-        autoCompletion.addObject(c1.name(), "obj2");
-        autoCompletion.addObject(c1.name(), "obj3");
-        autoCompletion.addObject(c1.name(), "obj4");
-
-        autoCompletion.addObject(c2.name(), "obj5");
-        autoCompletion.addObject(c2.name(), "obj6");
-        autoCompletion.addObject(c2.name(), "obj7");
-        autoCompletion.addObject(c2.name(), "obj8");
 
         state.createObject(c1, "obj1");
         state.createObject(c1, "obj2");

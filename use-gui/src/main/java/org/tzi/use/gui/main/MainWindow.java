@@ -1149,7 +1149,7 @@ public class MainWindow extends JFrame {
             	fLogWriter.println(model.getStats());
             	// create system
             	system = new MSystem(model);
-                autocompletion = new AutoCompletion(model,fSession);
+                autocompletion = new AutoCompletion(model, system.state(), fSession);
             } else {
             	system = null;
             }

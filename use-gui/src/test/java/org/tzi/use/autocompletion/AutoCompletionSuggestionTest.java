@@ -82,10 +82,10 @@ public class AutoCompletionSuggestionTest extends TestCase {
         AutoCompletion testee = testSystem.getAutoCompletion();
 
 
-        Set<String> expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4");
+        Set<String> expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4", "op1(Integer p1)", "op2(Real p1)", "operation3(Boolean p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("obj1.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_2", "attribute1_3");
+        expectedResult = Set.of("attribute1_2", "attribute1_3", "op1(Integer p1)", "op2(Real p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("5 = obj1.", true).suggestions));
 
         expectedResult = Set.of("attribute1_4");
@@ -94,10 +94,10 @@ public class AutoCompletionSuggestionTest extends TestCase {
         expectedResult = Set.of("attribute2_1", "attribute2_2", "attribute2_3");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("obj5.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_2", "attribute1_3");
+        expectedResult = Set.of("attribute1_2", "attribute1_3", "op1(Integer p1)", "op2(Real p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("6.2 = obj1.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_1");
+        expectedResult = Set.of("attribute1_1", "operation3(Boolean p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("false = obj1.", true).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("true = obj1.", true).suggestions));
     }
@@ -243,7 +243,7 @@ public class AutoCompletionSuggestionTest extends TestCase {
         Set<String> expectedResult = Set.of("1", "2", "3", "4", "5", "6", "7", "8");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(obj)", true).suggestions));
 
-        expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4");
+        expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4", "op1(Integer p1)", "op2(Real p1)", "operation3(Boolean p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(obj1.)", true).suggestions));
 
         expectedResult = Set.of("_1", "_2", "_3", "_4");

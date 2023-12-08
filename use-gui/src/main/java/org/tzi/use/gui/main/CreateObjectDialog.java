@@ -176,8 +176,6 @@ class CreateObjectDialog extends JDialog {
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
-        fParent.getAutocompletionInstance().addObject(cls.name(), name);
-
         fParent.createObject(cls, name);
     }
 }
