@@ -40,18 +40,17 @@ import org.tzi.use.util.TeeWriter;
 import org.tzi.use.autocompletion.SuggestionResult;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A dialog for entering and evaluating OCL expressions.
@@ -125,6 +124,85 @@ class EvalOCLDialog extends JDialog {
         // create panel on the left and add text components
         JPanel textPane = new JPanel();
         textPane.setLayout(new BoxLayout(textPane, BoxLayout.Y_AXIS));
+
+        fTextIn.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleDocumentUpdate();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleDocumentUpdate();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleDocumentUpdate();
+            }
+
+            private void handleDocumentUpdate() {
+                // Check if arrow up, arrow down, or enter keys are pressed
+                boolean arrowOrEnterPressed = isArrowOrEnterPressed();
+
+                // Call updateAutocompletionResults only if the specific conditions are met
+                if (!arrowOrEnterPressed) {
+                    updateAutocompletionResults(textPane);
+                }
+            }
+
+            private boolean isArrowOrEnterPressed() {
+                KeyStroke upKeyStroke = KeyStroke.getKeyStroke("pressed UP");
+                KeyStroke downKeyStroke = KeyStroke.getKeyStroke("pressed DOWN");
+                KeyStroke enterKeyStroke = KeyStroke.getKeyStroke("pressed ENTER");
+
+                return fTextIn.getInputMap().get(upKeyStroke) == null
+                        || fTextIn.getInputMap().get(downKeyStroke) == null
+                        || fTextIn.getInputMap().get(enterKeyStroke) == null;
+            }
+        });
+
+
+        InputMap inputMap = fTextIn.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap actionMap = fTextIn.getActionMap();
+
+        KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        KeyStroke upKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+        KeyStroke downKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+
+        inputMap.put(enterKeyStroke, "enterPressed");
+        inputMap.put(upKeyStroke, "upPressed");
+        inputMap.put(downKeyStroke, "downPressed");
+
+        actionMap.put("enterPressed", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                autocompletionResultList.setFocusable(true);
+                autocompletionResultList.requestFocus();
+            }
+        });
+
+        actionMap.put("upPressed", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                autocompletionResultList.setFocusable(true);
+                autocompletionResultList.requestFocus();
+                int lastIndex = autocompletionResultList.getModel().getSize() - 1;
+                int selectedIndex = autocompletionResultList.getSelectedIndex();
+                autocompletionResultList.setSelectedIndex(selectedIndex < 0 ? lastIndex : selectedIndex - 1);
+            }
+        });
+
+        actionMap.put("downPressed", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                autocompletionResultList.setFocusable(true);
+                autocompletionResultList.requestFocus();
+                int lastIndex = autocompletionResultList.getModel().getSize() - 1;
+                int selectedIndex = autocompletionResultList.getSelectedIndex();
+                autocompletionResultList.setSelectedIndex(selectedIndex == lastIndex ? 0 : selectedIndex + 1);
+            }
+        });
 
         JPanel p = new JPanel(new BorderLayout());
         p.add(textInLabel, BorderLayout.NORTH);
@@ -230,39 +308,6 @@ class EvalOCLDialog extends JDialog {
         contentPane.add(btnPane, BorderLayout.EAST);
         getRootPane().setDefaultButton(btnEval);
 
-        Action ctrlSpaceAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingWorker<SuggestionResult, Void> worker = new SwingWorker<>() {
-                    @Override
-                    protected SuggestionResult doInBackground() throws Exception {
-                        return autocompletion.getSuggestions(fTextIn.getText(), true);
-                    }
-
-                    @Override
-                    protected void done() {
-                        try {
-                            SuggestionResult suggestion = get();
-                            // Open a new window to display the results (if not empty)
-                            if (suggestion != null && !suggestion.suggestions.isEmpty()) {
-                                displayResultsWindow(suggestion, textPane);
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                };
-
-                worker.execute();
-            }
-        };
-
-        // Map the Ctrl+Space key combination to the action
-        KeyStroke ctrlSpaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, KeyEvent.CTRL_DOWN_MASK);
-        fTextIn.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlSpaceKeyStroke, "ctrlSpaceAction");
-        fTextIn.getActionMap().put("ctrlSpaceAction", ctrlSpaceAction);
-
-
         pack();
         setSize(new Dimension(500, 200));
         setLocationRelativeTo(parent);
@@ -273,6 +318,31 @@ class EvalOCLDialog extends JDialog {
         addKeyListener(ekl);
         fTextIn.addKeyListener(ekl);
         fTextOut.addKeyListener(ekl);
+    }
+
+    private void updateAutocompletionResults(JPanel textPane) {
+        SwingWorker<SuggestionResult, Void> worker = new SwingWorker<>() {
+            @Override
+            protected SuggestionResult doInBackground() {
+                return autocompletion.getSuggestions(fTextIn.getText(), true);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    SuggestionResult suggestion = get();
+                    if (suggestion != null && !suggestion.suggestions.isEmpty()) {
+                        displayResultsWindow(suggestion, textPane);
+                    } else {
+                        autocompletionPopupMenu.setVisible(false);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        };
+
+        worker.execute();
     }
 
     /**
@@ -387,6 +457,69 @@ class EvalOCLDialog extends JDialog {
             autocompletionResultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             autocompletionResultList.setCellRenderer(new TwoColorListCellRenderer());
 
+            autocompletionResultList.addKeyListener(new KeyAdapter() {
+                //Keys needing special treatment
+                final Set<Integer> specialKeySet = Set.of(
+                        KeyEvent.VK_BACK_SPACE,
+                        KeyEvent.VK_LEFT,
+                        KeyEvent.VK_RIGHT
+                        // Add more special keys as needed
+                );
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int keyCode = e.getKeyCode();
+                    if (specialKeySet.contains(keyCode)) {
+                        handleSpecialKey(e, keyCode);// Handle special keys (backspace, arrow keys, etc.) separately
+                    } else {
+                        // If a normal key is pressed, give focus back to textarea
+                        fTextIn.requestFocus();
+
+                        // Simulate the keypress in the textarea
+                        char keyChar = e.getKeyChar();
+
+                        if(keyCode != KeyEvent.VK_UP && keyCode != KeyEvent.VK_DOWN && keyCode != KeyEvent.VK_ENTER && keyCode != KeyEvent.VK_ESCAPE){
+                            fTextIn.append(String.valueOf(keyChar));
+                        }
+                    }
+                }
+
+                private void handleSpecialKey(KeyEvent e, int keyCode) {
+                    fTextIn.dispatchEvent(new KeyEvent(fTextIn, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), e.getModifiersEx(), keyCode, KeyEvent.CHAR_UNDEFINED));
+                    fTextIn.requestFocus();
+                }
+            });
+
+
+            InputMap inputMap = autocompletionResultList.getInputMap(JComponent.WHEN_FOCUSED);
+            ActionMap actionMap = autocompletionResultList.getActionMap();
+
+            KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+            KeyStroke upKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+            KeyStroke downKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+
+            inputMap.put(enterKeyStroke, "enterPressed");
+            inputMap.put(upKeyStroke, "upPressed");
+            inputMap.put(downKeyStroke, "downPressed");
+
+            actionMap.put("upPressed", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int lastIndex = autocompletionResultList.getModel().getSize() - 1;
+                    int selectedIndex = autocompletionResultList.getSelectedIndex();
+                    autocompletionResultList.setSelectedIndex(selectedIndex <= 0 ? lastIndex : selectedIndex - 1);
+                }
+            });
+
+            actionMap.put("downPressed", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int lastIndex = autocompletionResultList.getModel().getSize() - 1;
+                    int selectedIndex = autocompletionResultList.getSelectedIndex();
+                    autocompletionResultList.setSelectedIndex(selectedIndex == lastIndex ? 0 : selectedIndex + 1);
+                }
+            });
+
             autocompletionPopupMenu = new JPopupMenu();
             autocompletionPopupMenu.add(new JScrollPane(autocompletionResultList));
             textPane.add(autocompletionPopupMenu);
@@ -427,6 +560,7 @@ class EvalOCLDialog extends JDialog {
                 }
 
                 autocompletionPopupMenu.setVisible(false);
+                fTextIn.requestFocusInWindow();
             }
         };
 
@@ -449,8 +583,11 @@ class EvalOCLDialog extends JDialog {
 
         int prefixPixelOffset = SwingUtilities.computeStringWidth(fTextIn.getFontMetrics(fTextIn.getFont()), suggestion.prefix);
 
+        fTextIn.requestFocusInWindow();
+
         autocompletionPopupMenu.show(fTextIn, (int) caretRectangle.getX() + xOffset - prefixPixelOffset, (int) caretRectangle.getY() + yOffset);
-        autocompletionResultList.requestFocus();
+        autocompletionResultList.setFocusable(false);
+        fTextIn.requestFocusInWindow();
         pack();
     }
 
@@ -479,7 +616,10 @@ class EvalOCLDialog extends JDialog {
 
             // Highlight the prefix in blue
             if (prefix != null) {
-                displayedList.add(i, "<font color='blue'>" + prefix + "</font>" + sugString);
+                displayedList.add(i, "<font color='blue'>" + prefix + "</font>");
+                if(!sugString.equals(prefix)){
+                    displayedList.set(i, displayedList.get(i) + sugString);
+                }
             } else {
                 displayedList.add(i, suggestion.suggestions.get(i));
             }

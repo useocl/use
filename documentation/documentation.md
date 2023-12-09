@@ -165,7 +165,13 @@ The 'getSuggestions' method then calls 'getResult' of the 'AutoCompletionParser'
 
 ### Usage in GUI
 
-The hotkey 'CTRL+SPACE' triggers autocompletion in the 'EvalOClDialog,' and 'ENTER' selects a value. Currently, these hotkeys are not customizable.
+1. **Autocompletion suggestions:** Suggestions are updated in real-time as characters are typed in the text area.
+
+2. **Navigation:** Use the 'ArrowDown' and 'ArrowUp' keys to move through the suggested list.
+
+3. **Selection:** Press 'Enter' to choose an item from the suggestion list.
+
+4. **Focus:** The text area retains focus for all other keyboard inputs, even when the suggestion list is active.
 
 ### Usage in Code
 

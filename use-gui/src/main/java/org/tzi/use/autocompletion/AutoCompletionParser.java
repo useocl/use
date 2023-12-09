@@ -69,11 +69,11 @@ public class AutoCompletionParser {
                     }
                 }
                 case "object" -> {
-                    if (parserResult.result == null) {//TODO: evtl. if von oben einfügen, wirkt aber nicht notwendig
+                    if (parserResult.result == null) {
                         parserResult.result = new ResultTypeOCLObjects(parserResult.foundValues.get("objectName"), parserResult.foundValues.get("operationType"));
                     }
                 }
-                case "set", "bag", "orderedSet", "sequence" -> { //might be orderedset
+                case "set", "bag", "orderedSet", "sequence" -> {
                     if (!parserResult.foundValues.containsKey("operationName")) {
                         parserResult.result = new ResultTypeOCLCollectionsDefault(parserResult.foundValues.get("objectPrefix"), type);
                     }
@@ -95,8 +95,6 @@ public class AutoCompletionParser {
                             parserResult.result = new ResultTypeOCLCollectionsDefault(parserResult.foundValues.get("operationPrefix"), null);
                         } else if (parserResult.result instanceof ResultTypeOCLCollectionsDefault) {
                             parserResult.result = new ResultTypeOCLCollectionsDefault(parserResult.foundValues.get("operationPrefix"), ((ResultTypeOCLCollectionsDefault) parserResult.result).collectionType);
-                        } else {
-                            System.out.println("Hier sollten wir nicht sein"); //TODO: maybe bei "endsWithCommaAndIsForAll"
                         }
                     }
                 }
@@ -301,7 +299,7 @@ public class AutoCompletionParser {
     private String handleParenthesis(String token) {
         String res = token;
 
-        if (!token.startsWith("(") && token.contains("(") && iterationExpressionAllowed(token)) {//TODO: might be wrong to check if iteration expression is allowed
+        if (!token.startsWith("(") && token.contains("(") && iterationExpressionAllowed(token)) {
             if (!token.contains(",") || (token.contains(",") && token.startsWith("forAll"))) { //illegal character
                 if (token.contains("(")) {
                     res = token.substring(token.indexOf("(") + 1);
@@ -465,7 +463,7 @@ public class AutoCompletionParser {
             }
             case "" -> {
                 if (isValidJavaIdentifier(input)) {//actual object or operation prefix
-                    parserResult.foundTypes.add("objectName");//TODO: change to prefix
+                    parserResult.foundTypes.add("objectName");
                     parserResult.foundValues.put("objectPrefix", input.trim());
                 } else {//iterationexpression
                     handleIterationExpression(input);
