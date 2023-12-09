@@ -40,12 +40,14 @@ import org.tzi.use.util.TeeWriter;
 import org.tzi.use.autocompletion.SuggestionResult;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
@@ -76,8 +78,10 @@ class EvalOCLDialog extends JDialog {
     
     private JList<String> autocompletionResultList;
 
-    private JScrollPane autocompletionScrollPane;
-    
+    private JPopupMenu autocompletionPopupMenu;
+
+    private DefaultListModel<String> autocompletionListModel;
+
     private final ChangeListener sessionChangeListener = new ChangeListener() {
 		@Override
 		public void stateChanged(ChangeEvent e) {
@@ -137,7 +141,7 @@ class EvalOCLDialog extends JDialog {
         // create panel on the right containing buttons
         JPanel btnPane = new JPanel();
         btnEvalBrowser = new JButton("Browser");
-        
+
         btnEval = new JButton("Evaluate");
         btnEval.setMnemonic('E');
         
@@ -365,88 +369,119 @@ class EvalOCLDialog extends JDialog {
      * <p>
      * This method takes a {@code SuggestionResult} object and a {@code JPanel} where the suggestions
      * will be displayed. The suggestions are formatted and displayed in a {@code JList} within a scrollable
-     * {@code JScrollPane}. The user can confirm a selection by pressing the Enter key.
+     * {@code JScrollPane} within a popupmenu. The user can confirm a selection by pressing the Enter key.
      * <p>
      * The formatting includes highlighting the prefix in blue and, if the suggestion contains parentheses,
      * highlighting the content within parentheses in orange.
      *
      * @param suggestion The {@code SuggestionResult} object containing the list of suggestions and the prefix.
-     * @param textPane    The {@code JPanel} where the autocomplete suggestions will be displayed.
+     * @param textPane   The {@code JPanel} where the autocomplete suggestions will be displayed.
      */
     private void displayResultsWindow(SuggestionResult suggestion, JPanel textPane) {
         List<String> suggestionList = suggestion.suggestions;
-        List<String> displayedList = formatStrings(suggestion, suggestionList);
+        List<String> displayedList = formatStrings(suggestion);
 
-        if (autocompletionScrollPane == null) {
-            autocompletionResultList = new JList<>(displayedList.toArray(new String[0]));
+        if (autocompletionPopupMenu == null) {
+            autocompletionListModel = new DefaultListModel<>();
+            autocompletionResultList = new JList<>(autocompletionListModel);
             autocompletionResultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             autocompletionResultList.setCellRenderer(new TwoColorListCellRenderer());
 
-            autocompletionResultList.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmSelection");
-            autocompletionResultList.getActionMap().put("confirmSelection", new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String selectedValue = suggestionList.get(autocompletionResultList.getSelectedIndex());
-                    if (selectedValue != null) {
-                        String currentText = fTextIn.getText();
-
-                        String newText;
-                        boolean hasParenthesis = false;
-                        if (selectedValue.endsWith(")")) {
-                            if (selectedValue.contains("(")) {
-                                int firstIndex = selectedValue.indexOf("(");
-                                selectedValue = selectedValue.substring(0, firstIndex + 1);
-                            }
-                            newText = currentText + selectedValue + ")";
-                            hasParenthesis = true;
-                        } else if(currentText.endsWith(")")){
-                            newText = currentText.substring(0, currentText.length()-1) + selectedValue + ")";
-                            hasParenthesis = true;
-                        } else {
-                            newText = currentText + selectedValue;
-                        }
-
-                        fTextIn.setText(newText);
-                        if(hasParenthesis){
-                            fTextIn.setCaretPosition(newText.length()-1);
-                        } else {
-                            fTextIn.setCaretPosition(newText.length());
-                        }
-                    }
-                    autocompletionScrollPane = null;
-                    autocompletionResultList = null;
-                    textPane.remove(1);
-                    fTextIn.requestFocus();
-                    pack();
-                }
-            });
-
-            autocompletionScrollPane = new JScrollPane(autocompletionResultList);
-            textPane.add(autocompletionScrollPane, 1);
-        } else {
-            autocompletionResultList.setListData(displayedList.toArray(new String[0]));
+            autocompletionPopupMenu = new JPopupMenu();
+            autocompletionPopupMenu.add(new JScrollPane(autocompletionResultList));
+            textPane.add(autocompletionPopupMenu);
         }
 
+        autocompletionResultList.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmSelection");
+        Action confirmSelectionAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = autocompletionResultList.getSelectedIndex();
+
+                if (selectedIndex >= 0 && selectedIndex < autocompletionListModel.size()) {
+                    String selectedValue = suggestionList.get(selectedIndex);
+                    String currentText = fTextIn.getText();
+
+                    String newText;
+                    boolean hasParenthesis = false;
+                    if (selectedValue.endsWith(")")) {
+                        if (selectedValue.contains("(")) {
+                            int firstIndex = selectedValue.indexOf("(");
+                            selectedValue = selectedValue.substring(0, firstIndex + 1);
+                        }
+                        newText = currentText + selectedValue + ")";
+                        hasParenthesis = true;
+                    } else if (currentText.endsWith(")")) {
+                        newText = currentText.substring(0, currentText.length() - 1) + selectedValue + ")";
+                        hasParenthesis = true;
+                    } else {
+                        newText = currentText + selectedValue;
+                    }
+
+                    fTextIn.setText(newText);
+                    if (hasParenthesis) {
+                        fTextIn.setCaretPosition(newText.length() - 1);
+                    } else {
+                        fTextIn.setCaretPosition(newText.length());
+                    }
+                }
+
+                autocompletionPopupMenu.setVisible(false);
+            }
+        };
+
+        autocompletionResultList.getActionMap().put("confirmSelection", confirmSelectionAction);
+
+        autocompletionListModel.clear();
+        autocompletionListModel.addAll(displayedList);
+
+        int caretPosition = fTextIn.getCaretPosition();
+        Rectangle2D caretRectangle;
+        try {
+            caretRectangle = fTextIn.modelToView2D(caretPosition);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        int xOffset = -2; //due to the boarder of the popupmenu
+        int yOffset = 12;
+
+        int prefixPixelOffset = SwingUtilities.computeStringWidth(fTextIn.getFontMetrics(fTextIn.getFont()), suggestion.prefix);
+
+        autocompletionPopupMenu.show(fTextIn, (int) caretRectangle.getX() + xOffset - prefixPixelOffset, (int) caretRectangle.getY() + yOffset);
         autocompletionResultList.requestFocus();
         pack();
     }
 
-    private List<String> formatStrings(SuggestionResult suggestion, List<String> suggestionList) {
+    /**
+     * Formats a list of suggestion strings for display, highlighting the prefix in blue
+     * and content within parentheses in orange.
+     *
+     * @param suggestion      The SuggestionResult object containing the prefix and the list of suggestions.
+     * @return                The formatted list of suggestions.
+     */
+    private List<String> formatStrings(SuggestionResult suggestion) {
         String prefix = suggestion.prefix;
 
         List<String> displayedList = new LinkedList<>();
 
-        for (int i = 0; i < suggestionList.size(); i++) {
-            String sugString = suggestionList.get(i);
+        for (int i = 0; i < suggestion.suggestions.size(); i++) {
+            String sugString = suggestion.suggestions.get(i);
 
+            // Highlight content within parentheses in orange
             if (sugString.contains("(")) {
-                sugString = sugString.substring(0, sugString.indexOf("(") + 1) + "<font color='orange'>" + sugString.substring(sugString.indexOf("(") + 1, sugString.indexOf(")")) + "</font>" + ")";
+                sugString = sugString.substring(0, sugString.indexOf("(") + 1) +
+                        "<font color='orange'>" +
+                        sugString.substring(sugString.indexOf("(") + 1, sugString.indexOf(")")) +
+                        "</font>)";
             }
 
+            // Highlight the prefix in blue
             if (prefix != null) {
                 displayedList.add(i, "<font color='blue'>" + prefix + "</font>" + sugString);
             } else {
-                displayedList.add(i, suggestionList.get(i));
+                displayedList.add(i, suggestion.suggestions.get(i));
             }
         }
         return displayedList;

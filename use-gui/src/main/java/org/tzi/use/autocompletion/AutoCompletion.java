@@ -331,6 +331,10 @@ public class AutoCompletion {
         }
 
         MObject obj = state.objectByName(objectName);
+        if (obj == null) {
+            return List.of();
+        }
+
         List<MAttribute> attrs = obj.cls().allAttributes();
         List<MOperation> ops = obj.cls().allOperations();
 
