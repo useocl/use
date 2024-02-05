@@ -64,6 +64,7 @@ import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.autocompletion.AutoCompletion;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.USEWriter;
@@ -98,6 +99,8 @@ public class MainWindow extends JFrame {
     private final Session fSession;
 
     private final StatusBar fStatusBar;
+
+    private AutoCompletion autocompletion;
 
     private final LogPanel fLogPanel;
 
@@ -1146,6 +1149,7 @@ public class MainWindow extends JFrame {
             	fLogWriter.println(model.getStats());
             	// create system
             	system = new MSystem(model);
+                autocompletion = new AutoCompletion(model, system.state(), fSession);
             } else {
             	system = null;
             }
@@ -1589,6 +1593,7 @@ public class MainWindow extends JFrame {
         @Override
 		public void actionPerformed(ActionEvent e) {
             EvalOCLDialog dlg = new EvalOCLDialog(fSession, MainWindow.this);
+            dlg.setAutoCompletion(autocompletion);
             dlg.setVisible(true);
         }
     }
@@ -2239,4 +2244,8 @@ public class MainWindow extends JFrame {
 	private Icon getIcon(String name) {
 		return new ImageIcon(getClass().getResource(Options.getIconPath(name)));
 	}
+
+    public AutoCompletion getAutocompletionInstance(){
+        return autocompletion;
+    }
 }
