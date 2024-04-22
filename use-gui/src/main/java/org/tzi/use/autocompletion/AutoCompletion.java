@@ -338,11 +338,27 @@ public class AutoCompletion {
         List<MAttribute> attrs = obj.cls().allAttributes();
         List<MOperation> ops = obj.cls().allOperations();
 
-        List<String> attributes = new LinkedList<>(filterAttributes(attrs, operationType));
-        attributes.addAll(filterOperations(ops, operationType));
+        //only add type matching operations and attrs to matching
+        List<String> matching = new LinkedList<>(filterAttributes(attrs, operationType));
+        matching.addAll(filterOperations(ops, operationType));
 
-        sortSuggestions(attributes);
-        return attributes;
+        //add every operation and every attribute to temp
+        Set<String> temp = new HashSet<>();
+        temp.addAll(attrs.stream().map(MAttribute::name).collect(Collectors.toList()));
+        temp.addAll(ops.stream().map(this::formatOperationWithParameters).collect(Collectors.toList()));
+
+        //remove matching operations and attributes from temp
+        matching.forEach(temp::remove);
+        List<String> tempList = new LinkedList<>(temp);
+
+        //sort both lists
+        sortSuggestions(matching);
+        sortSuggestions(tempList);
+
+        //append temp at the end of matching
+        matching.addAll(tempList);
+
+        return matching;
     }
 
     /**
@@ -730,13 +746,16 @@ public class AutoCompletion {
         }
 
 
-        List<String> allAttributes = getSuggestionsObjects(new ResultTypeOCLObjects(objectName, operationType));//TODO attributeprefix
+        List<String> allAttributes = getSuggestionsObjects(new ResultTypeOCLObjects(objectName, operationType));
 
         List<String> result = allAttributes.stream()
                 .filter(attributeName -> attributeName != null && attributeName.startsWith(attributePrefix))
                 .map(attributeName -> attributeName.substring(attributePrefix.length()))
                 .collect(Collectors.toList());
-        sortSuggestions(result);
+
+        //Don't sort since getSuggestionsObjects already created a list containing a sorted list appended to another sorted list
+        //sortSuggestions(result);
+
         return result;
     }
 

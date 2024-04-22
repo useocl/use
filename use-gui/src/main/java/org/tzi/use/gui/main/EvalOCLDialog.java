@@ -334,7 +334,9 @@ class EvalOCLDialog extends JDialog {
                     if (suggestion != null && !suggestion.suggestions.isEmpty()) {
                         displayResultsWindow(suggestion, textPane);
                     } else {
-                        autocompletionPopupMenu.setVisible(false);
+                        if(autocompletionPopupMenu != null) {
+                            autocompletionPopupMenu.setVisible(false);
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

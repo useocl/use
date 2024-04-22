@@ -55,18 +55,18 @@ public class AutoCompletionSuggestionTest extends TestCase {
         TestSystem testSystem = new TestSystem();
         AutoCompletion testee = testSystem.getAutoCompletion();
 
-        Set<String> expectedResult = Set.of("tribute1_1", "tribute1_2", "tribute1_3", "tribute1_4");
+        Set<String> expectedResult = Set.of("tr_isMarried", "tr_age", "tr_size", "tr_name");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("obj1.at", false).suggestions));
 
-        expectedResult = Set.of("tribute1_2", "tribute1_3");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("5 = obj1.at", false).suggestions));
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("5 = obj2.at", false).suggestions));
+        List<String> expectedResultList = List.of("tr_age", "tr_size", "tr_isMarried", "tr_name");
+        assertEquals(expectedResultList, new LinkedList<>(testee.getSuggestions("5 = obj1.at", false).suggestions));
+        assertEquals(expectedResultList, new LinkedList<>(testee.getSuggestions("5 = obj2.at", false).suggestions));
 
-        expectedResult = Set.of("tribute2_1", "tribute2_2", "tribute2_3");
+        expectedResult = Set.of("tr_hasOwner", "tr_isHappy", "tr_size");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("obj5.at", false).suggestions));
 
-        expectedResult = Set.of("tribute2_1", "tribute2_2");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("false = obj5.at", false).suggestions));
+        expectedResultList = List.of("tr_size", "tr_hasOwner", "tr_isHappy");
+        assertEquals(expectedResultList, new LinkedList<>(testee.getSuggestions("3.5 = obj5.at", false).suggestions));
     }
 
     public void testSuggestionsCaseOperationNameStarted() throws MSystemException, ExpInvalidException, MInvalidModelException {
@@ -82,22 +82,23 @@ public class AutoCompletionSuggestionTest extends TestCase {
         AutoCompletion testee = testSystem.getAutoCompletion();
 
 
-        Set<String> expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4", "op1(Integer p1)", "op2(Real p1)", "operation3(Boolean p1)");
+        Set<String> expectedResult = Set.of("attr_isMarried", "attr_age", "attr_size", "attr_name", "addToAge(Integer num)", "addToSize(Real num)", "compareToIsMarried(Boolean bool)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("obj1.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_2", "attribute1_3", "op1(Integer p1)", "op2(Real p1)");
+        //expectedResult = Set.of("attr_age", "attr_size", "op1(Integer p1)", "op2(Real p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("5 = obj1.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_4");
+        //expectedResult = Set.of("attr_name");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("'5' = obj1.", true).suggestions));
 
-        expectedResult = Set.of("attribute2_1", "attribute2_2", "attribute2_3");
+        expectedResult = Set.of("attr_hasOwner", "attr_isHappy", "attr_size");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("obj5.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_2", "attribute1_3", "op1(Integer p1)", "op2(Real p1)");
+        //expectedResult = Set.of("attr_age", "attr_size", "op1(Integer p1)", "op2(Real p1)");
+        expectedResult = Set.of("attr_isMarried", "attr_age", "attr_size", "attr_name", "addToAge(Integer num)", "addToSize(Real num)", "compareToIsMarried(Boolean bool)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("6.2 = obj1.", true).suggestions));
 
-        expectedResult = Set.of("attribute1_1", "operation3(Boolean p1)");
+        //expectedResult = Set.of("attr_isMarried", "operation3(Boolean p1)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("false = obj1.", true).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("true = obj1.", true).suggestions));
     }
@@ -106,20 +107,20 @@ public class AutoCompletionSuggestionTest extends TestCase {
         TestSystem testSystem = new TestSystem();
         AutoCompletion testee = testSystem.getAutoCompletion();
 
-        Set<String> expectedResult = Set.of("class1", "class2", "A1", "AC1");
+        Set<String> expectedResult = Set.of("Human", "Dog", "ownership_assoc", "ownership_assocclass");
 
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 :", false).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3:", false).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : ", false).suggestions));
 
         expectedResult = Set.of("obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : AC1 between (", false).suggestions));
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : ownership_assoc between (", false).suggestions));
         expectedResult = Set.of("obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : AC1 between(", false).suggestions));
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : ownership_assoc between(", false).suggestions));
 
         expectedResult = Set.of("obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : AC1 between (obj1,", false).suggestions));
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : AC1 between (obj1, ", false).suggestions));
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : ownership_assoc between (obj1,", false).suggestions));
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!create obj3 : ownership_assoc between (obj1, ", false).suggestions));
 
         expectedResult = Set.of("obj1", "obj2", "obj3", "obj4", "obj5", "obj6", "obj7", "obj8");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!destroy ", false).suggestions));
@@ -144,7 +145,7 @@ public class AutoCompletionSuggestionTest extends TestCase {
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!insert(obj1,", false).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!insert(obj1, ", false).suggestions));
 
-        expectedResult = Set.of("A1", "AC1");
+        expectedResult = Set.of("ownership_assoc", "ownership_assocclass");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!insert(obj1, obj2) into ", false).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!insert(obj1,obj2) into ", false).suggestions));
 
@@ -158,7 +159,7 @@ public class AutoCompletionSuggestionTest extends TestCase {
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!delete(obj1,", false).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!delete(obj1, ", false).suggestions));
 
-        expectedResult = Set.of("A1", "AC1");
+        expectedResult = Set.of("ownership_assoc", "ownership_assocclass");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!delete(obj1, obj2) from ", false).suggestions));
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!delete(obj1,obj2) from ", false).suggestions));
     }
@@ -171,10 +172,10 @@ public class AutoCompletionSuggestionTest extends TestCase {
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!set ", false).suggestions));
 
 
-        expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4");
+        expectedResult = Set.of("attr_isMarried", "attr_age", "attr_size", "attr_name");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!set obj1.", false).suggestions));
 
-        expectedResult = Set.of("attribute2_1", "attribute2_2", "attribute2_3");
+        expectedResult = Set.of("attr_hasOwner", "attr_isHappy", "attr_size");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!set obj5.", false).suggestions));
     }
 
@@ -188,14 +189,14 @@ public class AutoCompletionSuggestionTest extends TestCase {
         expectedResult = Set.of("1", "2", "3", "4", "5", "6", "7", "8");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!openter obj", false).suggestions));
 
-        expectedResult = Set.of("op1", "op2", "operation3");
+        expectedResult = Set.of("addToAge", "addToSize", "compareToIsMarried");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!openter obj1 ", false).suggestions));
 
-        expectedResult = Set.of("1", "2", "eration3");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!openter obj1 op", false).suggestions));
+        expectedResult = Set.of("ToAge", "ToSize");
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!openter obj1 add", false).suggestions));
 
-        expectedResult = Set.of("ration3");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!openter obj1 ope", false).suggestions));
+        expectedResult = Set.of("ize");
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("!openter obj1 addToS", false).suggestions));
     }
 
     public void testSuggestionsCaseCheck() throws MSystemException, ExpInvalidException, MInvalidModelException {
@@ -232,7 +233,7 @@ public class AutoCompletionSuggestionTest extends TestCase {
         Set<String> expectedResult = Set.of("class", "model", "state", "opstack", "prog", "vars");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("info ", false).suggestions));
 
-        expectedResult = Set.of("class1", "class2", "AC1");
+        expectedResult = Set.of("Human", "Dog", "ownership_assocclass");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("info class ", false).suggestions));
     }
 
@@ -243,11 +244,11 @@ public class AutoCompletionSuggestionTest extends TestCase {
         Set<String> expectedResult = Set.of("1", "2", "3", "4", "5", "6", "7", "8");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(obj)", true).suggestions));
 
-        expectedResult = Set.of("attribute1_1", "attribute1_2", "attribute1_3", "attribute1_4", "op1(Integer p1)", "op2(Real p1)", "operation3(Boolean p1)");
+        expectedResult = Set.of("attr_isMarried", "attr_age", "attr_size", "attr_name", "addToAge(Integer num)", "addToSize(Real num)", "compareToIsMarried(Boolean bool)");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(obj1.)", true).suggestions));
 
-        expectedResult = Set.of("_1", "_2", "_3", "_4");
-        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(obj2.attribute1)", true).suggestions));
+        expectedResult = Set.of("isMarried", "age", "size", "name");
+        assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(obj2.attr_)", true).suggestions));
 
         expectedResult = Set.of("Integer");
         assertEquals(expectedResult, new HashSet<>(testee.getSuggestions("Set{1,2,3}->forAll(e1: )", true).suggestions));

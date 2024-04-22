@@ -36,7 +36,6 @@ import java.util.List;
 /**
  * Helper to setup a test system.
  *
- * @author Daniel Gent
  */
 public class TestSystem {
 
@@ -73,35 +72,35 @@ public class TestSystem {
         ModelFactory factory = new ModelFactory();
         MModel model = factory.createModel("testModel");
 
-        MClass c1 = factory.createClass("class1", false);
+        MClass c1 = factory.createClass("Human", false);
         model.addClass(c1);
-        c1.addAttribute(factory.createAttribute("attribute1_1", TypeFactory.mkBoolean()));
-        c1.addAttribute(factory.createAttribute("attribute1_2", TypeFactory.mkInteger()));
-        c1.addAttribute(factory.createAttribute("attribute1_3", TypeFactory.mkReal()));
-        c1.addAttribute(factory.createAttribute("attribute1_4", TypeFactory.mkString()));
-        MOperation op1 = new MOperation("op1", new VarDeclList(new VarDecl("p1", TypeFactory.mkInteger())), TypeFactory.mkInteger());
+        c1.addAttribute(factory.createAttribute("attr_isMarried", TypeFactory.mkBoolean()));
+        c1.addAttribute(factory.createAttribute("attr_age", TypeFactory.mkInteger()));
+        c1.addAttribute(factory.createAttribute("attr_size", TypeFactory.mkReal()));
+        c1.addAttribute(factory.createAttribute("attr_name", TypeFactory.mkString()));
+        MOperation op1 = new MOperation("addToAge", new VarDeclList(new VarDecl("num", TypeFactory.mkInteger())), TypeFactory.mkInteger());
         op1.setStatement(new MVariableAssignmentStatement("result", IntegerValue.valueOf(42)));
         c1.addOperation(op1);
-        MOperation op2 = new MOperation("op2", new VarDeclList(new VarDecl("p1", TypeFactory.mkReal())), TypeFactory.mkInteger());
+        MOperation op2 = new MOperation("addToSize", new VarDeclList(new VarDecl("num", TypeFactory.mkReal())), TypeFactory.mkInteger());
         op2.setStatement(new MVariableAssignmentStatement("result", IntegerValue.valueOf(40)));
         c1.addOperation(op2);
-        MOperation op3 = new MOperation("operation3", new VarDeclList(new VarDecl("p1", TypeFactory.mkBoolean())), TypeFactory.mkBoolean());
+        MOperation op3 = new MOperation("compareToIsMarried", new VarDeclList(new VarDecl("bool", TypeFactory.mkBoolean())), TypeFactory.mkBoolean());
         op3.setStatement(new MVariableAssignmentStatement("result", IntegerValue.valueOf(42)));
         c1.addOperation(op3);
 
 
-        MClass c2 = factory.createClass("class2", false);
+        MClass c2 = factory.createClass("Dog", false);
         model.addClass(c2);
-        c2.addAttribute(factory.createAttribute("attribute2_1", TypeFactory.mkBoolean()));
-        c2.addAttribute(factory.createAttribute("attribute2_2", TypeFactory.mkBoolean()));
-        c2.addAttribute(factory.createAttribute("attribute2_3", TypeFactory.mkReal()));
+        c2.addAttribute(factory.createAttribute("attr_hasOwner", TypeFactory.mkBoolean()));
+        c2.addAttribute(factory.createAttribute("attr_isHappy", TypeFactory.mkBoolean()));
+        c2.addAttribute(factory.createAttribute("attr_size", TypeFactory.mkReal()));
 
         List<VarDecl> emptyQualifiers = Collections.emptyList();
-        MAssociation a1 = factory.createAssociation("A1");
+        MAssociation a1 = factory.createAssociation("ownership_assoc");
         a1.addAssociationEnd(
                 factory.createAssociationEnd(
                         c1,
-                        "E1",
+                        "owner_assoc",
                         new MMultiplicity(0, 1),
                         MAggregationKind.NONE,
                         false, emptyQualifiers));
@@ -109,18 +108,18 @@ public class TestSystem {
         a1.addAssociationEnd(
                 factory.createAssociationEnd(
                         c2,
-                        "E2",
+                        "owned_assoc",
                         new MMultiplicity(0, 1),
                         MAggregationKind.NONE,
                         false, emptyQualifiers));
 
         model.addAssociation(a1);
 
-        MAssociationClass ac1 = factory.createAssociationClass("AC1", false);
+        MAssociationClass ac1 = factory.createAssociationClass("ownership_assocclass", false);
         ac1.addAssociationEnd(
                 factory.createAssociationEnd(
                         c1,
-                        "role1",
+                        "owner_assocclass",
                         new MMultiplicity(0, 1),
                         MAggregationKind.NONE,
                         false, emptyQualifiers));
@@ -128,7 +127,7 @@ public class TestSystem {
         ac1.addAssociationEnd(
                 factory.createAssociationEnd(
                         c2,
-                        "role2",
+                        "owned_assocclass",
                         new MMultiplicity(0, 1),
                         MAggregationKind.NONE,
                         false, emptyQualifiers));
@@ -146,8 +145,8 @@ public class TestSystem {
         MSystemState state = fSystem.state();
         VariableEnvironment varEnv = fSystem.getVariableEnvironment();
 
-        MClass C1 = getModel().getClass("class1");
-        MClass C2 = getModel().getClass("class2");
+        MClass C1 = getModel().getClass("Human");
+        MClass C2 = getModel().getClass("Dog");
 
         varEnv.assign("v", IntegerValue.valueOf(42));
 
