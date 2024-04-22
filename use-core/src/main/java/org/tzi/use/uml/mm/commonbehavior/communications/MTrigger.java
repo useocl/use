@@ -21,7 +21,7 @@ package org.tzi.use.uml.mm.commonbehavior.communications;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.MOperation;
 
@@ -79,9 +79,9 @@ public class MTrigger implements MNamedElement {
 	 * @param text
 	 * @return
 	 */
-	public static MTrigger create(String text, MClass cls) {
+	public static MTrigger create(String text, MClassifier cf) {
 		if (text.equals("create")) {
-			return new MTrigger(new MEventCreate(cls));
+			return new MTrigger(new MEventCreate(cf));
 		}
 		
 		return null;

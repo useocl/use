@@ -31,22 +31,8 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.ExpAttrOp;
-import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpNavigation;
-import org.tzi.use.uml.ocl.expr.ExpNavigationClassifierSource;
-import org.tzi.use.uml.ocl.expr.ExpObjAsSet;
-import org.tzi.use.uml.ocl.expr.ExpObjOp;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.ExpTupleSelectOp;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
@@ -205,6 +191,7 @@ public class ASTOperationExpression extends ASTExpression {
             // assumed to be the source expression?
             if (res == null ) {
                 ExprContext ec = ctx.exprContext();
+                MClassifier cf = ctx.model().getClassifier(opname);
                 if (! ec.isEmpty() ) {
                     // construct source expression
                     ExprContext.Entry e = ec.peek();
@@ -212,10 +199,16 @@ public class ASTOperationExpression extends ASTExpression {
                     if (e.fType.isKindOfCollection(VoidHandling.EXCLUDE_VOID) )
                         fFollowsArrow = true;
                     res = gen1(ctx, srcExpr);
-                } else
+                } else if (cf != null ) {
+                    // constructor call?
+                    // (8) check for constructor call
+                    // "self" might not be appropriate here.
+                    res = gen1(ctx, new ExpVariable("self", cf));
+                } else {
                     throw new SemanticException(fOp, "Undefined " + 
                                                 ( fHasParentheses ? "operation" : "variable" ) + 
                                                 " `" + opname + "'.");
+                }
             }
         }
 
@@ -234,7 +227,6 @@ public class ASTOperationExpression extends ASTExpression {
         
         return res;
     }
-    
 
     private Expression gen1(Context ctx, Expression srcExpr) 
         throws SemanticException 
@@ -597,25 +589,28 @@ public class ASTOperationExpression extends ASTExpression {
 
 
     // checks (3) and (1)
-    private Expression genObjOperation(Context ctx, MClassifier srcClass, Expression srcExpr) throws SemanticException {
+    private Expression genObjOperation(Context ctx, MClassifier srcClassifier, Expression srcExpr) throws SemanticException {
         Expression res = null;
 
         // find operation
         String opname = fOp.getText();
-        MOperation op = null;
-        
-        if (srcClass.isTypeOfClass()) {
-        	op = ((MClass)srcClass).operation(opname, true);
+        MOperation op;
+
+        // check for constructor call
+        MClassifier cf = ctx.model().getClassifier(opname);
+        if (cf == null) {
+            op = srcClassifier.operation(opname, true);
+        } else {
+            op = cf.operation(opname, false);
         }
         
         if (op != null ) {
-        	
-        	// operation must have a body
-        	if (!op.hasBody()) {
+        	// operation must have a body or must be a constructor
+        	if (!op.hasBody() && !op.isConstructor()) {
         		throw new SemanticException(
         				fOp, 
         				"Operation " +
-        				srcClass.name() +
+        				srcClassifier.name() +
         				"::" + 
         				opname +
         				" has no body.");
@@ -628,19 +623,23 @@ public class ASTOperationExpression extends ASTExpression {
         		throw new SemanticException(
         				fOp, 
         				"Operation " +
-        				srcClass.name() +
+        				srcClassifier.name() +
         				"::" + 
         				opname +
         				" is not a query operation.");
         	}
         	
-            try { 
-                // constructor performs additional checks
-                res = new ExpObjOp(op, fArgExprs);
+            try {
+                if (op.isConstructor()) {
+                    res = new ExpInstanceConstructor(srcClassifier, fArgExprs);
+                } else {
+                    // constructor performs additional checks
+                    res = new ExpObjOp(op, fArgExprs);
+                }
                 res.setSourcePosition(new SrcPos(fOp));
             } catch (ExpInvalidException ex) {
                 throw new SemanticException(fOp, 
-                                            "In operation call `" + srcClass.name() + "::" + 
+                                            "In operation call `" + srcClassifier.name() + "::" + 
                                             opname + "': " + ex.getMessage());
             }
         } else {

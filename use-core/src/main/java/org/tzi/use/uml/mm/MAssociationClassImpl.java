@@ -228,7 +228,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
      */
     public void addOperation( MOperation op ) throws MInvalidModelException {
         fClassImpl.addOperation( op );
-        op.setClass(this);
+        op.setClassifier(this);
     }
 
     /**
@@ -388,13 +388,13 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
     }
 
     @Override
-    public boolean isSubClassOf( MClassifier otherClassifier ) {
-        return fClassImpl.isSubClassOf( otherClassifier );
+    public boolean isSubClassOf( MClassifier otherClass ) {
+        return fClassImpl.isSubClassOf( otherClass );
     }
 
     @Override
-    public boolean isSubClassOf( MClassifier otherClassifier, boolean excludeThis ) {
-        return fClassImpl.isSubClassOf( otherClassifier, excludeThis );
+    public boolean isSubClassifierOf( MClassifier otherClass, boolean excludeThis ) {
+        return fClassImpl.isSubClassifierOf( otherClass, excludeThis );
     }
     
     //////////////////////////////////////////////////

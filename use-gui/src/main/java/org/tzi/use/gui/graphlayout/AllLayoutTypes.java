@@ -69,7 +69,7 @@ public class AllLayoutTypes<N extends Layoutable> {
      * Sets a new default length for edges.
      */
     public void setEdgeLen(double len) {
-        fEdgeLen = fEdgeLen;
+        fEdgeLen = len;
     }
 
     private void MakeAllParametersEmpty() {

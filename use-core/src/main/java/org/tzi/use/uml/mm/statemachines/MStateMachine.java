@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.UseFileLocatable;
 
@@ -54,7 +54,7 @@ public class MStateMachine implements MNamedElement, UseFileLocatable {
 	 * which is a superclass of StateMachine.
 	 * The classifier that is the context for the execution of the behavior.
 	 */
-	protected MClass context;
+	protected MClassifier context;
 	
 	/**
 	 * The regions owned directly by the state machine.
@@ -66,7 +66,7 @@ public class MStateMachine implements MNamedElement, UseFileLocatable {
 	 * @param name The name of the state machine
 	 * @param srcPos The source position of the state machine inside of a USE file.
 	 */
-	public MStateMachine(String name, SrcPos srcPos, MClass context) {
+	public MStateMachine(String name, SrcPos srcPos, MClassifier context) {
 		this.srcPos = srcPos;
 		this.name = name;
 		this.context = context;
@@ -91,7 +91,7 @@ public class MStateMachine implements MNamedElement, UseFileLocatable {
 		return this.region.iterator().next();
 	}
 	
-	public MClass getContext() {
+	public MClassifier getContext() {
 		return this.context;
 	}
 

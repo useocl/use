@@ -29,7 +29,6 @@ import org.tzi.use.uml.mm.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
@@ -69,9 +68,9 @@ public class ASTAssociationClass extends ASTClass {
     }
 
     public void genAttributesOperationSignaturesAndGenSpec( Context ctx ) {
-        ctx.setCurrentClass( fAssocClass );
-        if ( fSuperClasses != null ) {
-            for(Token id : fSuperClasses) {
+        ctx.setCurrentClassifier( fAssocClass );
+        if ( fSuperClassifiers != null ) {
+            for(Token id : fSuperClassifiers) {
                 // lookup parent by name
                 MClass parent = ctx.model().getClass( id.getText() );
                 if ( parent == null )
@@ -118,7 +117,7 @@ public class ASTAssociationClass extends ASTClass {
             }
         }
 
-        ctx.setCurrentClass( null );
+        ctx.setCurrentClassifier( null );
     }
 
     public MAssociationClass genAssociation( Context ctx )
@@ -157,7 +156,7 @@ public class ASTAssociationClass extends ASTClass {
     }
 
     public void genOperationBodiesAndDerivedAttributes(Context ctx) {
-    	ctx.setCurrentClass( fAssocClass );
+    	ctx.setCurrentClassifier( fAssocClass );
 
         // enter pseudo-variable "self" into scope of expressions
         ctx.exprContext().push( "self", fAssocClass );
@@ -192,11 +191,11 @@ public class ASTAssociationClass extends ASTClass {
         
         vars.exitScope();
         ctx.exprContext().pop();
-        ctx.setCurrentClass( null );
+        ctx.setCurrentClassifier( null );
     }
     
     public void genConstraints( Context ctx ) {
-        ctx.setCurrentClass( fAssocClass );
+        ctx.setCurrentClassifier( fAssocClass );
 
         // enter pseudo-variable "self" into scope of expressions
         ctx.exprContext().push( "self", fAssocClass );
@@ -216,7 +215,7 @@ public class ASTAssociationClass extends ASTClass {
 
         vars.exitScope();
         ctx.exprContext().pop();
-        ctx.setCurrentClass( null );
+        ctx.setCurrentClassifier( null );
     }
 
 	/**

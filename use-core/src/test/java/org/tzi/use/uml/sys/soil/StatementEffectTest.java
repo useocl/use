@@ -36,12 +36,7 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.soil.VariableEnvironment;
@@ -1356,7 +1351,7 @@ public class StatementEffectTest extends TestCase {
 		assertEquals(fTestSystem.getSystem().getCallStack().size(), 1);
 		// which happens to be the called operation
 		MOperationCall opCall = fTestSystem.getSystem().getCurrentOperation();
-		MObject self = opCall.getSelf();
+		MInstance self = opCall.getSelf();
 		assertSame(self, object);
 		assertEquals(opCall.getOperation().name(), opName);
 		

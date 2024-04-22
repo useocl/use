@@ -35,14 +35,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -88,18 +81,7 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationClassImpl;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MNamedElementComparator;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
@@ -118,6 +100,7 @@ import com.ximpleware.XPathParseException;
  * 
  * @author Fabian Gutsche
  * @author Lars Hamann
+ * @author Stefan Schoon
  */
 @SuppressWarnings("serial")
 public class ClassDiagram extends DiagramView
@@ -226,7 +209,7 @@ public class ClassDiagram extends DiagramView
 				}
 			}
 
-			// check all edges in the list if they are suppose to be selected
+			// check all edges in the list if they are supposed to be selected
 			// or deselected.
 			for (EdgeBase edge : edges) {
 				if (edge != null) {
@@ -303,6 +286,10 @@ public class ClassDiagram extends DiagramView
 			hideClass(visibleData.fClassToNodeMap.keySet().iterator().next());
 		}
 
+		while (visibleData.fDataTypeToNodeMap.size() > 0) {
+			hideDataType(visibleData.fDataTypeToNodeMap.keySet().iterator().next());
+		}
+
 		while (visibleData.fEnumToNodeMap.size() > 0) {
 			hideEnum(visibleData.fEnumToNodeMap.keySet().iterator().next());
 		}
@@ -315,36 +302,31 @@ public class ClassDiagram extends DiagramView
 	 *            Class to be added.
 	 */
 	public void addClass(MClass cls) {
-		// Find a random new position. getWidth and getHeight return 0
-		// if we are called on a new diagram.
-		int fNextNodeX = (int) (Math.random() * Math.max(100, fParent.getWidth() - 50));
-		int fNextNodeY = (int) (Math.random() * Math.max(100, fParent.getHeight() - 50));
+		int[] position = randomPosition();
 
 		ClassNode n = new ClassNode(cls, fOpt);
-		n.setPosition(fNextNodeX, fNextNodeY);
+		n.setPosition(position[0], position[1]);
 
 		n.setMinWidth(minClassNodeWidth);
 		n.setMinHeight(minClassNodeHeight);
 
 		fGraph.add(n);
 		visibleData.fClassToNodeMap.put(cls, n);
+
 		fLayouter = null;
 	}
 
 	public void addSignal(MSignal signal) {
-		// Find a random new position. getWidth and getHeight return 0
-		// if we are called on a new diagram.
-		int fNextNodeX = (int) (Math.random() * Math.max(100, fParent.getWidth() - 50));
-		int fNextNodeY = (int) (Math.random() * Math.max(100, fParent.getHeight() - 50));
+		int[] position = randomPosition();
 
 		SignalNode n = new SignalNode(signal, fOpt);
-		n.setPosition(fNextNodeX, fNextNodeY);
-
+		n.setPosition(position[0], position[1]);
 		n.setMinWidth(minClassNodeWidth);
 		n.setMinHeight(minClassNodeHeight);
 
 		fGraph.add(n);
 		visibleData.fSignalToNodeMap.put(signal, n);
+
 		fLayouter = null;
 	}
 
@@ -425,8 +407,8 @@ public class ClassDiagram extends DiagramView
 	protected void showOrHideClassNode(MClass cls, boolean show) {
 		ClassDiagramData source = (show ? hiddenData : visibleData);
 		ClassDiagramData target = (show ? visibleData : hiddenData);
-		ClassNode n = source.fClassToNodeMap.get(cls);
 
+		ClassNode n = source.fClassToNodeMap.get(cls);
 		if (n != null) {
 			if (!show && this.getNodeSelection().isSelected(n))
 				this.getNodeSelection().remove(n);
@@ -444,21 +426,107 @@ public class ClassDiagram extends DiagramView
 	}
 
 	/**
+	 * Adds a data type to the diagram.
+	 *
+	 * @param dtp
+	 *            Data type to be added.
+	 */
+	public void addDataType(MDataType dtp) {
+		int[] position = randomPosition();
+
+		DataTypeNode n = new DataTypeNode(dtp, fOpt);
+		n.setPosition(position[0], position[1]);
+		n.setMinWidth(minClassNodeWidth);
+		n.setMinHeight(minClassNodeHeight);
+
+		fGraph.add(n);
+		visibleData.fDataTypeToNodeMap.put(dtp, n);
+
+		fLayouter = null;
+	}
+
+	/**
+	 * Hides a data type from the diagram.
+	 */
+	public void hideDataType(MDataType dtp) {
+		if (!visibleData.fDataTypeToNodeMap.containsKey(dtp))
+			return;
+		showOrHideDataTypeNode(dtp, false);
+
+		// Remove all generalization edges
+		Set<MGeneralization> gens = fParent.system().model().generalizationGraph().allEdges(dtp);
+
+		for (MGeneralization gen : gens) {
+			hideGeneralization(gen);
+		}
+	}
+
+	/**
+	 * Shows an already hidden data type again
+	 * 
+	 * @param dtp
+	 */
+	public void showDataType(MDataType dtp) {
+		showOrHideDataTypeNode(dtp, true);
+
+		// Add all generalization edges, if nodes are present
+
+		Set<MGeneralization> gens = dtp.model().generalizationGraph().allEdges(dtp);
+		for (MGeneralization gen : gens) {
+			if (visibleData.fDataTypeToNodeMap.containsKey(gen.child())
+					&& visibleData.fDataTypeToNodeMap.containsKey(gen.parent())) {
+				showGeneralization(gen);
+			}
+		}
+	}
+
+	/**
+	 * Shows or hides a data type.
+	 * 
+	 * @param dtp
+	 *            The <code>MDataType</code> to show or hide
+	 * @param show
+	 *            If <code>true</code>, the data type is shown otherwise it is
+	 *            hidden.
+	 */
+	protected void showOrHideDataTypeNode(MDataType dtp, boolean show) {
+		ClassDiagramData source = (show ? hiddenData : visibleData);
+		ClassDiagramData target = (show ? visibleData : hiddenData);
+
+		DataTypeNode n = source.fDataTypeToNodeMap.get(dtp);
+		if (n != null) {
+			if (!show && this.getNodeSelection().isSelected(n))
+				this.getNodeSelection().remove(n);
+
+			if (show) {
+				fGraph.add(n);
+			} else
+				fGraph.remove(n);
+
+			source.fDataTypeToNodeMap.remove(dtp);
+			target.fDataTypeToNodeMap.put(dtp, n);
+
+			fLayouter = null;
+		}
+	}
+
+	/**
 	 * Adds an enumeration to the diagram.
 	 * 
 	 * @param enumeration
 	 *            Enumeration to be added.
 	 */
 	public void addEnum(EnumType enumeration) {
-		// Find a random new position. getWidth and getheight return 0
-		// if we are called on a new diagram.
-		int fNextNodeX = (int) (Math.random() * Math.max(100, getWidth()));
-		int fNextNodeY = (int) (Math.random() * Math.max(100, getHeight()));
+		int[] position = randomPosition();
+
 		EnumNode n = new EnumNode(enumeration, fOpt);
-		n.setPosition(fNextNodeX, fNextNodeY);
+		n.setPosition(position[0], position[1]);
+		n.setMinWidth(minClassNodeWidth);
+		n.setMinHeight(minClassNodeHeight);
 
 		fGraph.add(n);
 		visibleData.fEnumToNodeMap.put(enumeration, n);
+
 		fLayouter = null;
 	}
 
@@ -470,7 +538,7 @@ public class ClassDiagram extends DiagramView
 	}
 
 	/**
-	 * Shows an hidden enumeration in the diagram again.
+	 * Shows a hidden enumeration in the diagram again.
 	 */
 	public void showEnum(EnumType enumeration) {
 		showOrHideEnum(enumeration, true);
@@ -481,9 +549,7 @@ public class ClassDiagram extends DiagramView
 		ClassDiagramData target = (show ? visibleData : hiddenData);
 
 		EnumNode n = source.fEnumToNodeMap.get(enumeration);
-
 		if (n != null) {
-
 			if (!show && this.getNodeSelection().isSelected(n))
 				this.getNodeSelection().remove(n);
 
@@ -494,6 +560,7 @@ public class ClassDiagram extends DiagramView
 
 			source.fEnumToNodeMap.remove(enumeration);
 			target.fEnumToNodeMap.put(enumeration, n);
+
 			fLayouter = null;
 		}
 	}
@@ -510,7 +577,7 @@ public class ClassDiagram extends DiagramView
 	}
 
 	/**
-	 * Show an association Wenn die uebergebene Assoziation nicht sichtbar isd,
+	 * Show an association. Wenn die uebergebene Assoziation nicht sichtbar ist,
 	 * wird sie in die Darstellung aufgenommen. Werden fuer die Darstellung
 	 * Klassen benoetigt, werden diese ebenfalls sichtbar gemacht, damit keine
 	 * ungueltige Darstellung entsteht.
@@ -606,14 +673,11 @@ public class ClassDiagram extends DiagramView
 
 	protected void addNAryAssociation(MAssociation assoc) {
 
-		// Find a random new position. getWidth and getheight return 0
-		// if we are called on a new diagram.
-		double fNextNodeX = Math.random() * Math.max(100, getWidth());
-		double fNextNodeY = Math.random() * Math.max(100, getHeight());
+		int[] position = randomPosition();
 
 		// n-ary association: create a diamond node and n edges to classes
 		DiamondNode node = new DiamondNode(assoc, fOpt);
-		node.setPosition(fNextNodeX, fNextNodeY);
+		node.setPosition(position[0], position[1]);
 		fGraph.add(node);
 		// connected to an associationclass
 		if (assoc instanceof MAssociationClass) {
@@ -743,13 +807,7 @@ public class ClassDiagram extends DiagramView
 		if (parent instanceof MAssociation && !(parent instanceof MAssociationClass))
 			return;
 
-		Map<?, ? extends PlaceableNode> lookup;
-
-		if (parent instanceof MSignal) {
-			lookup = visibleData.fSignalToNodeMap;
-		} else {
-			lookup = visibleData.fClassToNodeMap;
-		}
+		Map<? extends MClassifier, ? extends ClassifierNode> lookup = visibleData.lookupClassifierToNodeMap(parent);
 
 		GeneralizationEdge e = GeneralizationEdge.create(lookup.get(child), lookup.get(parent), this);
 
@@ -901,8 +959,7 @@ public class ClassDiagram extends DiagramView
 			}, pos++);
 
 			// Erstelle Actions fuer crop
-			Set<MClass> classToHide = new HashSet<>();
-			classToHide.addAll(selectedClasses);
+            Set<MClass> classToHide = new HashSet<>(selectedClasses);
 			selectedAssociations.forEach(assoc -> {
 				classToHide.addAll(assoc.associatedClasses());
 				if (assoc instanceof MAssociationClass) {
@@ -1279,7 +1336,7 @@ public class ClassDiagram extends DiagramView
 
 				try {
 					exporter.export(lastFile, getSystem(), visibleData.fClassToNodeMap.keySet(),
-							visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
+							visibleData.fDataTypeToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(ClassDiagram.this, e1.getMessage(), "Error saving the USE model",
 							JOptionPane.ERROR_MESSAGE);
@@ -1341,13 +1398,15 @@ public class ClassDiagram extends DiagramView
 	 * Hides the given elements in this diagram.
 	 * 
 	 * @param nodesToHide
-	 *            A set of {@link MClassifier} ({@link MClass} or
-	 *            {@link EnumType}) to hide
+	 *            A set of {@link MClassifier} ({@link MClass}
+	 *            {@link MDataType} or {@link EnumType}) to hide
 	 */
 	public void hideElementsInDiagram(Set<MClassifier> nodesToHide, Set<MAssociation> edgesToHide) {
 		for (MClassifier elem : nodesToHide) {
 			if (elem instanceof MClass) {
 				hideClass((MClass) elem);
+			} else if (elem instanceof MDataType) {
+				hideDataType((MDataType) elem);
 			} else if (elem instanceof EnumType) {
 				hideEnum((EnumType) elem);
 			}
@@ -1359,16 +1418,18 @@ public class ClassDiagram extends DiagramView
 	}
 
 	/**
-	 * Hides the given elements in this diagram.
+	 * Show the given elements in this diagram.
 	 * 
-	 * @param nodesToHide
-	 *            A set of {@link MClassifier} ({@link MClass} or
-	 *            {@link EnumType}) to hide
+	 * @param nodesToShow
+	 *            A set of {@link MClassifier} ({@link MClass}
+	 *            {@link MDataType} or {@link EnumType}) to hide
 	 */
 	public void showElementsInDiagram(Set<?> nodesToShow) {
 		for (Object elem : nodesToShow) {
 			if (elem instanceof MClass) {
 				showClass((MClass) elem);
+			} else if (elem instanceof MDataType) {
+				showDataType((MDataType) elem);
 			} else if (elem instanceof EnumType) {
 				showEnum((EnumType) elem);
 			}
@@ -1394,6 +1455,10 @@ public class ClassDiagram extends DiagramView
 
 		// store node positions in property object
 		for (ClassNode n : data.fClassToNodeMap.values()) {
+			n.storePlacementInfo(helper, parent, !visible);
+		}
+
+		for (DataTypeNode n : data.fDataTypeToNodeMap.values()) {
 			n.storePlacementInfo(helper, parent, !visible);
 		}
 
@@ -1484,8 +1549,10 @@ public class ClassDiagram extends DiagramView
 							if (isHidden(helper, version))
 								hiddenAssociations.add(assoc);
 						} catch (Exception e) {
-							fLog.append("Error restoring binary edge " + StringUtil.inQuotes(assoc.name()) + ":"
-									+ e.getMessage() + "\n");
+							fLog.append("Error restoring binary edge ")
+									.append(StringUtil.inQuotes(assoc.name()))
+									.append(":").append(e.getMessage())
+									.append("\n");
 						}
 					}
 				}
@@ -1544,8 +1611,31 @@ public class ClassDiagram extends DiagramView
 						if (isHidden(helper, version))
 							hiddenClassifier.add(cls);
 					} catch (Exception e) {
-						fLog.append("Error restoring class node " + StringUtil.inQuotes(cls.name()) + ":"
-								+ e.getMessage() + "\n");
+						fLog.append("Error restoring class node ")
+								.append(StringUtil.inQuotes(cls.name())).append(":")
+								.append(e.getMessage()).append("\n");
+					}
+				}
+			}
+		});
+
+		// Simply the data type nodes
+		h.handle("./node[@type='DataType']", new RestoreItemHandler() {
+			@Override
+			public void handleItem(PersistHelper helper, int version) {
+				String name = helper.getElementStringValue("name");
+				MDataType dtp = fParent.system().model().getDataType(name);
+				// Could be deleted
+				if (dtp != null) {
+					DataTypeNode node = visibleData.fDataTypeToNodeMap.get(dtp);
+					try {
+						node.restorePlacementInfo(helper, version);
+						if (isHidden(helper, version))
+							hiddenClassifier.add(dtp);
+					} catch (Exception e) {
+						fLog.append("Error restoring data type node ")
+								.append(StringUtil.inQuotes(dtp.name())).append(":")
+								.append(e.getMessage()).append("\n");
 					}
 				}
 			}
@@ -1565,8 +1655,9 @@ public class ClassDiagram extends DiagramView
 						if (isHidden(helper, version))
 							hiddenClassifier.add(enumType);
 					} catch (Exception e) {
-						fLog.append("Error restoring enum node " + StringUtil.inQuotes(enumType.name()) + ":"
-								+ e.getMessage() + "\n");
+						fLog.append("Error restoring enum node ")
+								.append(StringUtil.inQuotes(enumType.name())).append(":")
+								.append(e.getMessage()).append("\n");
 					}
 				}
 			}
@@ -1587,8 +1678,9 @@ public class ClassDiagram extends DiagramView
 							if (isHidden(helper, version))
 								hiddenAssociations.add(assoc);
 						} catch (Exception e) {
-							fLog.append("Error restoring diamond node " + StringUtil.inQuotes(node.name()) + ":"
-									+ e.getMessage() + "\n");
+							fLog.append("Error restoring diamond node ")
+									.append(StringUtil.inQuotes(node.name())).append(":")
+									.append(e.getMessage()).append("\n");
 						}
 					}
 				}
@@ -1629,13 +1721,13 @@ public class ClassDiagram extends DiagramView
 			Map<MModelElement, Integer> propCover = theData.getPropertyCoverage();
 
 			int minCover = 0; // data.calcLowestClassCoverage();
-			int maxCover = theData.calcHighestCompleteClassCoverage();
+			int maxCover = theData.calcHighestCompleteClassifierCoverage();
 			int maxAttCover = theData.highestInt(propCover);
 			int value;
 
 			for (MClass cls : model.classes()) {
-				if (theData.getCompleteClassCoverage().containsKey(cls)) {
-					value = theData.getCompleteClassCoverage().get(cls);
+				if (theData.getCompleteClassifierCoverage().containsKey(cls)) {
+					value = theData.getCompleteClassifierCoverage().get(cls);
 				} else {
 					value = 0;
 				}
@@ -1665,6 +1757,38 @@ public class ClassDiagram extends DiagramView
 				}
 			}
 
+			for (MDataType dtp : model.dataTypes()) {
+				if (theData.getCompleteClassifierCoverage().containsKey(dtp)) {
+					value = theData.getCompleteClassifierCoverage().get(dtp);
+				} else {
+					value = 0;
+				}
+
+				DataTypeNode n = visibleData.fDataTypeToNodeMap.get(dtp);
+				if (n == null)
+					n = hiddenData.fDataTypeToNodeMap.get(dtp);
+
+				n.setColor(scaleColor(value, minCover, maxCover));
+
+				for (MAttribute att : dtp.attributes()) {
+					if (propCover.containsKey(att)) {
+						value = theData.getAttributeCoverage().get(att);
+					} else {
+						value = 0;
+					}
+					n.setAttributeColor(att, scaleColor(value, minCover, maxAttCover));
+				}
+
+				for (MOperation op : dtp.operations()) {
+					if (propCover.containsKey(op)) {
+						value = theData.getOperationCoverage().get(op);
+					} else {
+						value = 0;
+					}
+					n.setOperationColor(op, scaleColor(value, minCover, maxAttCover));
+				}
+			}
+
 			for (Rolename rolename : visibleData.getAllRolenames()) {
 				if (propCover.containsKey(rolename.getEnd())) {
 					value = propCover.get(rolename.getEnd());
@@ -1683,6 +1807,11 @@ public class ClassDiagram extends DiagramView
 
 	protected void resetColor() {
 		for (ClassNode n : visibleData.fClassToNodeMap.values()) {
+			n.setColor(null);
+			n.resetAttributeColor();
+			n.resetOperationColor();
+		}
+		for (DataTypeNode n : visibleData.fDataTypeToNodeMap.values()) {
 			n.setColor(null);
 			n.resetAttributeColor();
 			n.resetOperationColor();
@@ -1749,7 +1878,9 @@ public class ClassDiagram extends DiagramView
 	 * @return
 	 */
 	public boolean isVisible(MClassifier cs) {
-		return visibleData.fClassToNodeMap.containsKey(cs) || visibleData.fEnumToNodeMap.containsKey(cs);
+		return visibleData.fClassToNodeMap.containsKey(cs)
+				|| visibleData.fDataTypeToNodeMap.containsKey(cs)
+				|| visibleData.fEnumToNodeMap.containsKey(cs);
 	}
 
 	@Override
@@ -1789,5 +1920,14 @@ public class ClassDiagram extends DiagramView
 		} else {
 			return false;
 		}
+	}
+
+	private int[] randomPosition() {
+		// Find a random new position. getWidth and getHeight return 0
+		// if we are called on a new diagram.
+		int fNextNodeX = (int) (Math.random() * Math.max(100, fParent.getWidth() - 50));
+		int fNextNodeY = (int) (Math.random() * Math.max(100, fParent.getHeight() - 50));
+
+		return new int[] {fNextNodeX, fNextNodeY};
 	}
 }

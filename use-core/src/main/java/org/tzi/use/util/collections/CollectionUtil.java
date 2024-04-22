@@ -31,6 +31,7 @@ import java.util.*;
  *
  * @author  Joern Bohling
  * @author  Lars Hamann
+ * @author Stefan Schoon
  */
 public final class CollectionUtil {
 
@@ -297,5 +298,29 @@ public final class CollectionUtil {
 
 	public static <T,TCast> Set<TCast> filterByType(final Set<T> source, final Class<TCast> cls) {
 		return Sets.newHashSet(Iterators.filter(source.iterator(), cls)); 
+	}
+
+    /**
+     * Compares two lists to see if they contain the same contents, but without order mattering.
+     * @param one First list to compare
+     * @param two Second list to compare
+     * @param comparator Comparator for type of contents
+     */
+	public static <T> boolean equalLists(List<T> one, List<T> two, Comparator<T> comparator) {
+		if (one == null && two == null) {
+			return true;
+		}
+
+		if (one == null || two == null || one.size() != two.size()) {
+			return false;
+		}
+
+		// To avoid messing the order of the lists we will use a copy
+		one = new ArrayList<>(one);
+		two = new ArrayList<>(two);
+
+		one.sort(comparator);
+		two.sort(comparator);
+		return one.equals(two);
 	}
 }

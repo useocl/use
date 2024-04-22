@@ -78,7 +78,8 @@ public final class Main {
 		MSystem system = null;
 
 		if (!Options.disableExtensions) {
-			ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + "/oclextensions";
+			ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + Options.FILE_SEPARATOR +
+					"oclextensions";
 			ExtensionManager.getInstance().loadExtensions();
 		}
 		

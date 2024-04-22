@@ -28,10 +28,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
 import org.tzi.use.parser.use.statemachines.ASTSignal;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 
@@ -40,10 +37,12 @@ import org.tzi.use.uml.ocl.type.EnumType;
  *
  * @author  Mark Richters
  * @author  Lars Hamann
+ * @author  Stefan Schoon
  */
 public class ASTModel extends ASTAnnotatable {
     private final Token fName;
     private final List<ASTEnumTypeDefinition> fEnumTypeDefs;
+    private final List<ASTDataType> fDataTypes;
     private final List<ASTClass> fClasses;
     private final List<ASTAssociationClass> fAssociationClasses;
     private final List<ASTAssociation> fAssociations;
@@ -54,6 +53,7 @@ public class ASTModel extends ASTAnnotatable {
     public ASTModel(Token name) {
         fName = name;
         fEnumTypeDefs = new ArrayList<>();
+        fDataTypes = new ArrayList<>();
         fClasses = new ArrayList<>();
         fAssociationClasses = new ArrayList<>();
         fAssociations = new ArrayList<>();
@@ -64,6 +64,10 @@ public class ASTModel extends ASTAnnotatable {
 
     public void addEnumTypeDef(ASTEnumTypeDefinition etd) {
         fEnumTypeDefs.add(etd);
+    }
+
+    public void addDataType(ASTDataType dtp) {
+        fDataTypes.add(dtp);
     }
 
     public void addClass(ASTClass cls) {
@@ -107,6 +111,22 @@ public class ASTModel extends ASTAnnotatable {
                 ctx.reportError(ex);
             } catch (MInvalidModelException ex) {
                 ctx.reportError(fName, ex);
+            }
+        }
+
+        // (1b) add empty data types to model
+        Iterator<ASTDataType> dIt = fDataTypes.iterator();
+        while (dIt.hasNext()) {
+            ASTDataType d = dIt.next();
+            try {
+                MDataType dtp = d.genEmptyDataType(ctx);
+                model.addDataType(dtp);
+            } catch (SemanticException ex) {
+                ctx.reportError(ex);
+                dIt.remove();
+            } catch (MInvalidModelException ex) {
+                ctx.reportError(fName, ex);
+                dIt.remove();
             }
         }
 
@@ -165,6 +185,13 @@ public class ASTModel extends ASTAnnotatable {
 	        }
         }
         
+        // (2a) add attributes and set generalization
+        // relationships. The names of all data types are known at this
+        // point
+        for (ASTDataType d : fDataTypes) {
+            d.genAttributesOperationSignaturesAndGenSpec(ctx);
+        }
+
         // (2a) add attributes and set generalization
         // relationships. The names of all classes are known at this
         // point
@@ -250,6 +277,11 @@ public class ASTModel extends ASTAnnotatable {
         	}
         }
         
+        // (4a) generate bodies of data types
+        for (ASTDataType d : fDataTypes) {
+            d.genOperationBodiesAndDerivedAttributes(ctx);
+        }
+
         // (4a) generate bodies of association and non-association classes
         // All class interfaces are known and association features
         // are available for expressions.
@@ -261,6 +293,12 @@ public class ASTModel extends ASTAnnotatable {
             ac.genOperationBodiesAndDerivedAttributes(ctx);
         }
         
+        // (4b) generate constraints of association and non-association data types
+        // All data type interfaces are known and association features
+        // are available for expressions.
+        for (ASTDataType d : fDataTypes) {
+            d.genConstraints(ctx);
+        }
 
         // (4b) generate constraints of association and non-association classes
         // All class interfaces are known and association features

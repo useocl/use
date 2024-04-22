@@ -24,13 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 
 /**
  * Container class for coverage data.
@@ -40,14 +34,14 @@ import org.tzi.use.uml.mm.MOperation;
 public class CoverageData {
 	
 	/**
-	 * Only expressions which access directly a class (allInstances()) are counted
+	 * Only expressions which access directly a classifier (allInstances()) are counted
 	 */
-	protected Map<MClass, Integer> classCoverage = new HashMap<MClass, Integer>();
+	protected Map<MClassifier, Integer> classifierCoverage = new HashMap<MClassifier, Integer>();
 	
 	/**
-	 * All expressions are counted which cover the class, associations or attributes of the class
+	 * All expressions are counted which cover the classifier, associations or attributes of the classifier
 	 */
-	protected Map<MClass, Integer> completeClassCoverage = new HashMap<MClass, Integer>();
+	protected Map<MClassifier, Integer> completeClassifierCoverage = new HashMap<MClassifier, Integer>();
 	
 	protected Map<AttributeAccessInfo, Integer> attributeAccessCoverage = new HashMap<AttributeAccessInfo, Integer>();
 	
@@ -65,17 +59,17 @@ public class CoverageData {
 	public CoverageData() {	}
 	
 	/**
-	 * @return the classCoverage
+	 * @return the classifierCoverage
 	 */
-	public Map<MClass, Integer> getClassCoverage() {
-		return classCoverage;
+	public Map<MClassifier, Integer> getClassifierCoverage() {
+		return classifierCoverage;
 	}
 
 	/**
-	 * @return the classCoverage
+	 * @return the completeClassifierCoverage
 	 */
-	public Map<MClass, Integer> getCompleteClassCoverage() {
-		return completeClassCoverage;
+	public Map<MClassifier, Integer> getCompleteClassifierCoverage() {
+		return completeClassifierCoverage;
 	}
 	
 	/**
@@ -125,29 +119,29 @@ public class CoverageData {
 	}
 	
 	/**
-	 * Calculates the highest class coverage value
+	 * Calculates the highest classifier coverage value
 	 * @return
 	 */
-	public int calcHighestClassCoverage() {
-		return highestInt(this.classCoverage);
+	public int calcHighestClassifierCoverage() {
+		return highestInt(this.classifierCoverage);
 	}
 	
 	/**
 	 * Calculates the highest complete class coverage value
 	 * @return
 	 */
-	public int calcHighestCompleteClassCoverage() {
-		return highestInt(this.completeClassCoverage);
+	public int calcHighestCompleteClassifierCoverage() {
+		return highestInt(this.completeClassifierCoverage);
 	}
 	
-	public int calcLowestClassCoverage() {		
-		return lowestInt(this.classCoverage);
+	public int calcLowestClassifierCoverage() {		
+		return lowestInt(this.classifierCoverage);
 	}
 	
-	public Set<MClass> getCoveredClasses() {
-		Set<MClass> result = new TreeSet<MClass>();
+	public Set<MClassifier> getCoveredClassifiers() {
+		Set<MClassifier> result = new TreeSet<MClassifier>();
 		
-		for (Map.Entry<MClass, Integer> entry : getClassCoverage().entrySet()) {
+		for (Map.Entry<MClassifier, Integer> entry : getClassifierCoverage().entrySet()) {
 			if (entry.getValue().intValue() > 0) {
 				result.add(entry.getKey());
 			}
@@ -156,10 +150,10 @@ public class CoverageData {
 		return result;
 	}
 	
-	public Set<MClass> getCompleteCoveredClasses() {
-		Set<MClass> result = new TreeSet<MClass>();
+	public Set<MClassifier> getCompleteCoveredClassifiers() {
+		Set<MClassifier> result = new TreeSet<MClassifier>();
 		
-		for (Map.Entry<MClass, Integer> entry : getCompleteClassCoverage().entrySet()) {
+		for (Map.Entry<MClassifier, Integer> entry : getCompleteClassifierCoverage().entrySet()) {
 			if (entry.getValue().intValue() > 0) {
 				result.add(entry.getKey());
 			}
@@ -192,16 +186,24 @@ public class CoverageData {
 	}
 	
 	/**
-	 * Adds all uncovered classes to the corresponding maps with a value of 0.
+	 * Adds all uncovered classifiers to the corresponding maps with a value of 0.
 	 * @param model
 	 */
 	public void addUncoveredClasses(MModel model) {
 		for (MClass cls : model.classes()) {
-			if (!this.classCoverage.containsKey(cls)) {
-				this.classCoverage.put(cls, Integer.valueOf(0));
+			if (!this.classifierCoverage.containsKey(cls)) {
+				this.classifierCoverage.put(cls, Integer.valueOf(0));
 			}
-			if (!this.completeClassCoverage.containsKey(cls)) {
-				this.completeClassCoverage.put(cls, Integer.valueOf(0));
+			if (!this.completeClassifierCoverage.containsKey(cls)) {
+				this.completeClassifierCoverage.put(cls, Integer.valueOf(0));
+			}
+		}
+		for (MDataType dtp : model.dataTypes()) {
+			if (!this.classifierCoverage.containsKey(dtp)) {
+				this.classifierCoverage.put(dtp, Integer.valueOf(0));
+			}
+			if (!this.completeClassifierCoverage.containsKey(dtp)) {
+				this.completeClassifierCoverage.put(dtp, Integer.valueOf(0));
 			}
 		}
 	}

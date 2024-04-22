@@ -50,7 +50,7 @@ similar to the following.
 
 ```
 loading properties from: C:\Dev\USE\use-6.0.0\etc\use.properties
-USE version X.X.X, Copyright (C) 1999-2021 University of Bremen
+USE version X.X.X, Copyright (C) 1999-2024 University of Bremen & University of Applied Sciences Hamburg
 Plugin path: [C:\Dev\USE\use-6.0.0\lib\plugins]
 Plugin filename(s) [AssociationExtend.jar,ModelValidatorPlugin-5.2.0-r1.jar,ObjectToClassPlugin-2.0.jar,OCLComplexityPlugin5.1.0.jar,use-filmstrip.jar]
 compiling specification...

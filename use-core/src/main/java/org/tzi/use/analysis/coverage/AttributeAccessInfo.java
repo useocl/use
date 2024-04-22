@@ -20,7 +20,7 @@
 package org.tzi.use.analysis.coverage;
 
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 
 /**
  * A MAttribute can be defined in a base class.
@@ -33,11 +33,11 @@ import org.tzi.use.uml.mm.MClass;
  */
 public class AttributeAccessInfo implements Comparable<AttributeAccessInfo> {
 	private MAttribute attribute;
-	private MClass sourceClass;
+	private MClassifier sourceClassifier;
 	
-	public AttributeAccessInfo(MClass cls, MAttribute att) {
+	public AttributeAccessInfo(MClassifier cf, MAttribute att) {
 		this.attribute = att;
-		this.sourceClass = cls;
+		this.sourceClassifier = cf;
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class AttributeAccessInfo implements Comparable<AttributeAccessInfo> {
 	/**
 	 * @return the sourceClass
 	 */
-	public MClass getSourceClass() {
-		return sourceClass;
+	public MClassifier getSourceClass() {
+		return sourceClassifier;
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class AttributeAccessInfo implements Comparable<AttributeAccessInfo> {
 	
 	@Override
 	public int hashCode() {
-		return (sourceClass.name() + attribute.name()).hashCode();
+		return (sourceClassifier.name() + attribute.name()).hashCode();
 	}
 
 	/* (non-Javadoc)

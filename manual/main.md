@@ -45,7 +45,6 @@ example must therefore be translated into a USE specification[^1] by
 using an external text editor. The USE specification of the example
 model is shown below.
 
-
     model Cars
 
     class Car
@@ -315,6 +314,72 @@ Example:
 :   An enumeration definition with three elements.
 
         enum Flatware {Spoon, Fork, Knife}
+
+#### Data types
+
+Data types may be added at the top of the model body.
+
+#### Syntax
+
+    <datatypedefinition> ::= [ abstract ] dataType <datatypename> [ < <datatypename> { , <datatypename> } ]
+                             [ operations { <operationdeclaration> [ = <oclexpression> ]
+                             { <preconditiondefinition> | <postconditiondefinition> } } ]
+                             [ constraints { <invariantdefinition> } ]
+                             end
+          <datatypename> ::= <name>
+
+Example:
+
+The example shows four different data type definitions. The data types
+'Rectange' and 'Circle' inherit from abstract data type 'Shape'. 'Shape'
+defines the attribute 'position' which is of type 'Point' in its constructor.
+'Point' defines the attributes 'x' and 'y' which are both of primitive type
+'Real'. It also defines the operation 'translate()' which takes two parameters
+of type 'Real'for shifting 'x' and 'y' with no result type. 'Shape' defines
+the two opeartions 'perimeter()' and 'area()'. Since 'Shape' is abstract both
+'Rectangle' and 'Circle' implement their specific logic for these operations.
+Note that a constructor canonly have pre- and no postconditions, since it is a
+stateless operation.
+
+    dataType Point
+    operations
+      Point(x : Real, y : Real)
+      translate(dx : Real, dy : Real)(dx) : Point =
+        Point(self.x + dx, self.y + dy)
+    end
+
+    abstract dataType Shape
+    operations
+      Shape(position : Point)
+      perimeter() : Real
+      area() : Real
+    end
+
+    dataType Rectangle < Shape
+    operations
+      Rectangle(position : Point, width : Real, height : Real)(position)
+      perimeter() : Real = 2.0 * width + 2.0 * height
+      area() : Real = width * height
+    end
+
+    dataType Circle < Shape
+    operations
+      Circle(position : Point, radius : Real)(position)
+      perimeter() : Real = 2.0 * 3.14 * radius
+      area() : Real = 3.14 * radius * radius
+    end
+
+Following examample shows, how to query data types
+from the above model 'Shapes' in the shell:
+
+    use> ?Point(1, 1)
+    -> Point{x=1, y=1} : Point
+    use> ?Point(1, 1).translate(3, 4)
+    -> Point{x=4, y=5} : Point
+    use> ?Rectangle(Point(2, 2), 2, 3).perimeter()
+    -> 10.0 : Real
+    use> ?Circle(Point(2, 6), 2, 3).area()
+    -> 12.56 : Real
 
 #### Classes
 

@@ -33,11 +33,7 @@ import org.tzi.use.gui.views.diagrams.elements.Rolename;
 import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 
@@ -52,8 +48,12 @@ public class ClassDiagramData implements DiagramData {
 	 * All mappings from (association-)classes to nodes.
 	 */
 	public Map<MClass, ClassNode> fClassToNodeMap;
-	
-	
+
+	/**
+	 * All mappings from data types to nodes.
+	 */
+	public Map<MDataType, DataTypeNode> fDataTypeToNodeMap;
+
 	public Map<MSignal, SignalNode> fSignalToNodeMap;
 	
 	/**
@@ -86,6 +86,7 @@ public class ClassDiagramData implements DiagramData {
 	 */
 	public ClassDiagramData() {
 		fClassToNodeMap = new HashMap<MClass, ClassNode>();
+		fDataTypeToNodeMap = new HashMap<MDataType, DataTypeNode>();
         fEnumToNodeMap = new HashMap<EnumType, EnumNode>();
         fBinaryAssocToEdgeMap = new HashMap<MAssociation, BinaryAssociationOrLinkEdge>();
         fAssocClassToEdgeMap = new HashMap<MAssociationClass, EdgeBase>();
@@ -96,7 +97,9 @@ public class ClassDiagramData implements DiagramData {
 	}
 	
 	public boolean hasNodes() {
-		return !(fClassToNodeMap.isEmpty() && fEnumToNodeMap.isEmpty());
+		return !(fClassToNodeMap.isEmpty()
+				&& fDataTypeToNodeMap.isEmpty()
+				&& fEnumToNodeMap.isEmpty());
 	}
 
 	public boolean hasEdges() {
@@ -110,6 +113,7 @@ public class ClassDiagramData implements DiagramData {
 	@Override
 	public Set<PlaceableNode> getNodes() {
 		Set<PlaceableNode> result = new HashSet<PlaceableNode>(fClassToNodeMap.values());
+		result.addAll(fDataTypeToNodeMap.values());
 		result.addAll(fEnumToNodeMap.values());
 		result.addAll(fNaryAssocToDiamondNodeMap.values());
 		return result;
@@ -133,13 +137,19 @@ public class ClassDiagramData implements DiagramData {
 	 * @return
 	 */
 	public PlaceableNode getNode(MClassifier cf) {
-		PlaceableNode n = this.fClassToNodeMap.get(cf);
-		if (n != null) return n;
-		return this.fEnumToNodeMap.get(cf);
+		PlaceableNode n = null;
+		if (cf instanceof MClass) {
+			n = this.fClassToNodeMap.get(cf);
+		} else if (cf instanceof MDataType) {
+			n = this.fDataTypeToNodeMap.get(cf);
+		} else if (cf instanceof EnumType) {
+			n = this.fEnumToNodeMap.get(cf);
+		}
+		return n;
 	}
 	
 	public boolean containsNodeForClassifer(MClassifier cf) {
-		return this.fClassToNodeMap.containsKey(cf) || this.fEnumToNodeMap.containsKey(cf);
+		return getNode(cf) != null;
 	}
 
 	/**
@@ -147,9 +157,9 @@ public class ClassDiagramData implements DiagramData {
 	 * @param selected
 	 * @return
 	 */
-	public Set<PlaceableNode> getNodes(Set<MClassifier> classifier) {
+	public Set<PlaceableNode> getNodes(Set<MClassifier> selected) {
 		Set<PlaceableNode> nodes = new HashSet<PlaceableNode>();
-		for (MClassifier cf : classifier) {
+		for (MClassifier cf : selected) {
 			PlaceableNode node = getNode(cf);
 			if (node != null)
 				nodes.add(node);
@@ -185,5 +195,20 @@ public class ClassDiagramData implements DiagramData {
 		}
 		
 		return res;
+	}
+
+	/**
+	 * Returns the associated classifier-to-node map for given {@link MClassifier}.
+	 * @param cf to get map for
+	 */
+	public Map<? extends MClassifier, ? extends ClassifierNode> lookupClassifierToNodeMap(MClassifier cf) {
+		if (cf instanceof MClass) {
+			return fClassToNodeMap;
+		} else if (cf instanceof MDataType) {
+			return fDataTypeToNodeMap;
+		} if (cf instanceof MSignal) {
+			return fSignalToNodeMap;
+		}
+		return new HashMap<>(0);
 	}
 }

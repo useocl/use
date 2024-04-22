@@ -35,7 +35,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
-public interface MObject {
+public interface MObject extends MInstance {
 
     /**
      * Returns the class of this object.

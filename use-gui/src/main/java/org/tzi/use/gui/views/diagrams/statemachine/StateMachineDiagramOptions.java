@@ -60,6 +60,6 @@ public class StateMachineDiagramOptions extends DiagramOptions {
         return false;
     }
 
-    public void setShowMutliplicities( boolean showMutliplicities ) { }
+    public void setShowMutliplicities(boolean showMutliplicities ) { }
 
 }

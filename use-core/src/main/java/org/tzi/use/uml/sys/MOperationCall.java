@@ -57,7 +57,7 @@ public class MOperationCall {
 	/** The "self-pointer" for this operation call, i. e., 
 	 *  the receiver of the message
 	 */
-	private MObject fSelf;
+	private MInstance fSelf;
 	
 	/**
 	 * The called operation
@@ -126,7 +126,7 @@ public class MOperationCall {
 	 * @param arguments
 	 */
 	private MOperationCall(
-			MObject self, 
+			MInstance self,
 			MOperation operation, 
 			Value[] arguments,
 			Expression callerExpression,
@@ -150,7 +150,7 @@ public class MOperationCall {
 	 */
 	public MOperationCall(
 			MStatement caller,
-			MObject self, 
+			MInstance self,
 			MOperation operation, 
 			Value[] arguments) {
 		
@@ -168,7 +168,7 @@ public class MOperationCall {
 	 */
 	public MOperationCall(
 			Expression caller,
-			MObject self,
+			MInstance self,
 			MOperation operation,
 			Value[] arguments) {
 		
@@ -179,7 +179,7 @@ public class MOperationCall {
 	 * The receiver of the operation call.
 	 * @return
 	 */
-	public MObject getSelf() {
+	public MInstance getSelf() {
 		return fSelf;
 	}
 	

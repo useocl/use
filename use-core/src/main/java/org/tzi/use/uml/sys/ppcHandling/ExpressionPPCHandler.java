@@ -25,12 +25,13 @@ import java.io.PrintWriter;
 import java.util.Deque;
 import java.util.List;
 
+import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
 
 /**
@@ -107,7 +108,7 @@ public class ExpressionPPCHandler implements PPCHandler {
 			
 			printDetailedPPC(
 					system, 
-					operationCall.getPreState(), 
+					operationCall, 
 					preCondition.expression());
 			
 			fOutput.println();
@@ -157,7 +158,7 @@ public class ExpressionPPCHandler implements PPCHandler {
 			
 			printDetailedPPC(
 					system, 
-					operationCall.getPreState(), 
+					operationCall, 
 					postCondition.expression());
 			
 			fOutput.println();
@@ -176,15 +177,27 @@ public class ExpressionPPCHandler implements PPCHandler {
 	
 	private void printDetailedPPC(
 			MSystem system, 
-			MSystemState preState, 
+			MOperationCall operationCall, 
 			Expression ppc) {
 		
 		Evaluator oclEvaluator = new Evaluator();
+
+		MOperation operation = operationCall.getOperation();
+		VarBindings bindings;
+		if (operation.isConstructor()) {
+			bindings =  new VarBindings();
+			for (int i = 0; i < operationCall.getArguments().length; i++) {
+				bindings.push(operation.paramNames().get(i), operationCall.getArguments()[i]);
+			}
+		} else {
+			bindings = system.getVariableEnvironment().constructVarBindings();
+		}
+		
 		oclEvaluator.eval(
 				ppc,
-				preState,
+				operationCall.getPreState(),
 				system.state(), 
-				system.getVariableEnvironment().constructVarBindings(), 
+				bindings,
 				fOutput,
 				"    ");
 	}

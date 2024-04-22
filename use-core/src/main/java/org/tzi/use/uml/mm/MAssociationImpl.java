@@ -135,7 +135,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
     /** 
      * Adds an association end.
      *
-     * @exception MInvalidModel trying to add another composition
+     * @exception MInvalidModelException trying to add another composition
      *            or aggregation end.
      */
     public void addAssociationEnd(@NonNull MAssociationEnd aend) throws MInvalidModelException {
@@ -449,7 +449,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 				MAssociationEnd checkAgainstEnd = checkAgainst.associationEnds().get(i);
 				MAssociationEnd childEnd =  redefiningAssoc.associationEnds().get(i);
 				
-				if (childEnd.cls().isSubClassOf(checkAgainstEnd.cls(), true)) {
+				if (childEnd.cls().isSubClassifierOf(checkAgainstEnd.cls(), true)) {
 					// More specific redefinition
 					closure.add(redefiningAssoc);
 					break;

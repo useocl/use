@@ -1,0 +1,11 @@
+model t25a
+
+dataType D
+operations
+  D(a : Integer, b : Integer)
+end
+
+class C
+operations
+  C(a : Integer, b : Integer)
+end

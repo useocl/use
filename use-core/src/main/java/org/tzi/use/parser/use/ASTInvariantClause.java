@@ -27,9 +27,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MInvalidModelException;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
@@ -51,11 +49,11 @@ public class ASTInvariantClause extends ASTAnnotatable {
         return fExpr.toString();
     }
 
-    void gen(Context ctx, List<Token> varTokens, MClass cls) {
-    	gen(ctx, varTokens, cls, true);
+    void gen(Context ctx, List<Token> varTokens, MClassifier cf) {
+    	gen(ctx, varTokens, cf, true);
     }
     
-    MClassInvariant gen(Context ctx, List<Token> varTokens, MClass cls, boolean addToModel) {
+    MClassInvariant gen(Context ctx, List<Token> varTokens, MClassifier cf, boolean addToModel) {
         // enter context variable into scope of invariant
         Symtable vars = ctx.varTable();
         vars.enterScope();
@@ -66,14 +64,14 @@ public class ASTInvariantClause extends ASTAnnotatable {
         try {
             if (varTokens != null && varTokens.size() > 0) {                
             	for (Token var : varTokens) {
-            		vars.add(var, cls);
-            		ctx.exprContext().push(var.getText(), cls);
+            		vars.add(var, cf);
+            		ctx.exprContext().push(var.getText(), cf);
             		varNames.add(var.getText());
             	}
             } else {
                 // create pseudo-variable "self"
-                vars.add("self", cls, null);
-                ctx.exprContext().push("self", cls);
+                vars.add("self", cf, null);
+                ctx.exprContext().push("self", cf);
                 varNames.add("self");
             }
 
@@ -86,7 +84,7 @@ public class ASTInvariantClause extends ASTAnnotatable {
 				invName = fName.getText();
 			}
             
-            inv = onCreateMClassInvariant(ctx, cls, varNames, expr, invName);
+            inv = onCreateMClassInvariant(ctx, cf, varNames, expr, invName);
             
             this.genAnnotations(inv);
             
@@ -107,11 +105,11 @@ public class ASTInvariantClause extends ASTAnnotatable {
         return inv;
     }
 
-	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClass cls,
+	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClassifier cf,
 			List<String> varNames, Expression expr, String invName)
 			throws ExpInvalidException {
 		MClassInvariant inv = 
-		    ctx.modelFactory().createClassInvariant(invName, varNames, cls, expr, false);
+		    ctx.modelFactory().createClassInvariant(invName, varNames, cf, expr, false);
 		return inv;
 	}
 }

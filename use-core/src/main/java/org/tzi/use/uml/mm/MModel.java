@@ -42,7 +42,7 @@ public class MModel extends MModelElementImpl {
 
 	/**
 	 * This map keeps track of the numbering of "unnamed" named model elements,
-	 * i.e., if an invariant was defined without a name a name like
+	 * i.e., if an invariant was defined without a name, a name like
 	 * <code>inv::1</code> is generated.
 	 */
 	private final Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
@@ -56,6 +56,8 @@ public class MModel extends MModelElementImpl {
 	}
 
 	private Map<String, EnumType> fEnumTypes;
+
+	private Map<String, MDataType> fDataTypes;
 
 	private Map<String, MClass> fClasses;
 
@@ -74,6 +76,7 @@ public class MModel extends MModelElementImpl {
 	protected MModel(String name) {
 		super(name);
 		fEnumTypes = new TreeMap<String, EnumType>();
+		fDataTypes = new TreeMap<String, MDataType>();
 		fClasses = new TreeMap<String, MClass>();
 		fAssociations = new TreeMap<String, MAssociation>();
 		fGenGraph = new DirectedGraphBase<MClassifier, MGeneralization>();
@@ -148,12 +151,41 @@ public class MModel extends MModelElementImpl {
 	}
 
 	/**
-	 * Returns the classifier (currently MClass, MAssociation, or
-	 * MAssociationClass) with the given name or <code>null</code>, if no
-	 * classifier with the given name exists in the model.
+	 * Adds a data type. The data type must have a unique name within the model.
+	 *
+	 * @exception MInvalidModelException
+	 *                model already contains a data type with the same name.
+	 */
+	public void addDataType(MDataType dtp) throws MInvalidModelException {
+		if (fDataTypes.containsKey(dtp.name()))
+			throw new MInvalidModelException("Model already contains a data type `"
+					+ dtp.name() + "'.");
+
+		fDataTypes.put(dtp.name(), dtp);
+		fGenGraph.add(dtp);
+		dtp.setModel(this);
+	}
+
+	/**
+	 * Returns the specified data type.
+	 * 
+	 * @return <code>null</code> if data type <code>name</code> does not exist.
+	 */
+	public MDataType getDataType(String name) {
+		return fDataTypes.get(name);
+	}
+
+	/**
+	 * Returns the classifier (currently MClass, MDataType, MAssociation) with the given name or <code>null</code>,
+	 * if no classifier with the given name exists in the model.
 	 */
 	public MClassifier getClassifier(String name) {
 		MClassifier classifier = getClass(name);
+		if (classifier != null) {
+			return classifier;
+		}
+
+		classifier = getDataType(name);
 		if (classifier != null) {
 			return classifier;
 		}
@@ -195,12 +227,27 @@ public class MModel extends MModelElementImpl {
 	}
 
 	/**
+	 * Returns a collection containing all data types in this model.
+	 *
+	 * @return collection of MDataType objects.
+	 */
+	public Collection<MDataType> dataTypes() {
+		return fDataTypes.values();
+	}
+
+	/**
 	 * Returns a collection containing all classes in this model.
 	 * 
 	 * @return collection of MClass objects.
 	 */
 	public Collection<MClass> classes() {
 		return fClasses.values();
+	}
+
+	public Collection<MClassifier> classifiers() {
+		Set<MClassifier> col = new HashSet<>(dataTypes());
+		col.addAll(classes());
+		return col;
 	}
 
 	/**
@@ -398,7 +445,7 @@ public class MModel extends MModelElementImpl {
 		final boolean childIsAssocClass = child instanceof MAssociationClass;
 		final boolean parentIsAssocClass = parent instanceof MAssociationClass;
 
-		/**
+		/*
 		 * If one element is an association class, both elements must be
 		 * association classes. (childIsAssocClass || parentIsAssocClass)
 		 * implies (childIsAssocClass && parentIsAssocClass) This is negated to
@@ -475,8 +522,7 @@ public class MModel extends MModelElementImpl {
 	 * Returns a set of all enumeration types.
 	 */
 	public Set<EnumType> enumTypes() {
-		Set<EnumType> s = new HashSet<EnumType>();
-		s.addAll(fEnumTypes.values());
+        Set<EnumType> s = new HashSet<EnumType>(fEnumTypes.values());
 		return s;
 	}
 
@@ -686,7 +732,7 @@ public class MModel extends MModelElementImpl {
 				|| this.fClasses.containsKey(signal.name())
 				|| this.fEnumTypes.containsKey(signal.name())) {
 			throw new MInvalidModelException(
-					"Model already constains a classifier named "
+					"Model already contains a classifier named "
 							+ StringUtil.inQuotes(signal.name()));
 		}
 
@@ -719,7 +765,7 @@ public class MModel extends MModelElementImpl {
 
 	/**
 	 * Returns a string with some statistics about the model: Number of classes,
-	 * associations, invariants, and operations.
+	 * associations, data types, invariants, and operations.
 	 */
 	public String getStats() {
 		String stats = " (";
@@ -729,6 +775,10 @@ public class MModel extends MModelElementImpl {
 			stats += "es";
 		n = associations().size();
 		stats += ", " + n + " association";
+		if (n != 1)
+			stats += "s";
+		n = dataTypes().size();
+		stats += ", " + n + " data type";
 		if (n != 1)
 			stats += "s";
 		n = classInvariants().size();
@@ -774,7 +824,7 @@ public class MModel extends MModelElementImpl {
 	 * Sets the name of model element to a generated one, if the element has no
 	 * name. If the name is <code>null</code> or empty a new name starting with
 	 * <code>prefix</code> will be generated. Note that the generated names will
-	 * be unique but they may still clash with some user defined name.
+	 * be unique, but they may still clash with some user defined name.
 	 */
 	public String createModelElementName(String prefix) {
 

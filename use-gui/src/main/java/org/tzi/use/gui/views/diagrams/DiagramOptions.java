@@ -36,11 +36,12 @@ import org.w3c.dom.Element;
  */
 public abstract class DiagramOptions {
 	/**
-	 * The current version number of the layout informations
+	 * The current version number of the layout information
 	 */
 	public static int XML_LAYOUT_VERSION = 13;
 	
     protected boolean fDoAutoLayout = false;
+    protected boolean fSaveDefaultLayout = true;
     protected boolean fShowRolenames = true;
     protected boolean fShowAssocNames = false;
     protected boolean fDoAntiAliasing = false;
@@ -73,7 +74,7 @@ public abstract class DiagramOptions {
     
     public abstract boolean isShowMutliplicities();
     
-    public abstract void setShowMutliplicities( boolean showMutliplicities );
+    public abstract void setShowMutliplicities(boolean showMutliplicities );
 
     private List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
     
@@ -91,14 +92,20 @@ public abstract class DiagramOptions {
     	this.colorSafe = new HashMap<String, DiagramOptions.ColorContainer>(source.colorSafe);
         
         this.fDoAutoLayout = source.fDoAutoLayout;
+        this.fSaveDefaultLayout = source.fSaveDefaultLayout;
         this.fShowRolenames = source.fShowRolenames;
         this.fShowAssocNames = source.fShowAssocNames;
         this.fDoAntiAliasing = source.fDoAntiAliasing;
         this.fShowMutliplicities = source.fShowMutliplicities;
         this.fShowAttributes = source.fShowAttributes;
         this.fShowOperations = source.fShowOperations;
+        this.fGroupMR = source.fGroupMR;
         this.fShowGrid = source.fShowGrid;
         this.fGrayscale = source.fGrayscale;
+
+		this.showUnionConstraints = source.showUnionConstraints;
+		this.showSubsetsConstraints = source.showSubsetsConstraints;
+		this.showRedefinesConstraints = source.showRedefinesConstraints;
 
         this.modelFileName = source.modelFileName;
     }
@@ -124,6 +131,11 @@ public abstract class DiagramOptions {
     public boolean isDoAutoLayout() {
         return fDoAutoLayout;
     }
+
+    public boolean isSaveDefaultLayout() {
+        return fSaveDefaultLayout;
+    }
+
     public void setDoAutoLayout( boolean doAutoLayout ) {
         fDoAutoLayout = doAutoLayout;
         onOptionChanged("DOAUTOLAYOUT");

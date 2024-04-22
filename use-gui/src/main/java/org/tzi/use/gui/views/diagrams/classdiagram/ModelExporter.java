@@ -28,20 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.parser.ocl.OCLCompiler;
-import org.tzi.use.uml.mm.Annotatable;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MElementAnnotation;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MMPrintVisitor;
-import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -52,7 +39,6 @@ import org.tzi.use.util.NullPrintWriter;
 
 /**
  * @author Lars Hamann
- *
  */
 public class ModelExporter {
 	
@@ -60,7 +46,7 @@ public class ModelExporter {
 		
 	}
 	
-	public void export(Path exportFile, MSystem system, Set<MClass> classes, Set<EnumType> enums, Set<MAssociation> associations) throws IOException {
+	public void export(Path exportFile, MSystem system, Set<MClass> classes, Set<MDataType> dataTypes, Set<EnumType> enums, Set<MAssociation> associations) throws IOException {
 		ModelFactory f = new ModelFactory();
 		MModel sourceModel = system.model();
 		MModel targetModel = f.createModel(sourceModel.name());
@@ -82,6 +68,16 @@ public class ModelExporter {
 			} catch (MInvalidModelException e) { /* Cannot happen */ }
 		}
 		
+		// Create "skeletons" for data types
+		for (MDataType sourceDataType : dataTypes) {
+			try {
+				MDataType targetDataType;
+				targetDataType = f.createDataType(sourceDataType.name(), sourceDataType.isAbstract());
+				targetModel.addDataType(targetDataType);
+				copyAnnotations(sourceDataType, targetDataType);
+			} catch (MInvalidModelException e) { /* Cannot happen */ }
+		}
+
 		// Create enumerations
 		for (EnumType sourceEnum : enums) {
 			try {
@@ -156,7 +152,8 @@ public class ModelExporter {
 				if (hasErrors)
 					continue;
 				
-				MOperation targetOperation = f.createOperation(sourceOperation.name(), targetArgs, resultType);
+				MOperation targetOperation = f.createOperation(sourceOperation.name(), targetArgs, resultType,
+						sourceOperation.isConstructor());
 									
 				try {
 					targetClass.addOperation(targetOperation);
@@ -256,8 +253,8 @@ public class ModelExporter {
 	}
 	
 	/**
-	 * @param sourceModel
-	 * @param targetModel
+	 * @param source
+	 * @param target
 	 */
 	private void copyAnnotations(Annotatable source, Annotatable target) {
 		for (MElementAnnotation an : source.getAllAnnotations().values()) {

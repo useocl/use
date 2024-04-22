@@ -48,14 +48,15 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     
     /** The statement, might be <code>null</code>.*/
     private MStatement fStatement;
-    
+
     /** The owner */
-    private MClass fClass;
-    
+    private MClassifier fClassifier;
+
     private List<MPrePostCondition> fPreConditions;
     private List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
-    
+    private boolean fIsConstructor;
+
     public MOperation(String name, VarDeclList varDeclList, Type resultType) {
 	    super(name);
 	    fVarDeclList = varDeclList;
@@ -63,6 +64,12 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 	    fExpr = null;
 	    fPreConditions = new ArrayList<MPrePostCondition>();
 	    fPostConditions = new ArrayList<MPrePostCondition>();
+	    fIsConstructor = false;
+	}
+
+    public MOperation(String name, VarDeclList varDeclList, Type resultType, boolean isConstructor) {
+        this(name, varDeclList, resultType);
+        fIsConstructor = isConstructor;
 	}
 
     /**
@@ -116,17 +123,17 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     }
 
     /** 
-     * Returns the owning class of this operation.
+     * Returns the owning classifier of this operation.
      */
-    public MClass cls() {
-        return fClass;
+    public MClassifier cls() {
+        return fClassifier;
     }
 
     /** 
-     * Sets the owning class of this operation to <code>cls</code>.
+     * Sets the owning class of this operation to <code>cf</code>.
      */
-    void setClass(MClass cls) {
-        fClass = cls;
+    void setClassifier(MClassifier cf) {
+        fClassifier = cf;
     }
     
     /** 
@@ -195,9 +202,11 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
         // If no result type is set, use type of the expression
     	if (fResultType == null) {
     		fResultType = expr.type();
+    	//} else if (expr.isConstructorCall() == null) {
+            // TODO
     	} else if (expr.type() == null) {
-    		throw new MInvalidModelException("The operation " + StringUtil.inQuotes(this.cls().name() + "." + this.name()) + 
-    				" does not have a declared result type and the result type of the defined expression could not be calcuated. This" +
+    		throw new MInvalidModelException("The operation " + StringUtil.inQuotes(this.cls().name() + "." + this.name()) +
+    				" does not have a declared result type and the result type of the defined expression could not be calculated. This" +
     				" can happen when an operation without a declared result type is calling itself recursively.");
     	} else if (! expr.type().conformsTo(fResultType) ) {
             throw new MInvalidModelException("Expression type `" +
@@ -323,7 +332,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 		
 		MOperation op = (MOperation)obj;
 		
-		if (!fClass.equals(op.fClass))
+		if (!fClassifier.equals(op.fClassifier))
 			return false;
 
 		if (fResultType == null) {
@@ -347,11 +356,15 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 	}
 	
 	public String qualifiedName() {
-		return fClass.name() + "::" + name();
+		return fClassifier.name() + "::" + name();
 	}
 	
 	@Override
 	public String toString() {
 		return qualifiedName();
 	}
+
+    public boolean isConstructor() {
+        return fIsConstructor;
+    }
 }

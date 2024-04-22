@@ -132,11 +132,6 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 	}
 
 	@Override
-	public MNavigableElement navigableEnd(String rolename) {
-		return null;
-	}
-
-	@Override
 	public Map<String, MNavigableElement> navigableEnds() {
 		return Collections.emptyMap();
 	}

@@ -44,10 +44,11 @@ import java.util.prefs.Preferences;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "7.1.0";
+    public static final String RELEASE_VERSION = "7.2.0";
 
     // the copyright
-    public static final String COPYRIGHT = "Copyright (C) 1999-2021 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2024 University of Bremen & " +
+			"University of Applied Sciences Hamburg";
 
     // the trained support apes
     public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
@@ -85,6 +86,8 @@ public class Options {
     public static String USE_HISTORY_PATH = ".use_history";
 
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
+
+	public static String FILE_SEPARATOR = System.getProperty("file.separator");
 
     /**
      * Name of the property giving the path to the monitor aspect template.

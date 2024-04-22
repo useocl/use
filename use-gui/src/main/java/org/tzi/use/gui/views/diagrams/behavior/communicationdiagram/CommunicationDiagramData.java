@@ -27,10 +27,7 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.events.*;
 import org.tzi.use.util.StringUtil;
 
@@ -59,7 +56,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
     private CreationTimeRecorder messageRecorder = new CreationTimeRecorder();
 
     private Stack<MOperationCall> operationsStack;
-    private List<MObject> operationsCaller = new ArrayList<MObject>();
+    private List<MInstance> operationsCaller = new ArrayList<MInstance>();
     private List<Integer> sequenceNumbers;
 
 
@@ -125,7 +122,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         if (operationsStack.isEmpty()) {
             callOpNode = diagram.getActorNode();
         } else {
-            MObject callOpObject = operationsStack.peek().getSelf();
+            MInstance callOpObject = operationsStack.peek().getSelf();
             callOpNode = getNodeForObject(callOpObject);
         }
 
@@ -158,7 +155,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         if (operationsStack.isEmpty()) {
             callOpNode = diagram.getActorNode();
         } else {
-            MObject callOpObject = operationsStack.peek().getSelf();
+            MInstance callOpObject = operationsStack.peek().getSelf();
             callOpNode = getNodeForObject(callOpObject);
         }
 
@@ -193,7 +190,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         if (operationsStack.isEmpty()) {
             callOpNode = diagram.getActorNode();
         } else {
-            MObject callOpObject = operationsStack.peek().getSelf();
+            MInstance callOpObject = operationsStack.peek().getSelf();
             callOpNode = getNodeForObject(callOpObject);
         }
 
@@ -210,20 +207,20 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         CommunicationDiagramEdge cde;
         cde = CommunicationDiagramEdge.create(callOpNode, newLinkNode, diagram, false);
         cde.setDashed(true);
-        String messageLabel = "insert(";
+        StringBuilder messageLabel = new StringBuilder("insert(");
 
         for (MObject obj : link.linkedObjects()) {
             BaseNode linkedNode = getNodeForObject(obj);
 
-            messageLabel += String.format("@%s,", obj.name());
+            messageLabel.append(String.format("@%s,", obj.name()));
             CommunicationDiagramEdge linkEdge = CommunicationDiagramEdge.createLink(newLinkNode, linkedNode, diagram, false);
 
             diagram.getGraph().addEdge(linkEdge);
         }
 
-        messageLabel = messageLabel.substring(0, messageLabel.length() - 1) + ")";
+        messageLabel = new StringBuilder(messageLabel.substring(0, messageLabel.length() - 1) + ")");
 
-        MMessage mess = new MMessage(event, getSequenceNumber(), messageLabel);
+        MMessage mess = new MMessage(event, getSequenceNumber(), messageLabel.toString());
         messageRecorder.addMessage(mess);
         cde.addNewMessage(mess);
         diagram.getGraph().addEdge(cde);
@@ -244,7 +241,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         if (operationsStack.isEmpty()) {
             callOpNode = diagram.getActorNode();
         } else {
-            MObject callOpObject = operationsStack.peek().getSelf();
+            MInstance callOpObject = operationsStack.peek().getSelf();
             callOpNode = getNodeForObject(callOpObject);
         }
 
@@ -287,7 +284,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         if (operationsStack.isEmpty()) {
             callOpNode = diagram.getActorNode();
         } else {
-            MObject callOpObject = operationsStack.peek().getSelf();
+            MInstance callOpObject = operationsStack.peek().getSelf();
             callOpNode = getNodeForObject(callOpObject);
         }
 
@@ -325,7 +322,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
 
         MMessage mess = new MMessage(event, getSequenceNumber(), msgLabel.toString());
         messageRecorder.addMessage(mess);
-        MObject enterOpObject = operationCall.getSelf();
+        MInstance enterOpObject = operationCall.getSelf();
 
         BaseNode enterOpNode;
         enterOpNode = getNodeForObject(enterOpObject);
@@ -333,7 +330,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
         CommunicationDiagramEdge edge = null;
 
         if (!operationsCaller.isEmpty()) {
-            MObject callOpObject = operationsCaller.get(operationsCaller.size() - 1);
+            MInstance callOpObject = operationsCaller.get(operationsCaller.size() - 1);
             BaseNode callOpNode;
 
             callOpNode = getNodeForObject(callOpObject);
@@ -367,7 +364,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
      */
     void addOperationExitedEvent(OperationExitedEvent event) {
         MOperationCall operationCall = event.getOperationCall();
-        MObject obj = operationCall.getSelf();
+        MInstance obj = operationCall.getSelf();
         BaseNode obn = getNodeForObject(obj);
 
         if (!operationsCaller.isEmpty()) {
@@ -385,7 +382,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
 
             PlaceableNode sourceNode;
             if (!operationsCaller.isEmpty()) {
-                MObject sourceObject = operationsCaller.get(operationsCaller.size() - 1);
+                MInstance sourceObject = operationsCaller.get(operationsCaller.size() - 1);
                 sourceNode = getNodeForObject(sourceObject);
             } else {
                 sourceNode = diagram.getActorNode();
@@ -424,11 +421,11 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
      * @return current sequence number
      */
     private String getSequenceNumber() {
-        String sequenceNumber = sequenceNumbers.get(0).toString();
+        StringBuilder sequenceNumber = new StringBuilder(sequenceNumbers.get(0).toString());
         for (int i = 1; i < sequenceNumbers.size(); i++) {
-            sequenceNumber += "." + sequenceNumbers.get(i);
+            sequenceNumber.append(".").append(sequenceNumbers.get(i));
         }
-        return sequenceNumber;
+        return sequenceNumber.toString();
     }
 
     /**

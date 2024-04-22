@@ -27,12 +27,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.use.statemachines.ASTStateMachine;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 
@@ -41,47 +36,22 @@ import org.tzi.use.uml.mm.statemachines.MStateMachine;
  *
  * @author  Mark Richters
  */
-public class ASTClass extends ASTAnnotatable {
-    protected Token fName;
+public class ASTClass extends ASTClassifier {
     protected boolean fIsAbstract;
-    protected List<Token> fSuperClasses;
-    protected List<ASTAttribute> fAttributes;
-    protected List<ASTOperation> fOperations;
-    protected List<ASTConstraintDefinition> fConstraints;
-    
+
     /**
      * The class is constructed in several passes, see genXXX methods below
      */
     protected MClass fClass;
-    
-    protected ArrayList<ASTInvariantClause> fInvariantClauses;
 
     protected List<ASTStateMachine> stateMachines;
     
     public ASTClass(Token name, boolean isAbstract) {
-        fName = name;
+        super(name);
         fIsAbstract = isAbstract;
-        fAttributes = new ArrayList<ASTAttribute>();
-        fOperations = new ArrayList<ASTOperation>();
         fConstraints = new ArrayList<ASTConstraintDefinition>();
         fInvariantClauses = new ArrayList<ASTInvariantClause>();
         stateMachines = new ArrayList<ASTStateMachine>();
-    }
-
-    public void addAttribute(ASTAttribute a) {
-        fAttributes.add(a);
-    }
-
-    public void addOperation(ASTOperation op) {
-        fOperations.add(op);
-    }
-
-    public void addSuperClasses(List<Token> idList) {
-        fSuperClasses = idList;
-    }
-
-    public void addInvariantClause(ASTInvariantClause inv) {
-        fInvariantClauses.add(inv);
     }
 
     /**
@@ -103,10 +73,10 @@ public class ASTClass extends ASTAnnotatable {
      * Sets superclass relationship and adds attributes to the class.
      */
     public void genAttributesOperationSignaturesAndGenSpec(Context ctx) {
-        ctx.setCurrentClass(fClass);
-        if (fSuperClasses != null ) {
+        ctx.setCurrentClassifier(fClass);
+        if (fSuperClassifiers != null) {
         	
-            for(Token id : fSuperClasses) {
+            for (Token id : fSuperClassifiers) {
                 // lookup parent by name
                 MClass parent = ctx.model().getClass(id.getText());
                 
@@ -154,14 +124,12 @@ public class ASTClass extends ASTAnnotatable {
             }
         }
 
-        ctx.setCurrentClass(null);
+        ctx.setCurrentClassifier(null);
     }
-
 
     private void checkForInheritanceConflicts(MClass parent) throws SemanticException {
         //check for inheritance conflicts
-        for(MClassifier otherParentC : fClass.parents()) {
-        	MClass otherParent = (MClass)otherParentC;
+        for (MClass otherParent : fClass.parents()) {
             // check attributes
             for(MAttribute otherParentAttribute : otherParent.allAttributes()) {
                 
@@ -192,7 +160,7 @@ public class ASTClass extends ASTAnnotatable {
     }
     
     public void genOperationBodiesAndDerivedAttributes(Context ctx) {
-    	ctx.setCurrentClass(fClass);
+    	ctx.setCurrentClassifier(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
         ctx.exprContext().push("self", fClass);
@@ -226,11 +194,11 @@ public class ASTClass extends ASTAnnotatable {
         
         vars.exitScope(); 
         ctx.exprContext().pop();
-        ctx.setCurrentClass(null);
+        ctx.setCurrentClassifier(null);
     }
     
     public void genStateMachinesAndStates(Context ctx) {
-    	ctx.setCurrentClass(fClass);
+    	ctx.setCurrentClassifier(fClass);
     	
     	for (ASTStateMachine sm : this.stateMachines) {
     		MStateMachine mSm;
@@ -244,15 +212,14 @@ public class ASTClass extends ASTAnnotatable {
 			}
     	}
     	
-    	ctx.setCurrentClass(null);
+    	ctx.setCurrentClassifier(null);
     }
-    
 
     /**
 	 * @param ctx
 	 */
 	public void genStateMachineTransitions(Context ctx) {
-		ctx.setCurrentClass(fClass);
+		ctx.setCurrentClassifier(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
         ctx.exprContext().push("self", fClass);
@@ -269,14 +236,14 @@ public class ASTClass extends ASTAnnotatable {
     	
     	vars.exitScope(); 
         ctx.exprContext().pop();
-        ctx.setCurrentClass(null);
+        ctx.setCurrentClassifier(null);
 	}
 	
     /**
      * Adds constraints to the class.
      */
     public void genConstraints(Context ctx) {
-        ctx.setCurrentClass(fClass);
+        ctx.setCurrentClassifier(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
         ctx.exprContext().push("self", fClass);
@@ -296,11 +263,7 @@ public class ASTClass extends ASTAnnotatable {
 
         vars.exitScope(); 
         ctx.exprContext().pop();
-        ctx.setCurrentClass(null);
-    }
-
-    public String toString() {
-        return "(" + fName + ")";
+        ctx.setCurrentClassifier(null);
     }
 
     public void setClass(MClass cls) {

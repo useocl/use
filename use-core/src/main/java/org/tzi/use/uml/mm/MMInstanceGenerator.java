@@ -175,6 +175,26 @@ public class MMInstanceGenerator implements MMVisitor {
         }
     }
 
+    @Override
+    public void visitDataType(MDataType e) {
+        if (!fPass1) {
+            String id = genInstance(e, "DataType");
+            fOut.println("!set " + id + ".isAbstract := " + e.isAbstract());
+            fOut.println("!set " + id + ".isRoot := false");
+            fOut.println("!set " + id + ".isLeaf := false");
+
+            // add to model namespace
+            fOut.println("!insert (" + fModelId + ", " + id +
+                    ") into Namespace_ModelElement");
+            fOut.println();
+        }
+
+        // visit attributes
+        for (MAttribute attr : e.attributes()) {
+            attr.processWithVisitor(this);
+        }
+    }
+
     public void visitClassInvariant(MClassInvariant e) {
         String id = genInstance(e, "Constraint", e.cls().name());
         fOut.println("!set " + id + ".body := '" + 

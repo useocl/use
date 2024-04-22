@@ -24,10 +24,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
@@ -47,7 +44,7 @@ public class ASTPrePostClause extends ASTAnnotatable {
         fExpr = e;
     }
 
-    void gen(Context ctx, MClass cls, MOperation op) {
+    void gen(Context ctx, MClassifier cf, MOperation op) {
         boolean isPre = fToken.getText().equals("pre");
 
         // enter context variable into scope of invariant
@@ -56,8 +53,8 @@ public class ASTPrePostClause extends ASTAnnotatable {
 
         try {
             // create pseudo-variable "self"
-            vars.add("self", cls, null);
-            ctx.exprContext().push("self", cls);
+            vars.add("self", cf, null);
+            ctx.exprContext().push("self", cf);
             // add special variable `result' in postconditions with result value
             if (! isPre && op.hasResultType() )
                 vars.add("result", op.resultType(), null);

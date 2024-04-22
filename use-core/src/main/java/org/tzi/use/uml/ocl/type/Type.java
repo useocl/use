@@ -127,6 +127,10 @@ public interface Type extends BufferedToString {
     
     boolean isTypeOfClass();
 
+    boolean isKindOfDataType(VoidHandling h);
+
+    boolean isTypeOfDataType();
+
     boolean isKindOfAssociation(VoidHandling h);
     
     boolean isTypeOfAssociation();

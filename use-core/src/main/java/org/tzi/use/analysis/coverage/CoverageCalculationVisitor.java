@@ -19,12 +19,7 @@
 
 package org.tzi.use.analysis.coverage;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
 
 /**
@@ -47,38 +42,51 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	public CoverageCalculationVisitor(boolean expandOperations) {
 		super(expandOperations);
 	}
-	
+
+	/**
+	 * @param dtp
+	 */
+	@Override
+	protected void addDataTypeCoverage(MDataType dtp) {
+		if (!coverageData.getClassifierCoverage().containsKey(dtp)) {
+			coverageData.getClassifierCoverage().put(dtp, 1);
+		} else {
+			coverageData.getClassifierCoverage().put(dtp, coverageData.getClassifierCoverage().get(dtp) + 1);
+		}
+		addCompleteClassCoverage(dtp);
+	}
+
 	/**
 	 * @param cls
 	 */
 	@Override
 	protected void addClassCoverage(MClass cls) {
-		if (!coverageData.getClassCoverage().containsKey(cls)) {
-			coverageData.getClassCoverage().put(cls, 1);
+		if (!coverageData.getClassifierCoverage().containsKey(cls)) {
+			coverageData.getClassifierCoverage().put(cls, 1);
 		} else {
-			coverageData.getClassCoverage().put(cls, coverageData.getClassCoverage().get(cls) + 1);
+			coverageData.getClassifierCoverage().put(cls, coverageData.getClassifierCoverage().get(cls) + 1);
 		}
 		addCompleteClassCoverage(cls);
 	}
 	
 	/**
-	 * @param cls
+	 * @param cf
 	 */
-	protected void addCompleteClassCoverage(MClass cls) {
-		if (!coverageData.getCompleteClassCoverage().containsKey(cls)) {
-			coverageData.getCompleteClassCoverage().put(cls, 1);
+	protected void addCompleteClassCoverage(MClassifier cf) {
+		if (!coverageData.getCompleteClassifierCoverage().containsKey(cf)) {
+			coverageData.getCompleteClassifierCoverage().put(cf, 1);
 		} else {
-			coverageData.getCompleteClassCoverage().put(cls, coverageData.getCompleteClassCoverage().get(cls) + 1);
+			coverageData.getCompleteClassifierCoverage().put(cf, coverageData.getCompleteClassifierCoverage().get(cf) + 1);
 		}
 	}
 	
 	/**
-	 * @param sourceClass
+	 * @param sourceClassifier
 	 * @param att
 	 */
 	@Override
-	protected void addAttributeCoverage(MClass sourceClass, MAttribute att) {
-		AttributeAccessInfo info = new AttributeAccessInfo(sourceClass, att);
+	protected void addAttributeCoverage(MClassifier sourceClassifier, MAttribute att) {
+		AttributeAccessInfo info = new AttributeAccessInfo(sourceClassifier, att);
 		if (!coverageData.getAttributeAccessCoverage().containsKey(info)) {
 			coverageData.getAttributeAccessCoverage().put(info, 1);
 		} else {
@@ -89,21 +97,21 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 		} else {
 			coverageData.getAttributeCoverage().put(att, coverageData.getAttributeCoverage().get(att) + 1);
 		}
-		addCompleteClassCoverage(sourceClass);
+		addCompleteClassCoverage(sourceClassifier);
 	}
 	
 	/**
-	 * @param sourceClass
+	 * @param sourceClassifier
 	 * @param op
 	 */
 	@Override
-	protected void addOperationCoverage(MClass sourceClass, MOperation op) {
+	protected void addOperationCoverage(MClassifier sourceClassifier, MOperation op) {
 		if (!coverageData.getOperationCoverage().containsKey(op)) {
 			coverageData.getOperationCoverage().put(op, 1);
 		} else {
 			coverageData.getOperationCoverage().put(op, coverageData.getOperationCoverage().get(op) + 1);
 		}
-		addCompleteClassCoverage(sourceClass);
+		addCompleteClassCoverage(sourceClassifier);
 	}
 	
 	/**

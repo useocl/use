@@ -304,7 +304,7 @@ public final class Shell implements Runnable, PPCHandler {
 			System.err.println();
 			String nl = Options.LINE_SEPARATOR;
 			System.err
-			.println("INTERNAL ERROR: An unexpected exception occured. This happened most probably"
+			.println("INTERNAL ERROR: An unexpected exception occurred. This happened most probably"
 					+ nl
 					+ "due to an error in the program. The program will try to continue, but may"
 					+ nl
@@ -323,7 +323,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Method is called out of the GUI to exit the command line. <br>
 	 *
 	 * (This way the command line exits after hitting return once after closing
-	 * the window. It is not the preferd solution, but so far nothing better was
+	 * the window. It is not the preferred solution, but so far nothing better was
 	 * found)
 	 */
 	public void exit() {
@@ -493,7 +493,7 @@ public final class Shell implements Runnable, PPCHandler {
 					System.err.println("INTERNAL ERROR in Plugin "
 							+ StringUtil.inQuotes(crashedPlugin.getName()) + ":"
 							+ nl
-							+ "An unexpected exception occured. This happened most probably due to an"
+							+ "An unexpected exception occurred. This happened most probably due to an"
 							+ nl
 							+ "error in the plugin. The program will try to continue, but may not be"
 							+ nl
@@ -519,7 +519,9 @@ public final class Shell implements Runnable, PPCHandler {
 	
 	private void printDeprecatedCmdMessage(String enteredCmd, String replacement){
 		//TODO remove deprecated commands in Version 4.2.0 of USE, dont forget the help
-		Log.warn("The command " + StringUtil.inQuotes(enteredCmd) + " is deprecated and will be removed in the next USE release. Please replace it with the command " + StringUtil.inQuotes(replacement) + ".");
+		Log.warn("The command " + StringUtil.inQuotes(enteredCmd) +
+				" is deprecated and will be removed in the next USE release. Please replace it with the command "+
+				StringUtil.inQuotes(replacement) + ".");
 	}
 
 	private void cmdShowPlugins() {
@@ -1104,10 +1106,12 @@ public final class Shell implements Runnable, PPCHandler {
 		try {
 			// if quoted add remaining tokens
 			if (token.startsWith("\"") || token.startsWith("'")) {
-				while (st.hasMoreTokens()) {
-					token += " " + st.nextToken();
+                StringBuilder tokenBuilder = new StringBuilder(token);
+                while (st.hasMoreTokens()) {
+					tokenBuilder.append(" ").append(st.nextToken());
 				}
-			}
+                token = tokenBuilder.toString();
+            }
 
 			String filename = getFilenameToOpen(token);
 			String firstWord = getFirstWordOfFile(filename);
@@ -1188,7 +1192,7 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 
 		String filename;
-		if (line.equals("")) {
+		if (line.isEmpty()) {
 			try {
 				filename = recentFiles.get(0);
 			} catch (IndexOutOfBoundsException e) {
@@ -1328,8 +1332,7 @@ public final class Shell implements Runnable, PPCHandler {
 		}
 
 		try {
-			Value val = evaluator.eval(expr, system.state(), system
-					.varBindings(), output);
+			Value val = evaluator.eval(expr, system.state(), system.varBindings(), output);
 			// print result
 			System.out.println("-> " + val.toStringWithType());
 		} catch (MultiplicityViolationException e) {
@@ -1713,7 +1716,7 @@ public final class Shell implements Runnable, PPCHandler {
 							}
 						}
 					}
-					if (cont || line.trim().equals("")) {
+					if (cont || line.trim().isEmpty()) {
 						cont = false;
 						noCase = false;
 						continue;
@@ -1901,8 +1904,8 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	/**
-	 * Reads the first bytes of an input stream an checks for a unicode BOM.
-	 * If no BOM is present, the stream is reset. Otherwise the stream
+	 * Reads the first bytes of an input stream and checks for a unicode BOM.
+	 * If no BOM is present, the stream is reset. Otherwise, the stream
 	 * is at the beginning of the content.
 	 * @param in
 	 * @return

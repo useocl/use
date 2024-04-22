@@ -19,7 +19,7 @@
 package org.tzi.use.uml.mm.statemachines;
 
 import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
@@ -43,7 +43,7 @@ public class MProtocolStateMachine extends MStateMachine {
 	 * @param name
 	 * @param srcPos
 	 */
-	public MProtocolStateMachine(String name, SrcPos srcPos, MClass context) {
+	public MProtocolStateMachine(String name, SrcPos srcPos, MClassifier context) {
 		super(name, srcPos, context);
 	}
 	

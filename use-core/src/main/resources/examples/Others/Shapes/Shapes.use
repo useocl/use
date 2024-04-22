@@ -1,0 +1,49 @@
+model Shapes
+
+dataType Point
+operations
+  Point(x : Real, y : Real)
+  --pre: x > -1000 and x <= 1000
+  --pre: y > -1000 and y <= 1000
+
+  translate(dx : Real, dy : Real)(dx) : Point =
+    Point(self.x + dx, self.y + dy)
+
+  --move_x(dx:Real):Point = self with {x=self.x + dx}
+end
+
+abstract dataType Shape
+operations
+  Shape(position : Point)
+  perimeter() : Real
+  area() : Real
+  contains(p : Point) : Boolean
+end
+
+dataType Rectangle < Shape
+operations
+  Rectangle(position : Point, width : Real, height : Real)(position)
+  --Rectangle(x:Real, y:Real, position : Point, width : Real, height : Real)(Point(x, y))
+
+  perimeter() : Real = 2.0 * width + 2.0 * height
+  area() : Real = width * height
+
+  contains(p : Point) : Boolean =
+    self.position.x <= p.x and
+    self.position.x + width >= p.x and
+    self.position.y <= p.y and
+    self.position.y + height >= p.y
+
+  --contains_raw(x : Integer, y : Integer) : Boolean =
+    --self.contains(Point(x, y))
+end
+
+dataType Circle < Shape
+operations
+  Circle(position : Point, radius : Real)(position)
+
+  perimeter() : Real = 2.0 * 3.14 * radius
+  area() : Real = 3.14 * radius * radius
+
+  foo(r : Real) : Real = radius + Circle(Point(0, 0), r).radius
+end
