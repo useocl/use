@@ -88,7 +88,7 @@ public interface MDataType extends MClassifier {
      */
     void addAttribute(MAttribute attr) throws MInvalidModelException;
 
-    void addSuperAttribute(MAttribute attr, MClassifier owner) throws MInvalidModelException;
+    void addSuperAttribute(MAttribute attr, MClassifier owner);
 
     /**
      * Returns the set of all attributes (including inherited ones)
