@@ -332,6 +332,7 @@ public class VisibleData {
             for (Map.Entry<Class<? extends Event>, Boolean> entry: eventTypeManagement.entrySet()) {
                 if (!entry.getValue()) {
                     allClassesVisible = false;
+                    break;
                 }
             }
         }

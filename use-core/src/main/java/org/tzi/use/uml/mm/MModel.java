@@ -108,7 +108,7 @@ public class MModel extends MModelElementImpl {
 	 *         the model was not loaded.
 	 */
 	public File getModelDirectory() {
-		if (fFilename == null || fFilename.equals(""))
+		if (fFilename == null || fFilename.isEmpty())
 			return null;
 
 		File modelFile = new File(fFilename);
@@ -769,16 +769,16 @@ public class MModel extends MModelElementImpl {
 	 */
 	public String getStats() {
 		String stats = " (";
-		int n = classes().size();
+		int n = dataTypes().size();
+		stats += ", " + n + " data type";
+		if (n != 1)
+			stats += "s";
+		n = classes().size();
 		stats += n + " class";
 		if (n != 1)
 			stats += "es";
 		n = associations().size();
 		stats += ", " + n + " association";
-		if (n != 1)
-			stats += "s";
-		n = dataTypes().size();
-		stats += ", " + n + " data type";
 		if (n != 1)
 			stats += "s";
 		n = classInvariants().size();

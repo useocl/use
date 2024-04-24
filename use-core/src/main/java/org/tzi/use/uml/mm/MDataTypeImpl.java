@@ -48,7 +48,7 @@ public class MDataTypeImpl extends MClassifierImpl implements MDataType {
         return Character.toLowerCase(name().charAt(0)) + name().substring(1);
     }
 
-    public void addSuperAttribute(MAttribute attr, MClassifier owner) throws MInvalidModelException {
+    public void addSuperAttribute(MAttribute attr, MClassifier owner) {
         // add super attribute
         fSuperAttributes.put(attr.name(), attr);
         attr.setOwner(owner);

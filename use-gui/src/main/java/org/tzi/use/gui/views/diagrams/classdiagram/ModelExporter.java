@@ -92,8 +92,8 @@ public class ModelExporter {
 			MClass sourceClass = sourceModel.getClass(targetClass.name());
 			
 			// Inheritance
-			for (MClassifier sourceParentClassifier : sourceClass.parents()) {
-				MClass sourceParentClass = (MClass)sourceParentClassifier;
+			for (MClass sourceParentClassifier : sourceClass.parents()) {
+				MClass sourceParentClass = sourceParentClassifier;
 				MClass targetParentClass = findMostSpecificExportedType(sourceParentClass, targetModel);
 				
 				// Could be hidden!
@@ -231,8 +231,8 @@ public class ModelExporter {
 		if (parent != null)
 			return parent;
 		
-		for (MClassifier otherParent : sourceParentClass.parents()) {
-			parent = findMostSpecificExportedType((MClass)otherParent, targetModel); 
+		for (MClass otherParent : sourceParentClass.parents()) {
+			parent = findMostSpecificExportedType(otherParent, targetModel); 
 			if (parent != null)
 				return parent;
 		}
