@@ -3,8 +3,10 @@ model Shapes
 dataType Point
 operations
   Point(x : Real, y : Real)
-  --pre: x > -1000 and x <= 1000
-  --pre: y > -1000 and y <= 1000
+  pre: x > -1000 and x <= 1000
+  pre: y > -1000 and y <= 1000
+  post: x > -1000 and x <= 1000
+  post: y > -1000 and y <= 1000
 
   translate(dx : Real, dy : Real)(dx) : Point =
     Point(self.x + dx, self.y + dy)

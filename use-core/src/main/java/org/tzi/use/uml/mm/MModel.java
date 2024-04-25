@@ -669,8 +669,10 @@ public class MModel extends MModelElementImpl {
 		fPrePostConditions.put(name, ppc);
 		if (ppc.isPre())
 			ppc.operation().addPreCondition(ppc);
-		else
-			ppc.operation().addPostCondition(ppc);
+		else {
+			if (!ppc.operation().isConstructor())
+				ppc.operation().addPostCondition(ppc);
+		}
 	}
 
 	/**
