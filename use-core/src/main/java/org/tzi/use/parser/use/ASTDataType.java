@@ -105,8 +105,6 @@ public class ASTDataType extends ASTClassifier {
                 fDataType.addSuperAttribute(attr, fDataType.attribute(attr.name(), true).owner());
             } catch (SemanticException ex) {
                 ctx.reportError(ex);
-            } catch (MInvalidModelException ex) {
-                ctx.reportError(fName, ex);
             }
         }
 

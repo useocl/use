@@ -517,11 +517,11 @@ keyComposition:
 keyAggregation:
   {input.LT(1).getText().equals("aggregation")}? IDENT ;
   
-keyClass:
-  {input.LT(1).getText().equals("class")}? IDENT ;
-
 keyDataType:
   {input.LT(1).getText().equals("dataType")}? IDENT ;
+
+keyClass:
+  {input.LT(1).getText().equals("class")}? IDENT ;
 
 keySignal:
   {input.LT(1).getText().equals("signal")}? IDENT ;

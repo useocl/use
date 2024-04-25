@@ -770,11 +770,11 @@ public class MModel extends MModelElementImpl {
 	public String getStats() {
 		String stats = " (";
 		int n = dataTypes().size();
-		stats += ", " + n + " data type";
+		stats += n + " data type";
 		if (n != 1)
 			stats += "s";
 		n = classes().size();
-		stats += n + " class";
+		stats += ", " + n + " class";
 		if (n != 1)
 			stats += "es";
 		n = associations().size();

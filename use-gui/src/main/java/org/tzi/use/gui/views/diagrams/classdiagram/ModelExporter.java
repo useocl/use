@@ -93,8 +93,7 @@ public class ModelExporter {
 			
 			// Inheritance
 			for (MClass sourceParentClassifier : sourceClass.parents()) {
-				MClass sourceParentClass = sourceParentClassifier;
-				MClass targetParentClass = findMostSpecificExportedType(sourceParentClass, targetModel);
+                MClass targetParentClass = findMostSpecificExportedType(sourceParentClassifier, targetModel);
 				
 				// Could be hidden!
 				if (targetParentClass != null) {
