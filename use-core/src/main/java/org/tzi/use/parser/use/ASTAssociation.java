@@ -341,7 +341,7 @@ public class ASTAssociation extends ASTClassifier {
 				ourEnd    = association.reachableEnds().get(index);
 				parentEnd = parentAssociation.reachableEnds().get(index);
 				
-				if (!ourEnd.cls().isSubClassOf(parentEnd.cls())) {
+				if (!ourEnd.cls().isSubClassifierOf(parentEnd.cls())) {
 					errorBuffer.append("The end type of the association end ");
 					errorBuffer.append(StringUtil.inQuotes(ourEnd.toString()));
 					errorBuffer.append(" has no valid inheritance relation to the association end ");

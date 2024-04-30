@@ -196,7 +196,7 @@ public class GCollectorImpl implements IGCollector {
     }
     
     /**
-     * @return "true" if an pre or postcondition violation occured during the ASSL evaluation
+     * @return "true" if an pre or postcondition violation occurred during the ASSL evaluation
      * called by GEvalProcedure
      */
     public boolean getPrePostViolation() {

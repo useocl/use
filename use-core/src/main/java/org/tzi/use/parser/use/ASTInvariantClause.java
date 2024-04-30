@@ -88,7 +88,7 @@ public class ASTInvariantClause extends ASTAnnotatable {
             
             this.genAnnotations(inv);
             
-            // sets the line position of the USE-Model in this  invarinat
+            // sets the line position of the USE-Model in this  invariant
             inv.setPositionInModel( fExpr.getStartToken().getLine() );
             if(addToModel){
             	ctx.model().addClassInvariant(inv);

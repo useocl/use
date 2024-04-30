@@ -295,7 +295,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
     public boolean isAssignableFrom(MClass[] classes) {
         int i=0;
         for (MAssociationEnd end : associationEnds()) {
-            if (!classes[i].isSubClassOf(end.cls())) return false;
+            if (!classes[i].isSubClassifierOf(end.cls())) return false;
             ++i;
         }
         return true;
@@ -516,7 +516,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 		for (MAssociationEnd end : this.associationEnds()) {
 			if (end.equals(dst)) continue;
 			
-			if (srcClass.isSubClassOf(end.cls())) {
+			if (srcClass.isSubClassifierOf(end.cls())) {
 				if (explicitRolename == null) {
 					return end;
 				} else {

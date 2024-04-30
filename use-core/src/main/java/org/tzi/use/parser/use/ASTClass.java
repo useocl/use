@@ -148,7 +148,7 @@ public class ASTClass extends ASTClassifier {
                     if (parentOperation.name().equals(otherParentOperation.name()) && 
                     	!parentOperation.signature().equals(otherParentOperation.signature()) &&
                     	// the operations could be overloaded
-                    	!(parentOperation.cls().isSubClassOf(otherParentOperation.cls()) || otherParentOperation.cls().isSubClassOf(parentOperation.cls()))) {
+                    	!(parentOperation.cls().isSubClassifierOf(otherParentOperation.cls()) || otherParentOperation.cls().isSubClassifierOf(parentOperation.cls()))) {
                         throw new SemanticException(fName,"Inheritance conflict: operation " + parentOperation.name() +
                                 " occurs with different signatures in the base classes of " + 
                                 fClass.name());

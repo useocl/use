@@ -49,7 +49,7 @@ public class EvalContext {
      * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
      * @param postState the current <code>MSystemState</code> for the evaluation
      * @param globalBindings the global <code>VarBindings</code>
-     * @param evalLog <code>PrintWriter</code> to print evaluation informations. May be <code>null</code>
+     * @param evalLog <code>PrintWriter</code> to print evaluation information. May be <code>null</code>
      * @param evalLogIndent used indent for the output, e.g., "   "
      */
     public EvalContext(MSystemState preState,

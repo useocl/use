@@ -104,12 +104,12 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      * @return Set(MClassifier) 
      */
     Set<? extends MClassifier> children();
-    
+
     /**
      * Returns true if this classifier is a child of
      * <code>otherClassifier</code> or equal to it.
      */
-    boolean isSubClassOf( MClassifier otherClassifier );
+    boolean isSubClassifierOf(MClassifier otherClassifier);
 
     /**
      * Returns true if this classifier is a child of
@@ -118,8 +118,8 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      * it is not checked if <code>otherClassifier</code> equals this classifier, i.e.,
      * it is checked, if it is a "real" sub classifier.
      */
-    boolean isSubClassifierOf( MClassifier otherClass, boolean excludeThis );
-    
+    boolean isSubClassifierOf(MClassifier otherClass, boolean excludeThis);
+
     /**
      * Returns the specified attribute. Attributes are also looked up
      * in parents if <code>searchInherited</code> is <code>true</code>.

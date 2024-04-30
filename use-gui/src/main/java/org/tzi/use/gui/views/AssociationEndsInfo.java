@@ -46,7 +46,7 @@ import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.MSystem;
 
 /**
- * View for informations about associations, e.g., subsetting, redefined etc.
+ * View for information about associations, e.g., subsetting, redefined etc.
  * @author Lars Hamann
  *
  */

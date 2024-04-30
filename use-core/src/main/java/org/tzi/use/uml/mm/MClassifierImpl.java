@@ -453,7 +453,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
      * or if it is a parent of this classifier. 
      */
     @Override
-    public boolean isSubClassOf(MClassifier otherClass) {
+    public boolean isSubClassifierOf(MClassifier otherClass) {
         return isSubClassifierOf(otherClass, false);
     }
 

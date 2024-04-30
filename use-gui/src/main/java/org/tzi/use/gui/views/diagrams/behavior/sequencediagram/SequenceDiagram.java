@@ -273,7 +273,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	/**
 	 * Constructs a new SequenceDiagram-Object.
 	 * 
-	 * @param system contains (direct or indirect) all needed informations mainW
+	 * @param system contains (direct or indirect) all needed information mainW
 	 * @param mainW the MainWindow object from which the constructor is called
 	 */
 	public SequenceDiagram(MSystem system, MainWindow mainW, SequenceDiagramView parent, VisibleDataManager visibleData) {

@@ -50,7 +50,7 @@ import com.google.common.collect.Multimap;
  * An edge being part of a n-ary edge. This edge connects a node with a
  * DiamondNode in case of an n-ary edge, or an Object/ClassNode with a 
  * PseudoNode in case of an association class.
- * It only provides semantic informations about the target association end.
+ * It only provides semantic information about the target association end.
  * 
  * @author Fabian Gutsche
  * @author Lars Hamann

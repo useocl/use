@@ -647,7 +647,7 @@ public final class MSystemState {
 			// check all association ends the objects' class is
 			// connected to
 			for (MAssociationEnd aend : assoc.associationEnds()) {
-				if (objClass.isSubClassOf(aend.cls())) {
+				if (objClass.isSubClassifierOf(aend.cls())) {
 					Set<MLink> removedLinks = linkSet.removeAll(aend, obj);
 					
 					for (MLink removed : removedLinks) {
@@ -856,7 +856,7 @@ public final class MSystemState {
 					// valid links.
 					continue;
 				} else if (!checkAgainstEnd.cls().equals(childEnd.cls()) && 
-					objects.get(i).cls().isSubClassOf(redefiningAssoc.associationEnds().get(i).cls() ) ) {
+					objects.get(i).cls().isSubClassifierOf(redefiningAssoc.associationEnds().get(i).cls() ) ) {
 					if (err != null) {
 						err.print("The link of the association ");
 						err.print(StringUtil.inQuotes(assoc));
@@ -1153,7 +1153,7 @@ public final class MSystemState {
 				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
 				
 				// Add only if src end is a generalization relationship with cls of obj
-				if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+				if (subsettingSrcEnd.cls().isSubClassifierOf(obj.cls()) || obj.cls().isSubClassifierOf(subsettingSrcEnd.cls())) {
 					res.putAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
 				}
 			}
@@ -1162,7 +1162,7 @@ public final class MSystemState {
 			for (MAssociationEnd redefiningDestEnd : dstEnd.getRedefiningEnds()) {
 				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
 				// Add only if src end is generalization relationship with cls of obj
-				if (redefiningSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(redefiningSrcEnd.cls())) {				
+				if (redefiningSrcEnd.cls().isSubClassifierOf(obj.cls()) || obj.cls().isSubClassifierOf(redefiningSrcEnd.cls())) {				
 					res.putAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
 				}
 			}
@@ -1269,7 +1269,7 @@ public final class MSystemState {
 				
 				if (subsets) {
 					// Check only if source end has a generalization relationship with class of obj (inheritance tree can split up)
-					if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+					if (subsettingSrcEnd.cls().isSubClassifierOf(obj.cls()) || obj.cls().isSubClassifierOf(subsettingSrcEnd.cls())) {
 						tmpResult.addAll(getNavigableObjects(obj, subsettingAssoc, srcIndex, dstIndex, qualifierValues, excludeDerivedLinks, excludeRedefines));
 					}
 				}
@@ -1973,7 +1973,7 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Writes informations about a multiplicity violation to <code>out</code>.
+	 * Writes information about a multiplicity violation to <code>out</code>.
 	 * @param out <code>PrintWriter</code> to write the message to.
 	 * @param assoc The <code>MAssociation</code> the multiplicity is violated.
 	 * @param aend1 The <code>MAssociationEnd</code> at the end <code>obj</code>.

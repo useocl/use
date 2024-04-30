@@ -2097,7 +2097,7 @@ public class MainWindow extends JFrame {
      */
     private class ActionViewAssociationInfo extends AbstractAction {
     	ActionViewAssociationInfo() {
-            super("Association ends informations", getIcon("Association.gif"));
+            super("Association ends information", getIcon("Association.gif"));
         }
 
         @Override
