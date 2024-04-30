@@ -29,8 +29,11 @@ import org.tzi.use.uml.sys.MObject;
  */
 public final class ObjectValue extends InstanceValue {
 
+    private final MObject fInstance;
+
     public ObjectValue(MClassifier t, MObject obj) {
         super(t, obj);
+        fInstance = obj;
     }
 
     @Override
@@ -40,14 +43,14 @@ public final class ObjectValue extends InstanceValue {
 
     @Override
     public MObject value() {
-        return (MObject) fInstance;
+        return fInstance;
     }
 
     public boolean equals(Object obj) {
-        if (obj == this )
+        if (obj == this)
             return true;
 
-        if (obj instanceof ObjectValue )
+        if (obj instanceof ObjectValue)
             return fInstance.equals(((ObjectValue) obj).fInstance);
 
         return false;
@@ -64,7 +67,7 @@ public final class ObjectValue extends InstanceValue {
             return +1;
         if (!o.isObject())
             return toString().compareTo(o.toString());
-        
+
         return fInstance.name().compareTo(((ObjectValue) o).fInstance.name());
     }
 }
