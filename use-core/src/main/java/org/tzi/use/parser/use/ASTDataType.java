@@ -27,6 +27,7 @@ import org.tzi.use.uml.mm.*;
 import org.tzi.use.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -44,8 +45,6 @@ public class ASTDataType extends ASTClassifier {
     public ASTDataType(Token name, boolean isAbstract) {
         super(name);
         fIsAbstract = isAbstract;
-        fConstraints = new ArrayList<ASTConstraintDefinition>();
-        fInvariantClauses = new ArrayList<ASTInvariantClause>();
     }
 
     /**

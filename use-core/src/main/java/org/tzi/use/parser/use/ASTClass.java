@@ -49,8 +49,6 @@ public class ASTClass extends ASTClassifier {
     public ASTClass(Token name, boolean isAbstract) {
         super(name);
         fIsAbstract = isAbstract;
-        fConstraints = new ArrayList<ASTConstraintDefinition>();
-        fInvariantClauses = new ArrayList<ASTInvariantClause>();
         stateMachines = new ArrayList<ASTStateMachine>();
     }
 

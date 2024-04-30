@@ -42,6 +42,8 @@ public abstract class ASTClassifier extends ASTAnnotatable {
         fAttributes = new ArrayList<ASTAttribute>();
         fSuperAttributes = new ArrayList<ASTAttribute>();
         fOperations = new ArrayList<ASTOperation>();
+        fConstraints = new ArrayList<ASTConstraintDefinition>();
+        fInvariantClauses = new ArrayList<ASTInvariantClause>();
     }
 
     public void addAttribute(ASTAttribute a) {
