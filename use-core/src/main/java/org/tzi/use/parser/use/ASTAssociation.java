@@ -41,7 +41,7 @@ public class ASTAssociation extends ASTClassifier {
     private List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociation(Token kind, Token name) {
-        super(name);
+        super(name, false);
         fKind = kind;
         fName = name;
         fAssociationEnds = new ArrayList<ASTAssociationEnd>();

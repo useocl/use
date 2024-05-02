@@ -230,7 +230,7 @@ operationDefinition[ASTClassifier c] returns [ASTOperation n]
     pl = paramList
     spl = superParamList[pl]
     {
-      if ($IDENT.text.equals($c.getName())) {
+      if ($IDENT.text.equals($c.getName().getText())) {
         isConstructor = true;
         for (ASTVariableDeclaration vd : $pl.paramList) {
           /*

@@ -25,7 +25,7 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.use.ASTAnnotatable;
+import org.tzi.use.parser.use.ASTClassifier;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
@@ -34,12 +34,11 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  *
  * @author  Mark Richters
  */
-public class ASTEnumTypeDefinition extends ASTAnnotatable {
-    private Token fName;
+public class ASTEnumTypeDefinition extends ASTClassifier {
     private List<Token> fIdList;
 
     public ASTEnumTypeDefinition(Token name, List<Token> idList) {
-        fName = name;
+        super(name, false);
         fIdList = idList;
     }
 

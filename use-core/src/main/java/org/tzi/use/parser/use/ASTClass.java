@@ -37,7 +37,6 @@ import org.tzi.use.uml.mm.statemachines.MStateMachine;
  * @author  Mark Richters
  */
 public class ASTClass extends ASTClassifier {
-    protected boolean fIsAbstract;
 
     /**
      * The class is constructed in several passes, see genXXX methods below
@@ -47,8 +46,7 @@ public class ASTClass extends ASTClassifier {
     protected List<ASTStateMachine> stateMachines;
     
     public ASTClass(Token name, boolean isAbstract) {
-        super(name);
-        fIsAbstract = isAbstract;
+        super(name, isAbstract);
         stateMachines = new ArrayList<ASTStateMachine>();
     }
 

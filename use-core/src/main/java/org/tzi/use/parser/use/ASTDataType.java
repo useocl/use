@@ -26,16 +26,12 @@ import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
  * @author Stefan Schoon
  */
 public class ASTDataType extends ASTClassifier {
-    protected boolean fIsAbstract;
 
     /**
      * The data type is constructed in several passes, see genXXX methods below.
@@ -43,8 +39,7 @@ public class ASTDataType extends ASTClassifier {
     protected MDataType fDataType;
 
     public ASTDataType(Token name, boolean isAbstract) {
-        super(name);
-        fIsAbstract = isAbstract;
+        super(name, isAbstract);
     }
 
     /**

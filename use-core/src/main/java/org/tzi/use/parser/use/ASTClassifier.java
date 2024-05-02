@@ -31,19 +31,28 @@ import java.util.List;
  */
 public abstract class ASTClassifier extends ASTAnnotatable {
     protected Token fName;
+    protected boolean fIsAbstract;
     protected List<ASTAttribute> fAttributes, fSuperAttributes;
     protected List<ASTOperation> fOperations;
     protected List<Token> fSuperClassifiers;
     protected List<ASTConstraintDefinition> fConstraints;
     protected ArrayList<ASTInvariantClause> fInvariantClauses;
 
-    public ASTClassifier(Token name) {
-        fName = name;
+    public ASTClassifier(Token name, boolean isAbstract) {
+        this.fName = name;
+        this.fIsAbstract = isAbstract;
         fAttributes = new ArrayList<ASTAttribute>();
         fSuperAttributes = new ArrayList<ASTAttribute>();
         fOperations = new ArrayList<ASTOperation>();
         fConstraints = new ArrayList<ASTConstraintDefinition>();
         fInvariantClauses = new ArrayList<ASTInvariantClause>();
+    }
+
+    /**
+     * @return the isAbstract
+     */
+    public boolean isAbstract() {
+        return fIsAbstract;
     }
 
     public void addAttribute(ASTAttribute a) {
@@ -66,8 +75,11 @@ public abstract class ASTClassifier extends ASTAnnotatable {
         fInvariantClauses.add(inv);
     }
 
-    public String getName() {
-        return fName.getText();
+    /**
+     * @return the name
+     */
+    public Token getName() {
+        return fName;
     }
 
     public String toString() {
