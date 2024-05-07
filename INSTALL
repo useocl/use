@@ -26,8 +26,8 @@ The distribution of USE comes with compiled sources. If you don't
 want or need to recompile them, you can skip this step!
 
 Otherwise, a simple "mvn compile" or "mwn verify" should compile 
-the whole USE package. "mvn verify" will run all tests wheras
-"msv compile" ujust compiles.
+the whole USE package. "mvn verify" will run all tests whereas
+"mvn compile" just compiles.
 
 Interaction with USE is done via a command line interface. This will
 be much more comfortable if you have the GNU readline library
