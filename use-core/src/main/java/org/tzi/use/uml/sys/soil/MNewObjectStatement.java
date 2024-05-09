@@ -20,8 +20,6 @@
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MDataType;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.ObjectValue;
@@ -29,7 +27,6 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 
 /**
@@ -39,31 +36,31 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  * 
  */
 public class MNewObjectStatement extends MStatement {
-
-    private MClassifier fObjectClassifier;
-
+    
+    private MClass fObjectClass;
+    
     private Expression fObjectName;
-
+    
     /**
      * Constructs a new object creation statement.
-     *
-     * @param objectClassifier The classifier of the object to create.
+     * 
+     * @param objectClass The class of the object to create.
      * @param objectName The expression used to derive the name of the new object.
      */
-    public MNewObjectStatement(MClassifier objectClassifier, Expression objectName) {
-        fObjectClassifier = objectClassifier;
+    public MNewObjectStatement(MClass objectClass, Expression objectName) {
+        fObjectClass = objectClass;
         fObjectName = objectName;
     }
 
     /**
      * Constructs a new object creation statement.
-     *
-     * @param objectClassifier The classifier of the new object to create.
+     * 
+     * @param objectClass The class of the new object to create.
      * @param objectName The name of the new object.
      */
-    public MNewObjectStatement(MClassifier objectClassifier, String objectName) {
-        fObjectClassifier = objectClassifier;
-
+    public MNewObjectStatement(MClass objectClass, String objectName) {
+        fObjectClass = objectClass;
+        
         if (objectName != null) {
             fObjectName = new ExpConstString(objectName);
         }
@@ -72,8 +69,8 @@ public class MNewObjectStatement extends MStatement {
     /**
 	 * @return the fObjectClass
 	 */
-	public MClassifier getObjectClass() {
-		return fObjectClassifier;
+	public MClass getObjectClass() {
+		return fObjectClass;
 	}
 
 	/**
@@ -85,11 +82,11 @@ public class MNewObjectStatement extends MStatement {
 
 	/**
      * Returns the type of the object to create.
-     *
+     * 
      * @return
      */
-    public MClassifier getObjectType() {
-        return fObjectClassifier;
+    public MClass getObjectType() {
+        return fObjectClass;
     }
 
     @Override
@@ -97,30 +94,22 @@ public class MNewObjectStatement extends MStatement {
 
     	String objectName;
         if (fObjectName == null) {
-            objectName = context.getState().uniqueObjectNameForClass(fObjectClassifier);
+            objectName = context.getState().uniqueObjectNameForClass(fObjectClass);
         } else {
             objectName = EvalUtil.evaluateString(context, fObjectName);
         }
 
         // create new object
-        Value value = null;
         try {
-            if (fObjectClassifier instanceof MClass) {
-                value = new ObjectValue(fObjectClassifier,
-                        context.getSystem().createObject(result, (MClass) fObjectClassifier, objectName));
-            } else if (fObjectClassifier instanceof MDataType) {
-                throw new MSystemException("The data type " + StringUtil.inQuotes(fObjectClassifier.name()) +
-                        " cannot be instantiated. Creating an object from a data type is not supported.");
-            }
+            return new ObjectValue(fObjectClass, context.getSystem().createObject(result, fObjectClass, objectName));
         } catch (MSystemException e) {
             throw new EvaluationFailedException(e);
         }
-        return value;
     }
 
     @Override
     protected String shellCommand() {
-        return "new " + fObjectClassifier.name()
+        return "new " + fObjectClass.name()
                 + (fObjectName != null ? ("(" + fObjectName + ")") : "");
     }
 

@@ -670,8 +670,12 @@ public class MModel extends MModelElementImpl {
 		if (ppc.isPre())
 			ppc.operation().addPreCondition(ppc);
 		else {
-			if (!ppc.operation().isConstructor())
-				ppc.operation().addPostCondition(ppc);
+			if (ppc.operation().isConstructor()) {
+				throw new MInvalidModelException(
+						"Declaring a postcondition for constructor `" + ppc.operation()
+								+ "' is not allowed.");
+			}
+			ppc.operation().addPostCondition(ppc);
 		}
 	}
 

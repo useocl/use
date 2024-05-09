@@ -27,7 +27,9 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.mm.MDataType;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
@@ -84,8 +86,12 @@ public class ASTNewObjectStatement extends ASTStatement {
 		}
 		
 		MClassifier objectClassifier = (MClassifier) t;
-		
-		if (objectClassifier instanceof MAssociationClass ) {
+
+		if (objectClassifier instanceof MDataType) {
+			throw new CompilationFailedException(this,
+					"Cannot create object from data type " + StringUtil.inQuotes(objectClassifier.name()) +
+					" Objects can be created from classes only.");
+		} else if (objectClassifier instanceof MAssociationClass) {
 			throw new CompilationFailedException(this,
 					"Cannot instantiate association class "
 							+ inQuotes(objectClassifier.name())
@@ -96,7 +102,7 @@ public class ASTNewObjectStatement extends ASTStatement {
 			(fObjectName == null ? 
 					null : generateStringExpression(fObjectName));
 		
-		return new MNewObjectStatement(objectClassifier, objectName);
+		return new MNewObjectStatement((MClass) objectClassifier, objectName);
 	}
 
 	@Override

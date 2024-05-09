@@ -57,7 +57,7 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 		if (exp.getSourceType() instanceof MDataType) {
 			addDataTypeCoverage((MDataType) exp.getSourceType());
 		} else if (exp.getSourceType() instanceof MClass) {
-				addClassCoverage((MClass) exp.getSourceType());
+			addClassCoverage((MClass) exp.getSourceType());
 		} else if (exp.getSourceType() instanceof MAssociation) {
 			addAssociationCoverage((MAssociation) exp.getSourceType());
 		} else {
