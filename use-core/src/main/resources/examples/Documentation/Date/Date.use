@@ -39,3 +39,14 @@ dataType Date
             endif
         )
 end
+
+class Person
+attributes
+  firstname : String
+  lastname : String
+  dateOfBirth : Date
+operations
+  -- produce a full name, e.g. 'Mr. Frank Black'
+  fullname(prefix : String) : String =
+    prefix.concat(' ').concat(firstname).concat(' ').concat(lastname)
+end
