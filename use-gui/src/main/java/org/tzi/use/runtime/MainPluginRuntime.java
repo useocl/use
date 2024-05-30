@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
+import org.tzi.use.gui.main.runtime.IPluginGraphExtensionPoint;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.runtime.impl.PluginRuntime;
@@ -96,6 +97,9 @@ public class MainPluginRuntime {
 		IPluginShellExtensionPoint shellExtensionPoint = (IPluginShellExtensionPoint) pluginRuntime
 				.getExtensionPoint("shell");
 
+		final IPluginGraphExtensionPoint graphExtensionPoint = (IPluginGraphExtensionPoint) pluginRuntime
+				.getExtensionPoint("graph");
+
 		Log.debug("Registered [" + pluginRuntime.getPlugins().size() + "] plugins");
 		
 		for (IPluginDescriptor currentPluginDescriptor : pluginRuntime.getPlugins().values()) {
@@ -105,6 +109,8 @@ public class MainPluginRuntime {
 			actionExtensionPoint.registerActions(currentPluginDescriptor);
 			Log.debug("Main: Registering commands");
 			shellExtensionPoint.registerCmds(currentPluginDescriptor);
+
+			graphExtensionPoint.registerPlugin(currentPluginDescriptor);
 		}
 		return pluginRuntime;
 	}

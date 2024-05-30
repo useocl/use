@@ -228,14 +228,17 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
         fm = g.getFontMetrics();
         
         int labelWidth = fm.stringWidth( fLabel );
-        
-        if ( isSelected() ) {
-            g.setColor( fOpt.getNODE_SELECTED_COLOR() );
+
+        if (isSelected()) {
+            if (getBackColorSelected() != null)
+                g.setColor(getBackColorSelected());
+            else
+                g.setColor(fOpt.getNODE_SELECTED_COLOR());
         } else {
-        	if (getColor() != null)
-        		g.setColor( getColor() );
-        	else
-        		g.setColor( fOpt.getNODE_COLOR() );
+            if (getColor() != null)
+                g.setColor(getColor());
+            else
+                g.setColor(fOpt.getNODE_COLOR());
         }
         
         g.fill( currentBounds );

@@ -1,6 +1,7 @@
 package org.tzi.use.runtime;
 
 
+import org.tzi.use.runtime.gui.IGraphManipulator;
 
 /**
  * This interface provides the basic startup class behaviour for the Plugin's
@@ -29,4 +30,6 @@ public interface IPlugin {
 	 * 
 	 */
 	void run(IPluginRuntime pluginRuntime) throws Exception;
+
+	IGraphManipulator getGraphManipulator();
 }

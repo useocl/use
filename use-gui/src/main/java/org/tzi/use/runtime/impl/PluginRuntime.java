@@ -11,6 +11,7 @@ import org.tzi.use.main.runtime.IExtensionPoint;
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.IPluginRuntime;
 import org.tzi.use.runtime.gui.impl.ActionExtensionPoint;
+import org.tzi.use.runtime.gui.impl.GraphExtensionPoint;
 import org.tzi.use.runtime.gui.impl.MModelExtensionPoint;
 import org.tzi.use.runtime.model.PluginServiceModel;
 import org.tzi.use.runtime.service.IPluginService;
@@ -43,14 +44,13 @@ public class PluginRuntime implements IPluginRuntime {
 	private Map<String, IPluginServiceDescriptor> registeredServices = new HashMap<String, IPluginServiceDescriptor>();
 
 	public IExtensionPoint getExtensionPoint(String extensionPoint) {
-		if (extensionPoint.equals("action")) {
-			return ActionExtensionPoint.getInstance();
-		} else if (extensionPoint.equals("shell")) {
-			return ShellExtensionPoint.getInstance();
-		} else if (extensionPoint.equals("model")) {
-			return MModelExtensionPoint.getInstance();
-		} else
-			return null;
+        return switch (extensionPoint) {
+            case "action" -> ActionExtensionPoint.getInstance();
+            case "shell" -> ShellExtensionPoint.getInstance();
+            case "model" -> MModelExtensionPoint.getInstance();
+			case ("graph") -> GraphExtensionPoint.getInstance();
+            default -> null;
+        };
 	}
 
 	/**

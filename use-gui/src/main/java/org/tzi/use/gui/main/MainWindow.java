@@ -91,7 +91,7 @@ import java.util.*;
 /**
  * The main application window of USE.
  * 
- * 
+ *
  * @author Mark Richters
  * @author Lars Hamann
  * @author Frank Hilken
@@ -140,7 +140,7 @@ public class MainWindow extends JFrame {
 
     private JMenu recentFilesMenu;
     private JMenuItem clearRecentFiles;
-    
+
     private JButton addToToolBar(JToolBar toolBar, AbstractAction action, String toolTip) {
         JButton tb = new JButton(action);
         addToToolBar(toolBar, tb, toolTip);
@@ -252,7 +252,7 @@ public class MainWindow extends JFrame {
                     Options.getRecentFiles().remove(recent.toString());
                 }
             });
-			
+
         	menu.add(recentFilesMenu);
         	
         	setRecentFiles();
@@ -1136,7 +1136,7 @@ public class MainWindow extends JFrame {
             lastPath = fChooser.getCurrentDirectory().toPath();
             Options.setLastDirectory(lastPath);
             file = fChooser.getSelectedFile().toPath();
-            
+
             compile(file);
 
             Options.getRecentFiles().push(file.toAbsolutePath().toString());
@@ -1736,7 +1736,7 @@ public class MainWindow extends JFrame {
         	// Don't load layout if shift key is pressed
         	boolean loadLayout = (e.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
         		
-            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout);
+            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout, fPluginRuntime);
             ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {
