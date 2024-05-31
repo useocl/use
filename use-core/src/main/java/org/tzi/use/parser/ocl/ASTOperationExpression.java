@@ -202,7 +202,6 @@ public class ASTOperationExpression extends ASTExpression {
                 } else if (cf != null ) {
                     // constructor call?
                     // (8) check for constructor call
-                    // "self" might not be appropriate here.
                     res = gen1(ctx, new ExpVariable("self", cf));
                 } else {
                     throw new SemanticException(fOp, "Undefined " + 
