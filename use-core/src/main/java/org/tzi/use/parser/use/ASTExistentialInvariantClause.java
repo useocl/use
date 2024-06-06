@@ -5,8 +5,8 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
@@ -16,11 +16,10 @@ public class ASTExistentialInvariantClause extends ASTInvariantClause {
 		super(name, e);
 	}
 
-	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClass cls,
+	@Override
+	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClassifier cls,
 			List<String> varNames, Expression expr, String invName)
 			throws ExpInvalidException {
-		MClassInvariant inv = 
-		    ctx.modelFactory().createClassInvariant(invName, varNames, cls, expr, true);
-		return inv;
+        return ctx.modelFactory().createClassInvariant(invName, varNames, cls, expr, true);
 	}
 }
