@@ -17,9 +17,9 @@ public class ASTExistentialInvariantClause extends ASTInvariantClause {
 	}
 
 	@Override
-	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClassifier cls,
+	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClassifier cf,
 			List<String> varNames, Expression expr, String invName)
 			throws ExpInvalidException {
-        return ctx.modelFactory().createClassInvariant(invName, varNames, cls, expr, true);
+        return ctx.modelFactory().createClassInvariant(invName, varNames, cf, expr, true);
 	}
 }
