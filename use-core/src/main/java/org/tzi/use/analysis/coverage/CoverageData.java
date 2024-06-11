@@ -34,14 +34,14 @@ import org.tzi.use.uml.mm.*;
 public class CoverageData {
 	
 	/**
-	 * Only expressions which access directly a classifier (allInstances()) are counted
+	 * Only expressions which access directly a class (allInstances()) are counted
 	 */
-	protected Map<MClassifier, Integer> classifierCoverage = new HashMap<MClassifier, Integer>();
+	protected Map<MClassifier, Integer> classCoverage = new HashMap<MClassifier, Integer>();
 	
 	/**
-	 * All expressions are counted which cover the classifier, associations or attributes of the classifier
+	 * All expressions are counted which cover the class, associations or attributes of the class
 	 */
-	protected Map<MClassifier, Integer> completeClassifierCoverage = new HashMap<MClassifier, Integer>();
+	protected Map<MClassifier, Integer> completeClassCoverage = new HashMap<MClassifier, Integer>();
 	
 	protected Map<AttributeAccessInfo, Integer> attributeAccessCoverage = new HashMap<AttributeAccessInfo, Integer>();
 	
@@ -59,17 +59,17 @@ public class CoverageData {
 	public CoverageData() {	}
 	
 	/**
-	 * @return the classifierCoverage
+	 * @return the classCoverage
 	 */
-	public Map<MClassifier, Integer> getClassifierCoverage() {
-		return classifierCoverage;
+	public Map<MClassifier, Integer> getClassCoverage() {
+		return classCoverage;
 	}
 
 	/**
 	 * @return the completeClassifierCoverage
 	 */
-	public Map<MClassifier, Integer> getCompleteClassifierCoverage() {
-		return completeClassifierCoverage;
+	public Map<MClassifier, Integer> getCompleteClassCoverage() {
+		return completeClassCoverage;
 	}
 	
 	/**
@@ -119,29 +119,29 @@ public class CoverageData {
 	}
 	
 	/**
-	 * Calculates the highest classifier coverage value
+	 * Calculates the highest class coverage value
 	 * @return
 	 */
-	public int calcHighestClassifierCoverage() {
-		return highestInt(this.classifierCoverage);
+	public int calcHighestClassCoverage() {
+		return highestInt(this.classCoverage);
 	}
 	
 	/**
 	 * Calculates the highest complete class coverage value
 	 * @return
 	 */
-	public int calcHighestCompleteClassifierCoverage() {
-		return highestInt(this.completeClassifierCoverage);
+	public int calcHighestCompleteClassCoverage() {
+		return highestInt(this.completeClassCoverage);
 	}
 	
 	public int calcLowestClassifierCoverage() {		
-		return lowestInt(this.classifierCoverage);
+		return lowestInt(this.classCoverage);
 	}
 	
-	public Set<MClassifier> getCoveredClassifiers() {
+	public Set<MClassifier> getCoveredClasses() {
 		Set<MClassifier> result = new TreeSet<MClassifier>();
 		
-		for (Map.Entry<MClassifier, Integer> entry : getClassifierCoverage().entrySet()) {
+		for (Map.Entry<MClassifier, Integer> entry : getClassCoverage().entrySet()) {
 			if (entry.getValue().intValue() > 0) {
 				result.add(entry.getKey());
 			}
@@ -153,7 +153,7 @@ public class CoverageData {
 	public Set<MClassifier> getCompleteCoveredClassifiers() {
 		Set<MClassifier> result = new TreeSet<MClassifier>();
 		
-		for (Map.Entry<MClassifier, Integer> entry : getCompleteClassifierCoverage().entrySet()) {
+		for (Map.Entry<MClassifier, Integer> entry : getCompleteClassCoverage().entrySet()) {
 			if (entry.getValue().intValue() > 0) {
 				result.add(entry.getKey());
 			}
@@ -186,24 +186,24 @@ public class CoverageData {
 	}
 	
 	/**
-	 * Adds all uncovered classifiers to the corresponding maps with a value of 0.
+	 * Adds all uncovered classes to the corresponding maps with a value of 0.
 	 * @param model
 	 */
 	public void addUncoveredClasses(MModel model) {
 		for (MClass cls : model.classes()) {
-			if (!this.classifierCoverage.containsKey(cls)) {
-				this.classifierCoverage.put(cls, Integer.valueOf(0));
+			if (!this.classCoverage.containsKey(cls)) {
+				this.classCoverage.put(cls, Integer.valueOf(0));
 			}
-			if (!this.completeClassifierCoverage.containsKey(cls)) {
-				this.completeClassifierCoverage.put(cls, Integer.valueOf(0));
+			if (!this.completeClassCoverage.containsKey(cls)) {
+				this.completeClassCoverage.put(cls, Integer.valueOf(0));
 			}
 		}
 		for (MDataType dtp : model.dataTypes()) {
-			if (!this.classifierCoverage.containsKey(dtp)) {
-				this.classifierCoverage.put(dtp, Integer.valueOf(0));
+			if (!this.classCoverage.containsKey(dtp)) {
+				this.classCoverage.put(dtp, Integer.valueOf(0));
 			}
-			if (!this.completeClassifierCoverage.containsKey(dtp)) {
-				this.completeClassifierCoverage.put(dtp, Integer.valueOf(0));
+			if (!this.completeClassCoverage.containsKey(dtp)) {
+				this.completeClassCoverage.put(dtp, Integer.valueOf(0));
 			}
 		}
 	}

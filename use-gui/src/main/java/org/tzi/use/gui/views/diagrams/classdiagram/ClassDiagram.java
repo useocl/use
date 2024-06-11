@@ -1721,13 +1721,13 @@ public class ClassDiagram extends DiagramView
 			Map<MModelElement, Integer> propCover = theData.getPropertyCoverage();
 
 			int minCover = 0; // data.calcLowestClassCoverage();
-			int maxCover = theData.calcHighestCompleteClassifierCoverage();
+			int maxCover = theData.calcHighestCompleteClassCoverage();
 			int maxAttCover = theData.highestInt(propCover);
 			int value;
 
 			for (MClass cls : model.classes()) {
-				if (theData.getCompleteClassifierCoverage().containsKey(cls)) {
-					value = theData.getCompleteClassifierCoverage().get(cls);
+				if (theData.getCompleteClassCoverage().containsKey(cls)) {
+					value = theData.getCompleteClassCoverage().get(cls);
 				} else {
 					value = 0;
 				}
@@ -1758,8 +1758,8 @@ public class ClassDiagram extends DiagramView
 			}
 
 			for (MDataType dtp : model.dataTypes()) {
-				if (theData.getCompleteClassifierCoverage().containsKey(dtp)) {
-					value = theData.getCompleteClassifierCoverage().get(dtp);
+				if (theData.getCompleteClassCoverage().containsKey(dtp)) {
+					value = theData.getCompleteClassCoverage().get(dtp);
 				} else {
 					value = 0;
 				}

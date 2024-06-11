@@ -167,7 +167,7 @@ public class ShellCoverageCommandProcessor {
 										.size()
 								+ data.getPropertyCoverage().keySet().size());
 
-				classes = Integer.toString(data.getCoveredClassifiers().size());
+				classes = Integer.toString(data.getCoveredClasses().size());
 				classesComplete = Integer.toString(data
 						.getCompleteCoveredClassifiers().size());
 				associations = Integer.toString(data.getAssociationCoverage()
@@ -178,7 +178,7 @@ public class ShellCoverageCommandProcessor {
 						.keySet().size());
 			} else {
 				total = new String();
-				classes = StringUtil.fmtSeq(data.getCoveredClassifiers(),
+				classes = StringUtil.fmtSeq(data.getCoveredClasses(),
 						fCommaSpace);
 				classesComplete = StringUtil.fmtSeq(
 						data.getCompleteCoveredClassifiers(), fCommaSpace);
@@ -283,11 +283,11 @@ public class ShellCoverageCommandProcessor {
 
 		Log.println();
 		Log.println("Classes covered by" + fSpace + target + fSpaceColon
-				+ data.getCoveredClassifiers().size() + "/"
+				+ data.getCoveredClasses().size() + "/"
 				+ model.classes().size());
 
 		List<Map.Entry<MClassifier, Integer>> entries = new ArrayList<Map.Entry<MClassifier, Integer>>(
-				data.getClassifierCoverage().entrySet());
+				data.getClassCoverage().entrySet());
 
 		Collections.sort(entries, new Comparator<Map.Entry<MClassifier, Integer>>() {
 			@Override
@@ -303,7 +303,7 @@ public class ShellCoverageCommandProcessor {
 		}
 
 		Set<MClassifier> notCovered = new HashSet<MClassifier>(model.classifiers());
-		notCovered.removeAll(data.getClassifierCoverage().keySet());
+		notCovered.removeAll(data.getClassCoverage().keySet());
 
 		for (MClassifier entry : notCovered) {
 			Log.println(fSpaceTwo + entry.name() + fSpaceColon + 0);
@@ -315,7 +315,7 @@ public class ShellCoverageCommandProcessor {
 				+ model.classes().size());
 
 		entries = new ArrayList<Map.Entry<MClassifier, Integer>>(data
-				.getCompleteClassifierCoverage().entrySet());
+				.getCompleteClassCoverage().entrySet());
 
 		Collections.sort(entries, new Comparator<Map.Entry<MClassifier, Integer>>() {
 			@Override
@@ -331,7 +331,7 @@ public class ShellCoverageCommandProcessor {
 		}
 
 		notCovered = new HashSet<MClassifier>(model.classifiers());
-		notCovered.removeAll(data.getCompleteClassifierCoverage().keySet());
+		notCovered.removeAll(data.getCompleteClassCoverage().keySet());
 
 		for (MClassifier entry : notCovered) {
 			Log.println(fSpaceTwo + entry.name() + fSpaceColon + 0);
@@ -386,7 +386,7 @@ public class ShellCoverageCommandProcessor {
 										.size()
 								+ data.getPropertyCoverage().keySet().size());
 
-				classes = Integer.toString(data.getCoveredClassifiers().size());
+				classes = Integer.toString(data.getCoveredClasses().size());
 				classesComplete = Integer.toString(data
 						.getCompleteCoveredClassifiers().size());
 				associations = Integer.toString(data.getAssociationCoverage()
@@ -397,7 +397,7 @@ public class ShellCoverageCommandProcessor {
 						.keySet().size());
 			} else {
 				total = new String();
-				classes = StringUtil.fmtSeq(data.getCoveredClassifiers(),
+				classes = StringUtil.fmtSeq(data.getCoveredClasses(),
 						fCommaSpace);
 				classesComplete = StringUtil.fmtSeq(
 						data.getCompleteCoveredClassifiers(), fCommaSpace);

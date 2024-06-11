@@ -78,8 +78,7 @@ public final class ExpObjOp extends Expression {
     	
     	Value selfVal = fArgs[0].eval(ctx);
     	
-    	if (selfVal.isUndefined() || 
-    			!(selfVal instanceof InstanceValue)) {
+    	if (selfVal.isUndefined() || !(selfVal instanceof InstanceValue)) {
     		ctx.exit(this, result);
     		return result;
     	}

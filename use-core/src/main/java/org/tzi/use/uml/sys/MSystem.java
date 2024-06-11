@@ -413,7 +413,7 @@ public final class MSystem {
 
 	/**
 	 * Evaluates all post conditions of the given operation call and stores
-	 * their result inside of the operation call object.
+	 * their result inside the operation call object.
 	 * 
 	 * @param operationCall The operation call to validate the post conditions
 	 *            for. Also used to store the post condition results.

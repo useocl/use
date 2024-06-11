@@ -48,10 +48,10 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	 */
 	@Override
 	protected void addDataTypeCoverage(MDataType dtp) {
-		if (!coverageData.getClassifierCoverage().containsKey(dtp)) {
-			coverageData.getClassifierCoverage().put(dtp, 1);
+		if (!coverageData.getClassCoverage().containsKey(dtp)) {
+			coverageData.getClassCoverage().put(dtp, 1);
 		} else {
-			coverageData.getClassifierCoverage().put(dtp, coverageData.getClassifierCoverage().get(dtp) + 1);
+			coverageData.getClassCoverage().put(dtp, coverageData.getClassCoverage().get(dtp) + 1);
 		}
 		addCompleteClassCoverage(dtp);
 	}
@@ -61,32 +61,32 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	 */
 	@Override
 	protected void addClassCoverage(MClass cls) {
-		if (!coverageData.getClassifierCoverage().containsKey(cls)) {
-			coverageData.getClassifierCoverage().put(cls, 1);
+		if (!coverageData.getClassCoverage().containsKey(cls)) {
+			coverageData.getClassCoverage().put(cls, 1);
 		} else {
-			coverageData.getClassifierCoverage().put(cls, coverageData.getClassifierCoverage().get(cls) + 1);
+			coverageData.getClassCoverage().put(cls, coverageData.getClassCoverage().get(cls) + 1);
 		}
 		addCompleteClassCoverage(cls);
 	}
 	
 	/**
-	 * @param cf
+	 * @param cls
 	 */
-	protected void addCompleteClassCoverage(MClassifier cf) {
-		if (!coverageData.getCompleteClassifierCoverage().containsKey(cf)) {
-			coverageData.getCompleteClassifierCoverage().put(cf, 1);
+	protected void addCompleteClassCoverage(MClassifier cls) {
+		if (!coverageData.getCompleteClassCoverage().containsKey(cls)) {
+			coverageData.getCompleteClassCoverage().put(cls, 1);
 		} else {
-			coverageData.getCompleteClassifierCoverage().put(cf, coverageData.getCompleteClassifierCoverage().get(cf) + 1);
+			coverageData.getCompleteClassCoverage().put(cls, coverageData.getCompleteClassCoverage().get(cls) + 1);
 		}
 	}
 	
 	/**
-	 * @param sourceClassifier
+	 * @param sourceClass
 	 * @param att
 	 */
 	@Override
-	protected void addAttributeCoverage(MClassifier sourceClassifier, MAttribute att) {
-		AttributeAccessInfo info = new AttributeAccessInfo(sourceClassifier, att);
+	protected void addAttributeCoverage(MClassifier sourceClass, MAttribute att) {
+		AttributeAccessInfo info = new AttributeAccessInfo(sourceClass, att);
 		if (!coverageData.getAttributeAccessCoverage().containsKey(info)) {
 			coverageData.getAttributeAccessCoverage().put(info, 1);
 		} else {
@@ -97,21 +97,21 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 		} else {
 			coverageData.getAttributeCoverage().put(att, coverageData.getAttributeCoverage().get(att) + 1);
 		}
-		addCompleteClassCoverage(sourceClassifier);
+		addCompleteClassCoverage(sourceClass);
 	}
 	
 	/**
-	 * @param sourceClassifier
+	 * @param sourceClass
 	 * @param op
 	 */
 	@Override
-	protected void addOperationCoverage(MClassifier sourceClassifier, MOperation op) {
+	protected void addOperationCoverage(MClassifier sourceClass, MOperation op) {
 		if (!coverageData.getOperationCoverage().containsKey(op)) {
 			coverageData.getOperationCoverage().put(op, 1);
 		} else {
 			coverageData.getOperationCoverage().put(op, coverageData.getOperationCoverage().get(op) + 1);
 		}
-		addCompleteClassCoverage(sourceClassifier);
+		addCompleteClassCoverage(sourceClass);
 	}
 	
 	/**

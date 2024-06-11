@@ -44,7 +44,7 @@ import java.util.prefs.Preferences;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "7.2.0";
+    public static final String RELEASE_VERSION = "7.1.0";
 
     // the copyright
     public static final String COPYRIGHT = "Copyright (C) 1999-2024 University of Bremen & " +

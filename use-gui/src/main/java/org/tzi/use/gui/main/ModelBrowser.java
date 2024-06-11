@@ -351,7 +351,7 @@ public class ModelBrowser extends JPanel
             fMbs.sortClasses( new ArrayList<MClassifier>(fModel.classes()) );
         addChildNodes( top, "Classes", sortedClasses );
 
-        final ArrayList<MAssociation> sortedAssociations =
+        final ArrayList<MAssociation> sortedAssociations = 
             fMbs.sortAssociations(new ArrayList<MAssociation>(fModel.associations()));
 	    
         addChildNodes( top, "Associations", sortedAssociations );
