@@ -19,8 +19,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.List;
-
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
@@ -31,6 +29,8 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.util.StringUtil;
+
+import java.util.List;
 
 /**
  * An operation defined by a class.
@@ -134,6 +134,7 @@ public final class ExpObjOp extends Expression {
     	
 			if (operation.hasExpression()) {
 				result = operation.expression().eval(ctx);
+				operationCall.setResultValue(result);
 			}
 
 			operationCall.setExecutionFailed(false);
@@ -142,7 +143,7 @@ public final class ExpObjOp extends Expression {
     	} finally {
     		try {
 	    		if (operationCall.enteredSuccessfully()) {
-	    			system.exitQueryOperation(ctx, result);
+	    			system.exitQueryOperation(ctx);
 	    		}
     		} catch (Exception e){ }
     		ctx.popVarBindings(fArgs.length);
