@@ -546,17 +546,15 @@ public final class MSystem {
 	}
 
 	/**
-	 * Exits a query operation, i. e., a query without side effects. Validates
-	 * the post conditions of the query expression.
+	 * <p>Exits a query operation, i.e., a query without side effects. Validates
+	 * the post conditions of the query expression.</p>
 	 * 
-	 * In any case, the operation is removed from the call stack.
+	 * <p>In any case, the operation is removed from the call stack.</p>
 	 * 
-	 * @param ctx
-	 * @param resultValue
-	 * @return
-	 * @throws MSystemException
+	 * @param ctx The <code>EvalContext</code> the operations is evaluated in.
+	 * @throws MSystemException If the call stack is empty.
 	 */
-	public MOperationCall exitQueryOperation(EvalContext ctx, Value resultValue) throws MSystemException {
+	public void exitQueryOperation(EvalContext ctx) throws MSystemException {
 
 		MOperationCall operationCall = getCurrentOperation();
 
@@ -567,7 +565,7 @@ public final class MSystem {
 		if (operationCall.executionHasFailed()) {
 			operationCall.setExited(true);
 			fCallStack.pop();
-			return operationCall;
+			return;
 		}
 
 		try {
@@ -575,8 +573,6 @@ public final class MSystem {
 				assertPostConditions(ctx, operationCall);
 
 			operationCall.setExitedSuccessfully(true);
-
-			return operationCall;
 		} finally {
 			operationCall.setExited(true);
 			fCallStack.pop();

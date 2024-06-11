@@ -1,0 +1,6 @@
+!create a:A
+?a.foo()
+*[Warning] 1 postcondition in operation call `A::foo(self:a)' does not hold:
+*   postAlwaysInvalid: (result = 'Something else')
+* -> 'A static string' : String
+exit
