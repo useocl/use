@@ -74,7 +74,7 @@ public abstract class DiagramOptions {
     
     public abstract boolean isShowMutliplicities();
     
-    public abstract void setShowMutliplicities(boolean showMutliplicities );
+    public abstract void setShowMutliplicities( boolean showMutliplicities );
 
     private List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
     
@@ -103,9 +103,9 @@ public abstract class DiagramOptions {
         this.fShowGrid = source.fShowGrid;
         this.fGrayscale = source.fGrayscale;
 
-		this.showUnionConstraints = source.showUnionConstraints;
-		this.showSubsetsConstraints = source.showSubsetsConstraints;
-		this.showRedefinesConstraints = source.showRedefinesConstraints;
+        this.showUnionConstraints = source.showUnionConstraints;
+        this.showSubsetsConstraints = source.showSubsetsConstraints;
+        this.showRedefinesConstraints = source.showRedefinesConstraints;
 
         this.modelFileName = source.modelFileName;
     }

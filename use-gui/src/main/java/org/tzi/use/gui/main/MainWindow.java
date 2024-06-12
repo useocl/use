@@ -1108,7 +1108,7 @@ public class MainWindow extends JFrame {
         
         @Override
 		public void actionPerformed(ActionEvent e) {
-			if (!validateOpenPossible()) return;
+        	if (!validateOpenPossible()) return;
 
             Path lastPath = !wasUsed ? Options.getRecentFile("use") : null;
             if (lastPath != null) {
