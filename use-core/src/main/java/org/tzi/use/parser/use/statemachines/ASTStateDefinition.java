@@ -24,7 +24,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.statemachines.MFinalState;
 import org.tzi.use.uml.mm.statemachines.MPseudoState;
 import org.tzi.use.uml.mm.statemachines.MPseudoStateKind;
@@ -100,7 +100,7 @@ public class ASTStateDefinition extends AST {
 		if (stateInvariant == null || !(genVertex instanceof MState)) return;
 		
 		MState genState = (MState)genVertex;
-		MClass cls = sm.getContext();
+		MClassifier cf = sm.getContext();
 		Expression conditionExp = null;
 		
         // enter context variable into scope of invariant
@@ -109,8 +109,8 @@ public class ASTStateDefinition extends AST {
 
         try {
             // create pseudo-variable "self"
-            vars.add("self", cls, null);
-            ctx.exprContext().push("self", cls);
+            vars.add("self", cf, null);
+            ctx.exprContext().push("self", cf);
 
             conditionExp = stateInvariant.gen(ctx);
                         

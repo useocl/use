@@ -394,7 +394,12 @@ public final class MSystem {
 		for (MPrePostCondition preCondition : preConditions) {
 			Evaluator oclEvaluator = new Evaluator();
 
-			VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment.constructVarBindings() : ctx.varBindings());
+			VarBindings b;
+			if (!(operationCall.getOperation().isConstructor()) && operationCall.requiresVariableFrameInEnvironment()) {
+				b = fVariableEnvironment.constructVarBindings();
+			} else {
+				b = ctx.varBindings();
+			}
 
 			Value evalResult = oclEvaluator.eval(preCondition.expression(), fCurrentState, b);
 
@@ -408,7 +413,7 @@ public final class MSystem {
 
 	/**
 	 * Evaluates all post conditions of the given operation call and stores
-	 * their result inside of the operation call object.
+	 * their result inside the operation call object.
 	 * 
 	 * @param operationCall The operation call to validate the post conditions
 	 *            for. Also used to store the post condition results.
@@ -596,7 +601,7 @@ public final class MSystem {
 			ctx = new EvalContext(null, fCurrentState, b, null, "");
 		}
 
-		MObjectState objState = operationCall.getSelf().state(fCurrentState);
+		MInstanceState objState = operationCall.getSelf().state(fCurrentState);
 
 		for (MProtocolStateMachineInstance psm : objState.getProtocolStateMachinesInstances()) {
 			// Operation is not covered by the state machine
@@ -682,7 +687,7 @@ public final class MSystem {
 		if (!operationCall.hasPossibleTransitions())
 			return;
 
-		MObjectState objState = operationCall.getSelf().state(fCurrentState);
+		MInstanceState objState = operationCall.getSelf().state(fCurrentState);
 
 		if (ctx == null) {
 			VarBindings b = fVariableEnvironment.constructVarBindings();
@@ -1612,7 +1617,7 @@ public final class MSystem {
 		return e;
 	}
 	
-	TransitionEvent fireTransition(MObject source, MStateMachine stateMachine, MTransition transition) {
+	TransitionEvent fireTransition(MInstance source, MStateMachine stateMachine, MTransition transition) {
 		TransitionEvent e = new TransitionEvent(executionContext, source, stateMachine, transition);
 		getEventBus().post(e);
 		return e;

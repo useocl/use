@@ -22,7 +22,6 @@ package org.tzi.use.uml.ocl.expr;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
@@ -84,7 +83,7 @@ public final class ExpAllInstances extends Expression {
         SetValue res;
         
         if(fSourceType.isTypeOfClass()) {
-	        Set<MObject> objSet = systemState.objectsOfClassAndSubClasses((MClass)fSourceType);
+	        Set<MObject> objSet = systemState.objectsOfClassAndSubClasses(fSourceType);
 	        Value[] objValues = new Value[objSet.size()];
 	
 	        int i = 0;

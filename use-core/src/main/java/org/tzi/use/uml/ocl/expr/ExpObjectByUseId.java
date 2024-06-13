@@ -89,7 +89,7 @@ public final class ExpObjectByUseId extends Expression {
         MObject obj = systemState.objectByName(id.value());
         
         if (obj == null) return UndefinedValue.instance;
-        if (!obj.cls().isSubClassOf(sourceType)) return UndefinedValue.instance;
+        if (!obj.cls().isSubClassifierOf(sourceType)) return UndefinedValue.instance;
         
         ObjectValue res = new ObjectValue(sourceType, obj);
        

@@ -297,7 +297,7 @@ public class MMPrintVisitor implements MMVisitor {
         println();
     }
 
-    private void visitAttributesAndOperations( MClass e ) {
+    private void visitAttributesAndOperations( MClassifier e ) {
         // visit attributes
         if (e.attributes().size() > 0 ) {
             indent();
@@ -350,6 +350,27 @@ public class MMPrintVisitor implements MMVisitor {
         
         indent();
         println(keyword("end")); 
+    }
+
+    @Override
+    public void visitDataType(MDataType e) {
+        visitAnnotations(e);
+        indent();
+        if (e.isAbstract() )
+            print(keyword("abstract") + ws());
+        print(keyword("dataType") + ws() + id(e.name()));
+
+        Set<? extends MClassifier> parents = e.parents();
+        if (!parents.isEmpty() ) {
+            print(ws() + other("<") + ws() +
+                    other(StringUtil.fmtSeq(parents.iterator(), ",")));
+        }
+        println();
+
+        visitAttributesAndOperations(e);
+
+        indent();
+        println(keyword("end"));
     }
 
     @Override

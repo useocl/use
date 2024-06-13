@@ -48,7 +48,7 @@ public class QualifierWayPoint extends AttachedWayPoint {
 	MAssociationEnd qualifiedEnd;
 	
 	/**
-	 * Saves the displayed informations. Because qualifier values cannot be
+	 * Saves the displayed information. Because qualifier values cannot be
 	 * changed yet they can be stored when creating a qualifier node
 	 */
 	private List<String> displayedEntries;

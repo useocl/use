@@ -35,7 +35,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * context type
      */
-    private MClass fClass;
+    private MClassifier fClassifier;
     
     /**
      * boolean expression
@@ -81,7 +81,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * Constructs a new invariant. The <code>name</code> and <code>vars</code> is optional, i.e., can be <code>null</code>.
      */
-    MClassInvariant(String name, List<String> vars, MClass cls, Expression inv, boolean isExistential)
+    MClassInvariant(String name, List<String> vars, MClassifier cf, Expression inv, boolean isExistential)
         throws ExpInvalidException
     {
         super(name);
@@ -90,7 +90,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
         	throw new ExpInvalidException("An invariant must be a boolean expression.");
         }
         	
-        fClass = cls;
+        fClassifier = cf;
         fBody = inv;
         fBody.assertBoolean();
         fVars = new VarDeclList(true);
@@ -103,14 +103,14 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
         if (vars == null || vars.size() == 0)
         {
         	fHasVars = false;
-        	VarDecl decl = new VarDecl("self", fClass);
+        	VarDecl decl = new VarDecl("self", fClassifier);
         	fVars.add(decl);
         }
         else
         {
         	fHasVars = true;
         	for (String var : vars) {
-        		fVars.add(new VarDecl(var, fClass));
+        		fVars.add(new VarDecl(var, fClassifier));
         	}
         }
         
@@ -120,9 +120,9 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * Creates a dynamic invariant.
      */
-    MClassInvariant(String name, List<String> vars, MClass cls, Expression inv, boolean isExistential, boolean active, boolean negated)
+    MClassInvariant(String name, List<String> vars, MClassifier cf, Expression inv, boolean isExistential, boolean active, boolean negated)
     		throws ExpInvalidException {
-    	this(name, vars, cls, inv, isExistential);
+    	this(name, vars, cf, inv, isExistential);
     	
 		loaded = true;
 		this.active = active;
@@ -132,14 +132,14 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     }
 
     public String qualifiedName(){
-    	return fClass.name() + "::" + name();
+    	return fClassifier.name() + "::" + name();
     }
     
     /** 
      * Returns the class for which the invariant is specified.
      */
-    public MClass cls() {
-        return fClass;
+    public MClassifier cls() {
+        return fClassifier;
     }
 
     /** 
@@ -150,7 +150,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     }
 
     private void calculateExpandedExpression() throws ExpInvalidException {
-	    Expression allInstances = new ExpAllInstances(fClass);
+	    Expression allInstances = new ExpAllInstances(fClassifier);
 	    
 	    if (fIsExistential) {
 	    	fExpanded = new ExpExists(fVars, allInstances, fBody);
@@ -196,7 +196,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     public Expression getExpressionForViolatingInstances() {
                 
         try {
-            Expression allInstances = new ExpAllInstances(fClass);
+            Expression allInstances = new ExpAllInstances(fClassifier);
             Expression current = negated ? ExpStdOp.create("not", new Expression[]{ fBody }) : fBody ;
             // For invariants with more than one iteration variable
             // a simple Reject does not work, because it allows only one
@@ -229,7 +229,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      */
     public Expression getExpressionForSatisfyingInstances() {
         try {
-            Expression allInstances = new ExpAllInstances(fClass);
+            Expression allInstances = new ExpAllInstances(fClassifier);
             Expression current = negated ? ExpStdOp.create("not", new Expression[]{ fBody }) : fBody ;
             
             // For invariants with more than one iteration variable
@@ -276,13 +276,13 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
         if (fVars.size() == 1)
         	return fVars.varDecl(0).name();
         
-        String result = fVars.varDecl(0).name();
+        StringBuilder result = new StringBuilder(fVars.varDecl(0).name());
         for(int index = 1; index < fVars.size(); index++)
         {
-        	result += ", " + fVars.varDecl(index).name();
+        	result.append(", ").append(fVars.varDecl(index).name());
         }
         
-        return result;
+        return result.toString();
     }
     
     /**
@@ -337,7 +337,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      */
     @Override
     public String toString() {
-        return fClass.name() + "::" + name();
+        return fClassifier.name() + "::" + name();
     }
 
     /**

@@ -40,19 +40,7 @@ import org.tzi.use.util.collections.CollectionUtil;
  * @author  Lars Hamann
  */
 public class MClassImpl extends MClassifierImpl implements MClass {
-   
-	/**
-	 * All defined attributes of this class excluding inherited ones.
-	 */
-    private Map<String, MAttribute> fAttributes;
-    
-    private Map<String, MOperation> fOperations;
-    
-    /**
-     * Maps all operations (including inherited)
-     */
-    private Map<String, MOperation> fVTableOperations;
-        
+
     // other classes reachable by associations 
     private Map<String, MNavigableElement> fNavigableElements;
 
@@ -63,9 +51,6 @@ public class MClassImpl extends MClassifierImpl implements MClass {
     
     MClassImpl(String name, boolean isAbstract) {
         super(name, isAbstract);
-        fAttributes = new TreeMap<String, MAttribute>();
-        fOperations = new TreeMap<String, MOperation>();
-        fVTableOperations = new HashMap<String, MOperation>();
         fNavigableElements = new HashMap<String, MNavigableElement>();
     }
 
@@ -87,8 +72,8 @@ public class MClassImpl extends MClassifierImpl implements MClass {
 	public Iterable<MClass> specializationHierachie(final boolean includeThis) {
 		return (Iterable)super.specializationHierachie(includeThis);
 	}
-    
-    /** 
+
+    /**
      * Adds an attribute. The attribute must have a unique name within
      * the class and must not conflict with any attribute with the
      * same name defined in a superclass or subclass or with a
@@ -96,8 +81,9 @@ public class MClassImpl extends MClassifierImpl implements MClass {
      *
      * @exception MInvalidModelException the class already contains an
      *            attribute with the same name or a name clash
-     *            occured.  
+     *            occurred.
      */
+    @Override
     public void addAttribute(MAttribute attr) throws MInvalidModelException {
         // check if there already exists an attribute with the
         // specified name in this class
@@ -112,7 +98,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
             throw new MInvalidModelException("Attribute with name `" + 
                                              attrName + 
                                              "' already defined in a superclass.");
-    
+
         // check if attribute of same name is defined in a subclass
         for (MClass cls : allChildren() ) {
             if (cls.attribute(attrName, false) != null )
@@ -120,61 +106,31 @@ public class MClassImpl extends MClassifierImpl implements MClass {
                                                  attrName + "' conflicts with existing attribute " +
                                                  "in class `" + cls.name() + "'.");
         }
-        
+
         // add attribute
         fAttributes.put(attr.name(), attr);
         attr.setOwner(this);
     }
 
     /**
-     * Returns the set of attributes defined for this class. Inherited
-     * attributes are not included.  
-     *
-     * @return List(MAttribute)
-     */
-    public List<MAttribute> attributes() {
-        return new ArrayList<MAttribute>(fAttributes.values());
-    }
-
-    /**
      * Returns the set of all attributes (including inherited ones)
      * defined for this class.
      *
-     * @return List(MAttribute) 
+     * @return List(MAttribute)
      */
     public List<MAttribute> allAttributes() {
-        List<MAttribute> result = new ArrayList<MAttribute>();
-        
         // start with local attributes
-        result.addAll(attributes());
+        List<MAttribute> result = new ArrayList<>(attributes());
 
         // add attributes from all super classes
         for (MClass cls : allParents() ) {
             result.addAll(cls.attributes());
         }
-        
+
         return result;
     }
 
     /**
-     * Returns the specified attribute. Attributes are also looked up
-     * in superclasses if <code>searchInherited</code> is true.
-     *
-     * @return null if attribute does not exist.  
-     */
-    public MAttribute attribute(String name, boolean searchInherited) {
-        MAttribute a = fAttributes.get(name);
-        if (a == null && searchInherited ) {
-            for (MClass cls : allParents() ) {
-                a = cls.attribute(name, false);
-                if (a != null )
-                    break;
-            }
-        }
-        return a;
-    }
-
-    /** 
      * Adds an operation. The operation name must be unique among all
      * operations of this class. Operations in superclasses may be
      * redefined if the signature matches.
@@ -182,10 +138,16 @@ public class MClassImpl extends MClassifierImpl implements MClass {
      * @exception MInvalidModelException the operation is not unique
      *            or is not a valid redefinition.
      */
+    @Override
     public void addOperation(MOperation op) throws MInvalidModelException {
+        String opname = op.name();
+        // check if operation is a constructor
+        if (op.isConstructor()) {
+            throw new MInvalidModelException("Definition of constructor `" + opname +
+                    "' only possible in data types.");
+        }
         // check if there already exists an operation with the same
         // name in this class
-        String opname = op.name();
         if (fOperations.containsKey(opname) )
             throw new MInvalidModelException("Class `" + name() + 
                                              "' already contains an operation named `" + opname + "'.");
@@ -199,7 +161,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
                 throw new MInvalidModelException("Redefinition of operation `" + superOp +
                                                  "' requires same number and type of arguments.");
         }
-    
+
         // check if operation with same signature is already defined
         // in a subclass. A redefinition is only allowed with same
         // number and types of arguments.
@@ -211,21 +173,12 @@ public class MClassImpl extends MClassifierImpl implements MClass {
                                                      "' does not match its redefinition in class `" + 
                                                      cls + "'.");
         }
-    
+
         fOperations.put(op.name(), op);
         fVTableOperations.put(op.name(), op);
-        
-        op.setClass(this);
-    }
 
-	/**
-     * Returns all operations defined for this class. Inherited
-     * operations are not included.
-     */
-    public List<MOperation> operations() {
-        return new ArrayList<MOperation>( fOperations.values() );
+        op.setClassifier(this);
     }
-
 
     /**
      * Returns the set of all operations (including inherited ones)
@@ -234,10 +187,8 @@ public class MClassImpl extends MClassifierImpl implements MClass {
      * @return List(MOperation) 
      */
     public List<MOperation> allOperations() {
-        List<MOperation> result = new ArrayList<MOperation>();
-        
         // start with local operations
-        result.addAll(operations());
+        List<MOperation> result = new ArrayList<>(operations());
 
         // add operations from all superclasses
         for (MClass cls : allParents()) {
@@ -287,7 +238,6 @@ public class MClassImpl extends MClassifierImpl implements MClass {
         return op;
     }
 
-
     /**
      * Returns the association end that can be reached by the
      * OCL expression <code>self.rolename</code>.
@@ -305,8 +255,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
      * @return Map(String, MAssociationEnd) 
      */
     public Map<String, MNavigableElement> navigableEnds() {
-        Map<String, MNavigableElement> res = new TreeMap<String, MNavigableElement>();
-        res.putAll(fNavigableElements);
+        Map<String, MNavigableElement> res = new TreeMap<>(fNavigableElements);
         
         // recursively add association ends in superclasses
         for (MClass superclass : parents() ) {
@@ -329,7 +278,6 @@ public class MClassImpl extends MClassifierImpl implements MClass {
         }
     }
 
-    
     @Override
 	public boolean isTypeOfClassifier() {
 		return false;
@@ -412,8 +360,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
      * @return Set(MAssociation).  
      */
     public Set<MAssociation> allAssociations() {
-        Set<MAssociation> res = new HashSet<MAssociation>();
-        res.addAll(associations());
+        Set<MAssociation> res = new HashSet<>(associations());
         
         for (MClass cls : allParents()) {
             res.addAll(cls.associations());

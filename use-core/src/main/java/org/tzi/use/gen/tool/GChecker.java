@@ -130,7 +130,7 @@ public class GChecker implements IGChecker {
 	                }
 	            } catch (MultiplicityViolationException e) {
 	            	if (collector.doDetailPrinting()) {
-	            		collector.detailPrintWriter().println("An error occured while checking an invariant:");
+	            		collector.detailPrintWriter().println("An error occurred while checking an invariant:");
 	            		collector.detailPrintWriter().println(e.getMessage());
 	            	}
 	            	stat.registerException();

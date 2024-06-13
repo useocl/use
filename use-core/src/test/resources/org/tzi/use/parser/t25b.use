@@ -1,0 +1,7 @@
+model t25b
+
+dataType D
+operations
+  D(a : Integer, b : Integer)
+  op(x0 : Integer, x1 : Integer)
+end

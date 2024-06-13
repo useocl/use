@@ -65,13 +65,7 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
 import org.tzi.use.main.runtime.IRuntime;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.*;
 
 /** 
  * A ModelBrowser provides a tree view of classes, associations, and constraints
@@ -349,8 +343,12 @@ public class ModelBrowser extends JPanel
     }
 
     public void createNodes( final DefaultMutableTreeNode top ) {
-        final Collection<MClass> sortedClasses = 
-            fMbs.sortClasses( new ArrayList<MClass>(fModel.classes()) );
+        final Collection<MClassifier> sortedDataTypes =
+                fMbs.sortClasses( new ArrayList<MClassifier>(fModel.dataTypes()) );
+        addChildNodes( top, "Data types", sortedDataTypes );
+
+        final Collection<MClassifier> sortedClasses =
+            fMbs.sortClasses( new ArrayList<MClassifier>(fModel.classes()) );
         addChildNodes( top, "Classes", sortedClasses );
 
         final ArrayList<MAssociation> sortedAssociations = 

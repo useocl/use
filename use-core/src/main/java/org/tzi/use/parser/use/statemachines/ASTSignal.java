@@ -22,8 +22,8 @@ package org.tzi.use.parser.use.statemachines;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.use.ASTAnnotatable;
 import org.tzi.use.parser.use.ASTAttribute;
+import org.tzi.use.parser.use.ASTClassifier;
 import org.tzi.use.parser.use.ASTInvariantClause;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MGeneralization;
@@ -39,11 +39,7 @@ import java.util.List;
  * @author Lars Hamann
  *
  */
-public class ASTSignal extends ASTAnnotatable {
-	
-	private final Token name;
-	
-	private final boolean isAbstract;
+public class ASTSignal extends ASTClassifier {
 	
 	private final List<ASTAttribute> attributes = new ArrayList<>();
 	
@@ -54,22 +50,7 @@ public class ASTSignal extends ASTAnnotatable {
 	private MSignal signal;
 	
 	public ASTSignal(Token name, boolean isAbstract) {
-		this.name = name;
-		this.isAbstract = isAbstract;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public Token getName() {
-		return name;
-	}
-
-	/**
-	 * @return the isAbstract
-	 */
-	public boolean isAbstract() {
-		return isAbstract;
+        super(name, isAbstract);
 	}
 
 	/**
@@ -89,14 +70,14 @@ public class ASTSignal extends ASTAnnotatable {
 
 	public MSignal genEmptySignal(Context ctx) throws SemanticException {
 		
-		signal = ctx.modelFactory().createSignal(name.getText(), isAbstract);
+		signal = ctx.modelFactory().createSignal(fName.getText(), fIsAbstract);
 
-        signal.setPositionInModel( name.getLine() );
+        signal.setPositionInModel( fName.getLine() );
         
         this.genAnnotations(signal);
         
         // makes sure we have a unique class name
-        ctx.typeTable().add(name, TypeFactory.mkMessageType(signal));
+        ctx.typeTable().add(fName, TypeFactory.mkMessageType(signal));
         
         return signal;
 	}
@@ -122,7 +103,7 @@ public class ASTSignal extends ASTAnnotatable {
                     } catch (SemanticException ex) {
                         ctx.reportError(ex);
                     } catch (MInvalidModelException ex) {
-                        ctx.reportError(name, ex);
+                        ctx.reportError(fName, ex);
                     }
                 }
             }
@@ -136,7 +117,7 @@ public class ASTSignal extends ASTAnnotatable {
             } catch (SemanticException ex) {
                 ctx.reportError(ex);
             } catch (MInvalidModelException ex) {
-                ctx.reportError(name, ex);
+                ctx.reportError(fName, ex);
             }
         }
 		
@@ -149,7 +130,7 @@ public class ASTSignal extends ASTAnnotatable {
             for(MAttribute otherParentAttribute : otherParent.getAllAttributes()) {
             	for(MAttribute parentAttribute : parent.getAllAttributes()) {
                     if (parentAttribute.name().equals(otherParentAttribute.name()) && !parentAttribute.type().equals(otherParentAttribute.type())) {
-                        throw new SemanticException(name, "Inheritance conflict: attribute " + parentAttribute.name() +
+                        throw new SemanticException(fName, "Inheritance conflict: attribute " + parentAttribute.name() +
                                 " occurs with different types in the base classes of " + 
                                 signal.name());
                     }

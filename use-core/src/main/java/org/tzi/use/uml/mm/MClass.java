@@ -31,7 +31,6 @@ import org.tzi.use.uml.sys.MOperationCall;
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
-
 public interface MClass extends MClassifier {
 	
     /**
@@ -47,8 +46,7 @@ public interface MClass extends MClassifier {
      */
     @Override
     public Set<? extends MClass> parents();
-    
-    
+
     /**
      * Returns the set of all parent classes (without this class). 
      * This is the transitive closure of the generalization relation.
@@ -82,7 +80,7 @@ public interface MClass extends MClassifier {
     
     @Override
     public Iterable<? extends MClass> specializationHierachie(boolean includeThis);
-    
+
     /**
      * Adds an attribute. The attribute must have a unique name within
      * the class and must not conflict with any attribute with the
@@ -91,17 +89,9 @@ public interface MClass extends MClassifier {
      *
      * @exception MInvalidModelException the class already contains an
      *            attribute with the same name or a name clash
-     *            occured.
+     *            occurred.
      */
     public void addAttribute( MAttribute attr ) throws MInvalidModelException;
-
-    /**
-     * Returns the set of attributes defined for this class. Inherited
-     * attributes are not included.
-     *
-     * @return List(MAttribute)
-     */
-    public List<MAttribute> attributes();
 
     /**
      * Returns the set of all attributes (including inherited ones)
@@ -122,30 +112,12 @@ public interface MClass extends MClassifier {
     public void addOperation( MOperation op ) throws MInvalidModelException;
 
     /**
-     * Returns all operations defined for this class. Inherited
-     * operations are not included.
-     */
-    public List<MOperation> operations();
-
-
-    /**
      * Returns the set of all operations (including inherited ones)
      * defined for this class.
      *
      * @return List(MOperation)
      */
     public List<MOperation> allOperations();
-
-    /**
-     * Gets an operation by name. Operations are also looked up in
-     * superclasses if <code>searchInherited</code> is true. This
-     * method walks up the generalization hierarchy and selects the
-     * first matching operation. Thus, if an operation is redefined,
-     * this method returns the most specific one.
-     *
-     * @return null if operation does not exist.
-     */
-    public MOperation operation( String name, boolean searchInherited );
 
     /**
      * Returns the set of associations this class directly

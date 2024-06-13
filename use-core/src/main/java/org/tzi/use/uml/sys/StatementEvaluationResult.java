@@ -102,7 +102,7 @@ public class StatementEvaluationResult {
 	/**
 	 * Returns the exception which occurred during the calculation of this
 	 * result, if any.
-	 * @return The <code>Exception</code> that might have occured.  
+	 * @return The <code>Exception</code> that might have occurred.  
 	 */
 	public EvaluationFailedException getException() {
 		return fException;

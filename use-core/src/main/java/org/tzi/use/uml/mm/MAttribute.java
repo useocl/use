@@ -25,13 +25,13 @@ import org.tzi.use.uml.ocl.type.Type;
 import com.google.common.base.Optional;
 
 /**
- * An Attribute is a model element that is part of a Class.
+ * An Attribute is a model element that is part of a classifier.
  *
  * @author  Mark Richters
  * @author  Lars Hamann
  */
 public final class MAttribute extends MModelElementImpl implements UseFileLocatable {
-    private MClass fOwner;
+    private MClassifier fOwner;
     private final Type fType;
 
     private Expression deriveExpression = null;
@@ -48,14 +48,14 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
         fType = type;
     }
 
-    void setOwner(MClass owner) {
+    void setOwner(MClassifier owner) {
         fOwner = owner;
     }
 
     /**
      * Returns the owner class of this attribute.
      */
-    public MClass owner() {
+    public MClassifier owner() {
         return fOwner;
     }
 

@@ -31,11 +31,7 @@ import java.util.Set;
 import org.tzi.use.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 
@@ -164,7 +160,7 @@ public class ShellCoverageCommandProcessor {
 
 			if (displaySum) {
 				total = fSpace
-						+ Integer.toString(data.getCompleteCoveredClasses()
+						+ Integer.toString(data.getCompleteCoveredClassifiers()
 								.size()
 								+ data.getAssociationCoverage().keySet().size()
 								+ data.getAttributeAccessCoverage().keySet()
@@ -173,7 +169,7 @@ public class ShellCoverageCommandProcessor {
 
 				classes = Integer.toString(data.getCoveredClasses().size());
 				classesComplete = Integer.toString(data
-						.getCompleteCoveredClasses().size());
+						.getCompleteCoveredClassifiers().size());
 				associations = Integer.toString(data.getAssociationCoverage()
 						.keySet().size());
 				attributes = Integer.toString(data.getAttributeAccessCoverage()
@@ -185,7 +181,7 @@ public class ShellCoverageCommandProcessor {
 				classes = StringUtil.fmtSeq(data.getCoveredClasses(),
 						fCommaSpace);
 				classesComplete = StringUtil.fmtSeq(
-						data.getCompleteCoveredClasses(), fCommaSpace);
+						data.getCompleteCoveredClassifiers(), fCommaSpace);
 				associations = StringUtil.fmtSeq(data.getAssociationCoverage()
 						.keySet(), fCommaSpace);
 				attributes = StringUtil
@@ -290,54 +286,54 @@ public class ShellCoverageCommandProcessor {
 				+ data.getCoveredClasses().size() + "/"
 				+ model.classes().size());
 
-		List<Map.Entry<MClass, Integer>> entries = new ArrayList<Map.Entry<MClass, Integer>>(
+		List<Map.Entry<MClassifier, Integer>> entries = new ArrayList<Map.Entry<MClassifier, Integer>>(
 				data.getClassCoverage().entrySet());
 
-		Collections.sort(entries, new Comparator<Map.Entry<MClass, Integer>>() {
+		Collections.sort(entries, new Comparator<Map.Entry<MClassifier, Integer>>() {
 			@Override
-			public int compare(Entry<MClass, Integer> o1,
-					Entry<MClass, Integer> o2) {
+			public int compare(Entry<MClassifier, Integer> o1,
+					Entry<MClassifier, Integer> o2) {
 				return o2.getValue().compareTo(o1.getValue());
 			}
 		});
 
-		for (Map.Entry<MClass, Integer> entry : entries) {
+		for (Map.Entry<MClassifier, Integer> entry : entries) {
 			Log.println(fSpaceTwo + entry.getKey().name() + fSpaceColon
 					+ entry.getValue().toString());
 		}
 
-		Set<MClass> notCovered = new HashSet<MClass>(model.classes());
+		Set<MClassifier> notCovered = new HashSet<MClassifier>(model.classifiers());
 		notCovered.removeAll(data.getClassCoverage().keySet());
 
-		for (MClass entry : notCovered) {
+		for (MClassifier entry : notCovered) {
 			Log.println(fSpaceTwo + entry.name() + fSpaceColon + 0);
 		}
 
 		Log.println();
 		Log.println("Classes covered completely by" + fSpace + target
-				+ fSpaceColon + data.getCompleteCoveredClasses().size() + "/"
+				+ fSpaceColon + data.getCompleteCoveredClassifiers().size() + "/"
 				+ model.classes().size());
 
-		entries = new ArrayList<Map.Entry<MClass, Integer>>(data
+		entries = new ArrayList<Map.Entry<MClassifier, Integer>>(data
 				.getCompleteClassCoverage().entrySet());
 
-		Collections.sort(entries, new Comparator<Map.Entry<MClass, Integer>>() {
+		Collections.sort(entries, new Comparator<Map.Entry<MClassifier, Integer>>() {
 			@Override
-			public int compare(Entry<MClass, Integer> o1,
-					Entry<MClass, Integer> o2) {
+			public int compare(Entry<MClassifier, Integer> o1,
+					Entry<MClassifier, Integer> o2) {
 				return o2.getValue().compareTo(o1.getValue());
 			}
 		});
 
-		for (Map.Entry<MClass, Integer> entry : entries) {
+		for (Map.Entry<MClassifier, Integer> entry : entries) {
 			Log.println(fSpaceTwo + entry.getKey().name() + fSpaceColon
 					+ entry.getValue().toString());
 		}
 
-		notCovered = new HashSet<MClass>(model.classes());
+		notCovered = new HashSet<MClassifier>(model.classifiers());
 		notCovered.removeAll(data.getCompleteClassCoverage().keySet());
 
-		for (MClass entry : notCovered) {
+		for (MClassifier entry : notCovered) {
 			Log.println(fSpaceTwo + entry.name() + fSpaceColon + 0);
 		}
 
@@ -383,7 +379,7 @@ public class ShellCoverageCommandProcessor {
 
 			if (displaySum) {
 				total = fSpace
-						+ Integer.toString(data.getCompleteCoveredClasses()
+						+ Integer.toString(data.getCompleteCoveredClassifiers()
 								.size()
 								+ data.getAssociationCoverage().keySet().size()
 								+ data.getAttributeAccessCoverage().keySet()
@@ -392,7 +388,7 @@ public class ShellCoverageCommandProcessor {
 
 				classes = Integer.toString(data.getCoveredClasses().size());
 				classesComplete = Integer.toString(data
-						.getCompleteCoveredClasses().size());
+						.getCompleteCoveredClassifiers().size());
 				associations = Integer.toString(data.getAssociationCoverage()
 						.keySet().size());
 				attributes = Integer.toString(data.getAttributeAccessCoverage()
@@ -404,7 +400,7 @@ public class ShellCoverageCommandProcessor {
 				classes = StringUtil.fmtSeq(data.getCoveredClasses(),
 						fCommaSpace);
 				classesComplete = StringUtil.fmtSeq(
-						data.getCompleteCoveredClasses(), fCommaSpace);
+						data.getCompleteCoveredClassifiers(), fCommaSpace);
 				associations = StringUtil.fmtSeq(data.getAssociationCoverage()
 						.keySet(), fCommaSpace);
 				attributes = StringUtil

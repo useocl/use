@@ -78,7 +78,7 @@ public final class MSystemState {
 	 * The set of objects partitioned by class. Must be kept in sync with
 	 * fObjectStates.
 	 */
-	private Multimap<MClass, MObject> fClassObjects;
+	private Multimap<MClassifier, MObject> fClassObjects;
 
 	/**
 	 * Mapping of object names to objects to get
@@ -274,7 +274,7 @@ public final class MSystemState {
 	/**
 	 * Returns the set of objects of class <code>cls</code> currently existing
 	 * in this state.
-	 * <p>To also get the objects of the sublcasses use {@link #objectsOfClassAndSubClasses(MClass)}.</p>
+	 * <p>To also get the objects of the sublcasses use {@link #objectsOfClassAndSubClasses(MClassifier)}.</p>
 	 * @return Set(MObject)
 	 */
 	public Set<MObject> objectsOfClass(MClass cls) {
@@ -282,16 +282,15 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Returns the set of objects of class <code>cls</code> and all of its
+	 * Returns the set of objects of classifier <code>cf</code> and all of its
 	 * subclasses.
 	 * 
 	 * @return Set(MObject)
 	 */
-	public Set<MObject> objectsOfClassAndSubClasses(MClass cls) {
-		Set<MObject> res = new HashSet<MObject>();
-		Set<MClass> children = CollectionUtil.downCastUnsafe(cls.allChildren());
-		
-		res.addAll(fClassObjects.get(cls));
+	public Set<MObject> objectsOfClassAndSubClasses(MClassifier cf) {
+		Set<MClass> children = CollectionUtil.downCastUnsafe(cf.allChildren());
+
+		Set<MObject> res = new HashSet<MObject>(fClassObjects.get(cf));
 		
 		for (MClass c : children) {
 			res.addAll(fClassObjects.get(c));
@@ -427,7 +426,7 @@ public final class MSystemState {
 					" is not a valid object name");
 		}
 		
-		// checks if cls is a association class, if yes then throw an exception,
+		// checks if cls is an association class, if yes then throw an exception,
 		// because this should not be allowed.
 		if (cls instanceof MAssociationClass) {
 			throw new MSystemException(
@@ -437,7 +436,7 @@ public final class MSystemState {
 		
 		if (cls.isAbstract()) {
 			throw new MSystemException(
-					"Cannot create an object of an abtract class!");
+					"Cannot create an object of an abstract class!");
 		}
 		
 		// create new object and initial state
@@ -648,7 +647,7 @@ public final class MSystemState {
 			// check all association ends the objects' class is
 			// connected to
 			for (MAssociationEnd aend : assoc.associationEnds()) {
-				if (objClass.isSubClassOf(aend.cls())) {
+				if (objClass.isSubClassifierOf(aend.cls())) {
 					Set<MLink> removedLinks = linkSet.removeAll(aend, obj);
 					
 					for (MLink removed : removedLinks) {
@@ -857,7 +856,7 @@ public final class MSystemState {
 					// valid links.
 					continue;
 				} else if (!checkAgainstEnd.cls().equals(childEnd.cls()) && 
-					objects.get(i).cls().isSubClassOf(redefiningAssoc.associationEnds().get(i).cls() ) ) {
+					objects.get(i).cls().isSubClassifierOf(redefiningAssoc.associationEnds().get(i).cls() ) ) {
 					if (err != null) {
 						err.print("The link of the association ");
 						err.print(StringUtil.inQuotes(assoc));
@@ -890,7 +889,7 @@ public final class MSystemState {
 	 * Validates all links of the association if they confirm to the redefinition constraints. 
 	 * @param assoc The association to validate the redefines constraints for.
 	 * @param out PrintWriter to print error messages to. Can be <code>null</code>.
-	 * @param reportAllErrors If <code>true</code>, all errors are written to <code>out</code>. Otherwise the validation stops at the first error.
+	 * @param reportAllErrors If <code>true</code>, all errors are written to <code>out</code>. Otherwise, the validation stops at the first error.
 	 * @return
 	 */
 	private boolean validateRedefines(MAssociation assoc, PrintWriter out, boolean reportAllErrors) {
@@ -1128,7 +1127,7 @@ public final class MSystemState {
 	 * navigating from association end <code>srcEnd</code> to association end
 	 * <code>dst</code>.
 	 * The difference to {@link #getNavigableObjects(MObject, MNavigableElement, MNavigableElement, List)}
-	 * is, that no qualifier values are provided. Instead the reachable objects
+	 * is, that no qualifier values are provided. Instead, the reachable objects
 	 * are partitioned by these values, to allow the validation of
 	 * multiplicities on qualified ends (The meaning of multiplicities change when using qualifiers to
 	 * how many objects are connected given concrete qualifier values).
@@ -1154,7 +1153,7 @@ public final class MSystemState {
 				MAssociationEnd subsettingSrcEnd = subsettingDestEnd.getAllOtherAssociationEnds().get(0);
 				
 				// Add only if src end is a generalization relationship with cls of obj
-				if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+				if (subsettingSrcEnd.cls().isSubClassifierOf(obj.cls()) || obj.cls().isSubClassifierOf(subsettingSrcEnd.cls())) {
 					res.putAll(getLinkedObjects(obj, subsettingSrcEnd, subsettingDestEnd));
 				}
 			}
@@ -1163,7 +1162,7 @@ public final class MSystemState {
 			for (MAssociationEnd redefiningDestEnd : dstEnd.getRedefiningEnds()) {
 				MAssociationEnd redefiningSrcEnd = redefiningDestEnd.getAllOtherAssociationEnds().get(0);
 				// Add only if src end is generalization relationship with cls of obj
-				if (redefiningSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(redefiningSrcEnd.cls())) {				
+				if (redefiningSrcEnd.cls().isSubClassifierOf(obj.cls()) || obj.cls().isSubClassifierOf(redefiningSrcEnd.cls())) {				
 					res.putAll(getLinkedObjects(obj, redefiningSrcEnd, redefiningDestEnd));
 				}
 			}
@@ -1270,7 +1269,7 @@ public final class MSystemState {
 				
 				if (subsets) {
 					// Check only if source end has a generalization relationship with class of obj (inheritance tree can split up)
-					if (subsettingSrcEnd.cls().isSubClassOf(obj.cls()) || obj.cls().isSubClassOf(subsettingSrcEnd.cls())) {
+					if (subsettingSrcEnd.cls().isSubClassifierOf(obj.cls()) || obj.cls().isSubClassifierOf(subsettingSrcEnd.cls())) {
 						tmpResult.addAll(getNavigableObjects(obj, subsettingAssoc, srcIndex, dstIndex, qualifierValues, excludeDerivedLinks, excludeRedefines));
 					}
 				}
@@ -1522,7 +1521,7 @@ public final class MSystemState {
     	return result;
 	}
 
-	public Value evaluateDeriveExpression(final ObjectValue source, final MAttribute attribute) {
+	public Value evaluateDeriveExpression(final InstanceValue source, final MAttribute attribute) {
 		final EvalContext ctx = new SimpleEvalContext(this, this, system().varBindings());
     	
         ctx.pushVarBinding("self", source);
@@ -1536,8 +1535,13 @@ public final class MSystemState {
 		return UndefinedValue.instance;
 	}
 	
-	public Value evaluateDeriveExpression(final MObject source, final MAttribute attribute) {
-		final ObjectValue objVal = new ObjectValue(source.cls(), source);
+	public Value evaluateDeriveExpression(final MInstance source, final MAttribute attribute) {
+		InstanceValue objVal = null;
+		if (source instanceof MObject) {
+			objVal = new ObjectValue(source.cls(), (MObject) source);
+		} else if (source instanceof MDataTypeValue) {
+			objVal = new DataTypeValueValue(source.cls(), source, ((MDataTypeValue) source).value().getValues());
+		}
 		
     	return evaluateDeriveExpression(objVal, attribute);
 	}
@@ -1969,7 +1973,7 @@ public final class MSystemState {
 	}
 
 	/**
-	 * Writes informations about a multiplicity violation to <code>out</code>.
+	 * Writes information about a multiplicity violation to <code>out</code>.
 	 * @param out <code>PrintWriter</code> to write the message to.
 	 * @param assoc The <code>MAssociation</code> the multiplicity is violated.
 	 * @param aend1 The <code>MAssociationEnd</code> at the end <code>obj</code>.
@@ -2058,11 +2062,11 @@ public final class MSystemState {
 	
 	/**
 	 * wrapper for {@link #uniqueObjectNameForClass(String)}
-	 * @param cls the class
+	 * @param cf the classifier
 	 * @return available unique object name for an object of the supplied class
 	 */
-	public String uniqueObjectNameForClass(MClass cls) {
-		return uniqueObjectNameForClass(cls.name());
+	public String uniqueObjectNameForClass(MClassifier cf) {
+		return uniqueObjectNameForClass(cf.name());
 	}
 
 	/**

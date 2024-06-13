@@ -280,6 +280,16 @@ public abstract class TypeImpl implements Type {
 	}
 
 	@Override
+	public boolean isKindOfDataType(VoidHandling h) {
+		return false;
+	}
+
+	@Override
+	public boolean isTypeOfDataType() {
+		return false;
+	}
+
+	@Override
 	public boolean isKindOfAssociation(VoidHandling h) {
 		return false;
 	}

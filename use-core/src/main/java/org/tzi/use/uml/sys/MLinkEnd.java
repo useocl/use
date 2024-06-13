@@ -69,7 +69,7 @@ public final class MLinkEnd {
     {
         // make sure objects match the expected type of the
         // association end
-        if (! obj.cls().isSubClassOf(aend.cls()) )
+        if (! obj.cls().isSubClassifierOf(aend.cls()) )
             throw new MSystemException("Object `" + obj.name() + 
                                        "' is of class `" + obj.cls() +
                                        "', but association end `" + aend + 

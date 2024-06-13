@@ -20,13 +20,8 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.ocl.value.*;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.util.StringUtil;
 
@@ -51,7 +46,7 @@ public final class ExpObjOp extends Expression {
         super(op.resultType());
         fOp = op;
         fArgs = args;
-        if (! args[0].type().isTypeOfClass() )
+        if (!(args[0].type().isTypeOfClass() || args[0].type().isTypeOfDataType()))
             throw new ExpInvalidException(
                                           "Target expression of object operation must have " +
                                           "object type, found `" + args[0].type() + "'.");
@@ -83,18 +78,16 @@ public final class ExpObjOp extends Expression {
     	
     	Value selfVal = fArgs[0].eval(ctx);
     	
-    	if (selfVal.isUndefined() || 
-    			!(selfVal instanceof ObjectValue)) {
-    		
+    	if (selfVal.isUndefined() || !(selfVal instanceof InstanceValue)) {
     		ctx.exit(this, result);
     		return result;
     	}
     	
-    	MObject self = ((ObjectValue)selfVal).value();
+    	MInstance self = ((InstanceValue) selfVal).value();
     	
-    	if ((isPre() && (self.state(ctx.preState()) == null)) ||
-    			(!isPre() && (self.state(ctx.postState()) == null))) {
-    		
+    	if (selfVal instanceof ObjectValue &&
+    			((isPre() && (self.state(ctx.preState()) == null))
+    					|| (!isPre() && (self.state(ctx.postState()) == null)))) {
     		ctx.exit(this, result);
     		return result;
     	}
@@ -104,7 +97,7 @@ public final class ExpObjOp extends Expression {
     	if (!operation.isCallableFromOCL()) {
     		throw new RuntimeException("Cannot call operation " + operation);
     	}
-    	 	
+    	
     	List<String> parameterNames = operation.paramNames();
     	Value[] arguments = new Value[parameterNames.size()];
     	for (int i = 1; i < fArgs.length; ++i) {

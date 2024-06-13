@@ -20,12 +20,10 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.ocl.value.ObjectValue;
+import org.tzi.use.uml.ocl.value.InstanceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.*;
 
 /**
  * Attribute operation on objects.
@@ -42,7 +40,7 @@ public final class ExpAttrOp extends Expression {
         super(a.type());
         fAttr = a;
         fObjExp = objExp;
-        if (! objExp.type().isTypeOfClass() )
+        if (! (objExp.type().isTypeOfClass() || objExp.type().isTypeOfDataType()) )
             throw new IllegalArgumentException(
                                                "Target expression of attribute operation must have " +
                                                "object type, found `" + objExp.type() + "'.");
@@ -64,20 +62,19 @@ public final class ExpAttrOp extends Expression {
         Value res = UndefinedValue.instance;
         Value val = fObjExp.eval(ctx);
         // if we don't have an object we can't deliver an attribute value
-        if (! val.isUndefined() ) {
-            ObjectValue objVal = (ObjectValue) val;
-            MObject obj = objVal.value();
-            
+        if (!val.isUndefined()) {
+            InstanceValue instanceValue = (InstanceValue) val;
+            MInstance instance = instanceValue.value();
+
             if (fAttr.isDerived()) {
             	MSystemState state = isPre() ? ctx.preState() : ctx.postState();
-            	res = state.evaluateDeriveExpression(obj, fAttr);
+                res = state.evaluateDeriveExpression(instance, fAttr);
             } else {
-	            MObjectState objState = isPre() ? 
-	                obj.state(ctx.preState()) : obj.state(ctx.postState());
-	
+                MInstanceState objState = isPre() ? instance.state(ctx.preState()) : instance.state(ctx.postState());
+
 	            // if the object is dead the result is undefined
-	            if (objState != null )
-	                res = objState.attributeValue(fAttr);
+	            if (objState != null)
+                    res = objState.attributeValue(fAttr);
             }
         }
         ctx.exit(this, res);

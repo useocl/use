@@ -56,6 +56,10 @@ public class ASTVariableDeclaration extends AST {
         return fName;
     }
     
+    public ASTType getType() {
+        return fType;
+    }
+
     @Override
     public String toString() {
     	return fName.getText() + ":" + fType.toString(); 

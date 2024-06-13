@@ -16,67 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
 package org.tzi.use.analysis.coverage;
 
 import java.util.Stack;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.ExpAllInstances;
-import org.tzi.use.uml.ocl.expr.ExpAny;
-import org.tzi.use.uml.ocl.expr.ExpAsType;
-import org.tzi.use.uml.ocl.expr.ExpAttrOp;
-import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
-import org.tzi.use.uml.ocl.expr.ExpClosure;
-import org.tzi.use.uml.ocl.expr.ExpCollect;
-import org.tzi.use.uml.ocl.expr.ExpCollectNested;
-import org.tzi.use.uml.ocl.expr.ExpCollectionLiteral;
-import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
-import org.tzi.use.uml.ocl.expr.ExpConstEnum;
-import org.tzi.use.uml.ocl.expr.ExpConstInteger;
-import org.tzi.use.uml.ocl.expr.ExpConstReal;
-import org.tzi.use.uml.ocl.expr.ExpConstString;
-import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
-import org.tzi.use.uml.ocl.expr.ExpEmptyCollection;
-import org.tzi.use.uml.ocl.expr.ExpExists;
-import org.tzi.use.uml.ocl.expr.ExpForAll;
-import org.tzi.use.uml.ocl.expr.ExpIf;
-import org.tzi.use.uml.ocl.expr.ExpIsKindOf;
-import org.tzi.use.uml.ocl.expr.ExpIsTypeOf;
-import org.tzi.use.uml.ocl.expr.ExpIsUnique;
-import org.tzi.use.uml.ocl.expr.ExpIterate;
-import org.tzi.use.uml.ocl.expr.ExpLet;
-import org.tzi.use.uml.ocl.expr.ExpNavigation;
-import org.tzi.use.uml.ocl.expr.ExpNavigationClassifierSource;
-import org.tzi.use.uml.ocl.expr.ExpObjAsSet;
-import org.tzi.use.uml.ocl.expr.ExpObjOp;
-import org.tzi.use.uml.ocl.expr.ExpObjRef;
-import org.tzi.use.uml.ocl.expr.ExpObjectByUseId;
-import org.tzi.use.uml.ocl.expr.ExpOclInState;
-import org.tzi.use.uml.ocl.expr.ExpOne;
-import org.tzi.use.uml.ocl.expr.ExpOrderedSetLiteral;
-import org.tzi.use.uml.ocl.expr.ExpQuery;
-import org.tzi.use.uml.ocl.expr.ExpRange;
-import org.tzi.use.uml.ocl.expr.ExpReject;
-import org.tzi.use.uml.ocl.expr.ExpSelect;
-import org.tzi.use.uml.ocl.expr.ExpSelectByKind;
-import org.tzi.use.uml.ocl.expr.ExpSelectByType;
-import org.tzi.use.uml.ocl.expr.ExpSequenceLiteral;
-import org.tzi.use.uml.ocl.expr.ExpSetLiteral;
-import org.tzi.use.uml.ocl.expr.ExpSortedBy;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.ExpTupleLiteral;
-import org.tzi.use.uml.ocl.expr.ExpTupleSelectOp;
-import org.tzi.use.uml.ocl.expr.ExpUndefined;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.*;
 
 /**
  * Abstract visitor implementation.
@@ -92,21 +38,25 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 		this.expandOperations = expandOperations;
 	}
 
+	protected abstract void addDataTypeCoverage(MDataType cls);
+
 	protected abstract void addClassCoverage(MClass cls);
 
 	protected abstract void addAssociationEndCoverage(MNavigableElement dst);
 
 	protected abstract void addAssociationCoverage(MAssociation assoc);
 
-	protected abstract void addAttributeCoverage(MClass sourceClass,
+	protected abstract void addAttributeCoverage(MClassifier sourceClassifier,
 			MAttribute att);
 
-	protected abstract void addOperationCoverage(MClass sourceClass,
+	protected abstract void addOperationCoverage(MClassifier sourceClassifier,
 			MOperation att);
 
 	@Override
 	public void visitAllInstances(ExpAllInstances exp) {
-		if (exp.getSourceType() instanceof MClass) {
+		if (exp.getSourceType() instanceof MDataType) {
+			addDataTypeCoverage((MDataType) exp.getSourceType());
+		} else if (exp.getSourceType() instanceof MClass) {
 			addClassCoverage((MClass) exp.getSourceType());
 		} else if (exp.getSourceType() instanceof MAssociation) {
 			addAssociationCoverage((MAssociation) exp.getSourceType());
@@ -246,7 +196,24 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 			ex.processWithVisitor(this);
 		}
 
-		addOperationCoverage((MClass) exp.getArguments()[0].type(),
+		addOperationCoverage((MClassifier) exp.getArguments()[0].type(),
+				exp.getOperation());
+
+		if (expandOperations && exp.getOperation().hasExpression()
+				&& !operationStack.contains(exp.getOperation())) {
+			operationStack.push(exp.getOperation());
+			exp.getOperation().expression().processWithVisitor(this);
+			operationStack.pop();
+		}
+	}
+
+	@Override
+	public void visitInstanceConstructor(ExpInstanceConstructor exp) {
+		for (Expression ex : exp.getArguments()) {
+			ex.processWithVisitor(this);
+		}
+
+		addOperationCoverage((MClassifier) exp.getArguments()[0].type(),
 				exp.getOperation());
 
 		if (expandOperations && exp.getOperation().hasExpression()

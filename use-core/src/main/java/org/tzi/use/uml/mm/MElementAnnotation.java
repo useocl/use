@@ -37,7 +37,7 @@ public class MElementAnnotation {
 	/**
 	 * Creates an element annotation with the given annotation values. 
 	 * @param name The name of the annotation
-	 * @param annotationValues Attribute and value pairs with additional informations
+	 * @param annotationValues Attribute and value pairs with additional information
 	 */
 	public MElementAnnotation(String name, Map<String, String> annotationValues) {
 		this.name = name;

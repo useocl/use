@@ -36,6 +36,7 @@ public interface MMVisitor {
     void visitAttribute(MAttribute e);
     void visitClass(MClass e);
     void visitClassInvariant(MClassInvariant e);
+    void visitDataType(MDataType e);
     void visitGeneralization(MGeneralization e);
     void visitModel(MModel e);
     void visitOperation(MOperation e);

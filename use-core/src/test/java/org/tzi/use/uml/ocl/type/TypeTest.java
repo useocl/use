@@ -32,6 +32,7 @@ import org.tzi.use.api.UseModelApi;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MDataType;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
@@ -48,6 +49,7 @@ public class TypeTest extends TestCase {
     private EnumType enum2;
 
     private MClass testClass;
+    private MDataType testDataType;
     private MAssociation testAssociation;
     
     protected void setUp() {
@@ -58,6 +60,7 @@ public class TypeTest extends TestCase {
         UseModelApi api = new UseModelApi("Test");
 		try {
 			testClass = api.createClass("TestClass", false);
+			testDataType = api.createDataType("TestDataType", false);
 			testAssociation = api.createAssociation("TestAssoc", "TestClass", "a", "1", MAggregationKind.NONE,
 					                                             "TestClass", "b", "1", MAggregationKind.NONE);
 		} catch (UseApiException e) {
@@ -293,6 +296,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -316,6 +320,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -334,6 +339,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -355,6 +361,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -378,6 +385,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -396,6 +404,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -417,6 +426,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -440,6 +450,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -458,6 +469,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -479,6 +491,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -502,6 +515,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -520,6 +534,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -541,6 +556,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier()); 	
     	assertFalse(type.isTypeOfInteger());
     	assertTrue (type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -552,6 +568,29 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfVoidType());
     }
     
+    public void testIsTypeOfDataType() {
+    	Type type = testDataType;
+
+    	assertFalse(type.isTypeOfAssociation());
+    	assertFalse(type.isTypeOfBag());
+    	assertFalse(type.isTypeOfBoolean());
+    	assertFalse(type.isTypeOfCollection());
+    	assertFalse(type.isTypeOfEnum());
+    	assertFalse(type.isTypeOfClassifier());
+    	assertFalse(type.isTypeOfInteger());
+    	assertFalse(type.isTypeOfClass());
+    	assertTrue (type.isTypeOfDataType());
+    	assertFalse(type.isTypeOfOclAny());
+    	assertFalse(type.isTypeOfOrderedSet());
+    	assertFalse(type.isTypeOfReal());
+    	assertFalse(type.isTypeOfSequence());
+    	assertFalse(type.isTypeOfSet());
+    	assertFalse(type.isTypeOfString());
+    	assertFalse(type.isTypeOfTupleType());
+    	assertFalse(type.isTypeOfUnlimitedNatural());
+    	assertFalse(type.isTypeOfVoidType());
+    }
+
     public void testIsKindOfClass() {
     	Type type = testClass;
     	
@@ -564,6 +603,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -582,6 +622,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -592,6 +633,48 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfUnlimitedNatural(VoidHandling.INCLUDE_VOID));
     }
     
+    public void testIsKindOfDataType() {
+    	Type type = testDataType;
+
+    	assertFalse(type.isKindOfAssociation(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfBag(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfBoolean(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfCollection(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfEnum(VoidHandling.EXCLUDE_VOID));
+    	assertTrue (type.isKindOfClassifier(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertTrue (type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
+    	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfSequence(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfSet(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfString(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfTupleType(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfUnlimitedNatural(VoidHandling.EXCLUDE_VOID));
+
+    	assertFalse(type.isKindOfAssociation(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfBag(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfBoolean(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfCollection(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfEnum(VoidHandling.INCLUDE_VOID));
+    	assertTrue (type.isKindOfClassifier(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertTrue (type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
+    	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfSequence(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfSet(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfString(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfTupleType(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfUnlimitedNatural(VoidHandling.INCLUDE_VOID));
+    }
+
     public void testIsTypeOfInteger() {
     	Type type = TypeFactory.mkInteger();
     	
@@ -603,6 +686,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertTrue (type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -626,6 +710,7 @@ public class TypeTest extends TestCase {
     	assertTrue (type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -644,6 +729,7 @@ public class TypeTest extends TestCase {
     	assertTrue (type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -665,6 +751,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -688,6 +775,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -706,6 +794,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -727,6 +816,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertTrue (type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -750,6 +840,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -768,6 +859,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -789,6 +881,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertTrue (type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -812,6 +905,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -830,6 +924,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -851,6 +946,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertTrue (type.isTypeOfReal());
@@ -874,6 +970,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -892,6 +989,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -913,6 +1011,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -936,6 +1035,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -954,6 +1054,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -975,6 +1076,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -998,6 +1100,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -1016,6 +1119,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -1037,6 +1141,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -1060,6 +1165,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -1078,6 +1184,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -1099,6 +1206,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -1122,6 +1230,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -1140,6 +1249,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -1161,6 +1271,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -1184,6 +1295,7 @@ public class TypeTest extends TestCase {
     	assertTrue (type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -1202,6 +1314,7 @@ public class TypeTest extends TestCase {
     	assertTrue (type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue (type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.INCLUDE_VOID));
@@ -1223,6 +1336,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isTypeOfClassifier());    	
     	assertFalse(type.isTypeOfInteger());
     	assertFalse(type.isTypeOfClass());
+    	assertFalse(type.isTypeOfDataType());
     	assertFalse(type.isTypeOfOclAny());
     	assertFalse(type.isTypeOfOrderedSet());
     	assertFalse(type.isTypeOfReal());
@@ -1246,6 +1360,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfInteger(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfNumber(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfClass(VoidHandling.EXCLUDE_VOID));
+    	assertFalse(type.isKindOfDataType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOclAny(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfOrderedSet(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfReal(VoidHandling.EXCLUDE_VOID));
@@ -1264,6 +1379,7 @@ public class TypeTest extends TestCase {
     	assertTrue(type.isKindOfInteger(VoidHandling.INCLUDE_VOID));
     	assertTrue(type.isKindOfNumber(VoidHandling.INCLUDE_VOID));
     	assertTrue(type.isKindOfClass(VoidHandling.INCLUDE_VOID));
+    	assertTrue(type.isKindOfDataType(VoidHandling.INCLUDE_VOID));
     	assertTrue(type.isKindOfOclAny(VoidHandling.INCLUDE_VOID));
     	assertTrue(type.isKindOfOrderedSet(VoidHandling.INCLUDE_VOID));
     	assertTrue(type.isKindOfReal(VoidHandling.INCLUDE_VOID));

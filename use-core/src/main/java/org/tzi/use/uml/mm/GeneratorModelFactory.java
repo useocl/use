@@ -33,9 +33,9 @@ public class GeneratorModelFactory extends ModelFactory {
 
 	@Override
 	public MClassInvariant createClassInvariant(String name, List<String> vars,
-			MClass cls, Expression inv, boolean isExistential)
+			MClassifier cf, Expression inv, boolean isExistential)
 			throws ExpInvalidException {
-		return new MClassInvariant(name, vars, cls, inv, isExistential, true, false);
+		return new MClassInvariant(name, vars, cf, inv, isExistential, true, false);
 	}
 	
 }

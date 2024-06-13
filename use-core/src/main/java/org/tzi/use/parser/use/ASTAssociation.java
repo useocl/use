@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author  Mark Richters
  */
-public class ASTAssociation extends ASTAnnotatable {
+public class ASTAssociation extends ASTClassifier {
     private Token fKind;
     
     private Token fName;
@@ -41,6 +41,7 @@ public class ASTAssociation extends ASTAnnotatable {
     private List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociation(Token kind, Token name) {
+        super(name, false);
         fKind = kind;
         fName = name;
         fAssociationEnds = new ArrayList<ASTAssociationEnd>();
@@ -340,7 +341,7 @@ public class ASTAssociation extends ASTAnnotatable {
 				ourEnd    = association.reachableEnds().get(index);
 				parentEnd = parentAssociation.reachableEnds().get(index);
 				
-				if (!ourEnd.cls().isSubClassOf(parentEnd.cls())) {
+				if (!ourEnd.cls().isSubClassifierOf(parentEnd.cls())) {
 					errorBuffer.append("The end type of the association end ");
 					errorBuffer.append(StringUtil.inQuotes(ourEnd.toString()));
 					errorBuffer.append(" has no valid inheritance relation to the association end ");
@@ -376,8 +377,7 @@ public class ASTAssociation extends ASTAnnotatable {
 					MAssociationEnd parentAssocEnd = (MAssociationEnd)parentEnd;
 					
 					if (!parentAssocEnd.multiplicity().includesMultiplicity(ourAssocEnd.multiplicity(), validationContext == ValidationContext.REDEFINES)) {
-						errorBuffer.append("A " + (validationContext == ValidationContext.REDEFINES ? " redefining " : "subsetting ") + 
-								"association end can only reduce the multiplicity of the parent association end.");
+						errorBuffer.append("A ").append(validationContext == ValidationContext.REDEFINES ? " redefining " : "subsetting ").append("association end can only reduce the multiplicity of the parent association end.");
 						return false;
 					}
 				}

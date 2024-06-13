@@ -225,6 +225,34 @@ public class UseModelApi {
 	}
 
 	/**
+	 * Creates a new data type in a USE model. The model is owning this data type. First
+	 * a shell session is opened and the model has a valid name
+	 * <code>modelName</code>. Then the creation of the new data type is possible
+	 * with a valid <code>dataTypeName</code> and a classifier if the data type is
+	 * abstract or not <code>isAbstract</code>.
+	 *
+	 * @param dataTypeName The name of the data type to create. Must be unique in a model.
+	 * @param isAbstract If <code>true</code>, no instances can be created for this data type.
+	 * @return the newly created data type
+	 * @throws UseApiException If no data type name is given or if the data type is invalid.
+	 */
+	public MDataType createDataType(String dataTypeName, boolean isAbstract) throws UseApiException {
+		if (dataTypeName == null || dataTypeName.isEmpty()) {
+			throw new UseApiException("A data type must be named");
+		}
+
+		MDataType dtp = mFactory.createDataType(dataTypeName, isAbstract);
+
+		try {
+			mModel.addDataType(dtp);
+		} catch (MInvalidModelException e) {
+			throw new UseApiException("Add data type failed!", e);
+		}
+
+		return dtp;
+	}
+
+	/**
 	 * Creates a new enumeration with the given <code>literals</code> in the current model.
 	 * @param enumerationName The name of the enumeration (<i>required</i>).
 	 * @param literals The enumeration literals
@@ -351,7 +379,9 @@ public class UseModelApi {
 			resultType = getType(returnType);
 		}
 
-		return createOperationEx(owner, operationName, vars, resultType);
+		boolean isConstructor = operationName.equals(ownerName);
+
+		return createOperationEx(owner, operationName, vars, resultType, isConstructor);
 	}
 
 	/**
@@ -367,9 +397,9 @@ public class UseModelApi {
 	 * @throws UseApiException
 	 */
 	public MOperation createOperationEx(MClass owner, String operationName,
-			VarDeclList parameter, Type returnType) throws UseApiException {
+			VarDeclList parameter, Type returnType, boolean isConstructor) throws UseApiException {
 
-		MOperation op = mFactory.createOperation(operationName, parameter, returnType);
+		MOperation op = mFactory.createOperation(operationName, parameter, returnType, isConstructor);
 
 		try {
 			owner.addOperation(op);
@@ -403,7 +433,7 @@ public class UseModelApi {
 	 * @throws UseApiException
 	 */
 	public MOperation createQueryOperation(String ownerName, String operationName,
-			String[][] parameter, String returnType, String body) throws UseApiException {
+			String[][] parameter, String returnType, String body, boolean isConstructor) throws UseApiException {
 
 		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
 
@@ -457,7 +487,7 @@ public class UseModelApi {
 	 * @throws UseApiException
 	 */
 	public MOperation createImperativeOperation(String ownerName, String operationName,
-			String[][] parameter, String returnType, String body) throws UseApiException {
+			String[][] parameter, String returnType, String body, boolean isConstructor) throws UseApiException {
 
 		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
 

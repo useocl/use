@@ -19,11 +19,7 @@
 
 package org.tzi.use.analysis.coverage;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpObjectByUseId;
 import org.tzi.use.uml.ocl.expr.ExpRange;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -59,6 +55,11 @@ public class BasicExpressionCoverageCalulator extends AbstractCoverageVisitor {
 	}
 
 	@Override
+	protected void addDataTypeCoverage(MDataType dtp) {
+		coverage.getCoveredClasses().add(dtp);
+	}
+
+	@Override
 	protected void addClassCoverage(MClass cls) {
 		coverage.getCoveredClasses().add(cls);
 	}
@@ -74,7 +75,7 @@ public class BasicExpressionCoverageCalulator extends AbstractCoverageVisitor {
 	}
 
 	@Override
-	protected void addAttributeCoverage(MClass sourceClass, MAttribute att) {
+	protected void addAttributeCoverage(MClassifier sourceClassifier, MAttribute att) {
 		coverage.getCoveredAttributes().add(att);		
 	}
 
@@ -85,7 +86,7 @@ public class BasicExpressionCoverageCalulator extends AbstractCoverageVisitor {
 	}
 
 	@Override
-	protected void addOperationCoverage(MClass sourceClass, MOperation op) {
+	protected void addOperationCoverage(MClassifier sourceClassifier, MOperation op) {
 		coverage.getCoveredOperations().add(op);
 	}
 

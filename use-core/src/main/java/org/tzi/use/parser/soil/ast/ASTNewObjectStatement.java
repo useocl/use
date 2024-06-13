@@ -28,13 +28,14 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.mm.MDataType;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
-
 
 /**
  * AST class for a new object statement
@@ -46,7 +47,6 @@ public class ASTNewObjectStatement extends ASTStatement {
 	private ASTSimpleType fObjectType;
 	/** Expression to calculate the new object name from. Can be <code>null</code>. */
 	private ASTExpression fObjectName;
-	
 	
 	/**
 	 * Constructs a new ASTNewObjectStatement node using the provided information.
@@ -80,17 +80,21 @@ public class ASTNewObjectStatement extends ASTStatement {
 	
 		Type t = generateType(fObjectType);
 		
-		if (!t.isTypeOfClass()) {
+		if (!(t.isTypeOfClass() || t.isTypeOfDataType())) {
 			throw new CompilationFailedException(this, "Expected object type, found "
 					+ StringUtil.inQuotes(t) + ".");
 		}
 		
-		MClass objectClass = (MClass)t;
-		
-		if (objectClass instanceof MAssociationClass ) {
+		MClassifier objectClassifier = (MClassifier) t;
+
+		if (objectClassifier instanceof MDataType) {
+			throw new CompilationFailedException(this,
+					"Cannot create object from data type " + StringUtil.inQuotes(objectClassifier.name()) +
+					" Objects can be created from classes only.");
+		} else if (objectClassifier instanceof MAssociationClass) {
 			throw new CompilationFailedException(this,
 					"Cannot instantiate association class "
-							+ inQuotes(objectClass.name())
+							+ inQuotes(objectClassifier.name())
 							+ " without participants.");
 		}
 		
@@ -98,15 +102,13 @@ public class ASTNewObjectStatement extends ASTStatement {
 			(fObjectName == null ? 
 					null : generateStringExpression(fObjectName));
 		
-		return new MNewObjectStatement(objectClass, objectName);
+		return new MNewObjectStatement((MClass) objectClassifier, objectName);
 	}
-
 
 	@Override
 	protected void printTree(StringBuilder prelude, PrintWriter target) {
 		target.println(prelude + "[OBJECT CREATION]");
 	}
-	
 	
 	@Override
 	public String toString() {

@@ -315,7 +315,7 @@ public class GGenerator {
         
         // PrePostCondition check output
         if (collector.getPrePostViolation()) {
-        	pw.println("PrePostCondition violation occured");
+        	pw.println("PrePostCondition violation occurred");
         }
         pw.flush();
     }

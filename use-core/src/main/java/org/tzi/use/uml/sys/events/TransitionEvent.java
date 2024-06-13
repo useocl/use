@@ -21,7 +21,7 @@ package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MInstance;
 import org.tzi.use.uml.sys.events.tags.EventContext;
 import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
 
@@ -33,7 +33,7 @@ import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
  */
 public class TransitionEvent extends Event implements SystemStateChangedEvent {
 
-	private final MObject source;
+	private final MInstance source;
 	
 	private final MTransition transition;
 	
@@ -43,7 +43,7 @@ public class TransitionEvent extends Event implements SystemStateChangedEvent {
 	 * Constructs a new event
 	 * @param context
 	 */
-	public TransitionEvent(EventContext context, MObject source, MStateMachine stateMachine, MTransition transition) {
+	public TransitionEvent(EventContext context, MInstance source, MStateMachine stateMachine, MTransition transition) {
 		super(context);
 		this.source = source;
 		this.transition = transition;
@@ -54,7 +54,7 @@ public class TransitionEvent extends Event implements SystemStateChangedEvent {
 	 * The object that changed the state
 	 * @return the source
 	 */
-	public MObject getSource() {
+	public MInstance getSource() {
 		return source;
 	}
 

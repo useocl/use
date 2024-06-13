@@ -19,12 +19,7 @@
 
 package org.tzi.use.analysis.coverage;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
 
 /**
@@ -47,7 +42,20 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	public CoverageCalculationVisitor(boolean expandOperations) {
 		super(expandOperations);
 	}
-	
+
+	/**
+	 * @param dtp
+	 */
+	@Override
+	protected void addDataTypeCoverage(MDataType dtp) {
+		if (!coverageData.getClassCoverage().containsKey(dtp)) {
+			coverageData.getClassCoverage().put(dtp, 1);
+		} else {
+			coverageData.getClassCoverage().put(dtp, coverageData.getClassCoverage().get(dtp) + 1);
+		}
+		addCompleteClassCoverage(dtp);
+	}
+
 	/**
 	 * @param cls
 	 */
@@ -64,7 +72,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	/**
 	 * @param cls
 	 */
-	protected void addCompleteClassCoverage(MClass cls) {
+	protected void addCompleteClassCoverage(MClassifier cls) {
 		if (!coverageData.getCompleteClassCoverage().containsKey(cls)) {
 			coverageData.getCompleteClassCoverage().put(cls, 1);
 		} else {
@@ -77,7 +85,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	 * @param att
 	 */
 	@Override
-	protected void addAttributeCoverage(MClass sourceClass, MAttribute att) {
+	protected void addAttributeCoverage(MClassifier sourceClass, MAttribute att) {
 		AttributeAccessInfo info = new AttributeAccessInfo(sourceClass, att);
 		if (!coverageData.getAttributeAccessCoverage().containsKey(info)) {
 			coverageData.getAttributeAccessCoverage().put(info, 1);
@@ -97,7 +105,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	 * @param op
 	 */
 	@Override
-	protected void addOperationCoverage(MClass sourceClass, MOperation op) {
+	protected void addOperationCoverage(MClassifier sourceClass, MOperation op) {
 		if (!coverageData.getOperationCoverage().containsKey(op)) {
 			coverageData.getOperationCoverage().put(op, 1);
 		} else {

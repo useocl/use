@@ -29,8 +29,8 @@ import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
@@ -72,12 +72,12 @@ public class ASTConstraintDefinition extends AST {
                 throw new SemanticException(fType.getStartToken(), 
                                             "Expected an object type, found `" +
                                             t + "'");
-            MClass cls = (MClass)t;
-            ctx.setCurrentClass(cls);
-            
+            MClassifier cf = (MClassifier) t;
+            ctx.setCurrentClassifier(cf);
+
             MClassInvariant inv;
 			for (ASTInvariantClause astInv : fInvariantClauses) {
-				inv = astInv.gen(ctx, fVarNames, cls, addToModel);
+				inv = astInv.gen(ctx, fVarNames, cf, addToModel);
 				if(inv != null){
 					invs.add(inv);
 				}
@@ -86,7 +86,7 @@ public class ASTConstraintDefinition extends AST {
         } catch (SemanticException ex) {
             ctx.reportError(ex);
         } finally {
-            ctx.setCurrentClass(null);
+            ctx.setCurrentClassifier(null);
         }
         return invs;
     }

@@ -58,10 +58,10 @@ public final class MPrePostCondition extends MModelElementImpl implements UseFil
     }
 
     /** 
-     * Returns the class of the operation for which the constraint is
+     * Returns the classifier of the operation for which the constraint is
      * specified.  
      */
-    public MClass cls() {
+    public MClassifier cls() {
         return fOp.cls();
     }
 

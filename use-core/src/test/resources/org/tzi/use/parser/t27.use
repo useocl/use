@@ -1,0 +1,11 @@
+model t27
+
+dataType A
+operations
+  A(a0 : Integer)
+end
+
+dataType B < A
+operations
+  B(b0 : Integer)
+end

@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * If an integration test fails, two additional files are created:
  * <ol>
  *     <li><code>{testcasename}.expected</code> - The expected output calculated from the <code>{testcase}.in</code>-file</li>
- *     <li><code>{testcasename}.actual</code> - The ouptut captured while running the test.</li>
+ *     <li><code>{testcasename}.actual</code> - The output captured while running the test.</li>
  * </ol>
  * These files can be used to easily diff expected and current output.
  */
@@ -100,7 +100,7 @@ public class ShellIT {
     /**
      * This function controls the overall process for test for a single testfile.
      *
-     * The process is as follow:
+     * The process is as follows:
      * <ol>
      *     <li>a command file and the expected output are created by examining the input file (via <code>createCommandFile</code>.</li>
      *     <li>USE is executed using the <code>useFile</code> and the created command file (<code>runUSE</code>).</li>

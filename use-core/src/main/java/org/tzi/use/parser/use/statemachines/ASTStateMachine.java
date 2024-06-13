@@ -68,7 +68,7 @@ public class ASTStateMachine extends AST {
 	 * @param ctx
 	 */
 	public MStateMachine gen(Context ctx) throws SemanticException {
-		MStateMachine sm = new MStateMachine(name.getText(), new SrcPos(name), ctx.currentClass());
+		MStateMachine sm = new MStateMachine(name.getText(), new SrcPos(name), ctx.currentClassifier());
 				
 		return sm;
 	}

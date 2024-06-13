@@ -37,7 +37,7 @@ public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 	public void feedback( GConfiguration conf,
             Value value,
             IGCollector collector ) throws GEvaluationException {
-		// if a pre- or postcondition violation occured before skip this command and continue with ASSL evaluation
+		// if a pre- or postcondition violation occurred before skip this command and continue with ASSL evaluation
 		if (collector.getPrePostViolation()) 
 			fCaller.feedback(conf, value, collector);
 		else {

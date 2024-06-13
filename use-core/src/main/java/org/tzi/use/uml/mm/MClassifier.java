@@ -20,7 +20,9 @@
 package org.tzi.use.uml.mm;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.sys.MOperationCall;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,12 +104,12 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      * @return Set(MClassifier) 
      */
     Set<? extends MClassifier> children();
-    
+
     /**
      * Returns true if this classifier is a child of
      * <code>otherClassifier</code> or equal to it.
      */
-    boolean isSubClassOf( MClassifier otherClassifier );
+    boolean isSubClassifierOf(MClassifier otherClassifier);
 
     /**
      * Returns true if this classifier is a child of
@@ -116,8 +118,8 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      * it is not checked if <code>otherClassifier</code> equals this classifier, i.e.,
      * it is checked, if it is a "real" sub classifier.
      */
-    boolean isSubClassOf( MClassifier otherClass, boolean excludeThis );
-    
+    boolean isSubClassifierOf(MClassifier otherClass, boolean excludeThis);
+
     /**
      * Returns the specified attribute. Attributes are also looked up
      * in parents if <code>searchInherited</code> is <code>true</code>.
@@ -125,7 +127,40 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      * @return <code>null</code> if attribute does not exist.
      */
     MAttribute attribute( String name, boolean searchInherited );
-    
+
+    /**
+     * Returns the set of attributes defined for this class/data type. Inherited
+     * attributes are not included.
+     *
+     * @return List(MAttribute)
+     */
+    List<MAttribute> attributes();
+
+    /**
+     * Returns the set of all attributes (including inherited ones)
+     * defined for this class.
+     *
+     * @return List(MAttribute)
+     */
+    List<MAttribute> allAttributes();
+
+    /**
+     * Gets an operation by name. Operations are also looked up in
+     * super classifiers if <code>searchInherited</code> is true. This
+     * method walks up the generalization hierarchy and selects the
+     * first matching operation. Thus, if an operation is redefined,
+     * this method returns the most specific one.
+     *
+     * @return null if operation does not exist.
+     */
+    MOperation operation(String name, boolean searchInherited);
+
+    /**
+     * Returns all operations defined for this class/data type. Inherited
+     * operations are not included.
+     */
+    List<MOperation> operations();
+
     /**
      * Returns the association end that can be reached by the
      * OCL expression <code>self.rolename</code>.
@@ -141,4 +176,6 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      * @return Map(String, MAssociationEnd)
      */
     Map<String, ? extends MNavigableElement> navigableEnds();
+
+    boolean hasStateMachineWhichHandles(MOperationCall operationCall);
 }
