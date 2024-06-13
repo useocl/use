@@ -2,7 +2,11 @@ USE NEWS -- history of user-visible changes.
 Please see the file `README' for a description of how to report bugs.
 
 ** Changes between version 7.1.0 and X.X.X
-* USE now supports data types
+* Added support for UML (structured) data types
+* Added standard operations power (pow) and square root (sqrt) for numbers
+* Added 'Reload specification' menu entry with corresponding shortcut (Ctrl+R) to file menu
+* Added menu entry 'Clear recent specification' to 'Open recent specifications' submenu to file menu
+* The open file window now always starts at the directory of the most recent specification if there is at least one entry
 
 ** Changes between version 5.2.0 and 6.0.0
 * New OCL complexity plugin
