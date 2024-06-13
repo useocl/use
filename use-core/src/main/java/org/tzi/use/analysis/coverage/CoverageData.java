@@ -66,7 +66,7 @@ public class CoverageData {
 	}
 
 	/**
-	 * @return the completeClassifierCoverage
+	 * @return the completeClassCoverage
 	 */
 	public Map<MClassifier, Integer> getCompleteClassCoverage() {
 		return completeClassCoverage;
