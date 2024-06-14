@@ -83,6 +83,7 @@ public final class ExpInstanceConstructor extends Expression {
 
         MOperationCall operationCall = new MOperationCall(this, self, constructor, arguments);
         operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());
+        operationCall.setResultValue(result);
 
         MSystem system = ctx.postState().system();
         try {
@@ -93,7 +94,7 @@ public final class ExpInstanceConstructor extends Expression {
         } finally {
             try {
                 if (operationCall.enteredSuccessfully()) {
-                    system.exitQueryOperation(ctx, result);
+                    system.exitQueryOperation(ctx);
                 }
             } catch (MSystemException ignored) {
             }
