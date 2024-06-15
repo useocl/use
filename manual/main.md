@@ -369,7 +369,7 @@ stateless operation.
       area() : Real = 3.14 * radius * radius
     end
 
-Following examample shows, how to query data types
+Following example shows, how to query data types
 from the above model 'Shapes' in the shell:
 
     use> ?Point(1, 1)
