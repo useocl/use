@@ -67,6 +67,7 @@ class NoSystemException extends Exception {
 	/**
 	 * To get rid of the warning...
 	 */
+	@Serial
 	private static final long serialVersionUID = 1L;
 }
 
@@ -90,7 +91,7 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * The session contains the system most commands act on.
 	 */
-	private Session fSession;
+	private final Session fSession;
 
 	/**
 	 * Result of last check command.
@@ -113,13 +114,9 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private static Shell fShell = null;
 
-	private IPluginShellExtensionPoint shellExtensionPoint;
+    private final List<PluginShellCmdContainer> pluginCommands;
 
-	private final List<PluginShellCmdContainer> pluginCommands;
-
-	private IRuntime fPluginRuntime;
-
-	/**
+    /**
 	 * Constructs a new shell.
 	 */
 	private Shell(Session session, IRuntime pluginRuntime) {
@@ -134,14 +131,12 @@ public final class Shell implements Runnable, PPCHandler {
 			// out of luck...
 		}
 
-		this.fPluginRuntime = pluginRuntime;
-
-		// integrate plugin commands
+        // integrate plugin commands
 		if (Options.doPLUGIN) {
-			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
-					.getExtensionPoint("shell");
+            IPluginShellExtensionPoint shellExtensionPoint = (IPluginShellExtensionPoint) pluginRuntime
+                    .getExtensionPoint("shell");
 
-			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(this.fSession, this);
+			this.pluginCommands = shellExtensionPoint.createPluginCmds(this.fSession, this);
 		}
 		else {
 			pluginCommands = Collections.emptyList();
@@ -342,11 +337,11 @@ public final class Shell implements Runnable, PPCHandler {
 		if (delay > 0) {
 			try {
 				Thread.sleep(delay);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException ignored) {}
 		}
 
 		line = (line == null ? "" : line.trim());
-		if (line.length() == 0 || line.startsWith("//") || line.startsWith("--")) {
+		if (line.isEmpty() || line.startsWith("//") || line.startsWith("--")) {
 			return;
 		}
 
@@ -358,7 +353,7 @@ public final class Shell implements Runnable, PPCHandler {
 				if (c == 0x1b) {
 					fStepMode = false;
 				}
-			} catch (IOException ex) { }
+			} catch (IOException ignored) { }
 		}
 
 		if (line.startsWith("help") || line.endsWith("--help")) {
@@ -567,21 +562,19 @@ public final class Shell implements Runnable, PPCHandler {
 		tokenizer.nextToken();
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
-			if (token.equals("-v")) {
-				verbose = true;
-			} else if (token.equals("-d")) {
-				details = true;
-			} else if (token.equals("-a")) {
-				all = true;
-			} else {
-				MClassInvariant inv = system().model().getClassInvariant(token);
-				if (inv == null){
-					Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
-				}
-				else {
-					invNames.add(token);
-				}
-			}
+            switch (token) {
+                case "-v" -> verbose = true;
+                case "-d" -> details = true;
+                case "-a" -> all = true;
+                default -> {
+                    MClassInvariant inv = system().model().getClassInvariant(token);
+                    if (inv == null) {
+                        Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
+                    } else {
+                        invNames.add(token);
+                    }
+                }
+            }
 		}
 
 		PrintWriter out = new PrintWriter(USEWriter.getInstance().getOut());
@@ -752,8 +745,8 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdHelp(String line) {
 		String cmd = "";
 
-		if (line.indexOf("--help") < 0) {
-			cmd = line.substring(4, line.length());
+		if (!line.contains("--help")) {
+			cmd = line.substring(4);
 		} else {
 			cmd = line.substring(0, line.indexOf("--help"));
 		}
@@ -961,8 +954,8 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Saves pathname of the currently opened file and returns the absolute path.
 	 * All other files can be opened relative to it.
 	 */
-	private Stack<File> openFiles = new Stack<File>();
-	private Stack<String> relativeNames = new Stack<String>();
+	private final Stack<File> openFiles = new Stack<File>();
+	private final Stack<String> relativeNames = new Stack<String>();
 
 	public String getFilenameToOpen(String filename) {
 		return getFilenameToOpen(filename, true);
@@ -1500,7 +1493,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
 		String filename = str.trim();
-		if (filename.length() == 0) {
+		if (filename.isEmpty()) {
 			Log.error("syntax is `load FILE'");
 		} else {
 			filename = getFilenameToOpen(filename);
@@ -1640,7 +1633,7 @@ public final class Shell implements Runnable, PPCHandler {
 			system.generator().printInvariantFlags(invs);
 		}
 		else {
-			system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
+			system.setClassInvariantFlags(invs, (disabled == null)? null : !disabled, negated);
 		}
 	}
 
