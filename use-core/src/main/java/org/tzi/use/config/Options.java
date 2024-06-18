@@ -22,6 +22,7 @@ package org.tzi.use.config;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TypedProperties;
+import org.tzi.use.util.USEWriter;
 
 import java.awt.*;
 import java.io.*;
@@ -290,6 +291,46 @@ public class Options {
      */
 	public static boolean testMode;
 
+	public static boolean integrationTestMode;
+
+	/**
+	 * Resets all options to the default setting.
+	 * Used to "restart" the application during integration tests.
+	 * The usage of the singleton pattern would be a better choice,
+	 * however it would require a huge refactoring. Therefore,
+	 * this reset function was introduced.
+	 */
+	public static void resetOptions() {
+		USE_HISTORY_PATH = ".use_history";
+		LINE_SEPARATOR = System.getProperty("line.separator");
+		FILE_SEPARATOR = System.getProperty("file.separator");
+		MONITOR_ASPECT_TEMPLATE = null;
+		homeDir = null;
+		compileOnly = false;
+		compileAndPrint = false;
+		doGUI = true;
+		suppressWarningsAboutMissingReadlineLibrary = false;
+		quiet = false;
+		debug = false;
+		quietAndVerboseConstraintCheck = false;
+		disableCollectShorthand = false;
+		disableExtensions = false;
+		explicitVariableDeclarations = true;
+		checkTransitions = true;
+		checkStateInvariants = false;
+		WarningType checkWarningsOclAnyInCollections = WarningType.WARN;
+		WarningType checkWarningsUnrelatedTypes = WarningType.WARN;
+		doPLUGIN = true;
+		pluginDir = null;
+		fDiagramDimension = new Dimension( 600, 600 );
+		TypedProperties props = null;
+		specFilename = null;
+		cmdFilename = null;
+		lastDirectory = Paths.get(System.getProperty("user.dir"));
+		testMode = false;
+		integrationTestMode = false;
+	}
+
     /**
      * <p>Parses command line arguments and sets options accordingly.</p>
      * <p>Calls System.exit(1) in case of errors.</p>
@@ -329,6 +370,9 @@ public class Options {
                     Options.doGUI = false;
                 } else if (arg.equals("t")) { 
                 	Options.testMode = true;
+				} else if (arg.equals("it")) {
+					Options.testMode = true;
+					Options.integrationTestMode = true;
                 } else if (arg.equals("v")) {
                     Log.setVerbose(true);
                 } else if (arg.equals("vt")) {
@@ -376,7 +420,9 @@ public class Options {
                 System.exit(1);
             }
         }
-        
+
+		USEWriter.getInstance().setQuietMode(Options.quiet);
+
         if (homeDir == null) {
         	// Try to get the home from Java
         	URL path = Options.class.getProtectionDomain().getCodeSource().getLocation();

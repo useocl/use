@@ -67,6 +67,7 @@ class NoSystemException extends Exception {
 	/**
 	 * To get rid of the warning...
 	 */
+	@Serial
 	private static final long serialVersionUID = 1L;
 }
 
@@ -90,7 +91,7 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * The session contains the system most commands act on.
 	 */
-	private Session fSession;
+	private final Session fSession;
 
 	/**
 	 * Result of last check command.
@@ -113,13 +114,9 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private static Shell fShell = null;
 
-	private IPluginShellExtensionPoint shellExtensionPoint;
+    private final List<PluginShellCmdContainer> pluginCommands;
 
-	private final List<PluginShellCmdContainer> pluginCommands;
-
-	private IRuntime fPluginRuntime;
-
-	/**
+    /**
 	 * Constructs a new shell.
 	 */
 	private Shell(Session session, IRuntime pluginRuntime) {
@@ -134,14 +131,12 @@ public final class Shell implements Runnable, PPCHandler {
 			// out of luck...
 		}
 
-		this.fPluginRuntime = pluginRuntime;
-
-		// integrate plugin commands
+        // integrate plugin commands
 		if (Options.doPLUGIN) {
-			this.shellExtensionPoint = (IPluginShellExtensionPoint) this.fPluginRuntime
-					.getExtensionPoint("shell");
+            IPluginShellExtensionPoint shellExtensionPoint = (IPluginShellExtensionPoint) pluginRuntime
+                    .getExtensionPoint("shell");
 
-			this.pluginCommands = this.shellExtensionPoint.createPluginCmds(this.fSession, this);
+			this.pluginCommands = shellExtensionPoint.createPluginCmds(this.fSession, this);
 		}
 		else {
 			pluginCommands = Collections.emptyList();
@@ -342,11 +337,11 @@ public final class Shell implements Runnable, PPCHandler {
 		if (delay > 0) {
 			try {
 				Thread.sleep(delay);
-			} catch (InterruptedException e) {}
+			} catch (InterruptedException ignored) {}
 		}
 
 		line = (line == null ? "" : line.trim());
-		if (line.length() == 0 || line.startsWith("//") || line.startsWith("--")) {
+		if (line.isEmpty() || line.startsWith("//") || line.startsWith("--")) {
 			return;
 		}
 
@@ -358,7 +353,7 @@ public final class Shell implements Runnable, PPCHandler {
 				if (c == 0x1b) {
 					fStepMode = false;
 				}
-			} catch (IOException ex) { }
+			} catch (IOException ignored) { }
 		}
 
 		if (line.startsWith("help") || line.endsWith("--help")) {
@@ -567,43 +562,36 @@ public final class Shell implements Runnable, PPCHandler {
 		tokenizer.nextToken();
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
-			if (token.equals("-v")) {
-				verbose = true;
-			} else if (token.equals("-d")) {
-				details = true;
-			} else if (token.equals("-a")) {
-				all = true;
-			} else {
-				MClassInvariant inv = system().model().getClassInvariant(token);
-				if (inv == null){
-					Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
-				}
-				else {
-					invNames.add(token);
-				}
-			}
+            switch (token) {
+                case "-v" -> verbose = true;
+                case "-d" -> details = true;
+                case "-a" -> all = true;
+                default -> {
+                    MClassInvariant inv = system().model().getClassInvariant(token);
+                    if (inv == null) {
+                        Log.error("Model has no invariant named " + StringUtil.inQuotes(token) + ".");
+                    } else {
+                        invNames.add(token);
+                    }
+                }
+            }
 		}
 
-		PrintWriter out;
-		if (Options.quiet && !Options.quietAndVerboseConstraintCheck) {
-			out = new PrintWriter(new NullWriter());
-		} else {
-			out = new PrintWriter(Log.out());
-		}
-		fLastCheckResult = system().state().check(out, verbose, details, all,
-				invNames);
+		PrintWriter out = new PrintWriter(USEWriter.getInstance().getOut());
+
+		fLastCheckResult = system().state().check(out, verbose, details, all, invNames);
 	}
 
 
 	/**
-	 * Executes a SOIL statement (started by <code>!</code> or <code>!!</code>)
-	 * @param line The command line without <code>!</code>
-	 * @param verbose If <code>true</code> detailed messages are written to the shell.
-	 * @throws NoSystemException
+	 * Executes a SOIL statement (started by {@code !} or {@code !!})
+	 * @param line The command line without {@code !}
+	 * @param verbose If {@code true} detailed messages are written to the shell.
+	 * @throws NoSystemException If called without a loaded {@code MSystem}.
 	 */
 	private void cmdExec(String line, boolean verbose) throws NoSystemException {
 
-		if (line == null || line.length() == 0) {
+		if (line == null || line.isEmpty()) {
 			Log.error("ERROR: Statement expected.");
 			return;
 		}
@@ -676,7 +664,9 @@ public final class Shell implements Runnable, PPCHandler {
 				exitCode = 1;
 			}
 
-			System.exit(exitCode);
+			if (!Options.integrationTestMode) {
+				System.exit(exitCode);
+			}
 		}
 	}
 
@@ -755,8 +745,8 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdHelp(String line) {
 		String cmd = "";
 
-		if (line.indexOf("--help") < 0) {
-			cmd = line.substring(4, line.length());
+		if (!line.contains("--help")) {
+			cmd = line.substring(4);
 		} else {
 			cmd = line.substring(0, line.indexOf("--help"));
 		}
@@ -964,8 +954,8 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Saves pathname of the currently opened file and returns the absolute path.
 	 * All other files can be opened relative to it.
 	 */
-	private Stack<File> openFiles = new Stack<File>();
-	private Stack<String> relativeNames = new Stack<String>();
+	private final Stack<File> openFiles = new Stack<File>();
+	private final Stack<String> relativeNames = new Stack<String>();
 
 	public String getFilenameToOpen(String filename) {
 		return getFilenameToOpen(filename, true);
@@ -973,20 +963,25 @@ public final class Shell implements Runnable, PPCHandler {
 
 	/**
 	 * This operation handles filenames provided to the USE-Shell.
-	 * Surrounding characters like <code>'</code> or <code>"</code>
+	 * Surrounding characters like {@code '} or {@code "}
 	 * (even if mixed) are removed.
-	 * <p>If an absolute path is given as <code>filename</code>,
+	 *
+	 * <p>If an absolute path is given as {@code filename},
 	 * this file name (with removed quotes) is returned.<p>
-	 * <p>If a relative path is provided as <code>filename</code>,
+	 *
+	 * <p>If a relative path is provided as {@code filename},
 	 * the currently opened file is used as the starting point to calculate
 	 * the absolute path.</p>
+	 *
 	 * <p><b>Warning:</b> No check is made if the calculated file exists.
 	 * This has to be done by the caller.</p>
-	 * @param filename A absolute or relative filename to open.
-	 * @param useAsCurrentFile If <code>true</code>, the opened file is stored as currently opened
+	 *
+	 * @param filename An absolute or relative filename to open.
+	 * @param useAsCurrentFile If {@code true}, the opened file is stored as currently opened
 	 * and is used as the starting point to calculate subsequent relative file names.
 	 * After the file is no longer the current file, i.e., it was closed or the file was not opened, {@link #setFileClosed()} must be called.
-	 * @return
+	 *
+	 * @return The path to the file top open as a {@code String}
 	 */
 	public String getFilenameToOpen(String filename, boolean useAsCurrentFile) {
 		// matches '<name>' or "<name>", not "<name>'
@@ -1071,15 +1066,15 @@ public final class Shell implements Runnable, PPCHandler {
 
 	/**
 	 * Checks which file type is to be opened and calls the specific open
-	 * command (<code>cmdOpenUseFile</code>,<code>cmdRead</code>,
-	 * <code>cmdLoad</code>). If the parameter {@code forcequiet} is
+	 * command ({@code cmdOpenUseFile}, {@code cmdRead},
+	 * {@code cmdLoad}). If the parameter {@code forcequiet} is
 	 * {@code true}, the output will be suppressed.
 	 *
 	 * @param line
 	 *            Path and filename to be opened.
 	 */
 	private void cmdOpen(String line, boolean forcequiet) {
-		boolean doEcho = forcequiet?false:true;
+		boolean doEcho = !forcequiet;
 		StringTokenizer st = new StringTokenizer(line);
 
 		// if there is no filename and option
@@ -1117,7 +1112,7 @@ public final class Shell implements Runnable, PPCHandler {
 			String firstWord = getFirstWordOfFile(filename);
 			setFileClosed();
 
-			// if getFirstWordOfFile returned with error code, than
+			// if getFirstWordOfFile returned with error code, then
 			// end this method.
 			if (firstWord != null && firstWord.equals("ERROR: -1")) {
 				return;
@@ -1140,7 +1135,7 @@ public final class Shell implements Runnable, PPCHandler {
 			if (this.openFiles.size() <= 1) {
 				String opened;
 
-				if (this.openFiles.size() == 0) {
+				if (this.openFiles.isEmpty()) {
 					opened = filename;
 				} else {
 					opened = this.openFiles.peek().toString();
@@ -1158,8 +1153,8 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * <ul>
 	 *   <li>Executes the last open command if no arguments are specified.</li>
-	 *   <li>If <code>-l</code> is specified prints a list of the last opened files.</li>
-	 *   <li>If a number (<code>n</code>) is specified as an argument the <code>n</code>-th recent file is opened.</li>
+	 *   <li>If {@code -l} is specified prints a list of the last opened files.</li>
+	 *   <li>If a number ({@code n}) is specified as an argument the {@code n}-th recent file is opened.</li>
 	 * </ul>
 	 * @param line The command line without the command reopen.
 	 */
@@ -1294,7 +1289,7 @@ public final class Shell implements Runnable, PPCHandler {
 			throws NoSystemException {
 		Log.trace(this, line);
 
-		if (line.length() == 0) {
+		if (line.isEmpty()) {
 			Log.error("Expression expected after `?'. Try `help'.");
 			return;
 		}
@@ -1345,7 +1340,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdDeriveStaticType(String line) throws NoSystemException {
 		Log.trace(this, line);
-		if (line.length() == 0) {
+		if (line.isEmpty()) {
 			Log.error("Expression expected after `?'. Try `help'.");
 			return;
 		}
@@ -1381,7 +1376,6 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * Reads a file with commands and processes them.
 	 */
-	@SuppressWarnings("resource")
 	public void cmdRead(String filename, boolean doEcho) {
 		filename = getFilenameToOpen(filename);
 		
@@ -1499,7 +1493,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
 		String filename = str.trim();
-		if (filename.length() == 0) {
+		if (filename.isEmpty()) {
 			Log.error("syntax is `load FILE'");
 		} else {
 			filename = getFilenameToOpen(filename);
@@ -1547,7 +1541,7 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdGenResult(String str, MSystem system) {
 		str = str.trim();
 		try {
-			if (str.length() == 0) {
+			if (str.isEmpty()) {
 				PrintWriter pw = new PrintWriter(System.out);
 				system.generator().printResult(pw);
 				pw.flush();
@@ -1639,7 +1633,7 @@ public final class Shell implements Runnable, PPCHandler {
 			system.generator().printInvariantFlags(invs);
 		}
 		else {
-			system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
+			system.setClassInvariantFlags(invs, (disabled == null)? null : !disabled, negated);
 		}
 	}
 
@@ -1688,12 +1682,10 @@ public final class Shell implements Runnable, PPCHandler {
 					while (!noCase) {
 						noCase = true;
 						if (line.startsWith("--")) {
-							noCase = true;
 							cont = true;
 							continue;
 						}
 						if (line.startsWith("@")) {
-							noCase = true;
 							cont = true;
 							continue;
 						}
@@ -1702,7 +1694,7 @@ public final class Shell implements Runnable, PPCHandler {
 							isComment = true;
 							line = line.substring(line.indexOf("/*") + 2).trim();
 						}
-						if (isComment == true) {
+						if (isComment) {
 							noCase = false;
 							int index = line.indexOf("*/");
 							if (index != -1) {
@@ -1757,12 +1749,10 @@ public final class Shell implements Runnable, PPCHandler {
 				try {
 					ppcShell(system);
 					throw e;
-				} catch (NoSystemException e1) {
-					throw e;
-				} catch (IOException e1) {
+				} catch (NoSystemException | IOException e1) {
 					throw e;
 				}
-			} else {
+            } else {
 				throw e;
 			}
 		}
@@ -1793,12 +1783,10 @@ public final class Shell implements Runnable, PPCHandler {
 			try {
 				ppcShell(system);
 				throw e;
-			} catch (NoSystemException e1) {
-				throw e;
-			} catch (IOException e1) {
+			} catch (NoSystemException | IOException e1) {
 				throw e;
 			}
-		}
+        }
 	}
 
 
@@ -1856,9 +1844,14 @@ public final class Shell implements Runnable, PPCHandler {
 
 			input = input.trim();
 
+			if (!fReadline.doEcho()) {
+				USEWriter.getInstance().protocol(input);
+			}
+
 			if (input.equals("c")) {
 				return;
 			}
+
 			if (
 					input.startsWith("?") ||
 					input.startsWith(":") ||
@@ -1869,7 +1862,7 @@ public final class Shell implements Runnable, PPCHandler {
 				output.println(HELP);
 			}
 
-		} while (!input.equals("c"));
+		} while (true);
 	}
 
 	/**
@@ -1881,19 +1874,19 @@ public final class Shell implements Runnable, PPCHandler {
 	 * @throws IOException
 	 */
 	private Reader getReaderFromFilename(String filename) throws FileNotFoundException, IOException {
-		Reader r = getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
-		return r;
+        return getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));
 	}
 
 	/**
 	 * Safe way to get a reader from an input stream.
 	 * This operation examines a possible valid unicode BOM.
-	 * @param filename
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param in The InputStream to read from.
+	 *
+	 * @return A {@code Reader} with encoding set by the BOM or if not present with the default encoding
+	 *
+	 * @throws IOException If the file cannot be accessed
 	 */
-	private Reader getReaderFromInputStream(BufferedInputStream in) throws IOException {
+	private Reader getReaderFromInputStream(InputStream in) throws IOException {
 		String encoding = handleBOM(in);
 
 		if (encoding == null) {
@@ -1907,11 +1900,12 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Reads the first bytes of an input stream and checks for a unicode BOM.
 	 * If no BOM is present, the stream is reset. Otherwise, the stream
 	 * is at the beginning of the content.
-	 * @param in
-	 * @return
-	 * @throws IOException
+	 *
+	 * @param in The {@code InputStream} to check for a BOM
+	 * @return The represented encoding of the BOM, or {@code null} if no BOM is present
+	 * @throws IOException If access to the {@code InputStream} fails.
 	 */
-	private String handleBOM(BufferedInputStream in) throws IOException {
+	private String handleBOM(InputStream in) throws IOException {
 		String encoding = null;
 
 		in.mark(3);
