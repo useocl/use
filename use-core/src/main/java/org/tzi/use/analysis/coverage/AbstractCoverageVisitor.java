@@ -19,10 +19,10 @@
 
 package org.tzi.use.analysis.coverage;
 
-import java.util.Stack;
-
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
+
+import java.util.Stack;
 
 /**
  * Abstract visitor implementation.
