@@ -29,10 +29,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -45,7 +42,7 @@ import java.util.prefs.Preferences;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "7.1.0";
+    public static final String RELEASE_VERSION = "7.1.1";
 
     // the copyright
     public static final String COPYRIGHT = "Copyright (C) 1999-2024 University of Bremen & " +
@@ -86,9 +83,9 @@ public class Options {
      */
     public static String USE_HISTORY_PATH = ".use_history";
 
-    public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static String LINE_SEPARATOR = System.lineSeparator();
 
-	public static String FILE_SEPARATOR = System.getProperty("file.separator");
+	public static String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
 
     /**
      * Name of the property giving the path to the monitor aspect template.
@@ -302,8 +299,8 @@ public class Options {
 	 */
 	public static void resetOptions() {
 		USE_HISTORY_PATH = ".use_history";
-		LINE_SEPARATOR = System.getProperty("line.separator");
-		FILE_SEPARATOR = System.getProperty("file.separator");
+		LINE_SEPARATOR = System.lineSeparator();
+		FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
 		MONITOR_ASPECT_TEMPLATE = null;
 		homeDir = null;
 		compileOnly = false;
@@ -318,12 +315,12 @@ public class Options {
 		explicitVariableDeclarations = true;
 		checkTransitions = true;
 		checkStateInvariants = false;
-		WarningType checkWarningsOclAnyInCollections = WarningType.WARN;
-		WarningType checkWarningsUnrelatedTypes = WarningType.WARN;
+		checkWarningsOclAnyInCollections = WarningType.WARN;
+		checkWarningsUnrelatedTypes = WarningType.WARN;
 		doPLUGIN = true;
 		pluginDir = null;
 		fDiagramDimension = new Dimension( 600, 600 );
-		TypedProperties props = null;
+		props = null;
 		specFilename = null;
 		cmdFilename = null;
 		lastDirectory = Paths.get(System.getProperty("user.dir"));
