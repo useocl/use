@@ -19,10 +19,10 @@
 
 package org.tzi.use.analysis.coverage;
 
-import java.util.Stack;
-
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
+
+import java.util.Stack;
 
 /**
  * Abstract visitor implementation.
@@ -78,7 +78,7 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 	@Override
 	public void visitAttrOp(ExpAttrOp exp) {
 		exp.objExp().processWithVisitor(this);
-		addAttributeCoverage((MClass) exp.objExp().type(), exp.attr());
+		addAttributeCoverage((MClassifier) exp.objExp().type(), exp.attr());
 	}
 
 	@Override
