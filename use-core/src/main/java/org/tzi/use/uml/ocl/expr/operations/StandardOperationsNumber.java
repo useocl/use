@@ -28,8 +28,6 @@ class StandardOperationsNumber {
         OpGeneric.registerOperation(new Op_number_greater(), opmap);
         OpGeneric.registerOperation(new Op_number_lessequal(), opmap); 
         OpGeneric.registerOperation(new Op_number_greaterequal(), opmap);
-        OpGeneric.registerOperation(new Op_number_pow(), opmap);
-        OpGeneric.registerOperation(new Op_number_sqrt(), opmap);
         OpGeneric.registerOperation(new Op_number_toString(), opmap);
         
         // Real
@@ -794,83 +792,6 @@ final class Op_number_greaterequal extends OpGeneric {
 		else
 			d2 = ((RealValue) args[1]).value();
 		return BooleanValue.get(d1 >= d2);
-	}
-}
-
-// --------------------------------------------------------
-
-final class Op_number_pow extends OpGeneric {
-	@Override
-	public String name() {
-		return "pow";
-	}
-
-	@Override
-	public int kind() {
-		return OPERATION;
-	}
-
-	@Override
-	public boolean isInfixOrPrefix() {
-		return true;
-	}
-
-	@Override
-	public Type matches(Type params[]) {
-		return (params.length == 2 &&
-				params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) &&
-				params[1].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory.mkReal() : null;
-	}
-
-	@Override
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		double d1;
-		double d2;
-		if (args[0].isInteger())
-			d1 = ((IntegerValue) args[0]).value();
-		else
-			d1 = ((RealValue) args[0]).value();
-
-		if (args[1].isInteger())
-			d2 = ((IntegerValue) args[1]).value();
-		else
-			d2 = ((RealValue) args[1]).value();
-		double res = Math.pow(d1, d2);
-		// make special values resulting in undefined
-		if (Double.isNaN(res) || Double.isInfinite(res))
-			throw new ArithmeticException();
-		return new RealValue(res);
-	}
-}
-
-// --------------------------------------------------------
-
-final class Op_number_sqrt extends OpGeneric {
-	@Override
-	public String name() {
-		return "sqrt";
-	}
-
-	@Override
-	public int kind() {
-		return OPERATION;
-	}
-
-	@Override
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
-
-	@Override
-	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isTypeOfReal()) ? TypeFactory
-				.mkReal() : null;
-	}
-
-	@Override
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		double d1 = ((RealValue) args[0]).value();
-		return new RealValue(Math.sqrt(d1));
 	}
 }
 
