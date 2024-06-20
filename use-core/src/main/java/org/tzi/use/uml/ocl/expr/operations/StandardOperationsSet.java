@@ -1,12 +1,7 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
-import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.BagType;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.SetType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.expr.*;
+import org.tzi.use.uml.ocl.type.*;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
@@ -14,6 +9,8 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
 import com.google.common.collect.Multimap;
+
+import java.util.List;
 
 public class StandardOperationsSet {
 	public static void registerTypeOperations(Multimap<String, OpGeneric> opmap) {
@@ -42,401 +39,421 @@ public class StandardOperationsSet {
 
 /* union : Set(T1) x Set(T2) -> Set(T1), with T2 <= T1 */
 final class Op_set_union extends OpGeneric {
-	public String name() {
-		return "union";
-	}
 
-	public int kind() {
-		return OPERATION;
-	}
+    public Op_set_union() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, Type::isTypeOfSet), List.of("Set(T1)", "Set(T2)"), List.of("self", "other")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type[] params) {
+        return match(params) ? params[0].getLeastCommonSupertype(params[1]) : null;
+    }
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet() && 
-			params[1].isTypeOfSet()) {
-			
-			return params[0].getLeastCommonSupertype(params[1]);
-		}
+    public String name() {
+        return "union";
+    }
 
-		return null;
-	}
+    public int kind() {
+        return OPERATION;
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		SetValue set1 = (SetValue) args[0];
-		SetValue set2 = (SetValue) args[1];
-		return set1.union(resultType, set2);
-	}
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        SetValue set1 = (SetValue) args[0];
+        SetValue set2 = (SetValue) args[1];
+        return set1.union(resultType, set2);
+    }
 }
 
 // --------------------------------------------------------
 
 /* union : Set(T1) x Bag(T2) -> Bag(T1), with T2 <= T1 */
 final class Op_set_union_bag extends OpGeneric {
-	public String name() {
-		return "union";
-	}
 
-	public int kind() {
-		return OPERATION;
-	}
+    public Op_set_union_bag() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, Type::isTypeOfBag), List.of("Set(T1)", "Bag(T2)"), List.of("self", "other")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type[] params) {
+        if (match(params)) {
+            SetType set = (SetType) params[0];
+            BagType bag = (BagType) params[1];
+            Type newElementType = set.elemType().getLeastCommonSupertype(
+                    bag.elemType());
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet() && 
-			params[1].isTypeOfBag()) {
-			SetType set = (SetType) params[0];
-			BagType bag = (BagType) params[1];
-			Type newElementType = set.elemType().getLeastCommonSupertype(
-					bag.elemType());
+            if (newElementType != null) {
+                return TypeFactory.mkBag(newElementType);
+            }
+        }
+        return null;
+    }
 
-			if (newElementType != null)
-				return TypeFactory.mkBag(newElementType);
-		}
-		return null;
-	}
+    public String name() {
+        return "union";
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		SetValue set = (SetValue) args[0];
-		BagValue bag = (BagValue) args[1];
-		return set.union(resultType, bag);
-	}
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        SetValue set = (SetValue) args[0];
+        BagValue bag = (BagValue) args[1];
+        return set.union(resultType, bag);
+    }
 }
 
 // --------------------------------------------------------
 
 /* intersection : Set(T1) x Set(T2) -> Set(T1), with T2 <= T1 */
 final class Op_set_intersection extends OpGeneric {
-	public String name() {
-		return "intersection";
-	}
 
-	public int kind() {
-		return OPERATION;
-	}
+    public Op_set_intersection() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, Type::isTypeOfSet), List.of("Set(T1)", "Set(T2)"), List.of("self", "other")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type[] params) {
+        if (match(params)) {
+            SetType set1 = (SetType) params[0];
+            SetType set2 = (SetType) params[1];
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(
+                    set2.elemType());
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet() &&
-			params[1].isTypeOfSet()) {
-			
-			SetType set1 = (SetType) params[0];
-			SetType set2 = (SetType) params[1];
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(
-					set2.elemType());
+            if (commonElementType != null) {
+                return TypeFactory.mkSet(commonElementType);
+            }
+        }
+        return null;
+    }
 
-			if (commonElementType != null)
-				return TypeFactory.mkSet(commonElementType);
-		}
-		return null;
-	}
+    public String name() {
+        return "intersection";
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		SetValue set1 = (SetValue) args[0];
-		SetValue set2 = (SetValue) args[1];
-		return set1.intersection(resultType, set2);
-	}
-	
-	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
-		CollectionType col1 = (CollectionType) args[0].type();
-		CollectionType col2 = (CollectionType) args[1].type();
-		
-		Type elemType1 = col1.elemType();
-		Type elemType2 = col2.elemType();
-		
-		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
-		
-		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
-			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " will always evaluate to an empty set, " + StringUtil.NEWLINE +
-					 "because the element types " + StringUtil.inQuotes(elemType1) + 
-					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
-		}
-		
-		return null;
-	}
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        SetValue set1 = (SetValue) args[0];
+        SetValue set2 = (SetValue) args[1];
+        return set1.intersection(resultType, set2);
+    }
+
+    @Override
+    public String checkWarningUnrelatedTypes(Expression args[]) {
+        CollectionType col1 = (CollectionType) args[0].type();
+        CollectionType col2 = (CollectionType) args[1].type();
+
+        Type elemType1 = col1.elemType();
+        Type elemType2 = col2.elemType();
+
+        Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+
+        if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
+            return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) +
+                    " will always evaluate to an empty set, " + StringUtil.NEWLINE +
+                    "because the element types " + StringUtil.inQuotes(elemType1) +
+                    " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+        }
+
+        return null;
+    }
 }
 
 // --------------------------------------------------------
 
 /* intersection : Set(T1) x Bag(T2) -> Set(T1), with T2 <= T1 */
 final class Op_set_intersection_bag extends OpGeneric {
-	public String name() {
-		return "intersection";
-	}
 
-	public int kind() {
-		return OPERATION;
-	}
+    public Op_set_intersection_bag() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, Type::isTypeOfBag), List.of("Set(T1)", "Bag(T2)"), List.of("self", "other")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type[] params) {
+        if (match(params)) {
+            SetType set = (SetType) params[0];
+            BagType bag = (BagType) params[1];
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet() && 
-			params[1].isTypeOfBag()) {
-			
-			SetType set = (SetType) params[0];
-			BagType bag = (BagType) params[1];
+            Type commonElementType = set.elemType().getLeastCommonSupertype(
+                    bag.elemType());
 
-			Type commonElementType = set.elemType().getLeastCommonSupertype(
-					bag.elemType());
+            if (commonElementType != null) {
+                return TypeFactory.mkSet(commonElementType);
+            }
+        }
+        return null;
+    }
 
-			if (commonElementType != null)
-				return TypeFactory.mkSet(commonElementType);
-		}
-		return null;
-	}
+    public String name() {
+        return "intersection";
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		SetValue set = (SetValue) args[0];
-		BagValue bag = (BagValue) args[1];
-		return set.intersection(resultType, bag);
-	}
-	
-	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
-		CollectionType col1 = (CollectionType) args[0].type();
-		CollectionType col2 = (CollectionType) args[1].type();
-		
-		Type elemType1 = col1.elemType();
-		Type elemType2 = col2.elemType();
-		
-		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
-		
-		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
-			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " will always evaluate to an empty, " + StringUtil.NEWLINE +
-					 "because the element type " + StringUtil.inQuotes(elemType1) + 
-					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
-		}
-		
-		return null;
-	}
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        SetValue set = (SetValue) args[0];
+        BagValue bag = (BagValue) args[1];
+        return set.intersection(resultType, bag);
+    }
+
+    @Override
+    public String checkWarningUnrelatedTypes(Expression args[]) {
+        CollectionType col1 = (CollectionType) args[0].type();
+        CollectionType col2 = (CollectionType) args[1].type();
+
+        Type elemType1 = col1.elemType();
+        Type elemType2 = col2.elemType();
+
+        Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+
+        if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
+            return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) +
+                    " will always evaluate to an empty, " + StringUtil.NEWLINE +
+                    "because the element type " + StringUtil.inQuotes(elemType1) +
+                    " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+        }
+
+        return null;
+    }
 }
 
 // --------------------------------------------------------
 
 /* - : Set(T1) x Set(T2) -> Set(T1), with T2 <= T1 */
 final class Op_set_difference extends OpGeneric {
-	public String name() {
-		return "-";
-	}
 
-	public int kind() {
-		return OPERATION;
-	}
+    public Op_set_difference() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, Type::isTypeOfSet), List.of("Set(T1)", "Set(T2)"), List.of("self", "other")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return true;
-	}
+    public Type matches(Type[] params) {
+        if (match(params)) {
+            SetType set1 = (SetType) params[0];
+            SetType set2 = (SetType) params[1];
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(
+                    set2.elemType());
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet() && 
-			params[1].isTypeOfSet()) {
-			
-			SetType set1 = (SetType) params[0];
-			SetType set2 = (SetType) params[1];
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(
-					set2.elemType());
+            if (commonElementType != null) {
+                return TypeFactory.mkSet(commonElementType);
+            }
+        }
+        return null;
+    }
 
-			if (commonElementType != null)
-				return TypeFactory.mkSet(commonElementType);
-		}
-		return null;
-	}
+    public String name() {
+        return "-";
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		SetValue set1 = (SetValue) args[0];
-		SetValue set2 = (SetValue) args[1];
-		return set1.difference(resultType, set2);
-	}
-	
-	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
-		CollectionType col1 = (CollectionType) args[0].type();
-		CollectionType col2 = (CollectionType) args[1].type();
-		
-		Type elemType1 = col1.elemType();
-		Type elemType2 = col2.elemType();
-		
-		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
-		
-		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
-			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " will always evaluate to the same set, " + StringUtil.NEWLINE +
-					 "because the element types " + StringUtil.inQuotes(elemType1) + 
-					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
-		}
-		
-		return null;
-	}
+    public int kind() {
+        return OPERATION;
+    }
+
+    public boolean isInfixOrPrefix() {
+        return true;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        SetValue set1 = (SetValue) args[0];
+        SetValue set2 = (SetValue) args[1];
+        return set1.difference(resultType, set2);
+    }
+
+    @Override
+    public String checkWarningUnrelatedTypes(Expression args[]) {
+        CollectionType col1 = (CollectionType) args[0].type();
+        CollectionType col2 = (CollectionType) args[1].type();
+
+        Type elemType1 = col1.elemType();
+        Type elemType2 = col2.elemType();
+
+        Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+
+        if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
+            return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) +
+                    " will always evaluate to the same set, " + StringUtil.NEWLINE +
+                    "because the element types " + StringUtil.inQuotes(elemType1) +
+                    " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+        }
+
+        return null;
+    }
 }
 
 // --------------------------------------------------------
 
 /* including : Set(T1) x T2 -> Set(T1), with T2 <= T1 */
 final class Op_set_including extends OpGeneric {
-	public String name() {
-		return "including";
-	}
 
-	public int kind() {
-		return SPECIAL;
-	}
+    public Op_set_including() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, param -> true), List.of("Set(T1)", "T2"), List.of("self", "element")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type params[]) {
+        if (match(params)) {
+            SetType set1 = (SetType) params[0];
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet()) {
-			SetType set1 = (SetType) params[0];
+            if (commonElementType != null) {
+                return TypeFactory.mkSet(commonElementType);
+            }
+        }
+        return null;
+    }
 
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
 
-			if (commonElementType != null)
-				return TypeFactory.mkSet(commonElementType);
+    public String name() {
+        return "including";
+    }
 
-		}
-		return null;
-	}
+    public int kind() {
+        return SPECIAL;
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		if (args[0].isUndefined())
-			return UndefinedValue.instance;
-		SetValue set1 = (SetValue) args[0];
-				
-		return set1.including(resultType, args[1]);
-	}
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        if (args[0].isUndefined())
+            return UndefinedValue.instance;
+        SetValue set1 = (SetValue) args[0];
+
+        return set1.including(resultType, args[1]);
+    }
 }
 
 // --------------------------------------------------------
 
 /* excluding : Set(T1) x T2 -> Set(T1), with T2 <= T1 */
 final class Op_set_excluding extends OpGeneric {
-	public String name() {
-		return "excluding";
-	}
 
-	public int kind() {
-		return SPECIAL;
-	}
+    public Op_set_excluding() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, param -> true), List.of("Set(T1)", "T2"), List.of("self", "element")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type[] params) {
+        if (match(params)) {
+            SetType set1 = (SetType) params[0];
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
+            if (commonElementType != null) {
+                return TypeFactory.mkSet(commonElementType);
+            }
+        }
+        return null;
+    }
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet()) {
-			
-			SetType set1 = (SetType) params[0];
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(
-					params[1]);
+    public String name() {
+        return "excluding";
+    }
 
-			if (commonElementType != null)
-				return TypeFactory.mkSet(commonElementType);
-		}
-		return null;
-	}
+    public int kind() {
+        return SPECIAL;
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		if (args[0].isUndefined())
-			return UndefinedValue.instance;
-		SetValue set1 = (SetValue) args[0];
-		return set1.excluding(resultType, args[1]);
-	}
-	
-	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
-		CollectionType col = (CollectionType) args[0].type();
-		
-		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
-		
-		if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
-			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " will always evaluate to the same set, " + StringUtil.NEWLINE +
-					 "because the element type " + StringUtil.inQuotes(col.elemType()) + 
-					 " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
-		}
-		
-		return null;
-	}
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        if (args[0].isUndefined())
+            return UndefinedValue.instance;
+        SetValue set1 = (SetValue) args[0];
+        return set1.excluding(resultType, args[1]);
+    }
+
+    @Override
+    public String checkWarningUnrelatedTypes(Expression args[]) {
+        CollectionType col = (CollectionType) args[0].type();
+
+        Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
+
+        if (!(col.elemType().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
+            return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) +
+                    " will always evaluate to the same set, " + StringUtil.NEWLINE +
+                    "because the element type " + StringUtil.inQuotes(col.elemType()) +
+                    " and the parameter type " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+        }
+
+        return null;
+    }
 }
 
 // --------------------------------------------------------
 
 /* symmetricDifference : Set(T1) x Set(T2) -> Set(T1) with T2 <= T1 */
 final class Op_set_symmetricDifference extends OpGeneric {
-	public String name() {
-		return "symmetricDifference";
-	}
 
-	public int kind() {
-		return OPERATION;
-	}
+    public Op_set_symmetricDifference() {
+        setParamInfo(new ParamInfo(List.of(Type::isTypeOfSet, Type::isTypeOfSet), List.of("Set(T1)", "Set(T2)"), List.of("self", "other")));
+    }
 
-	public boolean isInfixOrPrefix() {
-		return false;
-	}
+    public Type matches(Type[] params) {
+        if (match(params)) {
+            SetType set1 = (SetType) params[0];
+            SetType set2 = (SetType) params[1];
 
-	public Type matches(Type params[]) {
-		if (params.length == 2 && 
-			params[0].isTypeOfSet() &&
-			params[1].isTypeOfSet()) {
-			
-			SetType set1 = (SetType) params[0];
-			SetType set2 = (SetType) params[1];
+            Type commonElementType = set1.elemType().getLeastCommonSupertype(
+                    set2.elemType());
 
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(
-					set2.elemType());
+            if (commonElementType != null) {
+                return TypeFactory.mkSet(commonElementType);
+            }
+        }
+        return null;
+    }
 
-			if (commonElementType != null)
-				return TypeFactory.mkSet(commonElementType);
-		}
-		return null;
-	}
+    public String name() {
+        return "symmetricDifference";
+    }
 
-	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		SetValue set1 = (SetValue) args[0];
-		SetValue set2 = (SetValue) args[1];
-		return set1.symmetricDifference(resultType, set2);
-	}
-	
-	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
-		CollectionType col1 = (CollectionType) args[0].type();
-		CollectionType col2 = (CollectionType) args[1].type();
-		
-		Type elemType1 = col1.elemType();
-		Type elemType2 = col2.elemType();
-		
-		Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
-		
-		if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
-			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " will always evaluate to the union of both sets, " + StringUtil.NEWLINE +
-					 "because the element types " + StringUtil.inQuotes(elemType1) + 
-					 " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
-		}
+    public int kind() {
+        return OPERATION;
+    }
 
-		return null;
-	}
+    public boolean isInfixOrPrefix() {
+        return false;
+    }
+
+    public Value eval(EvalContext ctx, Value[] args, Type resultType) {
+        SetValue set1 = (SetValue) args[0];
+        SetValue set2 = (SetValue) args[1];
+        return set1.symmetricDifference(resultType, set2);
+    }
+
+    @Override
+    public String checkWarningUnrelatedTypes(Expression args[]) {
+        CollectionType col1 = (CollectionType) args[0].type();
+        CollectionType col2 = (CollectionType) args[1].type();
+
+        Type elemType1 = col1.elemType();
+        Type elemType2 = col2.elemType();
+
+        Type commonElementType = elemType1.getLeastCommonSupertype(elemType2);
+
+        if (!(elemType1.isTypeOfOclAny() || elemType2.isTypeOfOclAny()) && commonElementType.isTypeOfOclAny()) {
+            return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) +
+                    " will always evaluate to the union of both sets, " + StringUtil.NEWLINE +
+                    "because the element types " + StringUtil.inQuotes(elemType1) +
+                    " and " + StringUtil.inQuotes(elemType2) + " are unrelated.";
+        }
+
+        return null;
+    }
 }
