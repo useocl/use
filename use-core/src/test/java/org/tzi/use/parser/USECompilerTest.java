@@ -73,7 +73,6 @@ import org.tzi.use.util.SuffixFileFilter;
  * @created    May 21, 2004
  * @author     Mark Richters
  */
-
 public class USECompilerTest extends TestCase {
     // Set this to true to see more details about what is tested.
     private static final boolean VERBOSE = false;
@@ -98,25 +97,21 @@ public class USECompilerTest extends TestCase {
 
     // java.io has a StringWriter, but we need an OutputStream for
     // System.err
-    class StringOutputStream extends OutputStream {
+    static class StringOutputStream extends OutputStream {
         private StringBuilder fBuffer = new StringBuilder();
-
 
         public void write(int b) {
             fBuffer.append((char) b);
         }
 
-
         public void reset() {
             fBuffer = new StringBuilder();
         }
-
 
         public String toString() {
             return fBuffer.toString();
         }
     }
-
 
     public void testSpecification() {
         Options.explicitVariableDeclarations = false;
@@ -179,11 +174,11 @@ public class USECompilerTest extends TestCase {
                 }
                 continue;
             }
-            if (line.length() == 0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
 
-            String expStr = line;
+            StringBuilder expStr = new StringBuilder(line);
             while (true) {
                 line = in.readLine();
                 lineNr++;
@@ -195,7 +190,7 @@ public class USECompilerTest extends TestCase {
                 if (line.startsWith("-> ")) {
                     break;
                 }
-                expStr += " " + line.trim();
+                expStr.append(" ").append(line.trim());
             }
             String resultStr = line.substring(3);
 
@@ -203,7 +198,7 @@ public class USECompilerTest extends TestCase {
                 System.out.println("expression: " + expStr);
             }
 
-            InputStream stream = new ByteArrayInputStream(expStr.getBytes());
+            InputStream stream = new ByteArrayInputStream(expStr.toString().getBytes());
 
             Expression expr =
                     OCLCompiler.compileExpression(
@@ -227,10 +222,8 @@ public class USECompilerTest extends TestCase {
         // check for a failure file
         String failFileName =
                 specFileName.substring(0, specFileName.length() - 4) + ".fail";
-        File failFile = new File(TEST_PATH, failFileName);
-        return failFile;
+        return new File(TEST_PATH, failFileName);
     }
-
 
     private void failCompileSpecFailedWithoutFailFile(String specFileName, StringOutputStream errStr, File failFile) {
         // unexpected failure
@@ -245,7 +238,6 @@ public class USECompilerTest extends TestCase {
                         + failFile.getName()
                         + "'.");
     }
-
 
     private void failCompileSpecFailedFailFileDiffers(String specFileName, StringOutputStream errStr, File failFile) {
         System.err.println("Expected: #############");
@@ -325,7 +317,6 @@ public class USECompilerTest extends TestCase {
         return fileList;
     }
 
-
     private MModel compileSpecification(File specFile, PrintWriter newErr) throws FileNotFoundException {
         MModel result = null;
 
@@ -340,5 +331,4 @@ public class USECompilerTest extends TestCase {
 
         return result;
     }
-
 }

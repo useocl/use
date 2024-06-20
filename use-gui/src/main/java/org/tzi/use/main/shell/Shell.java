@@ -603,7 +603,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdExec(String line, boolean verbose) throws NoSystemException {
 
-		if (line == null || line.length() == 0) {
+		if (line == null || line.isEmpty()) {
 			Log.error("ERROR: Statement expected.");
 			return;
 		}
@@ -1079,7 +1079,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 *            Path and filename to be opened.
 	 */
 	private void cmdOpen(String line, boolean forcequiet) {
-		boolean doEcho = forcequiet?false:true;
+		boolean doEcho = !forcequiet;
 		StringTokenizer st = new StringTokenizer(line);
 
 		// if there is no filename and option
@@ -1140,7 +1140,7 @@ public final class Shell implements Runnable, PPCHandler {
 			if (this.openFiles.size() <= 1) {
 				String opened;
 
-				if (this.openFiles.size() == 0) {
+				if (this.openFiles.isEmpty()) {
 					opened = filename;
 				} else {
 					opened = this.openFiles.peek().toString();
@@ -1294,7 +1294,7 @@ public final class Shell implements Runnable, PPCHandler {
 			throws NoSystemException {
 		Log.trace(this, line);
 
-		if (line.length() == 0) {
+		if (line.isEmpty()) {
 			Log.error("Expression expected after `?'. Try `help'.");
 			return;
 		}
@@ -1345,7 +1345,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private void cmdDeriveStaticType(String line) throws NoSystemException {
 		Log.trace(this, line);
-		if (line.length() == 0) {
+		if (line.isEmpty()) {
 			Log.error("Expression expected after `?'. Try `help'.");
 			return;
 		}
@@ -1499,7 +1499,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private void cmdGenLoadInvariants(String str, MSystem system, boolean doEcho) {
 		String filename = str.trim();
-		if (filename.length() == 0) {
+		if (filename.isEmpty()) {
 			Log.error("syntax is `load FILE'");
 		} else {
 			filename = getFilenameToOpen(filename);
@@ -1547,7 +1547,7 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdGenResult(String str, MSystem system) {
 		str = str.trim();
 		try {
-			if (str.length() == 0) {
+			if (str.isEmpty()) {
 				PrintWriter pw = new PrintWriter(System.out);
 				system.generator().printResult(pw);
 				pw.flush();
@@ -1639,7 +1639,7 @@ public final class Shell implements Runnable, PPCHandler {
 			system.generator().printInvariantFlags(invs);
 		}
 		else {
-			system.setClassInvariantFlags(invs, (disabled == null)? null : Boolean.valueOf(!disabled.booleanValue()), negated);
+			system.setClassInvariantFlags(invs, (disabled == null)? null : !disabled.booleanValue(), negated);
 		}
 	}
 
@@ -1702,7 +1702,7 @@ public final class Shell implements Runnable, PPCHandler {
 							isComment = true;
 							line = line.substring(line.indexOf("/*") + 2).trim();
 						}
-						if (isComment == true) {
+						if (isComment) {
 							noCase = false;
 							int index = line.indexOf("*/");
 							if (index != -1) {
