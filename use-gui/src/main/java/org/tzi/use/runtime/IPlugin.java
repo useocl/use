@@ -31,5 +31,7 @@ public interface IPlugin {
 	 */
 	void run(IPluginRuntime pluginRuntime) throws Exception;
 
-	IGraphManipulator getGraphManipulator();
+    default IGraphManipulator getGraphManipulator() {
+        return null;
+    }
 }

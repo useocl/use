@@ -21,10 +21,11 @@ public class GraphExtensionPoint implements IPluginGraphExtensionPoint {
         return INSTANCE;
     }
 
-    public void registerPlugin(IPluginDescriptor pluginDescriptor) {
-        final IGraphManipulator IGraphManipulator = pluginDescriptor.getPluginClass().getGraphManipulator();
-
-        registeredPlugins.add(IGraphManipulator);
+    public void registerPlugin(final IPluginDescriptor pluginDescriptor) {
+        final IGraphManipulator graphManipulator = pluginDescriptor.getPluginClass().getGraphManipulator();
+        if (graphManipulator != null) {
+            registeredPlugins.add(graphManipulator);
+        }
     }
 
 
