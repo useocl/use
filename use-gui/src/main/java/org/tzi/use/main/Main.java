@@ -60,7 +60,7 @@ public final class Main {
 		MetalLookAndFeel.setCurrentTheme(new MyTheme());
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		// set System.out to the OldUSEWriter to protocol the output.
 		System.setOut(USEWriter.getInstance().getOut());
 		// set System.err to the OldUSEWriter to protocol the output.
@@ -115,21 +115,31 @@ public final class Main {
 
 		// compile spec if filename given as argument
 		if (Options.specFilename != null) {
+			Path file = Path.of(Options.specFilename);
+
 			try (FileInputStream specStream = new FileInputStream(Options.specFilename)){
 				Log.verbose("compiling specification...");
 				model = USECompiler.compileSpecification(specStream,
-						Options.specFilename, new PrintWriter(System.err),
+						file.getFileName().toString(), new PrintWriter(System.err),
 						new ModelFactory());
 			} catch (FileNotFoundException e) {
 				Log.error("File `" + Options.specFilename + "' not found.");
-				System.exit(1);
+				if (Options.integrationTestMode) {
+					return;
+				} else {
+					System.exit(1);
+				}
 			} catch (IOException e1) {
 				// close failed
 			}
 
 			// compile errors?
 			if (model == null) {
-				System.exit(1);
+				if (Options.integrationTestMode) {
+					return;
+				} else {
+					System.exit(1);
+				}
 			}
 
 			if(!Options.quiet){

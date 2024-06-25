@@ -33,14 +33,14 @@ public class USEWriter {
     private static USEWriter INSTANCE;
     
     public static synchronized USEWriter getInstance() {
-        if (INSTANCE==null)
+        if (INSTANCE == null)
             INSTANCE = new USEWriter();
         return INSTANCE;
     }
     
-    private PrintStream out;
-    private PrintStream noProtocolOut;
-    private PrintStream err;
+    private final PrintStream out;
+    private final PrintStream noProtocolOut;
+    private final PrintStream err;
     
     private ByteArrayOutputStream log;
     private PrintStream logWriter;
@@ -93,15 +93,13 @@ public class USEWriter {
 
     public class LoggingOutputStreamDecorator extends OutputStream {
         
-        private OutputStream os;
+        private final OutputStream os;
 
         public LoggingOutputStreamDecorator(OutputStream o) {
             os = o;
         }
 
-        /* (non-Javadoc)
-         * @see java.io.OutputStream#write(int)
-         */
+        @Override
         public void write(int b) throws IOException {
             if (!quietMode) {
                 os.write(b);

@@ -1,0 +1,8 @@
+model PostConditionFailure
+
+class A
+  operations
+    foo():String = 'A static string'
+      post postConditionValid: result = 'A static string'
+      post postAlwaysInvalid: result = 'Something else'
+end
