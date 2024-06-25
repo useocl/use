@@ -91,7 +91,7 @@ public class ASTModel extends ASTAnnotatable {
     }
 
 	public void addSignal(ASTSignal s) {
-		this.signals.add(s);
+		this.signals.add(s);		
 	}
 	
     public MModel gen(Context ctx) {
@@ -167,20 +167,22 @@ public class ASTModel extends ASTAnnotatable {
         }
         
         // (1c) add empty signals to model
-        Iterator<ASTSignal> iter = this.signals.iterator();  
-        while (iter.hasNext()) {
-            ASTSignal s = iter.next();
-            
-            try {
-                MSignal signal = s.genEmptySignal(ctx);
-                model.addSignal(signal);
-            } catch (SemanticException ex) {
-                ctx.reportError( ex );
-                iter.remove();
-            } catch (MInvalidModelException e1) {
-                ctx.reportError( s.getName(), e1 );
-                iter.remove();
-            }
+        {
+	        Iterator<ASTSignal> iter = this.signals.iterator();  
+	        while (iter.hasNext()) {
+	        	ASTSignal s = iter.next();
+	        	
+	        	try {
+					MSignal signal = s.genEmptySignal(ctx);
+					model.addSignal(signal);
+				} catch (SemanticException ex) {
+					ctx.reportError( ex );
+					iter.remove();
+				} catch (MInvalidModelException e1) {
+					ctx.reportError( s.getName(), e1 );
+					iter.remove();
+				}
+	        }
         }
         
         // (2a) add attributes and set generalization
