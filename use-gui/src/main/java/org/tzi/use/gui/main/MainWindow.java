@@ -135,8 +135,8 @@ public class MainWindow extends JFrame {
 
     private static MainWindow fInstance; // global instance of main window
 
-    private final JMenu recentFilesMenu;
-    private final JMenuItem clearRecentFiles;
+    private JMenu recentFilesMenu;
+    private JMenuItem clearRecentFiles;
     
     private JButton addToToolBar(JToolBar toolBar, AbstractAction action, String toolTip) {
         JButton tb = new JButton(action);
