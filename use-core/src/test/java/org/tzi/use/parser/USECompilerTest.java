@@ -20,6 +20,7 @@
 /*
 // $Id: USECompilerTest.java 5574 2015-03-09 15:07:18Z fhilken $
  */
+
 package org.tzi.use.parser;
 
 import java.io.BufferedReader;
