@@ -158,6 +158,18 @@
 ? oclUndefined(Real) = oclUndefined(Integer)
 *-> true : Boolean
 
+? 3.pow(2)
+*-> 9.0 : Real
+
+? 3.0.pow(2)
+*-> 9.0 : Real
+
+? 9.sqrt()
+*-> 3.0 : Real
+
+? 9.0.sqrt()
+*-> 3.0 : Real
+
 #
 ## Operations on Booleans
 #

@@ -30,3 +30,11 @@ association A_B between
   A[*]
   B[0..1]
 end  
+
+dataType D
+operations
+  D(a : Integer, b : Integer)
+
+dataType E < D
+operations
+  D(a : Integer, b : Integer, c : Integer)(a, b)

@@ -135,4 +135,10 @@
 ? Set{a1}->iterate(v; result : A = oclUndefined(A) | v)
 *-> a1 : A
 
+? D(1, 1)
+*->D{a = 1, b = 1} : D
+
+? E(1, 1, 2)
+*->D{a=1, b=1, c=2} : E
+
 exit
