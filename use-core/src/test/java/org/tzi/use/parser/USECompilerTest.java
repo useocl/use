@@ -20,7 +20,6 @@
 /*
 // $Id: USECompilerTest.java 5574 2015-03-09 15:07:18Z fhilken $
  */
-
 package org.tzi.use.parser;
 
 import java.io.BufferedReader;
@@ -179,11 +178,11 @@ public class USECompilerTest extends TestCase {
                 }
                 continue;
             }
-            if (line.length() == 0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
 
-            String expStr = line;
+            StringBuilder expStr = new StringBuilder(line);
             while (true) {
                 line = in.readLine();
                 lineNr++;
@@ -195,7 +194,7 @@ public class USECompilerTest extends TestCase {
                 if (line.startsWith("-> ")) {
                     break;
                 }
-                expStr += " " + line.trim();
+                expStr.append(" ").append(line.trim());
             }
             String resultStr = line.substring(3);
 
@@ -203,7 +202,7 @@ public class USECompilerTest extends TestCase {
                 System.out.println("expression: " + expStr);
             }
 
-            InputStream stream = new ByteArrayInputStream(expStr.getBytes());
+            InputStream stream = new ByteArrayInputStream(expStr.toString().getBytes());
 
             Expression expr =
                     OCLCompiler.compileExpression(
@@ -227,8 +226,7 @@ public class USECompilerTest extends TestCase {
         // check for a failure file
         String failFileName =
                 specFileName.substring(0, specFileName.length() - 4) + ".fail";
-        File failFile = new File(TEST_PATH, failFileName);
-        return failFile;
+        return new File(TEST_PATH, failFileName);
     }
 
 
