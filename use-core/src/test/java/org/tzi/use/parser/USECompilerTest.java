@@ -20,7 +20,6 @@
 /*
 // $Id: USECompilerTest.java 5574 2015-03-09 15:07:18Z fhilken $
  */
-
 package org.tzi.use.parser;
 
 import java.io.BufferedReader;
@@ -73,10 +72,10 @@ import org.tzi.use.util.SuffixFileFilter;
  * @created    May 21, 2004
  * @author     Mark Richters
  */
+
 public class USECompilerTest extends TestCase {
     // Set this to true to see more details about what is tested.
     private static final boolean VERBOSE = false;
-    private static final int EXPECTED = 40;
 
     private static File TEST_PATH;
     private static File EXAMPLES_PATH;
@@ -97,26 +96,30 @@ public class USECompilerTest extends TestCase {
 
     // java.io has a StringWriter, but we need an OutputStream for
     // System.err
-    static class StringOutputStream extends OutputStream {
+    class StringOutputStream extends OutputStream {
         private StringBuilder fBuffer = new StringBuilder();
+
 
         public void write(int b) {
             fBuffer.append((char) b);
         }
 
+
         public void reset() {
             fBuffer = new StringBuilder();
         }
+
 
         public String toString() {
             return fBuffer.toString();
         }
     }
 
+
     public void testSpecification() {
         Options.explicitVariableDeclarations = false;
 
-        List<File> fileList = getFilesMatchingSuffix(".use", EXPECTED);
+        List<File> fileList = getFilesMatchingSuffix(".use", 32);
         // add all the example files which should have no errors
         File[] files = EXAMPLES_PATH.listFiles( new SuffixFileFilter(".use") );
         assertNotNull(files);
@@ -225,6 +228,7 @@ public class USECompilerTest extends TestCase {
         return new File(TEST_PATH, failFileName);
     }
 
+
     private void failCompileSpecFailedWithoutFailFile(String specFileName, StringOutputStream errStr, File failFile) {
         // unexpected failure
         System.err.println("#######################");
@@ -238,6 +242,7 @@ public class USECompilerTest extends TestCase {
                         + failFile.getName()
                         + "'.");
     }
+
 
     private void failCompileSpecFailedFailFileDiffers(String specFileName, StringOutputStream errStr, File failFile) {
         System.err.println("Expected: #############");
@@ -317,6 +322,7 @@ public class USECompilerTest extends TestCase {
         return fileList;
     }
 
+
     private MModel compileSpecification(File specFile, PrintWriter newErr) throws FileNotFoundException {
         MModel result = null;
 
@@ -331,4 +337,5 @@ public class USECompilerTest extends TestCase {
 
         return result;
     }
+
 }
