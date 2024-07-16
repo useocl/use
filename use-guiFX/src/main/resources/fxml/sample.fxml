@@ -29,12 +29,8 @@
                     <Menu text="Help" />
                 </menus>
             </MenuBar>
-            <ToolBar>
-                <Button text="Button1" />
-                <Button text="Button2" />
-                <Button text="Button3" />
-                <Button text="Undo" />
-                <Button text="Redo" />
+            <ToolBar fx:id="toolBar">
+
             </ToolBar>
         </VBox>
     </top>
