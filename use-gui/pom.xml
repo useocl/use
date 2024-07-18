@@ -12,6 +12,16 @@
     <artifactId>use-gui</artifactId>
     <dependencies>
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>use-core</artifactId>
             <version>${project.version}</version>
@@ -135,6 +145,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>org.tzi.use.gui.views.diagrams.classdiagram.Main</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

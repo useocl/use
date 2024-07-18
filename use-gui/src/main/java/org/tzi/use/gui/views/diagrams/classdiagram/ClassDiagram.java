@@ -797,7 +797,7 @@ public class ClassDiagram extends DiagramView
 	protected PopupMenuInfo unionOfPopUpMenu() {
 		// get the base popup menu
 		PopupMenuInfo info = super.unionOfPopUpMenu();
-		JPopupMenu popupMenu = info.popupMenu;
+		JPopupMenu popupMenu = info.popupMenu; //MIGRATE
 
 		// position for the popupMenu items
 		int pos = 0;
@@ -846,7 +846,7 @@ public class ClassDiagram extends DiagramView
 		}
 
 		if (hiddenData.hasNodes() || hiddenData.hasEdges()) {
-			final JMenuItem showAllClasses = new JMenuItem("Show hidden elements");
+			final JMenuItem showAllClasses = new JMenuItem("Show hidden elements"); //MIGRATE
 			showAllClasses.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ev) {
@@ -855,8 +855,8 @@ public class ClassDiagram extends DiagramView
 				}
 			});
 
-			popupMenu.insert(showAllClasses, pos++);
-			popupMenu.insert(new JSeparator(), pos++);
+			popupMenu.insert(showAllClasses, pos++); //MIGRATE
+			popupMenu.insert(new JSeparator(), pos++); //MIGRATE
 
 		}
 
@@ -882,7 +882,7 @@ public class ClassDiagram extends DiagramView
 			}
 
 			// Erstelle Actions fuer hide
-			popupMenu.insert(new AbstractAction(labelHide) {
+			popupMenu.insert(new AbstractAction(labelHide) { //MIGRATE
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// Hide Assocs if exisits
@@ -896,7 +896,7 @@ public class ClassDiagram extends DiagramView
 						selectedGeneralization.forEach(gen -> hideGeneralization(gen));
 					}
 
-					repaint();
+					repaint(); //MIGRATE
 				}
 			}, pos++);
 
@@ -913,7 +913,7 @@ public class ClassDiagram extends DiagramView
 			selectedGeneralization.forEach(gen -> classToHide.add((MClass) gen.parent()));
 
 			final String label = labelCrop;
-			popupMenu.insert(new AbstractAction(labelCrop) {
+			popupMenu.insert(new AbstractAction(labelCrop) { //MIGRATE
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					getActionHideNodes(label, getNoneSelectedElementsByElements(classToHide)).actionPerformed(e);
@@ -1359,11 +1359,11 @@ public class ClassDiagram extends DiagramView
 	}
 
 	/**
-	 * Hides the given elements in this diagram.
+	 * Shows the given elements in this diagram.
 	 * 
-	 * @param nodesToHide
-	 *            A set of {@link MClassifier} ({@link MClass} or
-	 *            {@link EnumType}) to hide
+	 * @param nodesToShow
+	 *            A set of {@link ?} ({@link MClass} or
+	 *            {@link EnumType}) to show
 	 */
 	public void showElementsInDiagram(Set<?> nodesToShow) {
 		for (Object elem : nodesToShow) {

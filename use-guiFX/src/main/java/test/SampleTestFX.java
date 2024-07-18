@@ -6,11 +6,12 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.tzi.use.config.Options;
 import org.tzi.use.util.USEWriter;
+
+import java.util.Objects;
 
 
 public class SampleTestFX extends Application {
@@ -18,6 +19,7 @@ public class SampleTestFX extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
 
 //        if (!Options.disableExtensions) {
 //            ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + "/oclextensions";
@@ -137,15 +139,14 @@ public class SampleTestFX extends Application {
                 "C:\\Users\\akifn\\Desktop\\MyProjects\\java\\useTesting\\use-guiFX\\src\\main\\resources\\styles\\style.css"
         );*/
 
-        //Erstmal auskommentiert
-        //scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-
         // Load the main window FXML file
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
         Parent root = loader.load();
 
         // Set up the scene
         Scene scene = new Scene(root, 900.0, 620.0);
+
+        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
 
         // Set the stage properties
         primaryStage.setTitle("USE");
