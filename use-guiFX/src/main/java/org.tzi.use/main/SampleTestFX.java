@@ -1,4 +1,4 @@
-package test;
+package org.tzi.use.main;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

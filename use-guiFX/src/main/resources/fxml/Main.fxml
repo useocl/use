@@ -14,7 +14,7 @@
 
 <BorderPane fx:id="borderPaneID" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="test.Controller" stylesheets="@/styles/style.css">
+            fx:controller="org.tzi.use.gui.main.Controller" stylesheets="@/styles/style.css">
     <top>
         <VBox>
             <MenuBar>
@@ -34,24 +34,31 @@
         <SplitPane fx:id="test" dividerPositions="0.8" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0"
                    BorderPane.alignment="CENTER">
             <items>
+                <!-- Middle/Top VBox (left and Right Display) -->
                 <SplitPane dividerPositions="0.25">
                     <items>
+                        <!-- Middle/Top VBox (LEFT Display) -->
                         <SplitPane fx:id="borderPaneLeft" dividerPositions="0.65" orientation="VERTICAL"
                                    prefHeight="200.0" prefWidth="160.0">
                             <items>
                                 <!-- Top VBox (Folder Tree) -->
                                 <VBox>
-                                    <TreeView fx:id="folderTree" VBox.vgrow="ALWAYS"/>
+                                    <TreeView fx:id="folderTreeView" VBox.vgrow="ALWAYS"/>
                                 </VBox>
-                                <!-- Bottom VBox (Text Display) -->
+                                <!-- Bottom VBox (Folder Tree INFO) -->
                                 <VBox>
                                     <TextArea fx:id="folderTreeTextDisplay" wrapText="true" VBox.vgrow="ALWAYS"/>
                                 </VBox>
                             </items>
                         </SplitPane>
-                        <ListView fx:id="modelListView"/>
+                        <!-- Middle/Top VBox (RIGHT Display) -->
+                        <VBox>
+                            <ListView fx:id="modelListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+
                     </items>
                 </SplitPane>
+                <!-- Bottom VBox (LOG Display) -->
                 <TextArea fx:id="logTextArea">
                     <BorderPane.margin>
                         <Insets top="1.0"/>

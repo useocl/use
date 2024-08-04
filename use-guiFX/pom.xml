@@ -129,7 +129,7 @@
                     <archive>
                         <manifest>
 <!--                            <mainClass>org.tzi.use.gui.views.diagrams.classdiagram.Main</mainClass>-->
-                            <mainClass>test.SampleTestFX</mainClass>
+                            <mainClass>org.tzi.use.main.SampleTestFX</mainClass>
                         </manifest>
                     </archive>
                     <finalName>use-guiFX</finalName>
@@ -200,7 +200,7 @@
                 <version>0.0.8</version>
                 <configuration>
 <!--                    <mainClass>org.tzi.use.gui.views.diagrams.classdiagram.Main</mainClass>-->
-                    <mainClass>test.SampleTestFX</mainClass>
+                    <mainClass>org.tzi.use.main.SampleTestFX</mainClass>
                 </configuration>
             </plugin>
         </plugins>

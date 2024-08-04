@@ -1,16 +1,17 @@
-package test;
+package org.tzi.use.gui.main;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.layout.Region;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.tzi.use.gui.main.AboutDialog;
-import org.tzi.use.gui.main.MainWindow;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -22,32 +23,38 @@ import java.util.Map;
 public class Controller {
 
     @FXML
-    private TextArea logTextArea; // Reference to the log text area in FXML
-    @FXML
-    private TextArea folderTreeTextDisplay; // Reference to the BorderPane Left side VBox Textarea: folderTreeTextDisplay
+    private TextArea logTextArea, folderTreeTextDisplay; // Reference to the log text area in FXML
     @FXML
     private ToolBar toolBar; // Reference to the ToolBar
     @FXML
     private Menu fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems;
+    @FXML
+    private TreeView<String> folderTreeView;
+
 
     public void initialize() {
         logTextArea.setText("Log output will be displayed here.");
         logTextArea.setEditable(false);
+
         folderTreeTextDisplay.setEditable(false);
+
+        // initializing the modelBrowserTreeView
+        ModelBrowserTest modelBrowserTest = new ModelBrowserTest(folderTreeView);
+        modelBrowserTest.updateFolderTree("name");
 
         // initializing the toolbar
         initToolbarItems(toolBar);
 
         // initialize the
-        initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems);
+        initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView);
 
     }
 
     /**
      * initializing the MenuBar
      */
-    private static void initMenuBarItems(Menu fileMenuItems, Menu editMenuItems, Menu stateMenuItems, Menu viewMenuItems, Menu pluginsMenuItems, Menu helpMenuItems) {
-        initFileMenuItems(fileMenuItems);
+    private static void initMenuBarItems(Menu fileMenuItems, Menu editMenuItems, Menu stateMenuItems, Menu viewMenuItems, Menu pluginsMenuItems, Menu helpMenuItems,TreeView<String> folderTreeView) {
+        initFileMenuItems(fileMenuItems, folderTreeView);
         initEditMenuItems(editMenuItems);
         initStateMenuItems(stateMenuItems);
         initViewMenuItems(viewMenuItems);
@@ -58,7 +65,7 @@ public class Controller {
     /**
      * initializing the FileMenuItems
      */
-    private static void initFileMenuItems(Menu fileMenuItems) {
+    private static void initFileMenuItems(Menu fileMenuItems, TreeView<String> folderTreeView) {
         MenuItem openSpecification = new MenuItem("Open specification...");
         MenuItem openRecentSpecification = new MenuItem("Open recent specification");
         MenuItem saveScript = new MenuItem("Save script (.soil)...");
@@ -87,12 +94,49 @@ public class Controller {
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
         openSpecification.setOnAction(e -> {
             System.out.println("Ctrl+O Succesfully pressed");
+            openDirectoryChooser(openSpecification, folderTreeView);
         });
         exit.setOnAction(e -> {
             System.out.println("Ctrl+Q Succesfully pressed");
         });
 
         fileMenuItems.getItems().addAll(openSpecification, openRecentSpecification, saveScript, saveProtocol, printerSetup, printDiagram, printView, exportAsPdf, exit);
+    }
+
+    /**
+     * This Methode has the Logic for the Filechooser of the folderTreeView
+     */
+    private static void openDirectoryChooser(MenuItem openSpecification, TreeView<String> folderTreeView) {
+        // Create a new FileChooser
+        FileChooser fileChooser = new FileChooser();
+        // Set the title for the FileChooser dialog
+        fileChooser.setTitle("Open .use File");
+
+        // Set the initial directory to a specific folder within your project
+        String workingDir = System.getProperty("user.dir");
+        if (workingDir != null) {
+            File initialDirectory = new File(workingDir);
+            if (initialDirectory.exists() && initialDirectory.isDirectory()) {
+                fileChooser.setInitialDirectory(initialDirectory);
+            }
+        }
+
+        Node someNode = openSpecification.getParentPopup().getOwnerNode();
+        Stage stage = (Stage) someNode.getScene().getWindow();
+
+        // Add a file filter to show only .use files
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("USE Files (*.use)", "*.use");
+        fileChooser.getExtensionFilters().add(extFilter);
+        ModelBrowserTest modelBrowserFolderTree = new ModelBrowserTest(folderTreeView);
+
+        File selectedDirectory = fileChooser.showOpenDialog(stage);
+
+        //System.out.println("Selected folder: " + selectedDirectory.getAbsolutePath());
+        //System.out.println(selectedDirectory.getName().replace(".use", ""));
+
+        //RootName of the FolderTree
+        modelBrowserFolderTree.updateFolderTree(selectedDirectory.getName().replace(".use", ""));
     }
 
     /**
@@ -234,6 +278,7 @@ public class Controller {
 
     /**
      * initializing the PluginMenuItems
+     * TODO
      */
     private static void initPluginsMenuItems(Menu pluginMenuItems) {
         //Currently Empty
@@ -247,14 +292,16 @@ public class Controller {
 
         about.setOnAction(e ->{
             Stage primaryStage = new Stage();
-            AboutDialog dlg = new AboutDialog(primaryStage);
+            AboutDialogFX dlg = new AboutDialogFX(primaryStage);
             dlg.showAndWait();
         });
 
         helpMenuItems.getItems().addAll(about);
     }
 
-
+    /**
+     * initializing the ToolbarItems
+     */
     private static void initToolbarItems(ToolBar toolBar) {
         Map<String, String> toolbarItems = new LinkedHashMap<>();
         toolbarItems.put("Open specification", "images/document-open.png");

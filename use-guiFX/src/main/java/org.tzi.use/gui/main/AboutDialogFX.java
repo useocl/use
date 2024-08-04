@@ -1,13 +1,12 @@
 package org.tzi.use.gui.main;
 
-import javafx.application.Platform;
+import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -20,9 +19,9 @@ import org.tzi.use.config.Options;
  *
  * @author  Akif Aydin
  */
-public class AboutDialog extends Stage {
+public class AboutDialogFX extends Stage {
 
-    public AboutDialog(Stage owner) {
+    public AboutDialogFX(Stage owner) {
         super(StageStyle.UTILITY); // Remove decorations for a simpler dialog
 
         setTitle("About");
@@ -73,6 +72,10 @@ public class AboutDialog extends Stage {
         sizeToScene(); // Ensure size fits content
         centerOnScreen(); // Center the dialog on the screen
     }
+    public static void main(String[] args){
+        Application.launch(args);
+    }
+
 }
 
 

@@ -9,9 +9,7 @@ rem CONFIGURATION
 rem Add -Xss20m to VMARGS when using the generator
 set VMARGS=
 
-set BIN_DIR=%~dp0
-set USE_HOME=%BIN_DIR%..
-set USE_JAR="%USE_HOME%\lib\use-gui.jar"
+set USE_JAR="C:\Users\akifn\Desktop\MyProjects\java\useTesting\use-gui\target\use-gui.jar"
 
 IF NOT EXIST %USE_JAR% (
 	echo Cannot find USE executable. Please provide correct path to use.jar.
