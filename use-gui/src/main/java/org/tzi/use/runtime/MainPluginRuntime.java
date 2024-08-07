@@ -1,17 +1,17 @@
 package org.tzi.use.runtime;
 
+import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
+import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.runtime.impl.PluginRuntime;
+import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-
-import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
-import org.tzi.use.gui.main.runtime.IPluginGraphExtensionPoint;
-import org.tzi.use.main.runtime.IRuntime;
-import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
-import org.tzi.use.runtime.impl.PluginRuntime;
-import org.tzi.use.util.Log;
-import org.tzi.use.util.StringUtil;
 
 /**
  * This is the Plugin Runtime's main class. It will be called from the USE main
@@ -97,8 +97,8 @@ public class MainPluginRuntime {
 		IPluginShellExtensionPoint shellExtensionPoint = (IPluginShellExtensionPoint) pluginRuntime
 				.getExtensionPoint("shell");
 
-		final IPluginGraphExtensionPoint graphExtensionPoint = (IPluginGraphExtensionPoint) pluginRuntime
-				.getExtensionPoint("graph");
+		final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime
+				.getExtensionPoint("diagram");
 
 		Log.debug("Registered [" + pluginRuntime.getPlugins().size() + "] plugins");
 		
@@ -110,7 +110,7 @@ public class MainPluginRuntime {
 			Log.debug("Main: Registering commands");
 			shellExtensionPoint.registerCmds(currentPluginDescriptor);
 
-			graphExtensionPoint.registerPlugin(currentPluginDescriptor);
+			diagramExtensionPoint.registerPlugin(currentPluginDescriptor);
 		}
 		return pluginRuntime;
 	}

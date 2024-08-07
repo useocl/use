@@ -24,11 +24,10 @@ package org.tzi.use.gui.views.diagrams.classdiagram;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
-import org.tzi.use.gui.main.runtime.IPluginGraphExtensionPoint;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.main.runtime.IRuntime;
-import org.tzi.use.runtime.gui.IGraphManipulator;
+import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -85,11 +84,9 @@ public class ClassDiagramView extends JPanel
         }
 
         if (pluginRuntime != null) {
-            final IPluginGraphExtensionPoint graphExtensionPoint = (IPluginGraphExtensionPoint) pluginRuntime.getExtensionPoint("graph");
-            for(  final IGraphManipulator IGraphManipulator : graphExtensionPoint.getRegisteredPlugins()) {
-                IGraphManipulator.manipulateOnInitialization(fClassDiagram.getGraph());
-            }
-
+            final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
+            diagramExtensionPoint.registerView(fClassDiagram);
+            diagramExtensionPoint.runPlugins();
         }
 	}
 
