@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import java.io.Serial;
+
 /**
  * Signals the attempt to construct an ill-formed expression.
  *
@@ -29,7 +31,8 @@ public class ExpInvalidException extends Exception {
 	/**
 	 * To get rid of the warning...
 	 */
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	public ExpInvalidException() {
         super();

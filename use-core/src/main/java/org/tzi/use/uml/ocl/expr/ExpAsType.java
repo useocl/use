@@ -32,7 +32,7 @@ import org.tzi.use.uml.sys.MObject;
  * @author  Mark Richters
  */
 public final class ExpAsType extends Expression {
-    private Expression fSourceExpr;
+    private final Expression fSourceExpr;
 
 	public ExpAsType(Expression sourceExpr, Type targetType)
         throws ExpInvalidException
@@ -41,7 +41,7 @@ public final class ExpAsType extends Expression {
         super(targetType);
         fSourceExpr = sourceExpr;
 
-        //FIXME diamong generalization hierarchy makes the static type not comparable?
+        //FIXME: diamond generalization hierarchy makes the static type not comparable?
         /*
          * class A; class B; class C < A, B
          * A.allInstances()->selectByKind( B ) is allowed and results in all classes that inherit from A and B
@@ -86,7 +86,7 @@ public final class ExpAsType extends Expression {
         if (v.isObject() ) {
             ObjectValue ov = (ObjectValue) v;
             MObject obj = ov.value();
-            // Note: an undefined value can still be casted to a
+            // Note: an undefined value can still be cast to a
             // subtype!  See initialization of res above
             if (obj.exists(ctx.postState()) && obj.cls().conformsTo(targetType) )
                 res = new ObjectValue((MClass) targetType, obj);

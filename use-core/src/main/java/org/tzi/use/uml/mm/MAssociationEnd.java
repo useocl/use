@@ -19,18 +19,14 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.collections.CollectionUtil;
+
+import java.util.*;
 
 /** 
  * An AssociationEnd stores information about the role a class plays
@@ -41,10 +37,10 @@ import org.tzi.use.util.collections.CollectionUtil;
 public final class MAssociationEnd extends MModelElementImpl implements MNavigableElement {
 
     private MAssociation fAssociation; // Owner of this association end
-    private MClass fClass;  // associated class
-    private MMultiplicity fMultiplicity; // multiplicity spec
+    private final MClass fClass;  // associated class
+    private final MMultiplicity fMultiplicity; // multiplicity spec
     private int fKind; // none, aggregation, or composition
-    private boolean fIsOrdered; // use as Set or OrderedSet
+    private final boolean fIsOrdered; // use as Set or OrderedSet
     private boolean fIsNavigable = true; 
     private boolean fIsExplicitNavigable = false;
     
@@ -113,11 +109,8 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
         fMultiplicity = mult;
         setAggregationKind(kind);
         fIsOrdered = isOrdered;
-        
-        if (qualifiers == null)
-        	this.qualifier = Collections.emptyList();
-        else
-        	this.qualifier = qualifiers;
+
+        this.qualifier = Objects.requireNonNullElse(qualifiers, Collections.emptyList());
     }
     
     /** 
@@ -248,7 +241,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
     	Type t;
     	
-    	if (this.getRedefiningEnds().size() > 0) {
+    	if (!this.getRedefiningEnds().isEmpty()) {
     		t = getRedefinedType((MClass)sourceObjectType);
     	} else {
     		t = cls();
@@ -480,7 +473,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 
 	@Override
 	public boolean hasQualifiers() {
-		return getQualifiers().size() > 0;
+		return !getQualifiers().isEmpty();
 	}
 	
 	/* (non-Javadoc)

@@ -19,13 +19,13 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.Value;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Range expressions are used by
@@ -36,8 +36,8 @@ import org.tzi.use.uml.ocl.value.Value;
  */
 public class ExpRange extends Expression {
 
-	private Expression startExp;
-	private Expression endExp;
+	private final Expression startExp;
+	private final Expression endExp;
 	
 	/**
 	 * @param first

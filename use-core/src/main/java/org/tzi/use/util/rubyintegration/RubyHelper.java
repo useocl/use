@@ -1,28 +1,14 @@
 package org.tzi.use.util.rubyintegration;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
-import org.tzi.use.uml.ocl.expr.ExpConstInteger;
-import org.tzi.use.uml.ocl.expr.ExpConstReal;
-import org.tzi.use.uml.ocl.expr.ExpConstString;
-import org.tzi.use.uml.ocl.expr.ExpUndefined;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.RealValue;
-import org.tzi.use.uml.ocl.value.StringValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RubyHelper {
 	private RubyHelper() {}
@@ -37,13 +23,13 @@ public class RubyHelper {
 		} else if (rubyValue instanceof Long) {
 			result = IntegerValue.valueOf(((Long) rubyValue).intValue());
         } else if (rubyValue instanceof Integer) {
-			result = IntegerValue.valueOf(((Integer) rubyValue).intValue());
+			result = IntegerValue.valueOf((Integer) rubyValue);
         } else if (rubyValue instanceof String) {
 			result = new StringValue((String)rubyValue);
 		} else if (rubyValue instanceof Boolean) {
-			result = BooleanValue.get(((Boolean)rubyValue).booleanValue());
+			result = BooleanValue.get((Boolean) rubyValue);
 		} else if (rubyValue instanceof Double) {
-			result = new RealValue(((Double)rubyValue).doubleValue());
+			result = new RealValue((Double) rubyValue);
 		} else if (rubyValue instanceof MObject) {
 			MObject obj = (MObject)rubyValue;
 			result = new ObjectValue(obj.cls(), obj);
@@ -103,41 +89,5 @@ public class RubyHelper {
 		}
 		Log.warn("Unhandled USE value for Ruby:" + useValue.toStringWithType());
 		return useValue;
-	}
-	
-	public static Expression makeUSEExpression(Object rubyValue) {
-		if (rubyValue instanceof Long) {
-        	return new ExpConstInteger(((Long) rubyValue).intValue());
-        }
-		if (rubyValue instanceof Integer) {
-        	return new ExpConstInteger(((Integer) rubyValue).intValue());
-        }
-		if (rubyValue instanceof String) {
-			return new ExpConstString((String)rubyValue);
-		}
-		if (rubyValue instanceof Boolean) {
-			return new ExpConstBoolean(((Boolean)rubyValue).booleanValue());
-		}
-		if (rubyValue instanceof Double) {
-			return new ExpConstReal(((Double)rubyValue).doubleValue());
-		}
-		if (rubyValue instanceof MObject) {
-			MObject obj = (MObject)rubyValue;
-			return new ExpressionWithValue(new ObjectValue(obj.cls(), obj));
-		}
-		if (rubyValue != null) {
-			Log.warn("makeUSEExpression: Unhandeled Ruby value: " + rubyValue.toString() + ":" + rubyValue.getClass().getName());
-		}
-		
-		return new ExpUndefined();
-	}
-	
-	public static Expression[] makeExpArray(Object[] exp) {
-		Expression[] res = new Expression[exp.length];
-		for (int i = 0; i < exp.length; i++) {
-			res[i] = (Expression)exp[i];
-		}
-		
-		return res;
 	}
 }

@@ -19,21 +19,17 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.OrderedSetValue;
-import org.tzi.use.uml.ocl.value.SetValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * OCL closure expression introduced in OCL 2.3
@@ -53,7 +49,7 @@ public class ExpClosure extends ExpQuery {
 
 	/**
 	 * Determines the result type of the closure operation.
-	 * If source is ordered a ordered set is returned,
+	 * If source is ordered an ordered set is returned,
 	 * otherwise a set.
 	 * The element type of the resulting collection type is
 	 * retrieved from the range expression.
@@ -133,12 +129,7 @@ public class ExpClosure extends ExpQuery {
         else
             return new SetValue(resultType.elemType(), resValues);
     }
-    
-	/**
-	 * @param resValues
-	 * @param elem
-	 * @param ctx
-	 */
+
 	private void evalClosureAux(Set<Value> resValues, Value elem, EvalContext ctx) {
 		
 		Collection<Value> rangeVal;

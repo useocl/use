@@ -19,17 +19,17 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.type.UniqueLeastCommonSupertypeDeterminator;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract base class for collection literals.
@@ -66,10 +66,10 @@ public abstract class ExpCollectionLiteral extends Expression {
     	else if (this.fElemExpr.length == 1)
     		return this.fElemExpr[0].type();
     	
-    	Set<Type> types = new HashSet<Type>();
-        for (int i = 0; i < fElemExpr.length; i++) {
-			Type t = fElemExpr[i].type();
-			types.add(t);
+    	Set<Type> types = new HashSet<>();
+        for (Expression expression : fElemExpr) {
+            Type t = expression.type();
+            types.add(t);
         }
 			
     	Type result = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types); 
@@ -95,7 +95,7 @@ public abstract class ExpCollectionLiteral extends Expression {
      */
     protected Value[] evalArgs(EvalContext ctx) {
     	
-        List<Value> argValues = new LinkedList<Value>();
+        List<Value> argValues = new LinkedList<>();
         
         for (Expression exp : fElemExpr) {
         	Value eValue = exp.eval(ctx);
@@ -104,16 +104,14 @@ public abstract class ExpCollectionLiteral extends Expression {
             		argValues.add(eValue);
             	} else {
             		SequenceValue sVal = (SequenceValue)eValue;
-            		for (Value v : sVal.collection()) {
-            			argValues.add(v);
-            		}
+                    argValues.addAll(sVal.collection());
             	}
             } else { 
             	argValues.add(eValue);
             }
         }
         
-        return argValues.toArray(new Value[argValues.size()]);
+        return argValues.toArray(new Value[0]);
     }
 
     @Override

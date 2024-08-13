@@ -20,7 +20,6 @@
 package org.tzi.use.util.collections;
 
 import java.util.AbstractCollection;
-import java.util.Iterator;
 
 /**
  * Skeleton for implementations of the Bag interface.
@@ -64,9 +63,7 @@ public abstract class AbstractBag<T> extends AbstractCollection<T> implements Ba
      */
     public int hashCode() {
         int h = 0;
-        Iterator<T> i = iterator();
-        while (i.hasNext()) {
-            Object obj = i.next();
+        for (Object obj : this) {
             if (obj != null)
                 h += obj.hashCode();
         }

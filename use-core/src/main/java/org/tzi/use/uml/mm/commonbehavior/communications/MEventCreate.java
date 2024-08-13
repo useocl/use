@@ -32,9 +32,6 @@ public class MEventCreate extends MEvent {
 		this.cf = cf;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "create";

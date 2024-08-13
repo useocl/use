@@ -47,7 +47,7 @@ public final class CollectionUtil {
                                     List<List<T>> listWithLists,
                                     List<List<T>> combinations) {
         if (elementStack.size() == listWithLists.size()) {
-            combinations.add( new ArrayList<T>(elementStack));
+            combinations.add(new ArrayList<>(elementStack));
         } else {
             List<T> currentList = listWithLists.get(elementStack.size());
 
@@ -66,8 +66,8 @@ public final class CollectionUtil {
      *              ... {b,2,q} {b,3,p} {b,3,q} }
      */
     public static <T> List<List<T>> combinations( List<List<T>> listWithLists ) {
-        List<List<T>> combinations = new ArrayList<List<T>>();
-        Stack<T> elementStack = new Stack<T>();
+        List<List<T>> combinations = new ArrayList<>();
+        Stack<T> elementStack = new Stack<>();
         
         combine( elementStack, listWithLists, combinations );
         
@@ -88,33 +88,33 @@ public final class CollectionUtil {
     	// Each partition contains only combinations from one element of the unique list
     	// e.g.: {a,b} {c,d} results in:
     	// 0 = {(a,c), (a,d)}, 1 = {(b,c), (b,d)}
-    	List<List<Pair<T>>> partitionedCombinations = new ArrayList<List<Pair<T>>>();
+    	List<List<Pair<T>>> partitionedCombinations = new ArrayList<>();
+
+        for (T t : l1) {
+            List<Pair<T>> partition = new ArrayList<>();
+
+            for (T value : l2) {
+                Pair<T> entry = new Pair<>();
+                if (unique == UniqueList.FIRST_IS_UNIQUE) {
+                    entry.first = value;
+                    entry.second = t;
+                } else {
+                    entry.first = t;
+                    entry.second = value;
+                }
+                partition.add(entry);
+            }
+
+            partitionedCombinations.add(partition);
+        }
     	
-    	for (int index = 0; index < l1.size(); index++) {
-    		List<Pair<T>> partition = new ArrayList<Pair<T>>();
-    		
-    		for (int index2 = 0; index2 < l2.size(); index2++) {
-    			Pair<T> entry = new Pair<T>();
-    			if (unique == UniqueList.FIRST_IS_UNIQUE) {
-    				entry.first  = l2.get(index2);
-    				entry.second = l1.get(index);
-    			} else {
-    				entry.first  = l1.get(index);
-    				entry.second = l2.get(index2);
-    			}
-    			partition.add(entry);
-    		}
-    		
-    		partitionedCombinations.add(partition);
-    	}
     	
-    	
-    	List<List<Pair<T>>> result = new ArrayList<List<Pair<T>>>();
-    	result.add(Collections.<Pair<T>>emptyList());
+    	List<List<Pair<T>>> result = new ArrayList<>();
+    	result.add(Collections.emptyList());
     	// Loops over all partitions of the combinations and calls combine.
-    	// The tails is reduced by one after every call, because the previous call includes already the combinations
+    	// The tails are reduced by one after every call, because the previous call includes already the combinations
     	for (int index = 0; index < partitionedCombinations.size(); ++index) {
-    		combinationsOneAux(result, Collections.<Pair<T>>emptyList(), partitionedCombinations.subList(index, partitionedCombinations.size()));
+    		combinationsOneAux(result, Collections.emptyList(), partitionedCombinations.subList(index, partitionedCombinations.size()));
     	}
     	
     	return result;
@@ -122,20 +122,20 @@ public final class CollectionUtil {
     
     private static <T> void combinationsOneAux(List<List<Pair<T>>> result, List<Pair<T>> head, List<List<Pair<T>>> tail) {
     
-    	if (tail.size() == 0) return;
+    	if (tail.isEmpty()) return;
     	
     	List<Pair<T>> myCombinations = tail.get(0);
     	
     	// All combination for a single element
     	// cmb = m * (1 + (|tail|  
-    	for(int index = 0; index < myCombinations.size(); ++index) {
-    		List<Pair<T>> newHead = new LinkedList<Pair<T>>(head);
-    		newHead.add(myCombinations.get(index));
-    		result.add(newHead);
-    		for (int index2 = 1; index2 < tail.size(); ++index2) {
-	    		combinationsOneAux(result, newHead, tail.subList(index2, tail.size()));
-    		}
-    	}
+        for (Pair<T> myCombination : myCombinations) {
+            List<Pair<T>> newHead = new LinkedList<>(head);
+            newHead.add(myCombination);
+            result.add(newHead);
+            for (int index2 = 1; index2 < tail.size(); ++index2) {
+                combinationsOneAux(result, newHead, tail.subList(index2, tail.size()));
+            }
+        }
     }
     
     /**
@@ -196,8 +196,8 @@ public final class CollectionUtil {
      * @return The same list if <code>theList.size() > 0</code> or a new <code>ArrayList</code>  
      */
     public static <T> List<T> initAsArrayList(final List<T> theList) {
-    	if (theList.size() == 0)
-    		return new ArrayList<T>();
+    	if (theList.isEmpty())
+    		return new ArrayList<>();
     	else
     		return theList;
     }
@@ -218,8 +218,8 @@ public final class CollectionUtil {
      * @return The same <code>Map</code> if <code>theMap.size() > 0</code> or a new <code>HashMap</code>  
      */
     public static <TK, TV> Map<TK,TV> initAsHashMap(final Map<TK,TV> theMap) {
-    	if (theMap.size() == 0)
-    		return new HashMap<TK,TV>();
+    	if (theMap.isEmpty())
+    		return new HashMap<>();
     	else
     		return theMap;
     }
@@ -239,8 +239,8 @@ public final class CollectionUtil {
      * @return The same set if <code>theSet.size() > 0</code> or a new <code>HashSet</code>  
      */
     public static <T> Set<T> initAsHashSet(final Set<T> theSet) {
-    	if (theSet.size() == 0)
-    		return new HashSet<T>();
+    	if (theSet.isEmpty())
+    		return new HashSet<>();
     	else
     		return theSet;
     }

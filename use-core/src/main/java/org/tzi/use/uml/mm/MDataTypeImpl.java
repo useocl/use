@@ -34,11 +34,11 @@ public class MDataTypeImpl extends MClassifierImpl implements MDataType {
     /**
      * All inherited attributes of this data type.
      */
-    private Map<String, MAttribute> fSuperAttributes;
+    private final Map<String, MAttribute> fSuperAttributes;
 
     MDataTypeImpl(String name, boolean isAbstract) {
         super(name, isAbstract);
-        fSuperAttributes = new TreeMap<String, MAttribute>();
+        fSuperAttributes = new TreeMap<>();
     }
 
     /**
@@ -128,11 +128,11 @@ public class MDataTypeImpl extends MClassifierImpl implements MDataType {
      * @return List(MAttribute)
      */
     public List<MAttribute> attributes() {
-        return new ArrayList<MAttribute>(fAttributes.values());
+        return new ArrayList<>(fAttributes.values());
     }
 
     public List<MAttribute> superAttributes() {
-        return new ArrayList<MAttribute>(fSuperAttributes.values());
+        return new ArrayList<>(fSuperAttributes.values());
     }
 
     /**

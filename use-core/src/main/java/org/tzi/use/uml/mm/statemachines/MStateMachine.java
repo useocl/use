@@ -19,13 +19,13 @@
 
 package org.tzi.use.uml.mm.statemachines;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.UseFileLocatable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * State machines can be used to express the behavior of part of a system. Behavior is modeled as a traversal of a graph of
@@ -59,12 +59,12 @@ public class MStateMachine implements MNamedElement, UseFileLocatable {
 	/**
 	 * The regions owned directly by the state machine.
 	 */
-	protected List<MRegion> region = new ArrayList<MRegion>();
+	protected List<MRegion> region = new ArrayList<>();
 	
 	/**
 	 * Constructs a new state machine with a default region.
 	 * @param name The name of the state machine
-	 * @param srcPos The source position of the state machine inside of a USE file.
+	 * @param srcPos The source position of the state machine in the USE file.
 	 */
 	public MStateMachine(String name, SrcPos srcPos, MClassifier context) {
 		this.srcPos = srcPos;

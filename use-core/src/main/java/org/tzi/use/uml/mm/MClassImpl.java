@@ -19,19 +19,11 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.util.collections.CollectionUtil;
+
+import java.util.*;
 
 /**
  * MClass instances represent classes in a model.
@@ -42,7 +34,7 @@ import org.tzi.use.util.collections.CollectionUtil;
 public class MClassImpl extends MClassifierImpl implements MClass {
 
     // other classes reachable by associations 
-    private Map<String, MNavigableElement> fNavigableElements;
+    private final Map<String, MNavigableElement> fNavigableElements;
 
     /**
      * All owned PSM
@@ -51,7 +43,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
     
     MClassImpl(String name, boolean isAbstract) {
         super(name, isAbstract);
-        fNavigableElements = new HashMap<String, MNavigableElement>();
+        fNavigableElements = new HashMap<>();
     }
 
     /**
@@ -344,7 +336,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
      * @return Set(MAssociation).  
      */
     public Set<MAssociation> associations() {
-        Set<MAssociation> res = new HashSet<MAssociation>();
+        Set<MAssociation> res = new HashSet<>();
 
         for(MNavigableElement aend : fNavigableElements.values()) {
             res.add(aend.association());
@@ -378,7 +370,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
 
 	@Override
 	public List<MAssociationEnd> getAssociationEnd(String roleName) {
-		List<MAssociationEnd> result = new LinkedList<MAssociationEnd>();
+		List<MAssociationEnd> result = new LinkedList<>();
 		
 		for (MClass cls : this.generalizationHierachie(true)) {
 			for (MAssociation assoc : cls.associations()) {
@@ -417,7 +409,7 @@ public class MClassImpl extends MClassifierImpl implements MClass {
 
 	@Override
 	public Set<MProtocolStateMachine> getAllOwnedProtocolStateMachines() {
-		Set<MProtocolStateMachine> psms = new HashSet<MProtocolStateMachine>();
+		Set<MProtocolStateMachine> psms = new HashSet<>();
 		for (MClass cls : generalizationHierachie(true)) {
 			psms.addAll(cls.getOwnedProtocolStateMachines());
 		}

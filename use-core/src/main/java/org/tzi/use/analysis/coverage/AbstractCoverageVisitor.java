@@ -54,15 +54,13 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 
 	@Override
 	public void visitAllInstances(ExpAllInstances exp) {
-		if (exp.getSourceType() instanceof MDataType) {
-			addDataTypeCoverage((MDataType) exp.getSourceType());
-		} else if (exp.getSourceType() instanceof MClass) {
-			addClassCoverage((MClass) exp.getSourceType());
-		} else if (exp.getSourceType() instanceof MAssociation) {
-			addAssociationCoverage((MAssociation) exp.getSourceType());
-		} else {
-			// handle case
-		}
+        switch (exp.getSourceType()) {
+            case MDataType mDataType -> addDataTypeCoverage(mDataType);
+            case MClass mClass -> addClassCoverage(mClass);
+            case MAssociation mAssociation -> addAssociationCoverage(mAssociation);
+            case null, default ->
+                    throw new RuntimeException("Unhandled subtype %s in visitor".formatted(exp.getClass().getName()));
+        }
 	}
 
 	@Override
@@ -188,7 +186,7 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 		exp.getObjectExpression().processWithVisitor(this);
 	}
 
-	private Stack<MOperation> operationStack = new Stack<MOperation>();
+	private final Stack<MOperation> operationStack = new Stack<MOperation>();
 
 	@Override
 	public void visitObjOp(ExpObjOp exp) {

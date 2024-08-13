@@ -21,7 +21,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -42,8 +41,8 @@ public class ExpCollectNested extends ExpQuery {
     {
         // result type is bag or sequence of query expression type
         super( rangeExp.type().isTypeOfSequence() || rangeExp.type().isTypeOfOrderedSet()
-                ? (Type) TypeFactory.mkSequence(queryExp.type())
-                : (Type) TypeFactory.mkBag(queryExp.type()), 
+                ? TypeFactory.mkSequence(queryExp.type())
+                : TypeFactory.mkBag(queryExp.type()),
                ( elemVarDecl != null ) 
                ? new VarDeclList(elemVarDecl) 
                : new VarDeclList(true),

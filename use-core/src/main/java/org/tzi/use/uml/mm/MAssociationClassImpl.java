@@ -19,14 +19,6 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -34,6 +26,8 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MOperationCall;
+
+import java.util.*;
 
 
 /**
@@ -48,8 +42,8 @@ import org.tzi.use.uml.sys.MOperationCall;
 
 public class MAssociationClassImpl extends MClassifierImpl implements MAssociationClass {
 
-    private MAssociationImpl fAssociationImpl;
-    private MClassImpl fClassImpl;
+    private final MAssociationImpl fAssociationImpl;
+    private final MClassImpl fClassImpl;
     
     /**
      * Creates a new associationclass.
@@ -520,7 +514,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
     	List<MNavigableElement> nav;
     	
     	if (cls.equals(this)) {
-    		nav = new ArrayList<MNavigableElement>(navigableEnds().values());
+    		nav = new ArrayList<>(navigableEnds().values());
     	} else {
     		nav = fAssociationImpl.navigableEndsFrom( cls );
     		nav.add( this );
@@ -530,7 +524,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
     }
 
     public Collection<MNavigableElement> navigableElements() {
-        List<MNavigableElement> ne = new ArrayList<MNavigableElement>( navigableEnds().values() );
+        List<MNavigableElement> ne = new ArrayList<>(navigableEnds().values());
         ne.add( this );
         return ne;
     }

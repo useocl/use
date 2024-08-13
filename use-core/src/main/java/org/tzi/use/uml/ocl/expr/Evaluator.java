@@ -19,14 +19,14 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.collections.Queue;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * Evaluation of expressions.
@@ -39,10 +39,10 @@ public final class Evaluator {
     private final boolean fEnableEvalTree;
 
     /**
-     * Creates a default Evaluator without building an evaluation tree.
+     * <p>Creates a default Evaluator without building an evaluation tree.</p>
      * 
-     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
-     * The tree is used, e.g., in the evaluation browser.  
+     * <p>Turns on building an evaluation tree if {@code enableEvalTree} is true.
+     * The tree is used, e.g., in the evaluation browser.</p>
      *
      */
     public Evaluator() {
@@ -52,7 +52,7 @@ public final class Evaluator {
     /**
      * Creates a default Evaluator.
      * 
-     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
+     * Turns on building an evaluation tree if {@code enableEvalTree} is true.
      * The tree is used, e.g., in the evaluation browser.  
      *
      */
@@ -63,7 +63,7 @@ public final class Evaluator {
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings. 
-     * Detailed information is printed to <code>evalLog</code>, which can be <code>null</code>.
+     * Detailed information is printed to {@code evalLog}, which can be {@code null}.
      */
     public Value eval(Expression expr, 
                       MSystemState preState,
@@ -171,17 +171,17 @@ public final class Evaluator {
     }
 
     /**
-     * Evaluates a list of expressions with <code>numThreads</code>
+     * <p>Evaluates a list of expressions with <code>numThreads</code>
      * threads running in parallel. This method spawns a thread doing
      * the evaluation and returns immediately with a synchronized
      * queue. The caller should use the Queue.get() method on this
      * queue to wait for results. The queue will block until results
      * become available. The order in which results are delivered is
-     * the same order passed in as <code>exprList</code>, i.e.,
-     * expressions are processed in FIFO order.
+     * the same order passed in as {@code exprList}, i.e.,
+     * expressions are processed in FIFO order.</p>
      *
-     * If <code>numThreads == 1</code>, the expression list will be
-     * processed sequentially with no thread overhead.
+     * <p>If <code>numThreads == 1</code>, the expression list will be
+     * processed sequentially with no thread overhead.</p>
      *
      * @return Queue(Value) a queue of result values for each expression.  
      */

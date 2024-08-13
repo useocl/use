@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstBoolean extends Expression {
-    private boolean fValue;
+    private final boolean fValue;
 
     public ExpConstBoolean(boolean b) {
         super(TypeFactory.mkBoolean());
@@ -55,17 +55,11 @@ public final class ExpConstBoolean extends Expression {
         return sb.append(fValue);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstBoolean(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
-	 */
 	@Override
 	protected boolean childExpressionRequiresPreState() {
 		return false;

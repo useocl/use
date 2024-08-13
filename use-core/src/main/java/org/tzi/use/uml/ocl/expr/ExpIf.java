@@ -29,9 +29,9 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpIf extends Expression {
-    private Expression fCondition;
-    private Expression fThenExp;
-    private Expression fElseExp;
+    private final Expression fCondition;
+    private final Expression fThenExp;
+    private final Expression fElseExp;
     
     public ExpIf(Expression condition,
                  Expression thenExp,
@@ -98,17 +98,11 @@ public final class ExpIf extends Expression {
         return fElseExp;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitIf(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
-	 */
 	@Override
 	protected boolean childExpressionRequiresPreState() {		
 		return  fCondition.requiresPreState() || fThenExp.requiresPreState() || fElseExp.requiresPreState();

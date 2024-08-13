@@ -20,7 +20,6 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
@@ -42,9 +41,9 @@ public class ExpCollect extends ExpQuery {
     {
         // result type is bag or sequence of query expression type
         super( rangeExp.type().isTypeOfSequence() || rangeExp.type().isTypeOfOrderedSet()
-               ? (Type) TypeFactory.mkSequence(
+               ? TypeFactory.mkSequence(
             		   (queryExp.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type()))
-               : (Type) TypeFactory.mkBag(
+               : TypeFactory.mkBag(
             		   (queryExp.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID) ? ((CollectionType)queryExp.type()).elemType() : queryExp.type())), 
                ( elemVarDecl != null ) 
                ? new VarDeclList(elemVarDecl) 

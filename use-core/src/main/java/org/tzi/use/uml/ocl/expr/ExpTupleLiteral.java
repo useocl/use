@@ -19,9 +19,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -30,6 +27,9 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.BufferedToString;
 import org.tzi.use.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Constant tuple literal.
  *
@@ -37,11 +37,11 @@ import org.tzi.use.util.StringUtil;
  * @author  Lars Hamann  
  */
 public final class ExpTupleLiteral extends Expression {
-    private Part[] fParts;
+    private final Part[] fParts;
 
     public static class Part implements BufferedToString {
-        private String fName;
-        private Expression fExpr;
+        private final String fName;
+        private final Expression fExpr;
         // Maybe a type was given by the user
         private Type givenType = null;
         
@@ -93,11 +93,9 @@ public final class ExpTupleLiteral extends Expression {
         // determine tuple type
         fParts = parts;
         TupleType.Part[] typeParts = new TupleType.Part[fParts.length];
-        Expression[] childExpressions = new Expression[fParts.length];
-        
+
         for (int i = 0; i < fParts.length; i++) {
         	 typeParts[i] = new TupleType.Part(i, fParts[i].fName, fParts[i].getType());
-        	 childExpressions[i] = fParts[i].fExpr;
         }
         
         setResultType(TypeFactory.mkTuple(typeParts));
@@ -135,17 +133,11 @@ public final class ExpTupleLiteral extends Expression {
         return sb.append("}");
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitTupleLiteral(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
-	 */
 	@Override
 	protected boolean childExpressionRequiresPreState() {
 		for (Part p : fParts) {

@@ -28,10 +28,10 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpLet extends Expression {
-    private String fVarname;
-    private Type fVarType;
-    private Expression fVarExpr;
-    private Expression fInExpr;
+    private final String fVarname;
+    private final Type fVarType;
+    private final Expression fVarExpr;
+    private final Expression fInExpr;
     
     public ExpLet(String varname, 
                   Type varType,
@@ -55,7 +55,7 @@ public final class ExpLet extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = null;
+        Value res;
         Value varValue = fVarExpr.eval(ctx);
         ctx.pushVarBinding(fVarname, varValue);
         res = fInExpr.eval(ctx);

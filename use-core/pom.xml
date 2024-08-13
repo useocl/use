@@ -12,8 +12,8 @@
     <artifactId>use-core</artifactId>
 
     <properties>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-core</artifactId>
-            <version>9.3.1.0</version>
+            <version>9.4.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.ximpleware</groupId>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-testlib</artifactId>
-            <version>20.0</version>
+            <version>33.2.1-jre</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -304,4 +304,11 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
 </project>

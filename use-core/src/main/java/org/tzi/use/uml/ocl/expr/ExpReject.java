@@ -45,17 +45,6 @@ public class ExpReject extends ExpQuery {
         assertBooleanQuery();
     }
 
-    public ExpReject(VarDeclList elemVarDeclList,
-            			Expression  rangeExp, 
-            			Expression  queryExp) throws ExpInvalidException
-    {
-    	// 	result has same type as range expression
-    	super(rangeExp.type(), elemVarDeclList, rangeExp, queryExp);
-
-    	// queryExp must be a boolean expression
-    	assertBooleanQuery();
-    }
-    
     /** 
      * Return name of query expression.
      */
@@ -73,9 +62,6 @@ public class ExpReject extends ExpQuery {
         return res;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitReject(this);

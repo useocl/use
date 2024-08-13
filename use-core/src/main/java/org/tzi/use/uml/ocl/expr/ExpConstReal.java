@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstReal extends Expression {
-    private double fValue;
+    private final double fValue;
 
     public ExpConstReal(double d) {
         super(TypeFactory.mkReal());
@@ -38,7 +38,7 @@ public final class ExpConstReal extends Expression {
 
     public ExpConstReal(Double d) {
         super(TypeFactory.mkReal());
-        fValue = d.doubleValue();
+        fValue = d;
     }
 
     public double value() {
@@ -60,17 +60,11 @@ public final class ExpConstReal extends Expression {
         return sb.append(fValue);
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitConstReal(this);		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
-	 */
 	@Override
 	protected boolean childExpressionRequiresPreState() {
 		return false;

@@ -33,7 +33,7 @@ public class HashBag<T> extends AbstractBag<T> {
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
-    class MutableInteger {
+    static class MutableInteger {
         int fInt;
         MutableInteger(int n) {
             fInt = n;
@@ -179,8 +179,8 @@ public class HashBag<T> extends AbstractBag<T> {
      * HashBag Iterator.
      */
     private class AllElementsIterator implements Iterator<T> {
-        private Bag<T> fBag;
-        private Iterator<T> fKeyIterator;
+        private final Bag<T> fBag;
+        private final Iterator<T> fKeyIterator;
         private int fElemsLeft;
         private T fElem;
 

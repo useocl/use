@@ -57,7 +57,7 @@ public final class MMultiplicity {
      */
     public static final MMultiplicity ZERO_ONE = new MMultiplicity(0, 1);
     
-    public final class Range {
+    public static final class Range {
         int fLower;
         int fUpper;
 
@@ -68,8 +68,7 @@ public final class MMultiplicity {
             //   *     u    error
             //   l     *    ok 
             //   l     u    l <= u, l >= 0, u > 0
-            if (upper != MANY && 
-                (lower > upper || lower < 0 ||  upper < 0 ) )
+            if (upper != MANY && (lower > upper || lower < 0))
                 throw new IllegalArgumentException(
                                                    "Invalid multiplicity range `" + 
                                                    lower + ".." + upper + "'.");
@@ -121,7 +120,7 @@ public final class MMultiplicity {
         }
     }
     
-    private List<Range> mRanges = new ArrayList<MMultiplicity.Range>();
+    private final List<Range> mRanges = new ArrayList<>();
     
     /**
 	 * @return the mRanges

@@ -48,9 +48,6 @@ public class Options {
     public static final String COPYRIGHT = "Copyright (C) 1999-2024 University of Bremen & " +
 			"University of Applied Sciences Hamburg";
 
-    // the trained support apes
-    public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
-
     /**
      * Name of the file for user properties.
      */

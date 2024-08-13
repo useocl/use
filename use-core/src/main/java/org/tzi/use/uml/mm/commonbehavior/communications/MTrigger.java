@@ -48,18 +48,12 @@ public class MTrigger implements MNamedElement {
 	public MEvent getEvent() {
 		return event;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MNamedElement#name()
-	 */
+
 	@Override
 	public String name() {
 		return event.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return event.toString();

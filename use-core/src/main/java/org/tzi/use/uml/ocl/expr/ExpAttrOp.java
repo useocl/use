@@ -32,9 +32,9 @@ import org.tzi.use.uml.sys.*;
  * @author Lars Hamann
  */
 public final class ExpAttrOp extends Expression {
-    private MAttribute fAttr;
+    private final MAttribute fAttr;
     
-    private Expression fObjExp;
+    private final Expression fObjExp;
     
     public ExpAttrOp(MAttribute a, Expression objExp) {
         super(a.type());

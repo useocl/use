@@ -30,7 +30,7 @@ import org.tzi.use.uml.sys.MObject;
  */
 public class ExpObjRef extends Expression {
 	/** The object */
-	private MObject fObject;
+	private final MObject fObject;
 	
 	
 	/**
@@ -65,19 +65,11 @@ public class ExpObjRef extends Expression {
 		  		 .append(fObject.name());
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitObjRef(this);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#childExpressionRequiresPreState()
-	 */
 	@Override
 	protected boolean childExpressionRequiresPreState() {
 		return false;

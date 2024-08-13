@@ -37,8 +37,7 @@ import java.util.*;
 public abstract class ExpQuery extends Expression {
 
 	/**
-     * List of element variables that will be bound to each range element (may
-     * be empty).
+     * List of element variables that will be bound to each range element (maybe empty).
      */
     protected VarDeclList fElemVarDecls;
 
@@ -110,7 +109,7 @@ public abstract class ExpQuery extends Expression {
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
-        ArrayList<Value> resValues = new ArrayList<Value>();
+        ArrayList<Value> resValues = new ArrayList<>();
 
         if (!rangeVal.type().isInstantiableCollection())
             throw new RuntimeException("rangeVal is not of collection type: " + rangeVal.type());
@@ -162,8 +161,8 @@ public abstract class ExpQuery extends Expression {
         return BooleanValue.get(res);
     }
 
-    private final boolean evalExistsOrForAll0(int nesting,
-            CollectionValue rangeVal, EvalContext ctx, boolean doExists) {
+    private boolean evalExistsOrForAll0(int nesting,
+                                        CollectionValue rangeVal, EvalContext ctx, boolean doExists) {
         // loop over range elements
         boolean res = !doExists;
         
@@ -333,7 +332,7 @@ public abstract class ExpQuery extends Expression {
         CollectionValue rangeVal = (CollectionValue) v;
 
         // prepare result value
-        List<Value> resValues = new ArrayList<Value>(rangeVal.size());
+        List<Value> resValues = new ArrayList<>(rangeVal.size());
                 
         if (!rangeVal.isEmpty()) {
 	        // bind element variable to range element, if variable was
@@ -383,7 +382,7 @@ public abstract class ExpQuery extends Expression {
         CollectionValue rangeVal = (CollectionValue) v;
 
         // collect values for finding duplicates
-        Set<Value> values = new HashSet<Value>();
+        Set<Value> values = new HashSet<>();
 
         // loop over range elements
         for (Value elemVal : rangeVal) {
@@ -420,7 +419,7 @@ public abstract class ExpQuery extends Expression {
             return UndefinedValue.instance;
         CollectionValue rangeVal = (CollectionValue) v;
 
-        ArrayList<KeyValPair> keyValList = new ArrayList<KeyValPair>();
+        ArrayList<KeyValPair> keyValList = new ArrayList<>();
 
         // loop over range elements
         for( Value elemVal : rangeVal) {
@@ -440,15 +439,11 @@ public abstract class ExpQuery extends Expression {
         }
 
         // sort elements by key
-        Collections.sort(keyValList, new Comparator<KeyValPair>() {
-            public int compare(KeyValPair o1, KeyValPair o2) {
-                return o1.fKey.compareTo(o2.fKey);
-            }
-        });
+        keyValList.sort(Comparator.comparing(o -> o.fKey));
 
         // drop the keys from the list
         ListIterator<KeyValPair> listIter = keyValList.listIterator();
-        Collection<Value> result = new ArrayList<Value>(keyValList.size());
+        Collection<Value> result = new ArrayList<>(keyValList.size());
         
         while (listIter.hasNext()) {
             KeyValPair kvp = listIter.next();
@@ -465,7 +460,7 @@ public abstract class ExpQuery extends Expression {
     }
 
     // used by evalSortedBy
-    private class KeyValPair {
+    private static class KeyValPair {
         Value fKey;
 
         Value fElem;

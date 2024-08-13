@@ -33,7 +33,7 @@ public class TreeBag<T> extends AbstractBag<T> {
 
     // We don't want to allocate a new Integer object each time we
     // have to increment the value in a map.
-    class MutableInteger {
+    static class MutableInteger {
         int fInt;
 
         MutableInteger(int n) {
@@ -42,7 +42,7 @@ public class TreeBag<T> extends AbstractBag<T> {
     }
 
     // private transient HashMap fMap;
-    private transient TreeMap<T, MutableInteger> fMap;
+    private final transient TreeMap<T, MutableInteger> fMap;
 
     private transient int fSizeAll;
 
@@ -52,7 +52,7 @@ public class TreeBag<T> extends AbstractBag<T> {
      */
     public TreeBag() {
         // TreeMaps are used because there the entries are ordered
-        fMap = new TreeMap<T, MutableInteger>();
+        fMap = new TreeMap<>();
     }
 
     /**
@@ -183,10 +183,10 @@ public class TreeBag<T> extends AbstractBag<T> {
     /**
      * HashBag Iterator.
      */
-    private class AllElementsIterator<ET> implements Iterator<ET> {
-        private Bag<ET> fBag;
+    private static class AllElementsIterator<ET> implements Iterator<ET> {
+        private final Bag<ET> fBag;
 
-        private Iterator<ET> fKeyIterator;
+        private final Iterator<ET> fKeyIterator;
 
         private int fElemsLeft;
 

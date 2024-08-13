@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public class ExpIterate extends ExpQuery {
-    private VarInitializer fAccuInitializer;
+    private final VarInitializer fAccuInitializer;
 
     /**
      * Constructs an iterate expression.
@@ -99,7 +99,7 @@ public class ExpIterate extends ExpQuery {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = null;
+        Value res;
 
         // evaluate range
         Value v = fRangeExp.eval(ctx);
@@ -119,10 +119,10 @@ public class ExpIterate extends ExpQuery {
         return res;
     }
 
-    private final Value eval0(EvalContext ctx, 
-                              int nesting, 
-                              CollectionValue rangeVal,
-                              Value accuVal)
+    private Value eval0(EvalContext ctx,
+                        int nesting,
+                        CollectionValue rangeVal,
+                        Value accuVal)
     {
         // loop over range elements
         for (Value elemVal : rangeVal) {
@@ -157,9 +157,6 @@ public class ExpIterate extends ExpQuery {
         return fAccuInitializer;
     }
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.ocl.expr.Expression#processWithVisitor(org.tzi.use.uml.ocl.expr.ExpressionVisitor)
-	 */
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitIterate(this);

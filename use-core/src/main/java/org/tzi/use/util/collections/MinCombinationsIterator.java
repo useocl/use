@@ -19,15 +19,10 @@
 
 package org.tzi.use.util.collections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-
 import org.tzi.use.util.Pair;
 import org.tzi.use.util.collections.CollectionUtil.UniqueList;
+
+import java.util.*;
 
 /**
  * An iterator which iterates over generated partitions of two lists.
@@ -43,9 +38,9 @@ import org.tzi.use.util.collections.CollectionUtil.UniqueList;
  */
 public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
 
-	private List<T> firstList;
-	private List<T> secondList;
-	private UniqueList unique;
+	private final List<T> firstList;
+	private final List<T> secondList;
+	private final UniqueList unique;
 	
 	private List<List<Pair<T>>> partitionedCombinations;
 		
@@ -102,7 +97,7 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
     			partition.add(entry);
     		}
     		
-    		if (partition.size() > 0)
+    		if (!partition.isEmpty())
     			partitionedCombinations.add(partition);
     	}
 	}
@@ -145,18 +140,12 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
 		s.index++;
 
     }
-    
-    /* (non-Javadoc)
-	 * @see java.util.Iterator#hasNext()
-	 */
+
 	@Override
 	public boolean hasNext() {
 		return nextLinkSet != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#next()
-	 */
 	@Override
 	public List<Pair<T>> next() {
 		List<Pair<T>> res = nextLinkSet;
@@ -164,9 +153,6 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Iterator#remove()
-	 */
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();

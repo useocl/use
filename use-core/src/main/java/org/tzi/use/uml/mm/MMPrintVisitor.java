@@ -19,15 +19,6 @@
 
 package org.tzi.use.uml.mm;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.expr.ExpressionPrintVisitor;
 import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
@@ -37,6 +28,9 @@ import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
 import org.tzi.use.util.uml.sorting.UseModelElementFileOrderComparator;
+
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * Visitor for dumping a string representation of model elements on an
@@ -49,7 +43,7 @@ import org.tzi.use.util.uml.sorting.UseModelElementFileOrderComparator;
 public class MMPrintVisitor implements MMVisitor {
     protected PrintWriter fOut;
     private int fIndent;    // number of columns to indent output
-    private int fIndentStep = 2;
+    private final int fIndentStep = 2;
 
     public MMPrintVisitor(PrintWriter out) {
         fOut = out;
@@ -233,7 +227,7 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(')');
         }
         
-        if (e.getSubsettedEnds().size() > 0) {
+        if (!e.getSubsettedEnds().isEmpty()) {
         	for (MAssociationEnd end : e.getSubsettedEnds()) {
         		result.append(ws());
         		result.append(keyword("subsets"));
@@ -242,7 +236,7 @@ public class MMPrintVisitor implements MMVisitor {
         	}
         }
         
-        if (e.getRedefinedEnds().size() > 0) {
+        if (!e.getRedefinedEnds().isEmpty()) {
         	for (MAssociationEnd end : e.getRedefinedEnds()) {
         		result.append(ws());
         		result.append(keyword("redefines"));
@@ -299,7 +293,7 @@ public class MMPrintVisitor implements MMVisitor {
 
     private void visitAttributesAndOperations( MClassifier e ) {
         // visit attributes
-        if (e.attributes().size() > 0 ) {
+        if (!e.attributes().isEmpty()) {
             indent();
             println(keyword("attributes"));
             incIndent();
@@ -315,7 +309,7 @@ public class MMPrintVisitor implements MMVisitor {
         }
 
         // visit operations
-        if (e.operations().size() > 0 ) {
+        if (!e.operations().isEmpty()) {
             indent();
             println(keyword("operations"));
             incIndent();
@@ -444,12 +438,12 @@ public class MMPrintVisitor implements MMVisitor {
         println();
 
         // visit classes and associations together to maintain USE file order and easy handling of association classes
-        Set<MModelElement> classesAndAssocs = new HashSet<MModelElement>();
+        Set<MModelElement> classesAndAssocs = new HashSet<>();
         classesAndAssocs.addAll(e.classes());
         classesAndAssocs.addAll(e.associations());
         
-        List<MModelElement> sortedClassesAndAssocs = new ArrayList<MModelElement>(classesAndAssocs);
-        Collections.sort(sortedClassesAndAssocs, new UseModelElementFileOrderComparator());
+        List<MModelElement> sortedClassesAndAssocs = new ArrayList<>(classesAndAssocs);
+        sortedClassesAndAssocs.sort(new UseModelElementFileOrderComparator());
         
         for(MModelElement element : sortedClassesAndAssocs){
         	element.processWithVisitor(this);

@@ -30,9 +30,9 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author      Mark Richters
  */
 public final class MPrePostCondition extends MModelElementImpl implements UseFileLocatable {
-    private MOperation fOp; //  operation to be constrained
-    private Expression fExpr;   //  boolean expression
-    private boolean fIsPre;
+    private final MOperation fOp; //  operation to be constrained
+    private final Expression fExpr;   //  boolean expression
+    private final boolean fIsPre;
     private int fPositionInModel;
     
     /**

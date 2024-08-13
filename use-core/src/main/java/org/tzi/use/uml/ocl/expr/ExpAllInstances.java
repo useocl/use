@@ -19,8 +19,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.util.Set;
-
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.Type;
@@ -35,6 +33,8 @@ import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 
+import java.util.Set;
+
 /**
  * Type.allInstances
  *
@@ -42,7 +42,7 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author Lars Hamann
  */
 public final class ExpAllInstances extends Expression {
-    private MClassifier fSourceType;
+    private final MClassifier fSourceType;
     
     public ExpAllInstances(Type sourceType)
         throws ExpInvalidException
@@ -58,7 +58,7 @@ public final class ExpAllInstances extends Expression {
 
     /**
      * The type allInstances() is applied to. 
-     * @return
+     * @return The source {@code MClassifier} for the allInstances expression.
      */
     public MClassifier getSourceType() {
     	return this.fSourceType;

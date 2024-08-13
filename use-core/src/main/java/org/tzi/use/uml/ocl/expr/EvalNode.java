@@ -75,11 +75,9 @@ public class EvalNode {
      * @param fVarBindings
      */
     public EvalNode(VarBindings fVarBindings) {
-        this.fVarBindings = new Vector<Entry>();
-        Iterator<Entry> it = fVarBindings.iterator();
-        
-        while (it.hasNext()) {
-            Entry entry = it.next();
+        this.fVarBindings = new Vector<>();
+
+        for (Entry entry : fVarBindings) {
             this.fVarBindings.add(entry);
         }
     }
@@ -93,7 +91,7 @@ public class EvalNode {
 
     void addChild(EvalNode n) {
         if (fChildren == null)
-            fChildren = new ArrayList<EvalNode>();
+            fChildren = new ArrayList<>();
         fChildren.add(n);
     }
 
@@ -126,46 +124,46 @@ public class EvalNode {
 			}
         
 	        if(rangeNode != null){
-	        	final List<String> relevantVars = new ArrayList<String>(expr.getVariableDeclarations().size());
+	        	final List<String> relevantVars = new ArrayList<>(expr.getVariableDeclarations().size());
 	        	for(int i = 0; i < expr.getVariableDeclarations().size(); i++){
 	        		relevantVars.add(expr.getVariableDeclarations().varDecl(i).name());
 	        	}
 
 	        	// sort the list by the variables defined in the query expression
-	        	Collections.sort(fChildren, new Comparator<EvalNode>() {
-					@Override
-					public int compare(EvalNode o1, EvalNode o2) {
-						Value[] v1 = getVarValues(o1, relevantVars);
-						Value[] v2 = getVarValues(o2, relevantVars);
-						
-						for(int i = 0; i < relevantVars.size(); i++){
-							if(v1[i] == null && v2[i] == null){
-								return 0;
-							} else if(v2[i] == null){
-								return -1;
-							} else if(v1[i] == null){
-								return 1;
-							} else if(!v1[i].equals(v2[i])){
-								return v1[i].compareTo(v2[i]);
-							}
-						}
-						
-						return 0;
-					}
-					
-					private Value[] getVarValues(EvalNode node, List<String> relevantVars) {
-						Value[] values = new Value[relevantVars.size()];
-						for(int i = 0; i < relevantVars.size(); i++){
-							String rVar = relevantVars.get(i);
-							for (VarBindings.Entry e : node.getVarBindings()) {
-								if (rVar.equals(e.getVarName())) {
-									values[i] = e.getValue();
-								}
-							}
-						}
-						return values;
-					}
-				});
+	        	fChildren.sort(new Comparator<>() {
+                    @Override
+                    public int compare(EvalNode o1, EvalNode o2) {
+                        Value[] v1 = getVarValues(o1, relevantVars);
+                        Value[] v2 = getVarValues(o2, relevantVars);
+
+                        for (int i = 0; i < relevantVars.size(); i++) {
+                            if (v1[i] == null && v2[i] == null) {
+                                return 0;
+                            } else if (v2[i] == null) {
+                                return -1;
+                            } else if (v1[i] == null) {
+                                return 1;
+                            } else if (!v1[i].equals(v2[i])) {
+                                return v1[i].compareTo(v2[i]);
+                            }
+                        }
+
+                        return 0;
+                    }
+
+                    private Value[] getVarValues(EvalNode node, List<String> relevantVars) {
+                        Value[] values = new Value[relevantVars.size()];
+                        for (int i = 0; i < relevantVars.size(); i++) {
+                            String rVar = relevantVars.get(i);
+                            for (Entry e : node.getVarBindings()) {
+                                if (rVar.equals(e.getVarName())) {
+                                    values[i] = e.getValue();
+                                }
+                            }
+                        }
+                        return values;
+                    }
+                });
 	        	
 	        	// insert range expression back at the first position
 	        	fChildren.add(0, rangeNode);
@@ -174,10 +172,7 @@ public class EvalNode {
     }
     
 	public List<EvalNode> children() {
-        if (fChildren == null)
-            return new ArrayList<EvalNode>();
-        else
-            return fChildren;
+        return Objects.requireNonNullElseGet(fChildren, ArrayList::new);
     }
 
     public void setExpression(Expression expr) {
@@ -363,7 +358,7 @@ public class EvalNode {
 		private final Map<Expression, Value> expressionsToReplace;
 		
 		public SubstituteVariablesExpressionVisitor(PrintWriter pw, boolean doHighlighting) {
-			this(pw, doHighlighting, Collections.<Expression,Value>emptyMap());
+			this(pw, doHighlighting, Collections.emptyMap());
 		}
 
 		public SubstituteVariablesExpressionVisitor(PrintWriter pw, boolean doHighlighting, Map<Expression, Value> expressionsToReplace) {

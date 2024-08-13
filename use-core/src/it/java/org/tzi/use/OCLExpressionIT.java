@@ -1,16 +1,13 @@
 package org.tzi.use;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.api.impl.UseSystemApiNative;
-import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.value.Value;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OCLExpressionIT {
 

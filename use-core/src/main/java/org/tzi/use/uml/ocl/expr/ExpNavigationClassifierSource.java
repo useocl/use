@@ -74,7 +74,7 @@ public class ExpNavigationClassifierSource extends Expression {
 		
 		if (!srcValue.isUndefined()) {
 			MSystemState state = (this.isPre() ? ctx.preState() : ctx.postState());
-			MLink link = null;
+			MLink link;
 			
 			if (srcValue.isObject()) {
 				ObjectValue objVal = (ObjectValue)srcValue;

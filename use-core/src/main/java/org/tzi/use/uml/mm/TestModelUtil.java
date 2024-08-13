@@ -19,11 +19,11 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class <code>TestModelUtil</code> offers methods for creating

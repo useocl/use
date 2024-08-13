@@ -105,7 +105,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 */
 	private boolean fStepMode = false;
 
-	private ReadlineStack fReadlineStack = null;
+	private final ReadlineStack fReadlineStack;
 
 	/**
 	 * Actual readline that is used.
@@ -217,7 +217,7 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 	
 	public synchronized String readline(String prompt) throws IOException {
-		String line = null;
+		String line;
 		
 		boolean multiLine = false;
 		final StringBuilder multiSB = new StringBuilder();
@@ -303,9 +303,7 @@ public final class Shell implements Runnable, PPCHandler {
 					+ nl
 					+ "due to an error in the program. The program will try to continue, but may"
 					+ nl
-					+ "not be able to recover from the error. Please send a bug report to"
-					+ nl
-					+ Options.SUPPORT_MAIL
+					+ "not be able to recover from the error. Please open an issue on GitHub"
 					+ nl
 					+ "with a description of your last input and include the following output:");
 			System.err.println("Program version: " + Options.RELEASE_VERSION);
@@ -533,16 +531,18 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 	
 	/**
-	 * Runs shell coverage command.
+	 * <p>Runs shell coverage command.</p>
 	 * 
-	 * Supported switches for shell 'coverage' command:
-	 * 	-sum 		(numeric sum of coverage measurement results)
-	 * 	-invariants (covers only invariants)
-	 * 	-pre 		(covers only preconditions)
-	 *  -post 		(covers only postconditions)
-	 *  -contracts  (covers only contracts, so pre- and post-conditions)
-	 *  -total		(covers all)
-	 *  
+	 * <p>Supported switches for shell 'coverage' command:
+	 *  <ul>
+	 * 	<li>sum 		(numeric sum of coverage measurement results)</li>
+	 * 	<li>invariants (covers only invariants)</li>
+	 * 	<li>pre 		(covers only preconditions)</li>
+	 *  <li>post 		(covers only postconditions)</li>
+	 *  <li>contracts  (covers only contracts, so pre- and post-conditions)</li>
+	 *  <li>total		(covers all)</li>
+	 *  </ul>
+	 * </p>
 	 */
 	private void cmdCoverage(String line) throws NoSystemException {
 		ShellCoverageCommandProcessor processor = new ShellCoverageCommandProcessor(system().model(), line);
@@ -743,7 +743,7 @@ public final class Shell implements Runnable, PPCHandler {
 	 * Prints help.
 	 */
 	private void cmdHelp(String line) {
-		String cmd = "";
+		String cmd;
 
 		if (!line.contains("--help")) {
 			cmd = line.substring(4);
@@ -760,22 +760,18 @@ public final class Shell implements Runnable, PPCHandler {
 		StringTokenizer tokenizer = new StringTokenizer(line);
 		try {
 			String subCmd = tokenizer.nextToken();
-			if (subCmd.equals("class")) {
-				String arg = tokenizer.nextToken();
-				cmdInfoClass(arg);
-			} else if (subCmd.equals("model")) {
-				cmdInfoModel();
-			} else if (subCmd.equals("state")) {
-				cmdInfoState();
-			} else if (subCmd.equals("opstack")) {
-				cmdInfoOpStack();
-			} else if (subCmd.equals("prog")) {
-				cmdInfoProg();
-			} else if (subCmd.equals("vars")) {
-				cmdInfoVars();
-			} else {
-				Log.error("Syntax error in info command. Try `help'.");
-			}
+            switch (subCmd) {
+                case "class" -> {
+                    String arg = tokenizer.nextToken();
+                    cmdInfoClass(arg);
+                }
+                case "model" -> cmdInfoModel();
+                case "state" -> cmdInfoState();
+                case "opstack" -> cmdInfoOpStack();
+                case "prog" -> cmdInfoProg();
+                case "vars" -> cmdInfoVars();
+                default -> Log.error("Syntax error in info command. Try `help'.");
+            }
 		} catch (NoSuchElementException ex) {
 			Log.error("Missing argument to `info' command. Try `help'.");
 		}
@@ -1031,7 +1027,7 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	private String getPathWithoutFile(String file) {
-		int lastDirSep = -1;
+		int lastDirSep;
 		lastDirSep = file.lastIndexOf("\\");
 		lastDirSep = Math.max(lastDirSep, file.lastIndexOf("/"));
 
@@ -1251,7 +1247,7 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdRunTestSuite(String file) {
 		String filename = getFilenameToOpen(file);
 		MTestSuite testSuite = null;
-		MModel model = null;
+		MModel model;
 
 		try {
 			model = system().model();
@@ -1667,7 +1663,7 @@ public final class Shell implements Runnable, PPCHandler {
 	//***********************************************************
 	private String getFirstWordOfFile(String filename) {
 		try {
-			String result = "";
+			String result;
 			// Handle possible UTF BOM
 			Reader r = getReaderFromFilename(filename);
 			
@@ -1868,10 +1864,10 @@ public final class Shell implements Runnable, PPCHandler {
 	/**
 	 * Safe way to get a reader from a filename.
 	 * This operation examines a possible valid unicode BOM.
-	 * @param filename
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param filename The {@code String} containing the path to file to open
+	 * @return A {code reader} configured by the BOM or with default encoding
+	 * @throws FileNotFoundException If file not found
+	 * @throws IOException If other IO issues occurred.
 	 */
 	private Reader getReaderFromFilename(String filename) throws FileNotFoundException, IOException {
         return getReaderFromInputStream(new BufferedInputStream(new FileInputStream(filename)));

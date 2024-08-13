@@ -117,11 +117,10 @@ public abstract class Expression implements BufferedToString {
      */
     public boolean requiresPreState() {
     	if (preStateRequired == null) {
-    		boolean result = fIsPre || childExpressionRequiresPreState();
-    		preStateRequired = Boolean.valueOf(result);
+            preStateRequired = fIsPre || childExpressionRequiresPreState();
     	}
     	
-    	return preStateRequired.booleanValue();
+    	return preStateRequired;
     }
 
     /**
@@ -155,7 +154,7 @@ public abstract class Expression implements BufferedToString {
     public void assertBoolean() throws ExpInvalidException {
         if (!fType.conformsTo(TypeFactory.mkBoolean()))
             throw new ExpInvalidException("Boolean expression expected, "
-                    + "found expression of type `" + this.toString() + "'.");
+                    + "found expression of type `" + this + "'.");
     }
 
     /**

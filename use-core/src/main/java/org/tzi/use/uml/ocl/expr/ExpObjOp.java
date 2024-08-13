@@ -33,12 +33,12 @@ import java.util.List;
  * @author  Mark Richters
  */
 public final class ExpObjOp extends Expression {
-    private MOperation fOp;
+    private final MOperation fOp;
     
     /**
      * The arguments, first one is "receiver" object
      */
-    private Expression[] fArgs;
+    private final Expression[] fArgs;
     
     public ExpObjOp(MOperation op, Expression[] args) 
         throws ExpInvalidException
@@ -138,7 +138,7 @@ public final class ExpObjOp extends Expression {
 	    		if (operationCall.enteredSuccessfully()) {
 	    			system.exitQueryOperation(ctx);
 	    		}
-    		} catch (Exception e){ }
+    		} catch (Exception ignored){ }
     		ctx.popVarBindings(fArgs.length);
     	    ctx.exit(this, result);
     	}
@@ -166,7 +166,8 @@ public final class ExpObjOp extends Expression {
     /**
      * All arguments of the expression.
      * Index 0 is the receiver object (self)
-     * @return
+     * @return The array of {@link Expression}s containing the receiver object at index 0,
+	 *         followed by the expressions for each argument.
      */
     public Expression[] getArguments() {
         return fArgs;

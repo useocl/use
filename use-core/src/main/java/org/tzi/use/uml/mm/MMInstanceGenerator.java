@@ -19,16 +19,16 @@
 
 package org.tzi.use.uml.mm;
 
-import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
+
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A visitor for producing a sequence of commands for generating the
@@ -40,13 +40,13 @@ import org.tzi.use.util.StringUtil;
  */
 public class MMInstanceGenerator implements MMVisitor {
     protected PrintWriter fOut;
-    private Set<Type> fDataTypes;
+    private final Set<Type> fDataTypes;
     private boolean fPass1;
     private String fModelId;
 
     public MMInstanceGenerator(PrintWriter out) {
         fOut = out;
-        fDataTypes = new HashSet<Type>();
+        fDataTypes = new HashSet<>();
     }
 
     /**
@@ -248,9 +248,9 @@ public class MMInstanceGenerator implements MMVisitor {
         
         for (Type t : fDataTypes) {
             if (e.getClass(t.toString()) == null ) {
-                String id = t.toString() + "DataType";
+                String id = t + "DataType";
                 fOut.println("!create " + id + " : DataType");
-                fOut.println("!set " + id + ".name := '" + t.toString() + "'");
+                fOut.println("!set " + id + ".name := '" + t + "'");
                 // add to model namespace
                 fOut.println("!insert (" + fModelId + ", " + id +
                              ") into Namespace_ModelElement");

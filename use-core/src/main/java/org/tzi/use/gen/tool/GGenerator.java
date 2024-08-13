@@ -24,15 +24,6 @@
 
 package org.tzi.use.gen.tool;
 
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.List;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
@@ -47,6 +38,10 @@ import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
+
+import java.io.*;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -81,14 +76,14 @@ public class GGenerator {
             e.printStackTrace(pw);
             pw.close();
             System.err.println("THE GENERATOR HAS AN INTERNAL ERROR." + nl +
-                               "PLEASE SEND THE FILE `generator_error.txt'"+nl+
-                               "TO " + Options.SUPPORT_MAIL + ".");
+                               "PLEASE SUBMIT THE FILE `generator_error.txt'"+nl+
+                               "AS AN ISSUE ON GITHUB.");
             System.err.println("The random number generator was " 
                                + "initialized with " + randomNr + ".");
         } catch (IOException ioException) {
             System.err.println("THE GENERATOR HAS AN INTERNAL ERROR." + nl +
-                               "PLEASE SEND THE FOLLOWING INFORMATION "+nl+
-                               "TO " + Options.SUPPORT_MAIL + ".");
+                               "PLEASE SUBMIT THE FOLLOWING INFORMATION "+nl+
+                               "AS AN ISSUE ON GITHUB.");
             System.err.println("Program version: " + Options.RELEASE_VERSION);
             System.err.println("Stack trace: ");
             e.printStackTrace();

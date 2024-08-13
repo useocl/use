@@ -19,16 +19,16 @@
 
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import java.util.Set;
-
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.type.MessageType;
 
+import java.util.Set;
+
 /**
- * Interface for the meta class <code>Signal</code>.
+ * Interface for the metaclass <code>Signal</code>.
  * @author Lars Hamann
  *
  */

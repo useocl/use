@@ -19,9 +19,6 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.uml.ocl.expr.ExpUndefined;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
@@ -29,6 +26,9 @@ import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An operation is a parameterized expression. Evaluation of the
@@ -38,7 +38,7 @@ import org.tzi.use.util.StringUtil;
  */
 public final class MOperation extends MModelElementImpl implements UseFileLocatable {
     /** A list of parameters */
-	private VarDeclList fVarDeclList;
+	private final VarDeclList fVarDeclList;
     
     /** The declared result type (optional) */
     private Type fResultType;
@@ -52,8 +52,8 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     /** The owner */
     private MClassifier fClassifier;
 
-    private List<MPrePostCondition> fPreConditions;
-    private List<MPrePostCondition> fPostConditions;
+    private final List<MPrePostCondition> fPreConditions;
+    private final List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
     private boolean fIsConstructor;
 
@@ -62,8 +62,8 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 	    fVarDeclList = varDeclList;
 	    fResultType = resultType;
 	    fExpr = null;
-	    fPreConditions = new ArrayList<MPrePostCondition>();
-	    fPostConditions = new ArrayList<MPrePostCondition>();
+	    fPreConditions = new ArrayList<>();
+	    fPostConditions = new ArrayList<>();
 	    fIsConstructor = false;
 	}
 
@@ -149,8 +149,8 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
      */
     public List<String> paramNames() {
     	
-    	ArrayList<String> parameterNames = 
-    		new ArrayList<String>(fVarDeclList.size());
+    	ArrayList<String> parameterNames =
+                new ArrayList<>(fVarDeclList.size());
     	
     	int numVarDecls = fVarDeclList.size();
     	for (int i = 0; i < numVarDecls; ++i) {
@@ -340,12 +340,9 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 		} else {
 			return fResultType.equals(op.fResultType);
 		}
-		
-		if (!this.paramList().equals(op.paramList()))
-			return false;
-		
-		return true;
-	}
+
+        return this.paramList().equals(op.paramList());
+    }
 
 	@Override
 	public int compareTo(MModelElement o) {

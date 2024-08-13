@@ -19,20 +19,12 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.util.collections.CollectionUtil;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
+import java.util.*;
 
 /** 
  * An association connects two or more classes.
@@ -41,13 +33,13 @@ import com.google.common.collect.Maps;
  */
 class MAssociationImpl extends MClassifierImpl implements MAssociation {
     
-	private List<MAssociationEnd> fAssociationEnds;
+	private final List<MAssociationEnd> fAssociationEnds;
     
-    private Set<MAssociation> subsets = new HashSet<MAssociation>();
-    private Set<MAssociation> subsettedBy = new HashSet<MAssociation>();
+    private final Set<MAssociation> subsets = new HashSet<>();
+    private final Set<MAssociation> subsettedBy = new HashSet<>();
     
-    private Set<MAssociation> redefines = new HashSet<MAssociation>();
-    private Set<MAssociation> redefinedBy = new HashSet<MAssociation>();
+    private final Set<MAssociation> redefines = new HashSet<>();
+    private final Set<MAssociation> redefinedBy = new HashSet<>();
     
     private boolean isUnion;
     
@@ -71,7 +63,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      */
     MAssociationImpl(String name) {
         super(name, false);
-        fAssociationEnds = new ArrayList<MAssociationEnd>(2);
+        fAssociationEnds = new ArrayList<>(2);
     }
 
     @Override
@@ -184,7 +176,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
     
     @Override
     public List<String> roleNames() {
-    	List<String> result = new ArrayList<String>();
+    	List<String> result = new ArrayList<>();
     	for (MAssociationEnd assocEnd : associationEnds()) {
     		result.add(assocEnd.name());
     	}
@@ -199,7 +191,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      * @return List(MAssociationEnd)
      */
     public List<MNavigableElement> reachableEnds() {
-        return new ArrayList<MNavigableElement>(associationEnds());
+        return new ArrayList<>(associationEnds());
     }
 
     /**
@@ -208,7 +200,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      * @return Set(MAssociationEnd)
      */
     public Set<MAssociationEnd> associationEndsAt(MClass cls) {
-        Set<MAssociationEnd> res = new HashSet<MAssociationEnd>();
+        Set<MAssociationEnd> res = new HashSet<>();
 
         for (MAssociationEnd aend : associationEnds()) {
             if (aend.cls().equals(cls) )
@@ -223,7 +215,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      * @return Set(MClass).
      */
     public Set<MClass> associatedClasses() {
-        HashSet<MClass> res = new HashSet<MClass>();
+        HashSet<MClass> res = new HashSet<>();
 
         for (MAssociationEnd aend : associationEnds()) {
             res.add(aend.cls());
@@ -267,7 +259,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      * @exception IllegalArgumentException cls is not part of this association.  
      */
     public List<MNavigableElement> navigableEndsFrom(MClass cls) {
-        List<MNavigableElement> res = new ArrayList<MNavigableElement>();
+        List<MNavigableElement> res = new ArrayList<>();
         boolean partOfAssoc = false;
         
         for (MAssociationEnd aend : associationEnds()) {
@@ -314,7 +306,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 	
 	@Override
 	public Set<MAssociation> getSubsetsClosure() {
-		Set<MAssociation> result = new HashSet<MAssociation>();
+		Set<MAssociation> result = new HashSet<>();
 		
 		for (MAssociation ass : getSubsets()) {
 			result.add(ass);
@@ -345,7 +337,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 
 	@Override
 	public Set<MAssociation> getSubsettedByClosure() {
-		Set<MAssociation> result = new HashSet<MAssociation>();
+		Set<MAssociation> result = new HashSet<>();
 		
 		for (MAssociation ass : getSubsettedBy()) {
 			result.add(ass);
@@ -367,23 +359,13 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 
 	@Override
 	public MNavigableElement navigableEnd(final String rolename) {
-		return Iterables.find(this.fAssociationEnds, new Predicate<MAssociationEnd>() {
-			@Override
-			public boolean apply(MAssociationEnd end) {
-				return rolename.equals(end.name());
-			}
-		}, null);
+		return Iterables.find(this.fAssociationEnds, end -> rolename.equals(end.name()), null);
 	}
 
 	@Override
 	public Map<String, MAssociationEnd> navigableEnds() {
 
-		return Maps.<String,MAssociationEnd>uniqueIndex(this.fAssociationEnds, new Function<MAssociationEnd, String>() {
-			@Override
-			public String apply(MAssociationEnd input) {
-				return input.nameAsRolename();
-			}
-		});
+		return Maps.uniqueIndex(this.fAssociationEnds, MAssociationEnd::nameAsRolename);
 	}
 
 	@Override
@@ -415,7 +397,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 	}
 	
 	public Set<MAssociation> getSpecifiedRedefinedByClosure() {
-		Set<MAssociation> result = new HashSet<MAssociation>();
+		Set<MAssociation> result = new HashSet<>();
 		
 		for (MAssociation ass : this.getRedefinedBy()) {
 			result.add(ass);
@@ -481,7 +463,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 	
 	@Override
 	public Set<MAssociation> getRedefinesClosure() {
-		Set<MAssociation> result = new HashSet<MAssociation>();
+		Set<MAssociation> result = new HashSet<>();
 		
 		for (MAssociation ass : this.getRedefines()) {
 			result.add(ass);

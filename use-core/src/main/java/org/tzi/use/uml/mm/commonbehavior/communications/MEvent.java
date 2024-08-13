@@ -33,10 +33,7 @@ import org.tzi.use.uml.mm.MNamedElement;
 public abstract class MEvent implements MNamedElement {
 
 	protected String name;
-	
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.MNamedElement#name()
-	 */
+
 	@Override
 	public String name() {
 		return name;

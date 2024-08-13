@@ -54,6 +54,4 @@ public class ExpSelectByType extends ExpSelectByKind {
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitExpSelectByType(this);
 	}
-
-	
 }

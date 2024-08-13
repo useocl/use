@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
+import java.io.Serial;
+
 /**
  * Signals that the effect of an operation would result in an invalid
  * model.
@@ -30,7 +32,8 @@ public class MInvalidModelException extends Exception {
     /**
 	 * To get rid of the warning...
 	 */
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	public MInvalidModelException() {
         super();

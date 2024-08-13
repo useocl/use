@@ -47,7 +47,7 @@ public final class ExpEmptyCollection extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        Value res = null;
+        Value res;
         CollectionType t = (CollectionType) type();
         
         res = t.createCollectionValue(new Value[0]);

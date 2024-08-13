@@ -19,20 +19,12 @@
 
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClassifierImpl;
-import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.mm.MNavigableElement;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.type.MessageType;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
+
+import java.util.*;
 
 /**
  * Meta class for signals
@@ -46,7 +38,7 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 	 * The attributes owned by the signal. (Subsets Classifier::attribute, Namespace::ownedMember). 
 	 * This association end is ordered.
 	 */
-	private Map<String,MAttribute> ownedAttribute = new HashMap<>();
+	private final Map<String,MAttribute> ownedAttribute = new HashMap<>();
 	
 	/**
 	 * Constructs a new signal with the given <code>name</code>.
@@ -123,7 +115,7 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 
 	@Override
 	public Set<MAttribute> getAllAttributes() {
-		Set<MAttribute> attrs = new HashSet<MAttribute>(getAttributes());
+		Set<MAttribute> attrs = new HashSet<>(getAttributes());
 		for (MSignal parent : generalizationHierachie(false)) {
 			attrs.addAll(parent.getAttributes());
 		}

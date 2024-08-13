@@ -19,12 +19,12 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import java.io.PrintWriter;
-
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
+
+import java.io.PrintWriter;
 
 /**
  * Context information used during evaluation.
@@ -163,11 +163,14 @@ public class EvalContext {
         }
     }
 
+    /**
+     * Returns the current indent for a line, i.e.,
+     * a space for each level of nesting.
+     *
+     * @return A {@code String} with {@link EvalContext#fNesting} numbers of spaces.
+     */
     private String indent() {
-        char[] indent = new char[fNesting];
-        for (int i = 0; i < fNesting; i++)
-            indent[i] = ' ';
-        return new String(indent);
+        return " ".repeat(fNesting);
     }
 }
 

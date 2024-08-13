@@ -19,11 +19,11 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.util.collections.CollectionUtil;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.tzi.use.util.collections.CollectionUtil;
 
 
 /**
@@ -33,9 +33,8 @@ import org.tzi.use.util.collections.CollectionUtil;
  */
 
 public abstract class MModelElementImpl implements MModelElement {
-	//TODO: Use delegation for Annotatable?
-	
-	private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
+
+	private static final Map<String, MutableInteger> fNameMap = new HashMap<>();
 	
 	private final String fName;
 	
@@ -58,7 +57,7 @@ public abstract class MModelElementImpl implements MModelElement {
     }
 
     protected MModelElementImpl(String name) {
-        if (name == null || name.length() == 0 )
+        if (name == null || name.isEmpty())
             throw new IllegalArgumentException("Modelelement without name");
         fName = name;
         hashCode = fName.hashCode();
@@ -71,14 +70,14 @@ public abstract class MModelElementImpl implements MModelElement {
      * they may still clash with some user defined name.
      */
     protected MModelElementImpl(String name, String prefix) {
-        if (name == null || name.trim().length() == 0 ) {
+        if (name == null || name.trim().isEmpty()) {
             MutableInteger i = fNameMap.get(prefix);
             if (i == null ) {
                 i = new MutableInteger();
                 fNameMap.put(prefix, i);
             } else
                 i.fInt++;
-            name = prefix + String.valueOf(i.fInt);
+            name = prefix + i.fInt;
         }
         fName = name;
         hashCode = fName.hashCode();
@@ -108,11 +107,7 @@ public abstract class MModelElementImpl implements MModelElement {
     
     @Override
     public MElementAnnotation getAnnotation(String name) {
-    	if (this.annotations.containsKey(name)) {
-    		return this.annotations.get(name);
-    	} else {
-    		return null;
-    	}
+        return this.annotations.getOrDefault(name, null);
     }
     
     @Override
