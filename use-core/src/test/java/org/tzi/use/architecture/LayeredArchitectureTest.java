@@ -16,6 +16,7 @@ public class LayeredArchitectureTest {
 
     private final JavaClasses classes = new ClassFileImporter().importPaths(USE_CORE, USE_GUI);
 
+    // funktioniert nicht, weil definedBy ein package erwartet und keinen Dateipfad
             @Test
             public void verify_layered_architecture() {
                 Architectures.LayeredArchitecture architecture = layeredArchitecture()
