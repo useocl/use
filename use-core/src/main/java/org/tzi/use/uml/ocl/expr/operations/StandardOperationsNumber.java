@@ -863,16 +863,22 @@ final class Op_number_sqrt extends OpGeneric {
 
 	@Override
 	public Type matches(Type params[]) {
-		return (params.length == 1 && params[0].isTypeOfReal()) ? TypeFactory
-				.mkReal() : null;
+		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
+				.mkInteger() : null;
 	}
 
 	@Override
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
-		double d1 = ((RealValue) args[0]).value();
+		double d1;
+		if (args[0].isInteger())
+			d1 = ((IntegerValue) args[0]).value();
+		else
+			d1 = ((RealValue) args[0]).value();
 		return new RealValue(Math.sqrt(d1));
 	}
 }
+
+// --------------------------------------------------------
 
 /* toString : Number -> String */
 final class Op_number_toString extends OpGeneric {
