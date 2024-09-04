@@ -8,6 +8,7 @@ import org.tzi.use.uml.mm.MModel;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,19 @@ public class ModelBrowserTest {
     }
 
     public void updateFolderTree(String name) {
+        // Clear existing items
+        folderTreeView.setRoot(null);
+
+        // Create the root item
+        TreeItem<String> rootItem = new TreeItem<>("No model available");
+        rootItem.setExpanded(true); //expands the TreeItem!
+        //rootItem.setGraphic(); Maybe Later Folder Icon
+
+        // Set the root item
+        folderTreeView.setRoot(rootItem);
+    }
+
+    public void updateFolderTree(File selectedDirectory, String name) {
         // Clear existing items
         folderTreeView.setRoot(null);
 

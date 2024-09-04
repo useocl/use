@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Region;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -38,7 +37,7 @@ public class Controller {
 
         folderTreeTextDisplay.setEditable(false);
 
-        // initializing the modelBrowserTreeView
+        // initializing the modelBrowserTreeView/browser panel
         ModelBrowserTest modelBrowserTest = new ModelBrowserTest(folderTreeView);
         modelBrowserTest.updateFolderTree("name");
 
@@ -125,18 +124,16 @@ public class Controller {
         Stage stage = (Stage) someNode.getScene().getWindow();
 
         // Add a file filter to show only .use files
-
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("USE Files (*.use)", "*.use");
         fileChooser.getExtensionFilters().add(extFilter);
         ModelBrowserTest modelBrowserFolderTree = new ModelBrowserTest(folderTreeView);
 
         File selectedDirectory = fileChooser.showOpenDialog(stage);
 
-        //System.out.println("Selected folder: " + selectedDirectory.getAbsolutePath());
-        //System.out.println(selectedDirectory.getName().replace(".use", ""));
-
-        //RootName of the FolderTree
-        modelBrowserFolderTree.updateFolderTree(selectedDirectory.getName().replace(".use", ""));
+        if (selectedDirectory != null){
+            // Updating The browser panel
+            modelBrowserFolderTree.updateFolderTree(selectedDirectory, selectedDirectory.getName().replace(".use", ""));
+        }
     }
 
     /**
