@@ -32,7 +32,7 @@ import javax.swing.event.PopupMenuListener;
  *
  * @version 1.5.0 04/05/12
  * @author Darryl
- * @see https://tips4java.wordpress.com/2009/02/01/menu-scroller/
+ * Source: <a href="https://tips4java.wordpress.com/2009/02/01/menu-scroller/">https://tips4java.wordpress.com/2009/02/01/menu-scroller/</a>
  */
 public class MenuScroller {
 

@@ -2059,7 +2059,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	 * MouseMotionListener needed for drawing the movement of the chooed
 	 * lifeline. While the left mouse button is pressed the choosed lifeline can
 	 * be moved and each movement is shown in the sequence diagram.
-	 * 
+	 * <p>
 	 * motion events
 	 * 
 	 * @author Antje Werner

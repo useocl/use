@@ -43,7 +43,6 @@ public class InsertActivation extends Activation {
 	 * @param start the position on the time axis on which the activation
 	 *            message is positioned
 	 * @param owner the lifeline which is receiver of the activation message
-	 * @param cmd the command which should be represented
 	 * @param src the source-activation from which the command fCmd has given
 	 * @param yValue the y-value on which the activation message should be drawn
 	 */

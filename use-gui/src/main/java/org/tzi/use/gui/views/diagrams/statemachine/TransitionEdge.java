@@ -74,8 +74,7 @@ public class TransitionEdge extends EdgeBase {
 	 * @param source
 	 * @param target
 	 * @param edgeName
-	 * @param diagram
-	 */
+     */
 	protected TransitionEdge(MTransition transition, VertexNode source,
 			VertexNode target, String edgeName, DiagramOptions diagramOptions,
 			Direction reflexivePosition) {
@@ -334,8 +333,7 @@ public class TransitionEdge extends EdgeBase {
 	 * @param source
 	 * @param target
 	 * @param edgeName
-	 * @param diagram
-	 */
+     */
 	public static TransitionEdge create(MTransition transition, VertexNode source,
 			VertexNode target, String edgeName, DiagramOptions diagramOptions,
 			Direction reflexivePosition) {

@@ -44,9 +44,7 @@ public class StrategyIdentity extends StatefullPositionStrategy {
 	}
 	
 	/**
-	 * @param connectionWayPoint
-	 * @param wayPoint
-	 */
+     */
 	public StrategyIdentity(PlaceableNode owner, PlaceableNode identitySource) {
 		super(owner);
 		setIdentitySource(identitySource);

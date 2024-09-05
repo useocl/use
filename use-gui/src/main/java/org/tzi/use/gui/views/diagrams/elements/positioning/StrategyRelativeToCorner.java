@@ -272,8 +272,7 @@ public class StrategyRelativeToCorner extends StatefullPositionStrategy {
 	}
 	
 	/**
-	 * @param function
-	 */
+     */
 	public void setWidthCalculation(final Supplier<Double> calculationSupplier) {
 		this.widthCalculation = calculationSupplier;
 	}

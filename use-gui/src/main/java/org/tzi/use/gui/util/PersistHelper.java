@@ -54,8 +54,7 @@ public class PersistHelper {
 	
 	/**
 	 * Sets up a new helper for reading a document
-	 * @param file
-	 */
+     */
 	public PersistHelper(Path fileToRead, PrintWriter log) {
 		vg = new VTDGen();
 		vg.parseFile(fileToRead.toAbsolutePath().toString(), false);
@@ -65,8 +64,7 @@ public class PersistHelper {
 
 	/**
 	 * Sets up a new helper for reading a document
-	 * @param file
-	 */
+     */
 	public PersistHelper(byte[] toLoad, PrintWriter log) throws ParseException {
 		vg = new VTDGen();
 		vg.setDoc(toLoad);
@@ -166,7 +164,6 @@ public class PersistHelper {
 	}
 	/**
 	 * Retrieves the text of the child element with the name <code>childName</code>.
-	 * @param parent
 	 * @param childName
 	 * @return The string value of the child (empty string of no text) or <code>null</code> if child does not exists.
 	 */
@@ -263,8 +260,7 @@ public class PersistHelper {
 	}
 
 	/**
-	 * @param collectAllNodes
-	 */
+     */
 	public void setAllNodes(Map<String, PlaceableNode> allNodes) {
 		this.allNodes = allNodes;
 	}

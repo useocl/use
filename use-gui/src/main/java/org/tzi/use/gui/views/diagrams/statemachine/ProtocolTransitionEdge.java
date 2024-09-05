@@ -32,8 +32,7 @@ public class ProtocolTransitionEdge extends TransitionEdge {
 	 * @param source
 	 * @param target
 	 * @param edgeName
-	 * @param diagram
-	 */
+     */
 	ProtocolTransitionEdge(MTransition t, VertexNode source, VertexNode target,
 			String edgeName, DiagramOptions diagramOptions, Direction reflexivePosition) {
 		super(t, source, target, edgeName, diagramOptions, reflexivePosition);

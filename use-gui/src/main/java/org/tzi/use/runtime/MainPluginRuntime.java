@@ -32,8 +32,6 @@ public class MainPluginRuntime {
 	/**
 	 * Method to get all filename with jar-extension in the given location.
 	 * 
-	 * @param location
-	 *            The Plugin location path
 	 * @return Array of jar-filenames
 	 */
 	private static String[] getJarFileNames(Path pluginDirURL) {

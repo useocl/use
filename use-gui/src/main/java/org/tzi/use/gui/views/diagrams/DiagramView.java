@@ -943,7 +943,6 @@ public abstract class DiagramView extends JPanel
     public abstract void storePlacementInfos(PersistHelper helper, Element rootElement);
 
     /**
-     * @param rootElement
      */
     public abstract void restorePlacementInfos(PersistHelper helper, int version);
 
@@ -1023,7 +1022,6 @@ public abstract class DiagramView extends JPanel
      * Called before the layout information is restored.
      * Can be used to suppress loading if version is incompatible.
      *
-     * @param options
      * @param version
      * @return
      */

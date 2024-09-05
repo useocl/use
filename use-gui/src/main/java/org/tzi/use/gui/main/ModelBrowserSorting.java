@@ -376,14 +376,12 @@ public class ModelBrowserSorting  {
     }
 
 	/**
-	 * @param newObjectDiagramView
-	 */
+     */
 	public void removeSortChangeListener(SortChangeListener l) {
 		fListenerList.remove( SortChangeListener.class, l );
 	}
 
 	/**
-	 * @param allOwnedProtocolStateMachines
 	 * @return
 	 */
 	public List<MStateMachine> sortStateMachines(

@@ -32,7 +32,7 @@ import org.tzi.use.util.collections.CollectionUtil.UniqueList;
 /**
  * An iterator which iterates over generated partitions of two lists.
  * One of the lists is specified as unique.
- * 
+ * <p>
  * Each returned partition contains only combinations from one element of the unique list
  * e.g.:<br/>
  * <code>{a,b} {c,d}</code> (second list is marked as unique) results in:<br/> 

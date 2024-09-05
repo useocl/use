@@ -46,8 +46,7 @@ public class SimpleEdge extends EdgeBase {
 	 * @param target
 	 * @param edgeName
 	 * @param opt
-	 * @param completeEdgeMoveMovesUserWayPoints
-	 */
+     */
 	protected SimpleEdge(PlaceableNode source, PlaceableNode target,
 			String edgeName, DiagramOptions opt) {
 		super(source, target, edgeName, opt, false);

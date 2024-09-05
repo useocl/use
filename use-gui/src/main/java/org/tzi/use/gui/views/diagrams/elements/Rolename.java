@@ -45,13 +45,7 @@ public final class Rolename extends EdgeProperty implements DiagramOptionChanged
 	/**
      * 
      * @param assocEnd The <code>MAassociationEnd</code> this role name belongs to.
-     * @param source The <code>NodeBase</code> which represents the class or object node this role name is attached to. 
-     * @param target The <code>NodeBase</code> which represents the class, object or diamond node of the opposite end.
-     * @param sourceWayPoint
-     * @param targetWayPoint
      * @param opt
-     * @param side
-     * @param edge
      */
     public Rolename( String id, MAssociationEnd assocEnd, AttachedWayPoint attached, DiagramOptions opt, EdgeBase edgeBase ) {
     	super(id, new PlaceableNode[] {attached}, false, opt, edgeBase);

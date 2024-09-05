@@ -34,10 +34,10 @@ import java.util.ResourceBundle;
 /**
  * Singleton helper class for the command line help. The actual help texts are
  * taken from a property file.
- * 
+ * <p>
  * The property is organized in keys. For each key, three entries must exist in
  * the property file.
- *
+ * <p>
  * Example: help.net.syntax=net help.net=Read commands from socket
  * help.net.detail=Read commands from a socket. Socket number is 1777.
  * 

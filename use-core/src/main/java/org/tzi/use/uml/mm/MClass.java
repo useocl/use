@@ -40,7 +40,7 @@ public interface MClass extends MClassifier {
 
     /**
      * Returns the set of all direct parent classes (without this class).
-     * 
+     * <p>
      * Sets the return type to Set&lt;MClass&gt;
      * @return Set&lt;MClass&gt;
      */
@@ -50,7 +50,7 @@ public interface MClass extends MClassifier {
     /**
      * Returns the set of all parent classes (without this class). 
      * This is the transitive closure of the generalization relation.
-     * 
+     * <p>
      * Sets the return type to Set&lt;MClass&gt;
      * @return Set&lt;MClass&gt;
      */

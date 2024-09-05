@@ -185,8 +185,7 @@ public class DiagramGraph extends DirectedGraphBase<PlaceableNode, EdgeBase>  {
 
 	/**
 	 * Calculates the reflexive position for a reflexive edge.
-	 * @param e
-	 */
+     */
 	protected Set<EdgeBase> setReflexivePositions(PlaceableNode node) {
 		// Check the next free reflexive position
 		// This allows to remove edges and place another edge at this position.
@@ -205,8 +204,7 @@ public class DiagramGraph extends DirectedGraphBase<PlaceableNode, EdgeBase>  {
 	
 	/**
 	 * Sets the offset for a set of edges.
-	 * @param e
-	 */
+     */
 	protected void setEdgeOffset(Set<EdgeBase> edges) {
 		if (edges.isEmpty()) return;
 		

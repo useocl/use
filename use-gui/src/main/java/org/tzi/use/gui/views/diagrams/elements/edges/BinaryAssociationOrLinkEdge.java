@@ -94,7 +94,6 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      * @param targetEnd
      * @param diagram
      * @param assoc
-     * @param isLink
      */
     protected BinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,

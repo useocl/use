@@ -63,13 +63,13 @@ import javax.swing.filechooser.FileFilter;
 /**
  * A convenience implementation of FileFilter that filters out
  * all files except for those type extensions that it knows about.
- *
+ * <p>
  * Extensions are of the type ".foo", which is typically found on
  * Windows and Unix boxes, but not on Macinthosh. Case is ignored.
- *
+ * <p>
  * Example - create a new filter that filerts out all files
  * but gif and jpg image files:
- *
+ * <p>
  *     JFileChooser chooser = new JFileChooser();
  *     ExampleFileFilter filter = new ExampleFileFilter(
  *                   new String {"gif", "jpg"}, "JPEG & GIF Images")
@@ -109,7 +109,7 @@ public class ExtFileFilter extends FileFilter {
     /**
      * Creates a file filter that accepts the given file type.
      * Example: new ExampleFileFilter("jpg", "JPEG Image Images");
-     *
+     * <p>
      * Note that the "." before the extension is not needed. If
      * provided, it will be ignored.
      *
@@ -122,7 +122,7 @@ public class ExtFileFilter extends FileFilter {
     /**
      * Creates a file filter from the given string array.
      * Example: new ExampleFileFilter(String {"gif", "jpg"});
-     *
+     * <p>
      * Note that the "." before the extension is not needed adn
      * will be ignored.
      *
@@ -135,7 +135,7 @@ public class ExtFileFilter extends FileFilter {
     /**
      * Creates a file filter from the given string array and description.
      * Example: new ExampleFileFilter(String {"gif", "jpg"}, "Gif and JPG Images");
-     *
+     * <p>
      * Note that the "." before the extension is not needed and will be ignored.
      *
      * @see #addExtension
@@ -152,7 +152,7 @@ public class ExtFileFilter extends FileFilter {
     /**
      * Return true if this file should be shown in the directory pane,
      * false if it shouldn't.
-     *
+     * <p>
      * Files that begin with "." are ignored.
      *
      * @see #getExtension
@@ -190,14 +190,14 @@ public class ExtFileFilter extends FileFilter {
 
     /**
      * Adds a filetype "dot" extension to filter against.
-     *
+     * <p>
      * For example: the following code will create a filter that filters
      * out all files except those that end in ".jpg" and ".tif":
-     *
+     * <p>
      *   ExampleFileFilter filter = new ExampleFileFilter();
      *   filter.addExtension("jpg");
      *   filter.addExtension("tif");
-     *
+     * <p>
      * Note that the "." before the extension is not needed and will be ignored.
      */
     public void addExtension(String extension) {
@@ -257,7 +257,7 @@ public class ExtFileFilter extends FileFilter {
     /**
      * Determines whether the extension list (.jpg, .gif, etc) should
      * show up in the human readable description.
-     *
+     * <p>
      * Only relevent if a description was provided in the constructor
      * or using setDescription();
      *
@@ -273,7 +273,7 @@ public class ExtFileFilter extends FileFilter {
     /**
      * Returns whether the extension list (.jpg, .gif, etc) should
      * show up in the human readable description.
-     *
+     * <p>
      * Only relevent if a description was provided in the constructor
      * or using setDescription();
      *

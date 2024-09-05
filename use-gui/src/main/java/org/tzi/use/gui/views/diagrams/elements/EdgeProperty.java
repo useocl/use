@@ -260,7 +260,7 @@ public abstract class EdgeProperty extends PlaceableNode {
 	/**
 	 * Draws a stroked line around the bounds of this edge property
 	 * and lines to the attached source or target way point.
-	 * If not connected to a specific way point, i.e., <code>{@link #fSide} == 0</code>,
+	 * If not connected to a specific way point, i.e., <code> == 0</code>,
 	 * lines to both sides are drawn.
 	 * @param g
 	 */

@@ -22,10 +22,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/**
- * March 22th 2001 
- * @author  Joern Bohling
- */
 
 package org.tzi.use.parser.generator;
 
@@ -41,8 +37,12 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.util.StringUtil;
 
+/**
+ * March 22th 2001 
+ * @author  Joern Bohling
+ */
 public class ASTGAtomicInstruction extends ASTGValueInstruction {
-	Token fName;
+    Token fName;
     List<Object> fParameter;  // ASTGInstructionParameterInterface;
 
     public ASTGAtomicInstruction(Token name) {
@@ -64,7 +64,7 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
                 String name = ((Token) param).getText();
                 boolean isClass = ctx.model().getClass(name) != null;
                 boolean isAssociation = ctx.model().getAssociation(name) != null;
-                
+
                 if (isClass && isAssociation )
                     errParams.add("Class/Association");
                 else if (isClass)
@@ -72,30 +72,30 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
                 else if (isAssociation)
                     errParams.add("Association");
                 else {
-                	boolean isAttribute = false;
-                	// Attribute?
-                	for (MClass cls : ctx.model().classes()) {
-                		if (cls.attribute(name, false) != null) {
-                			isAttribute = true;
-                			errParams.add("Attribute");
-                			params.add( name );
-                			break;
-                		}
-                	}
-                	
-                	if (isAttribute)
-            			continue;
-                	
+                    boolean isAttribute = false;
+                    // Attribute?
+                    for (MClass cls : ctx.model().classes()) {
+                        if (cls.attribute(name, false) != null) {
+                            isAttribute = true;
+                            errParams.add("Attribute");
+                            params.add( name );
+                            break;
+                        }
+                    }
+
+                    if (isAttribute)
+                        continue;
+
                     String err = "`" + name +"' is not a class or " +
-                        "association of the current model. If `" + name +
-                        "' is a variable, use squared " +
-                        "brackets.";
+                            "association of the current model. If `" + name +
+                            "' is a variable, use squared " +
+                            "brackets.";
                     throw new SemanticException(fName, err);
                 }
                 params.add( name );
             } else {
                 GValueInstruction instr =
-                    (GValueInstruction) ((ASTGocl) param).gen(ctx);
+                        (GValueInstruction) ((ASTGocl) param).gen(ctx);
                 params.add( instr );
                 errParams.add( instr.type().toString() );
             }
@@ -105,13 +105,13 @@ public class ASTGAtomicInstruction extends ASTGValueInstruction {
         // A containing string is a classname or associationname.
 
         GInstruction instr;
-        instr = GInstructionCreator.instance().create( fName.getText(), 
-                                                       params, 
-                                                       ctx.model() );
+        instr = GInstructionCreator.instance().create( fName.getText(),
+                params,
+                ctx.model() );
         if (instr == null) {
-            String err = "Instruction `" + fName.getText() + "(" + 
-                	     StringUtil.fmtSeq(errParams.iterator(), ",") +
-                         ")' not found.";
+            String err = "Instruction `" + fName.getText() + "(" +
+                    StringUtil.fmtSeq(errParams.iterator(), ",") +
+                    ")' not found.";
             throw new SemanticException(fName, err);
         }
         return instr;

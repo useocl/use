@@ -17,7 +17,7 @@ public interface IPluginActionExtensionPoint extends IExtensionPoint {
 
 	/**
 	 * Method to register Plugin Actions from the given Plugin Descriptor
-	 * 
+	 * <p>
 	 * param pluginDescriptor The Plugin Descriptor object
 	 */
 	void registerActions(IDescriptor pluginDescriptor);

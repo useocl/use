@@ -23,7 +23,7 @@ import java.io.IOException;
 
 /**
  * Native wrapper for the GNU Readline Library. 
- *
+ * <p>
  * Don't use this directly since it may no be available on all
  * platforms. Use LineInput.getReadline() to get an appropriate
  * implementation instead.

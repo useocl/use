@@ -52,7 +52,7 @@ import javax.swing.text.PlainDocument;
 
 /**
  * @author Antje Werner
- * 
+ * <p>
  *         A window for choosing some properties, e.g. font, distance of
  *         lifelines, size of object boxes and so on.
  */

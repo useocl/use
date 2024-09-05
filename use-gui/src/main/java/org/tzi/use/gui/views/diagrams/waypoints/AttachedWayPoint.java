@@ -62,10 +62,7 @@ public class AttachedWayPoint extends WayPoint {
 	/**
 	 * Constructs a new attached way point with the strategy {@link StrategyAttachedIntersection}.
 	 * @param attachedNode The node this way point is attached to. Used to register listeners. 
-	 * @param source
-	 * @param target
 	 * @param edge
-	 * @param id
 	 * @param type
 	 * @param edgeName
 	 * @param opt

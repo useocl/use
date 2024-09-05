@@ -88,8 +88,7 @@ public class StateNode extends VertexNode implements ToolTipProvider {
 	private Font invFont;
 		
 	/**
-	 * @param v
-	 */
+     */
 	public StateNode(MState state) {
 		super(state);
 		

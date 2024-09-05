@@ -35,7 +35,7 @@ import javax.swing.JPanel;
  * @author Antje Werner
  * @author Thomas Schaefer
  * @author Carsten Schlobohm
- * 
+ * <p>
  *         A window for choosing the commands to show in the communication diagram.
  *         By default only operation calls are diagramed,but it is also possible
  *         to diagram create-, destroy-, insert-, delete- and/or set-commands.

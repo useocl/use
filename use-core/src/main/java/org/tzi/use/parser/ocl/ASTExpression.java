@@ -93,7 +93,7 @@ public abstract class ASTExpression extends AST {
     public abstract Expression gen(Context ctx) throws SemanticException;
         
     /**
-     * Used by template method {@link getFreeVariables()} to create
+     * Used by template method {@link #getFreeVariables()} to create
      * a set of all free variables of an expression by asking its
      * sub-expressions.
      * <p>Implementors need to add all free variables to the provided set <code>freeVars</code>.</p>
@@ -271,7 +271,7 @@ public abstract class ASTExpression extends AST {
     /**
 	 * True if a navigation from an object of class <code>srcClass</code> to
 	 * the association end <code>dst</code> needs an explicit rolename.
-	 * 
+	 * <p>
 	 * Only reflexive associations with more then two reachable ends
      * can have an ambiguous path.
 	 * @param srcClass The <code>MClass</code> to navigate from

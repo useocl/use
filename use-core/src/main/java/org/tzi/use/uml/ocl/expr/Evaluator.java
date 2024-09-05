@@ -40,7 +40,7 @@ public final class Evaluator {
 
     /**
      * Creates a default Evaluator without building an evaluation tree.
-     * 
+     * <p>
      * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
      * The tree is used, e.g., in the evaluation browser.  
      *
@@ -51,7 +51,7 @@ public final class Evaluator {
     
     /**
      * Creates a default Evaluator.
-     * 
+     * <p>
      * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
      * The tree is used, e.g., in the evaluation browser.  
      *
@@ -179,7 +179,7 @@ public final class Evaluator {
      * become available. The order in which results are delivered is
      * the same order passed in as <code>exprList</code>, i.e.,
      * expressions are processed in FIFO order.
-     *
+     * <p>
      * If <code>numThreads == 1</code>, the expression list will be
      * processed sequentially with no thread overhead.
      *

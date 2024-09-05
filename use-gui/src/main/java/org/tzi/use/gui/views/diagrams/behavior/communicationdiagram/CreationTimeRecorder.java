@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
  * 4 !create ada:Person  (ada:Person -> {1,4})
  * This allows to identify the correct object node
  * if both ada objects are shown in the communication diagram.
- * 
+ * <p>
  * The creation time can be used by the raised events.
  * @author Lars Hamann
  */

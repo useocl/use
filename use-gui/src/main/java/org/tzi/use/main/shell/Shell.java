@@ -534,7 +534,7 @@ public final class Shell implements Runnable, PPCHandler {
 	
 	/**
 	 * Runs shell coverage command.
-	 * 
+	 * <p>
 	 * Supported switches for shell 'coverage' command:
 	 * 	-sum 		(numeric sum of coverage measurement results)
 	 * 	-invariants (covers only invariants)

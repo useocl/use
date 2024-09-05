@@ -42,7 +42,7 @@ public abstract class TypeImpl implements Type {
 
     /** 
      * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'.
-     * For complex string operations see {@link toString(StringBuilder)}
+     * For complex string operations see {@link #toString(StringBuilder)}
      */
     @Override
 	public final String toString() {

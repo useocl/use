@@ -192,8 +192,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	}
 
 	/**
-	 * @param relativeX the relativeX to set
-	 */
+     */
 	public void setStrategy(PositionStrategy strategy) {
 		this.strategy.dispose();
 		this.strategy = strategy;
@@ -210,7 +209,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	/**
      * Draws the placeable node to the given Graphics object.
      * When first drawn @link {@link #doCalculateSize(Graphics2D)} and 
-     * {@link #onFirstDraw(Graphics2D)} are called
+     *  are called
      * and afterwards {@link #onDraw(Graphics2D)}.
      * After the first draw only {@link #onDraw(Graphics2D)} is called. 
      * @param g Graphics object the node is drawn to.
@@ -843,8 +842,6 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * position of this node to the <code>target</code> point and
      * one of the four lines of the nodes polygon.
      * 
-     * @param node the source node.
-     * @param source the source <code>Point2D</code> of the line.
      * @param target the target <code>Point2D</code> of the line.
      */
     public final Point2D getIntersectionCoordinate( Point2D target ) {
@@ -858,7 +855,6 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
      * This method calculates the intersection point of the given line and 
      * one of the four lines of the nodes polygon.
      * 
-     * @param node the source node.
      * @param source the source <code>Point2D</code> of the line.
      * @param target the target <code>Point2D</code> of the line.
      */
@@ -950,7 +946,7 @@ public abstract class PlaceableNode implements Layoutable, Selectable {
 	
 	/**
 	 * Draws the text centered inside the bounds returned by {@link #getBounds()}.
-	 * The text is underlined if {@link fEdge#isLink()} returns true.
+	 * The text is underlined if  returns true.
 	 * @param g
 	 */
 	protected void drawTextCentered(String text, Graphics2D g) {

@@ -60,7 +60,7 @@ public class MTransition implements MNamedElement {
 	
 	/**
 	 * Simplified to Expression.
-	 * 
+	 * <p>
 	 * A guard is a constraint that provides a fine-grained control over the firing of the transition. 
 	 * The guard is evaluated when an event occurrence is dispatched by the state machine. 
 	 * If the guard is true at that time, the transition may be enabled; otherwise, it is disabled. 

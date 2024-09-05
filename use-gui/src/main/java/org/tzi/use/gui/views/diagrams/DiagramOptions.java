@@ -283,8 +283,7 @@ public abstract class DiagramOptions {
 	}
 	
 	/**
-	 * @param optionsElement
-	 */
+     */
 	public void saveOptions(PersistHelper helper, Element parent) {
 		// save diagram options
 		helper.appendChild(parent, LayoutTags.AUTOLAYOUT, String.valueOf(isDoAutoLayout()));
@@ -297,8 +296,7 @@ public abstract class DiagramOptions {
 		helper.appendChild(parent, LayoutTags.SHOWGRID, String.valueOf(showGrid()));
 	}
 	/**
-	 * @param rootElement
-	 */
+     */
 	public void loadOptions(PersistHelper helper, int version) {
 		setDoAutoLayout(helper.getElementBooleanValue(LayoutTags.AUTOLAYOUT));
 		setDoAntiAliasing(helper.getElementBooleanValue(LayoutTags.ANTIALIASING));

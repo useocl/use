@@ -41,7 +41,7 @@ public abstract class ClassifierNode extends CompartmentNode implements DiagramO
      * The size of all three compartments (name, attributes, operations) is
      * calculated once.
      * The correct size is returned by checking the diagram options 
-     * ({@link DiagramOptions#isShowAttributes(boolean)} and 
+     * ( and
      * ({@link DiagramOptions#isShowOperations()}.
      *  
      */

@@ -308,7 +308,6 @@ public class Util {
 
 	/**
 	 * @param circle
-	 * @param double1
 	 * @return
 	 */
 	public static Point2D intersectionPoint(Ellipse2D circle, Point2D point) {
@@ -353,7 +352,6 @@ public class Util {
      *                 \  /  corner 2      <br/>
      *       corner 3   \/                 <br/>
      * </code>
-     * @param node the source node.
      * @param source the source <code>Point2D</code> of the line.
      * @param target the target <code>Point2D</code> of the line.
      */

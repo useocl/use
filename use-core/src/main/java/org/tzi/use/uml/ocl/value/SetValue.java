@@ -225,7 +225,7 @@ public class SetValue extends CollectionValue {
 
     /**
      * Return a copy of this set excluding v
-     * 
+     * <p>
      * ocl.pre T2 &lt;= T1, if this has type Set(T1) and v has type T2.
      */
     public SetValue excluding(Type resultType, Value v) {

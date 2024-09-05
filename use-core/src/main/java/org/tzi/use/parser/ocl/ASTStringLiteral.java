@@ -63,7 +63,6 @@ public class ASTStringLiteral extends ASTExpression {
     /**
      * Converts EscapeCharcters in a String to the corresponding Java-Esc-Characters
      * See: http://forum.java.sun.com/thread.jspa?threadID=733734&messageID=4219038
-     * @param str
      * @return
      */
     private void convertString() {

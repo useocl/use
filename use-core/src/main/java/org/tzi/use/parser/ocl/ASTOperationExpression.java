@@ -42,7 +42,7 @@ import org.tzi.use.util.collections.CollectionUtil;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
- * 
+ * <p>
  * This AST class generates different expressions, depending
  * on the context:
  * 

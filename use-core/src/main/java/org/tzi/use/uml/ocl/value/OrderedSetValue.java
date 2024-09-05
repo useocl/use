@@ -50,7 +50,7 @@ public class OrderedSetValue extends CollectionValue {
     /**
      * Constructs an ordered set and adds all values. Elements are type checked
      * as they get inserted into the ordered set.
-     * 
+     * <p>
      * Duplicates are ignored after the first occurrence.
      */
     public OrderedSetValue(Type elemType, Value[] values) {
@@ -62,7 +62,7 @@ public class OrderedSetValue extends CollectionValue {
     /**
      * Constructs an orderedset and adds all values. Elements are type checked
      * as they get inserted into the sequence.
-     * 
+     * <p>
      * Duplicates are ignored after the first occurrence.
      */
     public OrderedSetValue(Type elemType, Collection<Value> values) {

@@ -45,8 +45,7 @@ public abstract class VertexNode extends PlaceableNode {
 	}
 
 	/**
-	 * @param active
-	 */
+     */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}	

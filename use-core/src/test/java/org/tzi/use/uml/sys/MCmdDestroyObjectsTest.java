@@ -35,7 +35,6 @@ import org.tzi.use.uml.ocl.value.Value;
  * Test the destruction of objects.
  *
  * @author  Fabian Gutsche
- * @see     MCmdDestroyObjects
  */
 
 public class MCmdDestroyObjectsTest extends TestCase {

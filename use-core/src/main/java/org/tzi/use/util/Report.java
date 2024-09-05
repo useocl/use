@@ -70,7 +70,7 @@ public class Report {
      * more format specifiers than columns, the excess specifiers are
      * ignored. If there are fewer format specifiers than columns,
      * all columns with no format specifier are left-aligned.
-     *
+     * <p>
      * Example:
      * <pre>
      * Report r = new Report(4, "[ $l = $r, $r, $c ]");

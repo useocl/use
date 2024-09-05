@@ -152,7 +152,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
      * @param source The source node of the edge.
      * @param target The target node of the edge.
      * @param edgeName The name of the edge.
-     * @param diagram The diagram this edge belongs to.
      * @param completeEdgeMoveMovesUserWayPoints If true, user defined way points are moved by the edge if
      * source and target are selected. 
      */
@@ -196,9 +195,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
 	
     /**
      * Adds a node to the list of nodes on this edge.
-     * @param node Node to be added.
-     * @param n1 Behind this node <code>node</code> will be added to 
-     *           the list of nodes.
      */
     private void addWayPoint( WayPoint wayPoint, WayPoint after ) {
         addWayPoint( fWayPoints.indexOf(after) + 1, wayPoint );
@@ -648,7 +644,6 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
      /**
      * Removes a way point from the edge.
      * 
-     * @param waypoint The way point to be removed.
      * @throws IllegalArgumentException if the way point is not allowed to be deleted (see {@link WayPointType#allowsDeletion()}).
      */
     public void removeWayPoint( WayPoint node ) {
@@ -713,7 +708,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
     }
     
     /**
-     * Before the new position of an edge is calculated by {@link #calculateNewPositions(Set)}
+     * Before the new position of an edge is calculated by
      * this can be used by an edge to calculate positions of additional related elements.
      * Currently used for <code>QualierNode</code>s.
      */

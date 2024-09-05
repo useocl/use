@@ -26,7 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 /**
  * @author Carsten Schlobohm
- *
+ * <p>
  * A class for a custom JPanel for the selection of
  * options for the Show related objects... option
  */

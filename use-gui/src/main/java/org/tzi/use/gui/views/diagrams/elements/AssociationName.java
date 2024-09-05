@@ -53,7 +53,6 @@ public final class AssociationName extends EdgeProperty {
     /**
      * Used by n-ary associations / links
      * @param name
-     * @param connectedNodes
      * @param opt
      * @param source
      * @param assoc

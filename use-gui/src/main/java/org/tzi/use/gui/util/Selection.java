@@ -34,7 +34,7 @@ import org.tzi.use.gui.views.diagrams.Selectable;
  * A selection maintains a collection of objects that implement 
  * the <code>Selectable</code>  interface. Clients may register for 
  * event notification when the selection changes.
- *
+ * <p>
  * Note: All graphical presentation and updates have to be done by
  * client classes.
  * 

@@ -311,9 +311,7 @@ public class DiagramInputHandling implements MouseListener,
     }
 
     /**
-     * 
-     * @param dx
-     * @param dy
+     *
      */
     protected void resizeSelectedObjects(Point p) {
         // Just to be sure

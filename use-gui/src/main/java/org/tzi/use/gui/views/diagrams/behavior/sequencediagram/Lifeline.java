@@ -735,9 +735,7 @@ public abstract class Lifeline implements Selectable {
 	 * activations from the fActivations list, the dashed line and the frames.
 	 * 
 	 * @param g the graphics on which the lifeline should be drawn
-	 * @param counter the level of scrolling which was calculated in the
-	 *            drawView-Method of the SequenceDiagram class.
-	 */
+     */
 	protected void draw(Graphics2D g) {
 		FontMetrics fm = sequenceDiagram.getFontMetrics(fProperties.getFont());
 		g.setColor(Color.black);
@@ -845,7 +843,6 @@ public abstract class Lifeline implements Selectable {
 		 * 
 		 * @param xValue the center x-value of the object box
 		 * @param yValue the y-value on which the object box starts
-		 * @param lifeline the corresponding lifeline
 		 * @param name the name of the corresponding object
 		 */
 		ObjectBox(int xValue, int yValue, String name) {

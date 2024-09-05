@@ -60,7 +60,7 @@ public class ShellCommandCompiler {
 	 * All checked exceptions that could happen during this process are
 	 * handled. If the input was not a valid soil statement
 	 * {@code null} is returned.
-	 * 
+	 * <p>
 	 * Encapsulates the string <code>input</code> as an input stream
 	 * and delegates to {@link ShellCommandCompiler#compileShellCommand(MModel, MSystemState, VariableEnvironment, InputStream, String, PrintWriter, boolean)}
 	 * @param model the model

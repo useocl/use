@@ -198,9 +198,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		/**
 		 * Copies all data to the target object
-		 * 
-		 * @param hiddenData
-		 */
+		 *
+         */
 		public void copyTo(ObjectDiagramData target) {
 			target.fBinaryLinkToEdgeMap.putAll(this.fBinaryLinkToEdgeMap);
 			target.fHalfLinkToEdgeMap.putAll(this.fHalfLinkToEdgeMap);

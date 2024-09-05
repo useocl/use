@@ -343,9 +343,9 @@ public class ClassInvariantView extends JPanel implements View {
     
     private class TableSizeUtilities {
 	    /**
-	     * Returns the max width of the column but does NOT include the header.
+	     * <p>Returns the max width of the column but does NOT include the header.</p>
 	     * 
-	     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+	     * Source: <a href="https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/">https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/</a>
 	     */
 	    private int getMaxWidthOfColumn(int column) {
 	        TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
@@ -375,10 +375,10 @@ public class ClassInvariantView extends JPanel implements View {
 	    private int getColumnHeaderWidth(int column) {
 	    	return getColumnHeaderDimension(column, false);
 	    }
-	    
-	    /**
-	     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
-	     */
+
+		/**
+		 * Source: <a href="https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/">https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/</a>
+		 */
 	    private int getColumnHeaderDimension(int column, boolean isHeight)
 		{
 			TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
