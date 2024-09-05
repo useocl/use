@@ -43,7 +43,7 @@ public class ReadlineTestReadlineDecorator implements Readline {
         return fBalance;
     }
     
-    private Readline fDecoratedReadline;
+    private final Readline fDecoratedReadline;
     
     public ReadlineTestReadlineDecorator(Readline rl) {
         fDecoratedReadline = rl;

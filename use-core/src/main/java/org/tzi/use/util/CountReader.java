@@ -61,7 +61,7 @@ public class CountReader extends FilterReader {
      *
      * @exception  IOException  If an I/O error occurs
      */
-    public int read(char cbuf[], int off, int len) throws IOException {
+    public int read(char[] cbuf, int off, int len) throws IOException {
         int c = super.read(cbuf, off, len);
         if (c != -1 )
             fCount += c;

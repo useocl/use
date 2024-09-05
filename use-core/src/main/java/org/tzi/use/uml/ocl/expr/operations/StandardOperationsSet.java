@@ -54,7 +54,7 @@ final class Op_set_union extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() && 
 			params[1].isTypeOfSet()) {
@@ -88,7 +88,7 @@ final class Op_set_union_bag extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() && 
 			params[1].isTypeOfBag()) {
@@ -126,7 +126,7 @@ final class Op_set_intersection extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() &&
 			params[1].isTypeOfSet()) {
@@ -149,7 +149,7 @@ final class Op_set_intersection extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col1 = (CollectionType) args[0].type();
 		CollectionType col2 = (CollectionType) args[1].type();
 		
@@ -185,7 +185,7 @@ final class Op_set_intersection_bag extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() && 
 			params[1].isTypeOfBag()) {
@@ -209,7 +209,7 @@ final class Op_set_intersection_bag extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col1 = (CollectionType) args[0].type();
 		CollectionType col2 = (CollectionType) args[1].type();
 		
@@ -245,7 +245,7 @@ final class Op_set_difference extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() && 
 			params[1].isTypeOfSet()) {
@@ -268,7 +268,7 @@ final class Op_set_difference extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col1 = (CollectionType) args[0].type();
 		CollectionType col2 = (CollectionType) args[1].type();
 		
@@ -304,7 +304,7 @@ final class Op_set_including extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet()) {
 			SetType set1 = (SetType) params[0];
@@ -343,7 +343,7 @@ final class Op_set_excluding extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet()) {
 			
@@ -365,7 +365,7 @@ final class Op_set_excluding extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col = (CollectionType) args[0].type();
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
@@ -397,7 +397,7 @@ final class Op_set_symmetricDifference extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfSet() &&
 			params[1].isTypeOfSet()) {
@@ -421,7 +421,7 @@ final class Op_set_symmetricDifference extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col1 = (CollectionType) args[0].type();
 		CollectionType col2 = (CollectionType) args[1].type();
 		

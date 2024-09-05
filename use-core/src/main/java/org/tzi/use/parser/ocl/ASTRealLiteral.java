@@ -32,7 +32,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTRealLiteral extends ASTExpression {
-    private double fValue;
+    private final double fValue;
 
     public ASTRealLiteral(Token token) {
         fValue = Double.valueOf(token.getText()).doubleValue();

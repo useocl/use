@@ -44,7 +44,7 @@ public class GInstructionCreator {
     private static GInstructionCreator _instance = null;
   
     private GInstructionCreator() {
-        IGInstructionMatcher matcherlist[] = {
+        IGInstructionMatcher[] matcherlist = {
             new GMatcherCreate_C(),
             new GMatcherAny_Seq(),
             new GMatcherSub_Seq(),

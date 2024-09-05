@@ -35,8 +35,8 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase.PropertyOwner;
 public final class MultiplicityRolenameWrapper implements
 		DiagramOptionChangedListener {
 
-	private Multiplicity multiplicity_client;
-	private Rolename rolename_client;
+	private final Multiplicity multiplicity_client;
+	private final Rolename rolename_client;
 
 	// Currently not needed, maybe of use later.
 	// private PropertyOwner end;

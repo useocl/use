@@ -52,10 +52,10 @@ import org.tzi.use.uml.ocl.type.Type.VoidHandling;
  * @author  Mark Richters
  */
 public class ASTQueryExpression extends ASTExpression {
-    private Token fOp;
-    private ASTExpression fRange; // may be null
-    private ASTElemVarsDeclaration fDeclList;
-    private ASTExpression fExpr;
+    private final Token fOp;
+    private final ASTExpression fRange; // may be null
+    private final ASTElemVarsDeclaration fDeclList;
+    private final ASTExpression fExpr;
 
     public ASTQueryExpression(Token op, 
                               ASTExpression range, 

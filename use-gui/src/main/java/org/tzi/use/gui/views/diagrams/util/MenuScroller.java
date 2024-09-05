@@ -39,8 +39,8 @@ public class MenuScroller {
   //private JMenu menu;
   private JPopupMenu menu;
   private Component[] menuItems;
-  private MenuScrollItem upItem;
-  private MenuScrollItem downItem;
+  private final MenuScrollItem upItem;
+  private final MenuScrollItem downItem;
   private final MenuScrollListener menuListener = new MenuScrollListener();
   private int scrollCount;
   private int interval;
@@ -536,7 +536,7 @@ public class MenuScroller {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private MenuScrollTimer timer;
+	private final MenuScrollTimer timer;
 
     public MenuScrollItem(MenuIcon icon, int increment) {
       setIcon(icon);

@@ -103,7 +103,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 
 	static final Color ACTIVATED_MESSAGE_COLOR = new Color(80, 136, 252);
 
-	private CommunicationDiagramView fParent;
+	private final CommunicationDiagramView fParent;
 	private ActorNode actorSymbolNode;
 
 	private CommunicationDiagramData dataSource;
@@ -112,7 +112,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * The position of the next object node. This is either set to a random
 	 * value or to a specific position when an object is created by drag & drop.
 	 */
-	private Point2D.Double nextNodePosition = new Point2D.Double();
+	private final Point2D.Double nextNodePosition = new Point2D.Double();
 
 	private ObjectSelection fSelection;
 	private DiagramInputHandling inputHandling;
@@ -121,7 +121,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	private CommunicationDiagramEdge activatedEdge;
 	private MessagesGroup activatedMessage;
 
-	private VisibleDataManager sharedVisibleManager;
+	private final VisibleDataManager sharedVisibleManager;
 
 	private boolean resetEnum = false;
 

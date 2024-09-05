@@ -32,7 +32,7 @@ import java.util.Set;
  * @author  Mark Richters
  */
 public class ASTIntegerLiteral extends ASTExpression {
-    private int fValue;
+    private final int fValue;
 
     public ASTIntegerLiteral(Token token) {
         fValue = Integer.parseInt(token.getText());

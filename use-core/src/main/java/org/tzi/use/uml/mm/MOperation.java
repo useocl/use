@@ -38,7 +38,7 @@ import org.tzi.use.util.StringUtil;
  */
 public final class MOperation extends MModelElementImpl implements UseFileLocatable {
     /** A list of parameters */
-	private VarDeclList fVarDeclList;
+	private final VarDeclList fVarDeclList;
     
     /** The declared result type (optional) */
     private Type fResultType;
@@ -52,8 +52,8 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     /** The owner */
     private MClassifier fClassifier;
 
-    private List<MPrePostCondition> fPreConditions;
-    private List<MPrePostCondition> fPostConditions;
+    private final List<MPrePostCondition> fPreConditions;
+    private final List<MPrePostCondition> fPostConditions;
     private int fPositionInModel;
     private boolean fIsConstructor;
 

@@ -34,7 +34,7 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstructionList;
  * @author  Joern Bohling
  */
 public class GInstructionList implements GInstruction {
-    private List<GInstruction> fInstructions;
+    private final List<GInstruction> fInstructions;
 
     public GInstructionList() {
         fInstructions = new ArrayList<GInstruction>();

@@ -41,7 +41,7 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 
 public class GEvalProcedure implements IGCaller {
-    private GProcedure fProcedure;
+    private final GProcedure fProcedure;
     private IGChecker fChecker;
   
     public GEvalProcedure( GProcedure proc ) {

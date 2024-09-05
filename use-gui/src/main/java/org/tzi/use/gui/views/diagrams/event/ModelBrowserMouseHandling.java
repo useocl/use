@@ -51,8 +51,8 @@ public class ModelBrowserMouseHandling implements MouseListener {
     private static final String ALPHABETIC_BY_COND_NAME = "in alphabetic order - condition name first";
     private static final String ALPHABETIC_BY_COND_TYPE= "in alphabetic order - pre conditions first";
     
-    private ModelBrowserSorting fMBS = ModelBrowserSorting.getInstance();
-    private ModelBrowser fMB;
+    private final ModelBrowserSorting fMBS = ModelBrowserSorting.getInstance();
+    private final ModelBrowser fMB;
     
     public ModelBrowserMouseHandling( ModelBrowser mb ) {
         fMB = mb;
@@ -344,7 +344,7 @@ public class ModelBrowserMouseHandling implements MouseListener {
     
     private Rectangle fRectangle;
     private MModelElement fElem;
-    private Map<MModelElement, Boolean> fHighlightElements;
+    private final Map<MModelElement, Boolean> fHighlightElements;
     
     public void setSelectedNodeRectangle( Rectangle rec ) {
         fRectangle = rec;

@@ -35,14 +35,16 @@ public class ShowRelatedObjectsPanel {
     /**
      * Some panels.
      */
-    private JPanel selectionSettings;
+    private final JPanel selectionSettings;
 
     private Container container;
 
-    private JComboBox<Integer> searchCycles;
+    private final JComboBox<Integer> searchCycles;
 
-    private JRadioButton showLinksRadio, showLinkObjectsRadio,
-            showEdgesFromLinkObjectsRadio, showFunctionParameterRadio;
+    private final JRadioButton showLinksRadio;
+    private final JRadioButton showLinkObjectsRadio;
+    private final JRadioButton showEdgesFromLinkObjectsRadio;
+    private final JRadioButton showFunctionParameterRadio;
 
 
     /**

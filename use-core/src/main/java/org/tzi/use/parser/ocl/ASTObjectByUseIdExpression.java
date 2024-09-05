@@ -38,9 +38,9 @@ import org.tzi.use.uml.ocl.type.Type.VoidHandling;
  * @author  Lars Hamann
  */
 public class ASTObjectByUseIdExpression extends ASTExpression {
-    private Token fToken;
+    private final Token fToken;
 
-    private ASTExpression idExpr;
+    private final ASTExpression idExpr;
     
     public ASTObjectByUseIdExpression(Token token, ASTExpression idExpr) {
         this.fToken = token;

@@ -10,7 +10,7 @@ import org.tzi.use.uml.sys.testsuite.MAssert;
 import org.tzi.use.uml.sys.testsuite.MAssertOclExpression;
 
 public class ASTAssertOclExpression extends ASTAssert {
-	private ASTExpression expression;
+	private final ASTExpression expression;
 	
 	public ASTAssertOclExpression(Token start, Token end, boolean shouldBeValid, ASTExpression exp) {
 		super(start, end, shouldBeValid);

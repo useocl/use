@@ -39,15 +39,15 @@ public class ASTConditionalExecutionStatement extends ASTStatement {
 	/** 
 	 * The AST of the OCL expression representing the condition 
 	 */
-	private ASTExpression fCondition;
+	private final ASTExpression fCondition;
 	/**
 	 * The statement which is executed when <code>fCondition</code> is <code>true</code> 
 	 */
-	private ASTStatement fThenStatement;
+	private final ASTStatement fThenStatement;
 	/**
 	 * The statement which is executed when <code>fCondition</code> is <code>false</code> 
 	 */
-	private ASTStatement fElseStatement;
+	private final ASTStatement fElseStatement;
 	
 	
 	/**

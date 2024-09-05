@@ -52,7 +52,7 @@ final class Op_bag_union extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfBag() &&
 			params[1].isTypeOfBag()) {
@@ -92,7 +92,7 @@ final class Op_bag_union_set extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfBag() && 
 			params[1].isTypeOfSet()) {
@@ -131,7 +131,7 @@ final class Op_bag_intersection extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length != 2) return null;
 		
 		if (params[0].isTypeOfBag() && 
@@ -161,7 +161,7 @@ final class Op_bag_intersection extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		BagType bag1 = (BagType) args[0].type();
 		BagType bag2 = (BagType) args[1].type();
 		
@@ -197,7 +197,7 @@ final class Op_bag_intersection_set extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && 
 			params[0].isTypeOfBag() && 
 			params[1].isTypeOfSet()) {
@@ -221,7 +221,7 @@ final class Op_bag_intersection_set extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		BagType  bag = (BagType) args[0].type();
 		SetType set = (SetType) args[1].type();
 		
@@ -257,7 +257,7 @@ final class Op_bag_including extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfBag()) {
 			BagType bag = (BagType) params[0];
 			Type commonElementType = bag.elemType().getLeastCommonSupertype(
@@ -293,7 +293,7 @@ final class Op_bag_excluding extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfBag()) {
 			BagType bag = (BagType) params[0];
 			Type commonElementType = bag.elemType().getLeastCommonSupertype(
@@ -313,7 +313,7 @@ final class Op_bag_excluding extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		BagType  bag = (BagType) args[0].type();
 		Type commonElementType = bag.elemType().getLeastCommonSupertype(args[1].type());
 		

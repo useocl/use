@@ -73,7 +73,7 @@ final class Op_string_size extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isTypeOfString()) ? TypeFactory
 				.mkInteger() : null;
 	}
@@ -100,7 +100,7 @@ final class Op_string_concat extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfString() && params[1]
 				.isTypeOfString()) ? params[0] : null;
 	}
@@ -128,7 +128,7 @@ final class Op_string_concatinfix extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfString() && params[1]
 				.isTypeOfString()) ? params[0] : null;
 	}
@@ -156,7 +156,7 @@ final class Op_string_toUpper extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isTypeOfString()) ? params[0] : null;
 	}
 
@@ -182,7 +182,7 @@ final class Op_string_toLower extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isTypeOfString()) ? params[0] : null;
 	}
 
@@ -208,7 +208,7 @@ final class Op_string_substring extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 3 && params[0].isTypeOfString()
 				&& params[1].isTypeOfInteger() && params[2].isTypeOfInteger()) ? params[0]
 				: null;
@@ -246,7 +246,7 @@ final class Op_string_less extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfString() && params[1]
 				.isTypeOfString()) ? TypeFactory.mkBoolean() : null;
 	}
@@ -273,7 +273,7 @@ final class Op_string_greater extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfString() && params[1]
 				.isTypeOfString()) ? TypeFactory.mkBoolean() : null;
 	}
@@ -300,7 +300,7 @@ final class Op_string_lessequal extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfString() && params[1]
 				.isTypeOfString()) ? TypeFactory.mkBoolean() : null;
 	}
@@ -327,7 +327,7 @@ final class Op_string_greaterequal extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfString() && params[1]
 				.isTypeOfString()) ? TypeFactory.mkBoolean() : null;
 	}
@@ -354,7 +354,7 @@ final class Op_string_toReal extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 1 && params[0].isTypeOfString() ? TypeFactory.mkReal() : null;
 	}
 
@@ -386,7 +386,7 @@ final class Op_string_toInteger extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 1 && params[0].isTypeOfString() ? TypeFactory.mkInteger() : null;
 	}
 
@@ -426,7 +426,7 @@ final class Op_string_indexOf extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 2 && params[0].isTypeOfString() && params[1].isTypeOfString() ? 
 				TypeFactory.mkInteger() : null;
 	}
@@ -458,7 +458,7 @@ final class Op_string_equalsIgnoreCase extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 2 && params[0].isTypeOfString() && params[1].isTypeOfString() ? 
 				TypeFactory.mkBoolean() : null;
 	}
@@ -487,7 +487,7 @@ final class Op_string_at extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 2 && params[0].isTypeOfString() && params[1].isTypeOfInteger() ? 
 				TypeFactory.mkString() : null;
 	}
@@ -519,7 +519,7 @@ final class Op_string_characters extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 1 && params[0].isTypeOfString() ? 
 				TypeFactory.mkSequence(TypeFactory.mkString()) : null;
 	}
@@ -555,7 +555,7 @@ final class Op_string_toBoolean extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 1 && params[0].isTypeOfString() ? 
 				TypeFactory.mkBoolean() : null;
 	}
@@ -586,7 +586,7 @@ final class Op_string_split extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return params.length == 2 && params[0].isTypeOfString() && params[1].isTypeOfString() ? 
 				TypeFactory.mkSequence(TypeFactory.mkString()) : null;
 	}

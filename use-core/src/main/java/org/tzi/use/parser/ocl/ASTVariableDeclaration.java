@@ -32,8 +32,8 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTVariableDeclaration extends AST {
-    private Token fName;
-    private ASTType fType;
+    private final Token fName;
+    private final ASTType fType;
 
     /**
      * 

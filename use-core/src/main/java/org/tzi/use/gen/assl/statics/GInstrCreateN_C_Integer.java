@@ -38,8 +38,8 @@ public class GInstrCreateN_C_Integer implements GValueInstruction {
 
     // CreateN( Class C, Integer ): Sequence(C)
 
-    private MClass fClass;
-    private GValueInstruction fIntegerInstr;
+    private final MClass fClass;
+    private final GValueInstruction fIntegerInstr;
 
     public GInstrCreateN_C_Integer( MClass cls, GValueInstruction i ) {
         fClass = cls;

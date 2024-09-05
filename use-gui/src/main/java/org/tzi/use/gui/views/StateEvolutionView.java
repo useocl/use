@@ -34,7 +34,7 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class StateEvolutionView extends LineChartView implements View {
-    private MSystem fSystem;
+    private final MSystem fSystem;
 
     public StateEvolutionView(MSystem system) {
         super(50, 2, new Color[] { Color.blue, Color.red });

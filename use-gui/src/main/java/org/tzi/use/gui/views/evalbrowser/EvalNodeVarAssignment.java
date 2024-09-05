@@ -40,7 +40,7 @@ public class EvalNodeVarAssignment extends EvalNode {
 	 * Variable assignments used to dense multiple
 	 * assignments into one tree node.
 	 */
-	private List<Entry> fVarAss = new ArrayList<>();
+	private final List<Entry> fVarAss = new ArrayList<>();
 
 	/**
 	 * @param vars

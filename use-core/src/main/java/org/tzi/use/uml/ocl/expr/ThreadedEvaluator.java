@@ -37,15 +37,15 @@ class ThreadedEvaluator {
      * a single expression at a time.
      */
     static class Controller extends Thread {
-        private Queue fResultValueQueue;
-        private ArrayList<Expression> fExprList;
+        private final Queue fResultValueQueue;
+        private final ArrayList<Expression> fExprList;
         MSystemState fSystemState;
 
-        private int fNumWorkers; // number of parallel worker threads
-        private Thread[] fWorkers;
+        private final int fNumWorkers; // number of parallel worker threads
+        private final Thread[] fWorkers;
 
-        private int fNumJobs;   // number of jobs to process
-        private Job[] fJobs;
+        private final int fNumJobs;   // number of jobs to process
+        private final Job[] fJobs;
         private int fNextJob;
 
         Controller(int numWorkers, Queue resultQueue, 
@@ -140,8 +140,8 @@ class ThreadedEvaluator {
      * them.  
      */
     static class Worker extends Thread {
-        private int fNumber;
-        private Controller fController;
+        private final int fNumber;
+        private final Controller fController;
 
         public Worker(Controller controller, int i) {
             fController = controller;

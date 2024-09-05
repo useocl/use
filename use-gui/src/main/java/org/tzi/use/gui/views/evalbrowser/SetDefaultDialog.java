@@ -298,7 +298,7 @@ class SetDefaultDialog extends JDialog {
                 escaptedAttr += attr.charAt(i);
         }
         Pattern p = Pattern.compile("\n" + escaptedAttr);
-        String parts[] = p.split(confFileContent);
+        String[] parts = p.split(confFileContent);
         confFileContent = "";
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {
@@ -342,7 +342,7 @@ class SetDefaultDialog extends JDialog {
                 escaptedAttr += attr.charAt(i);
         }
         Pattern p = Pattern.compile("\n" + escaptedAttr);
-        String parts[] = p.split(confFileContent);
+        String[] parts = p.split(confFileContent);
         confFileContent = "";
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {

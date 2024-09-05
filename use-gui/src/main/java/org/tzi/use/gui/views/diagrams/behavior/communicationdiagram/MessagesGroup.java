@@ -67,18 +67,18 @@ public final class MessagesGroup extends EdgeProperty {
 	/**
 	 * Set the filter on or off
 	 */
-	private boolean isFiltered = false;
+	private final boolean isFiltered = false;
 
 	/**
 	 * Delete some Messages
 	 */
-	private boolean deleteSomeMessages = false;
+	private final boolean deleteSomeMessages = false;
 
 	/**
 	 * Contains all Messages should be shown
 	 */
 
-	private Set<MMessage> visibleMessages = null;
+	private final Set<MMessage> visibleMessages = null;
 
 	/**
 	 * The message which should be colored on navigation of communication

@@ -32,8 +32,8 @@ import org.tzi.use.uml.mm.MClassifier;
  *
  */
 public class AttributeAccessInfo implements Comparable<AttributeAccessInfo> {
-	private MAttribute attribute;
-	private MClassifier sourceClassifier;
+	private final MAttribute attribute;
+	private final MClassifier sourceClassifier;
 	
 	public AttributeAccessInfo(MClassifier cf, MAttribute att) {
 		this.attribute = att;

@@ -32,8 +32,8 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTUnaryExpression extends ASTExpression {
-    private Token fToken;
-    private ASTExpression fExpr;
+    private final Token fToken;
+    private final ASTExpression fExpr;
 
     public ASTUnaryExpression(Token token, 
                               ASTExpression expr) {

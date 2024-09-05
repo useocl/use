@@ -35,8 +35,8 @@ import org.tzi.use.uml.sys.soil.MStatement;
  */
 public class Session {
     private MSystem fSystem;
-    private List<ChangeListener> fListenerStateChange;
-    private List<EvaluatedStatementListener> fListenerEvaluatedStatement;
+    private final List<ChangeListener> fListenerStateChange;
+    private final List<EvaluatedStatementListener> fListenerEvaluatedStatement;
 
     public class EvaluatedStatement extends EventObject {
 		private static final long serialVersionUID = 1L;

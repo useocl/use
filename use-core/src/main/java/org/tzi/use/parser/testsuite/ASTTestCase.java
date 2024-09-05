@@ -27,8 +27,8 @@ public class ASTTestCase extends AST {
 		ERROR
 	}
 	
-	private Token name;
-	private List<AST> statements = new ArrayList<AST>();
+	private final Token name;
+	private final List<AST> statements = new ArrayList<AST>();
 	
 	public ASTTestCase(Token name) {
 		this.name = name;

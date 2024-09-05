@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GEvalInstrSub_Seq_Integer extends GEvalInstruction implements IGCaller {
-    private GInstrSub_Seq_Integer fInstr;
+    private final GInstrSub_Seq_Integer fInstr;
     private IGCaller fCaller;
 
     private SequenceValue fSequence;

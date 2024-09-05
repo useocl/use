@@ -35,12 +35,12 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * context type
      */
-    private MClassifier fClassifier;
+    private final MClassifier fClassifier;
     
     /**
      * boolean expression
      */
-    private Expression fBody;
+    private final Expression fBody;
     
     /**
      * The body expression expanded by <code>forAll</code> or <code>exists</code>
@@ -56,12 +56,12 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * <code>true</code>, if this invariant has explicitly named
      * variables instead of an implicit <code>self</code>.
      */
-    private boolean fHasVars;
+    private final boolean fHasVars;
     
     /**
 	 * optional List of variable names
 	 */
-    private VarDeclList fVars;
+    private final VarDeclList fVars;
     
     /**
      * Flags from generator.
@@ -76,7 +76,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * to <code>className.allInstances()->exists(body)</code> instead of
      * <code>className.allInstances()->forAll(body)</code>.
      */
-    private boolean fIsExistential;
+    private final boolean fIsExistential;
     
     /**
      * Constructs a new invariant. The <code>name</code> and <code>vars</code> is optional, i.e., can be <code>null</code>.

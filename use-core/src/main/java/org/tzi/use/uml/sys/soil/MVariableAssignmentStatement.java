@@ -31,9 +31,9 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MVariableAssignmentStatement extends MStatement {
 	/** The name of the variable to assign a value to */
-	private String fVariableName;
+	private final String fVariableName;
 	/** The RValue to assign */
-	private MRValue fRValue;
+	private final MRValue fRValue;
 	
 	/**
 	 * Constructs a new variable assignment statement.

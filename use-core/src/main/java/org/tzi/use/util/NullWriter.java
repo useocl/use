@@ -28,7 +28,7 @@ import java.io.Writer;
  * @author  Mark Richters
  */
 public class NullWriter extends Writer {
-    public void write(char cbuf[], int off, int len) {}
+    public void write(char[] cbuf, int off, int len) {}
     public void flush() {}
     public void close() {}
 }

@@ -41,8 +41,8 @@ import org.tzi.use.util.StringUtil;
  * @author  Mark Richters
  */
 public class ASTCollectionLiteral extends ASTExpression {
-    private Token fToken;
-    private List<ASTCollectionItem> fItems;
+    private final Token fToken;
+    private final List<ASTCollectionItem> fItems;
 
     public ASTCollectionLiteral(Token token) {
         fToken = token;

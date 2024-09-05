@@ -37,7 +37,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MNewObjectStatement extends MStatement {
     
-    private MClass fObjectClass;
+    private final MClass fObjectClass;
     
     private Expression fObjectName;
     

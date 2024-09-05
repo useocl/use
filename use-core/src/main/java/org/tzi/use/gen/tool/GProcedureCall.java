@@ -42,8 +42,8 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author  Joern Bohling
  */
 public class GProcedureCall {
-    private GProcedure fProcedure;
-    private List<Expression> fParameter;    
+    private final GProcedure fProcedure;
+    private final List<Expression> fParameter;
     private GSignature signature = null;
     
     public GProcedureCall (GProcedure procedure, List<Expression> params) {

@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public class ExpIterate extends ExpQuery {
-    private VarInitializer fAccuInitializer;
+    private final VarInitializer fAccuInitializer;
 
     /**
      * Constructs an iterate expression.
@@ -119,10 +119,10 @@ public class ExpIterate extends ExpQuery {
         return res;
     }
 
-    private final Value eval0(EvalContext ctx, 
-                              int nesting, 
-                              CollectionValue rangeVal,
-                              Value accuVal)
+    private Value eval0(EvalContext ctx,
+                        int nesting,
+                        CollectionValue rangeVal,
+                        Value accuVal)
     {
         // loop over range elements
         for (Value elemVal : rangeVal) {

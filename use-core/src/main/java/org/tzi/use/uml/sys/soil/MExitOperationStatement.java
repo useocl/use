@@ -43,7 +43,7 @@ import java.util.Map.Entry;
  */
 public class MExitOperationStatement extends MStatement {
 	/** The expression used to calculate the operation call result */
-	private Expression fOperationResult;
+	private final Expression fOperationResult;
 	/** A custom PPC handler */
 	private PPCHandler fCustomPPCHandler;
 	/** The operation call created by openter */

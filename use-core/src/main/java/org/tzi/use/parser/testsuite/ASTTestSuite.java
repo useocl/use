@@ -11,7 +11,7 @@ import org.tzi.use.uml.sys.testsuite.MTestSuite;
 
 public class ASTTestSuite extends AST {
 	
-	private Token name;
+	private final Token name;
 	private Token modelFile;
 	private List<ASTTestCase> testCases;
 	private List<ASTStatement> setupStatements;

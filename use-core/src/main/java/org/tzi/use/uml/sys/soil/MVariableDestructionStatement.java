@@ -31,7 +31,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MVariableDestructionStatement extends MStatement {
 	/** Name of the assigned variable */
-	private String fVariableName;
+	private final String fVariableName;
 	
 	/**
 	 * Constructs a new variable destruction statement.

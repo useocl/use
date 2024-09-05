@@ -4,7 +4,7 @@ import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.sys.MSystem;
 
 public class MVariationStart extends MVariation {
-	private MSystem system;
+	private final MSystem system;
 	
 	public MVariationStart(SrcPos pos, MSystem system) {
 		super(pos);

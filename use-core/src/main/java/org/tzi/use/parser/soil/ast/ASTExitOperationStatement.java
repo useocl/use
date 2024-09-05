@@ -37,7 +37,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 public class ASTExitOperationStatement extends ASTStatement {
 	
 	/** The specified result expression, if any **/ 
-	private ASTExpression fResult;
+	private final ASTExpression fResult;
 
 	
 	/**

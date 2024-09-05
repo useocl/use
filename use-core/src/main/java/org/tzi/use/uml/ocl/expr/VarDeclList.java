@@ -33,7 +33,7 @@ import java.util.List;
  * @author      Mark Richters 
  */
 public class VarDeclList implements Iterable<VarDecl> {
-    private List<VarDecl> fVarDecls;
+    private final List<VarDecl> fVarDecls;
 
     /**
      * An additional constraint specifying that all declarations must

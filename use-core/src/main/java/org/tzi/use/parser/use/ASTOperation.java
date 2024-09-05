@@ -48,13 +48,13 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  * @author  Mark Richters
  */
 public class ASTOperation extends ASTAnnotatable {
-    private Token fName;
-    private List<ASTVariableDeclaration> fParamList;
-    private ASTType fType;           // (optional)
+    private final Token fName;
+    private final List<ASTVariableDeclaration> fParamList;
+    private final ASTType fType;           // (optional)
     private ASTExpression fExpr;     // (optional)
     private ASTStatement fStatement; // optional
     private MOperation fOperation;   // the operation is generated in two passes
-    private List<ASTPrePostClause> fPrePostClauses;
+    private final List<ASTPrePostClause> fPrePostClauses;
     private final boolean fIsConstructor;
 
     public ASTOperation(

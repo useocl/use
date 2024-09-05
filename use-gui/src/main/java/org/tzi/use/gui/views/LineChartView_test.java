@@ -28,7 +28,7 @@ import javax.swing.*;
  */
 public class LineChartView_test {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         JFrame f = new JFrame("LineChartView_test");
         Color[] colors = { Color.red, Color.blue };
         LineChartView lcv = new LineChartView(50, 2, colors);

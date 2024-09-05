@@ -35,7 +35,7 @@ import java.util.Set;
  * @author  Mark Richters
  */
 public class ASTAllInstancesExpression extends ASTExpression {
-    private Token fToken;
+    private final Token fToken;
 
     public ASTAllInstancesExpression(Token token) {
         fToken = token;

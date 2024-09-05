@@ -53,13 +53,13 @@ import com.google.common.collect.Iterators;
 public class DiagramGraph extends DirectedGraphBase<PlaceableNode, EdgeBase>  {
 	
 	//TODO: Extract generic interface like "DiagramContent"
-	private Set<PlaceableNode> uninitializedNodes = new HashSet<PlaceableNode>();
+	private final Set<PlaceableNode> uninitializedNodes = new HashSet<PlaceableNode>();
 	
-	private Set<EdgeBase> uninitializedEdges = new HashSet<EdgeBase>();
+	private final Set<EdgeBase> uninitializedEdges = new HashSet<EdgeBase>();
 	
-	private Set<PlaceableNode> invalidatedNodes = new HashSet<PlaceableNode>();
+	private final Set<PlaceableNode> invalidatedNodes = new HashSet<PlaceableNode>();
 	
-	private Set<EdgeBase> invalidatedEdges = new HashSet<EdgeBase>();
+	private final Set<EdgeBase> invalidatedEdges = new HashSet<EdgeBase>();
 	
 	private boolean allInvalid = false;
 	

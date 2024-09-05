@@ -66,7 +66,7 @@ public class VariableEnvironment {
 	/** reference to the current frame */
 	private Map<String, Value> fCurrentFrame;
 	/** the system state this variable environment is defined for. */
-	private MSystemState fSystemState;
+	private final MSystemState fSystemState;
 	
 
 	/**

@@ -54,11 +54,11 @@ public class ShowRelatedObjectsWindow extends JDialog implements ActionListener 
     /**
      * Some panels.
      */
-    private JPanel selectionPanel;
+    private final JPanel selectionPanel;
 
-    private ShowRelatedObjectsPanel panelContainer;
+    private final ShowRelatedObjectsPanel panelContainer;
 
-    private Container container;
+    private final Container container;
 
     public ShowRelatedObjectsWindow(ShowRelatedObjectsDelegate delegate) {
         setTitle("Show Related Objects...");

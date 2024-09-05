@@ -52,7 +52,7 @@ public abstract class TableModel<T> extends AbstractTableModel {
 		}
 	}
 	
-	private String[] columnNames = { "null", "null" };
+	private final String[] columnNames = { "null", "null" };
 	
 	protected List<Row<T>> rows;
 

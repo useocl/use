@@ -40,11 +40,11 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTEnterOperationStatement extends ASTStatement {
 	
-	private ASTExpression fObject;
+	private final ASTExpression fObject;
 	
-	private String fOperationName;
+	private final String fOperationName;
 	
-	private List<ASTExpression> fArguments;
+	private final List<ASTExpression> fArguments;
 	
 	
 	/**

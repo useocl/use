@@ -29,8 +29,8 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstEnum extends Expression {
-    private String fValue;
-    private EnumValue enumValue;
+    private final String fValue;
+    private final EnumValue enumValue;
         
     public ExpConstEnum(EnumType t, String literal) {
         super(t);

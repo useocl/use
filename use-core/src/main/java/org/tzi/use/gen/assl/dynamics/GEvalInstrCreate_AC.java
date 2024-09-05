@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.soil.MRValueExpression;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
-    private GInstrCreate_AC fInstr;
+    private final GInstrCreate_AC fInstr;
     private IGCaller fCaller;
     private List<MRValue> fObjectList;
     private ListIterator<GValueInstruction> fIterator;

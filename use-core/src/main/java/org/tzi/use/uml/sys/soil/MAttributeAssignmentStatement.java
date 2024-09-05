@@ -34,11 +34,11 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MAttributeAssignmentStatement extends MStatement {
 	/** The expression leading to an object to assign the new value to. */
-	private Expression fObject;
+	private final Expression fObject;
 	/** The attribute to assign the value to */
-	private MAttribute fAttribute;
+	private final MAttribute fAttribute;
 	/** The value to assign */
-	private MRValue fRValue;
+	private final MRValue fRValue;
 	
 	/**
 	 * Constructs a new attribute assignment statement. 

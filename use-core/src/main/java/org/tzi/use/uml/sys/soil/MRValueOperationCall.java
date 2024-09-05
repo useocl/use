@@ -30,7 +30,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MRValueOperationCall extends MRValue {
 	/** The encapsulated command */
-	private MOperationCallStatement fOperationCallStatement;
+	private final MOperationCallStatement fOperationCallStatement;
 	
 	/**
 	 * Constructs a new <code>MRValueOperationCall</code> which

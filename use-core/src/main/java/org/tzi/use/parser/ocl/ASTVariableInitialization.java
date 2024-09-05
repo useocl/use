@@ -33,9 +33,9 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTVariableInitialization extends AST {
-    private Token fName;
-    private ASTType fType;
-    private ASTExpression fExpr;
+    private final Token fName;
+    private final ASTType fType;
+    private final ASTExpression fExpr;
 
     public ASTVariableInitialization(Token name, ASTType type, 
                                      ASTExpression expr) {

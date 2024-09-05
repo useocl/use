@@ -41,17 +41,17 @@ public class ASTLinkInsertionStatement extends ASTStatement {
 	/**
 	 * The name of the association to insert a link into
 	 */
-	private String fAssociationName;
+	private final String fAssociationName;
 	
 	/**
 	 * The ASTRValues of the participating objects
 	 */
-	private List<ASTRValue> fParticipants;
+	private final List<ASTRValue> fParticipants;
 		
 	/**
 	 * The List of the provided qualifiers
 	 */
-	private List<List<ASTRValue>> qualifierValues;
+	private final List<List<ASTRValue>> qualifierValues;
 	
 	/**
 	 * Constructs a new AST node.

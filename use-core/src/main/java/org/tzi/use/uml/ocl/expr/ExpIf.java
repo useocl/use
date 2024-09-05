@@ -29,9 +29,9 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpIf extends Expression {
-    private Expression fCondition;
-    private Expression fThenExp;
-    private Expression fElseExp;
+    private final Expression fCondition;
+    private final Expression fThenExp;
+    private final Expression fElseExp;
     
     public ExpIf(Expression condition,
                  Expression thenExp,

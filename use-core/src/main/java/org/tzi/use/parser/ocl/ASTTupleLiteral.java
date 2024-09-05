@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTTupleLiteral extends ASTExpression {
-    private List<ASTTupleItem> fItems;
+    private final List<ASTTupleItem> fItems;
 
     public ASTTupleLiteral(List<ASTTupleItem> items) {
         fItems = items;

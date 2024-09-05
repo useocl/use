@@ -34,7 +34,7 @@ import java.awt.print.PageFormat;
  */
 @SuppressWarnings("serial")
 public class ViewFrame extends JInternalFrame {
-    private View fView;
+    private final View fView;
 
     public ViewFrame(String title, View view, String iconFilename) {
         super(title, true, true, true, true);

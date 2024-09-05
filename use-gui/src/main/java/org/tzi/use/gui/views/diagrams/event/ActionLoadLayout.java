@@ -39,7 +39,7 @@ public class ActionLoadLayout extends AbstractAction {
 	
     private String fTitle = "";
     private String fAppendix = "";
-    private DiagramView fDiagram;
+    private final DiagramView fDiagram;
     
     private Path lastFile = null;
     

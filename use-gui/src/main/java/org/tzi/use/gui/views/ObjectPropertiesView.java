@@ -77,17 +77,17 @@ import com.google.common.eventbus.Subscribe;
 public class ObjectPropertiesView extends JPanel implements View {
     private static final String NO_OBJECTS_AVAILABLE = "(No objects available.)";
 
-    private MainWindow fMainWindow;
-    private MSystem fSystem;
+    private final MainWindow fMainWindow;
+    private final MSystem fSystem;
     private MObject fObject;
 
-    private JComboBox<String> fObjectComboBox;
-    private JTable fTable;
-    private JScrollPane fTablePane;
-    private JButton fBtnApply;
-    private JButton fBtnReset;
-    private TableModel fTableModel;
-    private ObjectComboBoxActionListener fObjectComboBoxActionListener;
+    private final JComboBox<String> fObjectComboBox;
+    private final JTable fTable;
+    private final JScrollPane fTablePane;
+    private final JButton fBtnApply;
+    private final JButton fBtnReset;
+    private final TableModel fTableModel;
+    private final ObjectComboBoxActionListener fObjectComboBoxActionListener;
 
     private List<MAttribute> fAttributes;
     private String[] fValues;

@@ -5,10 +5,10 @@ import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.sys.MSystemException;
 
 public abstract class MAssert {
-	private String expressionString;
-	private String message;
-	private SrcPos position;
-	private boolean shouldBeValid;
+	private final String expressionString;
+	private final String message;
+	private final SrcPos position;
+	private final boolean shouldBeValid;
 	
 	public MAssert(SrcPos position, String expressionString, String message, boolean shouldBeValid) {
 		this.position = position;

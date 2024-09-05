@@ -8,8 +8,8 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
  * @author  Hanna Bauerdick
  */
 public class GIfThenElse implements GInstruction {
-    private GInstructionList fThenInstructionList;
-    private GInstructionList fElseInstructionList;
+    private final GInstructionList fThenInstructionList;
+    private final GInstructionList fElseInstructionList;
     private GValueInstruction fConditionInstr;
 
     public GIfThenElse() {

@@ -62,39 +62,39 @@ public final class MSystemState {
 	/**
 	 * The name of the system state
 	 */
-	private String fName;
+	private final String fName;
 	
 	/**
 	 * The system related to this state
 	 */
-	private MSystem fSystem;
+	private final MSystem fSystem;
 
 	/**
 	 * The set of all object states.
 	 */
-	private Map<MObject, MObjectState> fObjectStates;
+	private final Map<MObject, MObjectState> fObjectStates;
 	
 	/**
 	 * The set of objects partitioned by class. Must be kept in sync with
 	 * fObjectStates.
 	 */
-	private Multimap<MClassifier, MObject> fClassObjects;
+	private final Multimap<MClassifier, MObject> fClassObjects;
 
 	/**
 	 * Mapping of object names to objects to get
 	 * objects by name faster 
 	 */
-	private Map<String, MObject> fObjectNames;
+	private final Map<String, MObject> fObjectNames;
 	
 	/**
 	 * The set of all links partitioned by association.
 	 */
-	private Map<MAssociation, MLinkSet> fLinkSets;
+	private final Map<MAssociation, MLinkSet> fLinkSets;
 
 	/**
 	 * Handles virtual links and attribute values
 	 */
-	private DerivedValueController[] derivedValuesController;
+	private final DerivedValueController[] derivedValuesController;
 	
 	private static final int DVC_DERIVED_ASSOCS = 0;
 	private static final int DVC_UNION_ASSOCS = 1;
@@ -161,7 +161,7 @@ public final class MSystemState {
 	}
 
 	
-	private Object  dirtyLock = new Object();
+	private final Object  dirtyLock = new Object();
 	private boolean derivedIsDirty = true;
 	
 	/**
@@ -399,7 +399,7 @@ public final class MSystemState {
 		return linkSet.hasLink(objects, qualifierValues);
 	}
 	
-	private static Pattern validObjectNamePattern = Pattern.compile("[$a-zA-Z_][a-zA-Z_0-9]*");
+	private static final Pattern validObjectNamePattern = Pattern.compile("[$a-zA-Z_][a-zA-Z_0-9]*");
 	
 	/**
 	 * Checks for a valid object name.
@@ -593,10 +593,10 @@ public final class MSystemState {
 			
 		}
 		
-		private Set<MLink> removedLinks = new HashSet<MLink>();
-		private Set<MObject> removedObjects = new HashSet<MObject>();
-		private Set<MObjectState> removedObjectStates = new HashSet<MObjectState>();
-		private Set<ObjectStateModification> stateModifications = new HashSet<ObjectStateModification>();
+		private final Set<MLink> removedLinks = new HashSet<MLink>();
+		private final Set<MObject> removedObjects = new HashSet<MObject>();
+		private final Set<MObjectState> removedObjectStates = new HashSet<MObjectState>();
+		private final Set<ObjectStateModification> stateModifications = new HashSet<ObjectStateModification>();
 		
 		public Set<MLink> getRemovedLinks()
 		{
@@ -976,7 +976,7 @@ public final class MSystemState {
 		}
 	}
 	
-	private DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = new DirectedGraphBase<MObject, MWholePartLink>();
+	private final DirectedGraph<MObject, MWholePartLink> fWholePartLinkGraph = new DirectedGraphBase<MObject, MWholePartLink>();
 	
 	/**
 	 * The graph to store the information of the whole/part hierachy.

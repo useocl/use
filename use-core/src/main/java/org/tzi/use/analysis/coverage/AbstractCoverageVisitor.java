@@ -188,7 +188,7 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 		exp.getObjectExpression().processWithVisitor(this);
 	}
 
-	private Stack<MOperation> operationStack = new Stack<MOperation>();
+	private final Stack<MOperation> operationStack = new Stack<MOperation>();
 
 	@Override
 	public void visitObjOp(ExpObjOp exp) {

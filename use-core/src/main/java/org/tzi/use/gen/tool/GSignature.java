@@ -15,8 +15,8 @@ import org.tzi.use.util.StringUtil;
  */
 public class GSignature {
 
-	private String procedureName;
-	private List<Type> types;
+	private final String procedureName;
+	private final List<Type> types;
 	
 	public GSignature(String procedureName, List<Type> parameterTypes)
 	{

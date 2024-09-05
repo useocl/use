@@ -98,17 +98,17 @@ public class ClassInvariantView extends JPanel implements View {
 		}
 	}
 	
-	private JTable fTable;
-    private JLabel fLabel; // message at bottom of view
-    private JProgressBar fProgressBar;
+	private final JTable fTable;
+    private final JLabel fLabel; // message at bottom of view
+    private final JProgressBar fProgressBar;
 
-    private MSystem fSystem;
-    private MModel fModel;
+    private final MSystem fSystem;
+    private final MModel fModel;
     
     private MClassInvariant[] fClassInvariants = new MClassInvariant[0];
     private EvalResult[] fValues;
 
-    private ClassInvariantTableModel fMyTableModel;
+    private final ClassInvariantTableModel fMyTableModel;
     private int fSelectedRow = -1;
     private boolean fOpenEvalBrowserEnabled = false;
     private boolean showFlags = false;
@@ -116,7 +116,7 @@ public class ClassInvariantView extends JPanel implements View {
     
     private InvWorker worker = null;
 
-    private ExecutorService executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
+    private final ExecutorService executor = Executors.newFixedThreadPool(Options.EVAL_NUMTHREADS);
     
     private ViewFrame fViewFrame;
     public void setViewFrame(ViewFrame vf) {

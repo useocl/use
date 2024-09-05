@@ -55,11 +55,11 @@ import org.tzi.use.uml.sys.MSystem;
  */
 @SuppressWarnings("serial")
 class CreateObjectDialog extends JDialog {
-    private MSystem fSystem;
-    private MainWindow fParent;
-    private List<MClass> fClasses;
-    private JList<MClass> fListClasses;
-    private JTextField fTextObjectName;
+    private final MSystem fSystem;
+    private final MainWindow fParent;
+    private final List<MClass> fClasses;
+    private final JList<MClass> fListClasses;
+    private final JTextField fTextObjectName;
 
     CreateObjectDialog(Session session, MainWindow parent) {
         super(parent, "Create object");

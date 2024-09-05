@@ -39,13 +39,13 @@ public class StandardOperationsBoolean {
 			return true;
 		}
 	
-		public Type matches(Type params[]) {
+		public Type matches(Type[] params) {
 			return (params.length == 2 && 
 					params[0].isKindOfBoolean(VoidHandling.INCLUDE_VOID) && 
 					params[1].isKindOfBoolean(VoidHandling.INCLUDE_VOID)) ? params[0] : null;
 		}
 	
-		public Value evalWithArgs(EvalContext ctx, Expression args[]) {
+		public Value evalWithArgs(EvalContext ctx, Expression[] args) {
 			Value v1 = args[0].eval(ctx);
 			Value v2 = null;
 			
@@ -88,13 +88,13 @@ public class StandardOperationsBoolean {
 			return true;
 		}
 	
-		public Type matches(Type params[]) {
+		public Type matches(Type[] params) {
 			return (params.length == 2 && 
 					params[0].isKindOfBoolean(VoidHandling.INCLUDE_VOID) && 
 					params[1].isKindOfBoolean(VoidHandling.INCLUDE_VOID)) ? params[0] : null;
 		}
 	
-		public Value evalWithArgs(EvalContext ctx, Expression args[]) {
+		public Value evalWithArgs(EvalContext ctx, Expression[] args) {
 			Value v1 = args[0].eval(ctx);
 			if (v1.isUndefined())
 				return v1;
@@ -124,13 +124,13 @@ public class StandardOperationsBoolean {
 			return true;
 		}
 	
-		public Type matches(Type params[]) {
+		public Type matches(Type[] params) {
 			return (params.length == 2 && 
 					params[0].isKindOfBoolean(VoidHandling.INCLUDE_VOID) && 
 					params[1].isKindOfBoolean(VoidHandling.INCLUDE_VOID)) ? params[0] : null;
 		}
 	
-		public Value evalWithArgs(EvalContext ctx, Expression args[]) {
+		public Value evalWithArgs(EvalContext ctx, Expression[] args) {
 			Value v1 = args[0].eval(ctx);
 			Value v2 = null;
 			
@@ -173,13 +173,13 @@ public class StandardOperationsBoolean {
 			return true;
 		}
 	
-		public Type matches(Type params[]) {
+		public Type matches(Type[] params) {
 			return (params.length == 1 && params[0]
 					.isKindOfBoolean(VoidHandling.INCLUDE_VOID)) ? params[0]
 					: null;
 		}
 	
-		public Value evalWithArgs(EvalContext ctx, Expression args[]) {
+		public Value evalWithArgs(EvalContext ctx, Expression[] args) {
 			Value v = args[0].eval(ctx);
 			if (v.isUndefined())
 				return v;
@@ -200,14 +200,14 @@ public class StandardOperationsBoolean {
 			return true;
 		}
 	
-		public Type matches(Type params[]) {
+		public Type matches(Type[] params) {
 			return (params.length == 2
 					&& params[0].isKindOfBoolean(VoidHandling.INCLUDE_VOID) && params[1]
 						.isKindOfBoolean(VoidHandling.INCLUDE_VOID)) ? params[0]
 					: null;
 		}
 	
-		public Value evalWithArgs(EvalContext ctx, Expression args[]) {
+		public Value evalWithArgs(EvalContext ctx, Expression[] args) {
 			Value v1 = args[0].eval(ctx);
 			Value v2 = null;
 			
@@ -254,7 +254,7 @@ public class StandardOperationsBoolean {
 			return false;
 		}
 	
-		public Type matches(Type params[]) {
+		public Type matches(Type[] params) {
 			return params.length == 1
 					&& params[0].isKindOfBoolean(VoidHandling.INCLUDE_VOID) ? TypeFactory
 					.mkString() : null;

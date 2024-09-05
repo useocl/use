@@ -40,7 +40,7 @@ public class MSequenceStatement extends MStatement {
 	/**
 	 * The sequence of statements to evaluate
 	 */
-	private List<MStatement> fStatements;
+	private final List<MStatement> fStatements;
 	
 	
 	/**

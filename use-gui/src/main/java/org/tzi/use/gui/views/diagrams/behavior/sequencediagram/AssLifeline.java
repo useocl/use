@@ -43,17 +43,17 @@ public class AssLifeline extends Lifeline {
 	/**
 	 * The association of this lifeline.
 	 */
-	private MAssociation fAss;
+	private final MAssociation fAss;
 
 	/**
 	 * The link to the lifeline
 	 */
-	private MLink fLink;
+	private final MLink fLink;
 
 	/**
 	 * The list of the objects involved in the association of this lifeline.
 	 */
-	private List<MObject> fObjects;
+	private final List<MObject> fObjects;
 
 	/**
 	 * Costructs a new AssLifeline-Object.

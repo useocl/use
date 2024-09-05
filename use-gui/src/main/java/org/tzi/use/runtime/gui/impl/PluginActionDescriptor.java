@@ -16,13 +16,13 @@ import org.tzi.use.util.Log;
  */
 public class PluginActionDescriptor implements IPluginActionDescriptor {
 
-	private PluginActionModel pluginActionModel;
+	private final PluginActionModel pluginActionModel;
 
 	private IPluginActionDelegate pluginAction;
 
-	private IPluginClassLoader pluginClassLoader;
+	private final IPluginClassLoader pluginClassLoader;
 
-	private IPluginDescriptor parent;
+	private final IPluginDescriptor parent;
 
 	/**
 	 * Constructor to create a Plugin Action Descriptor with the given Plugin

@@ -45,9 +45,9 @@ import com.google.common.collect.Multimap;
  * @author Lars Hamann
  */
 public class CreationTimeRecorder {
-	private Multimap<Object,Integer> elementCreationTime = ArrayListMultimap.create();
+	private final Multimap<Object,Integer> elementCreationTime = ArrayListMultimap.create();
 	
-	private Vector<MMessage> messages = new Vector<>();
+	private final Vector<MMessage> messages = new Vector<>();
 	
 	private int time = 0;
 	

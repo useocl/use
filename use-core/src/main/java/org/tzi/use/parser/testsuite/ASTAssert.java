@@ -10,14 +10,14 @@ import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.sys.testsuite.MAssert;
 
 public abstract class ASTAssert extends AST {
-	private Token start;
+	private final Token start;
 	private Token end;
 	
-	private SrcPos position;
+	private final SrcPos position;
 	private String expressionString;
 	private String message;
 	
-	private boolean shouldBeValid;
+	private final boolean shouldBeValid;
 	
 	public ASTAssert(Token start, Token end, boolean shouldBeValid) {
 		this.position = new SrcPos(start);

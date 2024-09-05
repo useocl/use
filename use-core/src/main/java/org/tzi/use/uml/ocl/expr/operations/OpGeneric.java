@@ -45,13 +45,13 @@ public abstract class OpGeneric {
 
     public abstract boolean isInfixOrPrefix();
 
-    public abstract Type matches(Type params[]);
+    public abstract Type matches(Type[] params);
 
-    public String checkWarningUnrelatedTypes(Expression args[]) { return null; }
+    public String checkWarningUnrelatedTypes(Expression[] args) { return null; }
     
-    public abstract Value eval(EvalContext ctx, Value args[], Type resultType);
+    public abstract Value eval(EvalContext ctx, Value[] args, Type resultType);
 
-    public String stringRep(Expression args[], String atPre) {
+    public String stringRep(Expression[] args, String atPre) {
         String res;
         if (isInfixOrPrefix()) {
             if (args.length == 1) {

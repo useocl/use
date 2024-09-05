@@ -37,9 +37,9 @@ import java.util.*;
  */
 public class DirectedGraphBase<N, E extends DirectedEdge<N>> extends AbstractCollection<N> implements DirectedGraph<N, E> {
     
-	private Map<N, NodeInfo> fNodes;
+	private final Map<N, NodeInfo> fNodes;
     
-    private Set<E> fEdges;
+    private final Set<E> fEdges;
 
     /**
      * If order of the nodes in the graph is important.

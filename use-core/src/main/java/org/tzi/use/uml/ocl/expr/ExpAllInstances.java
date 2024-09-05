@@ -42,7 +42,7 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author Lars Hamann
  */
 public final class ExpAllInstances extends Expression {
-    private MClassifier fSourceType;
+    private final MClassifier fSourceType;
     
     public ExpAllInstances(Type sourceType)
         throws ExpInvalidException

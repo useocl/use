@@ -45,7 +45,7 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView,
 
 	private SequenceDiagram fSeqDia;
 
-	private VisibleDataManager visibleDataManager;
+	private final VisibleDataManager visibleDataManager;
 
 	/**
 	 * Creates a SequenceDiagramView

@@ -33,7 +33,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTTupleType extends ASTType {
-    private List<ASTTuplePart> fParts;    // (ASTTuplePart)
+    private final List<ASTTuplePart> fParts;    // (ASTTuplePart)
 
     public ASTTupleType(List<ASTTuplePart> parts) {
         fParts = parts;

@@ -45,7 +45,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrDelete_Object extends GEvalInstruction
     implements IGCaller {
-    private GInstrDelete_Object fInstr;
+    private final GInstrDelete_Object fInstr;
     private IGCaller fCaller;
 
     public GEvalInstrDelete_Object(GInstrDelete_Object instr ) {

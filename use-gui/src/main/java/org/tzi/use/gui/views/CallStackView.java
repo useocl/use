@@ -50,10 +50,10 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class CallStackView extends JPanel implements View {
-    private MSystem fSystem;
-    private JList<String> fList;
-    private DefaultListModel<String> fListModel;
-    private JPopupMenu fPopupMenu; // context menu on right mouse click
+    private final MSystem fSystem;
+    private final JList<String> fList;
+    private final DefaultListModel<String> fListModel;
+    private final JPopupMenu fPopupMenu; // context menu on right mouse click
     private boolean fShowCall = false;
 
     public CallStackView(MSystem system) {

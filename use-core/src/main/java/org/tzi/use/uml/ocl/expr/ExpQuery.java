@@ -162,8 +162,8 @@ public abstract class ExpQuery extends Expression {
         return BooleanValue.get(res);
     }
 
-    private final boolean evalExistsOrForAll0(int nesting,
-            CollectionValue rangeVal, EvalContext ctx, boolean doExists) {
+    private boolean evalExistsOrForAll0(int nesting,
+                                        CollectionValue rangeVal, EvalContext ctx, boolean doExists) {
         // loop over range elements
         boolean res = !doExists;
         

@@ -157,7 +157,7 @@ public class ExpStdOpTest extends TestCase {
     public void testSetConstruction() throws ExpInvalidException {
         Expression[] args;        
         Expression setLiteral;
-        Value values[];
+        Value[] values;
 
         args = new Expression[] {new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
         setLiteral = new ExpSetLiteral(args);
@@ -173,7 +173,7 @@ public class ExpStdOpTest extends TestCase {
     public void testSequenceConstruction() throws ExpInvalidException {
         Expression[] args;
         Expression op;
-        Value values[];
+        Value[] values;
 
         args = new Expression[] { new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
         op = new ExpSequenceLiteral(args);
@@ -189,7 +189,7 @@ public class ExpStdOpTest extends TestCase {
     public void testBagConstruction() throws ExpInvalidException {
         Expression[] args;
         Expression op;
-        Value values[];
+        Value[] values;
 
         args = new Expression[] { new ExpRange(new ExpConstInteger(1), new ExpConstInteger(10))};
         op = new ExpBagLiteral(args);
@@ -279,7 +279,7 @@ public class ExpStdOpTest extends TestCase {
         ExpStdOp op;
         Expression op1;
         Expression op2;
-        Value values[];
+        Value[] values;
         op1 = mkSet(new int[]{2, 3});
         args = new Expression[] { op1 };
 
@@ -366,7 +366,7 @@ public class ExpStdOpTest extends TestCase {
         Expression[] args;
         Expression op;
         Expression op1;
-        Value values[];
+        Value[] values;
         
         op1 = mkBag(new int[]{2, 3, 2});
         args = new Expression[] { op1 };

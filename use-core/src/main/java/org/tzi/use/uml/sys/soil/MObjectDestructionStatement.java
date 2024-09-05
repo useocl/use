@@ -40,7 +40,7 @@ public class MObjectDestructionStatement extends MStatement {
 	/** The expression leading to the objects to delete.
 	 *  Must be a single object or a collection of objects.
 	 */
-	private Expression fToDelete;
+	private final Expression fToDelete;
 	
 	/**
 	 * Constructs a new destruction statement.

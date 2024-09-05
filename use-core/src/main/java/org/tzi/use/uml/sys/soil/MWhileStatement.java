@@ -33,9 +33,9 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MWhileStatement extends MStatement {
 	
-	private Expression fCondition;
+	private final Expression fCondition;
 	
-	private MStatement fBody;
+	private final MStatement fBody;
 	
 	/**
 	 * Constructs a new while statement.

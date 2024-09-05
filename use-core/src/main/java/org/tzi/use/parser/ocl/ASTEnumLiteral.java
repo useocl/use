@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @author  Mark Richters
  */
 public class ASTEnumLiteral extends ASTExpression {
-    private Token fValue;
+    private final Token fValue;
     private Token fEnumType = null;
     
     public ASTEnumLiteral(Token token) {

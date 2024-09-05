@@ -33,7 +33,7 @@ import org.tzi.use.uml.sys.MSystemState;
  *
  */
 public class DetailedEvalContext extends EvalContext {
-	private Stack<EvalNode> fNodeStack = new Stack<EvalNode>();
+	private final Stack<EvalNode> fNodeStack = new Stack<EvalNode>();
 	private EvalNode fRootNode;
 	
 	public DetailedEvalContext(MSystemState preState,

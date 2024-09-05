@@ -60,9 +60,9 @@ import org.tzi.use.util.collections.CollectionUtil;
  * @author  Lars Hamann
  */
 public class ASTOperationExpression extends ASTExpression {
-    private Token fOp;
-    private ASTExpression fSrcExpr;
-    private List<ASTExpression> fArgs; 
+    private final Token fOp;
+    private final ASTExpression fSrcExpr;
+    private final List<ASTExpression> fArgs;
     private boolean fHasParentheses;
     private boolean fFollowsArrow;
     private Expression[] fArgExprs;

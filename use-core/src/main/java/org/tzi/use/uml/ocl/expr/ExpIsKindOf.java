@@ -32,8 +32,8 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpIsKindOf extends Expression {
-    private Expression fSourceExpr;
-    private Type fTargetType;
+    private final Expression fSourceExpr;
+    private final Type fTargetType;
     
     public ExpIsKindOf(Expression sourceExpr, Type targetType) throws ExpInvalidException {
         super(TypeFactory.mkBoolean());

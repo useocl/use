@@ -33,11 +33,11 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MConditionalExecutionStatement extends MStatement {
 	/** The condition expression */
-	private Expression fCondition;
+	private final Expression fCondition;
 	/** The statement executed if {@link #fCondition} is <code>true</code>. */
-	private MStatement fThenStatement;
+	private final MStatement fThenStatement;
 	/** The statement executed if {@link #fCondition} is <code>false</code>. */
-	private MStatement fElseStatement;
+	private final MStatement fElseStatement;
 	
 	
 	/**

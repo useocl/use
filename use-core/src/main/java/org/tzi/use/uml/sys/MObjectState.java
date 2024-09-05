@@ -50,17 +50,17 @@ public final class MObjectState implements MInstanceState {
     /**
      * Slots holding a value for each attribute.
      */
-    private Map<MAttribute, Value> fAttrSlots;
+    private final Map<MAttribute, Value> fAttrSlots;
 
     /**
      * Instances of the owned psm.
      */
-    private Set<MProtocolStateMachineInstance> protocolStateMachines;
+    private final Set<MProtocolStateMachineInstance> protocolStateMachines;
 
 	/**
      * owner object
      */
-    private MObject fObject;
+    private final MObject fObject;
 
     /**
      * Constructs a new object state. 

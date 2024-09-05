@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrInsert_Assoc_Linkends extends GEvalInstruction
     implements IGCaller {
-    private GInstrInsert_Assoc_Linkends fInstr;
+    private final GInstrInsert_Assoc_Linkends fInstr;
     private IGCaller fCaller;
     private ListIterator<GValueInstruction> fIterator;
     private List<String> fObjectNames;

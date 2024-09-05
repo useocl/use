@@ -39,7 +39,7 @@ import java.util.Set;
  * @author Mark Richters
  */
 public class SetValue extends CollectionValue {
-    private Set<Value> fElements; // (Value)
+    private final Set<Value> fElements; // (Value)
 
     /**
      * Constructs a new empty set.

@@ -34,11 +34,11 @@ import java.util.List;
  * @author  Mark Richters
  */
 public class ASTAssociation extends ASTClassifier {
-    private Token fKind;
+    private final Token fKind;
     
-    private Token fName;
+    private final Token fName;
     
-    private List<ASTAssociationEnd> fAssociationEnds;
+    private final List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociation(Token kind, Token name) {
         super(name, false);

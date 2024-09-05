@@ -42,7 +42,7 @@ final class Op_equal extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].getLeastCommonSupertype(params[1]) != null)
 			return TypeFactory.mkBoolean();
 		else
@@ -50,7 +50,7 @@ final class Op_equal extends OpGeneric {
 	}
 
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
 		
 		if ((!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) ||
@@ -96,7 +96,7 @@ final class Op_notequal extends OpGeneric {
 		return true;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].getLeastCommonSupertype(params[1]) != null)
 			return TypeFactory.mkBoolean();
 		else
@@ -112,7 +112,7 @@ final class Op_notequal extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
 		
 		if ((!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) ||
@@ -142,7 +142,7 @@ final class Op_isDefined extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1) ? TypeFactory.mkBoolean() : null;
 	}
 
@@ -152,7 +152,7 @@ final class Op_isDefined extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		if (args[0].type().isTypeOfVoidType()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
@@ -179,7 +179,7 @@ final class Op_isUndefined extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1) ? TypeFactory.mkBoolean() : null;
 	}
 
@@ -189,7 +189,7 @@ final class Op_isUndefined extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		if (args[0].type().isTypeOfVoidType()) {
 			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
 					 " can never evaluate to false because " + StringUtil.inQuotes(args[0].type()) + 

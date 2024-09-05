@@ -33,12 +33,12 @@ import java.util.List;
  * @author  Mark Richters
  */
 public final class ExpObjOp extends Expression {
-    private MOperation fOp;
+    private final MOperation fOp;
     
     /**
      * The arguments, first one is "receiver" object
      */
-    private Expression[] fArgs;
+    private final Expression[] fArgs;
     
     public ExpObjOp(MOperation op, Expression[] args) 
         throws ExpInvalidException

@@ -37,11 +37,11 @@ public class MAggregationKind {
     /**
      * Returns a string representation of the enumeration values.
      */
-    public static final String name(int k) { 
+    public static String name(int k) {
         return fNames[k];
     }
     
-    public static final boolean isValid(int k) {
+    public static boolean isValid(int k) {
     	return k >= 0 && k <= 2;
     }
 }

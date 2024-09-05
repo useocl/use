@@ -83,7 +83,7 @@ public class ObjectSelection {
 
 	@SuppressWarnings("serial")
 	class ActionSelectedObjectPathView extends AbstractAction {
-		private Set<MObject> selectedObjects;
+		private final Set<MObject> selectedObjects;
 
 		ActionSelectedObjectPathView(String text, Set<MObject> sc) {
 			super(text);

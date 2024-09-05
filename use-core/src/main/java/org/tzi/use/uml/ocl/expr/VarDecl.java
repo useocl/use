@@ -29,8 +29,8 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author      Mark Richters
  */
 public class VarDecl {
-    private String fVar;
-    private Type fType;
+    private final String fVar;
+    private final Type fType;
     private SrcPos sourcePosition = null;
 
 	public VarDecl(Token v, Type t) {

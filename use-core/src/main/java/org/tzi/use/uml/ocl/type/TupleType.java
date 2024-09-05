@@ -39,7 +39,7 @@ import org.tzi.use.util.StringUtil;
  * @author      Mark Richters 
  */
 public final class TupleType extends TypeImpl {
-    private Map<String, Part> fParts = new TreeMap<String, Part>();
+    private final Map<String, Part> fParts = new TreeMap<String, Part>();
 
     public static class Part implements BufferedToString {
         private final int position;

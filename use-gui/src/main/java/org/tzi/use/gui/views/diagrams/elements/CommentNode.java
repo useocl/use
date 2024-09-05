@@ -47,7 +47,7 @@ import org.tzi.use.gui.views.diagrams.util.Util;
  */
 public class CommentNode extends PlaceableNode {
 
-	private JComponent parent;
+	private final JComponent parent;
 	
 	private String commentText = "";
 	private JTextArea commentArea;
@@ -66,7 +66,7 @@ public class CommentNode extends PlaceableNode {
 	private int commentNodeHeight;
 	
 	private static int id;
-	private int commentNodeId;
+	private final int commentNodeId;
 	
 	public CommentNode(double pX, double pY, JComponent parent) {
 		commentNodeId = id++;

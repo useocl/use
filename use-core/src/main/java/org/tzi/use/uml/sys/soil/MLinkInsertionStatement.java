@@ -41,16 +41,16 @@ public class MLinkInsertionStatement extends MStatement {
 	/**
 	 * The association the link is created for.
 	 */
-	private MAssociation fAssociation;
+	private final MAssociation fAssociation;
 	/**
      * List of the objects that participate in the link in the same order as
      * association ends.
 	 */
-	private List<MRValue> fParticipants;
+	private final List<MRValue> fParticipants;
 	/**
 	 * List of the qualifier values for the association ends. 
 	 */
-	private List<List<MRValue>> qualifiers;
+	private final List<List<MRValue>> qualifiers;
 	/**
      * When creating an association class instance, this is the name of the
      * instance.

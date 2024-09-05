@@ -35,7 +35,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTEnumTypeDefinition extends ASTClassifier {
-    private List<Token> fIdList;
+    private final List<Token> fIdList;
 
     public ASTEnumTypeDefinition(Token name, List<Token> idList) {
         super(name, false);

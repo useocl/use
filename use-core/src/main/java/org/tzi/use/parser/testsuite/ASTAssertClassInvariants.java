@@ -9,7 +9,7 @@ import org.tzi.use.uml.sys.testsuite.MAssertClassInvariants;
 
 public class ASTAssertClassInvariants extends ASTAssert {
 
-	private Token classname;
+	private final Token classname;
 	
 	public ASTAssertClassInvariants(Token start, Token end, boolean shouldBeValid, Token classname) {
 		super(start, end, shouldBeValid);

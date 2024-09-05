@@ -109,28 +109,28 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	/**
 	 * The actual system status.
 	 */
-	private MSystem fSystem;
+	private final MSystem fSystem;
 
-	private SequenceDiagramView fParent;
+	private final SequenceDiagramView fParent;
 
 	/**
 	 * The Map of all Object-Lifelines. The respective MObject-Variable is used
 	 * as the key for finding the right Object-Lifeline. (MObject -> Lifeline)
 	 */
-	private Map<MObject, Lifeline> fObjectLifelines;
+	private final Map<MObject, Lifeline> fObjectLifelines;
 	
 	/**
 	 * The Map of all Link-Lifelines. Instead of using the possible duplicate
 	 * MLink as a key (when a link gets created a second time after deleting
 	 * it), the unique LinkInsertedEvent is used as a key instead.
 	 */
-	private Map<LinkInsertedEvent, Lifeline> fLinkLifelines;
+	private final Map<LinkInsertedEvent, Lifeline> fLinkLifelines;
 	
 	/**
 	 * Maps a LinkDeletedEvent to the LinkInsertedEvent that created the link
 	 * whose deletion created the LinkDeletedEvent.
 	 */
-	private Map<LinkDeletedEvent, LinkInsertedEvent> fInserter;
+	private final Map<LinkDeletedEvent, LinkInsertedEvent> fInserter;
 
 	/**
 	 * The list of all activations that should actually be drawn.
@@ -147,17 +147,17 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	 * The context menu on right mouse click when a lifeline is chosen. Provides
 	 * the possibility to hide the chosen lifeline.
 	 */
-	private JPopupMenu llMenu;
+	private final JPopupMenu llMenu;
 
 	/**
 	 * Contains several properties for this SequenceDiagram
 	 */
-	private SDProperties fProperties;
+	private final SDProperties fProperties;
 
 	/**
 	 * Contains several properties for the construction of object boxes.
 	 */
-	private OBProperties fObProperties;
+	private final OBProperties fObProperties;
 
 	/**
 	 * The actual number of time steps.
@@ -169,7 +169,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	 * button on it. Is null, if no Lifeline ist choosed and the left Mouse
 	 * button is released respecitvly.??
 	 */
-	private Selection<Lifeline> choosedLifelines;
+	private final Selection<Lifeline> choosedLifelines;
 
 	/**
 	 * The last x-value in the diagram (here ends the diagram). Needed for
@@ -186,7 +186,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	 * The MainWindow from which this sequence diagram is called. Needed for the
 	 * properties windows.
 	 */
-	private MainWindow fMainWindow;
+	private final MainWindow fMainWindow;
 
 	private int scrollCounter;
 
@@ -262,7 +262,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	 */
 	private Rectangle fView;
 
-	private VisibleDataManager visibleData;
+	private final VisibleDataManager visibleData;
 
 	public Rectangle getView() {
 		return fView;
@@ -573,7 +573,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	 * main fPopupMenu.
 	 */
 	private class SDPopupListener extends PopupListener {
-		private JPopupMenu fLlMenu;
+		private final JPopupMenu fLlMenu;
 
 		private SDPopupListener(JPopupMenu SDMenu, JPopupMenu llMenu) {
 			super(SDMenu);

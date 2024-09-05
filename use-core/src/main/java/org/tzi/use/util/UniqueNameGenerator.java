@@ -32,7 +32,7 @@ import java.util.Stack;
  */
 public class UniqueNameGenerator {
 	private class StackEntry {
-		private Map<String, Integer> nameCounters;
+		private final Map<String, Integer> nameCounters;
 		
 		private int numPushes = 1;
 				
@@ -78,7 +78,7 @@ public class UniqueNameGenerator {
 		}
 	}
 	
-	private Stack<StackEntry> fStack;
+	private final Stack<StackEntry> fStack;
         
     public UniqueNameGenerator() {
         fStack = new Stack<StackEntry>();

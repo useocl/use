@@ -29,8 +29,8 @@ import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 public class ActionSelectAll extends AbstractAction {
-    private Selection<PlaceableNode> fSelection;
-    private DiagramView fDiagram;
+    private final Selection<PlaceableNode> fSelection;
+    private final DiagramView fDiagram;
     
     public ActionSelectAll( Selection<PlaceableNode> selection, DiagramView diagram ) {
         super( "Select all" );

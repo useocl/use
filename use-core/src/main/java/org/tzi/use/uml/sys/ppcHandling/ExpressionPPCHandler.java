@@ -58,7 +58,7 @@ public class ExpressionPPCHandler implements PPCHandler {
 		return defaultHandlerToLog;
 	}
 	
-	private PrintWriter fOutput;
+	private final PrintWriter fOutput;
 	
 	/**
 	 * Constructs a new handler with default output to <code>output</code>.

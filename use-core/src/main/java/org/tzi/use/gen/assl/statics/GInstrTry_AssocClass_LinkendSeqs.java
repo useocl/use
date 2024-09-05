@@ -44,8 +44,8 @@ public class GInstrTry_AssocClass_LinkendSeqs extends GInstrTry implements GValu
     // Let tx be the type of the class of the xth associationend,
     // then endsetx must be of type Sequence(tx)
 
-    private MAssociationClass fAssociationClass;
-    private List<GValueInstruction> fLinkendSequences;
+    private final MAssociationClass fAssociationClass;
+    private final List<GValueInstruction> fLinkendSequences;
 
     public GInstrTry_AssocClass_LinkendSeqs( MAssociationClass assocClass, List<GValueInstruction> seqs ) {
     	fAssociationClass = assocClass;

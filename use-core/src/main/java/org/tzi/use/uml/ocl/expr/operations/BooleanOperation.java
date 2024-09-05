@@ -23,5 +23,5 @@ public abstract class BooleanOperation extends OpGeneric {
     	return true;
     }
 	
-	public abstract Value evalWithArgs(EvalContext ctx, Expression args[]);
+	public abstract Value evalWithArgs(EvalContext ctx, Expression[] args);
 }

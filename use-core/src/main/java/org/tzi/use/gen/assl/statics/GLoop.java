@@ -33,7 +33,7 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
  * @author  Joern Bohling
  */
 public class GLoop implements GInstruction {
-    private GInstructionList fInstructionList;
+    private final GInstructionList fInstructionList;
     private GValueInstruction fSequenceInstr;
     private VarDecl fDecl;
 

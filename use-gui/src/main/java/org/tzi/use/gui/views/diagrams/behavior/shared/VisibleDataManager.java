@@ -33,9 +33,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Carsten Schlobohm
  */
 public class VisibleDataManager {
-    private VisibleData data;
+    private final VisibleData data;
 
-    private MSystem mSystem;
+    private final MSystem mSystem;
 
     public static VisibleDataManager createVisibleDataManager(MSystem system) {
         VisibleDataManager manager = new VisibleDataManager(system);

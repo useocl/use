@@ -18,9 +18,9 @@ import org.tzi.use.uml.sys.testsuite.MAssertPre;
 
 public class ASTAssertPre extends ASTAssert {
 
-	private ASTExpression source;
-	private Token operationName;
-	private List<ASTExpression> arguments = new ArrayList<ASTExpression>();
+	private final ASTExpression source;
+	private final Token operationName;
+	private final List<ASTExpression> arguments = new ArrayList<ASTExpression>();
 	private Token conditionName = null;
 	
 	public ASTAssertPre(Token start, Token end, boolean shouldBeValid,

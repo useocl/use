@@ -42,11 +42,11 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTPrePost extends AST {
-    private Token fClassName;
-    private Token fOpName;
-    private List<ASTVariableDeclaration> fParamList;
-    private ASTType fResultType; // optional
-    private List<ASTPrePostClause> fPrePostClauses;
+    private final Token fClassName;
+    private final Token fOpName;
+    private final List<ASTVariableDeclaration> fParamList;
+    private final ASTType fResultType; // optional
+    private final List<ASTPrePostClause> fPrePostClauses;
 
     public ASTPrePost(Token classname, Token opname, 
                       List<ASTVariableDeclaration> paramList, ASTType resultType) {

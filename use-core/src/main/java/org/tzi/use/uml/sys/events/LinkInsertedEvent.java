@@ -36,7 +36,7 @@ import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
  */
 public class LinkInsertedEvent extends Event implements SystemStructureChangedEvent {
 	/** The association the link is inserted into. */
-	private MLink fLink;
+	private final MLink fLink;
 	
 	/**
 	 * Constructs a new link event instance.

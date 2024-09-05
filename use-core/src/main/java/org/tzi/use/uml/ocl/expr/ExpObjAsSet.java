@@ -32,8 +32,8 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author      Mark Richters 
  */
 public final class ExpObjAsSet extends Expression {
-    private Expression fObjExp;
-    private Type fElemType;
+    private final Expression fObjExp;
+    private final Type fElemType;
 
     public ExpObjAsSet(Expression objExp) {
         super(TypeFactory.mkSet(objExp.type()));

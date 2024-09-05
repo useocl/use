@@ -59,14 +59,14 @@ public enum Direction {
 	NORTH_WEST(NORTH.getValue() + WEST.getValue()),
 	SOUTH_WEST(SOUTH.getValue() + WEST.getValue());
 	
-	static Map<Integer, Direction> intMap = new HashMap<Integer, Direction>();
+	static final Map<Integer, Direction> intMap = new HashMap<Integer, Direction>();
 	static {
 		for (Direction d : Direction.values()) {
 			intMap.put(d.getValue(), d);
 		}
 	}
 	
-	int value;
+	final int value;
 	
 	Direction(int value) {
 		this.value = value;

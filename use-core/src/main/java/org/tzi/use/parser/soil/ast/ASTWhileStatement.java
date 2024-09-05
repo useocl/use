@@ -33,9 +33,9 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 public class ASTWhileStatement extends ASTStatement {
 	
-	private ASTExpression fCondition;
+	private final ASTExpression fCondition;
 	
-	private ASTStatement fBody;
+	private final ASTStatement fBody;
 	
 	
 	/**

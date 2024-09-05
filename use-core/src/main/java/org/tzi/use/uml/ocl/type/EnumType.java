@@ -40,12 +40,12 @@ public final class EnumType extends MClassifierImpl {
     /**
      * list of enumeration literals
      */
-    private List<String> fLiterals;
+    private final List<String> fLiterals;
     
     /**
      * for fast access
      */
-    private Set<String> fLiteralSet;
+    private final Set<String> fLiteralSet;
     
     /**
      * Constructs an enumeration type with name and list of literals

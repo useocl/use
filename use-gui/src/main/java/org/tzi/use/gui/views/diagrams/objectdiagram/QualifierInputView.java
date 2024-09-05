@@ -71,17 +71,17 @@ public class QualifierInputView extends JDialog {
 	/**
 	 * The system to execute the insert link statement on.
 	 */
-	private MSystem system;
+	private final MSystem system;
 	
 	/**
 	 * The association to insert the link into
 	 */
-	private MAssociation association;
+	private final MAssociation association;
 	
 	/**
 	 * The objects participating in the link
 	 */
-	private MObject[] participants;
+	private final MObject[] participants;
 	
 	/**
 	 * A table model for each end with qualifier	
@@ -273,9 +273,9 @@ public class QualifierInputView extends JDialog {
 
 		final String[] columnNames = { "Qualifier", "Value" };
 
-        private String[] qualifierNames;
+        private final String[] qualifierNames;
         
-        private String[] qualifierValues;
+        private final String[] qualifierValues;
         
         TableModel(String[] qualifierNames) {
         	this.qualifierNames = qualifierNames;

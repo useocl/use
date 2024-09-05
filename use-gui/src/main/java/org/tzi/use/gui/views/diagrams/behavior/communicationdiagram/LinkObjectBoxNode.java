@@ -32,7 +32,7 @@ import org.tzi.use.uml.sys.MObject;
  *
  */
 public class LinkObjectBoxNode extends LinkBoxNode implements ObjectNodeActivity {
-    private MObject object;
+    private final MObject object;
 
     /**
      * Custom constructor

@@ -38,10 +38,10 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
 public class MLibraryOperationCallStatement extends MOperationCallStatement {
 
 	/** The library operation to execute **/
-	private LibraryOperation operation;
+	private final LibraryOperation operation;
 	
 	/** The argument expressions **/
-	private Expression[] arguments;
+	private final Expression[] arguments;
 	
 	public MLibraryOperationCallStatement(LibraryOperation operation, Expression[] args) {
 		this.operation = operation;

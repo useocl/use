@@ -55,31 +55,38 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 	/**
 	 * The container for this Window.
 	 */
-	private Container fC;
+	private final Container fC;
 
 	/**
 	 * The tabbed pane for an Diagram, After select, actor settings-Tabs
 	 */
-	private JTabbedPane fTabbedPane;
+	private final JTabbedPane fTabbedPane;
 
 	/**
 	 * Some panels.
 	 */
-	private JPanel fDiag, actorSettings, selectionSettings;
+	private final JPanel fDiag;
+    private final JPanel actorSettings;
+    private final JPanel selectionSettings;
 
-	private ShowRelatedObjectsPanel panelContainer;
+	private final ShowRelatedObjectsPanel panelContainer;
 
-	private JLabel nameLabel;
+	private final JLabel nameLabel;
 	private JTextField nameField;
 
 	/**
 	 * The communication diagram from which this window is called.
 	 */
-	private CommunicationDiagramView comDia;
+	private final CommunicationDiagramView comDia;
 
-	private JRadioButton actorMovableNoBtn, actorMovableYesBtn, showIncompleteLinksYesBtn,
-			showIncompleteLinksNoBtn, bindDiagramToSelectionYesBtn, bindDiagramToSelectionNoBtn,
-			showActorAlwaysYesBtn, showActorAlwaysNoBtn;
+	private final JRadioButton actorMovableNoBtn;
+    private final JRadioButton actorMovableYesBtn;
+    private final JRadioButton showIncompleteLinksYesBtn;
+    private final JRadioButton showIncompleteLinksNoBtn;
+    private final JRadioButton bindDiagramToSelectionYesBtn;
+    private final JRadioButton bindDiagramToSelectionNoBtn;
+    private final JRadioButton showActorAlwaysYesBtn;
+    private final JRadioButton showActorAlwaysNoBtn;
 
 	/**
 	 * Constructs a new Properties-Window.

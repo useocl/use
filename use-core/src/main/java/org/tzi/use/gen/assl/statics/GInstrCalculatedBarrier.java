@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.MClassInvariant;
  */
 public class GInstrCalculatedBarrier extends GInstrBarrier {
 
-	private String invName;
+	private final String invName;
 	
 	/**
 	 * Constructs a new barrier statement for a calculated barrier.

@@ -42,11 +42,11 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MEnterOperationStatement extends MStatement {
 	/** The expression leading to the receiving object of the operation enter */
-	private Expression fObject;
+	private final Expression fObject;
 	/** The operation to enter */
-	private MOperation fOperation;
+	private final MOperation fOperation;
 	/** The arguments for the operation enter */
-	private Expression[] fArguments;
+	private final Expression[] fArguments;
 	/** A custom PPC handler */
 	private PPCHandler fCustomPPCHandler;
 

@@ -45,7 +45,7 @@ public class Selection<T extends Selectable> implements Iterable<T> {
     /**
      * The selected components
      */
-	private Set<T> fSelection;
+	private final Set<T> fSelection;
     
 	/**
 	 * The listeners

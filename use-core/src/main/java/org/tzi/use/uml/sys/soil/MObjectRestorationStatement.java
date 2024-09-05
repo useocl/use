@@ -45,12 +45,12 @@ public class MObjectRestorationStatement extends MStatement {
 	/** 
 	 * The result of the object delete statement this statement is the inverse of
 	 */
-	private DeleteObjectResult fDeleteObjectResult;
+	private final DeleteObjectResult fDeleteObjectResult;
 	
 	/** 
 	 * Used to restore top level variables
 	 */
-	private Map<MObject, List<String>> fUndefinedTopLevelReferences;
+	private final Map<MObject, List<String>> fUndefinedTopLevelReferences;
 	
 	/**
 	 * 

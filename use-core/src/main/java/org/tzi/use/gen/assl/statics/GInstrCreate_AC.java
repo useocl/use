@@ -41,9 +41,9 @@ public class GInstrCreate_AC implements GValueInstruction {
 
     // Create( AssociationClass C, Exp... ): C
 
-    private MAssociationClass associationClass;
+    private final MAssociationClass associationClass;
     
-    private List<GValueInstruction> linkedObjects;
+    private final List<GValueInstruction> linkedObjects;
     
     public GInstrCreate_AC( MAssociationClass cls, List<GValueInstruction> linkedObjects ) {
         this.associationClass = cls;

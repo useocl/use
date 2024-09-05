@@ -1269,7 +1269,7 @@ public class ClassDiagram extends DiagramView
 				optionItem.setSelected(getOptions().getShowCoverage() == coverageOption);
 				optionItem.addItemListener(new ItemListener() {
 
-					ShowCoverage selectedOption = coverageOption;
+					final ShowCoverage selectedOption = coverageOption;
 
 					@Override
 					public void itemStateChanged(ItemEvent e) {

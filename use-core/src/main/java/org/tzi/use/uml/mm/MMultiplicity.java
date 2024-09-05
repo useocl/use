@@ -121,7 +121,7 @@ public final class MMultiplicity {
         }
     }
     
-    private List<Range> mRanges = new ArrayList<MMultiplicity.Range>();
+    private final List<Range> mRanges = new ArrayList<MMultiplicity.Range>();
     
     /**
 	 * @return the mRanges

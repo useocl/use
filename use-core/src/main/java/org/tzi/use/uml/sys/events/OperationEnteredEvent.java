@@ -31,7 +31,7 @@ import org.tzi.use.uml.sys.events.tags.EventContext;
  */
 public class OperationEnteredEvent extends Event {
 	/** The operation call which let to this operation enter event */
-	private MOperationCall fOperationCall;
+	private final MOperationCall fOperationCall;
 
 	
 	/**

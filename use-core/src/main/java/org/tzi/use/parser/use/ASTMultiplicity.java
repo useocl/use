@@ -33,8 +33,8 @@ import org.tzi.use.uml.mm.MMultiplicity;
  * @author  Mark Richters
  */
 public class ASTMultiplicity extends AST {
-    private Token fStartToken; // for error position
-    private List<ASTMultiplicityRange> fRanges;
+    private final Token fStartToken; // for error position
+    private final List<ASTMultiplicityRange> fRanges;
 
     public ASTMultiplicity(Token t) {
         fStartToken = t;

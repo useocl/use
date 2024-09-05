@@ -44,8 +44,8 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 
 public class ASTGProcedureCall extends AST {
-    private Token fName;
-    private List<ASTExpression> fParameter;
+    private final Token fName;
+    private final List<ASTExpression> fParameter;
 
     public ASTGProcedureCall(Token name) {
         fName = name;

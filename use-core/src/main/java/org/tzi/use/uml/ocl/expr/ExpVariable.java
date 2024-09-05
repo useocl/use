@@ -28,7 +28,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpVariable extends Expression  {
-    private String fVarname;
+    private final String fVarname;
 
     public ExpVariable(String varname, Type t) {
         super(t);

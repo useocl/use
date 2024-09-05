@@ -41,15 +41,15 @@ public class MMessage implements MNamedElement {
 	public static final int RETURN = 3;
 
 	private String resetedSequenceNumber;
-	private String sequenceNumber;
-	private String name;
+	private final String sequenceNumber;
+	private final String name;
 	private int direction = FORWARD;
 	private boolean failedReturn;
 
 	private CommunicationDiagramEdge owner;
 
-	private boolean isVisible = true;
-	private boolean isAbsentFromGraphByEvent = false;
+	private final boolean isVisible = true;
+	private final boolean isAbsentFromGraphByEvent = false;
 
 	/**
 	 * Custom constructor

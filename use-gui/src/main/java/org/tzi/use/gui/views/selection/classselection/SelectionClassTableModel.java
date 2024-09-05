@@ -26,7 +26,7 @@ import org.tzi.use.uml.mm.MClassifier;
 @SuppressWarnings("serial")
 public class SelectionClassTableModel extends AbstractTableModel implements ChangeListener {
 			
-	private ClassDiagram classDiagram;
+	private final ClassDiagram classDiagram;
 	    
     public static class Row {
     	public Row(MClassifier classifier, boolean selected, boolean visible) {
@@ -42,7 +42,7 @@ public class SelectionClassTableModel extends AbstractTableModel implements Chan
     	public boolean selected;
     }
     
-    private List<Row> rows = new ArrayList<Row>();
+    private final List<Row> rows = new ArrayList<Row>();
     
 	/**
 	 * Constructor for SelectionClassTableModel

@@ -37,7 +37,7 @@ import org.tzi.use.util.Log;
  */
 @SuppressWarnings("serial")
 public class GraphPanel extends JPanel {
-    private Layout fLayout;
+    private final Layout fLayout;
 
     public GraphPanel(Layout l) {
         fLayout = l;

@@ -15,7 +15,7 @@ import org.tzi.use.util.Log;
  */
 
 public class ShellCmdRegistry {
-	private static ShellCmdRegistry instance = new ShellCmdRegistry();
+	private static final ShellCmdRegistry instance = new ShellCmdRegistry();
 
 	/**
 	 * Method returning the Singleton instance of the ShellCmdRegistry

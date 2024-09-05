@@ -100,7 +100,7 @@ public final class TupleValue extends Value {
 	/**
      * Map&lt;String, Value&gt;
      */
-	private Map<String, TupleValue.Part> fParts = new TreeMap<String, TupleValue.Part>();
+	private final Map<String, TupleValue.Part> fParts = new TreeMap<String, TupleValue.Part>();
 
     /**
      * Constructs a tuple and sets all values. Elements are type checked

@@ -29,7 +29,7 @@ import javax.swing.JPopupMenu;
  * @author      Mark Richters 
  */
 public class PopupListener extends MouseAdapter {
-    private JPopupMenu fPopupMenu;
+    private final JPopupMenu fPopupMenu;
 
     public PopupListener(JPopupMenu m) {
         fPopupMenu = m;

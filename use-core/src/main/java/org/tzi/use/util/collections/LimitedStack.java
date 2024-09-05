@@ -35,8 +35,8 @@ import java.util.Stack;
  */
 public class LimitedStack<E> implements Collection<E> {
 	
-	private Stack<E> container;
-	private int limit;
+	private final Stack<E> container;
+	private final int limit;
 
 	public LimitedStack(int limit) {
         this.limit = limit;

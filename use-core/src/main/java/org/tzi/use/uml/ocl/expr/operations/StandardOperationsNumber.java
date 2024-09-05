@@ -61,7 +61,7 @@ abstract class ArithOperation extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2) {
 			if (params[0].isTypeOfInteger() && params[1].isTypeOfInteger())
 				return TypeFactory.mkInteger();
@@ -212,7 +212,7 @@ final class Op_number_div extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && 
 				params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && 
 				params[1].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory.mkReal() : null;
@@ -259,7 +259,7 @@ final class Op_real_abs extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isTypeOfReal()) ? TypeFactory
 				.mkReal() : null;
 	}
@@ -291,7 +291,7 @@ final class Op_integer_abs extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isTypeOfInteger()) ? TypeFactory
 				.mkInteger() : null;
 	}
@@ -323,7 +323,7 @@ final class Op_number_unaryminus extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? params[0] : null;
 	}
 
@@ -361,7 +361,7 @@ final class Op_number_unaryplus extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? params[0] : null;
 	}
 
@@ -393,7 +393,7 @@ final class Op_real_floor extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkInteger() : null;
 	}
@@ -431,7 +431,7 @@ final class Op_real_round extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkInteger() : null;
 	}
@@ -558,7 +558,7 @@ final class Op_integer_mod extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfInteger() && params[1]
 				.isTypeOfInteger()) ? TypeFactory.mkInteger() : null;
 	}
@@ -591,7 +591,7 @@ final class Op_integer_idiv extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 && params[0].isTypeOfInteger() && params[1]
 				.isTypeOfInteger()) ? TypeFactory.mkInteger() : null;
 	}
@@ -624,7 +624,7 @@ final class Op_number_less extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2
 				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
 					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
@@ -673,7 +673,7 @@ final class Op_number_greater extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2
 				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
 					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
@@ -721,7 +721,7 @@ final class Op_number_lessequal extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2
 				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
 					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
@@ -769,7 +769,7 @@ final class Op_number_greaterequal extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2
 				&& params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) && params[1]
 					.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
@@ -816,7 +816,7 @@ final class Op_number_pow extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 2 &&
 				params[0].isKindOfNumber(VoidHandling.EXCLUDE_VOID) &&
 				params[1].isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory.mkReal() : null;
@@ -862,7 +862,7 @@ final class Op_number_sqrt extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0].isTypeOfReal()) ? TypeFactory
 				.mkReal() : null;
 	}
@@ -892,7 +892,7 @@ final class Op_number_toString extends OpGeneric {
 	}
 
 	@Override
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 1 && params[0]
 				.isKindOfNumber(VoidHandling.EXCLUDE_VOID)) ? TypeFactory
 				.mkString() : null;

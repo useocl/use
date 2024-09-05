@@ -29,8 +29,8 @@ import java.io.IOException;
  * @author  Mark Richters
  */
 public class TeeWriter extends Writer {
-    private Writer fOne;
-    private Writer fTwo;
+    private final Writer fOne;
+    private final Writer fTwo;
 
     /**
      * Creates a new tee writer.
@@ -40,7 +40,7 @@ public class TeeWriter extends Writer {
         fTwo = two;
     }
 
-    public void write(char cbuf[], int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len) throws IOException {
         fOne.write(cbuf, off, len);
         fTwo.write(cbuf, off, len);
     }

@@ -31,9 +31,9 @@ import java.util.Date;
  */
 public final class Log {
 
-    private static PrintStream fOut = System.out;
-    private static PrintStream fErr = System.err;
-    private static PrintStream fDbg = System.out;
+    private static final PrintStream fOut = System.out;
+    private static final PrintStream fErr = System.err;
+    private static final PrintStream fDbg = System.out;
 
     private static DateFormat fDateFormat = null;
 

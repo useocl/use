@@ -51,9 +51,9 @@ public class QualifierWayPoint extends AttachedWayPoint {
 	 * Saves the displayed information. Because qualifier values cannot be
 	 * changed yet they can be stored when creating a qualifier node
 	 */
-	private List<String> displayedEntries;
+	private final List<String> displayedEntries;
 
-	private AttachedWayPoint ourAttached;
+	private final AttachedWayPoint ourAttached;
 	
 	public QualifierWayPoint(PlaceableNode attachedNode, EdgeBase edge,
 			WayPointType type, String edgeName, DiagramOptions opt, MAssociationEnd theQualifiedEnd, MLink link) {

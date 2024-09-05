@@ -34,7 +34,7 @@ public class MDataTypeImpl extends MClassifierImpl implements MDataType {
     /**
      * All inherited attributes of this data type.
      */
-    private Map<String, MAttribute> fSuperAttributes;
+    private final Map<String, MAttribute> fSuperAttributes;
 
     MDataTypeImpl(String name, boolean isAbstract) {
         super(name, isAbstract);

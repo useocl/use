@@ -42,7 +42,7 @@ import org.tzi.use.util.collections.CollectionUtil;
 public class MClassImpl extends MClassifierImpl implements MClass {
 
     // other classes reachable by associations 
-    private Map<String, MNavigableElement> fNavigableElements;
+    private final Map<String, MNavigableElement> fNavigableElements;
 
     /**
      * All owned PSM

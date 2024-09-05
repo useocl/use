@@ -41,11 +41,11 @@ import org.tzi.use.uml.ocl.type.Type.VoidHandling;
  * @author  Mark Richters
  */
 public class ASTIterateExpression extends ASTExpression {
-    private Token fIterateToken;
-    private ASTExpression fRange; // may be null
-    private ASTElemVarsDeclaration fDeclList;
-    private ASTVariableInitialization fInit;
-    private ASTExpression fExpr;
+    private final Token fIterateToken;
+    private final ASTExpression fRange; // may be null
+    private final ASTElemVarsDeclaration fDeclList;
+    private final ASTVariableInitialization fInit;
+    private final ASTExpression fExpr;
 
     public ASTIterateExpression(Token iterateToken,
                                 ASTExpression range, 

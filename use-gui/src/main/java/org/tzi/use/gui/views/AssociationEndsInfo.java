@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.MSystem;
 @SuppressWarnings("serial")
 public class AssociationEndsInfo extends JPanel implements View {
 	
-	private MSystem useSystem;
+	private final MSystem useSystem;
 	
 	private JTable table;
 	

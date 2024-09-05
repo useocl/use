@@ -42,7 +42,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 public class ASTBlockStatement extends ASTStatement {
 	
 	/** The variables that are explicitly declared in this block (using 'declare') */
-	private List<ASTVariableDeclaration> fVariableDeclarations;
+	private final List<ASTVariableDeclaration> fVariableDeclarations;
 	
 	/** The inner statement of this block */
 	private ASTStatement fBody;

@@ -47,7 +47,7 @@ public class ExprContext {
     /**
      * The stack of entries.
      */
-    private Stack<Entry> fEntries;
+    private final Stack<Entry> fEntries;
     
     public ExprContext() {
         fEntries = new Stack<Entry>();

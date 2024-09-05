@@ -34,7 +34,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTRValueNewLinkObject extends ASTRValue {
 	/** The AST of the encapsulated statement */
-	private ASTNewLinkObjectStatement fNewLinkObjectStatement;
+	private final ASTNewLinkObjectStatement fNewLinkObjectStatement;
 	
 	/**
 	 * Constructs a new ATS node. 

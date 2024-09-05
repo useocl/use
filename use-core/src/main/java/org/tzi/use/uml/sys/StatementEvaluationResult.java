@@ -37,11 +37,11 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  * @author Lars Hamann
  */
 public class StatementEvaluationResult {
-	private MStatement fEvaluatedStatement;
-	private StateDifference fStateDifference = new StateDifference();
-	private MSequenceStatement fInverseStatement = new MSequenceStatement();
+	private final MStatement fEvaluatedStatement;
+	private final StateDifference fStateDifference = new StateDifference();
+	private final MSequenceStatement fInverseStatement = new MSequenceStatement();
 	private EvaluationFailedException fException = null;
-	private List<Event> fEvents = new ArrayList<Event>();
+	private final List<Event> fEvents = new ArrayList<Event>();
 	
 
 	/**

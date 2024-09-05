@@ -52,9 +52,9 @@ public final class MLinkSet {
      */
 	private final MAssociation fAssociation;
 	
-    private Set<MLink> fLinks;
+    private final Set<MLink> fLinks;
 
-    private SetMultimap<List<MObject>, MLink> objectsToLinksMap = HashMultimap.create();  
+    private final SetMultimap<List<MObject>, MLink> objectsToLinksMap = HashMultimap.create();
     
     private static final class CacheEntry {
         private final MAssociationEnd end;
@@ -99,7 +99,7 @@ public final class MLinkSet {
         }
     }
     
-    private Map<CacheEntry, Set<MLink>> selectCache; 
+    private final Map<CacheEntry, Set<MLink>> selectCache;
     
     MLinkSet(MAssociation assoc) {
         fAssociation = assoc;

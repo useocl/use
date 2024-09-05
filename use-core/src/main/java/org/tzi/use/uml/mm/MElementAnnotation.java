@@ -30,9 +30,9 @@ import java.util.Map;
  */
 public class MElementAnnotation {
 	
-	private String name;
+	private final String name;
 	
-	private Map<String, String> annotationValues;
+	private final Map<String, String> annotationValues;
 
 	/**
 	 * Creates an element annotation with the given annotation values. 

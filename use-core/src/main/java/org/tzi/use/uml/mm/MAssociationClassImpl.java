@@ -48,8 +48,8 @@ import org.tzi.use.uml.sys.MOperationCall;
 
 public class MAssociationClassImpl extends MClassifierImpl implements MAssociationClass {
 
-    private MAssociationImpl fAssociationImpl;
-    private MClassImpl fClassImpl;
+    private final MAssociationImpl fAssociationImpl;
+    private final MClassImpl fClassImpl;
     
     /**
      * Creates a new associationclass.

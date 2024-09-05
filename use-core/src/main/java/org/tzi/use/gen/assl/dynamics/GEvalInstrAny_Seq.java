@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 
 public class GEvalInstrAny_Seq extends GEvalInstruction implements IGCaller {
-    private GInstrAny_Seq fInstr;
+    private final GInstrAny_Seq fInstr;
     private IGCaller fCaller;
 
     public GEvalInstrAny_Seq(GInstrAny_Seq instr ) {

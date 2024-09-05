@@ -42,12 +42,12 @@ public class Report {
     public static final char FMT_RIGHT = 'r';
     public static final char FMT_CENTER = 'c';
 
-    private ArrayList<Object> fRows;    // (String[], String, or Character)
+    private final ArrayList<Object> fRows;    // (String[], String, or Character)
     private String[] fCurrentRow;
-    private int fColumns;
+    private final int fColumns;
     private int fCurrentColumn;
-    private String[] fFiller;
-    private char[] fColumnFormat;
+    private final String[] fFiller;
+    private final char[] fColumnFormat;
 
     /**
      * Creates a new report with the specified number of columns. Each

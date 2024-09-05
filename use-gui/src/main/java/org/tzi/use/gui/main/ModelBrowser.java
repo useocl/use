@@ -80,7 +80,7 @@ public class ModelBrowser extends JPanel
     implements DragSourceListener, DragGestureListener, SortChangeListener {
     private MModel fModel;
     private JTree fTree;
-    private JEditorPane fHtmlPane;
+    private final JEditorPane fHtmlPane;
     private ModelBrowserSorting fMbs;
 
     private DragSource fDragSource = null;
@@ -90,7 +90,7 @@ public class ModelBrowser extends JPanel
     
     private EventListenerList fListenerList;
     private ModelBrowserMouseHandling fMouseHandler;
-    private Map<String, Collection<?>> modelCollections = new HashMap<String, Collection<?>>();
+    private final Map<String, Collection<?>> modelCollections = new HashMap<String, Collection<?>>();
     private MainWindow mainWindow;
     
     // implementation of interface DragSourceListener

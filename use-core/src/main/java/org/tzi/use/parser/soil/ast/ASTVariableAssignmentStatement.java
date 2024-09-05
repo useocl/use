@@ -39,11 +39,11 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTVariableAssignmentStatement extends ASTStatement {
 	
-	private String fVariableName;
+	private final String fVariableName;
 	
-	private ASTType fMandatoryType;
+	private final ASTType fMandatoryType;
 	
-	private ASTRValue fRValue;
+	private final ASTRValue fRValue;
 	
 	
 	/**

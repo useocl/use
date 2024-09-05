@@ -37,7 +37,7 @@ class SDProperties {
 	/**
 	 * Needed for the Frames.
 	 */
-	private static final float DASH1[] = { 5.0f };
+	private static final float[] DASH1 = { 5.0f };
 
 	public static float[] getDASH1() {
 		return DASH1;
@@ -157,7 +157,7 @@ class SDProperties {
 	 */
 	private boolean isStateNodeManualSize;
 	
-	private SequenceDiagram sequenceDiagram;
+	private final SequenceDiagram sequenceDiagram;
 
 	/**
 	 * Creates a new SDProperties-Object and sets the standard values.

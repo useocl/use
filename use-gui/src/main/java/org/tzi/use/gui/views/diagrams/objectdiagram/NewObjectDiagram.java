@@ -222,9 +222,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	protected ObjectDiagramData visibleData = new ObjectDiagramData();
 
-	private ObjectDiagramData hiddenData = new ObjectDiagramData();
+	private final ObjectDiagramData hiddenData = new ObjectDiagramData();
 
-	private NewObjectDiagramView fParent;
+	private final NewObjectDiagramView fParent;
 
 	/**
 	 * The position of the next object node. This is either set to a random
@@ -237,12 +237,12 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * nodes (object nodes, linkobject nodes) are positioned as they were
 	 * before. Objects use {@link StrategyFixed}, so we just save the position.
 	 */
-	private Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
-	private Map<MLink, PositionStrategy> lastKnownLinkPositions = new WeakHashMap<>();
+	private final Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
+	private final Map<MLink, PositionStrategy> lastKnownLinkPositions = new WeakHashMap<>();
 
 	protected ShowObjectPropertiesViewMouseListener showObjectPropertiesViewMouseListener = new ShowObjectPropertiesViewMouseListener();
 
-	private ObjectSelection fSelection;
+	private final ObjectSelection fSelection;
 
 	protected DiagramInputHandling inputHandling;
 
@@ -965,8 +965,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Adds a new Link to the objectdiagram.
 	 */
 	class ActionInsertLink extends AbstractAction {
-		private MAssociation fAssociation;
-		private MObject[] fParticipants;
+		private final MAssociation fAssociation;
+		private final MObject[] fParticipants;
 
 		ActionInsertLink(MAssociation association, MObject[] participants) {
 			fAssociation = association;
@@ -994,7 +994,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Deletes a Link from the object diagram.
 	 */
 	class ActionDeleteLink extends AbstractAction {
-		private MLink link;
+		private final MLink link;
 
 		ActionDeleteLink(MLink link) {
 			this.link = link;
@@ -1027,7 +1027,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Deletes the selected objects.
 	 */
 	class ActionDelete extends AbstractAction {
-		private Set<MObject> fObjects;
+		private final Set<MObject> fObjects;
 
 		ActionDelete(String text, Set<MObject> objects) {
 			super(text);
@@ -1044,7 +1044,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Show properties of objects
 	 */
 	class ActionShowProperties extends AbstractAction {
-		private MObject fObject;
+		private final MObject fObject;
 
 		ActionShowProperties(String text, MObject object) {
 			super(text);

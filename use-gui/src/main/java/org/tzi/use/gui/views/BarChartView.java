@@ -40,15 +40,15 @@ import javax.swing.JPanel;
  */
 @SuppressWarnings("serial")
 public class BarChartView extends JPanel {
-    private String fHeader1;    // for name column
-    private String fHeader2;    // for bar column
-    private Color fBarColor;    // color of bar rectangles
+    private final String fHeader1;    // for name column
+    private final String fHeader2;    // for bar column
+    private final Color fBarColor;    // color of bar rectangles
     private Object[] fNames;    // names in left column
     private int fMaxNameWidth;  // max. width of names
     private int[] fValues;  // values associated to names
     private int fMaxValue;  // max. value
-    private int fFontSize;
-    private Font fFont;
+    private final int fFontSize;
+    private final Font fFont;
 
     /**
      * Creates a BarChartView with given headers and bar color.

@@ -60,13 +60,13 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 @SuppressWarnings("serial")
 public class ObjectBrowser extends JFrame {
-    private JTable fTable;
+    private final JTable fTable;
     private TableModel fTableModel;
-    private JScrollPane fTablePane;
-    private JLabel fTopLabel;
+    private final JScrollPane fTablePane;
+    private final JLabel fTopLabel;
     private Map<String, DefaultCellEditor> fCellEditors;
     
-    private MSystem fSystem;
+    private final MSystem fSystem;
     private MObject fObject;
     private MAttribute[] fAttributes;
     private String[] fValues;

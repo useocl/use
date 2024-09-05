@@ -32,7 +32,7 @@ import org.tzi.use.uml.sys.MObject;
  * @author  Mark Richters
  */
 public final class ExpAsType extends Expression {
-    private Expression fSourceExpr;
+    private final Expression fSourceExpr;
 
 	public ExpAsType(Expression sourceExpr, Type targetType)
         throws ExpInvalidException

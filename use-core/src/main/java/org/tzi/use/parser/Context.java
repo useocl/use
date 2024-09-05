@@ -40,22 +40,22 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 public class Context {
     private Symtable fVarTable; // declared variable names
-    private Symtable fTypeTable; // declared type names
+    private final Symtable fTypeTable; // declared type names
     // implicit context for some expressions (self or element variable
     // in iterate-based expressions)
-    private ExprContext fExprContext; 
+    private final ExprContext fExprContext;
     private int fErrorCount;
-    private String fFilename;
+    private final String fFilename;
     
-    private PrintWriter fErr;
+    private final PrintWriter fErr;
     private PrintWriter fOut;
     
     private MModel fModel;
     private MClassifier fCurrentClassifier;
-    private ModelFactory fModelFactory;
+    private final ModelFactory fModelFactory;
     private MSystemState fSystemState;
     private boolean fInsidePostCondition;
-    private List<String> fLoopVarNames;
+    private final List<String> fLoopVarNames;
     
     private List<GProcedure> generatorProcedures;
     

@@ -31,7 +31,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTBooleanLiteral extends ASTExpression {
-    private boolean fValue;
+    private final boolean fValue;
 
     public ASTBooleanLiteral(boolean val) {
         fValue = val;

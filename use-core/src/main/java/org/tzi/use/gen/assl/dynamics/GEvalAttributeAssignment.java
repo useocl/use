@@ -48,7 +48,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalAttributeAssignment extends GEvalInstruction
     implements IGCaller {
-    private GAttributeAssignment fInstr;
+    private final GAttributeAssignment fInstr;
     private IGCaller fCaller;
     private String fObjectName;
 

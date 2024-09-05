@@ -44,7 +44,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTOperationCallStatement extends ASTStatement {
 	
-	private ASTExpression fOperationCall;
+	private final ASTExpression fOperationCall;
 	
 	
 	/**

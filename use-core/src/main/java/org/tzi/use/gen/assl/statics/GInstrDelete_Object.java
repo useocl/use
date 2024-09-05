@@ -36,7 +36,7 @@ public class GInstrDelete_Object implements GInstruction {
     // NO RESULT VALUE -> not a subclass of GValueInstruction
     // Delete( Object )
 
-    private GValueInstruction fObjectInstr;
+    private final GValueInstruction fObjectInstr;
 
     public GInstrDelete_Object( GValueInstruction instr ) {
         fObjectInstr = instr;

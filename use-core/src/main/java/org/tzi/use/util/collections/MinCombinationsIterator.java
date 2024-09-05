@@ -43,9 +43,9 @@ import org.tzi.use.util.collections.CollectionUtil.UniqueList;
  */
 public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
 
-	private List<T> firstList;
-	private List<T> secondList;
-	private UniqueList unique;
+	private final List<T> firstList;
+	private final List<T> secondList;
+	private final UniqueList unique;
 	
 	private List<List<Pair<T>>> partitionedCombinations;
 		

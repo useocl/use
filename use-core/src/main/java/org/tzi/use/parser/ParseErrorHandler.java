@@ -33,8 +33,8 @@ import java.io.PrintWriter;
 public class ParseErrorHandler {
     private int fErrorCount = 0;
 
-    private String fFileName;
-    private PrintWriter fErrWriter;
+    private final String fFileName;
+    private final PrintWriter fErrWriter;
     
     /**
      * @param fileName The name of the parsed file - used for constructing

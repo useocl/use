@@ -46,7 +46,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTObjectDestructionStatement extends ASTStatement {
 	/** An expression leading to an object or a collection of objects */
-	private ASTExpression fToDelete;
+	private final ASTExpression fToDelete;
 
 	
 	/**

@@ -29,7 +29,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstReal extends Expression {
-    private double fValue;
+    private final double fValue;
 
     public ExpConstReal(double d) {
         super(TypeFactory.mkReal());

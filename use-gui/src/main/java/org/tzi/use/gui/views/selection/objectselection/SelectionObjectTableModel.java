@@ -29,7 +29,7 @@ public class SelectionObjectTableModel extends AbstractTableModel {
 
 	MSystem fSystem;
 
-	private List<Row> rows = new ArrayList<Row>();
+	private final List<Row> rows = new ArrayList<Row>();
 
 	private static class Row {
 		public String name;

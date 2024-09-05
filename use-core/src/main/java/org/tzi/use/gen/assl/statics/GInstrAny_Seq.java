@@ -37,7 +37,7 @@ public class GInstrAny_Seq implements GValueInstruction {
 
     // Any( Sequence(T) ): T
 
-    private GValueInstruction fSequenceInstr;
+    private final GValueInstruction fSequenceInstr;
 
     public GInstrAny_Seq( GValueInstruction instr ) {
         fSequenceInstr = instr;

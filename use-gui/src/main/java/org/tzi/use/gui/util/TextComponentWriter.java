@@ -31,7 +31,7 @@ import javax.swing.text.JTextComponent;
  * @author  Mark Richters
  */
 public class TextComponentWriter extends Writer {
-    private JTextComponent fTextComp;
+    private final JTextComponent fTextComp;
 
     public TextComponentWriter(JTextComponent textComp) {
         fTextComp = textComp;
@@ -40,7 +40,7 @@ public class TextComponentWriter extends Writer {
     /**
      * Writes a portion of an array of characters.
      */
-    public void write(char cbuf[], int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len) throws IOException {
         final String s = new String(cbuf, off, len);
 
         // be safe here: we might be called from outside the

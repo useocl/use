@@ -44,16 +44,16 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
      * The NodeBase of instance ClassNode or ObjectNode displaying 
      * the class part of the associationclass / objectlink.
      */
-    private PlaceableNode fAssociationClassOrLinkObjectNode;
+    private final PlaceableNode fAssociationClassOrLinkObjectNode;
     
     private SimpleEdge dashedEdge;
     
     /**
      * True, if the dashed line is connected to a link object.
      */
-    private boolean isLink;
+    private final boolean isLink;
     
-    private MAssociation association;
+    private final MAssociation association;
     
 	/**
      * Use this constructor if it is an t-nary associationclass/objectlink.

@@ -38,11 +38,11 @@ import java.io.PrintWriter;
  */
 public class ASTAttributeAssignmentStatement extends ASTStatement {
 	
-	private ASTExpression fObject;
+	private final ASTExpression fObject;
 	
-	private String fAttributeName;
+	private final String fAttributeName;
 	
-	private ASTRValue fRValue;
+	private final ASTRValue fRValue;
 		
 	
 	/**

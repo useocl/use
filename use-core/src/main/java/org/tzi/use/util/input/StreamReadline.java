@@ -31,9 +31,9 @@ import org.tzi.use.util.USEWriter;
  * @author      Mark Richters 
  */
 public class StreamReadline implements Readline {
-    private BufferedReader fBufferedReader;
-    private String fStaticPrompt;
-    private boolean fDoEcho;
+    private final BufferedReader fBufferedReader;
+    private final String fStaticPrompt;
+    private final boolean fDoEcho;
 
     /**
      * Constructs a new StreamReadline. If echoInput is true, each

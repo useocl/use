@@ -49,15 +49,15 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
      * as key.
      * However, only MLink or MObject instances should be contained
      */
-    private Map<ElementKey, BaseNode> elementsToNodeMap;
+    private final Map<ElementKey, BaseNode> elementsToNodeMap;
 
-    private CommunicationDiagram diagram;
+    private final CommunicationDiagram diagram;
 
-    private CreationTimeRecorder messageRecorder = new CreationTimeRecorder();
+    private final CreationTimeRecorder messageRecorder = new CreationTimeRecorder();
 
-    private Stack<MOperationCall> operationsStack;
-    private List<MInstance> operationsCaller = new ArrayList<MInstance>();
-    private List<Integer> sequenceNumbers;
+    private final Stack<MOperationCall> operationsStack;
+    private final List<MInstance> operationsCaller = new ArrayList<MInstance>();
+    private final List<Integer> sequenceNumbers;
 
 
     public CommunicationDiagramData(CommunicationDiagram diagram) {

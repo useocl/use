@@ -41,10 +41,10 @@ import java.util.*;
  * @author  Joern Bohling
  */
 public class GProcedure {
-    private String fName;
-    private List<VarDecl> fParameterDecls;
-    private List<VarDecl> fLocalDecls;
-    private GInstructionList fInstructionList;
+    private final String fName;
+    private final List<VarDecl> fParameterDecls;
+    private final List<VarDecl> fLocalDecls;
+    private final GInstructionList fInstructionList;
     private GSignature signature = null;
     
     public GProcedure(String name) {

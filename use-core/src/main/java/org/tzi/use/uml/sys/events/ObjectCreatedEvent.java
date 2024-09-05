@@ -31,7 +31,7 @@ import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
  */
 public class ObjectCreatedEvent extends Event implements SystemStructureChangedEvent {
 	/** The created object */
-	private MObject fCreatedObject;
+	private final MObject fCreatedObject;
 	
 	
 	/**

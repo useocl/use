@@ -27,7 +27,7 @@ import org.tzi.use.util.StringUtil;
  */
 public class PluginRuntime implements IPluginRuntime {
 
-	private static IPluginRuntime instance = new PluginRuntime();
+	private static final IPluginRuntime instance = new PluginRuntime();
 
 	/**
 	 * Method returning the Singleton instance of the PluginRuntime
@@ -38,9 +38,9 @@ public class PluginRuntime implements IPluginRuntime {
 		return instance;
 	}
 
-	private Map<String, IPluginDescriptor> registeredPlugins = new HashMap<String, IPluginDescriptor>();
+	private final Map<String, IPluginDescriptor> registeredPlugins = new HashMap<String, IPluginDescriptor>();
 
-	private Map<String, IPluginServiceDescriptor> registeredServices = new HashMap<String, IPluginServiceDescriptor>();
+	private final Map<String, IPluginServiceDescriptor> registeredServices = new HashMap<String, IPluginServiceDescriptor>();
 
 	public IExtensionPoint getExtensionPoint(String extensionPoint) {
 		if (extensionPoint.equals("action")) {

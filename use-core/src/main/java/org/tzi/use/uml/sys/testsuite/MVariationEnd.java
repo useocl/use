@@ -6,7 +6,7 @@ import org.tzi.use.uml.sys.MSystemException;
 
 public class MVariationEnd extends MVariation {
 
-	private MSystem system;
+	private final MSystem system;
 	
 	public MVariationEnd(SrcPos pos, MSystem system) {
 		super(pos);

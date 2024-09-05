@@ -34,11 +34,11 @@ import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
  */
 public class AttributeAssignedEvent extends Event implements SystemStateChangedEvent {
 	/** The object that was assigned a new attribute value */
-	private MObject fObject;
+	private final MObject fObject;
 	/** The attribute which was assigned a new value */
-	private MAttribute fAttribute;
+	private final MAttribute fAttribute;
 	/** The assigned value */
-	private Value fValue;
+	private final Value fValue;
 	
 	
 	/**

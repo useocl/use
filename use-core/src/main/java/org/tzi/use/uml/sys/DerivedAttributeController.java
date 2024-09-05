@@ -40,9 +40,9 @@ import java.util.Set;
  */
 public class DerivedAttributeController implements DerivedValueController {
 
-	private MSystemState state;
+	private final MSystemState state;
 	
-	private Map<MObject, MObjectState> objectStates;
+	private final Map<MObject, MObjectState> objectStates;
 	
 	/**
 	 * The set of all defined derived attributes in the system.

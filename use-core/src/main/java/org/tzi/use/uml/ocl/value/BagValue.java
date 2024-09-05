@@ -41,7 +41,7 @@ import java.util.List;
  * @author Mark Richters
  */
 public class BagValue extends CollectionValue {
-    private Bag<Value> fElements;
+    private final Bag<Value> fElements;
 
     /**
      * Constructs a new empty bag.

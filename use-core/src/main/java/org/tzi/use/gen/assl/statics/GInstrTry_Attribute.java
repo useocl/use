@@ -30,11 +30,11 @@ import org.tzi.use.uml.mm.MAttribute;
  */
 public class GInstrTry_Attribute extends GInstrTry implements GInstruction {
 
-	private MAttribute attribute;
+	private final MAttribute attribute;
     
-	private GOCLExpression objects;
+	private final GOCLExpression objects;
 	
-	private GOCLExpression values;
+	private final GOCLExpression values;
 	
     
 	/**

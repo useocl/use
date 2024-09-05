@@ -35,7 +35,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MRValueExpression extends MRValue {
 	/** The encapsulated expression the value is derived from */
-	private Expression fExpression;
+	private final Expression fExpression;
 	
 	/**
 	 * Constructs a new RValue encapsulating <code>expression</code>.

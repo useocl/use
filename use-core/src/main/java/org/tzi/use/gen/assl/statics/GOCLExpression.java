@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Joern Bohling
  */
 public class GOCLExpression implements GValueInstruction {
-    private Expression fExpression;
+    private final Expression fExpression;
 
     public GOCLExpression( Expression expression ) {
         fExpression = expression;

@@ -34,10 +34,10 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTIfExpression extends ASTExpression {
-    private Token fIfToken;
-    private ASTExpression fCond;
-    private ASTExpression fThen;
-    private ASTExpression fElse;
+    private final Token fIfToken;
+    private final ASTExpression fCond;
+    private final ASTExpression fThen;
+    private final ASTExpression fElse;
 
     public ASTIfExpression(Token ifToken,
                            ASTExpression cond,

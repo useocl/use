@@ -38,10 +38,10 @@ public class MBlockStatement extends MStatement {
 
 	
 	/** The variables that are explicitly declared in this block (using 'declare') */
-	private List<VarDecl> fVariableDeclarations;
+	private final List<VarDecl> fVariableDeclarations;
 	
 	/** The inner statement of this block */
-	private MStatement fBody;
+	private final MStatement fBody;
 	
 	/**
 	 * Constructs a new block statement. 

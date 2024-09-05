@@ -93,19 +93,19 @@ import com.google.common.eventbus.Subscribe;
 @SuppressWarnings("serial")
 public class ClassExtentView extends JPanel implements View, ActionListener {
 
-    private MSystem fSystem;
+    private final MSystem fSystem;
 
     private MClass fClass;
 
     private boolean fShowInvResults;
 
-    private JPopupMenu fPopupMenu; // context menu on right mouse click
+    private final JPopupMenu fPopupMenu; // context menu on right mouse click
 
-    private JTable fTable;
+    private final JTable fTable;
 
-    private JScrollPane fTablePane;
+    private final JScrollPane fTablePane;
 
-    private TableModel fTableModel;
+    private final TableModel fTableModel;
 
     public ClassExtentView(MainWindow parent, MSystem system) {
         super(new BorderLayout());
@@ -278,17 +278,17 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
      * The table model.
      */
     class TableModel extends AbstractTableModel {
-        private ArrayList<String> fColumnNames;
+        private final ArrayList<String> fColumnNames;
 
-		private ArrayList<MObject> fObjects;
+		private final ArrayList<MObject> fObjects;
 
         private MAttribute[] fAttributes;
 
         private MClassInvariant[] fClassInvariants;
 
-        private Map<MObject, String[]> fObjectValueStrMap;
+        private final Map<MObject, String[]> fObjectValueStrMap;
 
-        private Map<MClassInvariant, Set<MObject>> fInvBadObjects;
+        private final Map<MClassInvariant, Set<MObject>> fInvBadObjects;
 
         // need to cache all data because getValueAt is called often.
 

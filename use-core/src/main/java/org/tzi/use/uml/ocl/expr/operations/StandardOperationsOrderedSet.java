@@ -57,7 +57,7 @@ final class Op_orderedSet_union extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()
 				&& params[1].isTypeOfOrderedSet()) {
 			OrderedSetType oset1 = (OrderedSetType) params[0];
@@ -96,7 +96,7 @@ final class Op_orderedSet_append extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
@@ -131,7 +131,7 @@ final class Op_orderedSet_prepend extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
@@ -166,7 +166,7 @@ final class Op_orderedSet_insertAt extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 3 && params[0].isTypeOfOrderedSet()
 				&& params[1].isTypeOfInteger()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
@@ -207,7 +207,7 @@ final class Op_orderedSet_subOrderedSet extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		return (params.length == 3 && params[0].isTypeOfOrderedSet()
 				&& params[1].isTypeOfInteger() && params[2].isTypeOfInteger()) ? params[0]
 				: null;
@@ -246,7 +246,7 @@ final class Op_orderedSet_at extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()
 				&& params[1].isTypeOfInteger()) {
 			OrderedSetType oset = (OrderedSetType) params[0];
@@ -284,7 +284,7 @@ final class Op_orderedSet_first extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType oset = (OrderedSetType) params[0];
 			return oset.elemType();
@@ -316,7 +316,7 @@ final class Op_orderedSet_last extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType oset = (OrderedSetType) params[0];
 			return oset.elemType();
@@ -348,7 +348,7 @@ final class Op_orderedSet_including extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
@@ -386,7 +386,7 @@ final class Op_orderedSet_excluding extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
@@ -407,7 +407,7 @@ final class Op_orderedSet_excluding extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col = (CollectionType) args[0].type();
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
@@ -437,7 +437,7 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 2 && params[0].isTypeOfOrderedSet()) {
 			OrderedSetType osetType = (OrderedSetType) params[0];
 
@@ -465,7 +465,7 @@ final class Op_orderedSet_indexOf extends OpGeneric {
 	}
 	
 	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
+	public String checkWarningUnrelatedTypes(Expression[] args) {
 		CollectionType col = (CollectionType) args[0].type();
 		
 		Type commonElementType = col.elemType().getLeastCommonSupertype(args[1].type());
@@ -495,7 +495,7 @@ final class Op_orderedSet_reverse extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfOrderedSet()) {
 			return params[0];
 		}

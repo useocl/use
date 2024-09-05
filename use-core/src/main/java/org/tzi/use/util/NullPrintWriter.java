@@ -28,7 +28,7 @@ import java.io.PrintWriter;
  */
 public class NullPrintWriter extends PrintWriter {
 	/** The singleton instance */
-	private static NullPrintWriter fInstance = new NullPrintWriter();
+	private static final NullPrintWriter fInstance = new NullPrintWriter();
 
 	private NullPrintWriter() {
 		super(new NullWriter());

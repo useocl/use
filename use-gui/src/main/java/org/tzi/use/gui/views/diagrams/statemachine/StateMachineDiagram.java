@@ -99,14 +99,14 @@ public class StateMachineDiagram extends DiagramView {
 	
 	private final Map<MTransition, TransitionEdge> transitionMappings = new HashMap<MTransition, TransitionEdge>();
 	
-	private Map<MVertex, Integer> reflexiveTransitionCount = new HashMap<MVertex, Integer>();
+	private final Map<MVertex, Integer> reflexiveTransitionCount = new HashMap<MVertex, Integer>();
 	
 	private String caption;
 	
 	private Polygon captionPolygon = null;
 	
-	private int minStateNodeHeight;
-	private int minStateNodeWidth;
+	private final int minStateNodeHeight;
+	private final int minStateNodeWidth;
 	
 	public StateMachineDiagram(StateMachineDiagramView parent, PrintWriter log) {
 		this(parent, log, new StateMachineDiagramOptions(Paths.get(parent.getSystem().model().filename())));
@@ -653,8 +653,8 @@ public class StateMachineDiagram extends DiagramView {
 	 */
 	private class ElementFactory {
 		
-		private Map<Class<?>, VertexNodeCreator> nodeCreators = new HashMap<Class<?>, VertexNodeCreator>();
-		private Map<Class<?>, TransitionEdgeCreator> edgeCreators = new HashMap<Class<?>, TransitionEdgeCreator>();
+		private final Map<Class<?>, VertexNodeCreator> nodeCreators = new HashMap<Class<?>, VertexNodeCreator>();
+		private final Map<Class<?>, TransitionEdgeCreator> edgeCreators = new HashMap<Class<?>, TransitionEdgeCreator>();
 
 		public ElementFactory() {
 			nodeCreators.put(MPseudoState.class, new VertexNodeCreator() {

@@ -66,7 +66,7 @@ public class ModelBrowserSorting  {
 
     
     private static ModelBrowserSorting fModelBrowserSorting = null;
-    private EventListenerList fListenerList;
+    private final EventListenerList fListenerList;
     
     /**
      * Starting classes order.

@@ -52,7 +52,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
     implements IGCaller {
-    private GInstrDelete_Assoc_Linkends fInstr;
+    private final GInstrDelete_Assoc_Linkends fInstr;
     private IGCaller fCaller;
     private ListIterator<GValueInstruction> fIterator;
     private List<String> fObjectNames;

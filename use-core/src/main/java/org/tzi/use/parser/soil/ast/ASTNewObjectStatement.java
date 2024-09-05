@@ -44,9 +44,9 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTNewObjectStatement extends ASTStatement {
 	/** AST node for the object class */
-	private ASTSimpleType fObjectType;
+	private final ASTSimpleType fObjectType;
 	/** Expression to calculate the new object name from. Can be <code>null</code>. */
-	private ASTExpression fObjectName;
+	private final ASTExpression fObjectName;
 	
 	/**
 	 * Constructs a new ASTNewObjectStatement node using the provided information.

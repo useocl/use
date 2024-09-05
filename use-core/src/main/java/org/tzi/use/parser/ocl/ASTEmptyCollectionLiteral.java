@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTEmptyCollectionLiteral extends ASTExpression {
-    private ASTType fType;
+    private final ASTType fType;
 
     public ASTEmptyCollectionLiteral(ASTType t) {
         fType = t;

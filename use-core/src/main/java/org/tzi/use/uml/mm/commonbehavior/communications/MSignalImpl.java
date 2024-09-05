@@ -46,7 +46,7 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 	 * The attributes owned by the signal. (Subsets Classifier::attribute, Namespace::ownedMember). 
 	 * This association end is ordered.
 	 */
-	private Map<String,MAttribute> ownedAttribute = new HashMap<>();
+	private final Map<String,MAttribute> ownedAttribute = new HashMap<>();
 	
 	/**
 	 * Constructs a new signal with the given <code>name</code>.

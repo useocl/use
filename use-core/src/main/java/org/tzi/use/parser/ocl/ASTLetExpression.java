@@ -36,9 +36,9 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTLetExpression extends ASTExpression {
-    private Token fVarToken;
-    private ASTType fVarType;   // optional: may be null
-    private ASTExpression fVarExpr;
+    private final Token fVarToken;
+    private final ASTType fVarType;   // optional: may be null
+    private final ASTExpression fVarExpr;
     private ASTExpression fInExpr;
 
     public ASTLetExpression(Token varToken, 

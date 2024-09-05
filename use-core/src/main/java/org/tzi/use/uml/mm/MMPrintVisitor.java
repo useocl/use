@@ -49,7 +49,7 @@ import org.tzi.use.util.uml.sorting.UseModelElementFileOrderComparator;
 public class MMPrintVisitor implements MMVisitor {
     protected PrintWriter fOut;
     private int fIndent;    // number of columns to indent output
-    private int fIndentStep = 2;
+    private final int fIndentStep = 2;
 
     public MMPrintVisitor(PrintWriter out) {
         fOut = out;

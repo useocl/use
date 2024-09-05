@@ -43,7 +43,7 @@ import org.tzi.use.util.NullPrintWriter;
  */
 public class GCollectorImpl implements IGCollector {
     private boolean fValidStateFound;
-    private List<MStatement> fStatements;
+    private final List<MStatement> fStatements;
     private long fLimit;
     private PrintWriter fBasicPrintWriter;
     private PrintWriter fDetailPrintWriter;
@@ -81,7 +81,7 @@ public class GCollectorImpl implements IGCollector {
     
     private boolean isBlocked = false;
     
-    private List<GInstrBarrier> barriers = new ArrayList<GInstrBarrier>();
+    private final List<GInstrBarrier> barriers = new ArrayList<GInstrBarrier>();
     
     public GCollectorImpl(boolean doBasicPrinting, boolean doDetailPrinting) {
         fValidStateFound = false;

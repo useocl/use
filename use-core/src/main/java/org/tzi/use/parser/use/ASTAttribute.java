@@ -35,8 +35,8 @@ import org.tzi.use.util.StringUtil;
  * @author  Lars Hamann
  */
 public class ASTAttribute extends ASTAnnotatable {
-    private Token fName;
-    private ASTType fType;
+    private final Token fName;
+    private final ASTType fType;
     private ASTExpression deriveExpression;
     private ASTExpression initExpression;
     

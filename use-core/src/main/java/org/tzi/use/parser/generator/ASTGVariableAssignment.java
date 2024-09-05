@@ -38,8 +38,8 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 
 public class ASTGVariableAssignment extends ASTGInstruction {
-    private Token fTarget;
-    private ASTGValueInstruction fSource;
+    private final Token fTarget;
+    private final ASTGValueInstruction fSource;
 
     public ASTGVariableAssignment( Token target,
                                    ASTGValueInstruction source ) {

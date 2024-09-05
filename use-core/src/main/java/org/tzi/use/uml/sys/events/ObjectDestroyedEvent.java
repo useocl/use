@@ -31,7 +31,7 @@ import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
  */
 public class ObjectDestroyedEvent extends Event implements SystemStructureChangedEvent {
 	/** The destroyed object */
-	private MObject fDestroyedObject;
+	private final MObject fDestroyedObject;
 	
 	
 	/**

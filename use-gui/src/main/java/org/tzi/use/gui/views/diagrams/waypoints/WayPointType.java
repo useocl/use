@@ -64,7 +64,7 @@ public enum WayPointType {
      */
     ASSOC_CLASS_CON(7);
     
-    private int id;
+    private final int id;
     
     private WayPointType(int id) {
     	this.id = id; 

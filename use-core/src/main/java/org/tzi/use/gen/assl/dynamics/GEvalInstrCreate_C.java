@@ -44,7 +44,7 @@ import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrCreate_C extends GEvalInstruction {
-    private GInstrCreate_C fInstr;
+    private final GInstrCreate_C fInstr;
 
     public GEvalInstrCreate_C(GInstrCreate_C instr ) {
         fInstr = instr;

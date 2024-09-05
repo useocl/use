@@ -32,9 +32,9 @@ import org.tzi.use.uml.ocl.expr.Expression;
  * @author  Mark Richters
  */
 public class ASTBinaryExpression extends ASTExpression {
-    private Token fToken;
-    private ASTExpression fLeft;
-    private ASTExpression fRight;
+    private final Token fToken;
+    private final ASTExpression fLeft;
+    private final ASTExpression fRight;
 
     public ASTBinaryExpression(Token token, 
                                ASTExpression left, 

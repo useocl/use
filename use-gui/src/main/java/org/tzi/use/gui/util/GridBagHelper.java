@@ -28,9 +28,9 @@ import java.awt.*;
  * @author      Mark Richters
  */
 public class GridBagHelper {
-    private Container fContainer;
-    private GridBagConstraints fConstraints;
-    private GridBagLayout fGridBag;
+    private final Container fContainer;
+    private final GridBagConstraints fConstraints;
+    private final GridBagLayout fGridBag;
 
     /**
      * Creates a GridBagHelper for the specified container. A new

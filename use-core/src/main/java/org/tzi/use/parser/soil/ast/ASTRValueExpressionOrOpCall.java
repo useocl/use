@@ -39,7 +39,7 @@ public class ASTRValueExpressionOrOpCall extends ASTRValue {
 	/**
 	 *  The encapsulated expression
 	 */
-	private ASTExpression fExpressionOrOpCall;
+	private final ASTExpression fExpressionOrOpCall;
 	
 	
 	/**

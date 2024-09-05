@@ -41,10 +41,10 @@ import org.tzi.use.util.collections.CollectionUtil;
 public final class MAssociationEnd extends MModelElementImpl implements MNavigableElement {
 
     private MAssociation fAssociation; // Owner of this association end
-    private MClass fClass;  // associated class
-    private MMultiplicity fMultiplicity; // multiplicity spec
+    private final MClass fClass;  // associated class
+    private final MMultiplicity fMultiplicity; // multiplicity spec
     private int fKind; // none, aggregation, or composition
-    private boolean fIsOrdered; // use as Set or OrderedSet
+    private final boolean fIsOrdered; // use as Set or OrderedSet
     private boolean fIsNavigable = true; 
     private boolean fIsExplicitNavigable = false;
     

@@ -31,7 +31,7 @@ public class ExtensionManager {
 	 */
 	private MModel emptyModel = null;
 	private PrintWriter error = null;
-	private List<OpGeneric> addedOperations = new ArrayList<OpGeneric>();
+	private final List<OpGeneric> addedOperations = new ArrayList<OpGeneric>();
 	
 	/**
 	 * The required header for ruby method calls.

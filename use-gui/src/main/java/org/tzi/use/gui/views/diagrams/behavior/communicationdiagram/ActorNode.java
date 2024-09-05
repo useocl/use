@@ -40,7 +40,7 @@ public class ActorNode extends PlaceableNode {
 	private static final int MARGIN = 5;
 	private final DiagramOptions fOpt;
 
-	private Actor user;
+	private final Actor user;
 	private boolean isAlwaysVisible;
 
 	public ActorNode(Actor user) {

@@ -180,7 +180,7 @@ public abstract class Lifeline implements Selectable {
 	 */
 	protected SDProperties fProperties;
 
-	private OBProperties fObProperties;
+	private final OBProperties fObProperties;
 
 	public SDProperties getSequenceDiagramProperties() {
 		return fProperties;
@@ -836,7 +836,7 @@ public abstract class Lifeline implements Selectable {
 		/**
 		 * The name of the object which belongs to the object box.
 		 */
-		private String fName;
+		private final String fName;
 
 		/**
 		 * Constructs a new object box.
@@ -1113,12 +1113,12 @@ public abstract class Lifeline implements Selectable {
 		/**
 		 * The y-value on which the frame begins.
 		 */
-		private int fYValue;
+		private final int fYValue;
 
 		/**
 		 * The height of the frame.
 		 */
-		private int fHeight;
+		private final int fHeight;
 
 		/**
 		 * Constructs a new Frame.

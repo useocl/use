@@ -20,7 +20,7 @@ import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
 
 public class PluginShellCmdFactory {
 
-	private static PluginShellCmdFactory instance = new PluginShellCmdFactory();
+	private static final PluginShellCmdFactory instance = new PluginShellCmdFactory();
 
 	/**
 	 * Method returning the Singleton instance of the PluginShellCmdFactory

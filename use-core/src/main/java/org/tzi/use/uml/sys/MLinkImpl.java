@@ -59,7 +59,7 @@ class MLinkImpl implements MLink {
     private final int hashCode;
 
     
-    private List<List<Value>> qualifierValues;
+    private final List<List<Value>> qualifierValues;
     
     /**
      * Creates a new link for the given association.

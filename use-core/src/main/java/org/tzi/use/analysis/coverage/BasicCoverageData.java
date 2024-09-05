@@ -31,10 +31,10 @@ import org.tzi.use.uml.mm.*;
  *
  */
 public class BasicCoverageData {
-	private Set<MClassifier> coveredClasses = new HashSet<MClassifier>();
-	private Set<MAttribute> coveredAttributes = new HashSet<MAttribute>();
-	private Set<MOperation> coveredOperations = new HashSet<MOperation>();
-	private Set<MAssociation> coveredAssociations = new HashSet<MAssociation>();
+	private final Set<MClassifier> coveredClasses = new HashSet<MClassifier>();
+	private final Set<MAttribute> coveredAttributes = new HashSet<MAttribute>();
+	private final Set<MOperation> coveredOperations = new HashSet<MOperation>();
+	private final Set<MAssociation> coveredAssociations = new HashSet<MAssociation>();
 	/**
 	 * @return the coveredClasses
 	 */

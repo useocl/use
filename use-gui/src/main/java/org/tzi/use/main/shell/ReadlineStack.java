@@ -36,7 +36,7 @@ public class ReadlineStack {
     /**
      * Stack of input methods for reading user input.
      */
-    private Stack<Readline> fReadlineStack;
+    private final Stack<Readline> fReadlineStack;
 
     public ReadlineStack() {
         fReadlineStack = new Stack<Readline>();

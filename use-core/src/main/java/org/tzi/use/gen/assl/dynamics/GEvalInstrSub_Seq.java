@@ -37,7 +37,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Joern Bohling
  */
 public class GEvalInstrSub_Seq extends GEvalInstruction implements IGCaller {
-    private GInstrSub_Seq fInstr;
+    private final GInstrSub_Seq fInstr;
     private IGCaller fCaller;
 
     public GEvalInstrSub_Seq(GInstrSub_Seq instr ) {

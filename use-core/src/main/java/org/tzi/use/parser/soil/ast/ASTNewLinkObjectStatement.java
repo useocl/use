@@ -43,17 +43,17 @@ import java.util.List;
  */
 public class ASTNewLinkObjectStatement extends ASTStatement {
 	
-	private ASTSimpleType fAssociationClassName;
+	private final ASTSimpleType fAssociationClassName;
 	
-	private List<ASTRValue> fParticipants;
+	private final List<ASTRValue> fParticipants;
 	
 	/** Expression to retrieve the new object name from can be <code>null</code> */
-	private ASTExpression fLinkObjectName;
+	private final ASTExpression fLinkObjectName;
 	
 	/**
 	 * The List of the provided qualifiers
 	 */
-	private List<List<ASTRValue>> qualifierValues;
+	private final List<List<ASTRValue>> qualifierValues;
 	
 	
 	/**

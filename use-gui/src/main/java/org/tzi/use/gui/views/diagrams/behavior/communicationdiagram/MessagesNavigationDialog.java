@@ -48,16 +48,16 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class MessagesNavigationDialog extends JDialog {
-	private CommunicationDiagram communicationDiagram;
-	private BlinkingThread blinker;
+	private final CommunicationDiagram communicationDiagram;
+	private final BlinkingThread blinker;
 
-	private JButton closeButton;
-	private JButton nextButton;
-	private JButton previousButton;
-	private JLabel sequenceNumberLabel;
+	private final JButton closeButton;
+	private final JButton nextButton;
+	private final JButton previousButton;
+	private final JLabel sequenceNumberLabel;
 	private JComboBox<MMessage> messagesBox;
 	private DefaultComboBoxModel<MMessage> model;
-	private JComponent contentPanel;
+	private final JComponent contentPanel;
 
 	public MessagesNavigationDialog(CommunicationDiagram diagram) {
 		this.communicationDiagram = diagram;

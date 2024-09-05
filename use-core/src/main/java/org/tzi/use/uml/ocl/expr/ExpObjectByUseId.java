@@ -36,9 +36,9 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author  Lars Hamann
  */
 public final class ExpObjectByUseId extends Expression {
-    private MClass sourceType;
+    private final MClass sourceType;
     
-    private Expression idExpr;
+    private final Expression idExpr;
     
     public ExpObjectByUseId(MClass sourceType, Expression idExpr)
         throws ExpInvalidException

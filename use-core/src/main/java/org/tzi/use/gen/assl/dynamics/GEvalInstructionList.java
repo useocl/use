@@ -36,7 +36,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import java.util.ListIterator;
 
 public class GEvalInstructionList extends GEvalInstruction implements IGCaller {
-    private GInstructionList fInstr;
+    private final GInstructionList fInstr;
     private IGCaller fCaller;
     private ListIterator<GInstruction> fIterator;
 

@@ -40,7 +40,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 
 public class ASTGIfThenElse extends ASTGInstruction {
-    private Token fname;
+    private final Token fname;
     ASTGocl fCondition;
     List<ASTGInstruction> fThenInstructions;
     List<ASTGInstruction> fElseInstructions;

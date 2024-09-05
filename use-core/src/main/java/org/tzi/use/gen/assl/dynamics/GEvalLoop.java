@@ -35,7 +35,7 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Joern Bohling
  */
 public class GEvalLoop extends GEvalInstruction implements IGCaller {
-    private GLoop fInstr;
+    private final GLoop fInstr;
     private IGCaller fCaller;
     private ListIterator<Value> fSeqIterator;
 

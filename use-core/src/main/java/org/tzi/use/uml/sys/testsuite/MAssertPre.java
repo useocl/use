@@ -17,9 +17,9 @@ import org.tzi.use.util.soil.VariableEnvironment;
 
 public class MAssertPre extends MAssert {
 
-	private Expression objectExpr;
-	private MOperation operation;
-	private Expression[] args;
+	private final Expression objectExpr;
+	private final MOperation operation;
+	private final Expression[] args;
 	private MPrePostCondition singleCondition;
 	
 	public MAssertPre(SrcPos position, String expressionString, String message,

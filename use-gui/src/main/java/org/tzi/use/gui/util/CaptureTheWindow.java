@@ -225,7 +225,7 @@ public class CaptureTheWindow extends Thread {
             int topWidth = 0;
             int topHeight = fm.getHeight();
             Pattern p = Pattern.compile("\n");
-            String s[] = p.split(text);
+            String[] s = p.split(text);
             for (int i = 0; i < s.length; i++) {
                 // if the current string is wider
                 if (topWidth < fm.stringWidth(s[i]))

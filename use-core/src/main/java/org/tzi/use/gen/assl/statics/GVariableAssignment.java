@@ -32,7 +32,7 @@ import org.tzi.use.gen.assl.dynamics.GEvalVariableAssignment;
  * @author  Joern Bohling
  */
 public class GVariableAssignment extends GAssignment {
-    private String fTarget;
+    private final String fTarget;
 
     public GVariableAssignment(String target, GValueInstruction sourceInstr) {
         super(sourceInstr);

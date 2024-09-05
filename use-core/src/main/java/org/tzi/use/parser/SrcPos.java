@@ -27,9 +27,9 @@ import org.antlr.runtime.Token;
  * @author  Mark Richters
  */
 public class SrcPos {
-    private String fSrcName;
-    private int fLine;
-    private int fColumn;
+    private final String fSrcName;
+    private final int fLine;
+    private final int fColumn;
 
     public SrcPos(String srcName, int line, int column) {
         fSrcName = srcName;

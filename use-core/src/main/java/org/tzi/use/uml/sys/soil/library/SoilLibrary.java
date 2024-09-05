@@ -57,7 +57,7 @@ public class SoilLibrary {
 	}
 	
 	/** Operation can have different signatures, therefore a multimap is used. **/ 
-	private Multimap<String, LibraryOperation> operations = ArrayListMultimap.create();
+	private final Multimap<String, LibraryOperation> operations = ArrayListMultimap.create();
 	
 	private SoilLibrary() {}
 	

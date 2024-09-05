@@ -41,10 +41,10 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import java.util.List;
 
 public class ASTGProcedure extends AST {
-    private Token fName;
-    private List<ASTVariableDeclaration> fParameterDecls;
-    private List<ASTVariableDeclaration> fLocalDecls;
-    private List<ASTGInstruction> fInstructions;
+    private final Token fName;
+    private final List<ASTVariableDeclaration> fParameterDecls;
+    private final List<ASTVariableDeclaration> fLocalDecls;
+    private final List<ASTGInstruction> fInstructions;
     private GProcedure proc;
     
     public ASTGProcedure (

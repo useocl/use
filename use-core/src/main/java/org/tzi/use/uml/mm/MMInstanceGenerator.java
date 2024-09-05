@@ -40,7 +40,7 @@ import org.tzi.use.util.StringUtil;
  */
 public class MMInstanceGenerator implements MMVisitor {
     protected PrintWriter fOut;
-    private Set<Type> fDataTypes;
+    private final Set<Type> fDataTypes;
     private boolean fPass1;
     private String fModelId;
 

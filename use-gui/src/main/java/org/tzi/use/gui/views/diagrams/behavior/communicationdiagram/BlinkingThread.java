@@ -25,10 +25,10 @@ package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
  *
  */
 public class BlinkingThread implements Runnable {
-	private volatile CommunicationDiagram communicationDiagram;
+	private final CommunicationDiagram communicationDiagram;
     private Thread thread;
-    private long onTime = 2000;
-    private long offTime = 700;
+    private final long onTime = 2000;
+    private final long offTime = 700;
  
     public BlinkingThread(CommunicationDiagram comDia) {
         communicationDiagram = comDia;

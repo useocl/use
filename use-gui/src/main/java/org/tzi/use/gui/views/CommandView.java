@@ -44,9 +44,9 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class CommandView extends JPanel implements View {
-    private MSystem fSystem;
-    private JList<String> fList;
-    private DefaultListModel<String> fListModel;
+    private final MSystem fSystem;
+    private final JList<String> fList;
+    private final DefaultListModel<String> fListModel;
 
     public CommandView(MSystem system) {
         fSystem = system;

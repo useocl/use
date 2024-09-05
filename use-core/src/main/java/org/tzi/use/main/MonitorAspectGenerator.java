@@ -42,9 +42,9 @@ public class MonitorAspectGenerator {
 //    private static final String INDENT3 = INDENT2 + INDENT;
 //    private static final String NL = Options.LINE_SEPARATOR;
 
-    private MModel fModel;
+    private final MModel fModel;
 //    private PrintWriter fErr;
-    private PrintWriter fOut;
+    private final PrintWriter fOut;
 
     private static final String FILE_HEADER = 
         "@FILE_HEADER@";

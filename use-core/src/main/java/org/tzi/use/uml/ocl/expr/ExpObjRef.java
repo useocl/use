@@ -30,7 +30,7 @@ import org.tzi.use.uml.sys.MObject;
  */
 public class ExpObjRef extends Expression {
 	/** The object */
-	private MObject fObject;
+	private final MObject fObject;
 	
 	
 	/**

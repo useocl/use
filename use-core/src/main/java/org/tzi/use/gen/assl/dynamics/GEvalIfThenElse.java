@@ -35,7 +35,7 @@ import org.tzi.use.uml.ocl.value.Value;
  */
 public class GEvalIfThenElse extends GEvalInstruction
     implements IGCaller {
-    private GIfThenElse fInstr;
+    private final GIfThenElse fInstr;
     private IGCaller fCaller;
 
     public GEvalIfThenElse(GIfThenElse instr) {

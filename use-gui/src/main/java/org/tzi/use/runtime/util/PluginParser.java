@@ -34,7 +34,7 @@ public class PluginParser extends DefaultHandler implements
 
 	private final SAXParserFactory factory = SAXParserFactory.newInstance();
 
-	public void characters(char buf[], int offset, int len) throws SAXException {
+	public void characters(char[] buf, int offset, int len) throws SAXException {
 		Log.debug("PluginParser: Touching characters.");
 		String s = new String(buf, offset, len);
 		Log.debug(s);

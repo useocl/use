@@ -52,10 +52,10 @@ import org.tzi.use.uml.ocl.type.Type.VoidHandling;
  * @author  Lars Hamann
  */
 public class ASTTypeArgExpression extends ASTExpression {
-    private Token fOpToken;
-    private ASTExpression fSourceExpr; // may be null
-    private ASTType fTargetType;
-    private boolean fFollowsArrow;
+    private final Token fOpToken;
+    private final ASTExpression fSourceExpr; // may be null
+    private final ASTType fTargetType;
+    private final boolean fFollowsArrow;
 
     public ASTTypeArgExpression(Token opToken, 
                                 ASTExpression source, 

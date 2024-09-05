@@ -80,7 +80,7 @@ public class VarBindings implements Iterable<VarBindings.Entry> {
         }
     }
     
-    private List<Entry> fBindings;
+    private final List<Entry> fBindings;
 
     private MSystemState fVisibleState;
     

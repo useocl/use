@@ -45,7 +45,7 @@ public abstract class BaseNode extends PlaceableNode {
 
 	private final DiagramOptions fOpt;
 	private final CommunicationDiagramView comDiaView;
-	private DiagramOptionChangedListener fOptChaneListener;
+	private final DiagramOptionChangedListener fOptChaneListener;
 
 	protected String label;
 
@@ -54,7 +54,7 @@ public abstract class BaseNode extends PlaceableNode {
 	private ObjectState originalLifeState = ObjectState.NEW;
 	private ObjectState currentLifeState = ObjectState.NEW;
 
-	private Rectangle2D.Double nameRect = new Rectangle2D.Double();
+	private final Rectangle2D.Double nameRect = new Rectangle2D.Double();
 
 	public BaseNode(CommunicationDiagramView parent, DiagramOptions opt) {
 		comDiaView = parent;

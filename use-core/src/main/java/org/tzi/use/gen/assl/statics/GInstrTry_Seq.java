@@ -37,7 +37,7 @@ public class GInstrTry_Seq extends GInstrTry implements GValueInstruction {
 
     // Try( Sequence(T) ): T
 
-    private GValueInstruction fSequenceInstr;
+    private final GValueInstruction fSequenceInstr;
 
     public GInstrTry_Seq( GValueInstruction instr ) {
         fSequenceInstr = instr;

@@ -37,7 +37,7 @@ import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 public class LinkDeletedEvent extends Event implements SystemStructureChangedEvent {
 	
 	/** The deleted link */
-	private MLink fLink;
+	private final MLink fLink;
 
 	/**
 	 * Constructs a new LinkDeleteEvent. 

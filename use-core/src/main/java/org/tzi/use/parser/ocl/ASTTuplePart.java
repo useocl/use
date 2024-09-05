@@ -28,8 +28,8 @@ import org.tzi.use.parser.AST;
  * @author  Mark Richters
  */
 public class ASTTuplePart extends AST {
-    private Token fName;
-    private ASTType fType;
+    private final Token fName;
+    private final ASTType fType;
 
     public ASTTuplePart(Token name, ASTType type) {
         fName = name;

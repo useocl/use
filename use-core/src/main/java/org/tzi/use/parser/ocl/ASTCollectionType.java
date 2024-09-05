@@ -31,8 +31,8 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author  Mark Richters
  */
 public class ASTCollectionType extends ASTType {
-    private Token fName;
-    private ASTType fElement;
+    private final Token fName;
+    private final ASTType fElement;
 
     /**
      * Constructs a nested type. The type constructor is given as

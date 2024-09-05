@@ -31,16 +31,16 @@ package org.tzi.use.gen.tool;
  * @author  Joern Bohling
  */
 public class GResult {
-    private GCollectorImpl fCollector;
+    private final GCollectorImpl fCollector;
     
-    private GChecker fChecker;
+    private final GChecker fChecker;
     
-    private long fRandomNr;
+    private final long fRandomNr;
     
     /**
      * How long did it take to calculate the result?
      */
-    private long duration;
+    private final long duration;
     
     public GResult(GCollectorImpl collector, GChecker checker, long r, long duration) {
         fCollector = collector;

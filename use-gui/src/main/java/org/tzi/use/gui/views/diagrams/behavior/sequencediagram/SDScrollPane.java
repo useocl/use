@@ -33,7 +33,7 @@ public class SDScrollPane extends JScrollPane {
 	/**
 	 * The SequenceDiagramView which should be scrolled by this ScrollPane.
 	 */
-	private SequenceDiagramView sequenceDiagramView;
+	private final SequenceDiagramView sequenceDiagramView;
 
 	/**
 	 * Constructs a new SDScrollPane object.

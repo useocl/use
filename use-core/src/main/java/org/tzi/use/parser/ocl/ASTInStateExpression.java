@@ -41,10 +41,10 @@ import java.util.Set;
  *
  */
 public class ASTInStateExpression extends ASTExpression {
-	private Token fOpToken;
-    private ASTExpression fSourceExpr; // may be null
-    private Token fStateIdentifier;
-    private boolean fFollowsArrow;
+	private final Token fOpToken;
+    private final ASTExpression fSourceExpr; // may be null
+    private final Token fStateIdentifier;
+    private final boolean fFollowsArrow;
 
     public ASTInStateExpression(Token opToken, 
                                 ASTExpression source, 

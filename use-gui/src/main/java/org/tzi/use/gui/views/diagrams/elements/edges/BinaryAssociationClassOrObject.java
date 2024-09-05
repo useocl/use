@@ -57,7 +57,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
      * The PlaceableNode of instance ClassNode or ObjectNode displaying 
      * the class part of the association class / object link.
      */
-    private PlaceableNode fAssociationClassOrObjectNode; 
+    private final PlaceableNode fAssociationClassOrObjectNode;
     
     private SimpleEdge associationClassEdge;
     

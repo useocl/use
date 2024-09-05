@@ -33,7 +33,7 @@ public class CompilationFailedException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
 	/** The source position, if any of the failed statement **/
-	private SrcPos sourcePosition;
+	private final SrcPos sourcePosition;
 	
 	/**
 	 * Constructs a new exception using the AST of the statement failed to be compiled and a message.

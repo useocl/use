@@ -40,7 +40,7 @@ final class Op_oclIsNew extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfClass())
 			return TypeFactory.mkBoolean();
 		else
@@ -76,7 +76,7 @@ final class Op_useToId extends OpGeneric {
 		return false;
 	}
 
-	public Type matches(Type params[]) {
+	public Type matches(Type[] params) {
 		if (params.length == 1 && params[0].isTypeOfClass())
 			return TypeFactory.mkString();
 		else

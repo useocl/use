@@ -57,17 +57,17 @@ public class MOperationCall {
 	/** The "self-pointer" for this operation call, i. e., 
 	 *  the receiver of the message
 	 */
-	private MInstance fSelf;
+	private final MInstance fSelf;
 	
 	/**
 	 * The called operation
 	 */
-	private MOperation fOperation;
+	private final MOperation fOperation;
 	
 	/** 
 	 * The arguments of the operation all
 	 */
-	private Value[] fArguments;
+	private final Value[] fArguments;
 	
 	/** 
 	 * Reference to the system state before the operation was called.

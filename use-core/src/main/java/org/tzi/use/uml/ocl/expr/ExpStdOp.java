@@ -76,7 +76,7 @@ public final class ExpStdOp extends Expression {
     /**
      * Returns true if a standard operation exists matching <code>name</code> and <code>params</code>.
      */
-    public static boolean exists(String name, Type params[]) {
+    public static boolean exists(String name, Type[] params) {
         if (params.length == 0)
             throw new IllegalArgumentException(
                     "ExpStdOp.exists called with empty params array");
@@ -101,7 +101,7 @@ public final class ExpStdOp extends Expression {
      *
      * @throws ExpInvalidException cannot find a match for operation
      */
-    public static ExpStdOp create(String name, Expression args[])
+    public static ExpStdOp create(String name, Expression[] args)
             throws ExpInvalidException {
         if (args.length == 0)
             throw new IllegalArgumentException(
@@ -203,7 +203,7 @@ public final class ExpStdOp extends Expression {
 		}
 	}
 
-	private static String opCallSignature(String name, Expression args[]) {
+	private static String opCallSignature(String name, Expression[] args) {
         // build error message with type names of arguments
         Type srcType = args[0].type();
         StringBuffer s = new StringBuffer(srcType
@@ -218,11 +218,11 @@ public final class ExpStdOp extends Expression {
     }
 
     // instance variables
-    private OpGeneric fOp;
+    private final OpGeneric fOp;
 
-    private Expression fArgs[];
+    private final Expression[] fArgs;
 
-    private ExpStdOp(OpGeneric op, Expression args[], Type t) {
+    private ExpStdOp(OpGeneric op, Expression[] args, Type t) {
         super(t);
         fOp = op;
         fArgs = args;
@@ -278,7 +278,7 @@ public final class ExpStdOp extends Expression {
         if (getOperation().isBooleanOperation()) {
             res = ((BooleanOperation) getOperation()).evalWithArgs(ctx, fArgs);
         } else {
-            final Value argValues[] = new Value[fArgs.length];
+            final Value[] argValues = new Value[fArgs.length];
             final int opKind = getOperation().kind();
             
             Value v;

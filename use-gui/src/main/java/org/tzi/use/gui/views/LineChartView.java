@@ -29,15 +29,15 @@ import java.awt.*;
  */
 @SuppressWarnings("serial")
 public class LineChartView extends JPanel {
-    private int[][] fValues;    // y-values
-    private int fRangeX;    // max. number of samples on x-axis
-    private int fNumLines;  // number of lines drawn
-    private Color[] fColors;    // color of each line
+    private final int[][] fValues;    // y-values
+    private final int fRangeX;    // max. number of samples on x-axis
+    private final int fNumLines;  // number of lines drawn
+    private final Color[] fColors;    // color of each line
     private int fRangeCurrentX; // 0 <= fCurrentX < fMaxX 
     private int fMaxY = 0;  // max. y value of all samples
     private int fTopY = 10; // fMaxY <= fTopY
     
-    private Font fFont;
+    private final Font fFont;
 
     /**
      * Creates a LineChartView.

@@ -37,7 +37,7 @@ public class GInstrCreate_C implements GValueInstruction {
 
     // Create( Class C ): C
 
-    private MClass fClass;
+    private final MClass fClass;
 
     public GInstrCreate_C( MClass cls ) {
         fClass = cls;

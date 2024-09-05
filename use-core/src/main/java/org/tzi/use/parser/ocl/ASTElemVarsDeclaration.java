@@ -39,8 +39,8 @@ import java.util.*;
  * @author  Mark Richters
  */
 public class ASTElemVarsDeclaration extends AST {
-    private List<Token> fIdList;
-    private List<ASTType> fTypeList;
+    private final List<Token> fIdList;
+    private final List<ASTType> fTypeList;
 
     public ASTElemVarsDeclaration() {
         fIdList = new ArrayList<Token>();

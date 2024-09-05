@@ -76,7 +76,7 @@ public abstract class DiagramOptions {
     
     public abstract void setShowMutliplicities( boolean showMutliplicities );
 
-    private List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
+    private final List<DiagramOptionChangedListener> optionChangedListener = new ArrayList<DiagramOptionChangedListener>();
     
     public DiagramOptions() {
     	registerColors();

@@ -20,7 +20,7 @@ import org.tzi.use.runtime.util.ActionRegistry;
  */
 public class ActionExtensionPoint implements IPluginActionExtensionPoint {
 
-	private static ActionExtensionPoint instance = new ActionExtensionPoint();
+	private static final ActionExtensionPoint instance = new ActionExtensionPoint();
 
 	/**
 	 * Method returning the Singleton instance of the ActionExtensionPoint

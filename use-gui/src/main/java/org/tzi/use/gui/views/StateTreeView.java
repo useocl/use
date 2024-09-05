@@ -45,7 +45,7 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class StateTreeView extends JTree implements View {
-    private MSystem fSystem;
+    private final MSystem fSystem;
 
     public StateTreeView(MSystem system) {
         fSystem = system;

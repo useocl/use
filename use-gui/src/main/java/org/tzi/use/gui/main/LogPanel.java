@@ -30,8 +30,8 @@ import javax.swing.*;
  */
 @SuppressWarnings("serial")
 class LogPanel extends JPanel {
-    private JTextArea fTextLog;
-    private JPopupMenu fPopupMenu; // context menu on right mouse click
+    private final JTextArea fTextLog;
+    private final JPopupMenu fPopupMenu; // context menu on right mouse click
 
     public LogPanel() {
         setLayout(new BorderLayout());

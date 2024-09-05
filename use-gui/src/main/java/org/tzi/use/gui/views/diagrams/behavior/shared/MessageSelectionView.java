@@ -50,18 +50,19 @@ public class MessageSelectionView  extends JDialog implements ActionListener {
     /**
      * The container for this Window.
      */
-    private Container contentContainer;
+    private final Container contentContainer;
 
-    private JComboBox<String> messageDepthComboBox;
+    private final JComboBox<String> messageDepthComboBox;
 
-    private MessageSelectionDelegate delegate;
+    private final MessageSelectionDelegate delegate;
 
     private boolean withDepth = false;
 
     /**
      * The from/tillComboBox
      */
-    private JComboBox<String> tillComboBox, fromComboBox;
+    private final JComboBox<String> tillComboBox;
+    private final JComboBox<String> fromComboBox;
 
     public MessageSelectionView(MessageSelectionDelegate delegate, boolean withDepth) {
         setTitle("Choose the area of Messages");

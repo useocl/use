@@ -43,7 +43,7 @@ import org.tzi.use.uml.ocl.type.Type;
  */
 public class VariableSet {
 	/** maps variable names to the set of their types */
-	private Map<String, Set<Type>> fEntries = 
+	private final Map<String, Set<Type>> fEntries =
 		new HashMap<String, Set<Type>>();
 	
 	

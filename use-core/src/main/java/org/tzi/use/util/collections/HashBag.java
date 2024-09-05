@@ -40,7 +40,7 @@ public class HashBag<T> extends AbstractBag<T> {
         }
     }
 
-    private transient HashMap<T, MutableInteger> fMap;
+    private final transient HashMap<T, MutableInteger> fMap;
     private transient int fSizeAll;
 
     /**
@@ -179,8 +179,8 @@ public class HashBag<T> extends AbstractBag<T> {
      * HashBag Iterator.
      */
     private class AllElementsIterator implements Iterator<T> {
-        private Bag<T> fBag;
-        private Iterator<T> fKeyIterator;
+        private final Bag<T> fBag;
+        private final Iterator<T> fKeyIterator;
         private int fElemsLeft;
         private T fElem;
 

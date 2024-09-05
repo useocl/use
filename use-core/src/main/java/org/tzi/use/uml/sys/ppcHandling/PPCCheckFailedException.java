@@ -30,7 +30,7 @@ import org.tzi.use.uml.sys.MOperationCall;
 public abstract class PPCCheckFailedException extends Exception {
 	private static final long serialVersionUID = 1L;
 	/** The operation call which failed. */
-	private MOperationCall fOperationCall;
+	private final MOperationCall fOperationCall;
 	
 	/**
 	 * Constructor with all needed information. 

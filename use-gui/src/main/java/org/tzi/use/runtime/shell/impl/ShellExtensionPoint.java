@@ -22,7 +22,7 @@ import org.tzi.use.util.Log;
  */
 public class ShellExtensionPoint implements IPluginShellExtensionPoint {
 
-	private static ShellExtensionPoint instance = new ShellExtensionPoint();
+	private static final ShellExtensionPoint instance = new ShellExtensionPoint();
 
 	/**
 	 * Method returning the Singleton instance of the ShellExtensionPoint

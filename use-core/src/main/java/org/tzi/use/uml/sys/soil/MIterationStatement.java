@@ -33,11 +33,11 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MIterationStatement extends MStatement {
 	/** The name of the iteration variable */
-	private String fVariableName;
+	private final String fVariableName;
 	/** The range expression of the iteration (the iteration source) */
-	private Expression fRange;
+	private final Expression fRange;
 	/** The body of the iteration */
-	private MStatement fBody;
+	private final MStatement fBody;
 	
 	/**
 	 * Constructs a new iteration statement.

@@ -28,7 +28,7 @@ import org.tzi.use.graph.*;
 
 
 public class Layout {
-    private DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> fGraph;
+    private final DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> fGraph;
 
     Layout(DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> g) {
         fGraph = g;

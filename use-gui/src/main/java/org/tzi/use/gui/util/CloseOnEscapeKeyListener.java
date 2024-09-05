@@ -33,7 +33,7 @@ import java.awt.event.KeyEvent;
  * @author Frank Hilken 
  */
 public class CloseOnEscapeKeyListener extends KeyAdapter implements KeyEventDispatcher {
-    private Window fComp;
+    private final Window fComp;
 
     public CloseOnEscapeKeyListener(Window comp) {
         fComp = comp;

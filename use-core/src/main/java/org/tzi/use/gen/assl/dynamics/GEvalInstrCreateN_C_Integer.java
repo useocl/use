@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     implements IGCaller {
-    private GInstrCreateN_C_Integer fInstr;
+    private final GInstrCreateN_C_Integer fInstr;
     private IGCaller fCaller;
 
     public GEvalInstrCreateN_C_Integer(GInstrCreateN_C_Integer instr ) {

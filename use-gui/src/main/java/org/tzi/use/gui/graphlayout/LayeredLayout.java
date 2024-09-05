@@ -40,10 +40,10 @@ import org.tzi.use.graph.DirectedGraphBase;
 public class LayeredLayout<N, E extends DirectedEdge<N>> {
     private static final boolean DO_TIMING = true;
 
-    private DirectedGraph<N, E> fInGraph;
-    private DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> fOutGraph;
-    private HashMap<N, LayoutNode> fObjectToNode; // (Object -> LabeledNode)
-    private List<LayoutNode> fSinks;    // (LabeledNode)
+    private final DirectedGraph<N, E> fInGraph;
+    private final DirectedGraph<LayoutNode, DirectedEdge<LayoutNode>> fOutGraph;
+    private final HashMap<N, LayoutNode> fObjectToNode; // (Object -> LabeledNode)
+    private final List<LayoutNode> fSinks;    // (LabeledNode)
     private int fHeight;    // the number of layers
 
     public LayeredLayout(DirectedGraph<N, E> g) {

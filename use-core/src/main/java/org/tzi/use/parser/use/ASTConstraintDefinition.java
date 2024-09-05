@@ -39,9 +39,9 @@ import org.tzi.use.uml.ocl.type.Type;
  * @author  Mark Richters
  */
 public class ASTConstraintDefinition extends AST {
-    private List<Token> fVarNames;   // optional
+    private final List<Token> fVarNames;   // optional
     private ASTType fType;
-    private ArrayList<ASTInvariantClause> fInvariantClauses;
+    private final ArrayList<ASTInvariantClause> fInvariantClauses;
 
     public ASTConstraintDefinition() {
     	fVarNames = new ArrayList<Token>();

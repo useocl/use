@@ -41,13 +41,13 @@ import com.google.common.collect.Maps;
  */
 class MAssociationImpl extends MClassifierImpl implements MAssociation {
     
-	private List<MAssociationEnd> fAssociationEnds;
+	private final List<MAssociationEnd> fAssociationEnds;
     
-    private Set<MAssociation> subsets = new HashSet<MAssociation>();
-    private Set<MAssociation> subsettedBy = new HashSet<MAssociation>();
+    private final Set<MAssociation> subsets = new HashSet<MAssociation>();
+    private final Set<MAssociation> subsettedBy = new HashSet<MAssociation>();
     
-    private Set<MAssociation> redefines = new HashSet<MAssociation>();
-    private Set<MAssociation> redefinedBy = new HashSet<MAssociation>();
+    private final Set<MAssociation> redefines = new HashSet<MAssociation>();
+    private final Set<MAssociation> redefinedBy = new HashSet<MAssociation>();
     
     private boolean isUnion;
     

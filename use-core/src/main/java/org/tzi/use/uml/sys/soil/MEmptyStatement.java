@@ -30,7 +30,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MEmptyStatement extends MStatement {
 	/** The single instance of this class (no state) */
-	private static MEmptyStatement INSTANCE = new MEmptyStatement();
+	private static final MEmptyStatement INSTANCE = new MEmptyStatement();
 
 	private MEmptyStatement() { }
 	

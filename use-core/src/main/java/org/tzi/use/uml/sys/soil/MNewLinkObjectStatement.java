@@ -46,16 +46,16 @@ public class MNewLinkObjectStatement extends MStatement {
 	/**
 	 * The association class a link object has to be created for.  
 	 */
-	private MAssociationClass fAssociationClass;
+	private final MAssociationClass fAssociationClass;
 	/**
      * List of the objects that participate in the link in the same order as
      * association ends.
 	 */
-	private List<MRValue> fParticipants;
+	private final List<MRValue> fParticipants;
 	/**
 	 * List of the qualifier values for the association ends. 
 	 */
-	private List<List<MRValue>> qualifier;
+	private final List<List<MRValue>> qualifier;
 	/**
      * An optional expression which is used to construct the object name /
      * identifier.

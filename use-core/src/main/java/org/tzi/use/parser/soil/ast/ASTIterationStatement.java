@@ -42,11 +42,11 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTIterationStatement extends ASTStatement {
 	
-	private String fIterVarName;
+	private final String fIterVarName;
 	
-	private ASTExpression fRange;
+	private final ASTExpression fRange;
 	
-	private ASTStatement fBody;
+	private final ASTStatement fBody;
 	
 	
 	/**

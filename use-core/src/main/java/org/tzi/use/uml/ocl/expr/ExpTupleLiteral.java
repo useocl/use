@@ -37,11 +37,11 @@ import org.tzi.use.util.StringUtil;
  * @author  Lars Hamann  
  */
 public final class ExpTupleLiteral extends Expression {
-    private Part[] fParts;
+    private final Part[] fParts;
 
     public static class Part implements BufferedToString {
-        private String fName;
-        private Expression fExpr;
+        private final String fName;
+        private final Expression fExpr;
         // Maybe a type was given by the user
         private Type givenType = null;
         

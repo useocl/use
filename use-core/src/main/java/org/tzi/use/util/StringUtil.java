@@ -171,7 +171,7 @@ public final class StringUtil {
      * 
      * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], int, String)
      */
-    public static void fmtSeq(StringBuilder target, Object objarr[], int beginIndex, String divider) {
+    public static void fmtSeq(StringBuilder target, Object[] objarr, int beginIndex, String divider) {
     	if (objarr != null ) {
             boolean first = true;
             for (int i = beginIndex; i < objarr.length; i++) {
@@ -205,7 +205,7 @@ public final class StringUtil {
      * 
      * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], String)
      */
-    public static void fmtSeq(StringBuilder target, Object objarr[], String divider) {
+    public static void fmtSeq(StringBuilder target, Object[] objarr, String divider) {
         fmtSeq(target, objarr, 0, divider);
     }
     
@@ -314,7 +314,7 @@ public final class StringUtil {
      * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], int, String)
      * @see #fmtSeq(StringBuilder, Object[], int, String)
      */
-    public static String fmtSeq(Object objarr[], 
+    public static String fmtSeq(Object[] objarr,
                                 int beginIndex, String divider) {
         StringBuilder resString = new StringBuilder();
         fmtSeq(resString, objarr, beginIndex, divider);        
@@ -339,7 +339,7 @@ public final class StringUtil {
      * @see #fmtSeqBuffered(StringBuilder, BufferedToString[], String)
      * @see #fmtSeq(StringBuilder, Object[], String)
      */
-    public static String fmtSeq(Object objarr[], String divider) {
+    public static String fmtSeq(Object[] objarr, String divider) {
         return fmtSeq(objarr, 0, divider);
     }
 

@@ -41,8 +41,8 @@ import org.tzi.use.uml.ocl.type.Type;
 
 public class ASTGAttributeAssignment extends ASTGInstruction {
     ASTGocl fTargetObject;
-    private Token fAttributeName;
-    private ASTGValueInstruction fSource;
+    private final Token fAttributeName;
+    private final ASTGValueInstruction fSource;
 
     public ASTGAttributeAssignment( ASTGocl targetObject,
     								Token attributeName,

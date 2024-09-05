@@ -32,12 +32,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class VisibleData {
-    private Map<Event, Boolean> eventManagement = new ConcurrentHashMap<>();
-    private Map<MObject, Boolean> objectManagement = new ConcurrentHashMap<>();
-    private Map<MLink, Boolean> linkManagement = new ConcurrentHashMap<>();
-    private Map<Class<? extends Event>, Boolean> eventTypeManagement = new ConcurrentHashMap<>();
-    private Set<MObject> alwaysVisibleObjects = new HashSet<>();
-    private Set<MLink> alwaysVisibleLinks = new HashSet<>();
+    private final Map<Event, Boolean> eventManagement = new ConcurrentHashMap<>();
+    private final Map<MObject, Boolean> objectManagement = new ConcurrentHashMap<>();
+    private final Map<MLink, Boolean> linkManagement = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Event>, Boolean> eventTypeManagement = new ConcurrentHashMap<>();
+    private final Set<MObject> alwaysVisibleObjects = new HashSet<>();
+    private final Set<MLink> alwaysVisibleLinks = new HashSet<>();
 
 
     /**

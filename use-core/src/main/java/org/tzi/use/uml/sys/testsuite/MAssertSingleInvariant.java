@@ -11,7 +11,7 @@ import org.tzi.use.util.NullWriter;
 
 public class MAssertSingleInvariant extends MAssert {
 
-	private MClassInvariant invariant;
+	private final MClassInvariant invariant;
 	
 	public MAssertSingleInvariant(SrcPos position, String expressionString, String message, boolean shouldBeValid, MClassInvariant inv) {
 		super(position, expressionString, message, shouldBeValid);

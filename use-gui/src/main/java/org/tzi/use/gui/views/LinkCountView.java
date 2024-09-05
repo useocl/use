@@ -39,8 +39,8 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class LinkCountView extends BarChartView implements View {
-    private MSystem fSystem;
-    private MAssociation[] fAssociations;
+    private final MSystem fSystem;
+    private final MAssociation[] fAssociations;
 
     public LinkCountView(MSystem system) {
         super("Association", "# Links", Color.red);

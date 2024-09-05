@@ -63,14 +63,14 @@ public class CmdChooseWindow extends JDialog implements ActionListener {
 	 * A checkbox which contains the possible constructions (create, destroy,
 	 * set, insert, delete).
 	 */
-	private JCheckBox checkBoxes[] = new JCheckBox[5];
+	private final JCheckBox[] checkBoxes = new JCheckBox[5];
 
 	/**
 	 * The container for this Window.
 	 */
-	private Container contentContainer;
+	private final Container contentContainer;
 
-	private CmdChooseWindowDelegate delegate;
+	private final CmdChooseWindowDelegate delegate;
 
 	/**
 	 * Constructs an new CmdChooseWindow.

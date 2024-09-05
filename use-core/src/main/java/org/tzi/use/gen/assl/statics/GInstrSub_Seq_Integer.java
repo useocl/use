@@ -36,8 +36,8 @@ public class GInstrSub_Seq_Integer implements GValueInstruction {
 
     // Sub( Sequence(T), Integer ): Sequence(T)
 
-    private GValueInstruction fSequenceInstr;
-    private GValueInstruction fIntegerInstr;
+    private final GValueInstruction fSequenceInstr;
+    private final GValueInstruction fIntegerInstr;
 
     public GInstrSub_Seq_Integer( GValueInstruction sequenceInstr,
                                   GValueInstruction integerInstr) {

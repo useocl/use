@@ -38,11 +38,11 @@ public class RecentItems
     
     public final static String RECENT_ITEM_STRING = "recent.item."; //$NON-NLS-1$
     
-    private int                       m_maxItems;
-    private Preferences               m_prefNode;
+    private final int                       m_maxItems;
+    private final Preferences               m_prefNode;
 
-    private List<String>              m_items            = new ArrayList<String>();
-    private List<RecentItemsObserver> m_observers        = new ArrayList<RecentItemsObserver>();
+    private final List<String>              m_items            = new ArrayList<String>();
+    private final List<RecentItemsObserver> m_observers        = new ArrayList<RecentItemsObserver>();
     
     public RecentItems(int maxItems, Preferences prefNode)
     {

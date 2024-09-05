@@ -33,8 +33,8 @@ import org.tzi.use.uml.mm.MAttribute;
  * @author  Joern Bohling
  */
 public class GAttributeAssignment extends GAssignment {
-    private GValueInstruction fTargetObjectInstr;
-    private MAttribute fTargetAttribute;
+    private final GValueInstruction fTargetObjectInstr;
+    private final MAttribute fTargetAttribute;
 
     public GAttributeAssignment( GValueInstruction targetinstr,
                                  MAttribute targetAttribute,

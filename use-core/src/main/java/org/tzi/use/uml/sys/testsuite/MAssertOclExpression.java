@@ -7,7 +7,7 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
 
 public class MAssertOclExpression extends MAssert {
-	private Expression expression;
+	private final Expression expression;
 	
 	public MAssertOclExpression(SrcPos position, String expressionString, String message, boolean shouldBeValid, Expression expression) {
 		super(position, expressionString, message, shouldBeValid);

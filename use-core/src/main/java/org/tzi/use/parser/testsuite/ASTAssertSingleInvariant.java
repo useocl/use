@@ -10,8 +10,8 @@ import org.tzi.use.uml.sys.testsuite.MAssertSingleInvariant;
 
 public class ASTAssertSingleInvariant extends ASTAssert {
 
-	private Token className;
-	private Token invName;
+	private final Token className;
+	private final Token invName;
 	
 	public ASTAssertSingleInvariant(Token start, Token end, boolean shouldBeValid, Token className, Token invName) {
 		super(start, end, shouldBeValid);

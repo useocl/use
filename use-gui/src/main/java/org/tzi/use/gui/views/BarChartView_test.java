@@ -28,7 +28,7 @@ import javax.swing.*;
  */
 public class BarChartView_test {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         JFrame f = new JFrame("BarChartView_test");
         String[] names = { "Person", "Employee" , "Company", "ClassWithLongName",
                            "A", "B", "C" };

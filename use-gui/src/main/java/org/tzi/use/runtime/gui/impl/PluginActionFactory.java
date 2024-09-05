@@ -18,7 +18,7 @@ import org.tzi.use.runtime.model.PluginActionModel;
 
 public class PluginActionFactory {
 
-	private static PluginActionFactory instance = new PluginActionFactory();
+	private static final PluginActionFactory instance = new PluginActionFactory();
 
 	/**
 	 * Method returning the Singleton instance of the PluginActionFactory

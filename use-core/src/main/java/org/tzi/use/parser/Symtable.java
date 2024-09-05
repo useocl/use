@@ -55,7 +55,7 @@ public class Symtable {
     /**
      * The stack of scopes.
      */
-    private Stack<Map<String, Entry>> fScopes;
+    private final Stack<Map<String, Entry>> fScopes;
     
     /**
      * An optional set of externally defined global variable bindings.

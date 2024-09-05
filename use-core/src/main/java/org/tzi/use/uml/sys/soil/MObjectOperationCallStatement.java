@@ -41,13 +41,13 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MObjectOperationCallStatement extends MOperationCallStatement {
     /** Expression which leads to an object to send the operation call to. */
-	private Expression fObject;
+	private final Expression fObject;
 	
 	/** The operation to call. */
-	private MOperation fOperation;
+	private final MOperation fOperation;
 	
 	/** argument expressions */
-	private Expression[] fArguments;
+	private final Expression[] fArguments;
 	
     /**
      * Constructs a new operation call statement, to call

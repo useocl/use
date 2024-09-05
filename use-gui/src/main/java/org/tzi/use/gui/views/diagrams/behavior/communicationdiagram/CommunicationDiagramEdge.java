@@ -60,7 +60,7 @@ public class CommunicationDiagramEdge extends EdgeBase {
 	/**
 	 * All of messages belong to a edge
 	 */
-	private ArrayList<MMessage> messages;
+	private final ArrayList<MMessage> messages;
 
 	/**
 	 * Group of all messages belong to a edge
@@ -72,7 +72,7 @@ public class CommunicationDiagramEdge extends EdgeBase {
 	 */
 	private boolean isLinkEdge = false;
 
-	private CommunicationDiagram parentView;
+	private final CommunicationDiagram parentView;
 
 	public CommunicationDiagramEdge(PlaceableNode source, PlaceableNode target, CommunicationDiagram diagram, boolean completeEdgeMoveMovesUserWayPoints) {
 		super(source, target, source.name() + " - " + target.name(), diagram.getOptions(), false);

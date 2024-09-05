@@ -13,7 +13,7 @@ import org.tzi.use.util.Log;
  */
 public class ServiceRegistry {
 
-	private static ServiceRegistry instance = new ServiceRegistry();
+	private static final ServiceRegistry instance = new ServiceRegistry();
 
 	/**
 	 * Method returning the Singleton instance of the ServiceRegistry

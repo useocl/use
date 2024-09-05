@@ -36,8 +36,8 @@ import org.tzi.use.uml.ocl.value.Value;
  */
 public class ExpRange extends Expression {
 
-	private Expression startExp;
-	private Expression endExp;
+	private final Expression startExp;
+	private final Expression endExp;
 	
 	/**
 	 * @param first

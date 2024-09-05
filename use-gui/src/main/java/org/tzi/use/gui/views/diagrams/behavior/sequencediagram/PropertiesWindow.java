@@ -67,45 +67,75 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 	/**
 	 * The container for this Window.
 	 */
-	private Container fC;
+	private final Container fC;
 
 	/**
 	 * The tabbed pane for an Diagram, Objectbox, Activation and an
 	 * Lifeline-tab.
 	 */
-	private JTabbedPane fTabbedPane;
+	private final JTabbedPane fTabbedPane;
 
 	/**
 	 * The text fields for making some size-entries.
 	 */
-	private JTextField fLeftMargin, fTopMargin, fRightMargin, fBottomMargin, fManW, fManH, fAct_ManDist, fLl_Width, fLl_ManDist, stateNodeManualWidthField, stateNodeManualHeightField;
+	private final JTextField fLeftMargin;
+    private final JTextField fTopMargin;
+    private final JTextField fRightMargin;
+    private final JTextField fBottomMargin;
+    private final JTextField fManW;
+    private final JTextField fManH;
+    private final JTextField fAct_ManDist;
+    private final JTextField fLl_Width;
+    private final JTextField fLl_ManDist;
+    private final JTextField stateNodeManualWidthField;
+    private final JTextField stateNodeManualHeightField;
 
 	/**
 	 * ComboBoxes for creating some menu items.
 	 */
-	private JComboBox<String> fFontBox;
-	private JComboBox<Integer> fSizeBox;
+	private final JComboBox<String> fFontBox;
+	private final JComboBox<Integer> fSizeBox;
 
 	/**
 	 * RadioButtons for creating some menu items.
 	 */
-	private JRadioButton fWidthB1, fWidthB2, fHeightB1, fHeightB2, fLlB1, fLlB2, fLl_manDist, fLl_textLength, fLl_manLabel, fLl_individual, fObWidth_B1, fObWidth_B2,
-			fObHeight_B1, fObHeight_B2, lineBreakLabelNoBtn, lineBreakLabelYesBtn, stateNodeIndivitualBtn, stateNodeManualBtn;
+	private final JRadioButton fWidthB1;
+    private final JRadioButton fWidthB2;
+    private final JRadioButton fHeightB1;
+    private final JRadioButton fHeightB2;
+    private final JRadioButton fLlB1;
+    private final JRadioButton fLlB2;
+    private final JRadioButton fLl_manDist;
+    private final JRadioButton fLl_textLength;
+    private final JRadioButton fLl_manLabel;
+    private final JRadioButton fLl_individual;
+    private final JRadioButton fObWidth_B1;
+    private final JRadioButton fObWidth_B2;
+    private final JRadioButton fObHeight_B1;
+    private final JRadioButton fObHeight_B2;
+    private final JRadioButton lineBreakLabelNoBtn;
+    private final JRadioButton lineBreakLabelYesBtn;
+    private final JRadioButton stateNodeIndivitualBtn;
+    private final JRadioButton stateNodeManualBtn;
 
 	/**
 	 * Some caption labels.
 	 */
-	private JLabel fActLabel, stateNodeWidthLabel, stateNodeHeightLabel;
+	private final JLabel fActLabel;
+    private final JLabel stateNodeWidthLabel;
+    private final JLabel stateNodeHeightLabel;
 
 	/**
 	 * Some panels.
 	 */
-	private JPanel fDiag, fObjectBox, fLifeline;
+	private final JPanel fDiag;
+    private final JPanel fObjectBox;
+    private final JPanel fLifeline;
 
 	/**
 	 * The sequence fDiagram from which this window is called.
 	 */
-	private SequenceDiagram fSeqDiag;
+	private final SequenceDiagram fSeqDiag;
 
 	/**
 	 * Constructs a new Properties-Window.
@@ -145,7 +175,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 		GridBagLayout fontLayout = new GridBagLayout();
 		font.setLayout(fontLayout);
 		fFontBox = new JComboBox<String>();
-		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		String actFont = fSeqDiag.getProperties().getFont().getFamily();
 		for (int i = 0; i < fonts.length; i++) {
 			fFontBox.addItem(fonts[i]);
@@ -157,7 +187,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 		fFontBox.setSelectedItem(actFont);
 
 		fSizeBox = new JComboBox<Integer>();
-		int sizes[] = { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28 };
+		int[] sizes = { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28 };
 		for (int i = 0; i < sizes.length; i++) {
 			fSizeBox.addItem(Integer.valueOf(sizes[i]));
 		}

@@ -30,8 +30,8 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpTupleSelectOp extends Expression {
-    private TupleType.Part fPart;
-    private Expression fTupleExp;
+    private final TupleType.Part fPart;
+    private final Expression fTupleExp;
     
     public ExpTupleSelectOp(TupleType.Part part, Expression tupleExp) {
         super(part.type());

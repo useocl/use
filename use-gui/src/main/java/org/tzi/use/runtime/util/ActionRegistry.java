@@ -12,7 +12,7 @@ import org.tzi.use.util.Log;
  */
 public class ActionRegistry {
 
-	private static ActionRegistry instance = new ActionRegistry();
+	private static final ActionRegistry instance = new ActionRegistry();
 
 	/**
 	 * Method returning the Singleton instance of the ActionRegistry

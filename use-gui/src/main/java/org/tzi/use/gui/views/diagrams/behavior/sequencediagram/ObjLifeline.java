@@ -48,7 +48,7 @@ public class ObjLifeline extends Lifeline {
 	/**
 	 * The object of this lifeline.
 	 */
-	private MObject fObj;
+	private final MObject fObj;
 
 	/**
 	 * Costructs a new ObjLifeline-Object.

@@ -32,7 +32,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MRValueNewObject extends MRValue {
 	/** The encapsulated new object statement. */
-	private MNewObjectStatement fNewObjectStatement;
+	private final MNewObjectStatement fNewObjectStatement;
 	
 	/**
 	 * Constructs a new RValue to create a new object.  

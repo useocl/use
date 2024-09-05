@@ -42,17 +42,17 @@ public class MLinkDeletionStatement extends MStatement {
 	/**
 	 * The association to delete the link from. 
 	 */
-	private MAssociation fAssociation;
+	private final MAssociation fAssociation;
 	
 	/**
 	 * The List of objects that build the link which is deleted
 	 */
-	private List<MRValue> fParticipants;
+	private final List<MRValue> fParticipants;
 	
 	/**
 	 * The qualifier values of the associations ends.
 	 */
-	private List<List<MRValue>> qualifier;
+	private final List<List<MRValue>> qualifier;
 	
 	/**
 	 * Constructs a new link deletion statement.

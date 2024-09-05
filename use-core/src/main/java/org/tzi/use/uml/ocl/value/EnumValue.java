@@ -28,7 +28,7 @@ import org.tzi.use.uml.ocl.type.EnumType;
  * @see     org.tzi.use.uml.ocl.type.EnumType
  */
 public final class EnumValue extends Value {
-    private String fLiteral;
+    private final String fLiteral;
 
     public EnumValue(EnumType t, String literal) {
         super(t);

@@ -38,7 +38,7 @@ import org.tzi.use.parser.ocl.ASTExpression;
 
 public class ASTGocl extends ASTGValueInstruction {
   
-    private ASTExpression fExpression;
+    private final ASTExpression fExpression;
 
     public ASTGocl(ASTExpression expression, Token t) {
         fExpression = expression;

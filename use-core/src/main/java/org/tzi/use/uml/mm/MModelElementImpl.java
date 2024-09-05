@@ -35,7 +35,7 @@ import org.tzi.use.util.collections.CollectionUtil;
 public abstract class MModelElementImpl implements MModelElement {
 	//TODO: Use delegation for Annotatable?
 	
-	private static Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
+	private static final Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
 	
 	private final String fName;
 	

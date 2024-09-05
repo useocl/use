@@ -40,8 +40,8 @@ public class GInstrInsert_Assoc_Linkends implements GInstruction {
     // Insert( n-ary-Association, end1, end2, ..., endn )
     // endx must be type of the xth association-end.
 
-    private MAssociation fAssociation;
-    private List<GValueInstruction> fLinkends;
+    private final MAssociation fAssociation;
+    private final List<GValueInstruction> fLinkends;
 
     public GInstrInsert_Assoc_Linkends( MAssociation assoc, List<GValueInstruction> ends ) {
         fAssociation = assoc;

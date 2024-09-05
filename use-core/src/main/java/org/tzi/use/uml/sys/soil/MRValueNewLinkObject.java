@@ -30,7 +30,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  */
 public class MRValueNewLinkObject extends MRValue {
 	/** The encapsulated new link object statement. */
-	private MNewLinkObjectStatement fNewLinkObjectStatement;
+	private final MNewLinkObjectStatement fNewLinkObjectStatement;
 	
 	
 	/**

@@ -34,7 +34,7 @@ import org.tzi.use.uml.ocl.value.Value;
 
 public class GEvalVariableAssignment extends GEvalInstruction
     implements IGCaller {
-    private GVariableAssignment fInstr;
+    private final GVariableAssignment fInstr;
     private IGCaller fCaller;
 
     public GEvalVariableAssignment(GVariableAssignment instr) {

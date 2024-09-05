@@ -36,7 +36,7 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  */
 public class ASTRValueNewObject extends ASTRValue {
 	/** The AST of the encapsulated statement */
-	private ASTNewObjectStatement fNewObjectStatement;
+	private final ASTNewObjectStatement fNewObjectStatement;
 
 	
 	/**

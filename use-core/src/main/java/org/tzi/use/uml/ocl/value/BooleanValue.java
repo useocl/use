@@ -37,7 +37,7 @@ public final class BooleanValue extends Value {
      */
     public static final BooleanValue FALSE = new BooleanValue(false);
 
-    private boolean fValue;
+    private final boolean fValue;
     
     /**
      * Don't let anyone outside this class instantiate new Boolean

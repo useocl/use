@@ -50,7 +50,7 @@ import org.tzi.use.util.NullPrintWriter;
  * @author  Joern Bohling
  */
 public class GChecker implements IGChecker {
-    private boolean fCheckStructure;
+    private final boolean fCheckStructure;
     
     private final GInvariantStatistic[] fInvariantStatistics;
     private final int fSize;

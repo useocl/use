@@ -37,9 +37,9 @@ import org.tzi.use.util.soil.VariableEnvironment;
  */
 public class SoilEvaluationContext {
 	
-	private MSystem fSystem;
+	private final MSystem fSystem;
 
-	private Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
+	private final Deque<Expression> fExpressionStack = new ArrayDeque<Expression>();
 	
 	private boolean fIsUndo = false;
 	

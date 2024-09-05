@@ -84,11 +84,11 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	private JTextArea fTextOut;
 
-	private JRadioButton fRadioCropButton = new JRadioButton("crop", true);
+	private final JRadioButton fRadioCropButton = new JRadioButton("crop", true);
 
-	private JRadioButton fRadioShowButton = new JRadioButton("show", false);
+	private final JRadioButton fRadioShowButton = new JRadioButton("show", false);
 
-	private JRadioButton fRadioHideButton = new JRadioButton("hide", false);
+	private final JRadioButton fRadioHideButton = new JRadioButton("hide", false);
 
 	static String cropString = "crop";
 
@@ -98,7 +98,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 
 	String showart = cropString;
 
-	private ButtonGroup buttonGroup = new ButtonGroup();
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	private DiagramViewWithObjectNode diagram;
 	

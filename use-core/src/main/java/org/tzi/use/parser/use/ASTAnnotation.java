@@ -33,7 +33,7 @@ import org.tzi.use.uml.mm.MElementAnnotation;
  */
 public class ASTAnnotation extends AST {
 	
-	private Token name;
+	private final Token name;
 	
 	private Map<Token, Token> values;
 	

@@ -39,9 +39,9 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class ObjectCountView extends BarChartView implements View {
-    private MSystem fSystem;
-    private MClass[] fClasses;
-    private int[] fValues;
+    private final MSystem fSystem;
+    private final MClass[] fClasses;
+    private final int[] fValues;
 
     public ObjectCountView(MSystem system) {
         super("Class", "# Objects", Color.blue);

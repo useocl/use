@@ -28,9 +28,9 @@ import java.net.Socket;
  * @author      Mark Richters 
  */
 public class SocketReadline implements Readline {
-    private Socket fSocket;
-    private String fStaticPrompt;
-    private boolean fEchoInput;
+    private final Socket fSocket;
+    private final String fStaticPrompt;
+    private final boolean fEchoInput;
     private BufferedReader fIn;
     private BufferedWriter fOut;
 

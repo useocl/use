@@ -38,7 +38,7 @@ import org.tzi.use.uml.sys.MObject;
  */
 public class ASTObjectReferenceExpression extends ASTExpression {
 	/** The token of the object name */
-	private Token fObjectName;
+	private final Token fObjectName;
 	
 	/**
 	 * Constructs a new AST node 

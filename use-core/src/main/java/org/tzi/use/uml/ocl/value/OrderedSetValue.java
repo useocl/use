@@ -37,7 +37,7 @@ import java.util.Iterator;
  * @author  Lars Hamann
  */
 public class OrderedSetValue extends CollectionValue {
-    private ArrayList<Value> fElements;
+    private final ArrayList<Value> fElements;
     
     /**
      * Constructs a new empty OrderedSet.

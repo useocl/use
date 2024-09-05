@@ -37,7 +37,7 @@ public class ASTAssociationClass extends ASTClass {
 
     private Token fKind = null;
     private MAssociationClass fAssocClass;  
-    private List<ASTAssociationEnd> fAssociationEnds;
+    private final List<ASTAssociationEnd> fAssociationEnds;
 
     public ASTAssociationClass( Token name, boolean isAbstract ) {
         super( name, isAbstract );

@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 public class SuffixFileFilter implements FileFilter {
-    private String fSuffix;
+    private final String fSuffix;
     
     public SuffixFileFilter(String suffix) { 
         fSuffix = suffix; 

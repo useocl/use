@@ -253,7 +253,7 @@ public class UseSystemApiUndoable extends UseSystemApi {
      * @param statement
      * @throws MSystemException
      */
-    private final StatementEvaluationResult evaluateStatement(MStatement statement) throws MSystemException {
+    private StatementEvaluationResult evaluateStatement(MStatement statement) throws MSystemException {
     	return system.execute(statement);
     }
 }

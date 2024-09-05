@@ -195,13 +195,13 @@ public final class Main {
  * A theme with full control over fonts and customized tree display.
  */
 class MyTheme extends DefaultMetalTheme {
-	private FontUIResource controlFont;
+	private final FontUIResource controlFont;
 
-	private FontUIResource systemFont;
+	private final FontUIResource systemFont;
 
-	private FontUIResource userFont;
+	private final FontUIResource userFont;
 
-	private FontUIResource smallFont;
+	private final FontUIResource smallFont;
 
 	MyTheme() {
 		// System.out.println("font: " + Font.getFont("use.gui.controlFont"));

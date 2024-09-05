@@ -92,7 +92,7 @@ public class SymbolTable {
 	
 	//TODO: refactor both to one stack with a proper data object per frame
 	/** the stack of explicit/implicit */
-	private Deque<Boolean> fExplicitState = 
+	private final Deque<Boolean> fExplicitState =
 			new ArrayDeque<Boolean>();
 	
 	

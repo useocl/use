@@ -46,18 +46,18 @@ public class ExtensionOperation extends OpGeneric {
 		}
 	}
 	
-	private boolean isInfixOrPrefix = false;
-	private String name;
+	private final boolean isInfixOrPrefix = false;
+	private final String name;
 	
-	private String resultTypeName;
+	private final String resultTypeName;
 	private Type resultType;
 	
-	private String sourceTypeName;
+	private final String sourceTypeName;
 	private Type sourceType;
 	
-	private List<Parameter> parameter = new ArrayList<Parameter>();
+	private final List<Parameter> parameter = new ArrayList<Parameter>();
 	
-	private String operationBody;
+	private final String operationBody;
 	
 	public ExtensionOperation(String sourceTypeName, String name, String resultType, String body) {
 		this.sourceTypeName = sourceTypeName;

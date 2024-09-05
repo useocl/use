@@ -15,7 +15,7 @@ import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
 
 public class MModelExtensionPoint implements IPluginMModelExtensionPoint {
 
-	private static IPluginMModelExtensionPoint instance = new MModelExtensionPoint();
+	private static final IPluginMModelExtensionPoint instance = new MModelExtensionPoint();
 
 	/**
 	 * Method returning the Singleton instance of the PluginActionFactory

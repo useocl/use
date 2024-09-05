@@ -32,7 +32,7 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author Lars Hamann
  */
 public class ASTSimpleType extends ASTType {
-    private Token fName;
+    private final Token fName;
 
     public ASTSimpleType(Token name) {
         fName = name;

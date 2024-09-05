@@ -64,7 +64,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 		return defaultHandlerToLog;
 	}
 	
-	private PrintWriter fOutput;
+	private final PrintWriter fOutput;
 	
 	/**
 	 * Constructs a handler which outputs to {@link Log#out}.

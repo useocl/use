@@ -44,7 +44,7 @@ public class Activation {
 	/**
 	 * The lifeline which is receiver of the activation message.
 	 */
-	private Lifeline ownerLifeline;
+	private final Lifeline ownerLifeline;
 
 	/**
 	 * The command of this activation.
@@ -55,7 +55,7 @@ public class Activation {
 	 * The position on the time axis on which the activation message is
 	 * positioned (number of antecessors + 1)
 	 */
-	private int startRowOfActivationMessage;
+	private final int startRowOfActivationMessage;
 
 	/**
 	 * The position on the time axis on which the activations answer is
@@ -67,7 +67,7 @@ public class Activation {
 	 * The source-activation from which the command fCmd has given. Null if the
 	 * command was given by the actors Lifeline.
 	 */
-	private Activation sourceActivation;
+	private final Activation sourceActivation;
 
 	/**
 	 * The nesting of the fOwner lifeline at the moment of the command call.
@@ -89,13 +89,13 @@ public class Activation {
 	 */
 	private int messageLength;
 
-	private SequenceDiagram sequenceDiagram;
+	private final SequenceDiagram sequenceDiagram;
 
 	public SequenceDiagram getSequenceDiagram() {
 		return sequenceDiagram;
 	}
 
-	private SDProperties fProperties;
+	private final SDProperties fProperties;
 
 	public SDProperties getSequenceDiagramProperties() {
 		return fProperties;

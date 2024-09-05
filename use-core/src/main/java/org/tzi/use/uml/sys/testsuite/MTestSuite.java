@@ -20,11 +20,11 @@ import org.tzi.use.util.NullWriter;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
 public class MTestSuite {
-	private Token name;
-	private MModel model;
+	private final Token name;
+	private final MModel model;
 	
-	private List<ASTStatement> setupStatements;
-	private List<ASTTestCase> testCases;
+	private final List<ASTStatement> setupStatements;
+	private final List<ASTTestCase> testCases;
 	
 	private PrintWriter output = null;
 	
