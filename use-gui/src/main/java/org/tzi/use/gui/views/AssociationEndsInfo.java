@@ -77,8 +77,8 @@ public class AssociationEndsInfo extends JPanel implements View {
 		
 		for (MAssociation a : useSystem.model().associations()) {
 			if (a.associationEnds().size() == 2 && (
-				a.getSubsettedBy().size() > 0 ||
-				a.getRedefinedBy().size() > 0)) {
+                    !a.getSubsettedBy().isEmpty() ||
+                        !a.getRedefinedBy().isEmpty())) {
 				
 				associations.add(a);
 			}
@@ -265,13 +265,13 @@ public class AssociationEndsInfo extends JPanel implements View {
     				e.right = childAsso.associationEnds().get(0);
     			}
     			
-    			if (e.left.getSubsettingEnds().size() > 0 || e.left.getRedefiningEnds().size() > 0) {
+    			if (!e.left.getSubsettingEnds().isEmpty() || !e.left.getRedefiningEnds().isEmpty()) {
     				e.leftRolename = "<html><font color='blue'>" + e.left.name() + "</font></html>";
     			} else {
     				e.leftRolename = e.left.name();
     			}
     			
-    			if (e.right.getSubsettingEnds().size() > 0 || e.right.getRedefiningEnds().size() > 0) {
+    			if (!e.right.getSubsettingEnds().isEmpty() || !e.right.getRedefiningEnds().isEmpty()) {
     				e.rightRolename = "<html><font color='blue'>" + e.right.name() + "</font></html>";
     			} else {
     				e.rightRolename = e.right.name();
@@ -279,7 +279,7 @@ public class AssociationEndsInfo extends JPanel implements View {
     			    			
     			for (MAssociationEnd end : e.left.getSubsettedEnds()) {
     				if (leftEndSubsetsClosure.contains(end)) {
-    					if (e.leftSubsets.length() > 0) {
+    					if (!e.leftSubsets.isEmpty()) {
     						e.leftSubsets += ", ";
     					}
     					
@@ -290,7 +290,7 @@ public class AssociationEndsInfo extends JPanel implements View {
     			
     			for (MAssociationEnd end : e.right.getSubsettedEnds()) {
     				if (rightEndSubsetsClosure.contains(end)) {
-    					if (e.rightSubsets.length() > 0) {
+    					if (!e.rightSubsets.isEmpty()) {
     						e.rightSubsets += ", ";
     					}
     					
@@ -301,7 +301,7 @@ public class AssociationEndsInfo extends JPanel implements View {
     			
     			for (MAssociationEnd end : e.left.getRedefinedEnds()) {
     				if (leftEndRedefinesClosure.contains(end)) {
-    					if (e.leftRedefines.length() > 0) {
+    					if (!e.leftRedefines.isEmpty()) {
     						e.leftRedefines += ", ";
     					}
     					
@@ -312,7 +312,7 @@ public class AssociationEndsInfo extends JPanel implements View {
     			
     			for (MAssociationEnd end : e.right.getRedefinedEnds()) {
     				if (rightEndRedefinesClosure.contains(end)) {
-    					if (e.rightRedefines.length() > 0) {
+    					if (!e.rightRedefines.isEmpty()) {
     						e.rightRedefines += ", ";
     					}
     					

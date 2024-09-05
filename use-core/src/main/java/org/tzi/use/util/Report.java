@@ -93,7 +93,7 @@ public class Report {
         Arrays.fill(fColumnFormat, FMT_LEFT);
 
         // parse format string
-        if (fmt != null && fmt.length() > 0 ) {
+        if (fmt != null && !fmt.isEmpty()) {
             char[] f = fmt.toCharArray();
             int col = 0;
             int fillIndex = 0;

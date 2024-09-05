@@ -1453,7 +1453,7 @@ public final class MSystemState {
 			} else if (dst.isDerived()) {
 				res.addAll(linkedObjects);
 			} else {
-				if (linkedObjects.size() > 0)
+				if (!linkedObjects.isEmpty())
 					res.add(sourceObjects[dstIndex]);
 			}
 		}
@@ -1942,7 +1942,7 @@ public final class MSystemState {
 		for (MObject obj : objects) {
 			Map<List<Value>,Set<MObject>> linkedObjects = getLinkedObjects(obj, aend1, aend2);
 			
-			if (linkedObjects.size() == 0 && !aend2.multiplicity().contains(0)) {
+			if (linkedObjects.isEmpty() && !aend2.multiplicity().contains(0)) {
 				reportMultiplicityViolation(out, assoc, aend1, aend2, obj, null);
 				if (!reportAllErrors) {
 					return false;

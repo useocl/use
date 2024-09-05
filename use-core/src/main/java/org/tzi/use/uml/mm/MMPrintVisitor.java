@@ -233,7 +233,7 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(')');
         }
         
-        if (e.getSubsettedEnds().size() > 0) {
+        if (!e.getSubsettedEnds().isEmpty()) {
         	for (MAssociationEnd end : e.getSubsettedEnds()) {
         		result.append(ws());
         		result.append(keyword("subsets"));
@@ -242,7 +242,7 @@ public class MMPrintVisitor implements MMVisitor {
         	}
         }
         
-        if (e.getRedefinedEnds().size() > 0) {
+        if (!e.getRedefinedEnds().isEmpty()) {
         	for (MAssociationEnd end : e.getRedefinedEnds()) {
         		result.append(ws());
         		result.append(keyword("redefines"));
@@ -299,7 +299,7 @@ public class MMPrintVisitor implements MMVisitor {
 
     private void visitAttributesAndOperations( MClassifier e ) {
         // visit attributes
-        if (e.attributes().size() > 0 ) {
+        if (!e.attributes().isEmpty()) {
             indent();
             println(keyword("attributes"));
             incIndent();
@@ -315,7 +315,7 @@ public class MMPrintVisitor implements MMVisitor {
         }
 
         // visit operations
-        if (e.operations().size() > 0 ) {
+        if (!e.operations().isEmpty()) {
             indent();
             println(keyword("operations"));
             incIndent();

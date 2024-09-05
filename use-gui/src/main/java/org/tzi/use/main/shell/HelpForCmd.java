@@ -152,7 +152,7 @@ public class HelpForCmd {
      */
     public void printHelp(String cmd) {
         cmd = cmd.trim();
-        if (cmd.length() == 0) {
+        if (cmd.isEmpty()) {
             printHelpOverview();
         } else if (cmd.startsWith("??")) {
             printDetailedHelpByKey("help.eval.verbose");

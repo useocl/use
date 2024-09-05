@@ -162,7 +162,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
      */
     public void addSubsetsRolename(Token name) {
     	// Lazy initialization of the list.
-    	if (subsetsRolename.size() == 0)
+    	if (subsetsRolename.isEmpty())
     		subsetsRolename = new ArrayList<Token>();
     	
     	subsetsRolename.add(name);
@@ -182,7 +182,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
      */
     public void addRedefinesRolename(Token rolename) {
     	// Lazy initialization of the list.
-    	if (redefinesRolenames.size() == 0)
+    	if (redefinesRolenames.isEmpty())
     		redefinesRolenames = new ArrayList<Token>();
     	
     	redefinesRolenames.add(rolename);
@@ -248,7 +248,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
         }
         
         List<VarDecl> generatedQualifiers;
-        if (qualifiers.size() == 0) {
+        if (qualifiers.isEmpty()) {
         	generatedQualifiers = Collections.emptyList();
         } else {
         	generatedQualifiers = new ArrayList<VarDecl>(qualifiers.size());

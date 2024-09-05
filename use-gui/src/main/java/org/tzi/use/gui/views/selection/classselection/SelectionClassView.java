@@ -128,7 +128,7 @@ public class SelectionClassView extends ClassSelectionView {
 
 		Set<MClassifier> classifierToShow = getClassifierToShow(selectedClassifier);
 		
-		if (classifierToShow.size() > 0) {
+		if (!classifierToShow.isEmpty()) {
 			diagram.showElementsInDiagram(classifierToShow);
 			selectedClassifier.retainAll(classifierToShow);
 			Set<PlaceableNode> selectedNodes = ((ClassDiagramData)diagram.getVisibleData()).getNodes(selectedClassifier);
@@ -146,7 +146,7 @@ public class SelectionClassView extends ClassSelectionView {
 		Set<MClassifier> selected = ((SelectionClassTableModel) fTableModel).getSelectedClassifier();
 		Set<MClassifier> classifierToShow = getClassifierToShow(selected);
 		
-		if (classifierToShow.size() > 0) {
+		if (!classifierToShow.isEmpty()) {
 			diagram.showElementsInDiagram(classifierToShow);
 			
 			selected.retainAll(classifierToShow);
@@ -162,7 +162,7 @@ public class SelectionClassView extends ClassSelectionView {
 	public void applyHideChanges(ActionEvent ev) {
 		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedClassifier(), false);
 		
-		if (classifierToHide.size() > 0) {
+		if (!classifierToHide.isEmpty()) {
 			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
 			diagram.invalidateContent(true);
 			((SelectionClassTableModel) fTableModel).update();

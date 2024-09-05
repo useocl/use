@@ -178,7 +178,7 @@ public class StateNode extends VertexNode implements ToolTipProvider {
         Rectangle2D stateNameBounds;
         String invText = getInvariantText();
         
-        if (invText.length() == 0) {
+        if (invText.isEmpty()) {
         	stateNameBounds = getBounds();
         } else {
         	Rectangle2D bounds = getBounds();
@@ -249,7 +249,7 @@ public class StateNode extends VertexNode implements ToolTipProvider {
 	 */
 	protected String getInvariantText() {
 		String invText = "";
-		if (stateInvariant.length() > 0) {
+		if (!stateInvariant.isEmpty()) {
 			if (isShowInvariant()) {
 				invText = stateInvariant;
 			} else {

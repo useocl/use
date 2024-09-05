@@ -137,7 +137,7 @@ public class ClassSelection {
 		for (NewObjectDiagramView diagView : objDiagrams) {
 			NewObjectDiagram diag = diagView.getDiagram();
 
-			if (diag.getGraph() != null && diag.getGraph().size() > 0) {
+			if (diag.getGraph() != null && !diag.getGraph().isEmpty()) {
 				for (MClass mc : classes) {
 					Iterator<PlaceableNode> itobject = diag.getGraph().iterator();
 
@@ -168,7 +168,7 @@ public class ClassSelection {
 		for (NewObjectDiagramView diagView : diagrams) {
 			NewObjectDiagram diag = diagView.getDiagram();
 
-			if (diag.getHiddenNodes() != null && diag.getHiddenNodes().size() > 0) {
+			if (diag.getHiddenNodes() != null && !diag.getHiddenNodes().isEmpty()) {
 				for (MClass mc : classes) {
 					Iterator<? extends PlaceableNode> itobject = diag.getHiddenNodes().iterator();
 

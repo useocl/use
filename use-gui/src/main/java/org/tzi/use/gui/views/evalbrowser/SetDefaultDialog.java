@@ -310,7 +310,7 @@ class SetDefaultDialog extends JDialog {
             }
         }
         if (parts.length == 1) {
-            if (confFileContent.length() != 0
+            if (!confFileContent.isEmpty()
                     && confFileContent.charAt(confFileContent.length() - 1) != '\n')
                 confFileContent += "\n";
             System.setProperty(attr, val);
@@ -354,7 +354,7 @@ class SetDefaultDialog extends JDialog {
             }
         }
         if (parts.length == 1) {
-            if (confFileContent.length() != 0
+            if (!confFileContent.isEmpty()
                     && confFileContent.charAt(confFileContent.length() - 1) != '\n')
                 confFileContent += "\n";
             System.setProperty(attr, val);

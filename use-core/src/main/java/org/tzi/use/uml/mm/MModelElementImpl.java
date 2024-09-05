@@ -58,7 +58,7 @@ public abstract class MModelElementImpl implements MModelElement {
     }
 
     protected MModelElementImpl(String name) {
-        if (name == null || name.length() == 0 )
+        if (name == null || name.isEmpty())
             throw new IllegalArgumentException("Modelelement without name");
         fName = name;
         hashCode = fName.hashCode();
@@ -71,7 +71,7 @@ public abstract class MModelElementImpl implements MModelElement {
      * they may still clash with some user defined name.
      */
     protected MModelElementImpl(String name, String prefix) {
-        if (name == null || name.trim().length() == 0 ) {
+        if (name == null || name.trim().isEmpty()) {
             MutableInteger i = fNameMap.get(prefix);
             if (i == null ) {
                 i = new MutableInteger();

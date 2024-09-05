@@ -248,7 +248,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
     	Type t;
     	
-    	if (this.getRedefiningEnds().size() > 0) {
+    	if (!this.getRedefiningEnds().isEmpty()) {
     		t = getRedefinedType((MClass)sourceObjectType);
     	} else {
     		t = cls();
@@ -480,7 +480,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 
 	@Override
 	public boolean hasQualifiers() {
-		return getQualifiers().size() > 0;
+		return !getQualifiers().isEmpty();
 	}
 	
 	/* (non-Javadoc)

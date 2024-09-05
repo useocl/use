@@ -187,7 +187,7 @@ public abstract class ASTExpression extends AST {
         }
         
         if (navigationNeedsExplicitRolename(srcClass, dst)) {
-			if (explicitRolenameOrQualifiers.size() == 0) {
+			if (explicitRolenameOrQualifiers.isEmpty()) {
 				// an explicit rolename is needed, but not provided
 				throw new SemanticException(
 						rolenameToken,

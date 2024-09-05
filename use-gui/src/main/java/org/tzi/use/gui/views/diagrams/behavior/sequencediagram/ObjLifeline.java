@@ -65,7 +65,7 @@ public class ObjLifeline extends Lifeline {
 		// State Machine
 		sortedPSMs = new LinkedList<MProtocolStateMachine>(fObj.cls().getOwnedProtocolStateMachines());
 
-		if (sortedPSMs.size() > 0) {
+		if (!sortedPSMs.isEmpty()) {
 			hasStatesMachine = true;
 			// Support one state machine per class
 			MRegion reg = sortedPSMs.get(0).getRegions().get(0);

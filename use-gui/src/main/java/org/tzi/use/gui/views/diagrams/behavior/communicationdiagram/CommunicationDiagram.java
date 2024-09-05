@@ -296,7 +296,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 			selectedObjectsText = selectedNodesSet.size() + " Nodes";
 		}
 
-		if (selectedNodesSet.size() > 0) {
+		if (!selectedNodesSet.isEmpty()) {
 			final JMenuItem expandInfo = new JMenuItem("Show neighborhood of selection");
 			expandInfo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
@@ -321,7 +321,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 		showHideCrop.add(fSelection.getSelectionObjectView());
 		popupMenu.insert(showHideCrop, pos++);
 
-		if (fGraph.size() > 0) {
+		if (!fGraph.isEmpty()) {
 			popupMenu.insert(fSelection.getSubMenuHideObject(), pos++);
 		}
 
@@ -932,7 +932,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 			CommunicationDiagramEdge edge = iter.next();
 
 
-			if(edge.getMessages().size() > 0 && edge.getMessagesGroup().getEdgeMessages().size() == 0){
+			if(!edge.getMessages().isEmpty() && edge.getMessagesGroup().getEdgeMessages().isEmpty()){
 				edge.setHidden(true);
 			}else{
 				edge.setHidden(false);

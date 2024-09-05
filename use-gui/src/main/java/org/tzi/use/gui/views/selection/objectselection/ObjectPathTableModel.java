@@ -33,7 +33,7 @@ public class ObjectPathTableModel extends TableModel<MObject> {
 	public void update() {
 		rows = new ArrayList<Row<MObject>>();
 		
-		if (selectedObjects.size() > 0) {
+		if (!selectedObjects.isEmpty()) {
 			TreeSet<MObject> sortedObjects = new TreeSet<MObject>(new Comparator<MObject>() {
 				@Override
 				public int compare(MObject o1, MObject o2) {

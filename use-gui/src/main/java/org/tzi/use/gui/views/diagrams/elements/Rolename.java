@@ -87,7 +87,7 @@ public final class Rolename extends EdgeProperty implements DiagramOptionChanged
 		else
 			fName = fAssocEnd.nameAsRolename();
     	
-    	if (constraints.size() > 0) {
+    	if (!constraints.isEmpty()) {
     		fName = fName + " {" + StringUtil.fmtSeq(constraints.iterator(), ", ") + "}";
     	}
     }

@@ -742,28 +742,28 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 				fSeqDiag.getProperties().setStateNodeManualSize(true);
 			}
 
-			if (fLeftMargin.getText().length() == 0) {
+			if (fLeftMargin.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Enter a value for the left margin!", "No entry", JOptionPane.ERROR_MESSAGE);
 				dispose = false;
 				fTabbedPane.setSelectedComponent(fDiag);
 			} else {
 				fSeqDiag.getProperties().setLeftMargin(Integer.valueOf(fLeftMargin.getText()).intValue());
 			}
-			if (fRightMargin.getText().length() == 0) {
+			if (fRightMargin.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Enter a value for the right margin!", "No entry", JOptionPane.ERROR_MESSAGE);
 				dispose = false;
 				fTabbedPane.setSelectedComponent(fDiag);
 			} else {
 				fSeqDiag.getProperties().setRightMargin(Integer.valueOf(fRightMargin.getText()).intValue());
 			}
-			if (fTopMargin.getText().length() == 0) {
+			if (fTopMargin.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Enter a value for the top margin!", "No entry", JOptionPane.ERROR_MESSAGE);
 				dispose = false;
 				fTabbedPane.setSelectedComponent(fDiag);
 			} else {
 				fSeqDiag.getProperties().setTopMargin(Integer.valueOf(fTopMargin.getText()).intValue());
 			}
-			if (fBottomMargin.getText().length() == 0) {
+			if (fBottomMargin.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Enter a value for the bottom margin!", "No entry", JOptionPane.ERROR_MESSAGE);
 				dispose = false;
 				fTabbedPane.setSelectedComponent(fDiag);
@@ -771,7 +771,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 				fSeqDiag.getProperties().setBottomMargin(Integer.valueOf(fBottomMargin.getText()).intValue());
 			}
 
-			if (fAct_ManDist.getText().length() == 0) {
+			if (fAct_ManDist.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Enter a value for the Activation distance!", "No entry", JOptionPane.ERROR_MESSAGE);
 				dispose = false;
 				fTabbedPane.setSelectedComponent(fLifeline);
@@ -779,7 +779,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 				fSeqDiag.getProperties().setAct_manDist(Integer.valueOf(fAct_ManDist.getText()).intValue());
 			}
 
-			if (fLl_Width.getText().length() == 0) {
+			if (fLl_Width.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Enter a value for the frame-width!", "No entry", JOptionPane.ERROR_MESSAGE);
 				dispose = false;
 				fTabbedPane.setSelectedComponent(fLifeline);
@@ -791,7 +791,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 			fSeqDiag.getProperties().setFontSize(((Integer) fSizeBox.getSelectedItem()).intValue());
 
 			if (fObWidth_B2.isSelected()) {
-				if (fManW.getText().length() == 0) {
+				if (fManW.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Enter a width for the ObjectBox!", "No entry", JOptionPane.ERROR_MESSAGE);
 					dispose = false;
 					fTabbedPane.setSelectedComponent(fObjectBox);
@@ -806,7 +806,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 			}
 
 			if (fObHeight_B2.isSelected()) {
-				if (fManH.getText().length() == 0) {
+				if (fManH.getText().isEmpty()) {
 					dispose = false;
 					JOptionPane.showMessageDialog(null, "Enter a height for the ObjectBox!", "No entry", JOptionPane.ERROR_MESSAGE);
 					fTabbedPane.setSelectedComponent(fObjectBox);
@@ -824,7 +824,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 				fSeqDiag.getProperties().llLikeLongMess(false);
 				fSeqDiag.getProperties().setIndividualLl(fLl_individual.isSelected());
 				if (fLl_manLabel.isSelected()) {
-					if (fLl_ManDist.getText().length() == 0) {
+					if (fLl_ManDist.getText().isEmpty()) {
 						dispose = false;
 						JOptionPane.showMessageDialog(null, "Enter a distance for the Lifelines!", "No entry", JOptionPane.ERROR_MESSAGE);
 						fTabbedPane.setSelectedComponent(fLifeline);
@@ -883,7 +883,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 		 */
 		protected boolean isNumber(String toTest) {
 			try {
-				if (toTest.length() > 0)
+				if (!toTest.isEmpty())
 					Integer.valueOf(toTest);
 				return true;
 			} catch (final NumberFormatException ignored) {

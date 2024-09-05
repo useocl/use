@@ -122,7 +122,7 @@ public final class CollectionUtil {
     
     private static <T> void combinationsOneAux(List<List<Pair<T>>> result, List<Pair<T>> head, List<List<Pair<T>>> tail) {
     
-    	if (tail.size() == 0) return;
+    	if (tail.isEmpty()) return;
     	
     	List<Pair<T>> myCombinations = tail.get(0);
     	
@@ -196,7 +196,7 @@ public final class CollectionUtil {
      * @return The same list if <code>theList.size() > 0</code> or a new <code>ArrayList</code>  
      */
     public static <T> List<T> initAsArrayList(final List<T> theList) {
-    	if (theList.size() == 0)
+    	if (theList.isEmpty())
     		return new ArrayList<T>();
     	else
     		return theList;
@@ -218,7 +218,7 @@ public final class CollectionUtil {
      * @return The same <code>Map</code> if <code>theMap.size() > 0</code> or a new <code>HashMap</code>  
      */
     public static <TK, TV> Map<TK,TV> initAsHashMap(final Map<TK,TV> theMap) {
-    	if (theMap.size() == 0)
+    	if (theMap.isEmpty())
     		return new HashMap<TK,TV>();
     	else
     		return theMap;
@@ -239,7 +239,7 @@ public final class CollectionUtil {
      * @return The same set if <code>theSet.size() > 0</code> or a new <code>HashSet</code>  
      */
     public static <T> Set<T> initAsHashSet(final Set<T> theSet) {
-    	if (theSet.size() == 0)
+    	if (theSet.isEmpty())
     		return new HashSet<T>();
     	else
     		return theSet;

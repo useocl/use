@@ -188,7 +188,7 @@ public class ASTAssociation extends ASTClassifier {
 		 */
 		private void genRedefinesConstraints(ASTAssociationEnd aEnd)
 				throws SemanticException {			
-			if (aEnd.getRedefinesRolenames().size() > 0) {
+			if (!aEnd.getRedefinesRolenames().isEmpty()) {
 				// Get the MAssociationEnd from the name
 				MClass cls = model.getClass(aEnd.getClassName());
 				MAssociationEnd redefiningEnd = association.getAssociationEnd(cls, aEnd.getRolename(ctx));
@@ -202,7 +202,7 @@ public class ASTAssociation extends ASTClassifier {
 					String redefinesRolename = redefinesRolenameToken.getText();
 					List<MAssociationEnd> possibleRedefinedEnds = cls.getAssociationEnd(redefinesRolename);
 
-					if (possibleRedefinedEnds.size() == 0) {
+					if (possibleRedefinedEnds.isEmpty()) {
 						throw new SemanticException(redefinesRolenameToken, "No association end with name '" + redefinesRolename + "' to redefine.");
 					}
 					 
@@ -259,7 +259,7 @@ public class ASTAssociation extends ASTClassifier {
 					String subsetsRolename = subsetsRolenameToken.getText();
 					List<MAssociationEnd> possibleSubsettedEnds = cls.getAssociationEnd(subsetsRolename);
 
-					if (possibleSubsettedEnds.size() == 0) {
+					if (possibleSubsettedEnds.isEmpty()) {
 						throw new SemanticException(subsetsRolenameToken, "No association end with name '" + subsetsRolename + "' to subset.");
 					}
 					

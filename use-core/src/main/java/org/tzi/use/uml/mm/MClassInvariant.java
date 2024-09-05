@@ -100,7 +100,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
         fIsExistential = isExistential;
 
         // parse variables
-        if (vars == null || vars.size() == 0)
+        if (vars == null || vars.isEmpty())
         {
         	fHasVars = false;
         	VarDecl decl = new VarDecl("self", fClassifier);

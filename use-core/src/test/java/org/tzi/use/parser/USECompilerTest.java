@@ -179,7 +179,7 @@ public class USECompilerTest extends TestCase {
                 }
                 continue;
             }
-            if (line.length() == 0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
 

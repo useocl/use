@@ -131,7 +131,7 @@ public class SelectionClassTableModel extends AbstractTableModel implements Chan
 	public void update() {
 		ClassDiagramData visibleData = (ClassDiagramData)classDiagram.getVisibleData();
 		
-		if (rows.size() == 0) {
+		if (rows.isEmpty()) {
 			// initialize table model
 			TreeSet<MClassifier> sortedNodes = new TreeSet<MClassifier>(new Comparator<MClassifier>() {
 				@Override

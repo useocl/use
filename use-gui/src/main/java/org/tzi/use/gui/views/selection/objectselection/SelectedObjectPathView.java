@@ -122,7 +122,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 
 		Set<MLink> allLinks = fSystem.state().allLinks();
 		
-		while (buffer.size() > 0) {
+		while (!buffer.isEmpty()) {
 			currentObject = buffer.poll();
 			depth = result.get(currentObject).intValue() + 1;
 

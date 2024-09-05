@@ -155,7 +155,7 @@ public class AllLayoutTypes<N extends Layoutable> {
         SetRootNodes();
         GetLongestRootPath();
         Map<N, Integer> tracedRootNodes = new LinkedHashMap<N, Integer>();
-        if (RootNodes.size() == 0) {
+        if (RootNodes.isEmpty()) {
             //Show all Nodes - there is not any edge
         } else {
             double maxX = 0;
@@ -200,7 +200,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                         ExpandLayerLevelsToSourceNodes(layerNode, layerNode);
                     }
                     LayerLevelNodeCount.putAll(sourceLayerLevelNodeCount);
-                } while (sourceLayerLevelNodeCount.size() > 0);
+                } while (!sourceLayerLevelNodeCount.isEmpty());
                 AddDiamondNodesToLayers();
                 FindAssociations();
                 int CurrentLayerCount = 0;
@@ -339,7 +339,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                     isAssociationEndNotRootNode = true;
                 }
             }
-            if (isAssociationEndNotRootNode == false && fGraph.targetNodeSet(dnode).size() > 0) {
+            if (isAssociationEndNotRootNode == false && !fGraph.targetNodeSet(dnode).isEmpty()) {
                 RootNodes.add(fGraph.targetNodeSet(dnode).iterator().next());
             }
             for (N targetNode : fGraph.targetNodeSet(dnode)) {
@@ -400,7 +400,7 @@ public class AllLayoutTypes<N extends Layoutable> {
     int LongestRootPath = 0;
 
     private void GetLongestRootPath() {
-        if (RootNodes.size() == 0) {
+        if (RootNodes.isEmpty()) {
             return;
         } else {
             for (N node : RootNodes) {
@@ -424,7 +424,7 @@ public class AllLayoutTypes<N extends Layoutable> {
     int CurrentRootPathLong = 0;
 
     private void FindLongestPath(N rootNode, N mainRootNode) {
-        if (fGraph.targetNodeSet(rootNode).size() == 0) {
+        if (fGraph.targetNodeSet(rootNode).isEmpty()) {
             if (CurrentRootPathLong > CurrentLongestRootPath)
                 CurrentLongestRootPath = CurrentRootPathLong;
             CurrentRootPathLong--;
@@ -567,7 +567,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                         }
                     }
                 }
-                if (rootDiamond.size() == 0) {
+                if (rootDiamond.isEmpty()) {
                     LayerLevelNodeCount.replace(node, LayerLevelNodeCount.get(node).intValue(), 0);
                     for (N targetNode : fGraph.targetNodeSet(node)) {
                         if (LayerLevelNodeCount.keySet().contains(targetNode)) {
@@ -724,7 +724,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                                 if (sortedlayerLevelNodeCount.get(targetNode).intValue() == i + 1) {
                                     for (N n : LayerLevelNodeCount.keySet()) {
                                         if (LayerLevelNodeCount.get(n).intValue() == i + 1) {
-                                            if (fGraph.sourceNodeSet(n).size() == 0) {
+                                            if (fGraph.sourceNodeSet(n).isEmpty()) {
                                                 for (N levelTargetNode : fGraph.targetNodeSet(n)) {
                                                     if (fGraph.sourceNodeSet(levelTargetNode).contains(targetNode))
                                                         if (targetNode != levelTargetNode)
@@ -882,7 +882,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                         if (i == 0) {
                             n.setCenter((maxLayerWidth / 2) + startLayerX, maxHeight);
                             TracedNodes.add(n);
-                        } else if (fGraph.sourceNodeSet(n).size() == 0 || fGraph.sourceNodeSet(n).size() > 1) {
+                        } else if (fGraph.sourceNodeSet(n).isEmpty() || fGraph.sourceNodeSet(n).size() > 1) {
                             n.setCenter((maxLayerWidth / 2) + startLayerX, maxHeight);
                             TracedNodes.add(n);
                         } else if (fGraph.sourceNodeSet(n).size() == 1) {
@@ -1011,7 +1011,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                         if (i == 0) {
                             n.setCenter(maxWidth, (maxLayerHeight / 2) + startLayerY);
                             TracedNodes.add(n);
-                        } else if (fGraph.sourceNodeSet(n).size() == 0 || fGraph.sourceNodeSet(n).size() > 1) {
+                        } else if (fGraph.sourceNodeSet(n).isEmpty() || fGraph.sourceNodeSet(n).size() > 1) {
                             n.setCenter(maxWidth, (maxLayerHeight / 2) + startLayerY);
                             TracedNodes.add(n);
                         } else if (fGraph.sourceNodeSet(n).size() == 1) {
@@ -1223,7 +1223,7 @@ public class AllLayoutTypes<N extends Layoutable> {
         Map<N, String> tracedRootNodes = new LinkedHashMap<N, String>();
         Map<N, Integer> TempLayerLevelNodeCount = new LinkedHashMap<N, Integer>();
 
-        if (RootNodes.size() == 0) {
+        if (RootNodes.isEmpty()) {
             //Show all Nodes - there is not any edge
         } else {
             for (N rootNode : RootNodes) {
@@ -1275,7 +1275,7 @@ public class AllLayoutTypes<N extends Layoutable> {
             SplitRootLayerLevel();
             count = GetMaxLayerCount() + 1;
             sortLayerLevelNodeCount();
-        } while (TempLayerLevelNodeCount.size() > 0);
+        } while (!TempLayerLevelNodeCount.isEmpty());
 
         do {
             TempLayerLevelNodeCount.clear();
@@ -1324,7 +1324,7 @@ public class AllLayoutTypes<N extends Layoutable> {
             SplitRootLayerLevel();
             count = GetMaxLayerCount() + 1;
             sortLayerLevelNodeCount();
-        } while (TempLayerLevelNodeCount.size() > 0);
+        } while (!TempLayerLevelNodeCount.isEmpty());
 
         int tempLevelCount1 = 0;
         int tempLevelCount2 = 0;
@@ -1507,7 +1507,7 @@ public class AllLayoutTypes<N extends Layoutable> {
 
     private void AddTargetToLayerLevelNodeCount(Map<N, Integer> LayerNodes, N n) {
 
-        if (fGraph.targetNodeSet(n).size() == 0 || (fGraph.targetNodeSet(n).size() == 1 && fGraph.targetNodeSet(n).contains(n)))
+        if (fGraph.targetNodeSet(n).isEmpty() || (fGraph.targetNodeSet(n).size() == 1 && fGraph.targetNodeSet(n).contains(n)))
             return;
         boolean isAny = false;
         for (N targetNode : fGraph.targetNodeSet(n)) {

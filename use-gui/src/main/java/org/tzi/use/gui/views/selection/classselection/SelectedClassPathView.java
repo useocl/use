@@ -127,7 +127,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 		Set<? extends MClassifier> relatedClasses;
 		int depth;
 		
-		while (buffer.size() > 0) {
+		while (!buffer.isEmpty()) {
 			currentClass = buffer.poll();
 			depth = result.get(currentClass).intValue() + 1;
 			
@@ -189,12 +189,12 @@ public class SelectedClassPathView extends ClassSelectionView {
 	public void applyCropChanges(ActionEvent ev) {
 		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedPathClasses(), true);
 		
-		if (classifierToHide.size() > 0) {
+		if (!classifierToHide.isEmpty()) {
 			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
 		}
 		
 		Set<MClassifier> classifierToShow = getClassifierToShow(getSelectedPathClasses());
-		if (classifierToShow.size() > 0) {
+		if (!classifierToShow.isEmpty()) {
 			diagram.showElementsInDiagram(classifierToShow);
 		}
 		
@@ -226,7 +226,7 @@ public class SelectedClassPathView extends ClassSelectionView {
 		
 		Set<MClassifier> classifierToHide = getClassifierToHide(getSelectedPathClasses(), false);
 		
-		if (classifierToHide.size() > 0) {
+		if (!classifierToHide.isEmpty()) {
 			diagram.hideElementsInDiagram(classifierToHide, Collections.<MAssociation>emptySet());
 		}
 		diagram.invalidateContent(true);

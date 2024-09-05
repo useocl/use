@@ -62,7 +62,7 @@ public class ASTInvariantClause extends ASTAnnotatable {
         MClassInvariant inv = null;
         
         try {
-            if (varTokens != null && varTokens.size() > 0) {                
+            if (varTokens != null && !varTokens.isEmpty()) {
             	for (Token var : varTokens) {
             		vars.add(var, cf);
             		ctx.exprContext().push(var.getText(), cf);

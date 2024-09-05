@@ -697,7 +697,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 		cbState.setEnabled(false);
 		cbState.setState(fProperties.isStatesShown());
 		for (MClass cls : fSystem.model().classes()) {
-			if (cls.getAllOwnedProtocolStateMachines().size() > 0) {
+			if (!cls.getAllOwnedProtocolStateMachines().isEmpty()) {
 				cbState.setEnabled(true);
 				break;
 			}

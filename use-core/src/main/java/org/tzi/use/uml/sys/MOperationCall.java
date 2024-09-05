@@ -621,7 +621,7 @@ public class MOperationCall {
 	 * @return
 	 */
 	public boolean hasExecutedTransitions() {
-		return executedTransitions != null && executedTransitions.size() > 0;
+		return executedTransitions != null && !executedTransitions.isEmpty();
 	}
 
 	/**

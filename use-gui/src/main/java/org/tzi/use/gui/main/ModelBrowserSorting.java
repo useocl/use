@@ -198,7 +198,7 @@ public class ModelBrowserSorting  {
     public Collection<MClassifier> sortClasses( Collection<MClassifier> items) {
         ArrayList<MClassifier> classifiers = new ArrayList<MClassifier>( items );
         
-        if (classifiers.size() > 0) {
+        if (!classifiers.isEmpty()) {
             switch (clsOrder) {
                 case CLS_ALPHABETIC:
                     Collections.sort(classifiers, new AlphabeticalNamedElementComparator());
@@ -221,7 +221,7 @@ public class ModelBrowserSorting  {
     public List<MAttribute> sortAttributes(Collection<MAttribute> items) {
         ArrayList<MAttribute> attributes = new ArrayList<MAttribute>( items );
                 
-        if ( attributes.size() > 0 ) {
+        if (!attributes.isEmpty()) {
             switch ( attrOrder ) {
                 case ATTR_ALPHABETIC:
                     Collections.sort(attributes, new AlphabeticalNamedElementComparator());
@@ -245,7 +245,7 @@ public class ModelBrowserSorting  {
     public List<MOperation> sortOperations(Collection<MOperation> items) {
         ArrayList<MOperation> operations = new ArrayList<MOperation>( items );
                 
-        if ( operations.size() > 0 ) {
+        if (!operations.isEmpty()) {
             switch ( oprOrder ) {
                 case OPR_ALPHABETIC:
                     Collections.sort(operations, new AlphabeticalOperationComparator());
@@ -267,7 +267,7 @@ public class ModelBrowserSorting  {
      */
     ArrayList<MAssociation> sortAssociations(final ArrayList<MAssociation> associations) {
         ArrayList<MAssociation> onlyAssocs = new ArrayList<MAssociation>();
-        if (associations.size() > 0) {
+        if (!associations.isEmpty()) {
             for (MAssociation assoc : associations) {
                 if ( assoc instanceof MAssociationClass ) {
                     continue;
@@ -298,7 +298,7 @@ public class ModelBrowserSorting  {
     public ArrayList<MClassInvariant> sortInvariants(final Collection<MClassInvariant> items) {
         ArrayList<MClassInvariant> sortedInvs = new ArrayList<MClassInvariant>(items);
 
-        if (sortedInvs.size() > 0) {
+        if (!sortedInvs.isEmpty()) {
             switch (invOrder) {
             case INV_ALPHABETIC_BY_CLASS:
                 Collections.sort(sortedInvs, new AlphabeticalInvariantComparator(true));
@@ -325,7 +325,7 @@ public class ModelBrowserSorting  {
     Collection<MPrePostCondition> sortPrePostConditions(final Collection<MPrePostCondition> items) {
         final ArrayList<MPrePostCondition> sortedConds = new ArrayList<MPrePostCondition>(items);
 
-        if (sortedConds.size() > 0) {
+        if (!sortedConds.isEmpty()) {
             switch (condOrder) {
                 case COND_ALPHABETIC_BY_OPERATION:
                     Collections.sort(sortedConds, new AlphabeticalConditionComparator(false));

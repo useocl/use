@@ -67,7 +67,7 @@ public final class MLinkSet {
             this.object = object;
             // We set qualifier to null, if no elements are given
             // This makes comparison easier.
-            this.qualifiers = (qualifiers != null && qualifiers.size() == 0) ? null : qualifiers;
+            this.qualifiers = (qualifiers != null && qualifiers.isEmpty()) ? null : qualifiers;
             hashCode = end.hashCode() + 19 * object.hashCode() + (this.qualifiers == null ? 0 : 23 * this.qualifiers.hashCode());
         }
         

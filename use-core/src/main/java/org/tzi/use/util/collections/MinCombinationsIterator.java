@@ -102,7 +102,7 @@ public class MinCombinationsIterator<T> implements Iterator<List<Pair<T>>> {
     			partition.add(entry);
     		}
     		
-    		if (partition.size() > 0)
+    		if (!partition.isEmpty())
     			partitionedCombinations.add(partition);
     	}
 	}

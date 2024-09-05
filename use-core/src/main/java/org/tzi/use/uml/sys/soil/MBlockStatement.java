@@ -84,7 +84,7 @@ public class MBlockStatement extends MStatement {
 	protected String shellCommand() {
 		StringBuilder sb = new StringBuilder();
 		
-		if(fVariableDeclarations.size() > 0){
+		if(!fVariableDeclarations.isEmpty()){
 			sb.append("declare ");
 			boolean first = true;
 			for(VarDecl var : fVariableDeclarations){
@@ -109,7 +109,7 @@ public class MBlockStatement extends MStatement {
 			String indentIncrease,
 			StringBuilder target) {
 		
-		if(fVariableDeclarations.size() > 0){
+		if(!fVariableDeclarations.isEmpty()){
 			target.append(indent);
 			target.append("declare ");
 			boolean first = true;

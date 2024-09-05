@@ -159,7 +159,7 @@ class CreateObjectDialog extends JDialog {
     private void createObject() {
         // get object name
         String name = fTextObjectName.getText();
-        if (name.length() == 0 ) {
+        if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                                           "You need to specify a name for the new object.",
                                           "Error",

@@ -1224,10 +1224,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					if (selectedLinks.size() > 0) {
+					if (!selectedLinks.isEmpty()) {
 						selectedLinks.forEach(link -> hideLink(link));
 					}
-					if (selectedObjects.size() > 0) {
+					if (!selectedObjects.isEmpty()) {
 						selectedObjects.forEach(obj -> hideObject(obj));
 					}
 					repaint();
@@ -1276,7 +1276,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				selectedObjects.stream().filter(obj -> !visibleData.fObjectToNodeMap.get(obj).isGreyed())
 						.forEach(obj -> objToGreyOut.add(visibleData.fObjectToNodeMap.get(obj)));
 
-				if (objToGreyIn.size() > 0) {
+				if (!objToGreyIn.isEmpty()) {
 					popupMenu.insert(new AbstractAction("Grey in " + objToGreyIn.size() + " elements") {
 
 						@Override
@@ -1288,7 +1288,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				}
 
 				// Action for grey out more elements
-				if (objToGreyOut.size() > 0) {
+				if (!objToGreyOut.isEmpty()) {
 					popupMenu.insert(new AbstractAction("Grey out " + objToGreyOut.size() + " elements") {
 
 						@Override
@@ -1313,8 +1313,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		popupMenu.insert(showHideCrop, pos++);
 
-		if (fGraph.size() > 0 || !hiddenData.fObjectToNodeMap.isEmpty()) {
-			if (fGraph.size() > 0) {
+		if (!fGraph.isEmpty() || !hiddenData.fObjectToNodeMap.isEmpty()) {
+			if (!fGraph.isEmpty()) {
 				popupMenu.insert(fSelection.getSubMenuHideObject(), pos++);
 			}
 

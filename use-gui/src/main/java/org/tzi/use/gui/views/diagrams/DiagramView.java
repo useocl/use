@@ -1673,7 +1673,7 @@ public abstract class DiagramView extends JPanel
         popupMenu.add(fActionSaveLayout);
         fActionSaveLayout.setEnabled(!fGraph.isEmpty());
 
-        if (fGraph.size() > 0) {
+        if (!fGraph.isEmpty()) {
             popupMenu.addSeparator();
             popupMenu.add(fActionSelectAllNodes);
             popupMenu.add(fActionSelectAllEdges);

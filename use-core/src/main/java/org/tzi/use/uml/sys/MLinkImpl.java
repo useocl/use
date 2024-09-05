@@ -82,7 +82,7 @@ class MLinkImpl implements MLink {
         this.qualifierValues = qualifierValues;
         Iterator<MAssociationEnd> it1 = assoc.associationEnds().iterator();
         Iterator<MObject> it2 = objects.iterator();
-        boolean hasQualifiers = (qualifierValues != null && qualifierValues.size() > 0);
+        boolean hasQualifiers = (qualifierValues != null && !qualifierValues.isEmpty());
         Iterator<List<Value>> it3 = (hasQualifiers ? qualifierValues.iterator() : null);
         
         int newHashCode = fAssociation.hashCode();

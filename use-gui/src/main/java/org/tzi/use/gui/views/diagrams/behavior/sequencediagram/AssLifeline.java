@@ -82,7 +82,7 @@ public class AssLifeline extends Lifeline {
 		if (ass instanceof MAssociationClassImpl) {
 			sortedPSMs = new LinkedList<MProtocolStateMachine>(((MAssociationClassImpl) ass).getAllOwnedProtocolStateMachines());
 
-			if (sortedPSMs.size() > 0) {
+			if (!sortedPSMs.isEmpty()) {
 				hasStatesMachine = true;
 				// Support one state machine per class
 				MRegion reg = sortedPSMs.get(0).getRegions().get(0);

@@ -432,7 +432,7 @@ public class CommunicationDiagramData implements DiagramView.DiagramData {
      * Raises the sequence number
      */
     private void raiseSequenceNumber() {
-        if (sequenceNumbers.size() > 0) {
+        if (!sequenceNumbers.isEmpty()) {
             int lastNumber = sequenceNumbers.get(sequenceNumbers.size() - 1);
             sequenceNumbers.set(sequenceNumbers.size() - 1, lastNumber + 1);
         }

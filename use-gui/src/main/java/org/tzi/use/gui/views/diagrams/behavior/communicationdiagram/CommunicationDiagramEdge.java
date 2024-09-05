@@ -137,7 +137,7 @@ public class CommunicationDiagramEdge extends EdgeBase {
 	}
 
 	public MMessage getLongestMessage() {
-		if (messages.size() == 0)
+		if (messages.isEmpty())
 			return null;
 
 		MMessage result = messages.get(0);
@@ -226,7 +226,7 @@ public class CommunicationDiagramEdge extends EdgeBase {
 	public PlaceableNode findNode(double x, double y) {
 		PlaceableNode res = super.findNode(x, y);
 
-		if (((CommunicationDiagramOptions) fOpt).isShowCommunicationMessages() && messages.size() > 0 && messagesGroup.isVisible()
+		if (((CommunicationDiagramOptions) fOpt).isShowCommunicationMessages() && !messages.isEmpty() && messagesGroup.isVisible()
 				&& messagesGroup.occupies(x, y)) {
 			res = messagesGroup;
 		}

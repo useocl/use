@@ -298,7 +298,7 @@ public class ExprEvalBrowser extends JPanel {
             DefaultMutableTreeNode paren = treeParent;
             // if new variables appear in the term, they are added in the tree
             // before the child
-            if (varAssignmentMode == ShowVariableAssignment.EARLY && newVars.size() > 0) {
+            if (varAssignmentMode == ShowVariableAssignment.EARLY && !newVars.isEmpty()) {
                 Entry e = newVars.get(0);
                 
                 enode = new EvalNodeVarAssignment(new Vector<Entry>(childVars));

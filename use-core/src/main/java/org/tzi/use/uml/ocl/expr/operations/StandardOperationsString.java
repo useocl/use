@@ -435,8 +435,8 @@ final class Op_string_indexOf extends OpGeneric {
 		String self = ((StringValue)args[0]).value();
 		String s = ((StringValue)args[1]).value();
 		
-		if (self.length() == 0) return IntegerValue.valueOf(0);
-		if (s.length()== 0 && self.length() > 0) return IntegerValue.valueOf(1);
+		if (self.isEmpty()) return IntegerValue.valueOf(0);
+		if (s.isEmpty() && !self.isEmpty()) return IntegerValue.valueOf(1);
 		
 		return IntegerValue.valueOf(self.indexOf(s) + 1);
 	}

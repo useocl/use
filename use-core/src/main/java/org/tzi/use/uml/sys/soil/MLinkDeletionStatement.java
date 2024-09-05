@@ -189,7 +189,7 @@ public class MLinkDeletionStatement extends MStatement {
 			public String format(MRValue element) {
 				String qualifierValues = "";
 				
-				if (!qualifier.isEmpty() && qualifier.get(index) != null && qualifier.get(index).size() > 0) {
+				if (!qualifier.isEmpty() && qualifier.get(index) != null && !qualifier.get(index).isEmpty()) {
 					qualifierValues = "{";
 					qualifierValues += StringUtil.fmtSeq(qualifier.get(index), ",");
 					qualifierValues += "}";

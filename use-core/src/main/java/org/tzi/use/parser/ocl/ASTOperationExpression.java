@@ -283,7 +283,7 @@ public class ASTOperationExpression extends ASTExpression {
 
         opcase += fFollowsArrow ? ARROW : DOT;
         opcase += fHasParentheses ? PARENTHESES : NO_PARENTHESES;
-        opcase += fExplicitRolenameOrQualifiers.size() > 0 ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
+        opcase += !fExplicitRolenameOrQualifiers.isEmpty() ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
 
         switch ( opcase ) {
         case SRC_SIMPLE_TYPE + DOT + NO_PARENTHESES: 

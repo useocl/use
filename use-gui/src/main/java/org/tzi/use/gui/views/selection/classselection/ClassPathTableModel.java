@@ -32,7 +32,7 @@ public class ClassPathTableModel extends TableModel<MClass> {
 	public void update() {
 		rows = new ArrayList<Row<MClass>>();
 		
-		if (selectedClasses.size() > 0) {
+		if (!selectedClasses.isEmpty()) {
 			// add all class
 			TreeSet<MClass> sortedClasses = new TreeSet<MClass>(new Comparator<MClass>(){
 				public int compare(MClass o1, MClass o2) {

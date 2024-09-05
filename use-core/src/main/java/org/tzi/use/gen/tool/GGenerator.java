@@ -304,7 +304,7 @@ public class GGenerator {
         PrintWriter pw = new PrintWriter(System.out);
         lastResult().checker().printStatistics(pw, lastResult().collector().numberOfCheckedStates());
         
-        if (lastResult().collector().getBarriers().size() > 0) {
+        if (!lastResult().collector().getBarriers().isEmpty()) {
         	pw.println();
         	pw.println("Barrier statistics (barriers marked with * were calculated):");
         	pw.println("        checks          valid        invalid     mul. viol.      time (ms)  Barrier");

@@ -252,45 +252,45 @@ public class ClassDiagram extends DiagramView
 	 */
 	@Override
 	public void showAll() {
-		while (hiddenData.fClassToNodeMap.size() > 0) {
+		while (!hiddenData.fClassToNodeMap.isEmpty()) {
 			showClass(hiddenData.fClassToNodeMap.keySet().iterator().next());
 		}
 
-		while (hiddenData.fEnumToNodeMap.size() > 0) {
+		while (!hiddenData.fEnumToNodeMap.isEmpty()) {
 			showEnum(hiddenData.fEnumToNodeMap.keySet().iterator().next());
 		}
 
-		while (hiddenData.fBinaryAssocToEdgeMap.size() > 0) {
+		while (!hiddenData.fBinaryAssocToEdgeMap.isEmpty()) {
 			showAssociation(hiddenData.fBinaryAssocToEdgeMap.keySet().iterator().next());
 		}
 
-		while (hiddenData.fAssocClassToEdgeMap.size() > 0) {
+		while (!hiddenData.fAssocClassToEdgeMap.isEmpty()) {
 			showAssociation(hiddenData.fAssocClassToEdgeMap.keySet().iterator().next());
 		}
 
-		while (hiddenData.fNaryAssocToDiamondNodeMap.size() > 0) {
+		while (!hiddenData.fNaryAssocToDiamondNodeMap.isEmpty()) {
 			showAssociation(hiddenData.fNaryAssocToDiamondNodeMap.keySet().iterator().next());
 		}
 
-		while (hiddenData.fNaryAssocToHalfEdgeMap.size() > 0) {
+		while (!hiddenData.fNaryAssocToHalfEdgeMap.isEmpty()) {
 			showAssociation(hiddenData.fNaryAssocToHalfEdgeMap.keySet().iterator().next());
 		}
-		while (hiddenData.fGenToGeneralizationEdge.size() > 0) {
+		while (!hiddenData.fGenToGeneralizationEdge.isEmpty()) {
 			showGeneralization(hiddenData.fGenToGeneralizationEdge.keySet().iterator().next());
 		}
 	}
 
 	@Override
 	public void hideAll() {
-		while (visibleData.fClassToNodeMap.size() > 0) {
+		while (!visibleData.fClassToNodeMap.isEmpty()) {
 			hideClass(visibleData.fClassToNodeMap.keySet().iterator().next());
 		}
 
-		while (visibleData.fDataTypeToNodeMap.size() > 0) {
+		while (!visibleData.fDataTypeToNodeMap.isEmpty()) {
 			hideDataType(visibleData.fDataTypeToNodeMap.keySet().iterator().next());
 		}
 
-		while (visibleData.fEnumToNodeMap.size() > 0) {
+		while (!visibleData.fEnumToNodeMap.isEmpty()) {
 			hideEnum(visibleData.fEnumToNodeMap.keySet().iterator().next());
 		}
 	}
@@ -944,13 +944,13 @@ public class ClassDiagram extends DiagramView
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// Hide Assocs if exisits
-					if (selectedAssociations.size() > 0) {
+					if (!selectedAssociations.isEmpty()) {
 						selectedAssociations.forEach(assoc -> hideAssociation(assoc));
 					}
-					if (selectedClasses.size() > 0) {
+					if (!selectedClasses.isEmpty()) {
 						selectedClasses.forEach(cls -> hideClass(cls));
 					}
-					if (selectedGeneralization.size() > 0) {
+					if (!selectedGeneralization.isEmpty()) {
 						selectedGeneralization.forEach(gen -> hideGeneralization(gen));
 					}
 
@@ -987,7 +987,7 @@ public class ClassDiagram extends DiagramView
 				Set<MClass> filteredSelectedClasses = selectedClasses.stream().filter(cls -> !cls.parents().isEmpty())
 						.collect(Collectors.toSet());
 
-				if (filteredSelectedClasses.size() > 0) {
+				if (!filteredSelectedClasses.isEmpty()) {
 
 					String labelGen = filteredSelectedClasses.size() == 1
 							? filteredSelectedClasses.iterator().next().name()
@@ -1042,7 +1042,7 @@ public class ClassDiagram extends DiagramView
 				Set<MClass> filteredSelectedClasses = selectedClasses.stream().filter(cls -> !cls.children().isEmpty())
 						.collect(Collectors.toSet());
 
-				if (filteredSelectedClasses.size() > 0) {
+				if (!filteredSelectedClasses.isEmpty()) {
 
 					String labelGen = filteredSelectedClasses.size() == 1
 							? filteredSelectedClasses.iterator().next().name()
@@ -1105,7 +1105,7 @@ public class ClassDiagram extends DiagramView
 			popupMenu.insert(fSelection.getSubMenuShowClass(), pos++);
 		}
 
-		if (fGraph.size() > 0) {
+		if (!fGraph.isEmpty()) {
 			popupMenu.insert(fSelection.getSubMenuHideClass(), pos++);
 		}
 
@@ -1113,7 +1113,7 @@ public class ClassDiagram extends DiagramView
 		popupMenu.insert(new JSeparator(), pos++);
 
 		// new menu for hide assoc
-		if (fGraph.size() > 0 && (!visibleData.fBinaryAssocToEdgeMap.isEmpty()
+		if (!fGraph.isEmpty() && (!visibleData.fBinaryAssocToEdgeMap.isEmpty()
 				|| !visibleData.fAssocClassToEdgeMap.isEmpty() || !visibleData.fNaryAssocToDiamondNodeMap.isEmpty()
 				|| !visibleData.fNaryAssocToHalfEdgeMap.isEmpty())) {
 			popupMenu.insert(fSelection.getSubMenuHideAssoc(), pos++);

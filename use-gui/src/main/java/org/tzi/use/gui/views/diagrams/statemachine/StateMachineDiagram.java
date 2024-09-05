@@ -276,7 +276,7 @@ public class StateMachineDiagram extends DiagramView {
 		});
     
         final JMenuItem demergeSelectedTransitions = new JMenuItem("Demerge selected transitions");
-        demergeSelectedTransitions.setEnabled(fEdgeSelection.size() > 0);
+        demergeSelectedTransitions.setEnabled(!fEdgeSelection.isEmpty());
         demergeSelectedTransitions.addActionListener(new ActionListener() {
         	@Override
             public void actionPerformed(ActionEvent ev) {

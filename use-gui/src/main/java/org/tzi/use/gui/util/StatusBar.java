@@ -60,7 +60,7 @@ public class StatusBar extends JPanel {
      */
     public void showTmpMessage(String msg) {
         // prevent status bar from disappearing completely
-        if (msg == null || msg.length() == 0 )
+        if (msg == null || msg.isEmpty())
             msg = " ";
         fMsgLabel.setText(msg);
 
@@ -77,7 +77,7 @@ public class StatusBar extends JPanel {
      */
     public void showMessage(String msg, String position) {
     	// prevent status bar from disappearing completely
-        if (msg == null || msg.length() == 0 )
+        if (msg == null || msg.isEmpty())
             msg = " ";
         
         if (position.equals(BorderLayout.WEST))
