@@ -6,7 +6,7 @@ This operation uses the operation oclIsNew.
 
 The example corresponds to
 the section `Validating Pre- and Postconditions
-with USE´
+with USEÂ´
 
 Graph.use:
 one class Node and one association Edge
