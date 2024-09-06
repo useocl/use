@@ -30,12 +30,12 @@ public interface Selectable {
      * Sets if this node is selected or not.
      * @param on The new value of the selection
      */
-    public void setSelected( boolean on );
+    void setSelected(boolean on);
     
     /**
      * Returns if this node is selected. 
      */
-    public boolean isSelected();
+    boolean isSelected();
     
     /**
      * Sets, if a resize of a selected element is
@@ -43,12 +43,12 @@ public interface Selectable {
      * For example, it is the only selected element.
      * @param allowed
      */
-    public void setResizeAllowed( boolean allowed );
+    void setResizeAllowed(boolean allowed);
     
     /**
      * <code>true</code>, if an element is allowed to
      * be resized. 
      * @return
      */
-    public boolean getResizeAllowed();
+    boolean getResizeAllowed();
 }

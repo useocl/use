@@ -38,7 +38,7 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
 	/**
      * Returns the model owning this classifier.
      */
-    public MModel model();
+    MModel model();
 
     /**
      * Sets the model owning this classifier. This method must be called by
@@ -46,7 +46,7 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      *
      * @see MModel#addClass(MClass)
      */
-    public void setModel( MModel model );
+    void setModel(MModel model);
     
 	/**
 	 * If true, the Classifier does not provide a complete declaration and can typically not be instantiated.

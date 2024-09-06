@@ -32,10 +32,10 @@ package org.tzi.use.gen.assl.dynamics;
 import org.tzi.use.uml.ocl.value.Value;
 
 public interface IGCaller {
-    public void feedback( GConfiguration configuration,
-                          Value value,
-                          IGCollector collector ) 
+    void feedback(GConfiguration configuration,
+                  Value value,
+                  IGCollector collector)
         throws GEvaluationException;
 
-    public String toString();
+    String toString();
 }

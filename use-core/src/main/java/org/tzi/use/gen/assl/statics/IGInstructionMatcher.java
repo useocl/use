@@ -32,8 +32,8 @@ import java.util.List;
  * @author  Joern Bohling
  */
 public interface IGInstructionMatcher {
-    public GInstruction createIfMatches( List<Object> param, MModel model);
-    public String name();
+    GInstruction createIfMatches(List<Object> param, MModel model);
+    String name();
 }
 
 

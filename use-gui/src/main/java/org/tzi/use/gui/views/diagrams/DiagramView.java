@@ -1241,7 +1241,7 @@ public abstract class DiagramView extends JPanel
      */
     public abstract DiagramData getHiddenData();
 
-    public static interface DiagramData {
+    public interface DiagramData {
         Set<PlaceableNode> getNodes();
 
         Set<EdgeBase> getEdges();

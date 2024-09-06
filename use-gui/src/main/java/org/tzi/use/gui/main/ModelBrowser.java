@@ -515,6 +515,6 @@ public class ModelBrowser extends JPanel
     }
 
     public interface SelectionChangedListener extends EventListener {
-    	public void selectionChanged(MModelElement element);
+    	void selectionChanged(MModelElement element);
     }
 }

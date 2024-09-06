@@ -30,21 +30,21 @@ import java.util.Set;
 public interface MAssociationClass extends MClass, MAssociation, MNavigableElement {
 
 	@Override
-    public Set<MAssociationClass> parents();
+    Set<MAssociationClass> parents();
     
     
 	@Override
-    public Set<MAssociationClass> allParents();
+    Set<MAssociationClass> allParents();
     
 	@Override
-    public Set<MAssociationClass> allChildren();
+    Set<MAssociationClass> allChildren();
 
 	@Override
-    public Set<MAssociationClass> children();
+    Set<MAssociationClass> children();
 	
 	@Override
-	public Iterable<MAssociationClass> generalizationHierachie(boolean includeThis);
+    Iterable<MAssociationClass> generalizationHierachie(boolean includeThis);
 	
 	@Override
-	public Iterable<MAssociationClass> specializationHierachie(boolean includeThis);
+    Iterable<MAssociationClass> specializationHierachie(boolean includeThis);
 }

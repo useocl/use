@@ -29,12 +29,12 @@ public interface IPluginMMVisitor extends MMVisitor {
 	 * 
 	 * @return The ModelBrowser object.
 	 */
-	public ModelBrowser modelBrowser();
+    ModelBrowser modelBrowser();
 
 	/**
 	 * Method to get the PrintWriter.
 	 * 
 	 * @return The PrintWriter object to write into.
 	 */
-	public PrintWriter getPrintWriter();
+    PrintWriter getPrintWriter();
 }

@@ -16,19 +16,19 @@ public interface IPluginActionDescriptor {
 	 * 
 	 * @return the Plugin's Action class
 	 */
-	public IPluginActionDelegate getActionClass();
+    IPluginActionDelegate getActionClass();
 
 	/**
 	 * Method to get the Plugin Descriptor.
 	 * 
 	 * @return The Plugin Descriptor
 	 */
-	public IPluginDescriptor getParent();
+    IPluginDescriptor getParent();
 
 	/**
 	 * Method to get the Plugin Action's Model object
 	 * 
 	 * @return The Plugin Action's Model
 	 */
-	public PluginActionModel getPluginActionModel();
+    PluginActionModel getPluginActionModel();
 }

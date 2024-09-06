@@ -16,5 +16,5 @@ public interface IPluginShellCmdProxy {
 	 * @param substring
 	 *            The Plugin Shell Command arguments
 	 */
-	public void executeCmd(String currKey, String substring);
+    void executeCmd(String currKey, String substring);
 }

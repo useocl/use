@@ -19,28 +19,28 @@ public interface IPluginShellCmd {
 	 * @param cmdArguments
 	 *            The Shell Command's arguments
 	 */
-	public void executeCmd(String cmd, String cmdArguments, String[] argList);
+    void executeCmd(String cmd, String cmdArguments, String[] argList);
 
 	/**
 	 * Method to get the Shell Command's name
 	 * 
 	 * @return The Shell Command's name
 	 */
-	public String getCmd();
+    String getCmd();
 
 	/**
 	 * Method to get the Session Object
 	 * 
 	 * @return The Session object
 	 */
-	public Session getSession();
+    Session getSession();
 
 	/**
 	 * Method to get the Shell Object
 	 * 
 	 * @return The Shell object
 	 */
-	public Shell getShell();
+    Shell getShell();
 
 	/**
 	 * Method to get the Shell Command's arguments as a plain {@code String}.
@@ -48,7 +48,7 @@ public interface IPluginShellCmd {
 	 * @return The Shell Command's arguments
 	 * @see #getCmdArgumentList()
 	 */
-	public String getCmdArguments();
+    String getCmdArguments();
 	
 	/**
 	 * Method to get the Shell Command's arguments as a split
@@ -58,5 +58,5 @@ public interface IPluginShellCmd {
 	 * @return The Shell Command's arguments
 	 * @see #getCmdArguments()
 	 */
-	public String[] getCmdArgumentList();
+    String[] getCmdArgumentList();
 }

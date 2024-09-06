@@ -29,8 +29,8 @@ import org.tzi.use.uml.sys.MObject;
  */
 public interface ObjectNodeActivity {
     
-    public MObject object();
+    MObject object();
     
-    public MClass cls();
+    MClass cls();
 
 }

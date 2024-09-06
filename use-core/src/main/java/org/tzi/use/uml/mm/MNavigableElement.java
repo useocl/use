@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public interface MNavigableElement {
 
-    public MClass cls();
+    MClass cls();
 
     /**
      * <p>Returns the <code>Type</code> of the navigation from <code>sourceObjectType</code> via
@@ -58,9 +58,9 @@ public interface MNavigableElement {
      * @param qualifiedAccess Boolean value whether qualifier values are used or not. 
      * @return The result <code>Type</code> of a navigation with the specified parameters.
      */
-    public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess );
+    Type getType(Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess);
 
-    public MAssociation association();
+    MAssociation association();
 
     /**
 	 * Returns the role name for elements which are reachable
@@ -69,7 +69,7 @@ public interface MNavigableElement {
 	 * letter.
 	 * TODO: This changed in OCL 2.3 to returning the name as is.
 	 */
-    public String nameAsRolename();
+    String nameAsRolename();
 
     void setUnion(boolean newValue);
     
@@ -97,20 +97,20 @@ public interface MNavigableElement {
 	 * The immutable list of qualifier for this navigable end.
 	 * @return The <code>List</code> of all defined qualifiers or an empty list.
 	 */
-    public List<VarDecl> getQualifiers();
+    List<VarDecl> getQualifiers();
     
     /**
 	 * True if there are any qualifiers defined for this association end.
 	 * @return A <code>Boolean</code> value indicating if this end has defined qualifiers.
 	 */
-    public boolean hasQualifiers();
+    boolean hasQualifiers();
     
-    public List<MAssociationEnd> getAllOtherAssociationEnds();
+    List<MAssociationEnd> getAllOtherAssociationEnds();
     
-    public boolean isCollection();
+    boolean isCollection();
     
-    public boolean equals( Object obj );
+    boolean equals(Object obj);
 
-    public int hashCode();
+    int hashCode();
 
 }

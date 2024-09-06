@@ -66,7 +66,7 @@ public enum WayPointType {
     
     private final int id;
     
-    private WayPointType(int id) {
+    WayPointType(int id) {
     	this.id = id; 
     }
     

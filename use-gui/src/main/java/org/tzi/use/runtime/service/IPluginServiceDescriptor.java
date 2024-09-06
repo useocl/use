@@ -16,19 +16,19 @@ public interface IPluginServiceDescriptor {
 	 * 
 	 * @return The Plugin Descriptor
 	 */
-	public IPluginDescriptor getParent();
+    IPluginDescriptor getParent();
 
 	/**
 	 * Method to get the Plugin Service Model object.
 	 * 
 	 * @return The Plugin Service Model object
 	 */
-	public PluginServiceModel getPluginServiceModel();
+    PluginServiceModel getPluginServiceModel();
 
 	/**
 	 * Method to get the Service class.
 	 * 
 	 * @return The Service class
 	 */
-	public IPluginService getServiceClass();
+    IPluginService getServiceClass();
 }

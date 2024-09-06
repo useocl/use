@@ -16,19 +16,19 @@ public interface IPluginShellCmdDescriptor {
 	 * 
 	 * @return the Plugin's Shell Command class
 	 */
-	public IPluginShellCmdDelegate getCmdClass();
+    IPluginShellCmdDelegate getCmdClass();
 
 	/**
 	 * Method to get the Plugin Descriptor.
 	 * 
 	 * @return The Plugin Descriptor
 	 */
-	public IPluginDescriptor getParent();
+    IPluginDescriptor getParent();
 
 	/**
 	 * Method to get the Plugin Shell Command Model object.
 	 * 
 	 * @return The Plugin Shell Command Model object
 	 */
-	public PluginShellCmdModel getPluginCmdModel();
+    PluginShellCmdModel getPluginCmdModel();
 }

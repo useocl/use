@@ -41,83 +41,83 @@ public interface IGCollector {
      * No further execution is needed.
      * @return
      */
-	public boolean canStop();
+    boolean canStop();
     
-    public void setValidStateFound();
+    void setValidStateFound();
     
-    public void subsequentlyPrependStatement(MStatement statement);
+    void subsequentlyPrependStatement(MStatement statement);
     
-    public boolean expectSubsequentReporting();
+    boolean expectSubsequentReporting();
     
     /**
      * Called if a leaf is hit.
      * Normally used for statistical reasons (number of states checked).
      */
-    public void leaf();
+    void leaf();
     
     long numberOfCheckedStates();
     
-    public void setPrePostViolation();
+    void setPrePostViolation();
     
-    public boolean getPrePostViolation();
+    boolean getPrePostViolation();
     
-    public PrintWriter basicPrintWriter();
-    public boolean doBasicPrinting();
+    PrintWriter basicPrintWriter();
+    boolean doBasicPrinting();
     
-    public PrintWriter detailPrintWriter();
-    public boolean doDetailPrinting();
+    PrintWriter detailPrintWriter();
+    boolean doDetailPrinting();
 
-    public void invalid( String str );
-    public void invalid( Exception e );
+    void invalid(String str);
+    void invalid(Exception e);
 
 	/**
 	 * Adds <code>ignoredStates</code> to the overall ignored states
 	 * @param ignoredStates
 	 */
-	public void addIgnoredStates(long ignoredStates);
+    void addIgnoredStates(long ignoredStates);
 
 	/**
 	 * Informs the previous callers, that a barrier cannot be passed.
 	 */
-	public void setBlocked(boolean newValue);
+    void setBlocked(boolean newValue);
     
 	/**
 	 * Returns the state of the last checked barrier.
 	 */
-	public boolean getBlocked();
+    boolean getBlocked();
 	
 	/**
 	 * Adds 1 to the cut counter
 	 */
-	public void addCut();
+    void addCut();
 	
 	/**
 	 * Returns the number of cuts
 	 * @return Number of cuts made
 	 */
-	public long getCuts();
+    long getCuts();
 	
 	/**
 	 * Adds one to the number of "hit" barriers.
 	 */
-	public void addBarrierBlock();
+    void addBarrierBlock();
 	
 	/**
 	 * Returns the number of barriers hit.
 	 * @return Number of hit barriers.
 	 */
-	public long getBarriersHit();
+    long getBarriersHit();
 
 	/**
 	 * Add the barrier statement to the list of barriers.
 	 * @param bInstr 
 	 */
-	public void addBarrier(GInstrBarrier bInstr);
+    void addBarrier(GInstrBarrier bInstr);
 	
 	/**
 	 * Add the calculated barrier statement to the list of barriers and
 	 * increments the counter for calculated barriers by one.
 	 * @param bInstr 
 	 */
-	public void addBarrier(GInstrCalculatedBarrier bInstr);
+    void addBarrier(GInstrCalculatedBarrier bInstr);
 }

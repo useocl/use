@@ -21,7 +21,7 @@ public interface IPluginRuntime extends IRuntime {
 	 * 
 	 * @return A Map of Plugins
 	 */
-	public Map<String, IPluginDescriptor> getPlugins();
+    Map<String, IPluginDescriptor> getPlugins();
 
 	/**
 	 * Method to get a registered plugin Service by it's name
@@ -30,14 +30,14 @@ public interface IPluginRuntime extends IRuntime {
 	 *            The Service's name
 	 * @return The Plugin Service
 	 */
-	public IPluginService getService(String pluginServiceClassName);
+    IPluginService getService(String pluginServiceClassName);
 
 	/**
 	 * Method to get all registered Plugin Services
 	 * 
 	 * @return A Map of registered Plugin Services
 	 */
-	public Map<String, IPluginServiceDescriptor> getServices();
+    Map<String, IPluginServiceDescriptor> getServices();
 
 	/**
 	 * Method to register a Plugin by the given filename in the location path
@@ -47,7 +47,7 @@ public interface IPluginRuntime extends IRuntime {
 	 * @param pluginURL
 	 *            the Plugin's location path as URL
 	 */
-	public void registerPlugin(String pluginFilename, URL pluginURL);
+    void registerPlugin(String pluginFilename, URL pluginURL);
 
 	/**
 	 * Method to register all Services by PluginDescriptor provided by a Plugin.
@@ -55,6 +55,6 @@ public interface IPluginRuntime extends IRuntime {
 	 * @param currentPluginDescriptor
 	 *            The PluginDescriptor
 	 */
-	public void registerServices(IPluginDescriptor currentPluginDescriptor);
+    void registerServices(IPluginDescriptor currentPluginDescriptor);
 
 }

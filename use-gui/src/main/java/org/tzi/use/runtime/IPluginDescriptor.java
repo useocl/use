@@ -18,26 +18,26 @@ public interface IPluginDescriptor extends IDescriptor {
 	 * 
 	 * @return The Plugin class
 	 */
-	public IPlugin getPluginClass();
+    IPlugin getPluginClass();
 
 	/**
 	 * Method to get the Plugin's ClassLoader
 	 * 
 	 * @return The Plugin's ClassLoader
 	 */
-	public IPluginClassLoader getPluginClassLoader();
+    IPluginClassLoader getPluginClassLoader();
 
 	/**
 	 * Method to get the Plugin's path as URL.
 	 * 
 	 * @return The Plugin's path
 	 */
-	public URL getPluginLocation();
+    URL getPluginLocation();
 
 	/**
 	 * Method to get the Plugin's Model object
 	 * 
 	 * @return The Plugin's Model
 	 */
-	public PluginModel getPluginModel();
+    PluginModel getPluginModel();
 }

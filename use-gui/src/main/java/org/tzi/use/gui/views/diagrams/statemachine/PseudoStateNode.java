@@ -157,8 +157,8 @@ public class PseudoStateNode extends VertexNode {
 	}
 	
 	protected interface DrawingImpl {
-		public void onDraw(Graphics2D g);
-		public void setRectangleSize(Graphics2D g);
-		public Point2D getIntersectionCoordinate(Point2D source, Point2D target);
+		void onDraw(Graphics2D g);
+		void setRectangleSize(Graphics2D g);
+		Point2D getIntersectionCoordinate(Point2D source, Point2D target);
 	}
 }

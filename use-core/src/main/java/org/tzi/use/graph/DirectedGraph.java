@@ -315,7 +315,7 @@ public interface DirectedGraph<N, E extends DirectedEdge<N>> extends Collection<
 	 */
 	void clear();
 	
-	public interface NodeSetIterator<N> extends Iterator<N> {
+	interface NodeSetIterator<N> extends Iterator<N> {
 		int getDepth();
 	}
 }

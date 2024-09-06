@@ -149,7 +149,7 @@ public interface MAssociation extends MClassifier {
     /**
      * Sets the position in the defined USE-Model.
      */
-    public void setPositionInModel(int position);
+    void setPositionInModel(int position);
 
     /**
      * Sets the model owning this class. This method must be called by
@@ -157,7 +157,7 @@ public interface MAssociation extends MClassifier {
      *
      * @see MModel#addAssociation(MAssociation)
      */
-    public void setModel( MModel model );
+    void setModel(MModel model);
     
     /** 
      * Returns true if a link consisting of objects of the given classes
@@ -214,22 +214,22 @@ public interface MAssociation extends MClassifier {
 	Set<MAssociation> getRedefinesClosure();
 	
 	@Override
-    public Set<? extends MAssociation> parents();
+    Set<? extends MAssociation> parents();
         
     @Override
-    public Set<? extends MAssociation> allParents();
+    Set<? extends MAssociation> allParents();
     
     @Override
-    public Set<? extends MAssociation> allChildren();
+    Set<? extends MAssociation> allChildren();
 
     @Override
-    public Set<? extends MAssociation> children();
+    Set<? extends MAssociation> children();
     
     @Override
-    public Iterable<? extends MAssociation> generalizationHierachie(boolean includeThis);
+    Iterable<? extends MAssociation> generalizationHierachie(boolean includeThis);
     
     @Override
-    public Iterable<? extends MAssociation> specializationHierachie(boolean includeThis);
+    Iterable<? extends MAssociation> specializationHierachie(boolean includeThis);
     
 	/**
 	 * True, if links can be inserted into this association otherwise

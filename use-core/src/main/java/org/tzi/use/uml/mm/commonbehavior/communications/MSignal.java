@@ -38,7 +38,7 @@ public interface MSignal extends MClassifier {
 	 * UML 2.4.1 p. 466
 	 * The attributes owned by the signal. (Subsets Classifier::attribute, Namespace::ownedMember).
 	 */
-	public Set<MAttribute> getAttributes();
+    Set<MAttribute> getAttributes();
 
 	/**
 	 * Looks up the attribute of the signal with
@@ -46,40 +46,40 @@ public interface MSignal extends MClassifier {
 	 * @param name
 	 * @return The attribute with the given name or <code>null</code>.
 	 */
-	public MAttribute getAttribute(String name);
+    MAttribute getAttribute(String name);
 
 	/**
 	 * Adds the attribute <code>attr</code> to the signal.
 	 * @param attr The attribute to add.
 	 * @throws MInvalidModelException If the attribute is not valid, e.g., name collision.
 	 */
-	public void addAttribute(MAttribute attr) throws MInvalidModelException;
+    void addAttribute(MAttribute attr) throws MInvalidModelException;
 	
 	/**
 	 * Returns all attributes including inherited ones.
 	 * @return
 	 */
-	public Set<MAttribute> getAllAttributes();
+    Set<MAttribute> getAllAttributes();
 	
 	/**
 	 * Sets a reference to the model the signal is contained in.
 	 * @param model
 	 */
-	public void setModel(MModel model);
+    void setModel(MModel model);
 
 	/**
 	 * @param line
 	 */
-	public void setPositionInModel(int line);
+    void setPositionInModel(int line);
 	
 	@Override
-	public Iterable<MSignal> generalizationHierachie(boolean includeThis);
+    Iterable<MSignal> generalizationHierachie(boolean includeThis);
 
 	@Override
-	public Set<MSignal> parents();
+    Set<MSignal> parents();
 	
 	/**
 	 * @return
 	 */
-	public MessageType getType();
+    MessageType getType();
 }

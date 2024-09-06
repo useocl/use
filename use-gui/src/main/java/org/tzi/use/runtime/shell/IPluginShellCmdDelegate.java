@@ -18,6 +18,6 @@ public interface IPluginShellCmdDelegate {
 	 * @param pluginCommand
 	 *            The Plugin Shell Command Proxy
 	 */
-	public void performCommand(IPluginShellCmd pluginCommand);
+    void performCommand(IPluginShellCmd pluginCommand);
 
 }

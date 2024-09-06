@@ -32,13 +32,13 @@ public interface DerivedValueController {
 	/**
 	 * Initializes the derived controller.
 	 */
-	public void initState();
+    void initState();
 	
 	/**
 	 * Invoked after a statement changed the system state,
 	 * but before external instances are notified about the change.
 	 */
-	public void updateState();
+    void updateState();
 	
 	/**
 	 * Invoked after a statement changed the system state,
@@ -47,5 +47,5 @@ public interface DerivedValueController {
 	 * changes into the state difference <code>diff</code>.
 	 * @param diff
 	 */
-	public void updateState(StateDifference diff);
+    void updateState(StateDifference diff);
 }

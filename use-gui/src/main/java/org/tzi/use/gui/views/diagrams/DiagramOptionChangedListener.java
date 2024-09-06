@@ -27,5 +27,5 @@ import java.util.EventListener;
  *
  */
 public interface DiagramOptionChangedListener extends EventListener {
-	public void optionChanged(String optionname);
+	void optionChanged(String optionname);
 }

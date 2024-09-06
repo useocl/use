@@ -36,7 +36,7 @@ public interface MClass extends MClassifier {
     /**
      * Returns the name of this class with lowercase first letter.
      */
-    public String nameAsRolename();
+    String nameAsRolename();
 
     /**
      * Returns the set of all direct parent classes (without this class).
@@ -45,7 +45,7 @@ public interface MClass extends MClassifier {
      * @return Set&lt;MClass&gt;
      */
     @Override
-    public Set<? extends MClass> parents();
+    Set<? extends MClass> parents();
 
     /**
      * Returns the set of all parent classes (without this class). 
@@ -55,7 +55,7 @@ public interface MClass extends MClassifier {
      * @return Set&lt;MClass&gt;
      */
     @Override
-    public Set<? extends MClass> allParents();
+    Set<? extends MClass> allParents();
     
     /**
      * Returns the set of all child classes (without this class). This
@@ -64,7 +64,7 @@ public interface MClass extends MClassifier {
      * @return Set(MClass)
      */
     @Override
-    public Set<? extends MClass> allChildren();
+    Set<? extends MClass> allChildren();
 
     /**
      * Returns the set of all direct child classes (without this
@@ -73,13 +73,13 @@ public interface MClass extends MClassifier {
      * @return Set(MClass) 
      */
     @Override
-    public Set<? extends MClass> children();
+    Set<? extends MClass> children();
         
     @Override
-    public Iterable<? extends MClass> generalizationHierachie(boolean includeThis);
+    Iterable<? extends MClass> generalizationHierachie(boolean includeThis);
     
     @Override
-    public Iterable<? extends MClass> specializationHierachie(boolean includeThis);
+    Iterable<? extends MClass> specializationHierachie(boolean includeThis);
 
     /**
      * Adds an attribute. The attribute must have a unique name within
@@ -91,7 +91,7 @@ public interface MClass extends MClassifier {
      *            attribute with the same name or a name clash
      *            occurred.
      */
-    public void addAttribute( MAttribute attr ) throws MInvalidModelException;
+    void addAttribute(MAttribute attr) throws MInvalidModelException;
 
     /**
      * Returns the set of all attributes (including inherited ones)
@@ -99,7 +99,7 @@ public interface MClass extends MClassifier {
      *
      * @return List(MAttribute)
      */
-    public List<MAttribute> allAttributes();
+    List<MAttribute> allAttributes();
 
     /**
      * Adds an operation. The operation name must be unique among all
@@ -109,7 +109,7 @@ public interface MClass extends MClassifier {
      * @exception MInvalidModelException the operation is not unique
      *            or is not a valid redefinition.
      */
-    public void addOperation( MOperation op ) throws MInvalidModelException;
+    void addOperation(MOperation op) throws MInvalidModelException;
 
     /**
      * Returns the set of all operations (including inherited ones)
@@ -117,7 +117,7 @@ public interface MClass extends MClassifier {
      *
      * @return List(MOperation)
      */
-    public List<MOperation> allOperations();
+    List<MOperation> allOperations();
 
     /**
      * Returns the set of associations this class directly
@@ -125,7 +125,7 @@ public interface MClass extends MClassifier {
      *
      * @return Set(MAssociation).
      */
-    public Set<MAssociation> associations();
+    Set<MAssociation> associations();
 
     /**
      * Returns the set of associations this class and all of its
@@ -133,17 +133,17 @@ public interface MClass extends MClassifier {
      *
      * @return Set(MAssociation).
      */
-    public Set<MAssociation> allAssociations();
+    Set<MAssociation> allAssociations();
 
     /**
      * Sets the position in the defined USE-Model.
      */
-    public void setPositionInModel(int position);
+    void setPositionInModel(int position);
     
     /**
      * Process this element with visitor.
      */
-    public void processWithVisitor( MMVisitor v );
+    void processWithVisitor(MMVisitor v);
 
     /**
      * Searches for the association ends connected to this class or 
@@ -151,7 +151,7 @@ public interface MClass extends MClassifier {
      * @param name The name of association ends to look for.
      * @return A list of association ends in the order from the most specific class to the more general classes.
      */
-	public List<MAssociationEnd> getAssociationEnd(String name);
+    List<MAssociationEnd> getAssociationEnd(String name);
 	
 	/**
      * Registers all association ends as navigable from this
@@ -167,22 +167,22 @@ public interface MClass extends MClassifier {
 	 * Adds a new PSM to the class
 	 * @param psm
 	 */
-	public void addOwnedProtocolStateMachine(MProtocolStateMachine psm);
+    void addOwnedProtocolStateMachine(MProtocolStateMachine psm);
 	
 	/**
 	 * Returns all owned PSM or an empty list if no PSM is defined.
 	 * @return
 	 */
-	public Set<MProtocolStateMachine> getOwnedProtocolStateMachines();
+    Set<MProtocolStateMachine> getOwnedProtocolStateMachines();
 
 	/**
 	 * @param operationCall
 	 * @return
 	 */
-	public boolean hasStateMachineWhichHandles(MOperationCall operationCall);
+    boolean hasStateMachineWhichHandles(MOperationCall operationCall);
 
 	/**
 	 * @return
 	 */
-	public Set<MProtocolStateMachine> getAllOwnedProtocolStateMachines();
+    Set<MProtocolStateMachine> getAllOwnedProtocolStateMachines();
 }

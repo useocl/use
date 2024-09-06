@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public interface Type extends BufferedToString {
 	
-	public enum VoidHandling {
+	enum VoidHandling {
 		INCLUDE_VOID,
 		EXCLUDE_VOID
 	}

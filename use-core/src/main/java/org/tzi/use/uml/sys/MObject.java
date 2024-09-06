@@ -40,19 +40,19 @@ public interface MObject extends MInstance {
     /**
      * Returns the class of this object.
      */
-    public MClass cls();
+    MClass cls();
 
     /**
      * Returns a name for this object.
      */
-    public String name();
+    String name();
 
     
     /**
      * returns the value for this object
      * @return the value for this object
      */
-    public ObjectValue value();
+    ObjectValue value();
 
     
     /**
@@ -60,12 +60,12 @@ public interface MObject extends MInstance {
      *
      * @return null if object does not exist in the state
      */
-    public MObjectState state( MSystemState systemState );
+    MObjectState state(MSystemState systemState);
 
     /**
      * Returns true if this object exists in a specific system state.
      */
-    public boolean exists( MSystemState systemState );
+    boolean exists(MSystemState systemState);
 
     /**
      * Returns a list of objects at <code>dst</code> which are
@@ -79,20 +79,20 @@ public interface MObject extends MInstance {
      * 
      * @return List(MObject)
      */
-    public List<MObject> getNavigableObjects( MSystemState systemState,
-                                     MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues );
+    List<MObject> getNavigableObjects(MSystemState systemState,
+                                      MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues);
 
 
-    public int hashCode();
+    int hashCode();
 
     /**
      * Two objects are equal iff they have the same name.
      */
-    public boolean equals( Object obj );
+    boolean equals(Object obj);
 
     /**
      * Returns the name of the object.
      * @return The name of the object
      */
-    public String toString();
+    String toString();
 }

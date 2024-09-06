@@ -560,7 +560,7 @@ public class MenuScroller {
     }
   }
 
-  private static enum MenuIcon implements Icon {
+  private enum MenuIcon implements Icon {
 
     UP(9, 1, 9),
     DOWN(1, 9, 1);

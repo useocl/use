@@ -37,9 +37,9 @@ public interface PPCHandler {
 	 * @param operationCall
 	 * @throws PreConditionCheckFailedException
 	 */
-	public abstract void handlePreConditions(
-			MSystem system, 
-			MOperationCall operationCall) throws PreConditionCheckFailedException;
+    void handlePreConditions(
+            MSystem system,
+            MOperationCall operationCall) throws PreConditionCheckFailedException;
 	
 	/**
 	 * Called if the post conditions of an operation need to be handled.
@@ -47,9 +47,9 @@ public interface PPCHandler {
 	 * @param operationCall
 	 * @throws PostConditionCheckFailedException
 	 */
-	public abstract void handlePostConditions(
-			MSystem system, 
-			MOperationCall operationCall) throws PostConditionCheckFailedException;
+    void handlePostConditions(
+            MSystem system,
+            MOperationCall operationCall) throws PostConditionCheckFailedException;
 	
 	
 	/**
@@ -59,9 +59,9 @@ public interface PPCHandler {
 	 * @param operationCall
 	 * @throws PreConditionCheckFailedException
 	 */
-	public abstract void handleTransitionsPre(
-			MSystem system, 
-			MOperationCall operationCall) throws PreConditionCheckFailedException;
+    void handleTransitionsPre(
+            MSystem system,
+            MOperationCall operationCall) throws PreConditionCheckFailedException;
 	
 	/**
 	 * Called after the transition to execute was calculated.
@@ -69,7 +69,7 @@ public interface PPCHandler {
 	 * @param operationCall
 	 * @throws PostConditionCheckFailedException
 	 */
-	public abstract void handleTransitionsPost(
-			MSystem system, 
-			MOperationCall operationCall) throws PostConditionCheckFailedException;
+    void handleTransitionsPost(
+            MSystem system,
+            MOperationCall operationCall) throws PostConditionCheckFailedException;
 }

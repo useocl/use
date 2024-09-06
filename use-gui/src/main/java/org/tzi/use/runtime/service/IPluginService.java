@@ -16,6 +16,6 @@ public interface IPluginService {
 	 * @return general return Object
 	 * 
 	 */
-	public Object executeService(Object object);
+    Object executeService(Object object);
 
 }
