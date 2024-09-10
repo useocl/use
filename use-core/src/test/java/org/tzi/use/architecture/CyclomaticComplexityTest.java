@@ -19,8 +19,8 @@ public class CyclomaticComplexityTest {
 
     @Test
     public void check_cycles_in_core() {
-        // Violated 95 times
-         SlicesRuleDefinition.slices().matching("org.tzi.use.(*)..").should().beFreeOfCycles().check(classes);
+        // Violated 100 times
+        checkPackageForCycles("org.tzi.use");
     }
 
     @Test
