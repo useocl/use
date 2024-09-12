@@ -6,6 +6,14 @@ in contributing to USE. Either by developing use itself or by building plugins.
 It was startet in 2022 and is a growing documentation. Any pull request for USE should
 also change this technical documentation, to foster the growing.
 
+## Starting USE from IntelliJ IDEA
+
+### Maven Compile
+On the right side of the IDE there is a Maven button. Unfold `use (root)` and then `Lifecycle`. Select `compile` and then `Run Maven Build`. After the build is done `Reload All Maven Projects Incrementally`.
+
+### Starting the GUI
+Open the `Main` class in `use-gui/src/main/java/org.tzi.use/main/Main.java` and run it.
+
 ## Build Process
 
 ### Release Process
