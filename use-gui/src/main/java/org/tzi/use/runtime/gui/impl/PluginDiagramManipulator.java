@@ -28,8 +28,7 @@ public abstract class PluginDiagramManipulator {
      * This has to be implemented by the Plugin!
      * Executes the plugins behaviour after initialisation of given diagram.
      */
-    public abstract void doRun();
-
+    public abstract void onInitialisation();
 
     protected final List<PlaceableNode> getGraphNodes() {
         return diagramViews.stream().flatMap(view -> view.getGraph().getNodes().stream()).toList();
@@ -51,6 +50,21 @@ public abstract class PluginDiagramManipulator {
 //        return diagramViews.stream().map(view -> view.getGraph().getNodes().stream().filter((ClassNode node) -> node.cls().getAllAnnotations().).findFirst().orElse(null)).toList();
         return null;
     }
+
+    /**
+     * 			visibleData.fClassToNodeMap.values().stream().forEach(this::resetClassNodeColor);
+     * 			hiddenData.fClassToNodeMap.values().stream().forEach(this::resetClassNodeColor);
+     * 			visibleData.getAllRolenames().stream().forEach(this::resetRolenameColor);
+     * 			hiddenData.getAllRolenames().stream().forEach(this::resetRolenameColor);
+     * 			visibleData.fEnumToNodeMap.values().forEach(this::resetEnumNodeColor);
+     * 			hiddenData.fEnumToNodeMap.values().forEach(this::resetEnumNodeColor);
+     * 			visibleData.fAssocClassToEdgeMap.values().forEach(this::resetEdgeColor);
+     * 			hiddenData.fAssocClassToEdgeMap.values().forEach(this::resetEdgeColor);
+     * 			visibleData.fBinaryAssocToEdgeMap.values().forEach(this::resetEdgeColor);
+     * 			hiddenData.fBinaryAssocToEdgeMap.values().forEach(this::resetEdgeColor);
+     * 			visibleData.fGenToGeneralizationEdge.values().forEach(this::resetEdgeColor);
+     * 			hiddenData.fGenToGeneralizationEdge.values().forEach(this::resetEdgeColor);
+     */
 
 
 }

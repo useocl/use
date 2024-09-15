@@ -86,7 +86,7 @@ public class ClassDiagramView extends JPanel
         if (pluginRuntime != null) {
             final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
             diagramExtensionPoint.registerView(fClassDiagram);
-            diagramExtensionPoint.runPlugins();
+            diagramExtensionPoint.runPluginsOnInitialisation();
         }
 	}
 
