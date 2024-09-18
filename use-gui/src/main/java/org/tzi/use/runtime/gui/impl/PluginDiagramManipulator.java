@@ -1,6 +1,7 @@
 package org.tzi.use.runtime.gui.impl;
 
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public abstract class PluginDiagramManipulator {
     private final List<DiagramView> diagramViews;
 
     /**
-     * Constructs a handle to the requested diagram view.
+     * Constructs a handle to the requested diagram view by setting the class variable.
      *
      * @param clazz type of the requested diagram view
      */
@@ -30,41 +31,47 @@ public abstract class PluginDiagramManipulator {
      */
     public abstract void onInitialisation();
 
+    protected final void repaint() {
+        diagramViews.forEach(DiagramView::repaint);
+    }
+
     protected final List<PlaceableNode> getGraphNodes() {
         return diagramViews.stream().flatMap(view -> view.getGraph().getNodes().stream()).toList();
     }
 
-    protected final void addNode(final PlaceableNode node) {
+    protected final void addNodeToGraph(final PlaceableNode node) {
         diagramViews.forEach(view -> view.getGraph().add(node));
     }
 
-    protected final List<PlaceableNode> getNodes(final String name) {
+    protected final List<PlaceableNode> findNodesByName(final String name) {
         return diagramViews.stream().map(view -> view.getGraph().getNodes().stream().filter(node -> node.name().equals(name)).findFirst().orElse(null)).toList();
     }
 
-    protected final void addAnnotation(final PlaceableNode node) {
-//        diagramViews.forEach(view -> view.getGraph().getNodes().)
-    }
 
-    protected final List<PlaceableNode> getNodesByAnnotation(final String annotationName) {
-//        return diagramViews.stream().map(view -> view.getGraph().getNodes().stream().filter((ClassNode node) -> node.cls().getAllAnnotations().).findFirst().orElse(null)).toList();
-        return null;
+    protected final List<DiagramView.DiagramData> getDiagramDataByVisibility(final boolean isVisible) {
+        return diagramViews.stream().map(isVisible ? DiagramView::getVisibleData : DiagramView::getHiddenData).toList();
     }
 
     /**
-     * 			visibleData.fClassToNodeMap.values().stream().forEach(this::resetClassNodeColor);
-     * 			hiddenData.fClassToNodeMap.values().stream().forEach(this::resetClassNodeColor);
-     * 			visibleData.getAllRolenames().stream().forEach(this::resetRolenameColor);
-     * 			hiddenData.getAllRolenames().stream().forEach(this::resetRolenameColor);
-     * 			visibleData.fEnumToNodeMap.values().forEach(this::resetEnumNodeColor);
-     * 			hiddenData.fEnumToNodeMap.values().forEach(this::resetEnumNodeColor);
-     * 			visibleData.fAssocClassToEdgeMap.values().forEach(this::resetEdgeColor);
-     * 			hiddenData.fAssocClassToEdgeMap.values().forEach(this::resetEdgeColor);
-     * 			visibleData.fBinaryAssocToEdgeMap.values().forEach(this::resetEdgeColor);
-     * 			hiddenData.fBinaryAssocToEdgeMap.values().forEach(this::resetEdgeColor);
-     * 			visibleData.fGenToGeneralizationEdge.values().forEach(this::resetEdgeColor);
-     * 			hiddenData.fGenToGeneralizationEdge.values().forEach(this::resetEdgeColor);
+     * TODO: ClassNode only for certain use case. Abstract method to return node type
+     *  i can build my own mapper
      */
-
+    protected final void resetClassNodesColor() {
+        getDiagramDataByVisibility(true).stream().map(DiagramView.DiagramData::getNodes).forEach(placeableNode -> placeableNode.forEach(node -> {
+            if (placeableNode instanceof ClassNode classNode) {
+                // or generalize methods to use those of PlaceableNode
+                classNode.setColor(null);
+                classNode.resetAttributeColor();
+                classNode.resetOperationColor();
+            }
+        }));
+        getDiagramDataByVisibility(true).stream().map(DiagramView.DiagramData::getNodes).forEach(placeableNode -> placeableNode.forEach(node -> {
+            if (placeableNode instanceof ClassNode classNode) {
+                classNode.setColor(null);
+                classNode.resetAttributeColor();
+                classNode.resetOperationColor();
+            }
+        }));
+    }
 
 }
