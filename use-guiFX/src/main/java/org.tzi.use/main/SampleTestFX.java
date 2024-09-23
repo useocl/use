@@ -18,9 +18,6 @@ public class SampleTestFX extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-
-
-
         // Load the main window FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
         Parent root = loader.load();

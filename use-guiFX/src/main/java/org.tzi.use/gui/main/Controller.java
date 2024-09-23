@@ -1,7 +1,6 @@
 package org.tzi.use.gui.main;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,7 +10,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,14 +22,18 @@ import java.util.Map;
  */
 public class Controller {
 
-    @FXML
+    //@FXML
     private TextArea logTextArea, folderTreeTextDisplay; // Reference to the log text area in FXML
-    @FXML
+    //@FXML
     private ToolBar toolBar; // Reference to the ToolBar
-    @FXML
+    //@FXML
     private Menu fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems;
-    @FXML
+    //@FXML
     private TreeView<String> folderTreeView;
+
+    // Static variable to store the last selected directory path
+    private static String specificationDir = System.getProperty("user.dir");
+    private static List<String> specificationDirectorys = new ArrayList<>();
 
 
     public void initialize() {
@@ -38,32 +43,32 @@ public class Controller {
         folderTreeTextDisplay.setEditable(false);
 
         // initializing the modelBrowserTreeView/browser panel
-        ModelBrowserTest modelBrowserTest = new ModelBrowserTest(folderTreeView);
-        modelBrowserTest.updateFolderTree("name");
+        //ModelBrowserTest modelBrowserTest = new ModelBrowserTest(folderTreeView);
+        //modelBrowserTest.updateFolderTree("No model available");
 
         // initializing the toolbar
-        initToolbarItems(toolBar);
+        //initToolbarItems(toolBar, folderTreeView);
 
         // initialize the
-        initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView);
+        //initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView);
 
     }
 
     /**
      * initializing the MenuBar
      */
-    private static void initMenuBarItems(Menu fileMenuItems, Menu editMenuItems, Menu stateMenuItems, Menu viewMenuItems, Menu pluginsMenuItems, Menu helpMenuItems,TreeView<String> folderTreeView) {
+/*    private static void initMenuBarItems(Menu fileMenuItems, Menu editMenuItems, Menu stateMenuItems, Menu viewMenuItems, Menu pluginsMenuItems, Menu helpMenuItems, TreeView<String> folderTreeView) {
         initFileMenuItems(fileMenuItems, folderTreeView);
         initEditMenuItems(editMenuItems);
         initStateMenuItems(stateMenuItems);
         initViewMenuItems(viewMenuItems);
         initPluginsMenuItems(pluginsMenuItems);
         initHelpMenuItems(helpMenuItems);
-    }
+    }*/
 
-    /**
+/*    *//**
      * initializing the FileMenuItems
-     */
+     *//*
     private static void initFileMenuItems(Menu fileMenuItems, TreeView<String> folderTreeView) {
         MenuItem openSpecification = new MenuItem("Open specification...");
         MenuItem openRecentSpecification = new MenuItem("Open recent specification");
@@ -93,52 +98,51 @@ public class Controller {
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
         openSpecification.setOnAction(e -> {
             System.out.println("Ctrl+O Succesfully pressed");
-            openDirectoryChooser(openSpecification, folderTreeView);
+            openDirectoryChooser(folderTreeView);
         });
         exit.setOnAction(e -> {
             System.out.println("Ctrl+Q Succesfully pressed");
         });
 
         fileMenuItems.getItems().addAll(openSpecification, openRecentSpecification, saveScript, saveProtocol, printerSetup, printDiagram, printView, exportAsPdf, exit);
-    }
+    }*/
 
     /**
      * This Methode has the Logic for the Filechooser of the folderTreeView
      */
-    private static void openDirectoryChooser(MenuItem openSpecification, TreeView<String> folderTreeView) {
+    private static void openDirectoryChooser(TreeView<String> folderTreeView) {
         // Create a new FileChooser
         FileChooser fileChooser = new FileChooser();
         // Set the title for the FileChooser dialog
         fileChooser.setTitle("Open .use File");
 
         // Set the initial directory to a specific folder within your project
-        String workingDir = System.getProperty("user.dir");
-        if (workingDir != null) {
-            File initialDirectory = new File(workingDir);
+        if (specificationDir != null) {
+            File initialDirectory = new File(specificationDir);
             if (initialDirectory.exists() && initialDirectory.isDirectory()) {
                 fileChooser.setInitialDirectory(initialDirectory);
             }
         }
 
-        Node someNode = openSpecification.getParentPopup().getOwnerNode();
-        Stage stage = (Stage) someNode.getScene().getWindow();
-
         // Add a file filter to show only .use files
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("USE Files (*.use)", "*.use");
         fileChooser.getExtensionFilters().add(extFilter);
-        ModelBrowserTest modelBrowserFolderTree = new ModelBrowserTest(folderTreeView);
+        //ModelBrowserTest modelBrowserFolderTree = new ModelBrowserTest(folderTreeView);
 
-        File selectedDirectory = fileChooser.showOpenDialog(stage);
+        File selectedDirectory = fileChooser.showOpenDialog(Stage.getWindows().get(0));
 
         if (selectedDirectory != null){
+            specificationDir = selectedDirectory.getParent();
+            specificationDirectorys.add(selectedDirectory.getPath());
+
             // Updating The browser panel
-            modelBrowserFolderTree.updateFolderTree(selectedDirectory, selectedDirectory.getName().replace(".use", ""));
+            //modelBrowserFolderTree.updateFolderTree(selectedDirectory, selectedDirectory.getName().replace(".use", ""));
         }
     }
 
     /**
      * initializing the EditMenuItems
-     */
+     *//*
     private static void initEditMenuItems(Menu editMenuItems) {
         MenuItem undo = new MenuItem("Undo");
         MenuItem redo = new MenuItem("Redo");
@@ -161,9 +165,9 @@ public class Controller {
         editMenuItems.getItems().addAll(undo, redo);
     }
 
-    /**
+    *//**
      * initializing the StateMenuItems
-     */
+     *//*
     private static void initStateMenuItems(Menu stateMenuItems) {
         MenuItem createObject = new MenuItem("Create object...");
         MenuItem evaluateOCLexpr = new MenuItem("Evaluate OCL expression...");
@@ -220,9 +224,9 @@ public class Controller {
         stateMenuItems.getItems().addAll(createObject, evaluateOCLexpr, checkSN, checkSAEC, checkSMT, checkSIAEC, determine_states, checkStateInvariants, reset);
     }
 
-    /**
+    *//**
      * simulating a checkbox
-     */
+     *//*
     private static void checkAndUncheck(MenuItem menuItem) {
         Image checkedImage = new Image("images/check.png");
         Image uncheckedImage = new Image("images/unchecked.png");
@@ -241,9 +245,9 @@ public class Controller {
         }
     }
 
-    /**
+    *//**
      * initializing the ViewMenuItems
-     */
+     *//*
     private static void initViewMenuItems(Menu viewMenuItems) {
         Menu createView = new Menu("Create View");
         MenuItem tile = new MenuItem("Tile");
@@ -273,17 +277,17 @@ public class Controller {
         viewMenuItems.getItems().addAll(createView, tile, closeAll);
     }
 
-    /**
+    *//**
      * initializing the PluginMenuItems
      * TODO
-     */
+     *//*
     private static void initPluginsMenuItems(Menu pluginMenuItems) {
         //Currently Empty
     }
 
-    /**
+    *//**
      * initializing the HelpMenuItems
-     */
+     *//*
     private static void initHelpMenuItems(Menu helpMenuItems) {
         MenuItem about = new MenuItem("About...");
 
@@ -294,12 +298,12 @@ public class Controller {
         });
 
         helpMenuItems.getItems().addAll(about);
-    }
+    }*/
 
     /**
      * initializing the ToolbarItems
-     */
-    private static void initToolbarItems(ToolBar toolBar) {
+     *//*
+    private static void initToolbarItems(ToolBar toolBar, TreeView<String> folderTreeView) {
         Map<String, String> toolbarItems = new LinkedHashMap<>();
         toolbarItems.put("Open specification", "images/document-open.png");
         toolbarItems.put("Reload specification", "images/refresh.png");
@@ -335,6 +339,13 @@ public class Controller {
             button.setTooltip(tooltip);
             toolBar.getItems().add(button);
 
+            if (entry.getKey().equals("Open specification")) {
+                button.setOnAction(e -> {
+                    openDirectoryChooser(folderTreeView);
+
+                });
+            }
+
             // Add spacing between specific buttons
             if (i == 4 || i == 6 || i == 7) {
                 Region spacer = new Region();
@@ -344,6 +355,6 @@ public class Controller {
             i++;
         }
 
-    }
+    }*/
 
 }

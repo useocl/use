@@ -1,0 +1,16 @@
+.tree-cell {
+    -fx-padding: 5 10 5 10;
+}
+
+.tree-disclosure-node {
+    -fx-padding: 0 5 0 5;
+}
+
+.tree-view .tree-cell:filled:selected {
+    -fx-background-color: -fx-focus-color;
+}
+
+.tree-view {
+    -fx-show-root: true;
+    -fx-control-inner-background: #f9f9f9;
+}

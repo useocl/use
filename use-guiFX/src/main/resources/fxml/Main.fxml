@@ -12,9 +12,14 @@
 <?import javafx.scene.control.ToolBar?>
 
 
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.TabPane?>
+<?import org.kordamp.desktoppanefx.scene.layout.DesktopPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
 <BorderPane fx:id="borderPaneID" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.tzi.use.gui.main.Controller" stylesheets="@/styles/style.css">
+            fx:controller="org.tzi.use.gui.main.MainWindowFX" stylesheets="@/styles/style.css">
     <top>
         <VBox>
             <MenuBar>
@@ -46,28 +51,27 @@
                                     <TreeView fx:id="folderTreeView" VBox.vgrow="ALWAYS"/>
                                 </VBox>
                                 <!-- Bottom VBox (Folder Tree INFO) -->
-                                <VBox>
-                                    <TextArea fx:id="folderTreeTextDisplay" wrapText="true" VBox.vgrow="ALWAYS"/>
-                                </VBox>
+                                <VBox fx:id="webViewPlaceholder" VBox.vgrow="ALWAYS"/>
                             </items>
                         </SplitPane>
                         <!-- Middle/Top VBox (RIGHT Display) -->
                         <VBox>
-                            <ListView fx:id="modelListView" VBox.vgrow="ALWAYS"/>
+                            <DesktopPane fx:id="fDesktopPane" VBox.vgrow="ALWAYS"/>
                         </VBox>
 
                     </items>
                 </SplitPane>
                 <!-- Bottom VBox (LOG Display) -->
-                <TextArea fx:id="logTextArea">
-                    <BorderPane.margin>
-                        <Insets top="1.0"/>
-                    </BorderPane.margin>
-                    <padding>
-                        <Insets top="5.0"/>
-                    </padding>
-                </TextArea>
-
+                <VBox>
+                    <HBox>
+                        <Label text="Log" />
+                    </HBox>
+                    <TextArea fx:id="logTextArea">
+                    </TextArea>
+                    <HBox>
+                        <Label text="Ready." />
+                    </HBox>
+                </VBox>
             </items>
         </SplitPane>
     </center>
