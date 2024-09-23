@@ -139,7 +139,7 @@ public class MainWindowFX {
         fPluginRuntime = getPluginRuntime();
 
         // create the log panel
-        logTextArea.clear();
+        //logTextArea.clear();
         logTextArea.setEditable(false);
         //folderTreeViewLog.setEditable(false);
 
@@ -489,7 +489,7 @@ public class MainWindowFX {
         if (!validateOpenPossible()) {
             return recentSpec;
         } else {
-            instance.compile(filename);
+            //instance.compile(filename);
             recentSpec.setText(filename.toString());
             return recentSpec;
         }
@@ -515,7 +515,7 @@ public class MainWindowFX {
 
     protected boolean compile(final Path f) {
         //fLogPanel.clear();
-        Platform.runLater(() -> logTextArea.setText(""));
+        logTextArea.clear();
 
 
         MModel model = null;
@@ -525,18 +525,18 @@ public class MainWindowFX {
             // create the browser panel
 //            fLogWriter.println("done.");
             //fLogWriter.println("compiling specification " + f.toString() + "...");
-            Platform.runLater(() -> logTextArea.appendText("compiling specification " + f + "...\n"));
-            Platform.runLater(() -> logTextArea.appendText("done.\n"));
+            logTextArea.appendText("compiling specification " + f + "...\n");
+            logTextArea.appendText("done.\n");
         } catch (IOException ex) {
 //            fLogWriter.println("File `" + f.toAbsolutePath().toString() + "' not found.");
-            Platform.runLater(() -> logTextArea.appendText("File `" + f.toAbsolutePath().toString() + "' not found.\n"));
+            logTextArea.appendText("File `" + f.toAbsolutePath().toString() + "' not found.\n");
         }
 
         final MSystem system;
         if (model != null) {
 //            fLogWriter.println(model.getStats());
             MModel finalModel = model;
-            Platform.runLater(() -> logTextArea.appendText(finalModel.getStats() + "\n"));
+            logTextArea.appendText(finalModel.getStats() + "\n");
             // create system
             system = new MSystem(model);
         } else {

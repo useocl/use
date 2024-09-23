@@ -152,15 +152,12 @@ public class MainFX extends Application {
             Log.verbose(model.getStats());
 
             // Create system from the model
-            System.out.println("System: " + system);
             system = new MSystem(model);
-            System.out.println("System: " + system);
         }
         session.setSystem(system);
 
         showMainWindow(primaryStage);
 
-        startShell();
     }
 
     private void createPrimaryStage(Stage primaryStage) throws IOException {
