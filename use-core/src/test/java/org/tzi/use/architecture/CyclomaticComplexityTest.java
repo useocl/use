@@ -3,6 +3,7 @@ package org.tzi.use.architecture;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -10,6 +11,10 @@ import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,19 +27,30 @@ public class CyclomaticComplexityTest {
             .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.it.."))
             .that(JavaClass.Predicates.resideOutsideOfPackage("..resources.."));
 
-    @Test
-    public void count_cycles_in_core() {
-        int cycleCount = countCyclesForPackage("org.tzi.use");
-        System.out.println("Number of cycles in org.tzi.use: " + cycleCount);
-        Assertions.assertTrue(cycleCount >= 0, "Cycle count should be non-negative");
+    private static final String RESULTS_FILE = "cyclomatic_complexity_results.csv";
+
+    @BeforeEach
+    public void setup() {
+        // Delete the results file if it exists
+        File file = new File(RESULTS_FILE);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     @Test
-    void count_cycles_in_uml_package() {
-        int cycleCount = countCyclesForPackage("org.tzi.use.uml");
-        System.out.println("Number of cycles in org.tzi.use.uml: " + cycleCount);
+    public void count_cycles_in_core() {
+        int cycleCount = countCyclesForPackage("org.tzi.use");
+        writeResult(cycleCount);
         Assertions.assertTrue(cycleCount >= 0, "Cycle count should be non-negative");
     }
+
+/*    @Test
+    void count_cycles_in_uml_package() {
+        int cycleCount = countCyclesForPackage("org.tzi.use.uml");
+        writeResult("Number of cycles in org.tzi.use.uml: " + cycleCount);
+        Assertions.assertTrue(cycleCount >= 0, "Cycle count should be non-negative");
+    }*/
 
     private int countCyclesForPackage(String packageName) {
         SliceAssignment sliceAssignment = new SliceAssignment() {
@@ -78,5 +94,13 @@ public class CyclomaticComplexityTest {
         //System.out.println("Total cycles found: " + cycleCount.get());
 
         return cycleCount.get();
+    }
+
+    private void writeResult(int result) {
+        try (PrintWriter out = new PrintWriter(new FileWriter(RESULTS_FILE, true))){
+            out.println(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
