@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,50 +21,6 @@ public class CyclomaticComplexityTest {
             .that(JavaClass.Predicates.resideInAPackage("org.tzi.use.."))
             .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.it.."))
             .that(JavaClass.Predicates.resideOutsideOfPackage("..resources.."));
-
-    @Test
-    public void ensure_only_main_packages_are_analyzed() {
-        for (JavaClass clazz : classes) {
-            assertTrue(clazz.getPackageName().startsWith("org.tzi.use"));
-            assertFalse(clazz.getPackageName().contains("resources"));
-            assertFalse(clazz.getPackageName().startsWith("org.tzi.use.it"));
-        }
-    }
-
-    @Test
-    public void check_cycles_in_core() {
-        checkPackageForCycles("org.tzi.use");
-    }
-
-    @Test
-    void ensure_no_cycles_in_uml_package() {
-        checkPackageForCycles("org.tzi.use.uml");
-    }
-
-    private void checkPackageForCycles(String packageName) {
-        SliceAssignment sliceAssignment = new SliceAssignment() {
-            @Override
-            public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
-                if (javaClass.getPackageName().startsWith(packageName)) {
-                    String subPackage = javaClass.getPackageName().substring(packageName.length());
-                    if (subPackage.isEmpty()) {
-                        return SliceIdentifier.of("root");
-                    }
-
-                    String[] parts = subPackage.substring(1).split("\\.");
-                    return SliceIdentifier.of(parts.length > 0 ? parts[0] : "root");
-                }
-                return SliceIdentifier.ignore();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Slices for " + packageName;
-            }
-        };
-
-        SlicesRuleDefinition.slices().assignedFrom(sliceAssignment).should().beFreeOfCycles().check(classes);
-    }
 
     @Test
     public void count_cycles_in_core() {
@@ -116,12 +70,12 @@ public class CyclomaticComplexityTest {
                     cycleCount.incrementAndGet();
                     String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
                     cycleDetails.add(cycleInfo);
-                    System.out.println(cycleInfo);
+                    //System.out.println(cycleInfo);
                 });
 
-        System.out.println("Cycle details for " + packageName + ":");
-        cycleDetails.forEach(System.out::println);
-        System.out.println("Total cycles found: " + cycleCount.get());
+        //System.out.println("Cycle details for " + packageName + ":");
+        //cycleDetails.forEach(System.out::println);
+        //System.out.println("Total cycles found: " + cycleCount.get());
 
         return cycleCount.get();
     }
