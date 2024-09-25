@@ -331,14 +331,14 @@ Data types may be added at the top of the model body.
 Example:
 
 The example shows four different data type definitions. The data types
-'Rectange' and 'Circle' inherit from abstract data type 'Shape'. 'Shape'
+'Rectangle' and 'Circle' inherit from abstract data type 'Shape'. 'Shape'
 defines the attribute 'position' which is of type 'Point' in its constructor.
 'Point' defines the attributes 'x' and 'y' which are both of primitive type
 'Real'. It also defines the operation 'translate()' which takes two parameters
-of type 'Real'for shifting 'x' and 'y' with no result type. 'Shape' defines
-the two opeartions 'perimeter()' and 'area()'. Since 'Shape' is abstract both
+of type 'Real' for shifting 'x' and 'y' with no result type. 'Shape' defines
+the two operations 'perimeter()' and 'area()'. Since 'Shape' is abstract both
 'Rectangle' and 'Circle' implement their specific logic for these operations.
-Note that a constructor canonly have pre- and no postconditions, since it is a
+Note that a constructor can only have pre- and no postconditions, since it is a
 stateless operation.
 
     dataType Point
@@ -369,7 +369,7 @@ stateless operation.
       area() : Real = 3.14 * radius * radius
     end
 
-Following examample shows, how to query data types
+Following example shows, how to query data types
 from the above model 'Shapes' in the shell:
 
     use> ?Point(1, 1)
