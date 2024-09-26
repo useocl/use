@@ -18,6 +18,7 @@
 */
 model returns [ASTModel n]
 :
+    (i = importDefinition)*
 	as = annotationSet
     'model' modelName=IDENT { $n = new ASTModel($modelName); $n.setAnnotations($as.annotations); }
     (   generalClassifierDefinition[$n]
@@ -31,7 +32,11 @@ model returns [ASTModel n]
     )*
     EOF
     ;
-    
+
+importDefinition returns [ASTImportStatement n]:
+	'import' ((IDENT (DOT IDENT)* (DOT STAR)?) | STRING)
+	;
+
 /* ------------------------------------
   enumTypeDefinition ::= 
     "enum" id "{" idList "}" [ ";" ]

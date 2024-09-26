@@ -64,14 +64,6 @@ public class ASTIterationStatement extends ASTStatement {
 		fIterVarName = iterVarName;
 		fRange = range;
 		fBody = body;
-		
-		int type = fRange.getStartToken().getType();
-		// 44 is Bag, 48 is Set
-		if(type == SoilLexer.T__44 || type == SoilLexer.T__48) {
-			System.out.println(
-					"Warning: Iteration over a non-ordered collection. Order of the result might not be as expected. "
-					+ "(" + toString() + ")");
-		}
 	}
 	
 	
@@ -113,7 +105,13 @@ public class ASTIterationStatement extends ASTStatement {
 					+ StringUtil.inQuotes("Collection") + ", found "
 					+ StringUtil.inQuotes(range.type()) + ".");
 		}
-		
+
+		if (range.type().isKindOfSet(VoidHandling.EXCLUDE_VOID) || range.type().isKindOfBag(VoidHandling.EXCLUDE_VOID)) {
+			System.out.println(
+					"Warning: Iteration over a non-ordered collection. Order of the result might not be as expected. "
+							+ "(" + toString() + ")");
+		}
+
 		Type iterVarType = ((CollectionType)range.type()).elemType();
 		
 		fSymtable.storeState();
