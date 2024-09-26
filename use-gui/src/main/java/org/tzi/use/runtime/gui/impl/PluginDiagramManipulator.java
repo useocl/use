@@ -1,5 +1,6 @@
 package org.tzi.use.runtime.gui.impl;
 
+import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -30,6 +31,10 @@ public abstract class PluginDiagramManipulator {
      * Executes the plugins behaviour after initialisation of given diagram.
      */
     public abstract void onInitialisation();
+
+    protected DiagramOptions getDiagramOptions(){
+        return diagramViews.get(0).getOptions();
+    }
 
     protected final void repaint() {
         diagramViews.forEach(DiagramView::repaint);

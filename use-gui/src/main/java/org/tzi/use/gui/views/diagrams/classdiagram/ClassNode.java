@@ -116,6 +116,10 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
 	public void setAttributeColor(MAttribute att, Color color) {
 		fAttrColors[fAttributes.indexOf(att)] = color;
 	}
+
+    public Color getAttributeColor(final MAttribute att) {
+        return fAttrColors[fAttributes.indexOf(att)];
+    }
 	
 	/**
 	 * Sets the color of the operation <code>op</code> to <code>color</code>.
@@ -125,6 +129,10 @@ public class ClassNode extends ClassifierNode implements SortChangeListener {
 	public void setOperationColor(MOperation op, Color color) {
 		fOperationColors[fOperations.indexOf(op)] = color;
 	}
+
+    public Color getOperationColor(final MOperation op) {
+        return fOperationColors[fOperations.indexOf(op)];
+    }
 	
 	/**
 	 * Resets the attribute colors to the color of the class node

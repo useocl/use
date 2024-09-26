@@ -219,5 +219,9 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 	public PlaceableNode getClassOrObjectNode() {
 		return fAssociationClassOrObjectNode;
 	}
+
+	public SimpleEdge getAssociationClassEdge() {
+		return associationClassEdge;
+	}
 	
 }
