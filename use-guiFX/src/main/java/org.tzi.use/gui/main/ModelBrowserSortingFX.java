@@ -38,21 +38,6 @@ import java.util.*;
  */
 public class ModelBrowserSortingFX {
 
-    /**
-     * A SortChangeEvent is used to notify interested listeners that the
-     * sorting order has changed.
-     */
-    @SuppressWarnings("serial")
-	public class SortChangeEvent extends EventObject {
-        public SortChangeEvent(Object source) {
-            super(source);
-        }
-    }
-
-    public interface SortChangeListener extends EventListener {
-        void stateChanged(ModelBrowserSortingFX.SortChangeEvent e);
-    }
-
 
     private static ModelBrowserSortingFX fModelBrowserSorting = null;
     private EventListenerList fListenerList;
@@ -168,15 +153,6 @@ public class ModelBrowserSortingFX {
             fModelBrowserSorting = new ModelBrowserSortingFX();
         }
         return fModelBrowserSorting;
-    }
-    
-    
-    /**
-     * Adds Listeners who are interrested on a change event of sorting.
-     * @param l The listener who is interrested
-     */
-    public void addSortChangeListener( SortChangeListener l ) {
-        fListenerList.add( SortChangeListener.class, l );
     }
     
     /**
@@ -340,38 +316,64 @@ public class ModelBrowserSortingFX {
 		return value;
 	}
 
-    
-    /*
-     * Notify all listeners that have registered interest for
-     * notification on this event type.  The event instance 
-     * is lazily created using the parameters passed into 
-     * the fire method.
-     */
-    public void fireStateChanged() {
-        // Guaranteed to return a non-null array
-        Object[] listeners = fListenerList.getListenerList();
-        SortChangeEvent e = null;
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        for (int i = listeners.length-2; i >= 0; i -= 2) {
-            if (listeners[i] == SortChangeListener.class ) {
-                // Lazily create the event:
-                if (e == null) {
-                    e = new SortChangeEvent(this);
-                }
-                ((SortChangeListener) listeners[i+1]).stateChanged(e);
-            }          
-        }
+
+    public int getClsOrder() {
+        return clsOrder;
     }
 
-	/**
-	 * @param newObjectDiagramView
-	 */
-	public void removeSortChangeListener(SortChangeListener l) {
-		fListenerList.remove( SortChangeListener.class, l );
-	}
+    public void setClsOrder(int clsOrder) {
+        this.clsOrder = clsOrder;
+    }
 
-	/**
+    public int getAttrOrder() {
+        return attrOrder;
+    }
+
+    public void setAttrOrder(int attrOrder) {
+        this.attrOrder = attrOrder;
+    }
+
+    public int getOprOrder() {
+        return oprOrder;
+    }
+
+    public void setOprOrder(int oprOrder) {
+        this.oprOrder = oprOrder;
+    }
+
+    public int getAssocOrder() {
+        return assocOrder;
+    }
+
+    public void setAssocOrder(int assocOrder) {
+        this.assocOrder = assocOrder;
+    }
+
+    public int getInvOrder() {
+        return invOrder;
+    }
+
+    public void setInvOrder(int invOrder) {
+        this.invOrder = invOrder;
+    }
+
+    public StateMachineOrder getStateMachineOrder() {
+        return stateMachineOrder;
+    }
+
+    public void setStateMachineOrder(StateMachineOrder stateMachineOrder) {
+        this.stateMachineOrder = stateMachineOrder;
+    }
+
+    public int getCondOrder() {
+        return condOrder;
+    }
+
+    public void setCondOrder(int condOrder) {
+        this.condOrder = condOrder;
+    }
+
+    /**
 	 * @param allOwnedProtocolStateMachines
 	 * @return
 	 */

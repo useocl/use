@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener {
+public class ModelBrowserFX {
 
     private WebView fHtmlPane;
     private MModel fModel;
@@ -84,11 +84,9 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
      * Creates a browser with no model.
      */
     public ModelBrowserFX(MModel model, IRuntime pluginRuntime) {
-        System.out.println("ModelBrowserFX Constructor Called");
         setPluginRuntime(pluginRuntime);
         //this.fFolderTreeView = folderTreeView;
         setModel(model);
-        MainWindowFX.getInstance().getWebViewFromPlaceholder().getEngine().loadContent("Wie Gehts?");
         MainWindowFX.getInstance().setMode();
 
 
@@ -109,7 +107,6 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
             //TreeItem<String> selectedItem = newValue;
 
             //Object nodeInfo = selectedItem.getValue();
-            System.out.println("your here?");
             // Check if the node is a leaf and is an instance of MModelElement
             if (newValue != null) {
                 String selectedItem = newValue.getValue();  // Der ausgewählte String
@@ -160,7 +157,6 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         String spec = sw.toString();
 
         // Set the HTML content in the WebView
-        System.out.println("HTML: " + spec);
         MainWindowFX.getInstance().getWebViewFromPlaceholder().getEngine().loadContent(spec);
     }
 
@@ -183,10 +179,11 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         this.fPluginRuntime = pluginRuntime;
     }
 
-    @Override
-    public void stateChanged(ModelBrowserSortingFX.SortChangeEvent e) {
-        System.out.println("Sort has changed");
-    }
+//    @Override
+//    public void stateChanged(ModelBrowserSortingFX.SortChangeEvent e) {
+//        System.out.println("Sort has changed");
+//        applySorting(MainWindowFX.getInstance().getFolderTreeView());
+//    }
 
     class CellRenderer extends TreeCell<Object> {
 
@@ -253,7 +250,7 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         this.fModel = model;
 
         fMbs = ModelBrowserSortingFX.getInstance();
-        fMbs.addSortChangeListener(this);
+        //fMbs.addSortChangeListener(this);
 
         // Check if the model is null
         if (model == null) {
@@ -264,19 +261,15 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         }
 
         // Set root item with the model name
-        System.out.println("Model Name: " + fModel.name());
         TreeItem<String> rootItem = new TreeItem<>(fModel.name());
         MainWindowFX.getInstance().updateTreeView(rootItem);
 
         // Populate the tree with nodes
         createNodes(rootItem);
 
-        //fMbs = ModelBrowserSortingFX.getInstance();
-        //fMbs.addSortChangeListener(this);
-
         // Add sorting and mouse handling
-        applySorting(MainWindowFX.getInstance().getFolderTreeView()); // Call sorting method
-        setupMouseHandling(MainWindowFX.getInstance().getFolderTreeView()); // Set up mouse event handlers
+        //applySorting(MainWindowFX.getInstance().getFolderTreeView()); // Call sorting method
+        //setupMouseHandling(MainWindowFX.getInstance().getFolderTreeView()); // Set up mouse event handlers
 
         // Reset HTML pane
         if (MainWindowFX.getInstance().getWebViewFromPlaceholder() != null) {
@@ -284,7 +277,7 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         }
     }
 
-    private void createNodes(final TreeItem<String> root) {
+    public void createNodes(final TreeItem<String> root) {
         // Example: Adding sorted classes
         Collection<MClass> sortedClasses = fMbs.sortClasses(new ArrayList<>(fModel.classes()));
         addChildNodes(root, "Classes", sortedClasses);
@@ -392,25 +385,25 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         }
     }
 
-    // Set up mouse handling
-    private void setupMouseHandling(TreeView<String> folderTreeView) {
-        folderTreeView.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                // Handle double-click event
-                TreeItem<String> selectedItem = MainWindowFX.getInstance().getFolderTreeView().getSelectionModel().getSelectedItem();
-                if (selectedItem != null) {
-                    // Perform an action with the selected item
-                    System.out.println("Double-clicked on: " + selectedItem.getValue() + selectedItem.toString() + selectedItem.getChildren().toString());
-                }
-            }
-        });
-
-        // Example of handling right-click
-        folderTreeView.setOnContextMenuRequested(event -> {
-            // Show context menu or perform actions
-            System.out.println("Right-clicked at: " + event.getScreenX() + ", " + event.getScreenY());
-        });
-    }
+//    // Set up mouse handling
+//    private void setupMouseHandling(TreeView<String> folderTreeView) {
+//        folderTreeView.setOnMouseClicked(event -> {
+//            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+//                // Handle double-click event
+//                TreeItem<String> selectedItem = MainWindowFX.getInstance().getFolderTreeView().getSelectionModel().getSelectedItem();
+//                if (selectedItem != null) {
+//                    // Perform an action with the selected item
+//                    System.out.println("Double-clicked on: " + selectedItem.getValue() + selectedItem.toString() + selectedItem.getChildren().toString());
+//                }
+//            }
+//        });
+//
+//        // Example of handling right-click
+//        folderTreeView.setOnContextMenuRequested(event -> {
+//            // Show context menu or perform actions
+//            System.out.println("Right-clicked at: " + event.getScreenX() + ", " + event.getScreenY());
+//        });
+//    }
 
     private void initializeTreeView(String name) {
         // Create the root item
@@ -418,7 +411,6 @@ public class ModelBrowserFX implements ModelBrowserSortingFX.SortChangeListener 
         if (fModel != null) {
             rootItem = new TreeItem<>(name);
             createNodes(rootItem);  // Add child nodes to root item
-            System.out.println("TreeView root set to: " + name);
         } else {
             rootItem = new TreeItem<>("No model available");
         }

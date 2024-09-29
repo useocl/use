@@ -50,6 +50,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.parser.Context;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
 import org.tzi.use.uml.mm.MModel;
@@ -132,16 +133,12 @@ public class MainWindowFX {
     public void initialize() throws IOException {
         initWebViewPlaceholder();
         initDesktopPane();
-        TreeItem<String> rootItem = new TreeItem<>("No model available");
-        folderTreeView.setRoot(rootItem);
+        initLogTextArea(); // create the log panel
+        initFolderTreeView();
+
         Options.getRecentFiles().getItems().clear();
         fSession = getSession();
         fPluginRuntime = getPluginRuntime();
-
-        // create the log panel
-        //logTextArea.clear();
-        logTextArea.setEditable(false);
-        //folderTreeViewLog.setEditable(false);
 
         //fModelBrowser = new ModelBrowserFX(fSession.system().model(), folderTreeView, fPluginRuntime);
 
@@ -170,13 +167,10 @@ public class MainWindowFX {
      * Set application state for new system. The system parameter may be null.
      */
     void sessionChanged() {
-        System.out.println("Session: " + fSession);
-        System.out.println("Has system: " + (fSession != null && fSession.hasSystem()));
 
         boolean on = fSession.hasSystem();
         if (on) {
             MSystem system = fSession.system();
-            System.out.println("System: " + system);
             fModelBrowser.setModel(system.model());
             primaryStage.setTitle("USE: " + new File(system.model().filename()).getName());
         }
@@ -221,7 +215,6 @@ public class MainWindowFX {
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
 
         openSpecification.setOnAction(e -> {
-            System.out.println("Ctrl+O Succesfully pressed");
             instance.openDirectoryChooser(folderTreeView);
         });
 
@@ -442,9 +435,6 @@ public class MainWindowFX {
             fChooser.setInitialFileName(recentFile.getName());
         }
 
-        //TODO DELETE AFTER TEST
-        //ModelBrowserTest modelBrowserFolderTree = new ModelBrowserTest(folderTreeView);
-
         //This code shows an "Open" dialog, anchored to the first window of the JavaFX application, and captures the file the user selects.
         File selectedDirectory = fChooser.showOpenDialog(Stage.getWindows().get(0));
 
@@ -452,7 +442,6 @@ public class MainWindowFX {
             specificationDir = selectedDirectory.getParent();
 
             Path path = Path.of(selectedDirectory.getPath());
-            System.out.println(selectedDirectory.getPath()); //TODO DELETE AFTER TEST
             Options.setLastDirectory(path.getParent());
 
             instance.compile(path);
@@ -461,12 +450,9 @@ public class MainWindowFX {
 
             if (fSession.system() != null && fSession.system().model() != null) {
                 ModelBrowserFX modelBrowserFX = new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
-                System.out.println("müsste hier? : " + fSession.system().model());
                 //Platform.runLater(() -> logTextArea.clear());
             } else {
                 ModelBrowserFX modelBrowserFX = new ModelBrowserFX(null, fPluginRuntime);
-                System.out.println("oder hier? ");
-
             }
 
             wasUsed = true;
@@ -522,19 +508,14 @@ public class MainWindowFX {
         try (InputStream iStream = Files.newInputStream(f)) {
             model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(),
                     fLogWriter, new ModelFactory());
-            // create the browser panel
-//            fLogWriter.println("done.");
-            //fLogWriter.println("compiling specification " + f.toString() + "...");
             logTextArea.appendText("compiling specification " + f + "...\n");
             logTextArea.appendText("done.\n");
         } catch (IOException ex) {
-//            fLogWriter.println("File `" + f.toAbsolutePath().toString() + "' not found.");
             logTextArea.appendText("File `" + f.toAbsolutePath().toString() + "' not found.\n");
         }
 
         final MSystem system;
         if (model != null) {
-//            fLogWriter.println(model.getStats());
             MModel finalModel = model;
             logTextArea.appendText(finalModel.getStats() + "\n");
             // create system
@@ -608,6 +589,7 @@ public class MainWindowFX {
     public void initWebViewPlaceholder() {
         WebView webView = new WebView();
         webView.setVisible(true);
+        webView.setContextMenuEnabled(false);
         //webView.getEngine().loadContent("test");
         // Füge das WebView in die VBox (webViewPlaceholder) ein
         webViewPlaceholder.getChildren().add(webView);
@@ -627,6 +609,42 @@ public class MainWindowFX {
 
         //fDesktopPane.s
     }
+
+    public void initLogTextArea(){
+
+        // Erstelle das Kontextmenü
+        ContextMenu contextMenu = new ContextMenu();
+
+        // Füge die "Clear" Option hinzu
+        MenuItem clearItem = new MenuItem("Clear");
+        clearItem.setOnAction(event -> logTextArea.clear());
+
+        // Kontextmenü zur TextArea hinzufügen
+        contextMenu.getItems().addAll(clearItem);
+
+        // Setze das Kontextmenü in der TextArea
+        logTextArea.setContextMenu(contextMenu);
+
+        logTextArea.setEditable(false);
+
+    }
+
+    /**
+     * Initializes the FolderTreeView (WebViews Right Click Context Menu)
+     */
+    public void initFolderTreeView(){
+
+        TreeItem<String> rootItem = new TreeItem<>("No model available");
+        folderTreeView.setRoot(rootItem);
+
+        // Verwende die neue Klasse, um das Kontextmenü zu erstellen
+        FolderTreeContextMenuFX contextMenuHandler = new FolderTreeContextMenuFX(fSession, fPluginRuntime);
+        ContextMenu contextMenu = contextMenuHandler.createContextMenu();
+
+        folderTreeView.setContextMenu(contextMenu);
+
+    }
+
     // Create a method that creates an InternalWindow using the correct constructor
     private InternalWindow createInternalWindow(String id, String title, double x, double y) {
         // Create content for the InternalWindow (can be anything like a VBox, etc.)
@@ -680,7 +698,7 @@ public class MainWindowFX {
         // Initialize ModelBrowser and other session-related components
 //        fModelBrowser = new ModelBrowserFX(fSession.system().model(), folderTreeView, fPluginRuntime);
 //        fModelBrowser.fillTreeView();
-        System.out.println("ModelBrowserFX has been initialized with system.");
+        //System.out.println("ModelBrowserFX has been initialized with system.");
     }
 
     // Setter für IRuntime
