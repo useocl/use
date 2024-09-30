@@ -29,6 +29,8 @@ public class ModelBrowserFX {
     private ModelBrowserSortingFX fMbs;
     private final ObservableList<SelectionChangedListener> listeners = FXCollections.observableArrayList();
 
+    private static ModelBrowserFX instance;
+
     private static TreeView<String> fFolderTreeView;
 
     private IRuntime fPluginRuntime;
@@ -80,12 +82,15 @@ public class ModelBrowserFX {
 //        });
 //    }
 
+    public ModelBrowserFX() {
+        instance = this;
+    }
+
     /**
      * Creates a browser with no model.
      */
     public ModelBrowserFX(MModel model, IRuntime pluginRuntime) {
         setPluginRuntime(pluginRuntime);
-        //this.fFolderTreeView = folderTreeView;
         setModel(model);
         MainWindowFX.getInstance().setMode();
 
@@ -179,10 +184,28 @@ public class ModelBrowserFX {
         this.fPluginRuntime = pluginRuntime;
     }
 
-//    @Override
-//    public void stateChanged(ModelBrowserSortingFX.SortChangeEvent e) {
-//        System.out.println("Sort has changed");
-//        applySorting(MainWindowFX.getInstance().getFolderTreeView());
+    /**
+     * If an event occures the tree will be reloaded.
+     */
+//    public void stateChanged(ArrayList<String> lstofExpanded) {
+//        // Store the expanded state and selection before reloading the tree
+//        List<TreeItem<String>> expandedItems = new ArrayList<>();
+//        TreeItem<String> selectedItem = MainWindowFX.getInstance().getFolderTreeView().getSelectionModel().getSelectedItem();
+//
+//        saveExpandedItems(MainWindowFX.getInstance().getFolderTreeView().getRoot(), expandedItems);
+//
+//        // Reload tree data
+//        MainWindowFX.getInstance().getFolderTreeView().getRoot().getChildren().clear();
+//        createNodes(MainWindowFX.getInstance().getFolderTreeView().getRoot()); // recreate the nodes as needed
+//
+//        // Restore expanded state
+//        restoreExpandedItems(MainWindowFX.getInstance().getFolderTreeView().getRoot(), expandedItems);
+//
+//        // Restore selection if any
+//        if (selectedItem != null) {
+//            selectItem(MainWindowFX.getInstance().getFolderTreeView().getRoot(), selectedItem.getValue());
+//        }
+//
 //    }
 
     class CellRenderer extends TreeCell<Object> {
@@ -423,5 +446,11 @@ public class ModelBrowserFX {
     public interface SelectionChangedListener {
         void selectionChanged(MModelElement element);
     }
+
+    public static ModelBrowserFX getInstance(){
+        return instance;
+    }
+
+
 
 }

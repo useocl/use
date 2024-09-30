@@ -711,6 +711,11 @@ public class MainWindowFX {
         this.primaryStage = primaryStage;
     }
 
+    // Setter für IRuntime
+    public void updateRootNodeToExtendad() {
+        folderTreeView.getRoot().setExpanded(true);
+    }
+
     public TreeView<String> getFolderTreeView() {
         return folderTreeView;
     }
