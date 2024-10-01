@@ -711,11 +711,6 @@ public class MainWindowFX {
         this.primaryStage = primaryStage;
     }
 
-    // Setter für IRuntime
-    public void updateRootNodeToExtendad() {
-        folderTreeView.getRoot().setExpanded(true);
-    }
-
     public TreeView<String> getFolderTreeView() {
         return folderTreeView;
     }
@@ -746,6 +741,13 @@ public class MainWindowFX {
         return fPluginRuntime;
     }
 
+    /**
+     * Retrieves an icon by name and returns it as an ImageView. This method loads the image from the specified resource path
+     * constructed using the icon name provided. It ensures the resource is not null before loading to prevent runtime exceptions.
+     *
+     * @param name the name of the icon to retrieve, which is used to construct the resource path.
+     * @return an ImageView containing the loaded image.
+     */
     private static ImageView getIcon(String name) {
         // Load the image from the resource path
         Image image = new Image(Objects.requireNonNull(MainWindowFX.class.getResourceAsStream(Options.getIconPath(name))));

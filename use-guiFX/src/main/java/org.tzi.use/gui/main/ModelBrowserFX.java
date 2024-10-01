@@ -4,8 +4,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.web.WebView;
+import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitorFX;
 import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
@@ -93,15 +96,6 @@ public class ModelBrowserFX {
         setPluginRuntime(pluginRuntime);
         setModel(model);
         MainWindowFX.getInstance().setMode();
-
-
-//        // Set custom cell renderer (CellFactory in JavaFX)
-//        MainWindowFX.getInstance().getFolderTreeView().setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
-//            @Override
-//            public CellRenderer<String> call(TreeView<String> param) {
-//                return new CellRenderer(); // Use the custom CellRenderer
-//            }
-//        });
 
         // Apply CSS styling for angled lines (can be defined in an external CSS file)
         MainWindowFX.getInstance().setStyleSheet();
@@ -208,64 +202,6 @@ public class ModelBrowserFX {
 //
 //    }
 
-    class CellRenderer extends TreeCell<Object> {
-
-        @Override
-        protected void updateItem(Object item, boolean empty) {
-            super.updateItem(item, empty);
-
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-                setTooltip(null);
-                return;
-            }
-
-            TreeItem<Object> treeItem = getTreeItem();
-            int level = treeItem.getParent() == null ? 0 : treeItem.getParent().getChildren().indexOf(treeItem) + 1;
-
-            setTooltip(null); // Reset tooltip by default
-
-            // Display root and categories as non-leaf nodes
-            if (level == 0) {
-                // Root level - Customize icons
-                setText(item.toString());
-                if (treeItem.isLeaf()) {
-                    // Set an icon or style for a closed node (No model available)
-                    setGraphic(getClosedIcon());
-                } else {
-                    // Set an icon for an open node
-                    setGraphic(getOpenIcon());
-                }
-            } else if (level == 1) {
-                // Categories level
-                setText(item.toString());
-                if (treeItem.isExpanded()) {
-                    setGraphic(getOpenIcon());
-                } else {
-                    setGraphic(getClosedIcon());
-                }
-            } else {
-                // Custom level rendering (for MClass and other types)
-                setText(item.toString());
-                if (item instanceof MClass) {
-                    MClass cls = (MClass) item;
-                    Tooltip tooltip = new Tooltip("Drag onto object diagram to create a new " + cls.name() + " object.");
-                    setTooltip(tooltip);
-                }
-            }
-        }
-
-        private Node getClosedIcon() {
-            // Create a custom icon for a closed node (optional)
-            return new Label("Closed"); // Replace with an actual icon if needed
-        }
-
-        private Node getOpenIcon() {
-            // Create a custom icon for an open node (optional)
-            return new Label("Open"); // Replace with an actual icon if needed
-        }
-    }
 
     void setModel(MModel model) {
         initializeTreeView(model.name());
@@ -285,10 +221,15 @@ public class ModelBrowserFX {
 
         // Set root item with the model name
         TreeItem<String> rootItem = new TreeItem<>(fModel.name());
+
+        editDropDownGraphic(rootItem);
+
         MainWindowFX.getInstance().updateTreeView(rootItem);
 
         // Populate the tree with nodes
         createNodes(rootItem);
+
+        treeLeafIconForClassNodes(rootItem);
 
         // Add sorting and mouse handling
         //applySorting(MainWindowFX.getInstance().getFolderTreeView()); // Call sorting method
@@ -338,18 +279,31 @@ public class ModelBrowserFX {
         }
         addChildNodes(root, "Query Operations", queryOperations);
 
-
     }
 
-    // Adding child nodes to a parent
+    public void treeLeafIconForClassNodes(TreeItem<String> rootItem){
+
+        for (TreeItem<String> classNode : rootItem.getChildren()) {
+            for (TreeItem<String> treeLeaf :classNode.getChildren()) {
+                // Load an img for the Tree Leafs
+                ImageView treeLeafIcon = getIcon("TreeLeaf.gif");
+                treeLeaf.setGraphic(treeLeafIcon);
+            }
+        }
+    }
+
+    /**
+     * Adding child nodes to a parent
+     */
     private void addChildNodes(TreeItem<String> parent, String nodeName, Collection<?> items) {
-        TreeItem<String> categoryNode = new TreeItem<>(nodeName);
+        // Load an img for the closed folder
+        ImageView folderIconView = getIcon("TreeClosed.gif");
+
+        TreeItem<String> categoryNode = new TreeItem<>(nodeName, folderIconView);
         parent.getChildren().add(categoryNode);
 
-//        for (MModelElement item : items) {
-//            TreeItem<MModelElement> child = new TreeItem<MModelElement>(item);
-//            categoryNode.getChildren().add(child.getValue());
-//        }
+        editDropDownGraphic(categoryNode);
+
 
         for (Object item : items) {
             if (item instanceof MClass) {
@@ -376,7 +330,6 @@ public class ModelBrowserFX {
                 categoryNode.getChildren().add(childNode);
                 modelElementMap.put(mPrePostCondition.toString(), mPrePostCondition);  // Füge das Mapping hinzu
 
-
             } else if (item instanceof MOperation) {
                 MOperation mOperation = (MOperation) item;
                 TreeItem<String> childNode = new TreeItem<>(mOperation.toString());
@@ -387,25 +340,30 @@ public class ModelBrowserFX {
         }
     }
 
-    // Sort TreeItem children
-    private void sortTreeItems(TreeItem<String> rootItem) {
-        ObservableList<TreeItem<String>> children = rootItem.getChildren();
-        FXCollections.sort(children, (item1, item2) -> {
-            // Implement your sorting logic here
-            // For example, if sorting by a string name:
-            return item1.getValue().toString().compareTo(item2.getValue().toString());
-        });
-        for (TreeItem<String> child : children) {
-            sortTreeItems(child); // Recursively sort children
-        }
-    }
+    /**
+     * Sets dynamic icons for a TreeItem based on its expansion state.
+     * This method assigns a closed folder icon initially and switches between an open and closed folder icon
+     * when the TreeItem is expanded or collapsed, respectively.
+     *
+     * @param rootItem the TreeItem to which the dynamic icons are applied.
+     */
+    public void editDropDownGraphic(TreeItem<String> rootItem){
+        // Load an img for the closed folder
+        ImageView folderClosedIconView = getIcon("TreeClosed.gif");
 
-    // Call this method to sort the tree view
-    public void applySorting(TreeView<String> folderTreeView) {
-        TreeItem<String> root = folderTreeView.getRoot();
-        if (root != null) {
-            sortTreeItems(root);
-        }
+        // Default Closed Icon for Initialization
+        rootItem.setGraphic(folderClosedIconView);
+
+        // Load an img for the Opened folder
+        ImageView folderOpenIconView = getIcon("TreeOpen.gif");
+
+        rootItem.expandedProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue) {
+                rootItem.setGraphic(folderOpenIconView); // Changes the icon, when the node is opened
+            } else {
+                rootItem.setGraphic(folderClosedIconView); // Changes the icon, when the node is closed
+            }
+        });
     }
 
 //    // Set up mouse handling
@@ -428,6 +386,13 @@ public class ModelBrowserFX {
 //        });
 //    }
 
+    /**
+     * Initializes the TreeView with a root item and potential child nodes.
+     * The method creates a root TreeItem with the provided name if a model is available,
+     * or a placeholder if no model exists. It expands the root item and updates the TreeView display.
+     *
+     * @param name the name to be used for the root TreeItem or for identification in the placeholder.
+     */
     private void initializeTreeView(String name) {
         // Create the root item
         TreeItem<String> rootItem;
@@ -447,10 +412,22 @@ public class ModelBrowserFX {
         void selectionChanged(MModelElement element);
     }
 
+    /**
+     * Retrieves an icon by name and returns it as an ImageView. This method loads the image from the specified resource path
+     * constructed using the icon name provided. It ensures the resource is not null before loading to prevent runtime exceptions.
+     *
+     * @param name the name of the icon to retrieve, which is used to construct the resource path.
+     * @return an ImageView containing the loaded image.
+     */
+    private static ImageView getIcon(String name) {
+        // Load the image from the resource path
+        Image image = new Image(Objects.requireNonNull(MainWindowFX.class.getResourceAsStream(Options.getIconPath(name))));
+        // Create an ImageView to display the image
+        return new ImageView(image);
+    }
+
     public static ModelBrowserFX getInstance(){
         return instance;
     }
-
-
 
 }

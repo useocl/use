@@ -1,9 +1,10 @@
 .tree-cell {
-    -fx-padding: 5 10 5 10;
+    -fx-padding: 3 10 3 10; /* Make top and bottom padding equal */
+    -fx-alignment: center-left; /* Ensure everything is aligned to the left */
 }
 
 .tree-disclosure-node {
-    -fx-padding: 0 5 0 5;
+    -fx-padding: 0 5 0 0; /* Less right padding for closer alignment with text */
 }
 
 .tree-view .tree-cell:filled:selected {
