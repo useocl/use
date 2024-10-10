@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>use</artifactId>
         <groupId>org.tzi.use</groupId>
@@ -12,8 +12,8 @@
     <artifactId>use-core</artifactId>
 
     <properties>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -125,7 +125,8 @@
                                     <target>${project.build.directory}/grammars/ShellCommand.g</target>
                                     <sources>
                                         <source>src/main/resources/grammars/shell/ShellCommand.gpart</source>
-                                        <source>src/main/resources/grammars/base/ShellCommandBase.gpart</source>
+                                        <source>
+                                            src/main/resources/grammars/base/ShellCommandBase.gpart</source>
                                         <source>src/main/resources/grammars/base/OCLBase.gpart</source>
                                         <source>src/main/resources/grammars/base/SoilBase.gpart</source>
                                         <source>src/main/resources/grammars/base/OCLLexerRules.gpart</source>
@@ -136,7 +137,8 @@
                                     <!-- Merge Generator grammar -->
                                     <target>${project.build.directory}/grammars/Generator.g</target>
                                     <sources>
-                                        <source>src/main/resources/grammars/generator/Generator.gpart</source>
+                                        <source>
+                                            src/main/resources/grammars/generator/Generator.gpart</source>
                                         <source>src/main/resources/grammars/base/USEBase.gpart</source>
                                         <source>src/main/resources/grammars/base/OCLBase.gpart</source>
                                         <source>src/main/resources/grammars/base/SoilBase.gpart</source>
@@ -148,9 +150,11 @@
                                     <!-- Merge test suite grammar -->
                                     <target>${project.build.directory}/grammars/TestSuite.g</target>
                                     <sources>
-                                        <source>src/main/resources/grammars/testsuite/TestSuite.gpart</source>
+                                        <source>
+                                            src/main/resources/grammars/testsuite/TestSuite.gpart</source>
                                         <source>src/main/resources/grammars/base/OCLBase.gpart</source>
-                                        <source>src/main/resources/grammars/base/ShellCommandBase.gpart</source>
+                                        <source>
+                                            src/main/resources/grammars/base/ShellCommandBase.gpart</source>
                                         <source>src/main/resources/grammars/base/SoilBase.gpart</source>
                                         <source>src/main/resources/grammars/base/OCLLexerRules.gpart</source>
                                     </sources>
@@ -164,7 +168,7 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.3</version>
                 <configuration>
                     <!--<debug>true</debug>-->
                     <!-- print some fancy information about the grammars-->
@@ -205,51 +209,65 @@
                             <fileSets>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/USELexer.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/use/USELexer.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/use/USELexer.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/USEParser.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/use/USEParser.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/use/USEParser.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/GeneratorLexer.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorLexer.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorLexer.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/GeneratorParser.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/OCLLexer.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/ocl/OCLLexer.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/ocl/OCLLexer.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/OCLParser.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/ocl/OCLParser.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/ocl/OCLParser.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
-                                    <sourceFile>target/generated-sources/antlr3/ShellCommandLexer.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/shell/ShellCommandLexer.java</destinationFile>
+                                    <sourceFile>
+                                        target/generated-sources/antlr3/ShellCommandLexer.java</sourceFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/shell/ShellCommandLexer.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
-                                    <sourceFile>target/generated-sources/antlr3/ShellCommandParser.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/shell/ShellCommandParser.java</destinationFile>
+                                    <sourceFile>
+                                        target/generated-sources/antlr3/ShellCommandParser.java</sourceFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/shell/ShellCommandParser.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/SoilLexer.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/soil/SoilLexer.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/soil/SoilLexer.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/SoilParser.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/soil/SoilParser.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/soil/SoilParser.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/TestSuiteLexer.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/testsuite/TestSuiteLexer.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/testsuite/TestSuiteLexer.java</destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/generated-sources/antlr3/TestSuiteParser.java</sourceFile>
-                                    <destinationFile>target/generated-sources/antlr3/org/tzi/use/parser/testsuite/TestSuiteParser.java</destinationFile>
+                                    <destinationFile>
+                                        target/generated-sources/antlr3/org/tzi/use/parser/testsuite/TestSuiteParser.java</destinationFile>
                                 </fileSet>
                             </fileSets>
                         </configuration>
@@ -259,7 +277,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.5</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <id>add-test-source</id>
