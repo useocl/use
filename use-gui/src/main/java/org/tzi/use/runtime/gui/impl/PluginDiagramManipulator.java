@@ -32,6 +32,12 @@ public abstract class PluginDiagramManipulator {
      */
     public abstract void onInitialisation();
 
+    /**
+     * This has to be implemented by the Plugin!
+     * Executes the plugins behaviour when the diagram is being closed.
+     */
+    public abstract void onClosure();
+
     protected DiagramOptions getDiagramOptions(){
         return diagramViews.get(0).getOptions();
     }
@@ -78,5 +84,4 @@ public abstract class PluginDiagramManipulator {
             }
         }));
     }
-
 }

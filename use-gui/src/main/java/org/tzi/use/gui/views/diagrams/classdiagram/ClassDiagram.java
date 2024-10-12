@@ -81,6 +81,7 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.selection.classselection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
+import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
@@ -1442,6 +1443,12 @@ public class ClassDiagram extends DiagramView
 		fParent.getModelBrowser().removeHighlightChangeListener(this);
 		fParent.getModelBrowser().removeSelectionChangedListener(this);
 		ModelBrowserSorting.getInstance().removeSortChangeListener(this);
+
+			if (fParent.pluginRuntime != null) {
+				final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) fParent.pluginRuntime.getExtensionPoint("diagram");
+            diagramExtensionPoint.runPluginsOnClosure();
+			}
+
 	}
 
 	@Override

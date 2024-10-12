@@ -11,4 +11,6 @@ public interface IPluginDiagramExtensionPoint extends IExtensionPoint {
     <T extends DiagramView> void registerView(T diagramView);
 
     void runPluginsOnInitialisation();
+
+    void runPluginsOnClosure();
 }

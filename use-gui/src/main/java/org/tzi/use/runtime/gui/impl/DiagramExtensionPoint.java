@@ -32,6 +32,14 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
             diagramPlugin.getPluginDiagramManipulator().onInitialisation();
         }
     }
+
+    @Override
+    public void runPluginsOnClosure() {
+        for (final IDiagramPlugin diagramPlugin : registeredPlugins) {
+            diagramPlugin.getPluginDiagramManipulator().onClosure();
+        }
+    }
+
     @Override
     public void registerPlugin(final IPluginDescriptor pluginDescriptor) {
         if (pluginDescriptor.getPluginClass() instanceof IDiagramPlugin iDiagramPlugin) {
