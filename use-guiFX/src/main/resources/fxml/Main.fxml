@@ -56,7 +56,7 @@
                         </SplitPane>
                         <!-- Middle/Top VBox (RIGHT Display) -->
                         <VBox>
-                            <DesktopPane fx:id="fDesktopPane" VBox.vgrow="ALWAYS"/>
+                            <TabPane fx:id="fDesktopPane" VBox.vgrow="ALWAYS"/>
                         </VBox>
 
                     </items>

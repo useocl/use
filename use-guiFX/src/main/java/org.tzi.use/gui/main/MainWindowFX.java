@@ -19,18 +19,28 @@
 
 package org.tzi.use.gui.main;
 
+// Notwendig für die Einbindung von Java Swing Content in einer JavaFX Anwendung
 
 import javafx.application.Platform;
+
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+
+import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
@@ -58,6 +68,8 @@ import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystem;
 
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
@@ -75,6 +87,8 @@ public class MainWindowFX {
     private Stage primaryStage;  // Reference to the primary stage
 
     private static MainWindowFX instance;
+
+    private SwingNode swingNode;
 
     private static LogPanel fLogPanel;
 
@@ -96,7 +110,7 @@ public class MainWindowFX {
     private TreeView<String> folderTreeView;
 
     @FXML
-    private DesktopPane fDesktopPane;
+    private TabPane fDesktopPane;
 
     private static Menu recentFilesMenu;
 
@@ -131,8 +145,11 @@ public class MainWindowFX {
 
     @FXML
     public void initialize() throws IOException {
+        // to create a Intance of a SwingNode, which is used to hold the Swing-Components
+//        swingNode = new SwingNode();
+
         initWebViewPlaceholder();
-        initDesktopPane();
+        //initDesktopPane();
         initLogTextArea(); // create the log panel
         initFolderTreeView();
 
@@ -213,6 +230,10 @@ public class MainWindowFX {
 
         openSpecification.setAccelerator(KeyCombination.valueOf("Ctrl+O"));
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
+
+        openSpecification.setOnAction(e -> {
+            instance.openDirectoryChooser(folderTreeView);
+        });
 
         openSpecification.setOnAction(e -> {
             instance.openDirectoryChooser(folderTreeView);
@@ -381,9 +402,9 @@ public class MainWindowFX {
                 case "Open specification" -> button.setOnAction(e -> {
                     instance.openDirectoryChooser(folderTreeView);
                 });
-//                case "Reload specification" -> button.setOnAction(e -> {
-//                    openDirectoryChooser(folderTreeView);
-//                });
+                case "Create class diagram view" -> button.setOnAction(e -> {
+                    instance.createClassDiagram();
+                });
 
                 //TODO
             }
@@ -464,6 +485,33 @@ public class MainWindowFX {
             //ModelBrowserFX.fillTreeView();
 
         }
+    }
+
+    /**
+     * Creates a new class diagram view.
+     */
+    private void createClassDiagram() {
+
+        // to create a Intance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // Don' load layout if shift key is pressed
+        boolean loadLayout = (ActionEvent.SHIFT_MASK) == 0;
+
+        //setting the visiility of the MainWindow (Swing Gui) to false because we dont want it to be shown
+        MainWindow.setJavaFxCall(true);
+        // Calling the Swing MainWindow to get the ClassDiagram out of it
+        MainWindow mainwindow = MainWindow.create(fSession,fPluginRuntime);
+
+        ClassDiagramView cdv = new ClassDiagramView(mainwindow, fSession.system(), loadLayout);
+        ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
+
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(cdv, BorderLayout.CENTER);
+        swingNode.setContent(c);
+        Tab classDiagramTab = new Tab("class diagram", swingNode);
+        fDesktopPane.getTabs().add(classDiagramTab);
     }
 
     // Actions
@@ -595,16 +643,11 @@ public class MainWindowFX {
         webViewPlaceholder.getChildren().add(webView);
     }
 
+    // TODO Hier später TabPane Initialisieren
     public void initDesktopPane(){
         //fDesktopPane = new DesktopPane();
         // Create a custom internal window (for demonstration)
         // Create InternalWindows with proper constructor
-        fDesktopPane.getTaskBar().setPosition(TaskBar.Position.TOP);
-        InternalWindow internalWindow1 = createInternalWindow("Window1", "Window 1", 100, 100);
-        InternalWindow internalWindow2 = createInternalWindow("Window2", "Window 2", 300, 150);
-        // Manage window behavior, such as positioning
-        fDesktopPane.addInternalWindow(internalWindow1); // Position at (100, 100)
-        fDesktopPane.addInternalWindow(internalWindow2); // Position at (300, 150)
 
 
         //fDesktopPane.s

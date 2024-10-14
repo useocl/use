@@ -130,6 +130,8 @@ public class MainWindow extends JFrame {
 
     private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
 
+    private static Boolean javaFxCall = false;
+
     private PageFormat fPageFormat;
 
     private static MainWindow fInstance; // global instance of main window
@@ -2197,7 +2199,11 @@ public class MainWindow extends JFrame {
 
         win.pack();
         win.setLocationRelativeTo(null);
-        win.setVisible(true);
+        if (javaFxCall){
+            win.setVisible(false);
+        } else {
+            win.setVisible(true);
+        }
         return win;
     }
     
@@ -2235,8 +2241,16 @@ public class MainWindow extends JFrame {
         
         return dv;
 	}
-	
-	private Icon getIcon(String name) {
+
+    public static Boolean getJavaFxCall() {
+        return javaFxCall;
+    }
+
+    public static void setJavaFxCall(Boolean javaFxCall) {
+        MainWindow.javaFxCall = javaFxCall;
+    }
+
+    private Icon getIcon(String name) {
 		return new ImageIcon(getClass().getResource(Options.getIconPath(name)));
 	}
 }
