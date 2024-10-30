@@ -35,7 +35,7 @@ import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.MInstanceState;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
@@ -144,7 +144,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 	public void handleTransitionsPre(MSystem system, MOperationCall operationCall)
 			throws PreConditionCheckFailedException {
 
-		MObjectState selfState = operationCall.getSelf().state(system.state());
+		MInstanceState selfState = operationCall.getSelf().state(system.state());
 		Set<MProtocolStateMachineInstance> machinesSet = selfState.getProtocolStateMachinesInstances();
 		List<MProtocolStateMachineInstance> machines = new ArrayList<>(machinesSet);
 		

@@ -1,0 +1,7 @@
+t26.use:3:9: Data type `C' already contains an attribute named `c0'.
+t26.use:3:9: Data type `C' already contains an operation named `C'.
+t26.use:9:9: Attribute with name `c0' already defined in a super data type.
+t26.use:14:9: Constructor `E' is missing parent attribute(s).
+t26.use:19:9: Constructor `F' is missing parent attribute(s).
+t26.use:31:2: Constructor `H' must not have result type.
+t26.use:36:2: Constructor `I' must not have result type.

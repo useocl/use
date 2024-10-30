@@ -46,7 +46,7 @@ import com.google.common.collect.Collections2;
  * @author Mark Richters
  * @author Lars Hamann 
  */
-public final class MObjectState {
+public final class MObjectState implements MInstanceState {
     /**
      * Slots holding a value for each attribute.
      */

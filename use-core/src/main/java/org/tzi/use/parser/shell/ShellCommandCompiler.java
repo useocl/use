@@ -208,7 +208,7 @@ public class ShellCommandCompiler {
 	 * @param model The model
 	 * @param variableEnvironment
 	 * @param verbose if true, detailed messages are printed to stdout
-	 * @return The constructed MStatement or <code>null</code> if any error occured.
+	 * @return The constructed MStatement or <code>null</code> if any error occurred.
 	 */
 	private static MStatement constructStatement(
 			ASTStatement statement, 

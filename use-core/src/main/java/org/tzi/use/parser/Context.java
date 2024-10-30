@@ -27,9 +27,7 @@ import java.util.Map.Entry;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
@@ -53,7 +51,7 @@ public class Context {
     private PrintWriter fOut;
     
     private MModel fModel;
-    private MClass fCurrentClass;
+    private MClassifier fCurrentClassifier;
     private ModelFactory fModelFactory;
     private MSystemState fSystemState;
     private boolean fInsidePostCondition;
@@ -151,12 +149,12 @@ public class Context {
         return fSystemState;
     }
 
-    public void setCurrentClass(MClass cls) {
-        fCurrentClass = cls;
+    public void setCurrentClassifier(MClassifier cf) {
+        fCurrentClassifier = cf;
     }
 
-    public MClass currentClass() {
-        return fCurrentClass;
+    public MClassifier currentClassifier() {
+        return fCurrentClassifier;
     }
     
     public void setInsidePostCondition(boolean state) {

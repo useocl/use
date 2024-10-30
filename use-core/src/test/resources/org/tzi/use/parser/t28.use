@@ -1,0 +1,7 @@
+model t28
+
+dataType A
+operations
+  A(a0 : Integer, a0 : Boolean)
+  a(x0 : Integer, x1 : Integer)(x0)
+end

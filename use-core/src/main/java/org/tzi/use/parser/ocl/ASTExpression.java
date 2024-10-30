@@ -286,7 +286,7 @@ public abstract class ASTExpression extends AST {
 		
 		for (MNavigableElement nav : dst.association().reachableEnds()) {
             if (! nav.equals( dst ) ) {
-                if (srcClass.isSubClassOf(nav.cls()) ) {
+                if (srcClass.isSubClassifierOf(nav.cls()) ) {
                     possibleSourceEnds++;
                 }
             }

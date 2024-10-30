@@ -45,7 +45,7 @@ public class ASTProtocolStateMachine extends ASTStateMachine {
 	public MStateMachine gen(Context ctx) throws SemanticException {
 		
 		psm = new MProtocolStateMachine(name.getText(),
-				new SrcPos(name), ctx.currentClass());
+				new SrcPos(name), ctx.currentClassifier());
 		MRegion defaultRegion = psm.getDefaultRegion();
 		
 		boolean hasInitialState = false;

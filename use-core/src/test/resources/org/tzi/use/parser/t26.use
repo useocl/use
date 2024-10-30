@@ -1,0 +1,37 @@
+model t26
+
+dataType C
+operations
+  C(c0 : Integer)
+  C(c0 : Integer)
+end
+
+dataType D < C
+operations
+  D(c0 : Integer, d0 : Integer, d1 : Integer)
+end
+
+dataType E < C
+operations
+  E(d0 : Integer, d1 : Integer)(c0)
+end
+
+dataType F < C
+operations
+  F(d0 : Integer, d1 : Integer)
+end
+
+dataType G
+operations
+  X(x0 : Integer)
+end
+
+dataType H
+operations
+  H(h0 : Integer) : H
+end
+
+dataType I
+operations
+  I(i0 : Integer) : Integer = 1 + 1
+end

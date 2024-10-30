@@ -1,0 +1,52 @@
+model Date
+
+dataType Date
+  operations
+    Date(day: Integer, month : Integer, year : Integer)
+    pre: day >= 1 and day <= 31
+    pre: month >= 1 and month <= 12
+
+    getMonths() : Sequence(Tuple(name : String, days : Integer)) =
+      Sequence{
+        Tuple{name='January', days=31},
+        Tuple{name='February', days=if self.isLeapYear() then 29 else 28 endif},
+        Tuple{name='March', days=31},
+        Tuple{name='April', days=30},
+        Tuple{name='May', days=31},
+        Tuple{name='June', days=30},
+        Tuple{name='July', days=31},
+        Tuple{name='August', days=31},
+        Tuple{name='September', days=30},
+        Tuple{name='October', days=31},
+        Tuple{name='November', days=30},
+        Tuple{name='December', days=31}
+      }
+
+    isLeapYear() : Boolean =
+        self.year.mod(400) = 0 or (self.year.mod(4) = 0 and self.year.mod(100) <> 0)
+
+    add(days : Integer) : Date =
+        Sequence{1..days}->iterate(d; result : Date =
+        Date(self.day, self.month, self.year) |
+            if result.day + 1 > self.getMonths()->at(result.month).days then
+              if (result.month = 12) then
+                Date(1, 1, result.year + 1)
+              else
+                Date(1, result.month + 1, result.year)
+              endif
+            else
+              Date(result.day + 1, result.month, result.year)
+            endif
+        )
+end
+
+class Person
+attributes
+  firstname : String
+  lastname : String
+  dateOfBirth : Date
+operations
+  -- produce a full name, e.g. 'Mr. Frank Black'
+  fullname(prefix : String) : String =
+    prefix.concat(' ').concat(firstname).concat(' ').concat(lastname)
+end

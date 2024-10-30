@@ -68,7 +68,7 @@ import static org.tzi.use.util.StringUtil.inQuotes;
  */
 public final class MSystem {
 	/** The model of this system. */
-	private MModel fModel;
+	private final MModel fModel;
 
 	/** The current system state. */
 	private MSystemState fCurrentState;
@@ -80,7 +80,7 @@ public final class MSystem {
 	private UniqueNameGenerator fUniqueNameGenerator;
 
 	/** Event bus for detailed events during execution **/
-	private EventBus eventBus = new EventBus("System change");
+	private final EventBus eventBus = new EventBus("System change");
 
 	/** Last called operation (used by test suite) */
 	private MOperationCall lastOperationCall;
@@ -118,11 +118,11 @@ public final class MSystem {
 	/**
 	 * Stack of variation points (system state backups) for the test suite.
 	 */
-	private Stack<MSystemState> variationPointsStates = new Stack<MSystemState>();
+	private final Stack<MSystemState> variationPointsStates = new Stack<>();
 	/**
 	 * Stack of variation points (variable backups) for the test suite.
 	 */
-	private Stack<VariableEnvironment> variationPointsVars = new Stack<VariableEnvironment>();
+	private final Stack<VariableEnvironment> variationPointsVars = new Stack<>();
 
 	/**
 	 * Count of open GUI elements that require updates on changes with derived
@@ -151,15 +151,15 @@ public final class MSystem {
 	 * {@link #reset()})
 	 */
 	private void init() {
-		fObjects = new HashMap<String, MObject>();
+		fObjects = new HashMap<>();
 		fUniqueNameGenerator = new UniqueNameGenerator();
 		fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
 		fGenerator = new GGenerator(this);
 		fVariableEnvironment = new VariableEnvironment(fCurrentState);
-		fStatementEvaluationResults = new ArrayDeque<StatementEvaluationResult>();
-		fCallStack = new ArrayDeque<MOperationCall>();
-		fRedoStack = new ArrayDeque<MStatement>();
-		fCurrentlyEvaluatedStatements = new ArrayDeque<StatementEvaluationResult>();
+		fStatementEvaluationResults = new ArrayDeque<>();
+		fCallStack = new ArrayDeque<>();
+		fRedoStack = new ArrayDeque<>();
+		fCurrentlyEvaluatedStatements = new ArrayDeque<>();
 	}
 
 	/**
@@ -206,23 +206,24 @@ public final class MSystem {
 	}
 
 	/**
-	 * The event bus of the system. 
-	 * It is used to provide fine grained event 
-	 * notifications during execution.
+	 * <p>The event bus of the system.
+	 * It is used to provide fine grained event
+	 * notifications during execution.</p>
 	 * 
-	 * All raised events are in the
-	 * package {@link org.tzi.use.uml.sys.events}.
+	 * <p>All raised events are in the
+	 * package {@link org.tzi.use.uml.sys.events}.</p>
 	 * 
-	 * The documentation of the used event bus can 
-	 * be found <a href="http://code.google.com/p/guava-libraries/wiki/EventBusExplained">here</a>.   
-	 * @return
+	 * <p>The documentation of the used event bus can
+	 * be found <a href="http://code.google.com/p/guava-libraries/wiki/EventBusExplained">here</a>.</p>
+	 *
+	 * @return The {@code EventBus} for the system.
 	 */
 	public EventBus getEventBus() {
 		return this.eventBus;
 	}
 
 	/**
-	 * The current execution context, e. g., UNDO
+	 * The current execution context, e.g., UNDO
 	 * @return the executionContext
 	 */
 	public EventContext getExecutionContext() {
@@ -311,7 +312,7 @@ public final class MSystem {
 				}
 			}
 			
-			if(invs.size() > 0){
+			if(!invs.isEmpty()){
 				fireClassInvariantsLoadedEvent(invs);
 			}
 			
@@ -330,7 +331,7 @@ public final class MSystem {
 	}
 	
 	public void unloadInvariants(Set<String> invNames, PrintWriter out) {
-		Collection<MClassInvariant> invs = new LinkedList<MClassInvariant>();
+		Collection<MClassInvariant> invs = new LinkedList<>();
 		for(String name : invNames){
 			MClassInvariant inv = fModel.removeClassInvariant(name);
 			if(inv == null){
@@ -341,7 +342,7 @@ public final class MSystem {
 			}
 		}
 
-		if(invs.size() > 0){
+		if(!invs.isEmpty()){
 			fireClassInvariantsUnloadedEvent(invs);
 		}
 	}
@@ -364,12 +365,12 @@ public final class MSystem {
 	 */
 	public void setClassInvariantFlags(MClassInvariant inv, Boolean active, Boolean negated) {
 		if (active != null){
-			inv.setActive(active.booleanValue());
-			fireClassInvariantChangeEvent(inv, active.booleanValue() ? InvariantStateChange.ACTIVATED : InvariantStateChange.DEACTIVATED);
+			inv.setActive(active);
+			fireClassInvariantChangeEvent(inv, active ? InvariantStateChange.ACTIVATED : InvariantStateChange.DEACTIVATED);
 		}
 		if (negated != null){
-			inv.setNegated(negated.booleanValue());
-			fireClassInvariantChangeEvent(inv, negated.booleanValue() ? InvariantStateChange.NEGATED : InvariantStateChange.DENEGATED);
+			inv.setNegated(negated);
+			fireClassInvariantChangeEvent(inv, negated ? InvariantStateChange.NEGATED : InvariantStateChange.DENEGATED);
 		}
 	}
 	
@@ -384,17 +385,22 @@ public final class MSystem {
 
 		if (preConditions.isEmpty()) {
 			// Performance improvement...
-			operationCall.setPreConditionsCheckResult(Collections.<MPrePostCondition, Boolean> emptyMap());
+			operationCall.setPreConditionsCheckResult(Collections.emptyMap());
 			return;
 		}
 		
-		Map<MPrePostCondition, Boolean> results = new LinkedHashMap<MPrePostCondition, Boolean>(preConditions.size());
+		Map<MPrePostCondition, Boolean> results = new LinkedHashMap<>(preConditions.size());
 		operationCall.setPreConditionsCheckResult(results);
 
 		for (MPrePostCondition preCondition : preConditions) {
 			Evaluator oclEvaluator = new Evaluator();
 
-			VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment.constructVarBindings() : ctx.varBindings());
+			VarBindings b;
+			if (!(operationCall.getOperation().isConstructor()) && operationCall.requiresVariableFrameInEnvironment()) {
+				b = fVariableEnvironment.constructVarBindings();
+			} else {
+				b = ctx.varBindings();
+			}
 
 			Value evalResult = oclEvaluator.eval(preCondition.expression(), fCurrentState, b);
 
@@ -408,7 +414,7 @@ public final class MSystem {
 
 	/**
 	 * Evaluates all post conditions of the given operation call and stores
-	 * their result inside of the operation call object.
+	 * their result inside the operation call object.
 	 * 
 	 * @param operationCall The operation call to validate the post conditions
 	 *            for. Also used to store the post condition results.
@@ -419,11 +425,11 @@ public final class MSystem {
 
 		if (postConditions.isEmpty()) {
 			// Performance improvement...
-			operationCall.setPostConditionsCheckResult(Collections.<MPrePostCondition, Boolean> emptyMap());
+			operationCall.setPostConditionsCheckResult(Collections.emptyMap());
 			return;
 		}
 		
-		LinkedHashMap<MPrePostCondition, Boolean> results = new LinkedHashMap<MPrePostCondition, Boolean>(postConditions.size());
+		LinkedHashMap<MPrePostCondition, Boolean> results = new LinkedHashMap<>(postConditions.size());
 
 		VarBindings b = (operationCall.requiresVariableFrameInEnvironment() ? fVariableEnvironment.constructVarBindings() : ctx.varBindings());
 
@@ -546,17 +552,15 @@ public final class MSystem {
 	}
 
 	/**
-	 * Exits a query operation, i. e., a query without side effects. Validates
-	 * the post conditions of the query expression.
+	 * <p>Exits a query operation, i.e., a query without side effects. Validates
+	 * the post conditions of the query expression.</p>
 	 * 
-	 * In any case, the operation is removed from the call stack.
+	 * <p>In any case, the operation is removed from the call stack.</p>
 	 * 
-	 * @param ctx
-	 * @param resultValue
-	 * @return
-	 * @throws MSystemException
+	 * @param ctx The <code>EvalContext</code> the operations is evaluated in.
+	 * @throws MSystemException If the call stack is empty.
 	 */
-	public MOperationCall exitQueryOperation(EvalContext ctx, Value resultValue) throws MSystemException {
+	public void exitQueryOperation(EvalContext ctx) throws MSystemException {
 
 		MOperationCall operationCall = getCurrentOperation();
 
@@ -567,7 +571,7 @@ public final class MSystem {
 		if (operationCall.executionHasFailed()) {
 			operationCall.setExited(true);
 			fCallStack.pop();
-			return operationCall;
+			return;
 		}
 
 		try {
@@ -575,8 +579,6 @@ public final class MSystem {
 				assertPostConditions(ctx, operationCall);
 
 			operationCall.setExitedSuccessfully(true);
-
-			return operationCall;
 		} finally {
 			operationCall.setExited(true);
 			fCallStack.pop();
@@ -600,19 +602,19 @@ public final class MSystem {
 			ctx = new EvalContext(null, fCurrentState, b, null, "");
 		}
 
-		MObjectState objState = operationCall.getSelf().state(fCurrentState);
+		MInstanceState objState = operationCall.getSelf().state(fCurrentState);
 
 		for (MProtocolStateMachineInstance psm : objState.getProtocolStateMachinesInstances()) {
 			// Operation is not covered by the state machine
 			if (!psm.getProtocolStateMachine().handlesOperation(operationCall.getOperation()))
 				continue;
 			
-			Map<MRegion, Set<MTransition>> possibleTransitions = new LinkedHashMap<MRegion, Set<MTransition>>();
+			Map<MRegion, Set<MTransition>> possibleTransitions = new LinkedHashMap<>();
 			boolean validOperationCall = psm.validOperationCall(ctx, operationCall, possibleTransitions);
 
 			if (!psm.isExecutingTransition() && !validOperationCall) {
 				throw new MSystemException("No valid transition available in protocol state machine " + inQuotes(psm) + " for operation call "
-						+ operationCall.toString() + ".");
+						+ operationCall + ".");
 			}
 
 			if (psm.isExecutingTransition() && validOperationCall) {
@@ -686,7 +688,7 @@ public final class MSystem {
 		if (!operationCall.hasPossibleTransitions())
 			return;
 
-		MObjectState objState = operationCall.getSelf().state(fCurrentState);
+		MInstanceState objState = operationCall.getSelf().state(fCurrentState);
 
 		if (ctx == null) {
 			VarBindings b = fVariableEnvironment.constructVarBindings();
@@ -983,7 +985,7 @@ public final class MSystem {
 		DeleteObjectResult deleteResult = fCurrentState.deleteObject(object);
 		result.getStateDifference().addDeleteResult(deleteResult);
 
-		Map<MObject, List<String>> undefinedTopLevelReferences = new HashMap<MObject, List<String>>();
+		Map<MObject, List<String>> undefinedTopLevelReferences = new HashMap<>();
 
 		for (MObject destroyedObject : deleteResult.getRemovedObjects()) {
 			List<String> topLevelReferences = fVariableEnvironment.getTopLevelReferencesTo(destroyedObject);
@@ -1003,8 +1005,8 @@ public final class MSystem {
 			result.appendEvent(fireLinkDeleted(link));
 		}
 
-		Set<MLink> deletedLinks = new HashSet<MLink>(deleteResult.getRemovedLinks());
-		Set<MObject> deletedObjects = new HashSet<MObject>(deleteResult.getRemovedObjects());
+		Set<MLink> deletedLinks = new HashSet<>(deleteResult.getRemovedLinks());
+		Set<MObject> deletedObjects = new HashSet<>(deleteResult.getRemovedObjects());
 
 		deletedLinks.remove(object);
 		deletedObjects.remove(object);
@@ -1044,20 +1046,20 @@ public final class MSystem {
 
 		result.getStateDifference().addNewLink(newLink);
 
-		List<MRValue> wrappedParticipants = new ArrayList<MRValue>(participants.size());
+		List<MRValue> wrappedParticipants = new ArrayList<>(participants.size());
 
 		for (MObject participant : participants) {
 			wrappedParticipants.add(new MRValueExpression(participant));
 		}
 
-		List<List<MRValue>> wrappedQualifier = new LinkedList<List<MRValue>>();
+		List<List<MRValue>> wrappedQualifier = new LinkedList<>();
 
 		for (List<Value> qValues : qualifierValues) {
 			List<MRValue> wrappedQValues;
-			if (qValues.size() == 0) {
+			if (qValues.isEmpty()) {
 				wrappedQValues = Collections.emptyList();
 			} else {
-				wrappedQValues = new LinkedList<MRValue>();
+				wrappedQValues = new LinkedList<>();
 				for (Value qValue : qValues) {
 					wrappedQValues.add(new MRValueExpression(qValue));
 				}
@@ -1101,7 +1103,7 @@ public final class MSystem {
 
 		result.getStateDifference().addDeleteResult(fCurrentState.deleteLink(link));
 
-		List<MRValue> wrappedParticipants = new ArrayList<MRValue>(participants.size());
+		List<MRValue> wrappedParticipants = new ArrayList<>(participants.size());
 
 		for (MObject participant : participants) {
 			wrappedParticipants.add(new MRValueExpression(participant));
@@ -1111,7 +1113,7 @@ public final class MSystem {
 		if (qualifierValues == null || qualifierValues.isEmpty()) {
 			wrappedQualifier = Collections.emptyList();
 		} else {
-			wrappedQualifier = new ArrayList<List<MRValue>>(qualifierValues.size());
+			wrappedQualifier = new ArrayList<>(qualifierValues.size());
 
 			for (List<Value> endQualifier : qualifierValues) {
 				List<MRValue> endQualifierValues;
@@ -1119,7 +1121,7 @@ public final class MSystem {
 				if (endQualifier == null || endQualifier.isEmpty()) {
 					endQualifierValues = Collections.emptyList();
 				} else {
-					endQualifierValues = new ArrayList<MRValue>();
+					endQualifierValues = new ArrayList<>();
 					for (Value v : endQualifier) {
 						endQualifierValues.add(new MRValueExpression(v));
 					}
@@ -1268,9 +1270,7 @@ public final class MSystem {
 
 		fRedoStack.clear();
 
-		StatementEvaluationResult result = execute(statement, new SoilEvaluationContext(this), undoOnFailure, storeResult, notifyUpdateStateListeners);
-
-		return result;
+        return execute(statement, new SoilEvaluationContext(this), undoOnFailure, storeResult, notifyUpdateStateListeners);
 	}
 
 	/**
@@ -1355,9 +1355,7 @@ public final class MSystem {
 		SoilEvaluationContext context = new SoilEvaluationContext(this);
 		context.setIsUndo(true);
 
-		StatementEvaluationResult result = execute(inverseStatement, context, false, false, true);
-		
-		return result;
+        return execute(inverseStatement, context, false, false, true);
 	}
 
 	/**
@@ -1379,9 +1377,7 @@ public final class MSystem {
 		SoilEvaluationContext context = new SoilEvaluationContext(this);
 		context.setIsRedo(true);
 
-		StatementEvaluationResult result = execute(redoStatement, context, false, true, true);
-
-		return result;
+        return execute(redoStatement, context, false, true, true);
 	}
 
 	/**
@@ -1462,7 +1458,7 @@ public final class MSystem {
 	 * @return
 	 */
 	public List<MStatement> getEvaluatedStatements() {
-		List<MStatement> evaluatedStatements = new ArrayList<MStatement>(fStatementEvaluationResults.size());
+		List<MStatement> evaluatedStatements = new ArrayList<>(fStatementEvaluationResults.size());
 
 		for (StatementEvaluationResult result : fStatementEvaluationResults) {
 			evaluatedStatements.add(0, result.getEvaluatedStatement());
@@ -1616,7 +1612,7 @@ public final class MSystem {
 		return e;
 	}
 	
-	TransitionEvent fireTransition(MObject source, MStateMachine stateMachine, MTransition transition) {
+	TransitionEvent fireTransition(MInstance source, MStateMachine stateMachine, MTransition transition) {
 		TransitionEvent e = new TransitionEvent(executionContext, source, stateMachine, transition);
 		getEventBus().post(e);
 		return e;

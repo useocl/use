@@ -76,13 +76,7 @@ import org.tzi.use.gui.views.selection.objectselection.DataHolder;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelectionHelper;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MLinkObjectImpl;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectImpl;
-import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.Event;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
@@ -228,7 +222,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 		return allLifelines;
 	}
 	
-	public Lifeline getSpecificLifeline(MObject obj) {
+	public Lifeline getSpecificLifeline(MInstance obj) {
 		if(obj instanceof MLinkObject) {
 			for(LinkInsertedEvent lie : fLinkLifelines.keySet()) {
 				if(lie.getLink().equals(obj)) {
@@ -279,7 +273,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 	/**
 	 * Constructs a new SequenceDiagram-Object.
 	 * 
-	 * @param system contains (direct or indirect) all needed informations mainW
+	 * @param system contains (direct or indirect) all needed information mainW
 	 * @param mainW the MainWindow object from which the constructor is called
 	 */
 	public SequenceDiagram(MSystem system, MainWindow mainW, SequenceDiagramView parent, VisibleDataManager visibleData) {
@@ -1252,7 +1246,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 						// finish current activation
 						Activation a = activationStack.pop();
 						MOperationCall opcall = ((OperationExitedEvent) event).getOperationCall();
-						MObject obj = opcall.getSelf();
+						MInstance obj = opcall.getSelf();
 						// MObject obj = getObj(a.getCmd());
 						Lifeline ll = getSpecificLifeline(obj);
 						// if the lifeline and the source-lifeline is not marked
@@ -1618,7 +1612,7 @@ MessageSelectionView.MessageSelectionDelegate, DataHolder {
 		// see above
 		MOperationCall operationCall = event.getOperationCall();
 
-		MObject obj = operationCall.getSelf();
+		MInstance obj = operationCall.getSelf();
 		Lifeline ll = getSpecificLifeline(obj);
 		int yValue = lastYValue;
 		if (visibleEvent(event)) {

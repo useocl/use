@@ -30,13 +30,7 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator;
 import org.tzi.use.util.uml.sorting.AlphabeticalConditionComparator;
@@ -49,7 +43,7 @@ import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
 /**
  * ModelBrowserSorting is used to put the tree nodes of the
  * ModelBrowser in a specific order. It provides all the
- * sorting algorithem.
+ * sorting algorithm.
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
@@ -189,34 +183,34 @@ public class ModelBrowserSorting  {
     
     
     /**
-     * Adds Listeners who are interrested on a change event of sorting.
-     * @param l The listener who is interrested
+     * Adds Listeners who are interested on a change event of sorting.
+     * @param l The listener who is interested
      */
     public void addSortChangeListener( SortChangeListener l ) {
         fListenerList.add( SortChangeListener.class, l );
     }
     
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    public Collection<MClass> sortClasses( Collection<MClass> items) {
-        ArrayList<MClass> classes = new ArrayList<MClass>( items );
+    public Collection<MClassifier> sortClasses( Collection<MClassifier> items) {
+        ArrayList<MClassifier> classifiers = new ArrayList<MClassifier>( items );
         
-        if (classes.size() > 0) {
+        if (classifiers.size() > 0) {
             switch (clsOrder) {
                 case CLS_ALPHABETIC:
-                    Collections.sort(classes, new AlphabeticalNamedElementComparator());
+                    Collections.sort(classifiers, new AlphabeticalNamedElementComparator());
                     break;
                 case CLS_USE_ORDER:
-                    Collections.sort(classes, new UseFileOrderComparator());
+                    Collections.sort(classifiers, new UseFileOrderComparator());
                     break;
                 default:
                     break;
             }
         }
-        return classes;
+        return classifiers;
     }
     
     /**
@@ -244,7 +238,7 @@ public class ModelBrowserSorting  {
     }
     
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
@@ -267,7 +261,7 @@ public class ModelBrowserSorting  {
     }
     
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
@@ -297,7 +291,7 @@ public class ModelBrowserSorting  {
     }
 
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
@@ -324,7 +318,7 @@ public class ModelBrowserSorting  {
     }
 
     /**
-     * Calls the specific algorithem in which way the tree will be sorted.
+     * Calls the specific algorithm in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */

@@ -101,13 +101,7 @@ import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElementComparator;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkEnd;
-import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MLinkObjectImpl;
-import org.tzi.use.uml.sys.MLinkSet;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.w3c.dom.Element;
@@ -392,8 +386,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Hides all currently visible elements. The diagram is not repainted!
 	 */
 	public void hideAll() {
-		Set<MObject> objects = new HashSet<>(); 
-		objects.addAll(this.visibleData.fObjectToNodeMap.keySet());
+        Set<MObject> objects = new HashSet<>(this.visibleData.fObjectToNodeMap.keySet());
 		objects.forEach(obj -> hideObject(obj));
 	}
 
@@ -401,8 +394,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Hides all currently visible links. The diagram is not repainted!
 	 */
 	public void hideAllLinks() {
-		Set<MLink> links = new HashSet<>();
-		links.addAll(this.visibleData.fBinaryLinkToEdgeMap.keySet());
+        Set<MLink> links = new HashSet<>(this.visibleData.fBinaryLinkToEdgeMap.keySet());
 
 		for (MLink e : links) {
 			hideBinaryLink(e);
@@ -964,7 +956,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * 
 	 * @param obj
 	 */
-	public void updateObject(MObject obj) {
+	public void updateObject(MInstance obj) {
 		ObjectNode node = visibleData.fObjectToNodeMap.get(obj);
 		if (node != null)
 			invalidateNode(node);
@@ -1244,8 +1236,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			}, pos++);
 
 			// new Action for crop
-			Set<MObject> objectsToHide = new HashSet<>();
-			objectsToHide.addAll(selectedObjects);
+            Set<MObject> objectsToHide = new HashSet<>(selectedObjects);
 			selectedLinks.forEach(link -> {
 				if (link instanceof MLinkObject) {
 					objectsToHide.add((MLinkObject) link);
@@ -1421,7 +1412,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		selectedNodes.forEach(elem -> {
 			if (elem instanceof MLinkObjectImpl) {
-				noneSelectedNodes.removeAll(((MLinkObjectImpl) elem).linkedObjects());
+				((MLinkObjectImpl) elem).linkedObjects().forEach(noneSelectedNodes::remove);
 			}
 		});
 		return noneSelectedNodes;
@@ -1547,8 +1538,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		for (int i = 0; i < base; ++i) {
 			boolean found = false;
 			for (int j = 0; j < c.length; ++j) {
-				if (c[j] == i)
-					found = true;
+                if (c[j] == i) {
+                    found = true;
+                    break;
+                }
 			}
 			if (!found)
 				return false;

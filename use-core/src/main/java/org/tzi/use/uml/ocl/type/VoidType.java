@@ -90,6 +90,11 @@ public class VoidType extends TypeImpl {
 	}
 
 	@Override
+	public boolean isKindOfDataType(VoidHandling h) {
+		return h == VoidHandling.INCLUDE_VOID;
+	}
+
+	@Override
 	public boolean isKindOfOclAny(VoidHandling h) {
 		return h == VoidHandling.INCLUDE_VOID;
 	}

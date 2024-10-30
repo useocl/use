@@ -135,7 +135,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
     /** 
      * Adds an association end.
      *
-     * @exception MInvalidModel trying to add another composition
+     * @exception MInvalidModelException trying to add another composition
      *            or aggregation end.
      */
     public void addAssociationEnd(@NonNull MAssociationEnd aend) throws MInvalidModelException {
@@ -295,7 +295,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
     public boolean isAssignableFrom(MClass[] classes) {
         int i=0;
         for (MAssociationEnd end : associationEnds()) {
-            if (!classes[i].isSubClassOf(end.cls())) return false;
+            if (!classes[i].isSubClassifierOf(end.cls())) return false;
             ++i;
         }
         return true;
@@ -449,7 +449,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 				MAssociationEnd checkAgainstEnd = checkAgainst.associationEnds().get(i);
 				MAssociationEnd childEnd =  redefiningAssoc.associationEnds().get(i);
 				
-				if (childEnd.cls().isSubClassOf(checkAgainstEnd.cls(), true)) {
+				if (childEnd.cls().isSubClassifierOf(checkAgainstEnd.cls(), true)) {
 					// More specific redefinition
 					closure.add(redefiningAssoc);
 					break;
@@ -516,7 +516,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
 		for (MAssociationEnd end : this.associationEnds()) {
 			if (end.equals(dst)) continue;
 			
-			if (srcClass.isSubClassOf(end.cls())) {
+			if (srcClass.isSubClassifierOf(end.cls())) {
 				if (explicitRolename == null) {
 					return end;
 				} else {

@@ -212,12 +212,12 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	public abstract void applyCropChanges(ActionEvent ev);
 
 	/**
-	 * Method applyShowChanges shows the appropriate marked Classes or associations. 
+	 * Method applyShowChanges shows the appropriate marked classes or associations.
 	 */
 	public abstract void applyShowChanges(ActionEvent ev);
 
 	/**
-	 * Method applyHideChanges hides the appropriate marked Classes or Associationen. 
+	 * Method applyHideChanges hides the appropriate marked classes or associations.
 	 */
 	public abstract void applyHideChanges(ActionEvent ev);
 	

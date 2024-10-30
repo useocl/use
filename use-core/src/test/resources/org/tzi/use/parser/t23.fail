@@ -1,0 +1,2 @@
+t23.use:6:9: Redefinition of `A'.
+t23.use:3:9: `A' previously declared here.

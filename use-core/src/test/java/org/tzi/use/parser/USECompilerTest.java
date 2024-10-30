@@ -76,6 +76,7 @@ import org.tzi.use.util.SuffixFileFilter;
 public class USECompilerTest extends TestCase {
     // Set this to true to see more details about what is tested.
     private static final boolean VERBOSE = false;
+    private static final int EXPECTED = 40;
 
     private static File TEST_PATH;
     private static File EXAMPLES_PATH;
@@ -94,7 +95,7 @@ public class USECompilerTest extends TestCase {
         }
     }
 
-    // java.io has a StringWriter but we need an OutputStream for
+    // java.io has a StringWriter, but we need an OutputStream for
     // System.err
     class StringOutputStream extends OutputStream {
         private StringBuilder fBuffer = new StringBuilder();
@@ -119,7 +120,7 @@ public class USECompilerTest extends TestCase {
     public void testSpecification() {
         Options.explicitVariableDeclarations = false;
 
-        List<File> fileList = getFilesMatchingSuffix(".use", 32);
+        List<File> fileList = getFilesMatchingSuffix(".use", EXPECTED);
         // add all the example files which should have no errors
         File[] files = EXAMPLES_PATH.listFiles( new SuffixFileFilter(".use") );
         assertNotNull(files);
@@ -177,11 +178,11 @@ public class USECompilerTest extends TestCase {
                 }
                 continue;
             }
-            if (line.length() == 0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
 
-            String expStr = line;
+            StringBuilder expStr = new StringBuilder(line);
             while (true) {
                 line = in.readLine();
                 lineNr++;
@@ -193,7 +194,7 @@ public class USECompilerTest extends TestCase {
                 if (line.startsWith("-> ")) {
                     break;
                 }
-                expStr += " " + line.trim();
+                expStr.append(" ").append(line.trim());
             }
             String resultStr = line.substring(3);
 
@@ -201,7 +202,7 @@ public class USECompilerTest extends TestCase {
                 System.out.println("expression: " + expStr);
             }
 
-            InputStream stream = new ByteArrayInputStream(expStr.getBytes());
+            InputStream stream = new ByteArrayInputStream(expStr.toString().getBytes());
 
             Expression expr =
                     OCLCompiler.compileExpression(
@@ -225,8 +226,7 @@ public class USECompilerTest extends TestCase {
         // check for a failure file
         String failFileName =
                 specFileName.substring(0, specFileName.length() - 4) + ".fail";
-        File failFile = new File(TEST_PATH, failFileName);
-        return failFile;
+        return new File(TEST_PATH, failFileName);
     }
 
 

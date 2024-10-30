@@ -1,0 +1,35 @@
+model Shapes
+
+dataType Point
+operations
+  Point(x : Real, y : Real)
+  translate(dx : Real, dy : Real)(dx) : Point =
+    Point(self.x + dx, self.y + dy)
+end
+
+abstract dataType Shape
+operations
+  Shape(position : Point)
+  perimeter() : Real
+  area() : Real
+  contains(p : Point) : Boolean
+end
+
+dataType Rectangle < Shape
+operations
+  Rectangle(position : Point, width : Real, height : Real)(position)
+  perimeter() : Real = 2.0 * width + 2.0 * height
+  area() : Real = width * height
+  contains(p : Point) : Boolean =
+    self.position.x <= p.x and
+    self.position.x + width >= p.x and
+    self.position.y <= p.y and
+    self.position.y + height >= p.y
+end
+
+dataType Circle < Shape
+operations
+  Circle(position : Point, radius : Real)(position)
+  perimeter() : Real = 2.0 * 3.14 * radius
+  area() : Real = 3.14 * radius * radius
+end

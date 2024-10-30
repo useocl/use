@@ -22,6 +22,7 @@ package org.tzi.use.uml.sys;
 import org.tzi.use.analysis.coverage.CoverageCalculationVisitor;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.util.soil.StateDifference;
@@ -108,7 +109,7 @@ public class DerivedAttributeController implements DerivedValueController {
 		}
 		
 		for (MAttribute attr : derivedAttributes) {
-			MClass definingClass = attr.owner();
+			MClassifier definingClass = attr.owner();
 			Set<MObject> objects = state.objectsOfClassAndSubClasses(definingClass);
 			
 			for (MObject obj : objects) {

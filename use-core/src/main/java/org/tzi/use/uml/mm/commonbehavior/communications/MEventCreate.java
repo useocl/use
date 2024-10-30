@@ -18,7 +18,7 @@
  */
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 
 /**
  * @author Lars Hamann
@@ -26,10 +26,10 @@ import org.tzi.use.uml.mm.MClass;
  */
 public class MEventCreate extends MEvent {
 	
-	protected MClass cls;
+	protected MClassifier cf;
 	
-	public MEventCreate(MClass cls) {
-		this.cls = cls;
+	public MEventCreate(MClassifier cf) {
+		this.cf = cf;
 	}
 
 	/* (non-Javadoc)

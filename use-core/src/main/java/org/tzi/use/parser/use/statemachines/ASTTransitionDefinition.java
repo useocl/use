@@ -27,7 +27,7 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.commonbehavior.communications.MTrigger;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
@@ -151,11 +151,11 @@ public class ASTTransitionDefinition extends AST {
 					throw new SemanticException(event, "Initial transition must be unnamed or named " + StringUtil.inQuotes("create"));
 				}
 
-				result.setTrigger(MTrigger.create(event.getText(), ctx.currentClass()));
+				result.setTrigger(MTrigger.create(event.getText(), ctx.currentClassifier()));
 			}
 		} else if (operationName != null ){
 			// Operation call trigger?
-			MOperation op = ctx.currentClass().operation(operationName.getText(), true);
+			MOperation op = ctx.currentClassifier().operation(operationName.getText(), true);
 			
 			if (op == null) {
 				ctx.reportError(source, "Unknown operation " + StringUtil.inQuotes(operationName.getText()));
@@ -185,7 +185,7 @@ public class ASTTransitionDefinition extends AST {
 	}
 
 	private Expression genPrePost(MTransition t, Context ctx, MStateMachine sm, boolean isPre, ASTExpression expr) throws SemanticException {
-		MClass cls = sm.getContext();
+		MClassifier cf = sm.getContext();
 		Expression conditionExp = null;
 		
         // enter context variable into scope of invariant
@@ -194,8 +194,8 @@ public class ASTTransitionDefinition extends AST {
 
         try {
             // create pseudo-variable "self"
-            vars.add("self", cls, null);
-            ctx.exprContext().push("self", cls);
+            vars.add("self", cf, null);
+            ctx.exprContext().push("self", cf);
 
             t.getTrigger().buildEnvironment(vars, ctx.exprContext(), isPre);
             

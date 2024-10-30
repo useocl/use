@@ -18,10 +18,13 @@
  */
 package org.tzi.use.api;
 
-import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.parser.Symtable;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.tzi.use.parser.*;
+import org.tzi.use.parser.generator.GeneratorLexer;
+import org.tzi.use.parser.generator.GeneratorParser;
+import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.soil.SoilCompiler;
 import org.tzi.use.parser.soil.ast.ASTStatement;
@@ -41,10 +44,7 @@ import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.CompilationFailedException;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -225,6 +225,34 @@ public class UseModelApi {
 	}
 
 	/**
+	 * Creates a new data type in a USE model. The model is owning this data type. First
+	 * a shell session is opened and the model has a valid name
+	 * <code>modelName</code>. Then the creation of the new data type is possible
+	 * with a valid <code>dataTypeName</code> and a classifier if the data type is
+	 * abstract or not <code>isAbstract</code>.
+	 *
+	 * @param dataTypeName The name of the data type to create. Must be unique in a model.
+	 * @param isAbstract If <code>true</code>, no instances can be created for this data type.
+	 * @return the newly created data type
+	 * @throws UseApiException If no data type name is given or if the data type is invalid.
+	 */
+	public MDataType createDataType(String dataTypeName, boolean isAbstract) throws UseApiException {
+		if (dataTypeName == null || dataTypeName.isEmpty()) {
+			throw new UseApiException("A data type must be named");
+		}
+
+		MDataType dtp = mFactory.createDataType(dataTypeName, isAbstract);
+
+		try {
+			mModel.addDataType(dtp);
+		} catch (MInvalidModelException e) {
+			throw new UseApiException("Add data type failed!", e);
+		}
+
+		return dtp;
+	}
+
+	/**
 	 * Creates a new enumeration with the given <code>literals</code> in the current model.
 	 * @param enumerationName The name of the enumeration (<i>required</i>).
 	 * @param literals The enumeration literals
@@ -351,7 +379,9 @@ public class UseModelApi {
 			resultType = getType(returnType);
 		}
 
-		return createOperationEx(owner, operationName, vars, resultType);
+		boolean isConstructor = operationName.equals(ownerName);
+
+		return createOperationEx(owner, operationName, vars, resultType, isConstructor);
 	}
 
 	/**
@@ -367,9 +397,9 @@ public class UseModelApi {
 	 * @throws UseApiException
 	 */
 	public MOperation createOperationEx(MClass owner, String operationName,
-			VarDeclList parameter, Type returnType) throws UseApiException {
+			VarDeclList parameter, Type returnType, boolean isConstructor) throws UseApiException {
 
-		MOperation op = mFactory.createOperation(operationName, parameter, returnType);
+		MOperation op = mFactory.createOperation(operationName, parameter, returnType, isConstructor);
 
 		try {
 			owner.addOperation(op);
@@ -403,7 +433,7 @@ public class UseModelApi {
 	 * @throws UseApiException
 	 */
 	public MOperation createQueryOperation(String ownerName, String operationName,
-			String[][] parameter, String returnType, String body) throws UseApiException {
+			String[][] parameter, String returnType, String body, boolean isConstructor) throws UseApiException {
 
 		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
 
@@ -457,7 +487,7 @@ public class UseModelApi {
 	 * @throws UseApiException
 	 */
 	public MOperation createImperativeOperation(String ownerName, String operationName,
-			String[][] parameter, String returnType, String body) throws UseApiException {
+			String[][] parameter, String returnType, String body, boolean isConstructor) throws UseApiException {
 
 		MOperation op = createOperation(ownerName, operationName, parameter, returnType);
 
@@ -498,7 +528,7 @@ public class UseModelApi {
 	 * @param condition The OCL-Expression of the condition.
 	 * @param isPre Switch whether the condition is a precondition or not.
 	 * @return The created {@link MPrePostCondition}.
-	 * @throws UseApiException
+	 * @throws UseApiException If the condition could not be created.
 	 */
 	public MPrePostCondition createPrePostCondition(String ownerName,
 			String operationName, String name, String condition, boolean isPre)
@@ -506,7 +536,7 @@ public class UseModelApi {
 		MClass cls = getClassSafe(ownerName);
 		MOperation op = cls.operation(operationName, false);
 
-		if(op == null){
+		if(op == null) {
 			throw new UseApiException("Unknown operation "
 					+ StringUtil.inQuotes(ownerName + "::" + operationName)
 					+ ".");
@@ -515,30 +545,51 @@ public class UseModelApi {
 		StringWriter errBuffer = new StringWriter();
 		PrintWriter errorPrinter = new PrintWriter(errBuffer, true);
 
-		Symtable symTable = new Symtable();
+		ParseErrorHandler errHandler = new ParseErrorHandler("UseModelApi", errorPrinter);
+		InputStream inStream = new ByteArrayInputStream(condition.getBytes());
+
+		Expression exp = null;
+
 		try {
-			symTable.add("self", cls, null);
-			for(VarDecl var : op.paramList()){
-				symTable.add(var.name(), var.type(), null);
+			ANTLRInputStream aInput = new ANTLRInputStream(inStream);
+			aInput.name = "UseModelApi";
+
+			GeneratorLexer lexer = new GeneratorLexer(aInput);
+			CommonTokenStream tStream = new CommonTokenStream(lexer);
+			GeneratorParser parser = new GeneratorParser(tStream);
+
+			lexer.init(errHandler);
+			parser.init(errHandler);
+
+			// Parse the specification
+			ASTExpression astCondition = parser.expressionOnly();
+
+			if (errHandler.errorCount() == 0 ) {
+				ModelFactory modelFactory = new ModelFactory();
+				Context ctx = new Context("UseModelApi",
+						errorPrinter,
+						null,
+						modelFactory);
+				ctx.setModel(this.getModel());
+
+				Symtable vars = ctx.varTable();
+
+				// create pseudo-variable "self"
+				vars.add("self", cls, null);
+				ctx.exprContext().push("self", cls);
+				// add special variable `result' in postconditions with result value
+				if (! isPre && op.hasResultType() )
+					vars.add("result", op.resultType(), null);
+
+				ctx.setInsidePostCondition(! isPre);
+
+				exp = astCondition.gen(ctx);
 			}
-			if(op.hasResultType()){
-				symTable.add("result", op.resultType(), null);
-			}
-		}
-		catch(SemanticException ex){
-			throw new UseApiException("Could not create pre-/postcondition.", ex);
-		}
+		} catch (RecognitionException | SemanticException | IOException e) {
+            throw new UseApiException("Error adding condition!", e);
+        }
 
-		Expression conditionExp = OCLCompiler.compileExpression(mModel,
-				condition, "condition", errorPrinter, symTable);
-
-		if (conditionExp == null) {
-			throw new UseApiException(
-					"Compilation of condition expression failed:\n"
-							+ errBuffer.toString());
-		}
-
-		return createPrePostConditionEx(name, op, isPre, conditionExp);
+		return this.createPrePostConditionEx(name, op,isPre, exp);
 	}
 
 	/**

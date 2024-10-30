@@ -1224,7 +1224,9 @@ public abstract class DiagramView extends JPanel
      * the diagram.
      */
     protected void onClosing() {
-        this.saveDefaultLayout();
+        if (fOpt.isSaveDefaultLayout()) {
+            this.saveDefaultLayout();
+        }
     }
 
     /**
@@ -1627,7 +1629,7 @@ public abstract class DiagramView extends JPanel
                 layoutsOptionDialog.setVisible(true);
             }
         });
-        final JMenuItem horizontalRightToLeftLayout = new JMenuItem("Horizontal Rigth to Left layout");
+        final JMenuItem horizontalRightToLeftLayout = new JMenuItem("Horizontal Right to Left layout");
         horizontalRightToLeftLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

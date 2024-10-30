@@ -19,16 +19,13 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 
 import com.google.common.collect.Iterators;
+import org.tzi.use.uml.sys.MOperationCall;
 
 /**
  * 
@@ -53,11 +50,26 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	private boolean isAbstract;
 	
 	/**
+	 * All defined attributes of this classifier excluding inherited ones.
+	 */
+	protected Map<String, MAttribute> fAttributes;
+
+	protected Map<String, MOperation> fOperations;
+
+	/**
+	 * Maps all operations (including inherited)
+	 */
+	protected Map<String, MOperation> fVTableOperations;
+
+	/**
 	 * @param name
 	 */
 	protected MClassifierImpl(String name, boolean isAbstract) {
 		super(name, "Classifier");
 		this.isAbstract = isAbstract;
+		fAttributes = new TreeMap<String, MAttribute>();
+		fOperations = new TreeMap<String, MOperation>();
+		fVTableOperations = new HashMap<String, MOperation>();
 	}
 
 	/**
@@ -69,14 +81,14 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	/**
-     * Returns the model owning this class.
+     * Returns the model owning this classifier.
      */
     public MModel model() {
         return model;
     }
 
     /**
-     * Sets the model owning this class. This method must be called by
+     * Sets the model owning this classifier. This method must be called by
      * MModel.addClass().  
      *
      * @see MModel#addClass
@@ -159,9 +171,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
     		if (commonClasses.isEmpty()) {
     			Set<MClassifier> nextIteration = new HashSet<MClassifier>();
     			for (MClassifier cls : superClassesThis) {
-    				for (MClassifier cf : cls.parents()) {
-    					nextIteration.add(cf);
-    				}
+                    nextIteration.addAll(cls.parents());
     			}
     			
     			superClassesThis = nextIteration;
@@ -311,6 +321,16 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
+	public boolean isKindOfDataType(VoidHandling h) {
+		return false;
+	}
+
+	@Override
+	public boolean isTypeOfDataType() {
+		return false;
+	}
+
+	@Override
 	public boolean isTypeOfClass() {
 		return false;
 	}
@@ -376,8 +396,8 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
     }
 
     /**
-     * Returns the set of all parent classes (without this
-     * class). This is the transitive closure of the generalization
+     * Returns the set of all parent classifiers (without this
+     * classifier). This is the transitive closure of the generalization
      * relation.
      *
      * @return Set(MClass) 
@@ -388,7 +408,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
     }
 
     /**
-     * Returns the set of all child classes (without this class). This
+     * Returns the set of all child classifiers (without this classifier). This
      * is the transitive closure of the generalization relation.
      *
      * @return Set(MClass) 
@@ -399,8 +419,8 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
     }
 
     /**
-     * Returns the set of all direct child classes (without this
-     * class).
+     * Returns the set of all direct child classifiers (without this
+     * classifier).
      *
      * @return Set(MClass) 
      */
@@ -433,20 +453,104 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
      * or if it is a parent of this classifier. 
      */
     @Override
-    public boolean isSubClassOf(MClassifier otherClass) {
-        return isSubClassOf(otherClass, false);
+    public boolean isSubClassifierOf(MClassifier otherClass) {
+        return isSubClassifierOf(otherClass, false);
     }
 
     @Override
-    public boolean isSubClassOf(MClassifier otherClassifier, boolean excludeThis) {
+    public boolean isSubClassifierOf(MClassifier otherClassifier, boolean excludeThis) {
         return Iterators.contains(this.generalizationHierachie(!excludeThis).iterator(), otherClassifier);
     }
 
-    @Override
-    public MAttribute attribute( String name, boolean searchInherited ) {
-    	return null;
-    }
-    
+	/**
+	 * Returns the specified attribute. Attributes are also looked up
+	 * in super classifiers if <code>searchInherited</code> is true.
+	 *
+	 * @return null if attribute does not exist.
+	 */
+	public MAttribute attribute(String name, boolean searchInherited) {
+		MAttribute a = fAttributes.get(name);
+		if (a == null && searchInherited) {
+			for (MClassifier cf : allParents()) {
+				a = cf.attribute(name, false);
+				if (a != null)
+					break;
+			}
+		}
+		return a;
+	}
+
+	@Override
+	public List<MAttribute> attributes() {
+		return new ArrayList<MAttribute>(fAttributes.values());
+	}
+
+	/**
+	 * Returns the set of all attributes (including inherited ones)
+	 * defined for this classifier.
+	 *
+	 * @return List(MAttribute)
+	 */
+	public List<MAttribute> allAttributes() {
+		// start with local attributes
+		List<MAttribute> result = new ArrayList<>(attributes());
+
+		// add attributes from all super classes
+		for (MClassifier cf : allParents() ) {
+			result.addAll(cf.attributes());
+		}
+
+		return result;
+	}
+
+	/**
+	 * Gets an operation by name. Operations are also looked up in
+	 * super classifiers if <code>searchInherited</code> is true. This
+	 * method walks up the generalization hierarchy and selects the
+	 * first matching operation. Thus, if an operation is redefined,
+	 * this method returns the most specific one.
+	 *
+	 * @return <code>null</code> if operation does not exist.
+	 */
+	public MOperation operation(String name, boolean searchInherited) {
+		MOperation op;
+
+		if (searchInherited) {
+			op = fVTableOperations.get(name);
+
+			if (op != null)
+				return op;
+
+			for (MClassifier cf : parents()) {
+				op = cf.operation(name, false);
+				if (op != null) {
+					fVTableOperations.put(name, op);
+					return op;
+				}
+			}
+			// FIXME: The compiler has to check a unique binding in case of multiple inheritance
+			for (MClassifier cf : parents()) {
+				op = cf.operation(name, true);
+				if (op != null) {
+					fVTableOperations.put(name, op);
+					return op;
+				}
+			}
+		} else{
+			op = fOperations.get(name);
+		}
+
+		return op;
+	}
+
+	/**
+	 * Returns all operations defined for this classifier. Inherited
+	 * operations are not included.
+	 */
+	public List<MOperation> operations() {
+		return new ArrayList<MOperation>(fOperations.values());
+	}
+
 	@Override
 	public MNavigableElement navigableEnd(String rolename) {
 		return null;
@@ -455,5 +559,10 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	@Override
 	public Map<String, ? extends MNavigableElement> navigableEnds() {
 		return Collections.emptyMap();
+	}
+
+	@Override
+	public boolean hasStateMachineWhichHandles(MOperationCall operationCall) {
+		return false;
 	}
 }

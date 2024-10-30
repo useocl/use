@@ -24,13 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.*;
 
 /**
  * Container class for coverage data.
@@ -42,12 +36,12 @@ public class CoverageData {
 	/**
 	 * Only expressions which access directly a class (allInstances()) are counted
 	 */
-	protected Map<MClass, Integer> classCoverage = new HashMap<MClass, Integer>();
+	protected Map<MClassifier, Integer> classCoverage = new HashMap<MClassifier, Integer>();
 	
 	/**
 	 * All expressions are counted which cover the class, associations or attributes of the class
 	 */
-	protected Map<MClass, Integer> completeClassCoverage = new HashMap<MClass, Integer>();
+	protected Map<MClassifier, Integer> completeClassCoverage = new HashMap<MClassifier, Integer>();
 	
 	protected Map<AttributeAccessInfo, Integer> attributeAccessCoverage = new HashMap<AttributeAccessInfo, Integer>();
 	
@@ -67,14 +61,14 @@ public class CoverageData {
 	/**
 	 * @return the classCoverage
 	 */
-	public Map<MClass, Integer> getClassCoverage() {
+	public Map<MClassifier, Integer> getClassCoverage() {
 		return classCoverage;
 	}
 
 	/**
-	 * @return the classCoverage
+	 * @return the completeClassCoverage
 	 */
-	public Map<MClass, Integer> getCompleteClassCoverage() {
+	public Map<MClassifier, Integer> getCompleteClassCoverage() {
 		return completeClassCoverage;
 	}
 	
@@ -140,14 +134,14 @@ public class CoverageData {
 		return highestInt(this.completeClassCoverage);
 	}
 	
-	public int calcLowestClassCoverage() {		
+	public int calcLowestClassifierCoverage() {		
 		return lowestInt(this.classCoverage);
 	}
 	
-	public Set<MClass> getCoveredClasses() {
-		Set<MClass> result = new TreeSet<MClass>();
+	public Set<MClassifier> getCoveredClasses() {
+		Set<MClassifier> result = new TreeSet<MClassifier>();
 		
-		for (Map.Entry<MClass, Integer> entry : getClassCoverage().entrySet()) {
+		for (Map.Entry<MClassifier, Integer> entry : getClassCoverage().entrySet()) {
 			if (entry.getValue().intValue() > 0) {
 				result.add(entry.getKey());
 			}
@@ -156,10 +150,10 @@ public class CoverageData {
 		return result;
 	}
 	
-	public Set<MClass> getCompleteCoveredClasses() {
-		Set<MClass> result = new TreeSet<MClass>();
+	public Set<MClassifier> getCompleteCoveredClassifiers() {
+		Set<MClassifier> result = new TreeSet<MClassifier>();
 		
-		for (Map.Entry<MClass, Integer> entry : getCompleteClassCoverage().entrySet()) {
+		for (Map.Entry<MClassifier, Integer> entry : getCompleteClassCoverage().entrySet()) {
 			if (entry.getValue().intValue() > 0) {
 				result.add(entry.getKey());
 			}
@@ -202,6 +196,14 @@ public class CoverageData {
 			}
 			if (!this.completeClassCoverage.containsKey(cls)) {
 				this.completeClassCoverage.put(cls, Integer.valueOf(0));
+			}
+		}
+		for (MDataType dtp : model.dataTypes()) {
+			if (!this.classCoverage.containsKey(dtp)) {
+				this.classCoverage.put(dtp, Integer.valueOf(0));
+			}
+			if (!this.completeClassCoverage.containsKey(dtp)) {
+				this.completeClassCoverage.put(dtp, Integer.valueOf(0));
 			}
 		}
 	}

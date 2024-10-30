@@ -76,14 +76,14 @@ public class CaptureTheWindow extends Thread {
                                 .getAbsoluteFile());
                     else
                         new ErrorFrame("IO Error on File "
-                                + selectedFile.getAbsoluteFile() + " occured");
+                                + selectedFile.getAbsoluteFile() + " occurred");
                 } else if (getExtention(selectedFile).equals("eps")) {
                     if (selectedFile.canWrite())
                         ImageIO.write(img, "eps", selectedFile
                                 .getAbsoluteFile());
                     else
                         new ErrorFrame("IO Error on File "
-                                + selectedFile.getAbsoluteFile() + " occured");
+                                + selectedFile.getAbsoluteFile() + " occurred");
 
                 }// if the file has no valid extention
                 else if (ff.getDescription().equals("All Files")) {
@@ -95,7 +95,7 @@ public class CaptureTheWindow extends Thread {
                                 + ".png"));
                     else
                         new ErrorFrame("IO Error on File "
-                                + selectedFile.getAbsoluteFile() + " occured");
+                                + selectedFile.getAbsoluteFile() + " occurred");
 
                 } else {
                     if (selectedFile.canWrite()) {

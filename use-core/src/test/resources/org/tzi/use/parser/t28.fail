@@ -1,0 +1,2 @@
+t28.use:3:9: Data type `A' already contains an attribute named `a0'.
+t28.use:5:18: Redefinition of `a0'.

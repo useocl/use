@@ -44,9 +44,37 @@ enumTypeDefinition returns [ASTEnumTypeDefinition n]
     ;
 
 /* ------------------------------------
+  dataTypeDefinition ::=
+    [ "abstract" ] "dataType" id [ specialization ]
+    [ operations ]
+    [ constraints ]
+    "end"
+
+  specialization ::= "<" idList
+  operations ::= "operations" { operationDefinition }
+  constraints ::= "constraints" { invariantClause }
+*/
+dataTypeDefinition[boolean isAbstract] returns [ASTDataType n]
+:
+    keyDataType name=IDENT { $n = new ASTDataType($name, $isAbstract); }
+    ( LESS idListRes=idList { $n.addSuperClassifiers($idListRes.idList); } )?
+    ( 'operations'
+      (
+        op=operationDefinition[n] { $n.addOperation($op.n); }
+      )*
+    )?
+    ( 'constraints'
+      (
+        inv=invariantClause { $n.addInvariantClause($inv.n); }
+      )*
+    )?
+    'end'
+    ;
+
+/* ------------------------------------
   generalClassifierDefinition ::=
     [ "abstract" ]
-   	 { classDefinition | associationClassDefinition | signalDefinition }
+   	 { classDefinition | dataTypeDefinition | associationClassDefinition | signalDefinition }
 */
 generalClassifierDefinition[ASTModel n]
 @init{ 
@@ -59,6 +87,9 @@ generalClassifierDefinition[ASTModel n]
         c  = classDefinition[isAbstract] 
              { $n.addClass($c.n); $c.n.setAnnotations($as.annotations); }
       
+      | d  = dataTypeDefinition[isAbstract]
+             { $n.addDataType($d.n); $d.n.setAnnotations($as.annotations); }
+
       | ac = associationClassDefinition[isAbstract]
              { $n.addAssociationClass($ac.n); $ac.n.setAnnotations($as.annotations); }
              
@@ -87,12 +118,12 @@ classDefinition[boolean isAbstract] returns [ASTClass n]
 @init{ List idList; }
 :
     keyClass name=IDENT { $n = new ASTClass($name, $isAbstract); }
-    ( LESS idListRes=idList { $n.addSuperClasses($idListRes.idList); } )?
+    ( LESS idListRes=idList { $n.addSuperClassifiers($idListRes.idList); } )?
     ( 'attributes' 
       ( a=attributeDefinition { $n.addAttribute($a.n); } )* 
     )?
     ( 'operations' 
-      ( op=operationDefinition { $n.addOperation($op.n); } )* 
+      ( op=operationDefinition[n] { $n.addOperation($op.n); } )* 
     )?
     ( 'constraints'
       (
@@ -134,7 +165,7 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
     }
     
     name=IDENT { $n = new ASTAssociationClass($name, isAbstract); }
-    ( LESS idListRes=idList { $n.addSuperClasses($idListRes.idList); } )?
+    ( LESS idListRes=idList { $n.addSuperClassifiers($idListRes.idList); } )?
     ('between'
     ae=associationEnd { $n.addEnd($ae.n); }
     ( ae=associationEnd { $n.addEnd($ae.n); } )+
@@ -143,7 +174,7 @@ associationClassDefinition[boolean isAbstract] returns [ASTAssociationClass n]
       ( a=attributeDefinition { $n.addAttribute($a.n); } )* 
     )?
     ( 'operations' 
-      ( op=operationDefinition { $n.addOperation($op.n); } )* 
+      ( op=operationDefinition[n] { $n.addOperation($op.n); } )* 
     )?
     ( 'constraints'
       (
@@ -191,16 +222,38 @@ attributeDefinition returns [ASTAttribute n]
     id paramList ":" type [ "=" expression ] 
     { prePostClause } [ ";" ]
 */
-operationDefinition returns [ASTOperation n]
+operationDefinition[ASTClassifier c] returns [ASTOperation n]
+@init { boolean isConstructor = false; }
 :
 	as = annotationSet
     name = IDENT
     pl = paramList
+    spl = superParamList[pl]
+    {
+      if ($IDENT.text.equals($c.getName().getText())) {
+        isConstructor = true;
+        for (ASTVariableDeclaration vd : $pl.paramList) {
+          /*
+           * If an attribute of a constructor is already defined in a
+           * super classifier, it will not be added to List<ASTAttribute>.
+           */
+          if ($spl.superParamList.contains(vd.name().getText())) {
+            $c.addSuperAttribute(new ASTAttribute(vd.name(), vd.getType()));
+          } else {
+            $c.addAttribute(new ASTAttribute(vd.name(), vd.getType()));
+          }
+        }
+      }
+    }
     /* For a readable error message the required type
        is checked during compilation.
      */
     ( COLON t = type )? 
-    { $n = new ASTOperation($name, $pl.paramList, $t.n); $n.setAnnotations($as.annotations); }
+    {
+      ASTType type = $t.n;
+      $n = new ASTOperation($name, $pl.paramList, type, isConstructor);
+      $n.setAnnotations($as.annotations);
+    }
     (
         ( EQUAL e = expression   { $n.setExpression($e.n); } )
       | ( s = blockStat  { $n.setStatement($s.n);  } )
@@ -208,6 +261,23 @@ operationDefinition returns [ASTOperation n]
     ( ppc=prePostClause { $n.addPrePostClause($ppc.n); } )*
     ( SEMI )?
     ;
+
+/* ------------------------------------
+  superParamList ::= 
+    "(" [ IDENT { "," IDENT } ] ")"
+*/
+superParamList[List<ASTVariableDeclaration> paramList] returns [List<String> superParamList]
+@init{ $superParamList = new ArrayList<String>(); }
+:
+  (
+    LPAREN
+    (
+      i = IDENT { superParamList.add($i.text); }
+      (COMMA i = IDENT { superParamList.add($i.text); })*
+    )?
+    RPAREN
+  )?
+  ;
 
 /* ------------------------------------
   associationDefinition ::= 
@@ -447,6 +517,9 @@ keyComposition:
 keyAggregation:
   {input.LT(1).getText().equals("aggregation")}? IDENT ;
   
+keyDataType:
+  {input.LT(1).getText().equals("dataType")}? IDENT ;
+
 keyClass:
   {input.LT(1).getText().equals("class")}? IDENT ;
 

@@ -20,13 +20,12 @@
 package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.analysis.coverage.BasicCoverageData;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 
 import java.util.List;
 
 /**
- * Calculates the coverage informations about a 
+ * Calculates the coverage information about a 
  * ASSL instruction list.
  * @author Lars Hamann
  *
@@ -230,10 +229,10 @@ public class BasicInstructionCoverageCalulator implements InstructionVisitor {
 	/**
 	 * @param cls
 	 */
-	private void addClassCoverage(MClass cls) {
+	private void addClassCoverage(MClassifier cls) {
 		this.coverage.getCoveredClasses().add(cls);
 		for (MClassifier parent : cls.allParents()) {
-			this.coverage.getCoveredClasses().add((MClass)parent);
+			this.coverage.getCoveredClasses().add(parent);
 		}
 	}
 

@@ -19,7 +19,6 @@
 
 package org.tzi.use.uml.mm;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import org.eclipse.jdt.annotation.Nullable;
 import org.tzi.use.graph.DirectedGraph;
@@ -29,7 +28,6 @@ import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -42,10 +40,10 @@ public class MModel extends MModelElementImpl {
 
 	/**
 	 * This map keeps track of the numbering of "unnamed" named model elements,
-	 * i.e., if an invariant was defined without a name a name like
+	 * i.e., if an invariant was defined without a name, a name like
 	 * <code>inv::1</code> is generated.
 	 */
-	private final Map<String, MutableInteger> fNameMap = new HashMap<String, MutableInteger>();
+	private final Map<String, MutableInteger> fNameMap = new HashMap<>();
 
 	/**
 	 * We don't want to allocate a new Integer object each time we have to
@@ -55,30 +53,33 @@ public class MModel extends MModelElementImpl {
 		int fInt = 1;
 	}
 
-	private Map<String, EnumType> fEnumTypes;
+	private final Map<String, EnumType> fEnumTypes;
 
-	private Map<String, MClass> fClasses;
+	private final Map<String, MDataType> fDataTypes;
+
+	private final Map<String, MClass> fClasses;
 
 	protected Map<String, MAssociation> fAssociations;
 
-	private DirectedGraph<MClassifier, MGeneralization> fGenGraph;
+	private final DirectedGraph<MClassifier, MGeneralization> fGenGraph;
 
 	protected Map<String, MClassInvariant> fClassInvariants;
 
-	private Map<String, MPrePostCondition> fPrePostConditions;
+	private final Map<String, MPrePostCondition> fPrePostConditions;
 
 	private String fFilename; // name of .use file
 
-	private Map<String, MSignal> signals;
+	private final Map<String, MSignal> signals;
 
 	protected MModel(String name) {
 		super(name);
-		fEnumTypes = new TreeMap<String, EnumType>();
-		fClasses = new TreeMap<String, MClass>();
-		fAssociations = new TreeMap<String, MAssociation>();
-		fGenGraph = new DirectedGraphBase<MClassifier, MGeneralization>();
-		fClassInvariants = new TreeMap<String, MClassInvariant>();
-		fPrePostConditions = new TreeMap<String, MPrePostCondition>();
+		fEnumTypes = new TreeMap<>();
+		fDataTypes = new TreeMap<>();
+		fClasses = new TreeMap<>();
+		fAssociations = new TreeMap<>();
+		fGenGraph = new DirectedGraphBase<>();
+		fClassInvariants = new TreeMap<>();
+		fPrePostConditions = new TreeMap<>();
 		signals = new TreeMap<>();
 
 		fFilename = "";
@@ -94,26 +95,6 @@ public class MModel extends MModelElementImpl {
 	 */
 	public String filename() {
 		return fFilename;
-	}
-
-	/**
-	 * Returns the directory which contains the model file, if the model was
-	 * loaded from a file. Returns <code>null</code> if the model was not loaded
-	 * from a file.
-	 * 
-	 * @return The directory containing the model file or <code>null</code> if
-	 *         the model was not loaded.
-	 */
-	public File getModelDirectory() {
-		if (fFilename == null || fFilename.equals(""))
-			return null;
-
-		File modelFile = new File(fFilename);
-		// could be moved or deleted
-		if (!modelFile.exists())
-			return null;
-
-		return modelFile.getParentFile();
 	}
 
 	/**
@@ -148,12 +129,41 @@ public class MModel extends MModelElementImpl {
 	}
 
 	/**
-	 * Returns the classifier (currently MClass, MAssociation, or
-	 * MAssociationClass) with the given name or <code>null</code>, if no
-	 * classifier with the given name exists in the model.
+	 * Adds a data type. The data type must have a unique name within the model.
+	 *
+	 * @exception MInvalidModelException
+	 *                model already contains a data type with the same name.
+	 */
+	public void addDataType(MDataType dtp) throws MInvalidModelException {
+		if (fDataTypes.containsKey(dtp.name()))
+			throw new MInvalidModelException("Model already contains a data type `"
+					+ dtp.name() + "'.");
+
+		fDataTypes.put(dtp.name(), dtp);
+		fGenGraph.add(dtp);
+		dtp.setModel(this);
+	}
+
+	/**
+	 * Returns the specified data type.
+	 * 
+	 * @return <code>null</code> if data type <code>name</code> does not exist.
+	 */
+	public MDataType getDataType(String name) {
+		return fDataTypes.get(name);
+	}
+
+	/**
+	 * Returns the classifier (currently MClass, MDataType, MAssociation) with the given name or <code>null</code>,
+	 * if no classifier with the given name exists in the model.
 	 */
 	public MClassifier getClassifier(String name) {
 		MClassifier classifier = getClass(name);
+		if (classifier != null) {
+			return classifier;
+		}
+
+		classifier = getDataType(name);
 		if (classifier != null) {
 			return classifier;
 		}
@@ -177,21 +187,12 @@ public class MModel extends MModelElementImpl {
 	}
 
 	/**
-	 * Returns a collection containing all associationclasses in this model.
-	 * 
-	 * @return collection of MAssociationClass objects.
+	 * Returns a collection containing all data types in this model.
+	 *
+	 * @return collection of MDataType objects.
 	 */
-	public Collection<MAssociationClass> getAssociationClassesOnly() {
-		Collection<MAssociationClass> result = new ArrayList<MAssociationClass>();
-		Iterator<MClass> it = fClasses.values().iterator();
-
-		while (it.hasNext()) {
-			MClass elem = it.next();
-			if (elem instanceof MAssociationClass) {
-				result.add((MAssociationClass) elem);
-			}
-		}
-		return result;
+	public Collection<MDataType> dataTypes() {
+		return fDataTypes.values();
 	}
 
 	/**
@@ -201,6 +202,12 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Collection<MClass> classes() {
 		return fClasses.values();
+	}
+
+	public Collection<MClassifier> classifiers() {
+		Set<MClassifier> col = new HashSet<>(dataTypes());
+		col.addAll(classes());
+		return col;
 	}
 
 	/**
@@ -235,7 +242,7 @@ public class MModel extends MModelElementImpl {
 		for (MClass cls : assoc.associatedClasses()) {
 			Map<String, ? extends MNavigableElement> aends = cls
 					.navigableEnds();
-			List<String> newRolenames = new ArrayList<String>();
+			List<String> newRolenames = new ArrayList<>();
 
 			for (MNavigableElement elem : assoc.navigableEndsFrom(cls)) {
 				String newRolename = elem.nameAsRolename();
@@ -265,8 +272,8 @@ public class MModel extends MModelElementImpl {
 										+ "' navigable from class `"
 										+ cls.name()
 										+ "' conflicts with same rolename in association `"
-										+ ((MNavigableElement) aends
-												.get(newRolename))
+										+ aends
+												.get(newRolename)
 												.association().name() + "'.");
 					}
 				}
@@ -275,21 +282,20 @@ public class MModel extends MModelElementImpl {
 			// tests if the rolenames are already used in one of the subclasses
 			for (MClass subCls : CollectionUtil
 					.<MClassifier, MClass> downCastUnsafe(cls.allChildren())) {
-				for (int i = 0; i < newRolenames.size(); i++) {
-					String newRolename = newRolenames.get(i);
-					if (subCls.navigableEnds().containsKey(newRolename)) {
-						throw new MInvalidModelException(
-								"Association end `"
-										+ newRolename
-										+ "' navigable from class `"
-										+ subCls.name()
-										+ "' conflicts with same rolename in association `"
-										+ ((MNavigableElement) subCls
-												.navigableEnds().get(
-														newRolename))
-												.association().name() + "'.");
-					}
-				}
+                for (String newRolename : newRolenames) {
+                    if (subCls.navigableEnds().containsKey(newRolename)) {
+                        throw new MInvalidModelException(
+                                "Association end `"
+                                        + newRolename
+                                        + "' navigable from class `"
+                                        + subCls.name()
+                                        + "' conflicts with same rolename in association `"
+                                        + subCls
+                                        .navigableEnds().get(
+                                                newRolename)
+                                        .association().name() + "'.");
+                    }
+                }
 			}
 		}
 
@@ -333,15 +339,14 @@ public class MModel extends MModelElementImpl {
 	 * @return Set(MAssociation)
 	 */
 	public Set<MAssociation> getAssociationsBetweenClasses(Set<MClass> classes) {
-		Set<MAssociation> res = new HashSet<MAssociation>();
+		Set<MAssociation> res = new HashSet<>();
 
 		// search associations
-		Iterator<MAssociation> assocIter = fAssociations.values().iterator();
-		while (assocIter.hasNext()) {
-			MAssociation assoc = assocIter.next();
-			if (assoc.associatedClasses().equals(classes))
-				res.add(assoc);
-		}
+        for (MAssociation assoc : fAssociations.values()) {
+            if (assoc.associatedClasses().equals(classes))
+                res.add(assoc);
+        }
+
 		return res;
 	}
 
@@ -398,7 +403,7 @@ public class MModel extends MModelElementImpl {
 		final boolean childIsAssocClass = child instanceof MAssociationClass;
 		final boolean parentIsAssocClass = parent instanceof MAssociationClass;
 
-		/**
+		/*
 		 * If one element is an association class, both elements must be
 		 * association classes. (childIsAssocClass || parentIsAssocClass)
 		 * implies (childIsAssocClass && parentIsAssocClass) This is negated to
@@ -461,13 +466,12 @@ public class MModel extends MModelElementImpl {
 	 * @return null if enumeration type does not exist.
 	 */
 	public EnumType enumTypeForLiteral(String literal) {
-		Iterator<EnumType> it = fEnumTypes.values().iterator();
 
-		while (it.hasNext()) {
-			EnumType t = it.next();
-			if (t.contains(literal))
-				return t;
-		}
+        for (EnumType t : fEnumTypes.values()) {
+            if (t.contains(literal))
+                return t;
+        }
+
 		return null;
 	}
 
@@ -475,9 +479,7 @@ public class MModel extends MModelElementImpl {
 	 * Returns a set of all enumeration types.
 	 */
 	public Set<EnumType> enumTypes() {
-		Set<EnumType> s = new HashSet<EnumType>();
-		s.addAll(fEnumTypes.values());
-		return s;
+        return new HashSet<>(fEnumTypes.values());
 	}
 
 	/**
@@ -513,12 +515,7 @@ public class MModel extends MModelElementImpl {
 	public Collection<MClassInvariant> classInvariants(boolean onlyActive) {
 		if (onlyActive) {
 			return Maps.filterValues(fClassInvariants,
-					new Predicate<MClassInvariant>() {
-						@Override
-						public boolean apply(MClassInvariant input) {
-							return input.isActive();
-						}
-					}).values();
+                    MClassInvariant::isActive).values();
 		} else {
 			return fClassInvariants.values();
 		}
@@ -529,12 +526,7 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Collection<MClassInvariant> modelClassInvariants() {
 		return Maps.filterValues(fClassInvariants,
-				new Predicate<MClassInvariant>() {
-					@Override
-					public boolean apply(MClassInvariant inv) {
-						return !inv.isLoaded();
-					}
-				}).values();
+                inv -> !inv.isLoaded()).values();
 	}
 
 	/**
@@ -543,14 +535,13 @@ public class MModel extends MModelElementImpl {
 	 * @return collection of MClassInvariant objects.
 	 */
 	public Set<MClassInvariant> classInvariants(MClass cls) {
-		Set<MClassInvariant> res = new HashSet<MClassInvariant>();
-		Iterator<MClassInvariant> it = fClassInvariants.values().iterator();
+		Set<MClassInvariant> res = new HashSet<>();
 
-		while (it.hasNext()) {
-			MClassInvariant inv = it.next();
-			if (inv.cls().equals(cls))
-				res.add(inv);
-		}
+        for (MClassInvariant inv : fClassInvariants.values()) {
+            if (inv.cls().equals(cls))
+                res.add(inv);
+        }
+
 		return res;
 	}
 
@@ -561,17 +552,15 @@ public class MModel extends MModelElementImpl {
 	 * @return collection of MClassInvariant objects.
 	 */
 	public Set<MClassInvariant> allClassInvariants(MClass cls) {
-		Set<MClassInvariant> res = new HashSet<MClassInvariant>();
+		Set<MClassInvariant> res = new HashSet<>();
 		Set<MClass> allP = CollectionUtil.downCastUnsafe(cls.allParents());
-		Set<MClass> parents = new HashSet<MClass>(allP);
+		Set<MClass> parents = new HashSet<>(allP);
 		parents.add(cls);
-		Iterator<MClassInvariant> it = fClassInvariants.values().iterator();
 
-		while (it.hasNext()) {
-			MClassInvariant inv = it.next();
-			if (parents.contains(inv.cls()))
-				res.add(inv);
-		}
+        for (MClassInvariant inv : fClassInvariants.values()) {
+            if (parents.contains(inv.cls()))
+                res.add(inv);
+        }
 		return res;
 	}
 
@@ -589,12 +578,7 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Collection<MClassInvariant> getLoadedClassInvariants() {
 		return Maps.filterValues(fClassInvariants,
-				new Predicate<MClassInvariant>() {
-					@Override
-					public boolean apply(MClassInvariant inv) {
-						return inv.isLoaded();
-					}
-				}).values();
+                MClassInvariant::isLoaded).values();
 	}
 
 	public MClassInvariant removeClassInvariant(String name) {
@@ -623,8 +607,14 @@ public class MModel extends MModelElementImpl {
 		fPrePostConditions.put(name, ppc);
 		if (ppc.isPre())
 			ppc.operation().addPreCondition(ppc);
-		else
+		else {
+			if (ppc.operation().isConstructor()) {
+				throw new MInvalidModelException(
+						"Declaring a postcondition for constructor `" + ppc.operation()
+								+ "' is not allowed.");
+			}
 			ppc.operation().addPostCondition(ppc);
+		}
 	}
 
 	/**
@@ -643,7 +633,7 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Collection<MPrePostCondition> preConditions() {
 		Collection<MPrePostCondition> conditions = fPrePostConditions.values();
-		Collection<MPrePostCondition> preConditions = new ArrayList<MPrePostCondition>();
+		Collection<MPrePostCondition> preConditions = new ArrayList<>();
 		
 		for(MPrePostCondition ppc : conditions) {
 			if(ppc.isPre()) {
@@ -661,7 +651,7 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Collection<MPrePostCondition> postConditions() {
 		Collection<MPrePostCondition> conditions = fPrePostConditions.values();
-		Collection<MPrePostCondition> postConditions = new ArrayList<MPrePostCondition>();
+		Collection<MPrePostCondition> postConditions = new ArrayList<>();
 		
 		for(MPrePostCondition ppc : conditions) {
 			if(!ppc.isPre()) {
@@ -686,7 +676,7 @@ public class MModel extends MModelElementImpl {
 				|| this.fClasses.containsKey(signal.name())
 				|| this.fEnumTypes.containsKey(signal.name())) {
 			throw new MInvalidModelException(
-					"Model already constains a classifier named "
+					"Model already contains a classifier named "
 							+ StringUtil.inQuotes(signal.name()));
 		}
 
@@ -719,12 +709,16 @@ public class MModel extends MModelElementImpl {
 
 	/**
 	 * Returns a string with some statistics about the model: Number of classes,
-	 * associations, invariants, and operations.
+	 * associations, data types, invariants, and operations.
 	 */
 	public String getStats() {
 		String stats = " (";
-		int n = classes().size();
-		stats += n + " class";
+		int n = dataTypes().size();
+		stats += n + " data type";
+		if (n != 1)
+			stats += "s";
+		n = classes().size();
+		stats += ", " + n + " class";
 		if (n != 1)
 			stats += "es";
 		n = associations().size();
@@ -739,12 +733,11 @@ public class MModel extends MModelElementImpl {
 		n = 0;
 		int nPSMs = 0;
 
-		Iterator<MClass> it = classes().iterator();
-		while (it.hasNext()) {
-			MClass cls = it.next();
-			n += cls.operations().size();
-			nPSMs += cls.getOwnedProtocolStateMachines().size();
-		}
+        for (MClass cls : classes()) {
+            n += cls.operations().size();
+            nPSMs += cls.getOwnedProtocolStateMachines().size();
+        }
+
 		stats += ", " + n + " operation";
 		if (n != 1)
 			stats += "s";
@@ -774,7 +767,7 @@ public class MModel extends MModelElementImpl {
 	 * Sets the name of model element to a generated one, if the element has no
 	 * name. If the name is <code>null</code> or empty a new name starting with
 	 * <code>prefix</code> will be generated. Note that the generated names will
-	 * be unique but they may still clash with some user defined name.
+	 * be unique, but they may still clash with some user defined name.
 	 */
 	public String createModelElementName(String prefix) {
 
@@ -786,6 +779,6 @@ public class MModel extends MModelElementImpl {
 			i.fInt++;
 		}
 
-		return prefix + String.valueOf(i.fInt);
+		return prefix + i.fInt;
 	}
 }

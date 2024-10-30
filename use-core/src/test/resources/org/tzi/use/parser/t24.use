@@ -1,0 +1,13 @@
+model t24
+
+class C
+end
+
+dataType D < C
+end
+
+dataType A
+end
+
+class B < A
+end

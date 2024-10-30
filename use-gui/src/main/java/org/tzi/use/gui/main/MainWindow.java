@@ -88,10 +88,11 @@ import java.util.*;
 /**
  * The main application window of USE.
  * 
- *  
+ * 
  * @author Mark Richters
  * @author Lars Hamann
  * @author Frank Hilken
+ * @author Stefan Schoon
  */
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame {
@@ -137,6 +138,7 @@ public class MainWindow extends JFrame {
     private static MainWindow fInstance; // global instance of main window
 
     private JMenu recentFilesMenu;
+    private JMenuItem clearRecentFiles;
     
     private JButton addToToolBar(JToolBar toolBar, AbstractAction action, String toolTip) {
         JButton tb = new JButton(action);
@@ -241,20 +243,33 @@ public class MainWindow extends JFrame {
         {
 			recentFilesMenu = new JMenu("Open recent specification");
 			recentFilesMenu.setIcon(getIcon("document-open.png"));
+
+            clearRecentFiles = new JMenuItem("Clear recent specifications");
+            clearRecentFiles.setEnabled(!Options.getRecentFiles("use").isEmpty());
+            clearRecentFiles.addActionListener(e -> {
+                for (Path recent : Options.getRecentFiles("use")) {
+                    Options.getRecentFiles().remove(recent.toString());
+                }
+            });
 			
         	menu.add(recentFilesMenu);
         	
-        	setRecentfiles();
+        	setRecentFiles();
         	
         	Options.getRecentFiles().addObserver(new RecentItemsObserver() {
         		@Override
 				public void onRecentItemChange(RecentItems src) {
-					setRecentfiles();
+					setRecentFiles();
 					fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
 				}
 			});
         }
-        
+
+        mi = menu.add(fActionFileReload);
+        mi.setAccelerator(KeyStroke
+                .getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
+        mi.setMnemonic('R');
+
         mi = menu.add(fActionFileSaveScript);
         mi.setMnemonic('S');
 
@@ -595,18 +610,22 @@ public class MainWindow extends JFrame {
         communicationDiagrams.add(cdv);
     }
 
-	private void setRecentfiles() {
+	private void setRecentFiles() {
 		recentFilesMenu.removeAll();
 		
 		for (Path recent : Options.getRecentFiles("use")) {
 			recentFilesMenu.add(new ActionFileOpenSpecRecent(recent));
 		}
-	}
+
+        recentFilesMenu.addSeparator();
+        recentFilesMenu.add(clearRecentFiles);
+        clearRecentFiles.setEnabled(!Options.getRecentFiles("use").isEmpty());
+    }
 
     /**
 	 * @return the fPluginRuntime
 	 */
-	public static IRuntime getfPluginRuntime() {
+	public static IRuntime getPluginRuntime() {
 		return fPluginRuntime;
 	}
 
@@ -1075,6 +1094,7 @@ public class MainWindow extends JFrame {
      */
     private class ActionFileOpenSpec extends AbstractAction {
         private boolean wasUsed;
+        private Path file;
 
         ActionFileOpenSpec() {
             super("Open specification...", getIcon("document-open.png"));
@@ -1092,25 +1112,33 @@ public class MainWindow extends JFrame {
 		public void actionPerformed(ActionEvent e) {
         	if (!validateOpenPossible()) return;
 
+            Path lastPath = !wasUsed ? Options.getRecentFile("use") : null;
+            if (lastPath != null) {
+                Options.setLastDirectory(lastPath.getParent());
+            }
+
             JFileChooser fChooser = new JFileChooser(Options.getLastDirectory().toFile());
             ExtFileFilter filter = new ExtFileFilter("use", "USE specifications");
             fChooser.setFileFilter(filter);
             fChooser.setDialogTitle("Open specification");
-            
-            if (wasUsed)
-            	fChooser.setSelectedFile(Options.getRecentFile("use").toFile());
+
+            if (!wasUsed && lastPath != null) {
+                fChooser.setSelectedFile(lastPath.toFile());
+            } else if (file != null) {
+                fChooser.setSelectedFile(file.toFile());
+            }
 
             int returnVal = fChooser.showOpenDialog(MainWindow.this);
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
-            Path path = fChooser.getCurrentDirectory().toPath();
-            Options.setLastDirectory(path);
-            Path f = fChooser.getSelectedFile().toPath();
-
-            compile(f);
+            lastPath = fChooser.getCurrentDirectory().toPath();
+            Options.setLastDirectory(lastPath);
+            file = fChooser.getSelectedFile().toPath();
             
-            Options.getRecentFiles().push(f.toAbsolutePath().toString());
+            compile(file);
+
+            Options.getRecentFiles().push(file.toAbsolutePath().toString());
             wasUsed = true;
         }
 
@@ -1152,7 +1180,7 @@ public class MainWindow extends JFrame {
             	system = null;
             }
             
-            // set new system (may be null if compilation failed)
+            // set new system (might be null if compilation failed)
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
 				public void run() {
@@ -1704,7 +1732,7 @@ public class MainWindow extends JFrame {
 
         @Override
 		public void actionPerformed(ActionEvent e) {
-        	// Don' load layout if shift key is pressed
+        	// Don't load layout if shift key is pressed
         	boolean loadLayout = (e.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
         		
             ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout);
@@ -2071,7 +2099,7 @@ public class MainWindow extends JFrame {
      */
     private class ActionViewAssociationInfo extends AbstractAction {
     	ActionViewAssociationInfo() {
-            super("Association ends informations", getIcon("Association.gif"));
+            super("Association ends information", getIcon("Association.gif"));
         }
 
         @Override

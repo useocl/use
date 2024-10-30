@@ -173,7 +173,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
      *
      * @exception MInvalidModelException the class already contains an
      *            attribute with the same name or a name clash
-     *            occured.
+     *            occurred.
      */
     @Override
     public void addAttribute( MAttribute attr ) throws MInvalidModelException {
@@ -228,7 +228,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
      */
     public void addOperation( MOperation op ) throws MInvalidModelException {
         fClassImpl.addOperation( op );
-        op.setClass(this);
+        op.setClassifier(this);
     }
 
     /**
@@ -388,15 +388,15 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
     }
 
     @Override
-    public boolean isSubClassOf( MClassifier otherClassifier ) {
-        return fClassImpl.isSubClassOf( otherClassifier );
+    public boolean isSubClassifierOf(MClassifier otherClass) {
+        return fClassImpl.isSubClassifierOf(otherClass);
     }
 
     @Override
-    public boolean isSubClassOf( MClassifier otherClassifier, boolean excludeThis ) {
-        return fClassImpl.isSubClassOf( otherClassifier, excludeThis );
+    public boolean isSubClassifierOf(MClassifier otherClass, boolean excludeThis) {
+        return fClassImpl.isSubClassifierOf(otherClass, excludeThis);
     }
-    
+
     //////////////////////////////////////////////////
     // DELEGATION OF MAssociationImpl
     //////////////////////////////////////////////////
@@ -678,7 +678,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
 			return this;
 		} else if (srcClass instanceof MAssociationClass ) {
 			// Inherited association class?
-			if (srcClass.isSubClassOf(this)) {
+			if (srcClass.isSubClassifierOf(this)) {
 				return this;
 			}
 		}

@@ -40,6 +40,10 @@ public class ModelFactory {
         return new MModel(name);
     }
 
+    public MDataType createDataType(String name, boolean isAbstract) {
+        return new MDataTypeImpl(name, isAbstract);
+    }
+
     public MClass createClass(String name, boolean isAbstract) {
         return new MClassImpl(name, isAbstract);
     }
@@ -50,10 +54,10 @@ public class ModelFactory {
     }
 
     public MClassInvariant createClassInvariant(String name, List<String> vars, 
-            									MClass cls, Expression inv, boolean isExistential) 
+            									MClassifier cf, Expression inv, boolean isExistential) 
     	throws ExpInvalidException
 	{
-    	return new MClassInvariant(name, vars, cls, inv, isExistential);
+    	return new MClassInvariant(name, vars, cf, inv, isExistential);
 	}
 
     public MPrePostCondition createPrePostCondition(String name, 
@@ -70,10 +74,9 @@ public class ModelFactory {
     }
 
     public MOperation createOperation(String name, VarDeclList varDeclList, 
-                                      Type resultType) {
-        return new MOperation(name, varDeclList, resultType);
+                                      Type resultType, boolean isConstructor) {
+        return new MOperation(name, varDeclList, resultType, isConstructor);
     }
-
 
     public MAssociation createAssociation(String name) {
         return new MAssociationImpl(name);

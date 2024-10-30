@@ -22,16 +22,14 @@ package org.tzi.use.config;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TypedProperties;
+import org.tzi.use.util.USEWriter;
 
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -44,10 +42,11 @@ import java.util.prefs.Preferences;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "7.1.0";
+    public static final String RELEASE_VERSION = "7.1.1";
 
     // the copyright
-    public static final String COPYRIGHT = "Copyright (C) 1999-2021 University of Bremen";
+    public static final String COPYRIGHT = "Copyright (C) 1999-2024 University of Bremen & " +
+			"University of Applied Sciences Hamburg";
 
     // the trained support apes
     public static final String SUPPORT_MAIL = "grp-usedevel@informatik.uni-bremen.de";
@@ -84,7 +83,9 @@ public class Options {
      */
     public static String USE_HISTORY_PATH = ".use_history";
 
-    public static String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static String LINE_SEPARATOR = System.lineSeparator();
+
+	public static String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
 
     /**
      * Name of the property giving the path to the monitor aspect template.
@@ -287,6 +288,46 @@ public class Options {
      */
 	public static boolean testMode;
 
+	public static boolean integrationTestMode;
+
+	/**
+	 * Resets all options to the default setting.
+	 * Used to "restart" the application during integration tests.
+	 * The usage of the singleton pattern would be a better choice,
+	 * however it would require a huge refactoring. Therefore,
+	 * this reset function was introduced.
+	 */
+	public static void resetOptions() {
+		USE_HISTORY_PATH = ".use_history";
+		LINE_SEPARATOR = System.lineSeparator();
+		FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+		MONITOR_ASPECT_TEMPLATE = null;
+		homeDir = null;
+		compileOnly = false;
+		compileAndPrint = false;
+		doGUI = true;
+		suppressWarningsAboutMissingReadlineLibrary = false;
+		quiet = false;
+		debug = false;
+		quietAndVerboseConstraintCheck = false;
+		disableCollectShorthand = false;
+		disableExtensions = false;
+		explicitVariableDeclarations = true;
+		checkTransitions = true;
+		checkStateInvariants = false;
+		checkWarningsOclAnyInCollections = WarningType.WARN;
+		checkWarningsUnrelatedTypes = WarningType.WARN;
+		doPLUGIN = true;
+		pluginDir = null;
+		fDiagramDimension = new Dimension( 600, 600 );
+		props = null;
+		specFilename = null;
+		cmdFilename = null;
+		lastDirectory = Paths.get(System.getProperty("user.dir"));
+		testMode = false;
+		integrationTestMode = false;
+	}
+
     /**
      * <p>Parses command line arguments and sets options accordingly.</p>
      * <p>Calls System.exit(1) in case of errors.</p>
@@ -326,6 +367,9 @@ public class Options {
                     Options.doGUI = false;
                 } else if (arg.equals("t")) { 
                 	Options.testMode = true;
+				} else if (arg.equals("it")) {
+					Options.testMode = true;
+					Options.integrationTestMode = true;
                 } else if (arg.equals("v")) {
                     Log.setVerbose(true);
                 } else if (arg.equals("vt")) {
@@ -373,7 +417,9 @@ public class Options {
                 System.exit(1);
             }
         }
-        
+
+		USEWriter.getInstance().setQuietMode(Options.quiet);
+
         if (homeDir == null) {
         	// Try to get the home from Java
         	URL path = Options.class.getProtectionDomain().getCodeSource().getLocation();

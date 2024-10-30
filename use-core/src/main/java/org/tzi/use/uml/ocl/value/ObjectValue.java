@@ -19,8 +19,7 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.MObject;
 
 /**
@@ -28,46 +27,37 @@ import org.tzi.use.uml.sys.MObject;
  *
  * @author  Mark Richters
  */
-public final class ObjectValue extends Value {
-    private MObject fObject;
+public final class ObjectValue extends InstanceValue {
 
-    public ObjectValue(MClass t, MObject obj) {
-        super(t);
-        fObject = obj;
-    }
-    
-    @Override
-    public StringBuilder toString(StringBuilder sb) {
-        return sb.append(fObject.name());
+    private final MObject fInstance;
+
+    public ObjectValue(MClassifier t, MObject obj) {
+        super(t, obj);
+        fInstance = obj;
     }
 
     @Override
     public boolean isObject() {
     	return true;
     }
-    
-    public MObject value() {
-        return fObject;
-    }
 
-    /**
-     * Returns the <em>actual</em> type of the object.
-     */
-    public Type getRuntimeType() {
-        return fObject.cls();
+    @Override
+    public MObject value() {
+        return fInstance;
     }
 
     public boolean equals(Object obj) {
-        if (obj == this )
+        if (obj == this)
             return true;
 
-        if (obj instanceof ObjectValue )
-            return fObject.equals(((ObjectValue) obj).fObject);
+        if (obj instanceof ObjectValue)
+            return fInstance.equals(((ObjectValue) obj).fInstance);
+
         return false;
     }
 
     public int hashCode() {
-        return fObject.hashCode();
+        return fInstance.hashCode();
     }
 
     public int compareTo(Value o) {
@@ -77,7 +67,7 @@ public final class ObjectValue extends Value {
             return +1;
         if (!o.isObject())
             return toString().compareTo(o.toString());
-        
-        return fObject.name().compareTo(((ObjectValue) o).fObject.name());
+
+        return fInstance.name().compareTo(((ObjectValue) o).fInstance.name());
     }
 }

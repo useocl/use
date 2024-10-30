@@ -1,146 +1,146 @@
 open relativepath/Szenario1/szenario1.cmd
-*szenario1.cmd> open ../library.use
+*open ../library.use
 *compiling specification...
 *done
-*Model Library (7 classes, 2 associations, 2 invariants, 21 operations, 18 pre-/postconditions, 0 state machines)
-*szenario1.cmd> 
-*szenario1.cmd> !create ada:User
-*szenario1.cmd> !openter ada init('Ada','NY')
+*Model Library (0 data types, 7 classes, 2 associations, 2 invariants, 21 operations, 18 pre-/postconditions, 0 state machines)
+*
+*!create ada:User
+*!openter ada init('Ada','NY')
 *precondition `freshUser' is true
-*szenario1.cmd> open ../User/User_init.cmd
-*User_init.cmd> -- - - - - - - - - - - - - -  User::init(aName:String, anAddress:String)
-*User_init.cmd> !set self.name:=aName
-*User_init.cmd> !set self.address:=anAddress
-*User_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../User/User_init.cmd
+*-- - - - - - - - - - - - - -  User::init(aName:String, anAddress:String)
+*!set self.name:=aName
+*!set self.address:=anAddress
+*
+*!opexit
 *postcondition `attrsAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create bob:User
-*szenario1.cmd> !openter bob init('Bob','CA')
+*
+*!create bob:User
+*!openter bob init('Bob','CA')
 *precondition `freshUser' is true
-*szenario1.cmd> open ../User/User_init.cmd
-*User_init.cmd> -- - - - - - - - - - - - - -  User::init(aName:String, anAddress:String)
-*User_init.cmd> !set self.name:=aName
-*User_init.cmd> !set self.address:=anAddress
-*User_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../User/User_init.cmd
+*-- - - - - - - - - - - - - -  User::init(aName:String, anAddress:String)
+*!set self.name:=aName
+*!set self.address:=anAddress
+*
+*!opexit
 *postcondition `attrsAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create date:Book
-*szenario1.cmd> !openter date init('Intro to DBS',Sequence{'Date'},1983)
+*
+*!create date:Book
+*!openter date init('Intro to DBS',Sequence{'Date'},1983)
 *precondition `freshBook' is true
-*szenario1.cmd> open ../Book/Book_init.cmd
-*Book_init.cmd> --  Book::init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
-*Book_init.cmd> !set self.title:=aTitle
-*Book_init.cmd> !set self.authSeq:=anAuthSeq
-*Book_init.cmd> !set self.year:=aYear
-*Book_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../Book/Book_init.cmd
+*--  Book::init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
+*!set self.title:=aTitle
+*!set self.authSeq:=anAuthSeq
+*!set self.year:=aYear
+*
+*!opexit
 *postcondition `attrsAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create dbs42:Copy
-*szenario1.cmd> !openter dbs42 init('DBS42',date)
+*
+*!create dbs42:Copy
+*!openter dbs42 init('DBS42',date)
 *precondition `freshCopy' is true
 *precondition `bookOk' is true
-*szenario1.cmd> open ../Copy/Copy_init.cmd
-*Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
-*Copy_init.cmd> !set self.signature:=aSignature
-*Copy_init.cmd> !set self.numReturns:=0
-*Copy_init.cmd> !insert (self,aBook) into BelongsTo
-*Copy_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../Copy/Copy_init.cmd
+*-- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*!set self.signature:=aSignature
+*!set self.numReturns:=0
+*!insert (self,aBook) into BelongsTo
+*
+*!opexit
 *postcondition `attrsAndLinkAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !openter dbs42 borrow(ada)
+*
+*!openter dbs42 borrow(ada)
 *precondition `userOk' is true
 *precondition `notBorrowed' is true
-*szenario1.cmd> open ../Copy/Copy_borrow.cmd
-*Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
-*Copy_borrow.cmd> !insert (aUser,self) into Borrows
-*Copy_borrow.cmd> 
-*szenario1.cmd> !opexit
+*open ../Copy/Copy_borrow.cmd
+*-- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*!insert (aUser,self) into Borrows
+*
+*!opexit
 *postcondition `linkAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create elNa:Book
-*szenario1.cmd> !openter elNa init('Funds of DBS',Sequence{'Elmasri','Navathe'},1994)
+*
+*!create elNa:Book
+*!openter elNa init('Funds of DBS',Sequence{'Elmasri','Navathe'},1994)
 *precondition `freshBook' is true
-*szenario1.cmd> open ../Book/Book_init.cmd
-*Book_init.cmd> --  Book::init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
-*Book_init.cmd> !set self.title:=aTitle
-*Book_init.cmd> !set self.authSeq:=anAuthSeq
-*Book_init.cmd> !set self.year:=aYear
-*Book_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../Book/Book_init.cmd
+*--  Book::init(aTitle:String, anAuthSeq:Sequence(String), aYear:Integer)
+*!set self.title:=aTitle
+*!set self.authSeq:=anAuthSeq
+*!set self.year:=aYear
+*
+*!opexit
 *postcondition `attrsAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create dbs43:Copy
-*szenario1.cmd> !openter dbs43 init('DBS43',date)
+*
+*!create dbs43:Copy
+*!openter dbs43 init('DBS43',date)
 *precondition `freshCopy' is true
 *precondition `bookOk' is true
-*szenario1.cmd> open ../Copy/Copy_init.cmd
-*Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
-*Copy_init.cmd> !set self.signature:=aSignature
-*Copy_init.cmd> !set self.numReturns:=0
-*Copy_init.cmd> !insert (self,aBook) into BelongsTo
-*Copy_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../Copy/Copy_init.cmd
+*-- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*!set self.signature:=aSignature
+*!set self.numReturns:=0
+*!insert (self,aBook) into BelongsTo
+*
+*!opexit
 *postcondition `attrsAndLinkAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create dbs52:Copy
-*szenario1.cmd> !openter dbs52 init('DBS52',elNa)
+*
+*!create dbs52:Copy
+*!openter dbs52 init('DBS52',elNa)
 *precondition `freshCopy' is true
 *precondition `bookOk' is true
-*szenario1.cmd> open ../Copy/Copy_init.cmd
-*Copy_init.cmd> -- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
-*Copy_init.cmd> !set self.signature:=aSignature
-*Copy_init.cmd> !set self.numReturns:=0
-*Copy_init.cmd> !insert (self,aBook) into BelongsTo
-*Copy_init.cmd> 
-*szenario1.cmd> !opexit
+*open ../Copy/Copy_init.cmd
+*-- - - - - - - - - - - - - - - Copy::init(aSignature:String, aBook:Book)
+*!set self.signature:=aSignature
+*!set self.numReturns:=0
+*!insert (self,aBook) into BelongsTo
+*
+*!opexit
 *postcondition `attrsAndLinkAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !openter bob borrow(dbs43)
+*
+*!openter bob borrow(dbs43)
 *precondition `copyOk' is true
-*szenario1.cmd> open ../User/User_borrow.cmd
-*User_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  User::borrow(aCopy:Copy)
-*User_borrow.cmd> !insert (self,aCopy) into Borrows
-*User_borrow.cmd> 
-*szenario1.cmd> !opexit
+*open ../User/User_borrow.cmd
+*-- - - - - - - - - - - - - - - - - - - - - - -  User::borrow(aCopy:Copy)
+*!insert (self,aCopy) into Borrows
+*
+*!opexit
 *postcondition `linkAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !openter dbs52 borrow(ada)
+*
+*!openter dbs52 borrow(ada)
 *precondition `userOk' is true
 *precondition `notBorrowed' is true
-*szenario1.cmd> open ../Copy/Copy_borrow.cmd
-*Copy_borrow.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
-*Copy_borrow.cmd> !insert (aUser,self) into Borrows
-*Copy_borrow.cmd> 
-*szenario1.cmd> !opexit
+*open ../Copy/Copy_borrow.cmd
+*-- - - - - - - - - - - - - - - - - - - - - - -  Copy::borrow(aUser:User)
+*!insert (aUser,self) into Borrows
+*
+*!opexit
 *postcondition `linkAssigned' is true
-*szenario1.cmd> 
-*szenario1.cmd> !openter dbs52 return()
+*
+*!openter dbs52 return()
 *precondition `copyOk' is true
-*szenario1.cmd> open ../Copy/Copy_return.cmd
-*Copy_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
-*Copy_return.cmd> !set self.numReturns:=self.numReturns+1
-*Copy_return.cmd> !delete (self.user,self) from Borrows
-*Copy_return.cmd> 
-*szenario1.cmd> !opexit
+*open ../Copy/Copy_return.cmd
+*-- - - - - - - - - - - - - - - - - - - - - - - - - - - -  Copy::return()
+*!set self.numReturns:=self.numReturns+1
+*!delete (self.user,self) from Borrows
+*
+*!opexit
 *postcondition `linkRemoved' is true
 *postcondition `numReturnsIncreased' is true
-*szenario1.cmd> 
-*szenario1.cmd> !openter dbs43.user return(dbs43)
+*
+*!openter dbs43.user return(dbs43)
 *precondition `aCopyOk' is true
-*szenario1.cmd> open ../User/User_return.cmd
-*User_return.cmd> -- - - - - - - - - - - - - - - - - - - - - - -  User::return(aCopy:Copy)
-*User_return.cmd> !set aCopy.numReturns:=aCopy.numReturns+1
-*User_return.cmd> !delete (self,aCopy) from Borrows
-*User_return.cmd> 
-*szenario1.cmd> !opexit
+*open ../User/User_return.cmd
+*-- - - - - - - - - - - - - - - - - - - - - - -  User::return(aCopy:Copy)
+*!set aCopy.numReturns:=aCopy.numReturns+1
+*!delete (self,aCopy) from Borrows
+*
+*!opexit
 *postcondition `linkRemoved' is true
 *postcondition `numReturnsIncreased' is true
-*szenario1.cmd> 
-*szenario1.cmd> !create ok:OnlyKeyed
-*szenario1.cmd> !create of:OnlyFormatted
-*szenario1.cmd> 
+*
+*!create ok:OnlyKeyed
+*!create of:OnlyFormatted
+*
 exit

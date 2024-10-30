@@ -7,7 +7,7 @@
     <groupId>org.tzi.use</groupId>
     <artifactId>use</artifactId>
     <packaging>pom</packaging>
-    <version>7.1.0</version>
+    <version>7.1.1</version>
     <modules>
         <module>use-core</module>
         <module>use-gui</module>
@@ -16,8 +16,8 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>

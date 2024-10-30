@@ -35,16 +35,13 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
-import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.MGeneralization;
+import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.MSystem;
 
 /**
- * A graph showing an class diagram with all elements in the
+ * A graph showing a class diagram with all elements in the
  * current instance of MModel
  *
  * @author Fabian Gutsche
@@ -119,6 +116,12 @@ public class ClassDiagramView extends JPanel
         Collection<MClass> allClasses = fSystem.model().classes();
         for (MClass cls : allClasses) {
             fClassDiagram.addClass( cls );
+        }
+
+        // read data types
+        Collection<MDataType> allDataTypes = fSystem.model().dataTypes();
+        for (MDataType dtp : allDataTypes) {
+            fClassDiagram.addDataType(dtp);
         }
 
         // read Enumerations

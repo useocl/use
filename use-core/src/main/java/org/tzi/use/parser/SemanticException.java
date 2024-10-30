@@ -66,7 +66,7 @@ public class SemanticException extends Exception {
 
     
     /**
-     * Returns the source informations and the description of the exception 
+     * Returns the source information and the description of the exception 
      */
     @Override
     public String getMessage() {
