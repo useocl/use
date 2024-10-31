@@ -116,6 +116,8 @@ public class ClassDiagram extends DiagramView
 
 	private final DiagramInputHandling inputHandling;
 
+	private static Boolean javaFxCall = false;
+
 	ClassDiagram(ClassDiagramView parent, PrintWriter log) {
 		this(parent, log, new ClassDiagramOptions(Paths.get(parent.system().model().filename())));
 	}
@@ -1438,11 +1440,13 @@ public class ClassDiagram extends DiagramView
 
 	@Override
 	protected void onClosing() {
-		super.onClosing();
+		if (!javaFxCall) {
+			super.onClosing();
+		}
 		fParent.getModelBrowser().removeHighlightChangeListener(this);
 		fParent.getModelBrowser().removeSelectionChangedListener(this);
 		ModelBrowserSorting.getInstance().removeSortChangeListener(this);
-	}
+	} //TODO
 
 	@Override
 	public void storePlacementInfos(PersistHelper helper, Element parent) {
@@ -1930,4 +1934,8 @@ public class ClassDiagram extends DiagramView
 
 		return new int[] {fNextNodeX, fNextNodeY};
 	}
+	public static void setJavaFxCall(Boolean javaFxCall) {
+		ClassDiagram.javaFxCall = javaFxCall;
+	}
+
 }

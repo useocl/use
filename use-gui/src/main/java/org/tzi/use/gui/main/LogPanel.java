@@ -29,7 +29,7 @@ import javax.swing.*;
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")
-class LogPanel extends JPanel {
+public class LogPanel extends JPanel {
     private JTextArea fTextLog;
     private JPopupMenu fPopupMenu; // context menu on right mouse click
 

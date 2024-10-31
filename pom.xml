@@ -9,10 +9,10 @@
     <packaging>pom</packaging>
     <version>7.1.1</version>
     <modules>
+        <module>use-assembly</module>
         <module>use-core</module>
         <module>use-gui</module>
         <module>use-guiFX</module>
-        <module>use-assembly</module>
     </modules>
 
     <properties>

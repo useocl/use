@@ -22,8 +22,11 @@
 package org.tzi.use.gui.views.diagrams;
 
 import com.ximpleware.ParseException;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.graphlayout.AllLayoutTypes;
 import org.tzi.use.gui.graphlayout.SpringLayout;
@@ -1073,20 +1076,34 @@ public abstract class DiagramView extends JPanel
             // layout can not be saved
             return null;
         }
-        // use specific Xerces class to write DOM-data to a file:
 
-        OutputFormat format = new OutputFormat();
-        format.setLineWidth(65);
-        format.setIndenting(true);
-        format.setIndent(2);
-        StringWriter stringOut = new StringWriter();
-        XMLSerializer serializer = new XMLSerializer(stringOut, format);
         try {
-            serializer.serialize(doc);
-        } catch (IOException e1) {
+            // Set up a Transformer for the XML transformation
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+
+            // Set up formatting similar to OutputFormat
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // Enable indentation
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Set indent amount to 2
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); // Set encoding
+
+            // Create a StringWriter to hold the XML
+            StringWriter stringOut = new StringWriter();
+
+            // Serialize the XML Document
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(stringOut);
+
+            // Perform the transformation
+            transformer.transform(source, result);
+
+            return stringOut.toString();
+        } catch (Exception e) {
+            // Handle any exceptions during the transformation
+            e.printStackTrace();
             return "";
         }
-        return stringOut.toString();
+
     }
 
     public void saveLayout(Path layoutFile) {

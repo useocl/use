@@ -18,8 +18,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <BorderPane fx:id="borderPaneID" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.tzi.use.gui.main.MainWindowFX" stylesheets="@/styles/style.css">
+            prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.tzi.use.gui.mainFX.MainWindowFX">
     <top>
         <VBox>
             <MenuBar>

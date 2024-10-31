@@ -1,0 +1,81 @@
+-- $ Akif Aydin Demo Fruits $
+
+model Fruits
+
+-- enumerations
+
+enum Flatware {Spoon, Fork, Knife}
+
+
+-- classes
+
+class Apple < Orange, Lemon
+end
+
+abstract class Orange
+attributes
+  juice : Boolean
+end
+
+class Lemon
+operations
+  squeeze(i : Integer) : Integer = i + 1
+end
+
+class Banana < Lemon
+attributes
+  flatware : Set(Sequence(Flatware))
+operations
+  peel() : String = 'abcd'
+      pre: true
+      post: 2 = 2
+      post: result = 'theResult'
+end
+
+class Peach
+attributes
+operations
+constraints
+  inv: 3 > 2
+  inv neverViolated: true
+end
+
+associationclass FruitSalad
+  between
+  Banana[0..1]
+  Apple[1..*]
+attributes
+  name : String
+  weight : Real
+operations
+  putIn(apple : Apple, banana : Banana)
+end
+
+-- composition
+
+composition AppleSpritzer between
+  Apple[*] role base
+  Lemon[1..8,10,15..*] role flavor
+end
+
+-- association
+
+association Ingredients between
+  Apple[*] role mainIngredient
+  Orange[1]
+  Lemon[1..*] role lemon ordered
+end
+
+-- context
+constraints
+context Orange inv OrangeInv: 
+  1 = 1
+
+context orange : Orange
+  inv alwaysTrue: orange = orange
+  inv juicy: juice = true
+
+context Lemon :: squeeze(i : Integer) : Integer
+  pre: i > 0
+  pre lessThanTenOranges: i < 10
+  post alwaysTrue: true
