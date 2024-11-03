@@ -3,9 +3,10 @@ package org.tzi.use.architecture;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
+
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
@@ -29,7 +30,7 @@ public class CyclomaticComplexityTest {
 
     private static final String RESULTS_FILE = "cyclomatic_complexity_results.csv";
 
-    @BeforeEach
+    @Before
     public void setup() {
         // Delete the results file if it exists
         File file = new File(RESULTS_FILE);
@@ -42,7 +43,7 @@ public class CyclomaticComplexityTest {
     public void count_cycles_in_core() {
         int cycleCount = countCyclesForPackage("org.tzi.use");
         writeResult(cycleCount);
-        Assertions.assertTrue(cycleCount >= 0, "Cycle count should be non-negative");
+        assertTrue("Cycle count should be non-negative", cycleCount >= 0);
     }
 
 /*    @Test
