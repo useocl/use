@@ -28,22 +28,44 @@ public class CyclesTestAnt {
             .that(JavaClass.Predicates.resideInAPackage("org.tzi.use.."))
             .that(JavaClass.Predicates.resideOutsideOfPackage("..test.."));
 
-    private static final String RESULTS_FILE = "cycles_ant_results.csv";
+    private static final String PROJECT_ROOT = new File("").getAbsolutePath();
+    private static final String RESULTS_FILE = new File(PROJECT_ROOT, "cycles_ant_results.csv").getAbsolutePath();
+
 
     @Before
     public void setup() {
-        File file = new File(RESULTS_FILE);
-        if (file.exists()) {
-            file.delete();
+        try {
+            File file = new File(RESULTS_FILE);
+            if (file.exists()) {
+                file.delete();
+            }
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+
+            try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
+                out.println("Test setup complete");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Test
     public void count_cycles_in_main() {
-        int cycleCount = countCyclesForPackage("org.tzi.use");
-        writeResult(cycleCount);
-        System.out.println("HELLO FROM ARCHUNIT !!!!!");
-        assertTrue("Cycle count should not be negative", cycleCount >= 0);
+        try {
+            int cycleCount = countCyclesForPackage("org.tzi.use");
+            writeResult(cycleCount);
+            assertTrue("Cycle count should not be negative", cycleCount >= 0);
+        } catch (Exception e) {
+            // Log any exceptions that occur during test execution
+            try (PrintWriter out = new PrintWriter(new FileWriter(RESULTS_FILE, true))) {
+                out.println("Error during test: " + e.getMessage());
+                e.printStackTrace(out);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+            throw e;
+        }
     }
 
     private int countCyclesForPackage(String packageName) {
