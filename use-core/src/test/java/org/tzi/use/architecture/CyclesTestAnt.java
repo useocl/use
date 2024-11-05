@@ -42,6 +42,7 @@ public class CyclesTestAnt {
     public void count_cycles_in_main() {
         int cycleCount = countCyclesForPackage("org.tzi.use");
         writeResult(cycleCount);
+        System.out.println("HELLO FROM ARCHUNIT !!!!!");
         assertTrue("Cycle count should not be negative", cycleCount >= 0);
     }
 
