@@ -36,6 +36,7 @@ public class CyclesTestAnt {
     public void setup() {
         try {
             File file = new File(RESULTS_FILE);
+            System.out.println("CSV FILE CREATED IN: " + file.getAbsolutePath());
             if (file.exists()) {
                 file.delete();
             }
@@ -52,11 +53,14 @@ public class CyclesTestAnt {
 
     @Test
     public void count_cycles_in_main() {
+        System.out.println("------HELLO FROM ARCHUNIT------");
         try {
             int cycleCount = countCyclesForPackage("org.tzi.use");
+            System.out.println("CYCLES COUNTED: " + cycleCount);
             writeResult(cycleCount);
             assertTrue("Cycle count should not be negative", cycleCount >= 0);
         } catch (Exception e) {
+            System.out.println("ERROR IN ARCHUNIT TEST!");
             // Log any exceptions that occur during test execution
             try (PrintWriter out = new PrintWriter(new FileWriter(RESULTS_FILE, true))) {
                 out.println("Error during test: " + e.getMessage());
