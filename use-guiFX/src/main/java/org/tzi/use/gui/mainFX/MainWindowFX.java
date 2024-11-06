@@ -55,6 +55,8 @@ import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 
+import org.tzi.use.main.ChangeEvent;
+import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.parser.use.USECompiler;
@@ -148,31 +150,35 @@ public class MainWindowFX {
         //initDesktopPane();
         initLogTextArea(); // create the log panel
         initFolderTreeView();
+        initToolbarItems(toolBar, folderTreeView); // initializing the toolbar
+        initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView); // initializing the menubar
+
 
         Options.getRecentFiles().getItems().clear();
         fSession = getSession();
         fPluginRuntime = getPluginRuntime();
-
-        //fModelBrowser = new ModelBrowserFX(fSession.system().model(), folderTreeView, fPluginRuntime);
+        primaryStage = getPrimaryStage();
 
         if (fSession != null && fSession.hasSystem()) {
+            fModelBrowser = new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
             fModelBrowser.setModel(fSession.system().model());
         }
 
         fLogPanel = new LogPanel();
         fLogWriter = new PrintWriter(new TextComponentWriter(fLogPanel.getTextComponent()), true);
 
-        // initializing the toolbar
-        initToolbarItems(toolBar, folderTreeView);
-
-        // initializing the menubar
-        initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView);
-
 
         // initialize application state to current system
-
         sessionChanged();
 
+        fSession.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Platform.runLater(() -> {
+                    sessionChanged();
+                });
+            }
+        });
 
     }
 
@@ -180,13 +186,16 @@ public class MainWindowFX {
      * Set application state for new system. The system parameter may be null.
      */
     void sessionChanged() {
-
         boolean on = fSession.hasSystem();
-        if (on) {
-            MSystem system = fSession.system();
-            fModelBrowser.setModel(system.model());
-            primaryStage.setTitle("USE: " + new File(system.model().filename()).getName());
+        if (fModelBrowser != null && primaryStage != null) {
+            if (on) {
+                System.out.println("hier?");
+                MSystem system = fSession.system();
+                fModelBrowser.setModel(system.model());
+                primaryStage.setTitle("USE: " + new File(system.model().filename()).getName());
+            }
         }
+
     }
 
     /**
@@ -738,15 +747,21 @@ public class MainWindowFX {
         //System.out.println("ModelBrowserFX has been initialized with system.");
     }
 
-    // Setter für IRuntime
+    // setter für IRuntime
     public void setPluginRuntime(IRuntime pluginRuntime) {
         this.fPluginRuntime = pluginRuntime;
     }
 
-    // Setter für IRuntime
+    // setter for primaryStage
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
+
+    // getter for primaryStage
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
 
     public TreeView<String> getFolderTreeView() {
         return folderTreeView;
