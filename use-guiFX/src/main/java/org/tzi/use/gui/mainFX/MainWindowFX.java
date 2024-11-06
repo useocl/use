@@ -245,8 +245,8 @@ public class MainWindowFX {
         MenuItem undo = new MenuItem("Undo");
         MenuItem redo = new MenuItem("Redo");
 
-        Image undoImage = new Image("images/undo.png");
-        Image redoImage = new Image("images/redo.png");
+        Image undoImage = new Image("imagesFX/undo.png");
+        Image redoImage = new Image("imagesFX/redo.png");
 
         undo.setGraphic(new ImageView(undoImage));
         redo.setGraphic(new ImageView(redoImage));
@@ -277,7 +277,7 @@ public class MainWindowFX {
         MenuItem checkStateInvariants = new MenuItem("Check state invariants");
         MenuItem reset = new MenuItem("Reset");
 
-        Image oclImage = new Image("images/OCL.gif");
+        Image oclImage = new Image("imagesFX/OCL.gif");
         evaluateOCLexpr.setGraphic(new ImageView(oclImage));
 
         createObject.setAccelerator(KeyCombination.keyCombination("F7"));
@@ -304,20 +304,20 @@ public class MainWindowFX {
         MenuItem tile = new MenuItem("Tile");
         MenuItem closeAll = new MenuItem("Close all");
 
-        MenuItem createClassDiagramViewItem = new MenuItem("Class diagram", new ImageView("images/ClassDiagram.gif"));
-        Menu createStateMachineDiagramViewItem = new Menu("State machine diagram", new ImageView("images/Diagram.gif"));
-        MenuItem createObjectDiagramViewItem = new MenuItem("Object diagram ", new ImageView("images/ObjectDiagram.gif"));
-        MenuItem createClassInvariantViewItem = new MenuItem("Class invariant", new ImageView("images/invariant-view.png"));
-        MenuItem createObjectCountViewItem = new MenuItem("Object count", new ImageView("images/blue-chart-icon.png"));
-        MenuItem createLinkCountViewItem = new MenuItem("Link count", new ImageView("images/red-chart-icon.png"));
-        MenuItem createStateEvolutionViewItem = new MenuItem("State evolution", new ImageView("images/line-chart.png"));
-        MenuItem createObjectPropertiesViewItem = new MenuItem("Object properties", new ImageView("images/ObjectProperties.gif"));
-        MenuItem createClassExtentViewItem = new MenuItem("Class extent", new ImageView("images/ClassExtentView.gif"));
-        MenuItem createSequenceDiagramViewItem = new MenuItem("Sequence diagram", new ImageView("images/SequenceDiagram.gif"));
-        MenuItem createCommunicationDiagramViewItem = new MenuItem("Communication diagram", new ImageView("images/CommunicationDiagram.gif"));
-        MenuItem createCallStackViewItem = new MenuItem("Call stack", new ImageView("images/CallStack.gif"));
-        MenuItem createCommandListViewItem = new MenuItem("Command list ", new ImageView("images/CmdList.gif"));
-        MenuItem associationEndsInformation = new MenuItem("Association ends informations ", new ImageView("images/CompositeAggregation.gif"));
+        MenuItem createClassDiagramViewItem = new MenuItem("Class diagram", new ImageView("imagesFX/ClassDiagram.gif"));
+        Menu createStateMachineDiagramViewItem = new Menu("State machine diagram", new ImageView("imagesFX/Diagram.gif"));
+        MenuItem createObjectDiagramViewItem = new MenuItem("Object diagram ", new ImageView("imagesFX/ObjectDiagram.gif"));
+        MenuItem createClassInvariantViewItem = new MenuItem("Class invariant", new ImageView("imagesFX/invariant-view.png"));
+        MenuItem createObjectCountViewItem = new MenuItem("Object count", new ImageView("imagesFX/blue-chart-icon.png"));
+        MenuItem createLinkCountViewItem = new MenuItem("Link count", new ImageView("imagesFX/red-chart-icon.png"));
+        MenuItem createStateEvolutionViewItem = new MenuItem("State evolution", new ImageView("imagesFX/line-chart.png"));
+        MenuItem createObjectPropertiesViewItem = new MenuItem("Object properties", new ImageView("imagesFX/ObjectProperties.gif"));
+        MenuItem createClassExtentViewItem = new MenuItem("Class extent", new ImageView("imagesFX/ClassExtentView.gif"));
+        MenuItem createSequenceDiagramViewItem = new MenuItem("Sequence diagram", new ImageView("imagesFX/SequenceDiagram.gif"));
+        MenuItem createCommunicationDiagramViewItem = new MenuItem("Communication diagram", new ImageView("imagesFX/CommunicationDiagram.gif"));
+        MenuItem createCallStackViewItem = new MenuItem("Call stack", new ImageView("imagesFX/CallStack.gif"));
+        MenuItem createCommandListViewItem = new MenuItem("Command list ", new ImageView("imagesFX/CmdList.gif"));
+        MenuItem associationEndsInformation = new MenuItem("Association ends informations ", new ImageView("imagesFX/CompositeAggregation.gif"));
 
 
         // Add MenuItems objects to the SubMenu

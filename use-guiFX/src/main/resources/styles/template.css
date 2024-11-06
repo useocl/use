@@ -42,13 +42,13 @@
 
 /* Benutzerdefinierte Symbole für TreeView */
 .tree-cell {
-    -fx-graphic: url("images/TreeLeaf.gif");
+    -fx-graphic: url("../imagesFX/TreeLeaf.gif");
 }
 
 .tree-cell:expanded > .tree-disclosure-node {
-    -fx-graphic: url("images/TreeExpanded.gif");
+    -fx-graphic: url("../imagesFX/TreeExpanded.gif");
 }
 
 .tree-cell:collapsed > .tree-disclosure-node {
-    -fx-graphic: url("images/TreeCollapsed.gif");
+    -fx-graphic: url("../imagesFX/TreeCollapsed.gif");
 }
