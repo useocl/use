@@ -4,6 +4,7 @@ import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.junit.ArchTest;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CyclesTestAnt {
+public class AntCyclesTest {
 
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
@@ -52,15 +53,25 @@ public class CyclesTestAnt {
     }
 
     @Test
+    @ArchTest
     public void count_cycles_in_main() {
         System.out.println("------HELLO FROM ARCHUNIT------");
+        System.err.println("------HELLO FROM ARCHUNIT (ERR) ------");
         try {
+            File file = new File(RESULTS_FILE);
+            System.err.println("Attempting to write to: " + file.getAbsolutePath());
+
             int cycleCount = countCyclesForPackage("org.tzi.use");
             System.out.println("CYCLES COUNTED: " + cycleCount);
+            System.err.println("CYCLES COUNTED: " + cycleCount);
+
             writeResult(cycleCount);
+            System.err.println("Write complete");
+
             assertTrue("Cycle count should not be negative", cycleCount >= 0);
         } catch (Exception e) {
             System.out.println("ERROR IN ARCHUNIT TEST!");
+            System.err.println("ERROR IN ARCHUNIT TEST: " + e.getMessage());
             // Log any exceptions that occur during test execution
             try (PrintWriter out = new PrintWriter(new FileWriter(RESULTS_FILE, true))) {
                 out.println("Error during test: " + e.getMessage());
