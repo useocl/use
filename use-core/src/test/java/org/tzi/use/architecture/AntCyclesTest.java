@@ -25,9 +25,7 @@ public class AntCyclesTest {
 
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPaths("src/main")
-            .that(JavaClass.Predicates.resideInAPackage("org.tzi.use.."))
-            .that(JavaClass.Predicates.resideOutsideOfPackage("..test.."));
+            .importPackages("org.tzi.use");
 
     private static final String PROJECT_ROOT = new File("").getAbsolutePath();
     private static final String RESULTS_FILE = new File(PROJECT_ROOT, "cycles_ant_results.csv").getAbsolutePath();
@@ -55,30 +53,24 @@ public class AntCyclesTest {
     @Test
     @ArchTest
     public void count_cycles_in_main() {
-        System.out.println("------HELLO FROM ARCHUNIT------");
-        System.err.println("------HELLO FROM ARCHUNIT (ERR) ------");
+        System.out.println("Counting cycles in project...");
         try {
             File file = new File(RESULTS_FILE);
-            System.err.println("Attempting to write to: " + file.getAbsolutePath());
+            System.out.println("Attempting to write to: " + file.getAbsolutePath());
+
+            System.out.println("No. of classes analysed: " + classes.size());
+            // classes.forEach(clazz -> System.out.println("Found class: " + clazz.getName()));
 
             int cycleCount = countCyclesForPackage("org.tzi.use");
             System.out.println("CYCLES COUNTED: " + cycleCount);
-            System.err.println("CYCLES COUNTED: " + cycleCount);
 
             writeResult(cycleCount);
-            System.err.println("Write complete");
+            System.out.println("Write complete");
 
             assertTrue("Cycle count should not be negative", cycleCount >= 0);
         } catch (Exception e) {
-            System.out.println("ERROR IN ARCHUNIT TEST!");
             System.err.println("ERROR IN ARCHUNIT TEST: " + e.getMessage());
-            // Log any exceptions that occur during test execution
-            try (PrintWriter out = new PrintWriter(new FileWriter(RESULTS_FILE, true))) {
-                out.println("Error during test: " + e.getMessage());
-                e.printStackTrace(out);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
+            e.printStackTrace();
             throw e;
         }
     }
