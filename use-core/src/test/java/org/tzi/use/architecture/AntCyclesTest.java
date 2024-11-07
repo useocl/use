@@ -41,10 +41,6 @@ public class AntCyclesTest {
             }
             file.getParentFile().mkdirs();
             file.createNewFile();
-
-            try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
-                out.println("Test setup complete");
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
