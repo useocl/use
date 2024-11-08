@@ -25,7 +25,10 @@ public class AntCyclesTest {
 
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages("org.tzi.use");
+            .importPackages("org.tzi.use")
+            .that(JavaClass.Predicates.resideInAPackage("org.tzi.use.."))
+            .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
+            .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
 
     private static final String PROJECT_ROOT = new File("").getAbsolutePath();
     private static final String RESULTS_FILE = new File(PROJECT_ROOT, "cycles_ant_results.csv").getAbsolutePath();
