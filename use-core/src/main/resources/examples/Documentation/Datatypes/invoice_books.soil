@@ -8,7 +8,7 @@
 !insert (i1,li1_1) into Invoice_LineItem
 !insert (i1,li1_3) into Invoice_LineItem
 !i1.nr := 2001
-!i1.date := Date(2024, 1, 15)
+!i1.date := Date(15, 1, 2024)
 !new Currency('eur')
 !new Currency('usd')
 !usd.name := 'US Dollar'
