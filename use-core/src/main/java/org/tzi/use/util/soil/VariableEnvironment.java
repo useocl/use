@@ -66,7 +66,7 @@ public class VariableEnvironment {
 	/** reference to the current frame */
 	private Map<String, Value> fCurrentFrame;
 	/** the system state this variable environment is defined for. */
-	private MSystemState fSystemState;
+	private final MSystemState fSystemState;
 	
 
 	/**
@@ -88,21 +88,22 @@ public class VariableEnvironment {
 	 */
 	public VariableEnvironment(VariableEnvironment other) {
 		fSystemState = other.fSystemState;
-		fFrames = new ArrayDeque<Map<String, Value>>();
+		fFrames = new ArrayDeque<>();
+
 		for (Map<String,Value> b : other.fFrames) {
-			Map<String, Value> b1 = new HashMap<String,Value>();
-			b1.putAll(b);
+            Map<String, Value> b1 = new HashMap<>(b);
 			fFrames.add(b1);
 		}
+
 		fCurrentFrame = fFrames.peek();
-		fObjectVisibility = new ArrayDeque<Boolean>(other.fObjectVisibility);
+		fObjectVisibility = new ArrayDeque<>(other.fObjectVisibility);
 	}
 
 	public VariableEnvironment(VariableEnvironment other, MSystemState systemState) {
 		fSystemState = systemState;
-		fFrames = new ArrayDeque<Map<String, Value>>(other.fFrames);
+		fFrames = new ArrayDeque<>(other.fFrames);
 		fCurrentFrame = fFrames.peek();
-		fObjectVisibility = new ArrayDeque<Boolean>(other.fObjectVisibility);
+		fObjectVisibility = new ArrayDeque<>(other.fObjectVisibility);
 	}
 	
 	/**
@@ -111,8 +112,8 @@ public class VariableEnvironment {
 	 */
 	public void clear() {
 		
-		fFrames = new ArrayDeque<Map<String, Value>>();
-		fObjectVisibility = new ArrayDeque<Boolean>();
+		fFrames = new ArrayDeque<>();
+		fObjectVisibility = new ArrayDeque<>();
 		
 		pushFrame(true);
 	}
@@ -140,7 +141,7 @@ public class VariableEnvironment {
 	 * @see #popFrame()
 	 */
 	public void pushFrame(boolean objectsVisible) {
-		fFrames.push(new HashMap<String,Value>());
+		fFrames.push(new HashMap<>());
 		fCurrentFrame = fFrames.peek();
 		fObjectVisibility.push(objectsVisible);
 	}
@@ -284,7 +285,7 @@ public class VariableEnvironment {
 	 */
 	public List<String> getTopLevelReferencesTo(MObject object) {
 		
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		
 		for (Entry<String, Value> entry : fFrames.peekFirst().entrySet()) {
 			Value value = entry.getValue();
@@ -366,7 +367,7 @@ public class VariableEnvironment {
 		
 		final String COLON = " : ";
 		final String EQUAL = " = ";
-		final String NEWLN = System.getProperty("line.separator");
+		final String NEWLN = System.lineSeparator();
 		final String FRPRE = "[frame ";
 		final String FRPST = "]" + NEWLN;
 		final String EMPTY  = "empty" + NEWLN;
@@ -410,8 +411,8 @@ public class VariableEnvironment {
 			sb.append("[object variables]");
 			sb.append(NEWLN);
 			
-			List<String> objectNames = 
-				new LinkedList<String>(fSystemState.allObjectNames());
+			List<String> objectNames =
+                    new LinkedList<>(fSystemState.allObjectNames());
 			Collections.sort(objectNames);
 			
 			for (String objectName : objectNames) {

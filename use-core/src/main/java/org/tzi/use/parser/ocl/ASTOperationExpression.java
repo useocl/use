@@ -19,12 +19,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
@@ -40,10 +34,15 @@ import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 /**
- * Node of the abstract syntax tree constructed by the parser.
+ * <p>Node of the abstract syntax tree constructed by the parser.</p>
  * 
- * This AST class generates different expressions, depending
+ * <p>This AST class generates different expressions, depending
  * on the context:
  * 
  * <ol> 
@@ -56,13 +55,14 @@ import org.tzi.use.util.collections.CollectionUtil;
  *       navigation over associations with multiplicity zero or one (p. 7-13 of OMG UML 1.3)</li>
  *   <li>variable</li>
  * </ol>
+ * </p>
  * @author  Mark Richters
  * @author  Lars Hamann
  */
 public class ASTOperationExpression extends ASTExpression {
-    private Token fOp;
-    private ASTExpression fSrcExpr;
-    private List<ASTExpression> fArgs; 
+    private final Token fOp;
+    private final ASTExpression fSrcExpr;
+    private final List<ASTExpression> fArgs;
     private boolean fHasParentheses;
     private boolean fFollowsArrow;
     private Expression[] fArgExprs;
@@ -83,7 +83,7 @@ public class ASTOperationExpression extends ASTExpression {
                                   boolean followsArrow) {
         fOp = op;
         fSrcExpr = source;
-        fArgs = new ArrayList<ASTExpression>();
+        fArgs = new ArrayList<>();
         fHasParentheses = false;
         fFollowsArrow = followsArrow;
     }
@@ -167,7 +167,7 @@ public class ASTOperationExpression extends ASTExpression {
 
     public Expression gen(Context ctx) throws SemanticException {
         Expression res = null;
-        Expression srcExpr = null;
+        Expression srcExpr;
         String opname = fOp.getText();
 
         if (fSrcExpr != null ) {
@@ -230,7 +230,7 @@ public class ASTOperationExpression extends ASTExpression {
     private Expression gen1(Context ctx, Expression srcExpr) 
         throws SemanticException 
     {
-        Expression res = null;
+        Expression res;
         String opname = fOp.getText();
         Type srcType = srcExpr.type();
         
@@ -283,7 +283,7 @@ public class ASTOperationExpression extends ASTExpression {
 
         opcase += fFollowsArrow ? ARROW : DOT;
         opcase += fHasParentheses ? PARENTHESES : NO_PARENTHESES;
-        opcase += fExplicitRolenameOrQualifiers.size() > 0 ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
+        opcase += !fExplicitRolenameOrQualifiers.isEmpty() ? EXPLICIT_ROLENAME : NO_EXPLICIT_ROLENAME;
 
         switch ( opcase ) {
         case SRC_SIMPLE_TYPE + DOT + NO_PARENTHESES: 
@@ -300,7 +300,7 @@ public class ASTOperationExpression extends ASTExpression {
         	if (fArgExprs[0].type().isTypeOfVoidType()) {
         		try {
 					fArgExprs[0] = new ExpBagLiteral(new Expression[0]);
-				} catch (ExpInvalidException e) { }
+				} catch (ExpInvalidException ignored) { }
         	} else {
 	            ctx.reportWarning(fOp, "application of `" + opname + 
 	                              "' to a single value should be done with `.' " +
@@ -553,7 +553,7 @@ public class ASTOperationExpression extends ASTExpression {
                                              Type elemType)
         throws SemanticException 
     {
-        Expression res = null;
+        Expression res;
         // (1) predefined OCL operation
 
         // find operation on element type
@@ -589,7 +589,7 @@ public class ASTOperationExpression extends ASTExpression {
 
     // checks (3) and (1)
     private Expression genObjOperation(Context ctx, MClassifier srcClassifier, Expression srcExpr) throws SemanticException {
-        Expression res = null;
+        Expression res;
 
         // find operation
         String opname = fOp.getText();
@@ -654,12 +654,12 @@ public class ASTOperationExpression extends ASTExpression {
 
 	@Override
 	public void getFreeVariables(Set<String> freeVars) {
+        for (ASTExpression fArg : fArgs) {
+            fArg.getFreeVariables(freeVars);
+        }
+
 		if (fSrcExpr != null) {
 			fSrcExpr.getFreeVariables(freeVars);
-			Iterator<ASTExpression> it = fArgs.iterator();
-			while (it.hasNext()) {
-				it.next().getFreeVariables(freeVars);
-			}
 		} else {
 			if (!fHasParentheses) {
 				freeVars.add(fOp.getText());
