@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.ToolBar?>
+
+
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.TabPane?>
+<?import org.kordamp.desktoppanefx.scene.layout.DesktopPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<BorderPane fx:id="borderPaneID" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.tzi.use.gui.main.MainWindowFX">
+    <top>
+        <VBox>
+            <MenuBar>
+                <Menu text="File" fx:id="fileMenuItems"/>
+                <Menu text="Edit" fx:id="editMenuItems"/>
+                <Menu text="State" fx:id="stateMenuItems"/>
+                <Menu text="View" fx:id="viewMenuItems"/>
+                <Menu text="Plugins" fx:id="pluginsMenuItems"/>
+                <Menu text="Help" fx:id="helpMenuItems"/>
+            </MenuBar>
+            <ToolBar fx:id="toolBar">
+                <!-- ToolBar contents go here -->
+            </ToolBar>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane fx:id="test" dividerPositions="0.8" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0"
+                   BorderPane.alignment="CENTER">
+            <items>
+                <!-- Middle/Top VBox (left and Right Display) -->
+                <SplitPane dividerPositions="0.25">
+                    <items>
+                        <!-- Middle/Top VBox (LEFT Display) -->
+                        <SplitPane fx:id="borderPaneLeft" dividerPositions="0.65" orientation="VERTICAL"
+                                   prefHeight="200.0" prefWidth="160.0">
+                            <items>
+                                <!-- Top VBox (Folder Tree) -->
+                                <VBox>
+                                    <TreeView fx:id="folderTreeView" VBox.vgrow="ALWAYS"/>
+                                </VBox>
+                                <!-- Bottom VBox (Folder Tree INFO) -->
+                                <VBox fx:id="webViewPlaceholder" VBox.vgrow="ALWAYS"/>
+                            </items>
+                        </SplitPane>
+                        <!-- Middle/Top VBox (RIGHT Display) -->
+                        <VBox>
+                            <TabPane fx:id="fDesktopPane" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+
+                    </items>
+                </SplitPane>
+                <!-- Bottom VBox (LOG Display) -->
+                <VBox>
+                    <HBox>
+                        <Label text="Log" />
+                    </HBox>
+                    <TextArea fx:id="logTextArea" VBox.vgrow="ALWAYS">
+                    </TextArea>
+                    <HBox>
+                        <Label text="Ready." />
+                    </HBox>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

@@ -9,10 +9,10 @@ rem CONFIGURATION
 rem Add -Xss20m to VMARGS when using the generator
 set VMARGS=
 
-REM PATH1: C:\Users\akifn\Desktop\MyProjects\java\useTesting\use-gui\target\use-gui-7.1.0.jar
-REM PATH2: C:\Users\akifn\Desktop\MyProjects\java\useTesting\use-gui\target\use-gui-jar-with-dependencies.jar
-
-set USE_JAR="C:\Users\akifn\Desktop\MyProjects\java\useTesting\use-gui\target\use-gui-jar-with-dependencies.jar"
+set BIN_DIR=%~dp0
+set USE_HOME=%BIN_DIR%..\..\..\..
+set USE_JAR="%USE_HOME%\target\use-gui.jar"
+set JAVAFX_LIB="%USE_HOME%\lib\javafx-sdk-21.0.5\lib"
 
 IF NOT EXIST %USE_JAR% (
 	echo Cannot find USE executable. Please provide correct path to use.jar.
@@ -20,7 +20,7 @@ IF NOT EXIST %USE_JAR% (
 )
 
 :runApp
-java %VMARGS% -jar %USE_JAR% -nr %*
+java %VMARGS% --module-path %JAVAFX_LIB% --add-modules javafx.controls,javafx.fxml,javafx.web,javafx.graphics,javafx.swing --add-opens javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED -jar %USE_JAR% -nr %*
 
 if "%OS%"=="Windows_NT" @endlocal
 

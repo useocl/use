@@ -1,10 +1,15 @@
-open module use.gui {
+module use.gui {
     requires org.eclipse.jdt.annotation;
     requires use.core;
     requires vtd.xml;
     requires com.google.common;
     requires itextpdf;
-    requires java.desktop;
+    requires javafx.fxml;
+    requires javafx.web;
+    requires org.kordamp.desktoppanefx.core;
+    requires javafx.swing;
+    opens org.tzi.use.gui.main to javafx.fxml;
+    exports org.tzi.use.main.gui;
     exports org.tzi.use.gui.views;
     exports org.tzi.use.gui.main;
     exports org.tzi.use.gui.util;

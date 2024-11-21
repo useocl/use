@@ -530,7 +530,7 @@ public class MainWindow extends JFrame {
 		fMenuBar.add(menu);
 		
 		// not yet implemented in swing: menuBar.setHelpMenu(menu);
-		mi = menu.add(fActionHelpAbout);
+//		mi = menu.add(fActionHelpAbout);
 		mi.setMnemonic('A');
 
         // initialize application state to current system
@@ -1087,7 +1087,7 @@ public class MainWindow extends JFrame {
 
     private final ActionViewCloseAll fActionViewCloseAll = new ActionViewCloseAll();
 
-    private final ActionHelpAbout fActionHelpAbout = new ActionHelpAbout();
+//    private final ActionHelpAbout fActionHelpAbout = new ActionHelpAbout();
 
     /**
      * Opens and compiles a specification file.
@@ -2187,20 +2187,20 @@ public class MainWindow extends JFrame {
         }
     }
 
-    /**
-     * Help about.
-     */
-    private class ActionHelpAbout extends AbstractAction {
-        ActionHelpAbout() {
-            super("About...");
-        }
-
-        @Override
-		public void actionPerformed(ActionEvent e) {
-            AboutDialog dlg = new AboutDialog(MainWindow.this);
-            dlg.setVisible(true);
-        }
-    }
+//    /**
+//     * Help about.
+//     */
+//    private class ActionHelpAbout extends AbstractAction {
+//        ActionHelpAbout() {
+//            super("About...");
+//        }
+//
+//        @Override
+//		public void actionPerformed(ActionEvent e) {
+//            AboutDialog dlg = new AboutDialog(MainWindow.this);
+//            dlg.setVisible(true);
+//        }
+//    }
 
     public ObjectPropertiesView showObjectPropertiesView() {
         ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.this,
