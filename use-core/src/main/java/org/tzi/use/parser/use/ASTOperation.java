@@ -109,10 +109,6 @@ public class ASTOperation extends ASTAnnotatable {
         	}
         } else {
             resultType = fType.gen(ctx);
-            if (fIsConstructor && resultType != null) {
-                throw new SemanticException(fName, "Constructor " + StringUtil.inQuotes(fName.getText()) +
-                        " must not have result type.");
-            }
         }
 
         fOperation = ctx.modelFactory().createOperation(fName.getText(), varDeclList, resultType, fIsConstructor);
@@ -141,6 +137,11 @@ public class ASTOperation extends ASTAnnotatable {
         if (fOperation == null)
             return;
         
+        if (fIsConstructor && fOperation.resultType() != fOperation.cls()) {
+            throw new SemanticException(fName, "Constructor " + StringUtil.inQuotes(fName.getText()) +
+                    " must not have result type.");
+        }
+
         // enter parameters into scope of expression
         Symtable vars = ctx.varTable();
         vars.enterScope();
@@ -195,7 +196,7 @@ public class ASTOperation extends ASTAnnotatable {
 	/**
 	 * During compilation, this operation marks this AST-node
 	 * as invalid, because the signature had errors.
-	 * Any call to {@link #genFinal(Context)} afterwards
+	 * Any call to {@link #genFinal(Context)} afterward
 	 * is ignored.
 	 */
 	public void setSignatureGenFailed() {

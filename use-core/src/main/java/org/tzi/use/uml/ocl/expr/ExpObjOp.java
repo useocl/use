@@ -32,20 +32,13 @@ import java.util.List;
  *
  * @author  Mark Richters
  */
-public final class ExpObjOp extends Expression {
-    private MOperation fOp;
-    
-    /**
-     * The arguments, first one is "receiver" object
-     */
-    private Expression[] fArgs;
-    
+public final class ExpObjOp extends ExpInstanceOp {
+
     public ExpObjOp(MOperation op, Expression[] args) 
         throws ExpInvalidException
     {
-        super(op.resultType());
-        fOp = op;
-        fArgs = args;
+        super(op, args);
+
         if (!(args[0].type().isTypeOfClass() || args[0].type().isTypeOfDataType()))
             throw new ExpInvalidException(
                                           "Target expression of object operation must have " +
@@ -158,33 +151,4 @@ public final class ExpObjOp extends Expression {
         
         return sb.append(")");
     }
-    
-    public MOperation getOperation() {
-        return fOp;
-    }
-
-    /**
-     * All arguments of the expression.
-     * Index 0 is the receiver object (self)
-     * @return
-     */
-    public Expression[] getArguments() {
-        return fArgs;
-    }
-
-	@Override
-	public void processWithVisitor(ExpressionVisitor visitor) {
-		visitor.visitObjOp(this);
-	}
-
-	@Override
-	protected boolean childExpressionRequiresPreState() {
-		for (Expression e : fArgs) {
-			if (e.requiresPreState()) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
 }
