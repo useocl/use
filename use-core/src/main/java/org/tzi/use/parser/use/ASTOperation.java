@@ -138,7 +138,7 @@ public class ASTOperation extends ASTAnnotatable {
             return;
         
         if (fIsConstructor && fOperation.resultType() != fOperation.cls()) {
-            throw new SemanticException(fName, "Constructor " + StringUtil.inQuotes(fName.getText()) +
+            throw new SemanticException(fName, "Instance constructor " + StringUtil.inQuotes(fName.getText()) +
                     " must not have result type.");
         }
 
@@ -162,7 +162,7 @@ public class ASTOperation extends ASTAnnotatable {
         try {
             if (fExpr != null ) {
                 if (fIsConstructor) {
-                    throw new MInvalidModelException("Constructor " + StringUtil.inQuotes(fName.getText())
+                    throw new MInvalidModelException("Instance constructor " + StringUtil.inQuotes(fName.getText())
                             + " must not have body.");
                 }
                 Expression expr = fExpr.gen(ctx);

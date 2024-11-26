@@ -25,7 +25,6 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
-import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 
 import java.util.HashMap;
