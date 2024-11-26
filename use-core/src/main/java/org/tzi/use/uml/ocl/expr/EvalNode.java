@@ -48,7 +48,7 @@ public class EvalNode {
     
     /**
      * If <code>true</code>, the occurrence
-     * of variables in the text is replaces by the current value
+     * of variables in the text is replaced by the current value
      * of the variable.
      */
     private boolean fSubstituteVariables = false;
@@ -525,9 +525,9 @@ public class EvalNode {
 		}
 
 		@Override
-		public void visitObjOp(ExpObjOp exp) {
+		public void visitInstanceOp(ExpInstanceOp exp) {
 			if (replace(exp)) return;
-			super.visitObjOp(exp);
+			super.visitInstanceOp(exp);
 		}
 
 		@Override

@@ -251,6 +251,9 @@ operationDefinition[ASTClassifier c] returns [ASTOperation n]
     ( COLON t = type )? 
     {
       ASTType type = $t.n;
+      if (type == null && isConstructor) {
+        type = new ASTSimpleType($c.getName());
+      }
       $n = new ASTOperation($name, $pl.paramList, type, isConstructor);
       $n.setAnnotations($as.annotations);
     }

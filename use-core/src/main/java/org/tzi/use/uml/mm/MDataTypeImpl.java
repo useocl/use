@@ -179,7 +179,7 @@ public class MDataTypeImpl extends MClassifierImpl implements MDataType {
                     .map(MModelElementImpl::name).collect(Collectors.toList());
             List<String> paramNames = op.paramNames();
             if (!CollectionUtil.equalLists(allAttributes, paramNames, Comparator.comparing(String::toString))) {
-                throw new MInvalidModelException("Constructor `" + opname + "' is missing parent attribute(s).");
+                throw new MInvalidModelException("Instance constructor `" + opname + "' is missing parent attribute(s).");
             }
         }
 

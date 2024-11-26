@@ -202,8 +202,6 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
         // If no result type is set, use type of the expression
     	if (fResultType == null) {
     		fResultType = expr.type();
-    	//} else if (expr.isConstructorCall() == null) {
-            // TODO
     	} else if (expr.type() == null) {
     		throw new MInvalidModelException("The operation " + StringUtil.inQuotes(this.cls().name() + "." + this.name()) +
     				" does not have a declared result type and the result type of the defined expression could not be calculated. This" +

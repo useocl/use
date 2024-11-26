@@ -337,7 +337,7 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 	}
 
 	@Override
-	public void visitObjOp(ExpObjOp exp) {
+	public void visitInstanceOp(ExpInstanceOp exp) {
 		exp.getArguments()[0].processWithVisitor(this);
 		writer.write('.');
 		writer.write(operation(exp.getOperation().name(), exp));
@@ -349,24 +349,6 @@ public class ExpressionPrintVisitor implements ExpressionVisitor {
 				writer.write(ws());
 			}
 			
-			exp.getArguments()[i].processWithVisitor(this);
-		}
-		writer.write(operator(")", exp));
-	}
-
-	@Override
-	public void visitInstanceConstructor(ExpInstanceConstructor exp) {
-		exp.getArguments()[0].processWithVisitor(this);
-		writer.write('.');
-		writer.write(operation(exp.getOperation().name(), exp));
-		atPre(exp);
-		writer.write(operator("(", exp));
-		for (int i = 1; i < exp.getArguments().length; ++i) {
-			if (i > 1) {
-				writer.write(",");
-				writer.write(ws());
-			}
-
 			exp.getArguments()[i].processWithVisitor(this);
 		}
 		writer.write(operator(")", exp));
