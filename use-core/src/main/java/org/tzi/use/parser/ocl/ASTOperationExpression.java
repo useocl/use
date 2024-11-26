@@ -629,10 +629,10 @@ public class ASTOperationExpression extends ASTExpression {
         	}
         	
             try {
+                // constructor performs additional checks
                 if (op.isConstructor()) {
                     res = new ExpInstanceConstructor(op, fArgExprs);
                 } else {
-                    // constructor performs additional checks
                     res = new ExpObjOp(op, fArgExprs);
                 }
                 res.setSourcePosition(new SrcPos(fOp));

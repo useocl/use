@@ -45,14 +45,14 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
 
         if (!(args[0].type().isTypeOfClass() || args[0].type().isTypeOfDataType()))
             throw new ExpInvalidException(
-                    "Target expression of constructor must have " +
+                    "Target expression of instance constructor must have " +
                             "object type, found `" + args[0].type() + "'.");
 
         // check for matching arguments
         VarDeclList params = fOp.paramList();
         if (params.size() != (args.length - 1) )
             throw new ExpInvalidException(
-                    "Number of arguments does not match declaration of constructor `" +
+                    "Number of arguments does not match declaration of instance constructor `" +
                             fOp.name() + "'. Expected " + params.size() + " argument(s), found " +
                             (args.length - 1) + ".");
 
