@@ -19,31 +19,11 @@ public abstract class ExpInstanceOp extends Expression {
 
     protected final MClassifier fClassifier;
 
-    public ExpInstanceOp(MOperation op, Expression[] args) throws ExpInvalidException {
+    public ExpInstanceOp(MOperation op, Expression[] args) {
         super(op.resultType());
         fOp = op;
         fArgs = args;
         fClassifier = op.cls();
-
-        if (!(args[0].type().isTypeOfClass() || args[0].type().isTypeOfDataType()))
-            throw new ExpInvalidException(
-                    "Target expression of object operation must have " +
-                            "object type, found `" + args[0].type() + "'.");
-
-        // check for matching arguments
-        VarDeclList params = fOp.paramList();
-        if (params.size() != (args.length - 1) )
-            throw new ExpInvalidException(
-                    "Number of arguments does not match declaration of operation `" +
-                            fOp.name() + "'. Expected " + params.size() + " argument(s), found " +
-                            (args.length - 1) + ".");
-
-        for (int i = 1; i < args.length; i++)
-            if (! args[i].type().conformsTo(params.varDecl(i - 1).type()) )
-                throw new ExpInvalidException(
-                        "Type mismatch in argument `" + params.varDecl(i - 1).name() +
-                                "'. Expected type `" + params.varDecl(i - 1).type() +
-                                "', found `" + args[i].type() + "'.");
     }
 
     public abstract Value eval(EvalContext ctx);
