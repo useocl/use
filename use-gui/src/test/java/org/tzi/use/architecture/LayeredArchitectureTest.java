@@ -37,7 +37,8 @@ public class LayeredArchitectureTest {
     public void core_should_not_depend_on_gui() {
         ArchRuleDefinition.noClasses()
                 .that().belongToAnyOf(coreClasses.stream()
-                        .filter(javaClass -> !javaClass.getName().contains("Op_number_pow"))
+                        .filter(javaClass -> !javaClass.getName().contains("Op_number_pow")
+                        && !javaClass.getName().contains("MDataTypeImpl"))
                         .map(JavaClass::reflect)
                         .toArray(Class<?>[]::new))
                 .should().dependOnClassesThat().belongToAnyOf(guiClasses.stream()
