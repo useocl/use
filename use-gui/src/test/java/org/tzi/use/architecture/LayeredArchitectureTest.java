@@ -44,14 +44,7 @@ public class LayeredArchitectureTest {
 
     @Test
     @ArchTest
-    //TODO Nicht sicher, ob das mit util so geht. Die Frage ist hier, ob es ok ist, wenn ShellReadline in util.input quasi
-    //von sich selbst "abhängig" ist oder ob das zum Fehler führt...
-/*    resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
-                               "org.tzi.use.config..", "org.tzi.use.gen..", "org.tzi.use.graph..", "org.tzi.use.parser..",
-                               "org.tzi.use.uml..", "org.tzi.use.main.runtime..", "org.tzi.use.main.ChangeEvent",
-                               "org.tzi.use.main.ChangeListener", "org.tzi.use.main.MonitorAspectGenerator", "org.tzi.use.main.Session",
-                               "org.tzi.use.util.collections..", "org.tzi.use.util.rubyintegration..", "org.tzi.use.util.soil..",
-                               "org.tzi.use.util.uml..")*/
+    //TODO herausfinden wie man einzelne Klassen statt Packages hinzufügen kann
     public void core_should_not_depend_on_gui() {
         ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
