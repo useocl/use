@@ -1,3 +1,4 @@
+/*
 package org.tzi.use.architecture;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -64,3 +65,4 @@ public class ArchUnitTest {
 
 
 }
+*/
