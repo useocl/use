@@ -5,25 +5,18 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import org.junit.Before;
+import org.junit.Test;
 
 public class LayeredArchitectureAntTest {
-    private JavaClasses coreClasses;
-    private JavaClasses guiClasses;
     private JavaClasses classes;
 
-    @BeforeEach
-    void setUp() {
-
+    @Before
+    public void setUp() {
         classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
         System.out.println("Classes found: " + classes.size());
-
     }
 
     @Test
