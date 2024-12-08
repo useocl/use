@@ -1,0 +1,42 @@
+####Queries
+type Query{
+    classes: [Class]
+}
+
+
+type Class{
+    name_mclass: String!
+    attributes: [Attribute]
+    operations: [Operation]
+}
+
+type Attribute{
+    name_attr: String!
+    type: String!
+}
+
+type Operation{
+    head: String!
+    body: String
+}
+
+#### Mutations
+type Mutation{
+    aUseClass(mClassInput: ClassInput): Class
+}
+
+input ClassInput{
+    name_mclass: String!
+    attributes: [AttributeInput]
+    operations: [OperationInput]
+}
+
+input AttributeInput{
+    name_attr: String!
+    type: String!
+}
+
+input OperationInput{
+    head: String!
+    body: String
+}
