@@ -59,6 +59,7 @@ import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
 import org.tzi.use.uml.mm.MModel;
@@ -256,7 +257,9 @@ public class MainWindowFX {
         MenuItem exit = new MenuItem("Exit");
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
         exit.setOnAction(e -> {
-            System.out.println("Ctrl+Q Succesfully pressed");
+            // Platform.exit beendet die gesamte JavaFX Anwendung
+            Platform.exit();
+            Shell.getInstance().exit();
         });
 
         fileMenuItems.getItems().addAll(openSpecification, recentFilesMenu, reloadSpecification, saveScript, saveProtocol, new SeparatorMenuItem(), printerSetup, printDiagram, printView, exportAsPdf, new SeparatorMenuItem(), exit);
