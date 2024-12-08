@@ -25,6 +25,8 @@ import javafx.application.Platform;
 
 import javax.swing.*;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -42,12 +44,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.kordamp.desktoppanefx.scene.layout.InternalWindow;
 import org.tzi.use.config.Options;
 
-import org.tzi.use.gui.main.LogPanel;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
 
@@ -83,13 +83,9 @@ public class MainWindowFX {
     private static Session fSession;
     private static IRuntime fPluginRuntime;
     private Stage primaryStage;  // Reference to the primary stage
-
     private static MainWindowFX instance;
-
     private SwingNode swingNode;
-
     private static LogPanel fLogPanel;
-
     private static PrintWriter fLogWriter;
 
     @FXML
@@ -109,6 +105,12 @@ public class MainWindowFX {
 
     @FXML
     private TabPane fDesktopPane;
+
+    private BooleanProperty fActionFileReload = new SimpleBooleanProperty(false);;
+//    private BooleanProperty specificationAvailable;
+//    private BooleanProperty specificationAvailable;
+//    private BooleanProperty specificationAvailable;
+
 
     private static Menu recentFilesMenu;
 
@@ -143,18 +145,16 @@ public class MainWindowFX {
 
     @FXML
     public void initialize() throws IOException {
-        // to create a Intance of a SwingNode, which is used to hold the Swing-Components
-//        swingNode = new SwingNode();
+        Options.getRecentFiles().getItems().clear();
+        // update the status for the visibility of the menu- and tab-items
+        updateSpecificationAvailability();
 
         initWebViewPlaceholder();
-        //initDesktopPane();
         initLogTextArea(); // create the log panel
         initFolderTreeView();
         initToolbarItems(toolBar, folderTreeView); // initializing the toolbar
         initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView); // initializing the menubar
 
-
-        Options.getRecentFiles().getItems().clear();
         fSession = getSession();
         fPluginRuntime = getPluginRuntime();
         primaryStage = getPrimaryStage();
@@ -214,37 +214,52 @@ public class MainWindowFX {
      * initializing the FileMenuItems
      */
     private void initFileMenuItems(Menu fileMenuItems, TreeView<String> folderTreeView) {
+
         MenuItem openSpecification = new MenuItem("Open specification...");
-        recentFilesMenu = new Menu("Open recent specification");
-        MenuItem saveScript = new MenuItem("Save script (.soil)...");
-        MenuItem saveProtocol = new MenuItem("Save protocol...");
-        MenuItem printerSetup = new MenuItem("Printer Setup...");
-        MenuItem printDiagram = new MenuItem("Print diagram...");
-        MenuItem printView = new MenuItem("Print View...");
-        MenuItem exportAsPdf = new MenuItem("Export view as PDF...");
-        MenuItem exit = new MenuItem("Exit");
-
         openSpecification.setGraphic(getIcon("document-open.png"));
-        recentFilesMenu.setGraphic(getIcon("document-open.png"));
-        saveScript.setGraphic(getIcon("save.png"));
-        saveProtocol.setGraphic(getIcon("save.png"));
-        printerSetup.setGraphic(getIcon("document-print.png"));
-        printDiagram.setGraphic(getIcon("document-print.png"));
-        printView.setGraphic(getIcon("document-print.png"));
-        exportAsPdf.setGraphic(getIcon("export_pdf.png"));
-
         openSpecification.setAccelerator(KeyCombination.valueOf("Ctrl+O"));
-        exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
-
         openSpecification.setOnAction(e -> {
             instance.openDirectoryChooser(folderTreeView);
         });
 
+        recentFilesMenu = new Menu("Open recent specification");
+        recentFilesMenu.setGraphic(getIcon("document-open.png"));
+
+        MenuItem reloadSpecification = new MenuItem("Reload specification");
+        reloadSpecification.disableProperty().bind(fActionFileReload.not());
+        reloadSpecification.setAccelerator(KeyCombination.valueOf("Ctrl+R"));
+        reloadSpecification.setGraphic(getIcon("refresh.png"));
+        reloadSpecification.setOnAction(e -> {
+            // can not be Null bcs reloadSpecification is disabled if recentFiles is null ^^
+            instance.compile(Options.getRecentFile("use"));
+            initializeModelBrowserFX(); //reinitializing after compiling
+        });
+
+        MenuItem saveScript = new MenuItem("Save script (.soil)...");
+        saveScript.setGraphic(getIcon("save.png"));
+
+        MenuItem saveProtocol = new MenuItem("Save protocol...");
+        saveProtocol.setGraphic(getIcon("save.png"));
+
+        MenuItem printerSetup = new MenuItem("Printer Setup...");
+        printerSetup.setGraphic(getIcon("document-print.png"));
+
+        MenuItem printDiagram = new MenuItem("Print diagram...");
+        printDiagram.setGraphic(getIcon("document-print.png"));
+
+        MenuItem printView = new MenuItem("Print View...");
+        printView.setGraphic(getIcon("document-print.png"));
+
+        MenuItem exportAsPdf = new MenuItem("Export view as PDF...");
+        exportAsPdf.setGraphic(getIcon("export_pdf.png"));
+
+        MenuItem exit = new MenuItem("Exit");
+        exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
         exit.setOnAction(e -> {
             System.out.println("Ctrl+Q Succesfully pressed");
         });
 
-        fileMenuItems.getItems().addAll(openSpecification, recentFilesMenu, saveScript, saveProtocol, printerSetup, printDiagram, printView, exportAsPdf, exit);
+        fileMenuItems.getItems().addAll(openSpecification, recentFilesMenu, reloadSpecification, saveScript, saveProtocol, new SeparatorMenuItem(), printerSetup, printDiagram, printView, exportAsPdf, new SeparatorMenuItem(), exit);
     }
 
     /**
@@ -362,7 +377,7 @@ public class MainWindowFX {
     private void initToolbarItems(ToolBar toolBar, TreeView<String> folderTreeView) {
         Map<String, ImageView> toolbarItems = new LinkedHashMap<>();
         toolbarItems.put("Open specification", getIcon("document-open.png"));
-        toolbarItems.put("Reload specification", getIcon("refresh.png"));
+        toolbarItems.put("Reload current specification", getIcon("refresh.png"));
         toolbarItems.put("Print diagram", getIcon("document-print.png"));
         toolbarItems.put("Print view", getIcon("document-print.png"));
         toolbarItems.put("Export content of view as PDF", getIcon("export_pdf.png"));
@@ -384,7 +399,7 @@ public class MainWindowFX {
         toolbarItems.put("Create command list view", getIcon("CmdList.gif"));
 
         int i = 0;
-        // Add buttons with images
+        // initializing each button of the toolbar
         for (Map.Entry<String, ImageView> entry : toolbarItems.entrySet()) {
             String tooltipText = entry.getKey();
             ImageView imageKey = entry.getValue();
@@ -396,21 +411,26 @@ public class MainWindowFX {
             toolBar.getItems().add(button);
 
             switch (entry.getKey()) {
-                case "Open specification" -> button.setOnAction(e -> {
+                case "Open specification":
+                    button.setDisable(false);
+                    button.setOnAction(e -> {
                     instance.openDirectoryChooser(folderTreeView);
-                });
-                case "Create class diagram view" -> button.setOnAction(e -> {
-                    instance.createClassDiagram();
-                });
-
+                }); break;
+                case "Reload current specification":
+                    button.disableProperty().bind(fActionFileReload.not());
+                    button.setOnAction(e -> {
+                        instance.compile(Options.getRecentFile("use"));
+                        initializeModelBrowserFX(); //reinitializing after compiling
+                }); break;
                 //TODO
+                case "Create class diagram view":
+                    button.setOnAction(e -> {
+                        instance.createClassDiagram();
+                    }); break;
+
+
             }
 
-            if (entry.getKey().equals("Open specification")) {
-                button.setOnAction(e -> {
-                    instance.openDirectoryChooser(folderTreeView);
-                });
-            }
 
             // Add spacing between specific buttons
             if (i == 4 || i == 6 || i == 7) {
@@ -448,8 +468,8 @@ public class MainWindowFX {
         fChooser.getExtensionFilters().add(extFilter);
         //fChooser.setTitle("Open specification");
 
-        if (wasUsed) {
-            File recentFile = Objects.requireNonNull(Options.getRecentFile("use")).toFile();
+        if (wasUsed && Options.getRecentFile("use") != null) {
+            File recentFile = Options.getRecentFile("use").toFile();
             fChooser.setInitialFileName(recentFile.getName());
         }
 
@@ -466,18 +486,16 @@ public class MainWindowFX {
 
             Options.getRecentFiles().push(path.toAbsolutePath().toString());
 
-            if (fSession.system() != null && fSession.system().model() != null) {
-                new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
-                //Platform.runLater(() -> logTextArea.clear());
-            } else {
-                new ModelBrowserFX(null, fPluginRuntime);
-            }
+            initializeModelBrowserFX();
 
             wasUsed = true;
 
             setRecentfiles();
 
         }
+
+        // update the status for the visibility of the menu- and tab-items
+        updateSpecificationAvailability();
     }
 
     /**
@@ -509,20 +527,6 @@ public class MainWindowFX {
     }
 
     // Actions
-
-    public MenuItem ActionFileOpenSpecRecent(Path filename) {
-        MenuItem recentSpec = new MenuItem();
-        recentSpec.setText("");
-        //ffileName = filename;
-        if (!validateOpenPossible()) {
-            return recentSpec;
-        } else {
-            //instance.compile(filename);
-            recentSpec.setText(filename.toString());
-            return recentSpec;
-        }
-    }
-
 
     private boolean validateOpenPossible() {
         if (fSession != null) {
@@ -568,14 +572,6 @@ public class MainWindowFX {
             system = null;
         }
 
-//        // set new system (may be null if compilation failed)
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                fSession.setSystem(system);
-//            }
-//        });
-
         if (system != null) {
             fSession.setSystem(system);  // System synchron setzen, da keine GUI-Operation erforderlich ist
             Options.getRecentFiles().push(f.toString());
@@ -583,6 +579,14 @@ public class MainWindowFX {
             return true;
         } else {
             return false;
+        }
+    }
+    protected void initializeModelBrowserFX() {
+        updateSpecificationAvailability(); // check if specifications avaiable
+        if (fSession.system() != null && fSession.system().model() != null) {
+            new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
+        } else {
+            new ModelBrowserFX(null, fPluginRuntime);
         }
     }
 
@@ -718,12 +722,39 @@ public class MainWindowFX {
 //        return win;
 //    }
 
-    private void setRecentfiles() {
-        recentFilesMenu.getItems().clear();
+    /**
+     *  this Method creates menu-items for each recent specification and
+     *  ads a seperator after each has been created, to include at last an
+     *  menu-item (clearRecentSpecifications) to clear these menu-items
+     *  (also the recent files in the Options)
+     */
+    public void setRecentfiles() {
+        if (recentFilesMenu.getItems() != null){
+            recentFilesMenu.getItems().clear();
+        }
 
         for (Path recent : Options.getRecentFiles("use")) {
-            recentFilesMenu.getItems().add(ActionFileOpenSpecRecent(recent));
+            MenuItem item = new MenuItem(recent.toString());
+            item.setOnAction(e -> {
+                compile(Objects.requireNonNull(recent));
+                initializeModelBrowserFX();
+            });
+            recentFilesMenu.getItems().add(item);
         }
+
+        MenuItem clearRecentSpecifications = new MenuItem("Clear recent specifications");
+        clearRecentSpecifications.disableProperty().bind(fActionFileReload.not());
+        clearRecentSpecifications.setOnAction(e -> {
+            Options.getRecentFiles().getItems().clear();
+            recentFilesMenu.getItems().clear();
+            // after having all menu-items for the recent specifications deleted we reinitialize
+            // the menuitem to contain only the divider and clearRecentSpecifications
+            setRecentfiles();
+            updateSpecificationAvailability();
+        });
+
+        recentFilesMenu.getItems().add(new SeparatorMenuItem());
+        recentFilesMenu.getItems().add(clearRecentSpecifications);
     }
 
 
@@ -787,6 +818,13 @@ public class MainWindowFX {
 
     public IRuntime getPluginRuntime() {
         return fPluginRuntime;
+    }
+
+    /**
+     * This Method updates the Status of the BooleanPropertys, according to if specifications are available.
+     */
+    public void updateSpecificationAvailability() {
+        fActionFileReload.set(!Options.getRecentFiles().isEmpty());
     }
 
     /**

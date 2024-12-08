@@ -117,21 +117,30 @@ public class Main extends Application {
     private void compileSpecification(Stage primaryStage) throws IOException {
         // compile spec if filename given as argument
         if (Options.specFilename != null) {
+            Path file = Path.of(Options.specFilename);
             try (FileInputStream specStream = new FileInputStream(Options.specFilename)) {
                 Log.verbose("compiling specification...");
                 model = USECompiler.compileSpecification(specStream,
-                        Options.specFilename, new PrintWriter(System.err),
+                        file.getFileName().toString(), new PrintWriter(System.err),
                         new ModelFactory());
             } catch (FileNotFoundException e) {
                 Log.error("File `" + Options.specFilename + "' not found.");
-                System.exit(1);
+                if (Options.integrationTestMode){
+                    return;
+                } else{
+                    System.exit(1);
+                }
             } catch (IOException e1) {
                 // close failed
             }
 
             // Check for compilation errors
             if (model == null) {
-                System.exit(1);
+                if (Options.integrationTestMode){
+                    return;
+                } else {
+                    System.exit(1);
+                }
             }
 
             if (!Options.quiet) {

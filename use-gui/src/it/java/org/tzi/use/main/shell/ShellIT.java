@@ -1,18 +1,12 @@
 //package org.tzi.use.main.shell;
 //
-//import com.github.difflib.text.DiffRow;
-//import com.github.difflib.text.DiffRowGenerator;
-//import javafx.application.Platform;
-//import javafx.stage.Stage;
+//import com.github.difflib.DiffUtils;
+//import com.github.difflib.patch.AbstractDelta;
+//import com.github.difflib.patch.Patch;
 //import org.junit.jupiter.api.DynamicTest;
 //import org.junit.jupiter.api.TestFactory;
-//import org.tzi.use.config.Options;
-//import org.tzi.use.main.gui.Main;
-//import org.tzi.use.util.USEWriter;
 //
-//import java.io.ByteArrayOutputStream;
-//import java.io.FileWriter;
-//import java.io.IOException;
+//import java.io.*;
 //import java.net.URISyntaxException;
 //import java.net.URL;
 //import java.nio.charset.StandardCharsets;
@@ -21,12 +15,8 @@
 //import java.util.Collections;
 //import java.util.LinkedList;
 //import java.util.List;
-//import java.util.Locale;
-//import java.util.concurrent.CompletableFuture;
-//import java.util.concurrent.ExecutionException;
+//import java.util.Optional;
 //import java.util.function.Function;
-//import java.util.function.Predicate;
-//import java.util.stream.Collectors;
 //import java.util.stream.Stream;
 //
 //import static org.junit.jupiter.api.Assertions.fail;
@@ -34,35 +24,35 @@
 ///**
 // * This class implements the shell integration tests.
 // *
-// * <p>These tests represent nearly the exact behavior of the
-// * USE shell. Only some whitespace differences and time outputs are ignored.</p>
+// * These tests represent nearly the exact behavior of the
+// * USE shell. Only some whitespace differences and time outputs are ignored.
 // *
-// * <p>Each test consists of the following files:
+// * Each test consists of the following files:
 // * <ol>
-// *     <li>a model file (suffix {@code .use}) - this file provides the (possible empty) model used
+// *     <li>a model file (suffix <code>.use</code>) - this file provides the (possible empty) model used
 // *     for the tests</li>
-// *     <li>an input file (suffix: {@code .in}) - this file can contain any commands USE supports.
-// *     The expected output must be specified by starting a line with a star {@code *}</li>
+// *     <li>an input file (suffix: <code>.in</code>) - this file can contain any commands USE supports.
+// *     The expected output must be specified by starting a line with a star <code>*</code></li>
 // *     <li>any other used file from the command line, e.g., ASSL- or command-files.</li>
-// * </ol></p>
-// *
-// * <p>All {@code .use</code> and </code><code>.in} files must share the same name, e.g., t555.use and t555.in for test
-// * case 555. These files must be placed in the folder {@code it/resources/testfiles/shell}.</p>
-// *
-// * <p>If an integration test fails, two additional files are created:
-// * <ol>
-// *     <li>{@code {testcasename}.expected</code> - The expected output calculated from the <code>{testcase}.in}-file</li>
-// *     <li>{@code {testcasename}.actual} - The output captured while running the test.</li>
 // * </ol>
-// * These files can be used to easily diff expected and current output.</p>
+// *
+// * All <code>.use</code> and </code><code>.in</code> files must share the same name, e.g., t555.use and t555.in for test
+// * case 555. These files must be placed in the folder <code>it/resources/testfiles/shell</code>.
+// *
+// * If an integration test fails, two additional files are created:
+// * <ol>
+// *     <li><code>{testcasename}.expected</code> - The expected output calculated from the <code>{testcase}.in</code>-file</li>
+// *     <li><code>{testcasename}.actual</code> - The ouptut captured while running the test.</li>
+// * </ol>
+// * These files can be used to easily diff expected and current output.
 // */
 //public class ShellIT {
 //
 //    /**
-//     * This TestFactory enumerates the {@code .in</code>-files in th folder <code>testfiles/shell}.
-//     * For each file a {@code DynamicTest} is created with the name of the file.
+//     * This TestFactory enumerates the <code>.in</code>-files in th folder <code>testfiles/shell</code>.
+//     * For each file a <Code>DynamicTest</Code> is created with the name of the file.
 //     *
-//     * @return A {@code Stream</code> with one <code>DynamicTest</code> for each <code>*.in}-file.
+//     * @return A <code>Stream</code> with one <code>DynamicTest</code> for each <code>*.in</code>-file.
 //     */
 //    @TestFactory
 //    public Stream<DynamicTest> evaluateExpressionFiles() {
@@ -79,10 +69,10 @@
 //            fail("Directory for shell integration tests not found!");
 //        }
 //
-//        try  {
+//        try {
 //            return Files.walk(testDirPath).filter(
 //                    path -> path.getFileName().toString().endsWith(".in")
-//                        ).map(mapInFileToTest());
+//            ).map(mapInFileToTest());
 //        } catch (IOException e) {
 //            fail("Error iterating shell integration test input files!");
 //        }
@@ -91,11 +81,11 @@
 //    }
 //
 //    /**
-//     * This {@code Function} is used to map
-//     * a given testinput-file given as a {@code Path}
-//     * to a {@code DynamicTest}.
+//     * This <code>Function</code> is used to map
+//     * a given testinput-file given as a <code>Path</code>
+//     * to a <code>DynamicTest</code>.
 //     *
-//     * @return A {@code DynamicTest</code> that uses the function <code>assertShellExpression}
+//     * @return A <code>DynamicTest</code> that uses the function <code>assertShellExpression</code>
 //     *         to test the given testinput file.
 //     */
 //    private Function<Path, DynamicTest> mapInFileToTest() {
@@ -108,17 +98,17 @@
 //    }
 //
 //    /**
-//     * <p>This function controls the overall process for test for a single testfile.</p>
+//     * This function controls the overall process for test for a single testfile.
 //     *
-//     * <p>The process is as follows:
+//     * The process is as follow:
 //     * <ol>
-//     *     <li>a command file and the expected output are created by examining the input file (via {@code createCommandFile}.</li>
-//     *     <li>USE is executed using the {@code useFile</code> and the created command file (<code>runUSE}).</li>
-//     *     <li>The output of USE is compared to the expected output created in 1. ({@code validateOutput}).</li>
-//     * </ol></p>
+//     *     <li>a command file and the expected output are created by examining the input file (via <code>createCommandFile</code>.</li>
+//     *     <li>USE is executed using the <code>useFile</code> and the created command file (<code>runUSE</code>).</li>
+//     *     <li>The output of USE is compared to the expected output created in 1. (<code>validateOutput</code>).</li>
+//     * </ol>
 //     *
-//     * @param testFile {@code Path} to the test input file to execute.
-//     * @param useFile {@code Path} to the USE file containing the model to load for the test.
+//     * @param testFile <code>Path</code> to the test input file to execute.
+//     * @param useFile <code>Path</code> to the USE file containing the model to load for the test.
 //     */
 //    private void assertShellExpressions(Path testFile, Path useFile) {
 //
@@ -126,39 +116,33 @@
 //
 //        List<String> expectedOutput = createCommandFile(testFile, cmdFile);
 //
-//        List<String> actualOutput = runUSE(useFile, cmdFile).collect(Collectors.toList());
+//        List<String> actualOutput = runUSE(useFile, cmdFile);
 //
 //        validateOutput(testFile, expectedOutput, actualOutput);
 //    }
 //
 //    /**
-//     * Compares the two lists of strings {@code expectedOutput}
-//     * and {@code actualOutput}.
+//     * Compares the two lists of strings <code>expectedOutput</code>
+//     * and <code>actualOutput</code>.
 //     * If they differ, two files are written at the location of the
-//     * {@code testFile</code>. One with the expected output (<code>.expected})
-//     * and one with the actual output ({@code .actual}).
+//     * <code>testFile</code>. One with the expected output (<code>.expected</code>)
+//     * and one with the actual output (<code>.actual</code>).
 //     *
-//     * @param testFile The {@code Path</code> to the <code>testFile}
+//     * @param testFile The <code>Path</code> to the <code>testFile</code>
 //     * @param expectedOutput List of strings with the expected output (one String per line)
 //     * @param actualOutput List of strings with the actual output (one String per line)
 //     */
 //    private void validateOutput(Path testFile, List<String> expectedOutput, List<String> actualOutput) {
-//        //create a configured DiffRowGenerator
-//        DiffRowGenerator generator = DiffRowGenerator.create()
-//                .showInlineDiffs(true)
-//                .mergeOriginalRevised(true)
-//                .inlineDiffByWord(true)
-//                .ignoreWhiteSpaces(true)
-//                .lineNormalizer( (s) -> s ) // No normalization required
-//                .oldTag((f, start) -> start ? "-\033[9m" : "\033[m-")      //introduce markdown style for strikethrough
-//                .newTag((f, start) -> start ? "+\033[97;42m" : "\033[m+")     //introduce markdown style for bold
-//                .build();
+//        Patch<String> patch = DiffUtils.diff(expectedOutput, actualOutput);
+//        boolean nonWhitespaceChange = false;
 //
-//        //compute the differences for two test texts.
-//        List<DiffRow> rows = generator.generateDiffRows(expectedOutput, actualOutput);
-//        Predicate<DiffRow> filter = d -> d.getTag() != DiffRow.Tag.EQUAL;
+//        // Check if non whitespace diffs are present
+//        nonWhitespaceChange = patch.getDeltas().stream().anyMatch(
+//                (delta) -> delta.getSource().getLines().stream().anyMatch(line -> !line.isBlank()) ||
+//                        delta.getTarget().getLines().stream().anyMatch(line -> !line.isBlank())
+//        );
 //
-//        if (rows.stream().anyMatch(filter)) {
+//        if (nonWhitespaceChange) {
 //            StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!").append(System.lineSeparator());
 //
 //            diffMsg.append("Testfile: ").append(testFile).append(System.lineSeparator());
@@ -166,24 +150,32 @@
 //            diffMsg.append(System.lineSeparator()).append("Note: the position is not the position in the input file!");
 //            diffMsg.append(System.lineSeparator()).append(System.lineSeparator());
 //
-//            rows.stream().filter(filter).forEach(
-//                    row ->diffMsg.append(System.lineSeparator()).append(row.getOldLine())
-//            );
+//            //simple output the computed patch to console
+//            for (AbstractDelta<String> delta : patch.getDeltas()) {
+//                diffMsg.append("Diff [")
+//                        .append(delta.getType())
+//                        .append("] Source: '")
+//                        .append(delta.getSource().toString())
+//                        .append("' Target: '" )
+//                        .append(delta.getTarget().toString())
+//                        .append("'")
+//                        .append(System.lineSeparator());
+//            }
 //
-//            writeToFile(expectedOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".expected"));
-//            writeToFile(actualOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".actual"));
+//            writeToFile(expectedOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".expected" ));
+//            writeToFile(actualOutput, testFile.getParent().resolve(testFile.getFileName().toString() + ".actual" ));
 //
 //            fail(diffMsg.toString());
 //        }
 //    }
 //
 //    /**
-//     * <p>Helper method that writes the list of strings {@code data}
-//     * to the file located by the {@code Path} {@code file}.</p>
+//     * Helper method that writes the list of strings <code>data</code>
+//     * to the file loctaed by the <code>Path</code> <code>file</code>.
 //     *
-//     * <p>If the file is not accessible, i.e., an IOException is thrown,
-//     * the exceptions is caught and the test case fails.</p>
-//     * @param data The {@code List} of string (lines) to write.
+//     * If the file is not accessible, i.e., an IOException is thrown,
+//     * the exceptions is cathed and the test case fails.
+//     * @param data The <code>List</code> of string (lines) to write.
 //     * @param file The path to the file to write (file is overwritten).
 //     */
 //    private void writeToFile(List<String> data, Path file) {
@@ -199,46 +191,41 @@
 //    }
 //
 //    /**
-//     * Creates a USE-command file at the position located by the path {@code cmdFile}.
-//     * The file contains all commands that are specified in the {@code inFile}.
-//     * The expected output, i.e., lines starting with a {@code *} are added to the list {@code expectedOutput}.
+//     * Creates a USE-commandfile at the position located by the path <code>cmdFile</code>.
+//     * The file contains all commands that are specified in the <code>inFile</code>.
+//     * The expected output, i.e., lines starting with a <code>*</code> are added to the list <code>expectedOutput</code>.
 //     *
-//     * @param inFile The {@code Path} to the test input file.
-//     * @param cmdFile The {@code Path} where to create the command file.
-//     * @return  A {@code List} which is filled with the expected output of USE.
+//     * @param inFile The <code>Path</code> to the test input file.
+//     * @param cmdFile The <code>Path</code> where to create the command file.
+//     * @return  A <code>List</code> which is filled with the expected output of USE.
 //     */
 //    private List<String> createCommandFile(Path inFile, Path cmdFile) {
 //        List<String> expectedOutput = new LinkedList<>();
 //
 //        // Build USE command file and build expected output
 //        try (
-//            Stream<String> linesStream = Files.lines(inFile, StandardCharsets.UTF_8);
-//            FileWriter cmdWriter = new FileWriter(cmdFile.toFile(), StandardCharsets.UTF_8, false)
+//                Stream<String> linesStream = Files.lines(inFile, StandardCharsets.UTF_8);
+//                FileWriter cmdWriter = new FileWriter(cmdFile.toFile(), StandardCharsets.UTF_8, false)
 //        ) {
+//            // USE writes a prompt including the filename
+//            String prompt = cmdFile.getFileName().toString() + "> ";
 //
 //            linesStream.forEach(inputLine -> {
-//
-//                // Ignore empty lines in expected, since they are also suppressed in actual output
-//                if (inputLine.isBlank())
-//                    return;
-//
-//                if ((inputLine.startsWith("*") || inputLine.startsWith("#"))
-//                        && inputLine.substring(1).isBlank()) {
-//                    return;
-//                }
-//
 //                if (inputLine.startsWith("*")) {
 //                    // Input line minus prefix(*) is expected output
 //                    expectedOutput.add(inputLine.substring(1).trim());
 //                } else if (!inputLine.startsWith("#")) { // Not a comment
+//                    inputLine = inputLine.trim();
+//
+//                    if (inputLine.isEmpty()) {
+//                        return;
+//                    }
+//
 //                    try {
 //                        cmdWriter.write(inputLine);
 //                        cmdWriter.write(System.lineSeparator());
 //
-//                        // Multi line commands (backslash and dot) are ignored
-//                        if (!inputLine.matches("^[\\\\.]$")) {
-//                            expectedOutput.add(inputLine);
-//                        }
+//                        expectedOutput.add((prompt + inputLine).trim());
 //                    } catch (IOException e1) {
 //                        fail("Could not write USE command file for test!", e1);
 //                    }
@@ -252,54 +239,105 @@
 //    }
 //
 //    /**
-//     * Executes USE with the given {@code useFile} as the model
-//     * and the {@code cmdFile} to execute commands.
+//     * Executes USE with the given <code>useFile</code> as the model
+//     * and the <code>cmdFile</code> to execute commands.
 //     * The output is captured from the output and error streams.
 //     *
 //     * @param useFile Path to the USE model to load on startup
 //     * @param cmdFile Path to the commands file to execute
-//     * @return A {@code List} of strings. Each string is one line of output.
+//     *
+//     * @return A <code>List</code> of strings. Each string is one line of output.
 //     */
-//    private Stream<String> runUSE(Path useFile, Path cmdFile) {
-//        // We need to specify a concrete locale to always get the same formatted result
-//        Locale.setDefault(new Locale("en", "US"));
+//    private List<String> runUSE(Path useFile, Path cmdFile) {
+//        // Find USE jar
+//        Optional<Path> useJar;
 //
-//        // Prepare arguments for JavaFX application start
-//        String[] args = {
-//                "-nogui",
-//                "-spec=" + useFile.toString(),
-//                "-cmd=" + cmdFile.toString(),
-//                // Add other necessary command line arguments here
-//        };
-//
-//        // Start JavaFX application and wait for initialization
-//        CompletableFuture<Void> fxAppStarted = new CompletableFuture<>();
-//        Platform.startup(() -> {
-//            try {
-//                new Main().start(new Stage()); // Replace with proper method to start your main JavaFX application
-//                fxAppStarted.complete(null); // Signal that JavaFX is ready
-//            } catch (Exception e) {
-//                fxAppStarted.completeExceptionally(e);
-//            }
-//        });
-//
-//        // Wait for JavaFX application to initialize
 //        try {
-//            fxAppStarted.get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            fail("JavaFX application could not be started.", e);
-//        }
-//
-//        // Capture output from the JavaFX application
-//        try (ByteArrayOutputStream protocol = new ByteArrayOutputStream()) {
-//            USEWriter.getInstance().writeProtocolFile(protocol);
-//            String output = protocol.toString();
-//            return output.lines().filter(l -> !l.isBlank());
+//            Path targetDir = useFile.getParent().getParent().getParent().getParent();
+//            useJar = Files.walk(targetDir).filter(p -> p.getFileName().toString().matches("use-gui.jar")).findFirst();
 //        } catch (IOException e) {
-//            fail("Failed to capture output from JavaFX application.", e);
+//            fail("Could not find USE jar!", e);
+//            return Collections.emptyList();
 //        }
 //
-//        return Stream.empty();
-//    }
+//        if (useJar.isEmpty()) {
+//            fail("Could not find USE jar!");
+//        }
 //
+//        Path javaHome = Path.of(System.getProperty("java.home"));
+//        Path javaBinary = javaHome.resolve("bin/java.exe");
+//
+//        if (!javaBinary.toFile().exists()) {
+//            javaBinary = javaHome.resolve("bin/java");
+//
+//            if (!javaBinary.toFile().exists()) {
+//                fail("Java binary could not be found");
+//            }
+//        }
+//
+//        ProcessBuilder pb = new ProcessBuilder(
+//                javaBinary.toString(),
+//                "-Duser.country=US",
+//                "-Duser.language=en",
+//                "-jar",
+//                useJar.get().toString(),
+//                "-nogui",
+//                "-nr",
+//                "-t",
+//                "-oclAnyCollectionsChecks:E",
+//                "-extendedTypeSystemChecks:E",
+//                /* This is currently an unstable workaround
+//                   USE determines the plugin and the extensions to OCL by fixed paths.
+//                   For now, the use-core module contains the directories including the extensions
+//                   and an empty plugins folder.
+//                   The folder is located: use/use-core/target/classes
+//                   Therefore, this is used as the USE home
+//                 */
+//                "-H=" + useJar.get().getParent().resolve("../../use-core/target/classes").toString(),
+//                useFile.getFileName().toString(),
+//                cmdFile.getFileName().toString());
+//
+//        pb.redirectErrorStream(true);
+//        pb.directory(useFile.getParent().toFile());
+//
+//        // Run a java app in a separate system process
+//        Process proc = null;
+//        try {
+//            proc = pb.start();
+//        } catch (IOException e) {
+//            fail("USE could not be started!", e);
+//        }
+//
+//        // Then retrieve the process output
+//        InputStream in = proc.getInputStream();
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+//        String line;
+//        List<String> actualOutput = new LinkedList<>();
+//        boolean firstLine = true;
+//
+//        while(proc.isAlive()) {
+//            try {
+//                line = reader.readLine();
+//
+//                if (firstLine) {
+//                    // USE writes some information at the beginning
+//                    // We ignore this.
+//                    firstLine = false;
+//                    continue;
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                break;
+//            }
+//
+//            if (proc.isAlive()) {
+//                line = line == null ? "" : line.trim();
+//                if (!line.equals("")) {
+//                    actualOutput.add(line);
+//                }
+//            }
+//        }
+//
+//        return actualOutput;
+//    }
 //}
