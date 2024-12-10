@@ -224,8 +224,11 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"packages": {},
-						"type": "text/javascript"
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -235,6 +238,238 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"attributes\": [\r\n        {\r\n            \"name_attr\": \"Attribute1\",\r\n            \"type\": \"String\"\r\n        }\r\n    ],\r\n    \"operations\": [\r\n        {\r\n            \"head\": \"Operation1\",\r\n            \"body\": null\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/class"
+			},
+			"response": []
+		},
+		{
+			"name": "duplicate class",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"Class name already exists\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClass2\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/class"
+			},
+			"response": []
+		},
+		{
+			"name": "duplicate attribute",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"Attribute creation failed!\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassDoubleAttr\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/class"
+			},
+			"response": []
+		},
+		{
+			"name": "duplicate operation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"Operation creation failed!\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassDupOperation\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      },\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/class"
+			},
+			"response": []
+		},
+		{
+			"name": "no attribute name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"Modelelement without name\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassNoAttrName\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/class"
+			},
+			"response": []
+		},
+		{
+			"name": "no operation name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"Operation name is required!\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassNoOperationName\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/class"
+			},
+			"response": []
+		},
+		{
+			"name": "POST performance",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Generate a unique name using an iteration counter and timestamp\r",
+							"let iter = pm.info.iteration || 0;\r",
+							"let uniqueName = `Class-${iter}-${Date.now()}`;\r",
+							"\r",
+							"pm.environment.set(\"uniqueName\", uniqueName);\r",
+							"\r",
+							"console.log(\"Generated unique name: \" + uniqueName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response time is below 20ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(20);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is below 100ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(100);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n  {\r\n    \"name_mclass\": \"{{uniqueName}}\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }\r\n  {\r\n    \"name_mclass\": \"TestClass2\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
 					"options": {
 						"raw": {
 							"language": "json"
