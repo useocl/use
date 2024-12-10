@@ -1,6 +1,7 @@
 package org.tzi.use.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -10,8 +11,6 @@ import java.util.List;
 public class UseClass {
 
     @Id
-    private String id;
-
     private String name_mclass;
     // Unidirectional OneToMany relationship
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
