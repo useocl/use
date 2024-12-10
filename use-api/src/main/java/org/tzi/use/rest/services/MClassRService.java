@@ -18,6 +18,9 @@ public class MClassRService {
 
     public UseClass saveMClass(UseClass aUseClass) throws MInvalidModelException, UseApiException {
         MClassFacade.createMClass(aUseClass);
+        if(classRepository.findById(aUseClass.getName_mclass()).isPresent()) {
+            throw new UseApiException("Class name already exists");
+        }
         return classRepository.save(aUseClass);
     }
 
