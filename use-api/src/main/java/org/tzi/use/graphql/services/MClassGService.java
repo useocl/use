@@ -27,7 +27,7 @@ public class MClassGService {
     }
 
     @MutationMapping
-    public UseClass aClass(@Argument MClassInput mClassInput) {
+    public UseClass aUseClass(@Argument MClassInput mClassInput) {
         UseClass tmpUseClass = new UseClass(mClassInput.name_mclass, mClassInput.attributes,mClassInput.operations);
         return classRepo.save(tmpUseClass);
     }
