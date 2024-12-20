@@ -210,8 +210,8 @@ public class Main extends Application {
         if (Options.doGUI) {
             MainWindowFX mainWindowFX = new MainWindowFX();
             mainWindowFX.setSession(session);
-            mainWindowFX.setPrimaryStage(primaryStage);
             createPrimaryStage(primaryStage);
+            mainWindowFX.setPrimaryStage(primaryStage);
 
             if (pluginRuntime != null) {
                 Log.debug("Starting gui with plugin runtime.");

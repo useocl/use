@@ -29,6 +29,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
+import javafx.print.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -44,7 +45,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.kordamp.desktoppanefx.scene.layout.InternalWindow;
 import org.tzi.use.config.Options;
 
@@ -85,6 +85,7 @@ public class MainWindowFX {
     private static IRuntime fPluginRuntime;
     private Stage primaryStage;  // Reference to the primary stage
     private static MainWindowFX instance;
+    private PageLayout fPageLayout;
     private SwingNode swingNode;
     private static LogPanel fLogPanel;
     private static PrintWriter fLogWriter;
@@ -244,6 +245,24 @@ public class MainWindowFX {
 
         MenuItem printerSetup = new MenuItem("Printer Setup...");
         printerSetup.setGraphic(getIcon("document-print.png"));
+        printerSetup.setOnAction(e -> {
+
+            PrinterJob job = PrinterJob.createPrinterJob();
+
+            // initialize page format if necessary
+            fPageLayout = pageLayout(job);
+
+            // Set the job's current page layout before showing the dialog
+            job.getJobSettings().setPageLayout(fPageLayout);
+
+            // Show page setup dialog
+            boolean proceed = job.showPageSetupDialog(null);
+            if (proceed) {
+                // Apply the configured layout to the job
+                fPageLayout = job.getJobSettings().getPageLayout();
+            }
+
+        });
 
         MenuItem printDiagram = new MenuItem("Print diagram...");
         printDiagram.setGraphic(getIcon("document-print.png"));
@@ -257,7 +276,7 @@ public class MainWindowFX {
         MenuItem exit = new MenuItem("Exit");
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
         exit.setOnAction(e -> {
-            // Platform.exit beendet die gesamte JavaFX Anwendung
+            // Platform.exit terminates the entire JavaFX application
             Platform.exit();
             Shell.getInstance().exit();
         });
@@ -844,8 +863,36 @@ public class MainWindowFX {
         return new ImageView(image);
     }
 
+    /**
+     * Returns the instance of MainWindow.
+     */
     public static MainWindowFX getInstance() {
         return instance;
+    }
+
+    /**
+     * Returns the page format for printing.
+     */
+    public PageLayout pageLayout(PrinterJob job) {
+        if (fPageLayout == null) {
+
+            // initialize with defaults
+            Printer printer = job.getPrinter();
+            Paper paper = job.getPrinter().getDefaultPageLayout().getPaper();
+
+            // Default Portrait to initialize it
+            PageOrientation pageOrientation = PageOrientation.PORTRAIT;
+
+            if (Options.PRINT_PAGEFORMAT_ORIENTATION.equals("landscape"))
+                pageOrientation = PageOrientation.LANDSCAPE;
+            else if (Options.PRINT_PAGEFORMAT_ORIENTATION.equals("seascape"))
+                pageOrientation = PageOrientation.REVERSE_LANDSCAPE;
+
+            fPageLayout = printer.createPageLayout(paper, pageOrientation, Printer.MarginType.DEFAULT);
+
+        }
+
+        return fPageLayout;
     }
 
 }
