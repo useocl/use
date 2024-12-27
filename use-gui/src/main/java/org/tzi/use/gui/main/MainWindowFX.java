@@ -21,6 +21,8 @@ package org.tzi.use.gui.main;
 
 // Notwendig für die Einbindung von Java Swing Content in einer JavaFX Anwendung
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 
 import javax.swing.*;
@@ -45,6 +47,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.kordamp.desktoppanefx.scene.layout.InternalWindow;
 import org.tzi.use.config.Options;
 
@@ -53,18 +56,24 @@ import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.Communicatio
 
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 
 import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
+import org.tzi.use.main.gui.Main;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.util.USEWriter;
 
 
 import java.awt.*;
@@ -108,10 +117,17 @@ public class MainWindowFX {
     @FXML
     private TabPane fDesktopPane;
 
-    private BooleanProperty fActionFileReload = new SimpleBooleanProperty(false);;
-//    private BooleanProperty specificationAvailable;
-//    private BooleanProperty specificationAvailable;
-//    private BooleanProperty specificationAvailable;
+    @FXML
+    private Label fStatusBar;
+
+    // Boolean Property's as Action Listeners to Update Visibility!!
+    private final BooleanProperty fActionFileReload = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionSpecificationLoaded = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionSaveScript = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionPrintDiagram = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionPrintView = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionExportContentAsPDF = new SimpleBooleanProperty(false);
+
 
 
     private static Menu recentFilesMenu;
@@ -149,7 +165,12 @@ public class MainWindowFX {
     public void initialize() throws IOException {
         Options.getRecentFiles().getItems().clear();
         // update the status for the visibility of the menu- and tab-items
-        updateSpecificationAvailability();
+        updateFActionSpecificationLoaded();
+        updateFActionFileReload();
+        updateFActionSaveScript();
+        updateFActionDiagramPrinter();
+        updateFActionViewPrinter();
+        updateFActionExportContentAsPDF();
 
         initWebViewPlaceholder();
         initLogTextArea(); // create the log panel
@@ -166,6 +187,7 @@ public class MainWindowFX {
             fModelBrowser.setModel(fSession.system().model());
         }
 
+        //create the log panel
         fLogPanel = new LogPanel();
         fLogWriter = new PrintWriter(new TextComponentWriter(fLogPanel.getTextComponent()), true);
 
@@ -239,6 +261,7 @@ public class MainWindowFX {
 
         MenuItem saveScript = new MenuItem("Save script (.soil)...");
         saveScript.setGraphic(getIcon("save.png"));
+        saveScript.disableProperty().bind(fActionSaveScript.not());
 
         MenuItem saveProtocol = new MenuItem("Save protocol...");
         saveProtocol.setGraphic(getIcon("save.png"));
@@ -266,12 +289,19 @@ public class MainWindowFX {
 
         MenuItem printDiagram = new MenuItem("Print diagram...");
         printDiagram.setGraphic(getIcon("document-print.png"));
+        printDiagram.disableProperty().bind(fActionPrintDiagram.not());
+        printDiagram.setOnAction(e -> {
+            // TODO
+        });
 
         MenuItem printView = new MenuItem("Print View...");
         printView.setGraphic(getIcon("document-print.png"));
+        printView.disableProperty().bind(fActionPrintView.not());
 
         MenuItem exportAsPdf = new MenuItem("Export view as PDF...");
         exportAsPdf.setGraphic(getIcon("export_pdf.png"));
+        exportAsPdf.disableProperty().bind(fActionExportContentAsPDF.not());
+
 
         MenuItem exit = new MenuItem("Exit");
         exit.setAccelerator(KeyCombination.valueOf("Ctrl+Q"));
@@ -311,29 +341,39 @@ public class MainWindowFX {
      */
     private void initStateMenuItems(Menu stateMenuItems) {
         MenuItem createObject = new MenuItem("Create object...");
+        createObject.setAccelerator(KeyCombination.keyCombination("F7"));
+        createObject.disableProperty().bind(fActionSpecificationLoaded.not());
+        createObject.setOnAction(e -> {
+            // TODO
+            CreateObjectDialogFX dlg = new CreateObjectDialogFX(fSession, instance);
+            dlg.showAndWait();
+        });
+
         MenuItem evaluateOCLexpr = new MenuItem("Evaluate OCL expression...");
+        evaluateOCLexpr.setAccelerator(KeyCombination.keyCombination("F8"));
+        evaluateOCLexpr.setGraphic(getIcon("OCL.gif"));
+        evaluateOCLexpr.setOnAction(e -> {
+            System.out.println("F8 Succesfully pressed");
+        });
+
         MenuItem checkSN = new MenuItem("Check structure now");
+        checkSN.setAccelerator(KeyCombination.keyCombination("F9"));
+        checkSN.disableProperty().bind(fActionSpecificationLoaded.not());
+        checkSN.setOnAction(e -> {
+            System.out.println("F9 Succesfully pressed");
+        });
+
         CheckMenuItem checkSAEC = new CheckMenuItem("Check structure after every change");
         CheckMenuItem checkSMT = new CheckMenuItem("Check state machine transitions");
         CheckMenuItem checkSIAEC = new CheckMenuItem("Check state invariants after every change");
         MenuItem determine_states = new MenuItem("Determine states");
+        determine_states.disableProperty().bind(fActionSpecificationLoaded.not());
         MenuItem checkStateInvariants = new MenuItem("Check state invariants");
+        checkStateInvariants.disableProperty().bind(fActionSpecificationLoaded.not());
         MenuItem reset = new MenuItem("Reset");
+        reset.disableProperty().bind(fActionSpecificationLoaded.not());
 
-        evaluateOCLexpr.setGraphic(getIcon("OCL.gif"));
 
-        createObject.setAccelerator(KeyCombination.keyCombination("F7"));
-        evaluateOCLexpr.setAccelerator(KeyCombination.keyCombination("F8"));
-        checkSN.setAccelerator(KeyCombination.keyCombination("F9"));
-        createObject.setOnAction(e -> {
-            System.out.println("F7 Succesfully pressed");
-        });
-        evaluateOCLexpr.setOnAction(e -> {
-            System.out.println("F8 Succesfully pressed");
-        });
-        checkSN.setOnAction(e -> {
-            System.out.println("F9 Succesfully pressed");
-        });
 
         stateMenuItems.getItems().addAll(createObject, evaluateOCLexpr, checkSN, checkSAEC, checkSMT, checkSIAEC, determine_states, checkStateInvariants, reset);
     }
@@ -347,8 +387,18 @@ public class MainWindowFX {
         MenuItem closeAll = new MenuItem("Close all");
 
         MenuItem createClassDiagramViewItem = new MenuItem("Class diagram", getIcon("ClassDiagram.gif"));
+        createClassDiagramViewItem.setOnAction(e -> {
+            instance.createClassDiagram();
+        });
+
         Menu createStateMachineDiagramViewItem = new Menu("State machine diagram", getIcon("Diagram.gif"));
+        createStateMachineDiagramViewItem.setOnAction(e -> {});
+
         MenuItem createObjectDiagramViewItem = new MenuItem("Object diagram ", getIcon("ObjectDiagram.gif"));
+        createObjectDiagramViewItem.setOnAction(e -> {
+            instance.createObjectDiagram();
+        });
+
         MenuItem createClassInvariantViewItem = new MenuItem("Class invariant", getIcon("invariant-view.png"));
         MenuItem createObjectCountViewItem = new MenuItem("Object count", getIcon("blue-chart-icon.png"));
         MenuItem createLinkCountViewItem = new MenuItem("Link count", getIcon("red-chart-icon.png"));
@@ -366,6 +416,10 @@ public class MainWindowFX {
         createView.getItems().addAll(createClassDiagramViewItem, createStateMachineDiagramViewItem, createObjectDiagramViewItem, createClassInvariantViewItem, createObjectCountViewItem,
                 createLinkCountViewItem, createStateEvolutionViewItem, createObjectPropertiesViewItem, createClassExtentViewItem, createSequenceDiagramViewItem, createCommunicationDiagramViewItem,
                 createCallStackViewItem, createCommandListViewItem, associationEndsInformation);
+
+        createView.getItems().iterator().forEachRemaining(menuItem -> {
+            menuItem.disableProperty().bind(fActionSpecificationLoaded.not());
+        });
 
         viewMenuItems.getItems().addAll(createView, tile, closeAll);
     }
@@ -444,15 +498,86 @@ public class MainWindowFX {
                         instance.compile(Options.getRecentFile("use"));
                         initializeModelBrowserFX(); //reinitializing after compiling
                 }); break;
-                //TODO
+                case "Print diagram":
+                    button.disableProperty().bind(fActionPrintDiagram.not());
+                    //TODO "Print diagram"
+                    break;
+                case "Print view":
+                    button.disableProperty().bind(fActionPrintView.not());
+                    //TODO "Print view"
+                    break;
+                case "Export content of view as PDF":
+                    button.disableProperty().bind(fActionExportContentAsPDF.not());
+                    //TODO "Export content of view as PDF"
+                    break;
+                case "Undo last statement":
+                    //TODO "Undo last statement"
+                    break;
+                case "Redo last undone statement":
+                    //TODO "Print view"
+                    break;
+                case "Evaluate OCL expression":
+                    //TODO "Print view"
+                    break;
                 case "Create class diagram view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
                     button.setOnAction(e -> {
                         instance.createClassDiagram();
                     }); break;
+                case "Create statemachine diagram view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create statemachine diagram view"
+                    break;
+                case "Create object diagram view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    button.setOnAction(e -> {
+                        instance.createObjectDiagram();
+                    });
+                    //TODO "Create object diagram view"
+                    break;
+                case "Create class invariant view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create class invariant view"
+                    break;
+                case "Create object count view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create object count view"
+                    break;
+                case "Create link count view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create link count view"
+                    break;
+                case "Create state evolution view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create state evolution view"
+                    break;
+                case "Create object properties view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create object properties view"
+                    break;
+                case "Create class extent view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create class extent view"
+                    break;
+                case "Create sequence diagram view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create sequence diagram view"
+                    break;
+                case "Create communication diagram view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create communication diagram view"
+                    break;
+                case "Create call stack view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create call stack view"
+                    break;
+                case "Create command list view":
+                    button.disableProperty().bind(fActionSpecificationLoaded.not());
+                    //TODO "Create command list view"
+                    break;
 
 
             }
-
 
             // Add spacing between specific buttons
             if (i == 4 || i == 6 || i == 7) {
@@ -517,7 +642,50 @@ public class MainWindowFX {
         }
 
         // update the status for the visibility of the menu- and tab-items
-        updateSpecificationAvailability();
+        updateFActionSpecificationLoaded();
+        updateFActionFileReload();
+    }
+
+    public void createObject(String clsName) {
+        MClass objectClass = fSession.system().model().getClass(clsName);
+
+        if (objectClass == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("No class named `" + clsName + "' defined in model.");
+            alert.showAndWait();
+
+            return;
+        }
+
+        createObject(objectClass, null);
+    }
+
+    /**
+     * Creates a new object. Keeps track of undo information and handles errors
+     * on the GUI level.
+     */
+    public void createObject(MClass objectClass, String objectName) {
+
+        try {
+            MNewObjectStatement statement =
+                    new MNewObjectStatement(objectClass, objectName);
+
+            USEWriter.getInstance().protocol(
+                    "[GUI] " + statement.getShellCommand().substring(1));
+
+            fSession.system().execute(statement);
+
+        } catch (MSystemException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            Platform.runLater(alert::showAndWait);
+        }
     }
 
     /**
@@ -525,15 +693,16 @@ public class MainWindowFX {
      */
     private void createClassDiagram() {
 
-        // to create a Intance of a SwingNode, which is used to hold the Swing-Components
+        // to create an Intance of a SwingNode, which is used to hold the Swing-Components
         swingNode = new SwingNode();
 
-        // Don' load layout if shift key is pressed
+        // Don't load layout if shift key is pressed
         boolean loadLayout = (ActionEvent.SHIFT_MASK) == 0;
 
         //setting the visiility of the MainWindow (Swing Gui) to false because we dont want it to be shown
         MainWindow.setJavaFxCall(true);
         ClassDiagram.setJavaFxCall(true); // so that class diagrams dont save any state
+
         // Calling the Swing MainWindow to get the ClassDiagram out of it
         MainWindow mainwindow = MainWindow.create(fSession,fPluginRuntime);
 
@@ -544,8 +713,75 @@ public class MainWindowFX {
         c.setLayout(new BorderLayout());
         c.add(cdv, BorderLayout.CENTER);
         swingNode.setContent(c);
-        Tab classDiagramTab = new Tab("class diagram", swingNode);
+
+        Tab classDiagramTab = new Tab("Class diagram", swingNode);
+
+        // Listener for the selected Tab
+        setupTabSelectionMessage(classDiagramTab, "Use left mouse button to move "
+                + "classes, right button for popup menu.");
+
+        // Add the tab to the TabPane
         fDesktopPane.getTabs().add(classDiagramTab);
+    }
+
+    /**
+     * Creates a new object diagram view.
+     */
+    private void createObjectDiagram() {
+
+        // to create an Intance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we doesn't want it to be shown
+        MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        MainWindow mainwindow = MainWindow.create(fSession,fPluginRuntime);
+
+        // Create the NewObjectDiagramView and the enclosing ViewFrame
+        NewObjectDiagramView odv = new NewObjectDiagramView(mainwindow, fSession.system());
+        ViewFrame f = new ViewFrame("Object diagram", odv, "ObjectDiagram.gif");
+
+        // on changes of session the object view diagrams are being updated!
+        fSession.addChangeListener(event -> {
+            Platform.runLater(odv::updateUI);
+        });
+
+        // Check if the system has too many objects and prompt the user
+        int OBJECTS_LARGE_SYSTEM = 1;
+        if (fSession.system().state().allObjects().size() > OBJECTS_LARGE_SYSTEM) {
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Large system state");
+            alert.setContentText("The current system state contains more than " + OBJECTS_LARGE_SYSTEM + " instances. " +
+                    "This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?");
+
+            // Show a confirmation dialog using Alert
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                odv.getDiagram().hideAll();
+            } else {
+                // Do Nothing (Show the Object Diagram View without Hiding)
+            }
+        }
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(odv, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+
+        // Create a new tab in the JavaFX TabPane for the object diagram
+        Tab objectDiagramTab = new Tab("Object diagram", swingNode);
+
+        // Show a temporary message in the status bar
+        setupTabSelectionMessage(objectDiagramTab, "Use left mouse button to move objects, right button for popup menu.");
+
+        // Add the tab to the TabPane
+        fDesktopPane.getTabs().add(objectDiagramTab);
     }
 
     // Actions
@@ -604,7 +840,13 @@ public class MainWindowFX {
         }
     }
     protected void initializeModelBrowserFX() {
-        updateSpecificationAvailability(); // check if specifications avaiable
+        // check if specifications avaiable
+        updateFActionSpecificationLoaded();
+        updateFActionFileReload();
+        updateFActionSaveScript();
+        updateFActionDiagramPrinter();
+        updateFActionViewPrinter();
+        updateFActionExportContentAsPDF();
         if (fSession.system() != null && fSession.system().model() != null) {
             new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
         } else {
@@ -772,7 +1014,7 @@ public class MainWindowFX {
             // after having all menu-items for the recent specifications deleted we reinitialize
             // the menuitem to contain only the divider and clearRecentSpecifications
             setRecentfiles();
-            updateSpecificationAvailability();
+            updateFActionFileReload(); //TODO hier für Reload Specification update einbauen
         });
 
         recentFilesMenu.getItems().add(new SeparatorMenuItem());
@@ -843,10 +1085,52 @@ public class MainWindowFX {
     }
 
     /**
-     * This Method updates the Status of the BooleanPropertys, according to if specifications are available.
+     * This Method updates the Status of the BooleanProperty (fActionFileReload), according to if specifications are available.
      */
-    public void updateSpecificationAvailability() {
+    public void updateFActionFileReload() {
         fActionFileReload.set(!Options.getRecentFiles().isEmpty());
+    }
+
+    /**
+     * This Method updates the Status of the BooleanProperty (fActionSpecificationLoaded), according to if specifications are available.
+     */
+    public void updateFActionSpecificationLoaded() {
+        fActionSpecificationLoaded.set(!Options.getRecentFiles().isEmpty());
+    }
+
+    /**
+     * This Method updates the Status of the BooleanProperty (fActionSaveScript), according to if scripts are available.
+     */
+    public void updateFActionSaveScript() {
+        // TODO hier schauen wann angezeigt werden soll
+        fActionSaveScript.set(false);
+    }
+
+    /**
+     * This Method updates the Status of the BooleanProperty (fActionPrintDiagram), according to if Diagrams are available.
+     */
+    public void updateFActionDiagramPrinter() {
+        // TODO hier schauen auf welchem Tab man ist und wenn man auf einem tab ist welches für Printer geeignet ist dann halt true.
+        //fActionPrinter.set(fDesktopPane.getTabs().);
+        fActionPrintDiagram.set(false);
+    }
+
+    /**
+     * This Method updates the Status of the BooleanProperty (fActionPrintView), according to if Views are available.
+     */
+    public void updateFActionViewPrinter() {
+        // TODO hier schauen auf welchem Tab man ist und wenn man auf einem tab ist welches für Printer geeignet ist dann halt true.
+        //fActionPrinter.set(fDesktopPane.getTabs().);
+        fActionPrintView.set(false);
+    }
+
+    /**
+     * This Method updates the Status of the BooleanProperty (fActionExportContentAsPDF), according to if contents of View are available.
+     */
+    public void updateFActionExportContentAsPDF() {
+        // TODO hier schauen auf welchem Tab man ist und wenn man auf einem tab ist welches für Printer geeignet ist dann halt true.
+        //fActionPrinter.set(fDesktopPane.getTabs().);
+        fActionExportContentAsPDF.set(false);
     }
 
     /**
@@ -892,7 +1176,28 @@ public class MainWindowFX {
 
         }
 
+
+
         return fPageLayout;
+    }
+
+    /**
+     * Sets up a tab to display a temporary message in the status bar when selected.
+     *
+     * @param tab       the Tab to which the selection behavior will be applied
+     * @param tmpMessage   the temporary message to display when the tab is selected
+     */
+    private void setupTabSelectionMessage(Tab tab, String tmpMessage){
+        tab.setOnSelectionChanged(event -> {
+            if (tab.isSelected()) {
+                fStatusBar.setText(tmpMessage);
+                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> fStatusBar.setText("Ready.")));
+                timeline.setCycleCount(1);
+                timeline.play();
+            } else {
+                fStatusBar.setText("Ready.");
+            }
+        });
     }
 
 }

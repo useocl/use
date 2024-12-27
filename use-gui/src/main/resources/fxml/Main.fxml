@@ -69,7 +69,7 @@
                     <TextArea fx:id="logTextArea" VBox.vgrow="ALWAYS">
                     </TextArea>
                     <HBox>
-                        <Label text="Ready." />
+                        <Label fx:id="fStatusBar" text="Ready." />
                     </HBox>
                 </VBox>
             </items>

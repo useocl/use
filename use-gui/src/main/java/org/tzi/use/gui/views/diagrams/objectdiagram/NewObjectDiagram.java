@@ -74,6 +74,7 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -246,6 +247,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	private ObjectSelection fSelection;
 
 	protected DiagramInputHandling inputHandling;
+
+	private static Boolean javaFxCall = false;
 
 	/**
 	 * Creates a new empty diagram.
@@ -1828,7 +1831,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	@Override
 	protected void onClosing() {
-		super.onClosing();
+		if (!javaFxCall) {
+			super.onClosing();
+		}
 		fParent.getModelBrowser().removeHighlightChangeListener(this);
 		fParent.removeKeyListener(inputHandling);
 		ModelBrowserSorting.getInstance().removeSortChangeListener(this);
@@ -2059,4 +2064,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 		return -1;
 	}
+
+	public static void setJavaFxCall(Boolean javaFxCall) {
+		NewObjectDiagram.javaFxCall = javaFxCall;
+	}
+
 }
