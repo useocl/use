@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.main.MainWindowFX;
 import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
@@ -305,7 +306,7 @@ public class NewObjectDiagramView extends JPanel
     }
 
     void createObject(String clsName) {
-        fMainWindow.createObject(clsName);
+        MainWindowFX.getInstance().createObject(clsName);
     }
 
     @Override

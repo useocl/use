@@ -19,165 +19,173 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-
-import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
-import org.tzi.use.gui.util.GridBagHelper;
-import org.tzi.use.main.ChangeEvent;
-import org.tzi.use.main.ChangeListener;
+import javafx.stage.StageStyle;
 import org.tzi.use.main.Session;
+import org.tzi.use.main.gui.Main;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MSystem;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /** 
  * A dialog for creating objects.
- *  
+ *
+ * @author  Akif Aydin
  * @author  Mark Richters
  * @author  Lars Hamann
  */
 @SuppressWarnings("serial")
-class CreateObjectDialog extends JDialog {
+class CreateObjectDialog extends Stage{
     private MSystem fSystem;
-    private MainWindow fParent;
-    private List<MClass> fClasses;
-    private JList<MClass> fListClasses;
-    private JTextField fTextObjectName;
+    private MainWindowFX fParent;
+    private List<MClass> fClassesList;
+    private ObservableList<MClass> fClassesOList;
+    private ListView<MClass> fListClasses;
+    private TextField fTextObjectName;
 
-    CreateObjectDialog(Session session, MainWindow parent) {
-        super(parent, "Create object");
-        
-        session.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				closeDialog();
-			}
-		});
-        
+    CreateObjectDialog(Session session, MainWindowFX parent) {
+
+        session.addChangeListener(event -> Platform.runLater(this::close));
+
         fSystem = session.system();
         fParent = parent;
 
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        //create Object Stage Styling
+        setTitle("Create object");
+        initStyle(StageStyle.DECORATED); // only exit button visible on top right side
+        setResizable(false);             // deactivate minimize/maximize feature
+        initModality(Modality.APPLICATION_MODAL); // Make it a modal dialog (You cant interact with anything else until this window is closed)
+        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif")))); // same icon as the MainWindow
 
-        fClasses = new ArrayList<MClass>(fSystem.model().classes().size());
-        // create class list and label
+        // closes the stage
+        setOnCloseRequest(windowEvent -> close());
+
+
+        // TODO
+        // filter classes (exclude MAssociationClass)
+        fClassesList = new ArrayList<MClass>(fSystem.model().classes().size());
         for (MClass cls : fSystem.model().classes()) {
-        	if (!(cls instanceof MAssociationClass))
-        		fClasses.add(cls);
+            if (!(cls instanceof MAssociationClass))
+                fClassesList.add(cls);
         }
-        
-        fListClasses = new JList<MClass>(fClasses.toArray(new MClass[]{}));
-        fListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JLabel labelClasses = new JLabel("Select class:");
-        labelClasses.setDisplayedMnemonic('S');
+        fClassesOList = FXCollections.observableArrayList(fClassesList);
+
+        // Class ListView
+        fListClasses = new ListView<>(fClassesOList); // list view
+        fListClasses.getSelectionModel().setSelectionMode(SelectionMode.SINGLE); // show one by one
+        fListClasses.setPrefHeight(150);
+
+        Label labelClasses = new Label("Select class:");
         labelClasses.setLabelFor(fListClasses);
-        JScrollPane scrollListClasses = new JScrollPane(fListClasses);
 
         // create object name field and label
-        fTextObjectName = new JTextField(10);
-        JLabel labelObjectName = new JLabel("Object name:");
-        labelObjectName.setDisplayedMnemonic('O');
+        fTextObjectName = new TextField();
+        fTextObjectName.setPromptText("Enter object name");
+        Label labelObjectName = new Label("Object name:");
         labelObjectName.setLabelFor(fTextObjectName);
 
+
         // create buttons
-        JButton btnCreate = new JButton("Create");
-        btnCreate.setMnemonic('C');
-        btnCreate.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    createObject();
-                }
-            });
-        JButton btnClose = new JButton("Close");
-        btnClose.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    closeDialog();
-                }
-            });
+        Button btnCreate = new Button("Create");
+        btnCreate.setOnAction(e -> {
+            createObject();
+        });
 
-        // layout content pane
-        JComponent contentPane = (JComponent) getContentPane();
-        contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        Button btnCancel = new Button("Close");
+        btnCancel.setOnAction(e -> {
+            close();
+        });
 
-        GridBagHelper gh = new GridBagHelper(contentPane);
-        gh.add(labelClasses, 0, 0, 
-               1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+        HBox buttonbox = new HBox(10, btnCreate, btnCancel);
+        buttonbox.setPadding(new Insets(10,0,0,0));
 
-        gh.add(scrollListClasses, 0, 1, 
-               1, GridBagConstraints.REMAINDER, 1.0, 0.0, 
-               GridBagConstraints.BOTH);
+        //GridPane Layout
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
+        grid.setHgap(10);
+        grid.setVgap(10);
 
-        gh.add(labelObjectName, 1, 0, 
-               1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+        grid.add(labelClasses, 0, 0);
+        grid.add(fListClasses, 0,1,2,1);
 
-        gh.add(fTextObjectName, 1, 1, 
-               1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+        grid.add(labelObjectName, 0, 2);
+        grid.add(fTextObjectName, 1, 2);
 
-        gh.add(new JPanel(), 1, 2, 
-               1, 1, 0.0, 1.0, GridBagConstraints.BOTH);
+        grid.add(buttonbox, 1, 3);
+        GridPane.setHgrow(fTextObjectName, Priority.ALWAYS);
 
-        gh.add(btnCreate, 1, 3, 
-               1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+        // Set Scene
+        Scene scene = new Scene(grid, 300, 300);
+        setScene(scene);
 
-        gh.add(btnClose, 1, 4, 
-               1, 1, 0.0, 0.0, GridBagConstraints.HORIZONTAL);
+        // Close on Escape Key
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE){
+                close();
+            }
+        });
 
-
-        getRootPane().setDefaultButton(btnCreate);
-        pack();
-        setSize(new Dimension(300, 300));
-        setLocationRelativeTo(parent);
-        fListClasses.requestFocus();
-    
-        // allow dialog close on escape key
-        CloseOnEscapeKeyListener ekl = new CloseOnEscapeKeyListener(this);
-        addKeyListener(ekl);
-        fTextObjectName.addKeyListener(ekl);
     }
 
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
-    }
-
+    /**
+     * Creates a new object based on user input.
+     * <p>
+     * Validates the object name and class selection. If valid, it delegates the
+     * creation of the object to the parent window and closes the dialog.
+     * </p>
+     */
     private void createObject() {
         // get object name
-        String name = fTextObjectName.getText();
-        if (name.length() == 0 ) {
-            JOptionPane.showMessageDialog(this,
-                                          "You need to specify a name for the new object.",
-                                          "Error",
-                                          JOptionPane.ERROR_MESSAGE);
+        String name = fTextObjectName.getText().trim();
+        if (name.isEmpty()) {
+            showAlert("You need to specify a name for the new object.");
             return;
         }
 
         // get class
-        MClass cls = fListClasses.getSelectedValue();
+        MClass cls = fListClasses.getSelectionModel().getSelectedItem();
         if ( cls == null ) {
-            JOptionPane.showMessageDialog(this,
-                                          "You need to specify a class for the new object.",
-                                          "Error",
-                                          JOptionPane.ERROR_MESSAGE);
+            showAlert("You need to specify a class for the new object.");
             return;
         }
 
+        // Call parent method to create the object
         fParent.createObject(cls, name);
+    }
+
+    /**
+     * Displays an error alert with the given title and message.
+     *
+     * @param content the message displayed in the alert dialog
+     */
+    private void showAlert(String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+        alert.showAndWait();
     }
 }
 

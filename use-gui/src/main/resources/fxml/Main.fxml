@@ -30,7 +30,7 @@
                 <Menu text="Plugins" fx:id="pluginsMenuItems"/>
                 <Menu text="Help" fx:id="helpMenuItems"/>
             </MenuBar>
-            <ToolBar fx:id="toolBar">
+            <ToolBar fx:id="fToolBar">
                 <!-- ToolBar contents go here -->
             </ToolBar>
         </VBox>
@@ -66,7 +66,7 @@
                     <HBox>
                         <Label text="Log" />
                     </HBox>
-                    <TextArea fx:id="logTextArea" VBox.vgrow="ALWAYS">
+                    <TextArea fx:id="fLogTextArea" VBox.vgrow="ALWAYS">
                     </TextArea>
                     <HBox>
                         <Label fx:id="fStatusBar" text="Ready." />

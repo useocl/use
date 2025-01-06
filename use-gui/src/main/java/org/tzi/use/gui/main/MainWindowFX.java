@@ -50,8 +50,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.kordamp.desktoppanefx.scene.layout.InternalWindow;
 import org.tzi.use.config.Options;
+import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
-import org.tzi.use.gui.util.TextComponentWriter;
+import org.tzi.use.config.RecentItems;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
 
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
@@ -96,17 +97,19 @@ public class MainWindowFX {
     private static MainWindowFX instance;
     private PageLayout fPageLayout;
     private SwingNode swingNode;
-    private static LogPanel fLogPanel;
     private static PrintWriter fLogWriter;
+    private LogPanel fLogPanel;
+    private Button fBtnEditUndo;
+    private Button fBtnEditRedo;
 
     @FXML
-    private TextArea logTextArea;
+    private TextArea fLogTextArea;
 
     @FXML
     private VBox webViewPlaceholder; // Reference to the log text area in FXML
 
     @FXML
-    private ToolBar toolBar; // Reference to the ToolBar
+    private ToolBar fToolBar; // Reference to the ToolBar
 
     @FXML
     private Menu fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems;
@@ -127,6 +130,8 @@ public class MainWindowFX {
     private final BooleanProperty fActionPrintDiagram = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionPrintView = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionExportContentAsPDF = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionEditUndo = new SimpleBooleanProperty(false);
+    private final BooleanProperty fActionEditRedo = new SimpleBooleanProperty(false);
 
 
 
@@ -165,17 +170,16 @@ public class MainWindowFX {
     public void initialize() throws IOException {
         Options.getRecentFiles().getItems().clear();
         // update the status for the visibility of the menu- and tab-items
-        updateFActionSpecificationLoaded();
-        updateFActionFileReload();
-        updateFActionSaveScript();
         updateFActionDiagramPrinter();
         updateFActionViewPrinter();
         updateFActionExportContentAsPDF();
 
+        bindActionProperties();
+
         initWebViewPlaceholder();
-        initLogTextArea(); // create the log panel
         initFolderTreeView();
-        initToolbarItems(toolBar, folderTreeView); // initializing the toolbar
+
+        initToolbarItems(fToolBar, folderTreeView); // initializing the toolbar
         initMenuBarItems(fileMenuItems, editMenuItems, stateMenuItems, viewMenuItems, pluginsMenuItems, helpMenuItems, folderTreeView); // initializing the menubar
 
         fSession = getSession();
@@ -188,13 +192,14 @@ public class MainWindowFX {
         }
 
         //create the log panel
-        fLogPanel = new LogPanel();
-        fLogWriter = new PrintWriter(new TextComponentWriter(fLogPanel.getTextComponent()), true);
+        fLogPanel = new LogPanel(fLogTextArea);
+        fLogWriter = new PrintWriter(fLogPanel, true);
 
 
         // initialize application state to current system
         sessionChanged();
 
+        // the session may be changed from the shell
         fSession.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -204,6 +209,62 @@ public class MainWindowFX {
             }
         });
 
+        fDesktopPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab)-> {
+            if (newTab != null) {
+                String tabName = newTab.getText();
+                if ("Class diagram".equals(tabName) || "Object diagram".equals(tabName) || "Communication diagram".equals(tabName)) {
+                    // show diagram printer and exportAsPdf if above tabs selected
+                    fActionPrintDiagram.setValue(true);
+                    fActionExportContentAsPDF.setValue(true);
+                } else {
+                    // don't show diagram printer and exportAsPdf if not selected
+                    fActionPrintDiagram.setValue(false);
+                    fActionExportContentAsPDF.setValue(false);
+                }
+                if ("Sequence diagram".equals(tabName)) {
+                    // show view printer if sequence diagram tab is selected
+                    fActionPrintView.setValue(true);
+                } else {
+                    // don't show view printer if sequence diagram tab is not selected
+                    fActionPrintView.setValue(false);
+                }
+            } else {
+                // when no tabs open
+                fActionPrintDiagram.setValue(false);
+                fActionPrintView.setValue(false);
+                fActionExportContentAsPDF.setValue(false);
+            }
+        });
+
+        /**
+         * for soil statements
+         */
+        fSession.addEvaluatedStatementListener(
+                new Session.EvaluatedStatementListener(){
+                    @Override
+                    public void evaluatedStatement(Session.EvaluatedStatement event) {
+                        Platform.runLater(() -> {
+                            setUndoRedoButtons();
+                        });
+                    }});
+
+    }
+
+    private void bindActionProperties() {
+        // **[MARKER: DYNAMIC BINDINGS FOR ACTIONS]**
+        Options.getRecentFiles().addObserver(new RecentItemsObserver() {
+            @Override
+            public void onRecentItemChange(RecentItems src) {
+                setRecentFiles();
+                fActionFileReload.set(!Options.getRecentFiles().isEmpty());
+                fActionSpecificationLoaded.set(!Options.getRecentFiles().isEmpty());
+            }
+        });
+
+//        fActionSpecificationLoaded.bind(Bindings.createBooleanBinding(
+//                () -> fSession != null && fSession.hasSystem(),
+//                fSession.systemProperty()
+//        ));
     }
 
     /**
@@ -211,6 +272,19 @@ public class MainWindowFX {
      */
     void sessionChanged() {
         boolean on = fSession.hasSystem();
+
+        if (Options.doPLUGIN) {
+            for (PluginActionProxy currentAction : pluginActions.values()) {
+                currentAction.calculateEnabled();
+            }
+        }
+
+        //TODO
+        setUndoRedoButtons();
+//        closeAllViews();
+//        statemachineMenu.removeAll();
+//        createStateMachineMenuEntries(statemachineMenu);
+
         if (fModelBrowser != null && primaryStage != null) {
             if (on) {
                 System.out.println("hier?");
@@ -220,6 +294,75 @@ public class MainWindowFX {
             }
         }
 
+    }
+
+    private void setUndoRedoButtons() {
+        if(!fSession.hasSystem()){
+            disableUndo();
+            disableRedo();
+            return;
+        }
+
+        String nextToUndo = fSession.system().getUndoDescription();
+
+        if (nextToUndo != null) {
+            enableUndo(nextToUndo);
+        } else {
+            disableUndo();
+        }
+
+        String nextToRedo =
+                fSession.system().getRedoDescription();
+
+        if (nextToRedo != null) {
+            enableRedo(nextToRedo);
+        } else {
+            disableRedo();
+        }
+    }
+
+    /**
+     * Enables the undo command.
+     */
+    void enableUndo(String name) {
+        System.out.println("enableUndo?");
+
+        fActionEditUndo.set(true);
+        // change text of menu item, leave toolbar button untouched
+        String s = "Undo: " + name;
+//        fMenuItemEditUndo.setText(s);
+        fBtnEditUndo.getTooltip().setText(s);
+    }
+
+    /**
+     * Disables the undo command.
+     */
+    void disableUndo() {
+        fActionEditUndo.set(false);
+        // change text of menu item, leave toolbar button untouched
+//        fMenuItemEditUndo.setText("Undo");
+        fBtnEditUndo.getTooltip().setText(DEFAULT_UNDO_TEXT);
+    }
+
+    /**
+     * Enables the redo command.
+     */
+    void enableRedo(String name) {
+        fActionEditRedo.set(true);
+        // change text of menu item, leave toolbar button untouched
+        String s = "Redo: " + name;
+//        fMenuItemEditRedo.setText(s);
+        fBtnEditRedo.getTooltip().setText(s);
+    }
+
+    /**
+     * Disables the undo command.
+     */
+    void disableRedo() {
+        fActionEditRedo.set(false);
+        // change text of menu item, leave toolbar button untouched
+//        fMenuItemEditRedo.setText("Redo");
+        fBtnEditRedo.getTooltip().setText(DEFAULT_REDO_TEXT);
     }
 
     /**
@@ -345,8 +488,10 @@ public class MainWindowFX {
         createObject.disableProperty().bind(fActionSpecificationLoaded.not());
         createObject.setOnAction(e -> {
             // TODO
-            CreateObjectDialogFX dlg = new CreateObjectDialogFX(fSession, instance);
+            CreateObjectDialog dlg = new CreateObjectDialog(fSession, instance);
             dlg.showAndWait();
+            updateFActionSaveScript();
+            setUndoRedoButtons();
         });
 
         MenuItem evaluateOCLexpr = new MenuItem("Evaluate OCL expression...");
@@ -465,7 +610,7 @@ public class MainWindowFX {
         toolbarItems.put("Create object diagram view", getIcon("ObjectDiagram.gif"));
         toolbarItems.put("Create class invariant view", getIcon("invariant-view.png"));
         toolbarItems.put("Create object count view", getIcon("blue-chart-icon.png"));
-        toolbarItems.put("Create link count view", getIcon("blue-chart-icon.png"));
+        toolbarItems.put("Create link count view", getIcon("red-chart-icon.png"));
         toolbarItems.put("Create state evolution view", getIcon("line-chart.png"));
         toolbarItems.put("Create object properties view", getIcon("ObjectProperties.gif"));
         toolbarItems.put("Create class extent view", getIcon("ClassExtentView.gif"));
@@ -484,99 +629,122 @@ public class MainWindowFX {
             button.setGraphic(imageKey);
             Tooltip tooltip = new Tooltip(tooltipText);
             button.setTooltip(tooltip);
-            toolBar.getItems().add(button);
+
 
             switch (entry.getKey()) {
                 case "Open specification":
                     button.setDisable(false);
-                    button.setOnAction(e -> {
-                    instance.openDirectoryChooser(folderTreeView);
-                }); break;
+                    button.setOnAction(e -> instance.openDirectoryChooser(folderTreeView));
+                    toolBar.getItems().add(button);
+                    break;
                 case "Reload current specification":
                     button.disableProperty().bind(fActionFileReload.not());
                     button.setOnAction(e -> {
                         instance.compile(Options.getRecentFile("use"));
                         initializeModelBrowserFX(); //reinitializing after compiling
-                }); break;
+                    });
+                    toolBar.getItems().add(button);
+                    break;
                 case "Print diagram":
                     button.disableProperty().bind(fActionPrintDiagram.not());
                     //TODO "Print diagram"
+                    toolBar.getItems().add(button);
                     break;
                 case "Print view":
                     button.disableProperty().bind(fActionPrintView.not());
                     //TODO "Print view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Export content of view as PDF":
                     button.disableProperty().bind(fActionExportContentAsPDF.not());
                     //TODO "Export content of view as PDF"
+                    toolBar.getItems().add(button);
                     break;
                 case "Undo last statement":
+                    fBtnEditUndo = button;
+                    fBtnEditUndo.disableProperty().bind(fActionEditUndo.not());
+                    fBtnEditUndo.setTooltip(new Tooltip(DEFAULT_UNDO_TEXT));
                     //TODO "Undo last statement"
+                    toolBar.getItems().add(fBtnEditUndo);
                     break;
                 case "Redo last undone statement":
+                    fBtnEditRedo = button;
+                    fBtnEditRedo.disableProperty().bind(fActionEditRedo.not());
+                    fBtnEditRedo.setTooltip(new Tooltip(DEFAULT_REDO_TEXT));
                     //TODO "Print view"
+                    toolBar.getItems().add(fBtnEditRedo);
                     break;
                 case "Evaluate OCL expression":
                     //TODO "Print view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create class diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    button.setOnAction(e -> {
-                        instance.createClassDiagram();
-                    }); break;
+                    button.setOnAction(e -> instance.createClassDiagram());
+                    toolBar.getItems().add(button);
+                    break;
                 case "Create statemachine diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create statemachine diagram view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create object diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     button.setOnAction(e -> {
                         instance.createObjectDiagram();
                     });
-                    //TODO "Create object diagram view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create class invariant view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create class invariant view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create object count view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create object count view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create link count view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create link count view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create state evolution view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create state evolution view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create object properties view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create object properties view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create class extent view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create class extent view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create sequence diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create sequence diagram view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create communication diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create communication diagram view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create call stack view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create call stack view"
+                    toolBar.getItems().add(button);
                     break;
                 case "Create command list view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create command list view"
+                    toolBar.getItems().add(button);
                     break;
-
-
             }
 
             // Add spacing between specific buttons
@@ -637,13 +805,10 @@ public class MainWindowFX {
 
             wasUsed = true;
 
-            setRecentfiles();
+            setRecentFiles();
 
         }
 
-        // update the status for the visibility of the menu- and tab-items
-        updateFActionSpecificationLoaded();
-        updateFActionFileReload();
     }
 
     public void createObject(String clsName) {
@@ -754,6 +919,8 @@ public class MainWindowFX {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Large system state");
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
             alert.setContentText("The current system state contains more than " + OBJECTS_LARGE_SYSTEM + " instances. " +
                     "This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?");
 
@@ -805,30 +972,32 @@ public class MainWindowFX {
 
     protected boolean compile(final Path f) {
         // clearing the current state before compiling the new one
-        logTextArea.clear();
-        // Now it's safe to clear the tabs
-        fDesktopPane.getTabs().clear();
+        fLogPanel.clear();
+        fDesktopPane.getTabs().clear();  // clearing the tabs
 
+        fLogWriter.println("compiling specification " + f.toString() + "...");
 
         MModel model = null;
         try (InputStream iStream = Files.newInputStream(f)) {
             model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(),
                     fLogWriter, new ModelFactory());
-            logTextArea.appendText("compiling specification " + f + "...\n");
-            logTextArea.appendText("done.\n");
+            fLogWriter.println("done.");
+            //logTextArea.appendText("done.\n");
         } catch (IOException ex) {
-            logTextArea.appendText("File `" + f.toAbsolutePath().toString() + "' not found.\n");
+            fLogWriter.println("File `" + f.toAbsolutePath().toString() + "' not found.");
         }
 
         final MSystem system;
         if (model != null) {
-            MModel finalModel = model;
-            logTextArea.appendText(finalModel.getStats() + "\n");
+            fLogWriter.println(model.getStats());
             // create system
             system = new MSystem(model);
         } else {
             system = null;
         }
+
+        // set new system (might be null if compilation failed)
+        Platform.runLater(() -> fSession.setSystem(system));
 
         if (system != null) {
             fSession.setSystem(system);  // System synchron setzen, da keine GUI-Operation erforderlich ist
@@ -841,9 +1010,7 @@ public class MainWindowFX {
     }
     protected void initializeModelBrowserFX() {
         // check if specifications avaiable
-        updateFActionSpecificationLoaded();
-        updateFActionFileReload();
-        updateFActionSaveScript();
+        //updateFActionSaveScript();
         updateFActionDiagramPrinter();
         updateFActionViewPrinter();
         updateFActionExportContentAsPDF();
@@ -851,46 +1018,6 @@ public class MainWindowFX {
             new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
         } else {
             new ModelBrowserFX(null, fPluginRuntime);
-        }
-    }
-
-    // Methode zur Überwachung der Logdatei auf Änderungen
-    private void watchLogFile(Path logFilePath) {
-        new Thread(() -> {
-            try {
-                WatchService watchService = FileSystems.getDefault().newWatchService();
-                logFilePath.getParent().register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
-
-                while (true) {
-                    WatchKey key = watchService.take();
-                    for (WatchEvent<?> event : key.pollEvents()) {
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY &&
-                                event.context().toString().equals(logFilePath.getFileName().toString())) {
-
-                            // Lesen des geänderten Inhalts
-                            String updatedText = new String(Files.readAllBytes(logFilePath));
-                            // Aktualisieren der TextArea im JavaFX-Thread
-                            Platform.runLater(() -> logTextArea.appendText(updatedText + "\n"));
-                        }
-                    }
-                    key.reset();
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    // Simuliert einen LogWriter, der regelmäßig neue Log-Einträge schreibt
-    private void simulateLogWriter(File logFile) {
-        try (FileWriter writer = new FileWriter(logFile, true)) {
-            for (int i = 1; i <= 10; i++) {
-                writer.write("Log-Eintrag " + i + "\n");
-                writer.flush();
-                Thread.sleep(2000); // 2 Sekunden warten, bevor ein neuer Eintrag kommt
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -908,35 +1035,6 @@ public class MainWindowFX {
                     webViewPlaceholder.getChildren().add(webView);
                 }
         );
-    }
-
-    // TODO Hier später TabPane Initialisieren
-    public void initDesktopPane(){
-        //fDesktopPane = new DesktopPane();
-        // Create a custom internal window (for demonstration)
-        // Create InternalWindows with proper constructor
-
-
-        //fDesktopPane.s
-    }
-
-    public void initLogTextArea(){
-
-        // Erstelle das Kontextmenü
-        ContextMenu contextMenu = new ContextMenu();
-
-        // Füge die "Clear" Option hinzu
-        MenuItem clearItem = new MenuItem("Clear");
-        clearItem.setOnAction(event -> logTextArea.clear());
-
-        // Kontextmenü zur TextArea hinzufügen
-        contextMenu.getItems().addAll(clearItem);
-
-        // Setze das Kontextmenü in der TextArea
-        logTextArea.setContextMenu(contextMenu);
-
-        logTextArea.setEditable(false);
-
     }
 
     /**
@@ -992,7 +1090,7 @@ public class MainWindowFX {
      *  menu-item (clearRecentSpecifications) to clear these menu-items
      *  (also the recent files in the Options)
      */
-    public void setRecentfiles() {
+    public void setRecentFiles() {
         if (recentFilesMenu.getItems() != null){
             recentFilesMenu.getItems().clear();
         }
@@ -1013,8 +1111,7 @@ public class MainWindowFX {
             recentFilesMenu.getItems().clear();
             // after having all menu-items for the recent specifications deleted we reinitialize
             // the menuitem to contain only the divider and clearRecentSpecifications
-            setRecentfiles();
-            updateFActionFileReload(); //TODO hier für Reload Specification update einbauen
+            setRecentFiles();
         });
 
         recentFilesMenu.getItems().add(new SeparatorMenuItem());
@@ -1085,25 +1182,13 @@ public class MainWindowFX {
     }
 
     /**
-     * This Method updates the Status of the BooleanProperty (fActionFileReload), according to if specifications are available.
-     */
-    public void updateFActionFileReload() {
-        fActionFileReload.set(!Options.getRecentFiles().isEmpty());
-    }
-
-    /**
-     * This Method updates the Status of the BooleanProperty (fActionSpecificationLoaded), according to if specifications are available.
-     */
-    public void updateFActionSpecificationLoaded() {
-        fActionSpecificationLoaded.set(!Options.getRecentFiles().isEmpty());
-    }
-
-    /**
      * This Method updates the Status of the BooleanProperty (fActionSaveScript), according to if scripts are available.
      */
     public void updateFActionSaveScript() {
         // TODO hier schauen wann angezeigt werden soll
-        fActionSaveScript.set(false);
+        if (fSession.hasSystem()) {
+            fActionSaveScript.set(fSession.system().numEvaluatedStatements() > 0);
+        }
     }
 
     /**

@@ -9,6 +9,8 @@ module use.gui {
     requires org.kordamp.desktoppanefx.core;
     requires javafx.swing;
     requires org.checkerframework.checker.qual;
+    requires annotations;
+    requires jline;
     opens org.tzi.use.gui.main to javafx.fxml;
     exports org.tzi.use.main.gui;
     exports org.tzi.use.gui.views;
