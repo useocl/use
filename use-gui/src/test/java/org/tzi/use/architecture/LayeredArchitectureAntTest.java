@@ -21,7 +21,6 @@ public class LayeredArchitectureAntTest {
 
     @Test
     @ArchTest
-    //TODO Frage: runtime Ordner noch integrieren nach Maven Vorbild?
     public void core_should_not_depend_on_gui() {
         ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",

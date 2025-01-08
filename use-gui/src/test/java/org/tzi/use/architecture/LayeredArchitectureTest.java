@@ -1,6 +1,5 @@
 package org.tzi.use.architecture;
 
-import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -9,42 +8,22 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 public class LayeredArchitectureTest {
-    private JavaClasses coreClasses;
-    private JavaClasses guiClasses;
     private JavaClasses classes;
 
     @BeforeEach
     void setUp() {
-/*        Path corePath = Paths.get("..\\use-core\\target\\classes\\org\\tzi\\use");
-        Path guiPath = Paths.get("..\\use-gui\\target\\classes\\org\\tzi\\use");
-
-        coreClasses = new ClassFileImporter()
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .importPath(corePath);
-        System.out.println("Core classes found: " + coreClasses.size());
-
-        guiClasses = new ClassFileImporter()
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .importPath(guiPath);
-        System.out.println("GUI classes found: " + guiClasses.size());*/
-
-        Path corePath = Paths.get("use-core/src/main/java/org/tzi/use");
-        Path guiPath = Paths.get("use-gui/src/main/java");
-
+        // DO_NOT_INCLUDE_TESTS lässt folgende Tests aus: alle in GUI plus Integrationtest ShellIT
         classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
         System.out.println("Classes found: " + classes.size());
-
     }
 
     @Test
     @ArchTest
-    //TODO herausfinden wie man einzelne Klassen statt Packages hinzufügen kann
+    //ist leider nicht optimal & vollständig, da Namensdopplung in:
+    // org.tzi.use.util, org.tzi.use.util.input, org.tzi.use.main,
     public void core_should_not_depend_on_gui() {
         ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
@@ -56,18 +35,6 @@ public class LayeredArchitectureTest {
                         "org.tzi.use.runtime..", "org.tzi.use.main.shell..")
                 .because("Core packages should not depend on GUI packages")
                 .check(classes);
-
-/*        ArchRuleDefinition.noClasses()
-                .that().belongToAnyOf(coreClasses.stream()
-                        .filter(javaClass -> !javaClass.getName().contains("Op_number_pow")
-                        && !javaClass.getName().contains("MDataTypeImpl"))
-                        .map(JavaClass::reflect)
-                        .toArray(Class<?>[]::new))
-                .should().dependOnClassesThat().belongToAnyOf(guiClasses.stream()
-                        .map(JavaClass::reflect)
-                        .toArray(Class<?>[]::new))
-                .because("Core module should not depend on GUI module")
-                .check(coreClasses);*/
 
     }
 }

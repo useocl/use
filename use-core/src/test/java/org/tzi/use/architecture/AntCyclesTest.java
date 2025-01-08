@@ -31,13 +31,13 @@ public class AntCyclesTest {
             .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
 
     private static final String PROJECT_ROOT = new File("").getAbsolutePath();
-    private static final String RESULTS_FILE = new File(PROJECT_ROOT, "cycles_ant_results.csv").getAbsolutePath();
+    private static final String ALL_MODULES_RESULTS_FILE = new File(PROJECT_ROOT, "ant_cyclic_dependencies_results.csv").getAbsolutePath();
 
 
     @Before
     public void setup() {
         try {
-            File file = new File(RESULTS_FILE);
+            File file = new File(ALL_MODULES_RESULTS_FILE);
             System.out.println("CSV FILE CREATED IN: " + file.getAbsolutePath());
             if (file.exists()) {
                 file.delete();
@@ -51,10 +51,10 @@ public class AntCyclesTest {
 
     @Test
     @ArchTest
-    public void count_cycles_in_main() {
-        System.out.println("Counting cycles in project...");
+    public void count_cycles_in_core() {
+        System.out.println("Counting cycles in core...");
         try {
-            File file = new File(RESULTS_FILE);
+            File file = new File(ALL_MODULES_RESULTS_FILE);
             System.out.println("Attempting to write to: " + file.getAbsolutePath());
 
             System.out.println("No. of classes analysed: " + classes.size());
@@ -111,7 +111,7 @@ public class AntCyclesTest {
     }
 
     private void writeResult(int result) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(RESULTS_FILE, true))) {
+        try (PrintWriter out = new PrintWriter(new FileWriter(ALL_MODULES_RESULTS_FILE, true))) {
             out.println(result);
         } catch (IOException e) {
             e.printStackTrace();
