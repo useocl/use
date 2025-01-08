@@ -22,7 +22,7 @@ public class MavenCyclicDependenciesTest {
 
     // hier sind keine Tests drin, überlegen, ob das so soll oder nicht
     // mit Tests: 293 Zyklen, ohne 55 ! und ohne uml sogar nur 5
-    // scheinbar sind hier nur core Klassen drin, weil core keinen Zugriff auf gui hat
+    // hier sind nur core Klassen drin, weil core keinen Zugriff auf gui hat
     // also u.U. auch so einen Test f. gui
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
@@ -52,62 +52,71 @@ public class MavenCyclicDependenciesTest {
     @Test
     public void count_cycles_in_core() {
         int cycleCount = countCyclesForPackage("org.tzi.use");
+        writeResult(cycleCount, ALL_MODULES_RESULTS);
         System.out.println("Cycles in core module : " + cycleCount);
-        writeResult(cycleCount);
         //assertTrue("Cycle count should be non-negative", cycleCount >= 0);
     }
 
     @Test
     public void count_cycles_in_analysis_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.analysis");
+        writeResult(cycleCount, ANALYSIS_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.analysis: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_api_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.api");
+        writeResult(cycleCount, API_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.api: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_config_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.config");
+        writeResult(cycleCount, CONFIG_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.config: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_gen_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.gen");
+        writeResult(cycleCount, GEN_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.gen: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_graph_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.graph");
+        writeResult(cycleCount, GRAPH_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.graph: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_main_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.main");
+        writeResult(cycleCount, MAIN_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.main: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_parser_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.parser");
+        writeResult(cycleCount, PARSER_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.parser: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_uml_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.uml");
+        writeResult(cycleCount, UML_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.uml: " + cycleCount);
     }
 
     @Test
     public void count_cycles_in_util_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.util");
+        writeResult(cycleCount, UTIL_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.util: " + cycleCount);
     }
 
@@ -155,8 +164,8 @@ public class MavenCyclicDependenciesTest {
         return cycleCount.get();
     }
 
-    private void writeResult(int result) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(ALL_MODULES_RESULTS, true))){
+    private void writeResult(int result, String filename) {
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))){
             out.println(result);
         } catch (IOException e) {
             e.printStackTrace();
