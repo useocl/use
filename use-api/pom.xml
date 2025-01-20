@@ -115,6 +115,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <executable>true</executable>
+                    <mainClass>org.tzi.use.UseAPIApplication</mainClass>
                 </configuration>
             </plugin>
 <!--            <plugin>-->
