@@ -29,8 +29,8 @@ jobs:
       run: mvn clean package
       
       #List target dir
-    - name: List target directory
-      run: ls -l target/
+    #- name: List target directory
+      #run: ls -l target/
       
     # Start Spring Boot
     - name: Start Spring Boot
