@@ -42,7 +42,7 @@ jobs:
     # Wait for Spring Boot to start
     - name: Wait for Spring Boot
       run: |
-        for i in {1..10}; do
+        for i in {1..4}; do
           curl --fail http://localhost:8080/actuator/health && break || sleep 10;
         done
 
@@ -50,7 +50,7 @@ jobs:
     - name: Run Postman tests
       run: |
         npm install -g newman
-        newman run src/main/resources/postman_collection/use-webapi.postman_collection.json
+        newman run use-api/src/main/resources/postman_collection/use-webapi.postman_collection.json
 
 
     # Cleanup
