@@ -117,6 +117,13 @@
                     <executable>true</executable>
                     <mainClass>org.tzi.use.UseAPIApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 <!--            <plugin>-->
 <!--                <groupId>com.github.joelittlejohn.embedmongo</groupId>-->
