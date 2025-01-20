@@ -20,11 +20,6 @@ jobs:
         build_time=$((end_time - start_time))
         echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
       run: mvn --batch-mode --update-snapshots verify
-      #List target dir
-    - name: List target directory
-      run: ls -l use-assembly/target/
-    - name: List target directory
-      run: ls -l use-api/target/
     - name: Upload build result
       run: mkdir staging && cp use-assembly/target/*.zip staging
     - uses: actions/upload-artifact@v4
