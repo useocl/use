@@ -26,7 +26,7 @@ jobs:
 
     # Build the application
     - name: Build with Maven
-      run: mvn --batch-mode --update-snapshots verify
+      run: mvn --batch-mode --update-snapshots clean package verify
       
       #List target dir
     - name: List target directory
