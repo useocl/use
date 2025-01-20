@@ -108,12 +108,15 @@
         </dependency>
     </dependencies>
 
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
 <!--            <plugin>-->
 <!--                <groupId>com.github.joelittlejohn.embedmongo</groupId>-->
 <!--                <artifactId>embedmongo-maven-plugin</artifactId>-->
@@ -200,6 +203,6 @@
 <!--                    </execution>-->
 <!--                </executions>-->
 <!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
+        </plugins>
+    </build>
 </project>
