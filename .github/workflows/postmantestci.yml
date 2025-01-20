@@ -30,7 +30,7 @@ jobs:
 
     # Start Spring Boot
     - name: Start Spring Boot
-      run: java -Dspring.profiles.active=test -jar target/your-application.jar &
+      run: java -Dspring.profiles.active=test -jar target/use-api-7.1.1.jar &
       env:
         SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
 
