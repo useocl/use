@@ -73,7 +73,10 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.USEWriter;
 
 
@@ -91,16 +94,6 @@ import java.util.*;
  */
 @SuppressWarnings("serial")
 public class MainWindowFX {
-    private static Session fSession;
-    private static IRuntime fPluginRuntime;
-    private Stage primaryStage;  // Reference to the primary stage
-    private static MainWindowFX instance;
-    private PageLayout fPageLayout;
-    private SwingNode swingNode;
-    private static PrintWriter fLogWriter;
-    private LogPanel fLogPanel;
-    private Button fBtnEditUndo;
-    private Button fBtnEditRedo;
 
     @FXML
     private TextArea fLogTextArea;
@@ -133,18 +126,25 @@ public class MainWindowFX {
     private final BooleanProperty fActionEditUndo = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionEditRedo = new SimpleBooleanProperty(false);
 
-
-
+    private static Session fSession;
+    private static IRuntime fPluginRuntime;
+    private Stage primaryStage;  // Reference to the primary stage
+    private static MainWindowFX instance;
+    private PageLayout fPageLayout;
+    private SwingNode swingNode;
+    private static PrintWriter fLogWriter;
+    private LogPanel fLogPanel;
+    private Button fBtnEditUndo;
+    private Button fBtnEditRedo;
+    private MenuItem fMenuItemEditUndo;
+    private MenuItem fMenuItemEditRedo;
     private static Menu recentFilesMenu;
-
     private ModelBrowserFX fModelBrowser;
-
 
     // Static variable to store the last selected directory path
     private static String specificationDir = System.getProperty("user.dir");
 
     private static boolean wasUsed;
-
 
     private final List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
     private final List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
@@ -153,9 +153,6 @@ public class MainWindowFX {
     private static final String DEFAULT_UNDO_TEXT = "Undo last statement";
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
-    private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
-
-    private static Path ffileName;
 
 
     private Map<Map<String, String>, PluginActionProxy> pluginActions =
@@ -287,7 +284,6 @@ public class MainWindowFX {
 
         if (fModelBrowser != null && primaryStage != null) {
             if (on) {
-                System.out.println("hier?");
                 MSystem system = fSession.system();
                 fModelBrowser.setModel(system.model());
                 primaryStage.setTitle("USE: " + new File(system.model().filename()).getName());
@@ -325,12 +321,10 @@ public class MainWindowFX {
      * Enables the undo command.
      */
     void enableUndo(String name) {
-        System.out.println("enableUndo?");
-
         fActionEditUndo.set(true);
         // change text of menu item, leave toolbar button untouched
         String s = "Undo: " + name;
-//        fMenuItemEditUndo.setText(s);
+        fMenuItemEditUndo.setText(s);
         fBtnEditUndo.getTooltip().setText(s);
     }
 
@@ -340,7 +334,7 @@ public class MainWindowFX {
     void disableUndo() {
         fActionEditUndo.set(false);
         // change text of menu item, leave toolbar button untouched
-//        fMenuItemEditUndo.setText("Undo");
+        fMenuItemEditUndo.setText("Undo");
         fBtnEditUndo.getTooltip().setText(DEFAULT_UNDO_TEXT);
     }
 
@@ -351,7 +345,7 @@ public class MainWindowFX {
         fActionEditRedo.set(true);
         // change text of menu item, leave toolbar button untouched
         String s = "Redo: " + name;
-//        fMenuItemEditRedo.setText(s);
+        fMenuItemEditRedo.setText(s);
         fBtnEditRedo.getTooltip().setText(s);
     }
 
@@ -361,7 +355,7 @@ public class MainWindowFX {
     void disableRedo() {
         fActionEditRedo.set(false);
         // change text of menu item, leave toolbar button untouched
-//        fMenuItemEditRedo.setText("Redo");
+        fMenuItemEditRedo.setText("Redo");
         fBtnEditRedo.getTooltip().setText(DEFAULT_REDO_TEXT);
     }
 
@@ -461,22 +455,24 @@ public class MainWindowFX {
      * initializing the EditMenuItems
      */
     private void initEditMenuItems(Menu editMenuItems) {
-        MenuItem undo = new MenuItem("Undo");
-        MenuItem redo = new MenuItem("Redo");
+        fMenuItemEditUndo = new MenuItem("Undo");
+        fMenuItemEditRedo = new MenuItem("Redo");
 
-        undo.setGraphic(getIcon("undo.png"));
-        redo.setGraphic(getIcon("redo.png"));
+        fMenuItemEditUndo.setGraphic(getIcon("undo.png"));
+        fMenuItemEditRedo.setGraphic(getIcon("redo.png"));
 
-        undo.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
-        undo.setOnAction(e -> {
-            System.out.println("Ctrl+Z Succesfully pressed");
+        fMenuItemEditUndo.disableProperty().bind(fActionEditUndo.not());
+        fMenuItemEditUndo.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
+        fMenuItemEditUndo.setOnAction(e -> {
+            actionEditUndo();
         });
-        redo.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+Z"));
-        redo.setOnAction(e -> {
-            System.out.println("Ctrl+Shift+Z Succesfully pressed");
+        fMenuItemEditRedo.disableProperty().bind(fActionEditRedo.not());
+        fMenuItemEditRedo.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+Z"));
+        fMenuItemEditRedo.setOnAction(e -> {
+            actionEditRedo();
         });
 
-        editMenuItems.getItems().addAll(undo, redo);
+        editMenuItems.getItems().addAll(fMenuItemEditUndo, fMenuItemEditRedo);
     }
 
     /**
@@ -487,7 +483,6 @@ public class MainWindowFX {
         createObject.setAccelerator(KeyCombination.keyCombination("F7"));
         createObject.disableProperty().bind(fActionSpecificationLoaded.not());
         createObject.setOnAction(e -> {
-            // TODO
             CreateObjectDialog dlg = new CreateObjectDialog(fSession, instance);
             dlg.showAndWait();
             updateFActionSaveScript();
@@ -664,14 +659,18 @@ public class MainWindowFX {
                     fBtnEditUndo = button;
                     fBtnEditUndo.disableProperty().bind(fActionEditUndo.not());
                     fBtnEditUndo.setTooltip(new Tooltip(DEFAULT_UNDO_TEXT));
-                    //TODO "Undo last statement"
+                    fBtnEditUndo.setOnAction(e->{
+                        actionEditUndo();
+                    });
                     toolBar.getItems().add(fBtnEditUndo);
                     break;
                 case "Redo last undone statement":
                     fBtnEditRedo = button;
                     fBtnEditRedo.disableProperty().bind(fActionEditRedo.not());
                     fBtnEditRedo.setTooltip(new Tooltip(DEFAULT_REDO_TEXT));
-                    //TODO "Print view"
+                    fBtnEditRedo.setOnAction(e->{
+                        actionEditRedo();
+                    });
                     toolBar.getItems().add(fBtnEditRedo);
                     break;
                 case "Evaluate OCL expression":
@@ -809,6 +808,45 @@ public class MainWindowFX {
 
         }
 
+    }
+
+    /**
+     * Undoes the last executed statement in the system.
+     * Shows alerts if the system is busy or an error occurs.
+     */
+    public void actionEditUndo(){
+        if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+            showAlert("The system is currently executing a statement.\nPlease end the execution before undoing.", "USE is executing");
+        }
+
+        try {
+            fSession.system().undoLastStatement();
+            setUndoRedoButtons();
+        } catch (MSystemException ex) {
+            showAlert(ex.getMessage(), "Error");
+        }
+
+    }
+
+    public void actionEditRedo() {
+        if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+            showAlert("The system is currently executing a statement.\nPlease end the execution before redoing.", "USE is executing");
+        }
+
+        MSystem system = fSession.system();
+
+        MStatement nextToRedo = system.nextToRedo();
+
+        if ((nextToRedo instanceof MEnterOperationStatement) || (nextToRedo instanceof MExitOperationStatement)) {
+            showAlert("openter/opexit can only be redone in the shell", "Error");
+        }
+
+        try {
+            system.redoStatement();
+            setUndoRedoButtons();
+        } catch (MSystemException ex) {
+            showAlert(ex.getMessage(), "Error");
+        }
     }
 
     public void createObject(String clsName) {
@@ -1053,37 +1091,6 @@ public class MainWindowFX {
 
     }
 
-    // Create a method that creates an InternalWindow using the correct constructor
-    private InternalWindow createInternalWindow(String id, String title, double x, double y) {
-        // Create content for the InternalWindow (can be anything like a VBox, etc.)
-        VBox content = new VBox(new Label(title));
-        content.setStyle("-fx-background-color: lightgray; -fx-padding: 10;");
-
-        // Create an optional icon for the window (can use an ImageView or any other node)
-        ImageView icon = getIcon("arrow.png"); // Optional, can be null
-
-        // Create the InternalWindow using the correct constructor
-        InternalWindow internalWindow = new InternalWindow(id, icon, title, content);
-        internalWindow.setPrefSize(300, 200);
-
-        // Set the position of the window
-        internalWindow.setLayoutX(x);
-        internalWindow.setLayoutY(y);
-
-        return internalWindow;
-    }
-
-
-//
-//    public static MainWindowFX create(Session session, IRuntime pluginRuntime) {
-//        final MainWindowFX win = new MainWindowFX(session, pluginRuntime);
-//
-//        //win.pack();
-//        //win.setLocationRelativeTo(null);
-//        //win.setVisible(true);
-//        return win;
-//    }
-
     /**
      *  this Method creates menu-items for each recent specification and
      *  ads a seperator after each has been created, to include at last an
@@ -1283,6 +1290,21 @@ public class MainWindowFX {
                 fStatusBar.setText("Ready.");
             }
         });
+    }
+
+    /**
+     * Displays an error alert with the given title and message.
+     *
+     * @param content the message displayed in the alert dialog
+     */
+    private void showAlert(String content, String title) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+        alert.showAndWait();
     }
 
 }
