@@ -40,6 +40,9 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.runtime.gui.impl.StyleInfoProvider;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,6 +71,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -106,6 +110,8 @@ public abstract class DiagramView extends JPanel
 
     protected DiagramOptions fOpt;
 
+    private final IRuntime pluginRuntime;
+
     /**
      * This value is read from the system properties file.
      * It determines the minimum width of a class node
@@ -125,7 +131,12 @@ public abstract class DiagramView extends JPanel
      */
     private boolean hasUserDefinedLayout = false;
 
-    public DiagramView(DiagramOptions opt, PrintWriter log) {
+    public DiagramView(final DiagramOptions opt, final PrintWriter log){
+        this(opt, log, null);
+    }
+
+    public DiagramView(DiagramOptions opt, PrintWriter log, final IRuntime pluginRuntime) {
+        this.pluginRuntime = pluginRuntime;
         fOpt = opt;
         fGraph = new DiagramGraph();
         fLog = log;
@@ -189,6 +200,7 @@ public abstract class DiagramView extends JPanel
      */
     @Override
     public void paintComponent(Graphics g) {
+        //1
         drawDiagram(g);
     }
 
@@ -315,12 +327,17 @@ public abstract class DiagramView extends JPanel
             }
             fGraph.clearInvalidated();
 
+            // TODO: after the computation of the position of each element in the diagram
+            //  but before the drawing
+
+
             // draw edges
             // they need to be drawn first otherwise the association will
             // be drawn above the nodes
             Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
             while (edgeIterator.hasNext()) {
                 EdgeBase e = edgeIterator.next();
+                checkForPluginColorChanges(e);
                 e.draw(g2d);
             }
 
@@ -331,6 +348,7 @@ public abstract class DiagramView extends JPanel
             Iterator<PlaceableNode> nodeIterator = fGraph.iterator();
             while (nodeIterator.hasNext()) {
                 PlaceableNode n = nodeIterator.next();
+                checkForPluginColorChanges(n);
                 n.draw(g2d);
                 maxX = Math.max(maxX, n.getX() + n.getWidth());
                 maxY = Math.max(maxY, n.getY() + n.getHeight());
@@ -361,6 +379,38 @@ public abstract class DiagramView extends JPanel
                 this.revalidate();
             }
         }
+    }
+
+    private void checkForPluginColorChanges(final EdgeBase e) {
+        if (pluginRuntime == null){
+            return;
+        }
+    }
+
+    private void checkForPluginColorChanges(final PlaceableNode node){
+        if (pluginRuntime == null){
+            return;
+        }
+
+        //TODO: BUG - Each node gets called a second time
+        //get all provider
+        final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
+        final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
+
+        // TODO accumulate changes from all provider
+        // TODO read their (StyleInfo:)change if present
+        if (!styleInfoProviders.isEmpty()) {
+            StyleInfoBase currentStyleInfo = null;
+            final StyleInfoBase styleInfoForDiagramElement = styleInfoProviders.get(0).getStyleInfoForDiagramElement(node, currentStyleInfo);
+            // TODO recolor respective element
+            recolorPlaceableNode(node, styleInfoForDiagramElement);
+        }
+
+
+    }
+
+    protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {
+        //TODO: abstract and implement for all diagrams
     }
 
     /**
@@ -1204,6 +1254,7 @@ public abstract class DiagramView extends JPanel
 
         hasUserDefinedLayout = false;
     }
+
 
     /**
      * Resets the diagram to a random layout.

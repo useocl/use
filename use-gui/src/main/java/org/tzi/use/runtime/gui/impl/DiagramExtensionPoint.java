@@ -6,13 +6,17 @@ import org.tzi.use.runtime.gui.IDiagramPlugin;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
 
     private static final DiagramExtensionPoint INSTANCE = new DiagramExtensionPoint();
 
     private final List<IDiagramPlugin> registeredPlugins = new ArrayList<>();
+
+    private final Map<Class<? extends DiagramView>, List<StyleInfoProvider>> styleInfoProviders = new HashMap<>();
 
     public static IPluginDiagramExtensionPoint getInstance() {
         return INSTANCE;
@@ -39,6 +43,25 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
             diagramPlugin.getPluginDiagramManipulator().onClosure();
         }
     }
+
+    @Override
+    public void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
+        final Class<? extends DiagramView> targetClass = styleInfoProvider.getTargetClass();
+
+        // if an entry for this target class already exists: add, else: skip
+        styleInfoProviders.computeIfPresent(targetClass, (key, value) -> {
+            value.add(styleInfoProvider);
+            return value;
+        });
+        // if no entry exists: create, else: skip
+        styleInfoProviders.putIfAbsent(targetClass, List.of(styleInfoProvider));
+    }
+
+    @Override
+    public List<StyleInfoProvider> getStyleInfoProvider(final Class<? extends DiagramView> targetClass) {
+        return styleInfoProviders.getOrDefault(targetClass, List.of());
+    }
+
 
     @Override
     public void registerPlugin(final IPluginDescriptor pluginDescriptor) {

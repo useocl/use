@@ -61,6 +61,8 @@ import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.StyleInfoBase;
+import org.tzi.use.gui.views.diagrams.StyleInfoClassNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions.ShowCoverage;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -98,7 +100,7 @@ import com.ximpleware.XPathParseException;
 
 /**
  * A panel drawing a UML class diagrams.
- * 
+ *
  * @author Fabian Gutsche
  * @author Lars Hamann
  * @author Stefan Schoon
@@ -122,7 +124,7 @@ public class ClassDiagram extends DiagramView
 	}
 
 	protected ClassDiagram(ClassDiagramView parent, PrintWriter log, ClassDiagramOptions opt) {
-		super(opt, log);
+		super(opt, log, parent.pluginRuntime);
 
 		fParent = parent;
 
@@ -298,7 +300,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Adds a class to the diagram.
-	 * 
+	 *
 	 * @param cls
 	 *            Class to be added.
 	 */
@@ -359,7 +361,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows an already hidden class again
-	 * 
+	 *
 	 * @param cls
 	 */
 	public void showClass(MClass cls) {
@@ -398,7 +400,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows or hides a class.
-	 * 
+	 *
 	 * @param cls
 	 *            The <code>MClass</code> to show or hide
 	 * @param show
@@ -464,7 +466,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows an already hidden data type again
-	 * 
+	 *
 	 * @param dtp
 	 */
 	public void showDataType(MDataType dtp) {
@@ -483,7 +485,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows or hides a data type.
-	 * 
+	 *
 	 * @param dtp
 	 *            The <code>MDataType</code> to show or hide
 	 * @param show
@@ -513,7 +515,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Adds an enumeration to the diagram.
-	 * 
+	 *
 	 * @param enumeration
 	 *            Enumeration to be added.
 	 */
@@ -582,7 +584,7 @@ public class ClassDiagram extends DiagramView
 	 * wird sie in die Darstellung aufgenommen. Werden fuer die Darstellung
 	 * Klassen benoetigt, werden diese ebenfalls sichtbar gemacht, damit keine
 	 * ungueltige Darstellung entsteht.
-	 * 
+	 *
 	 * @param assoc
 	 */
 	public void showAssociation(MAssociation assoc) {
@@ -664,7 +666,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * This part is a separate method for easier inheritance.
-	 * 
+	 *
 	 * @author Andreas Kaestner
 	 */
 	protected BinaryAssociationOrLinkEdge createBinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
@@ -1357,7 +1359,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Finds all elements (class or enum node) which are not selected.
-	 * 
+	 *
 	 * @param selectedElements
 	 *            Nodes which are selected at this point in the diagram.
 	 * @return A Set of the none selected objects in the diagram.
@@ -1397,7 +1399,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Hides the given elements in this diagram.
-	 * 
+	 *
 	 * @param nodesToHide
 	 *            A set of {@link MClassifier} ({@link MClass}
 	 *            {@link MDataType} or {@link EnumType}) to hide
@@ -1420,7 +1422,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Show the given elements in this diagram.
-	 * 
+	 *
 	 * @param nodesToShow
 	 *            A set of {@link MClassifier} ({@link MClass}
 	 *            {@link MDataType} or {@link EnumType}) to hide
@@ -1488,6 +1490,32 @@ public class ClassDiagram extends DiagramView
 		for (GeneralizationEdge e : data.fGenToGeneralizationEdge.values()) {
 			e.storePlacementInfo(helper, parent, !visible);
 		}
+	}
+
+	@Override
+	protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement){
+		if (placeableNode instanceof ClassNode classNode)
+			if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode){
+				adaptClassNodeToStyleInfo(classNode, styleInfoClassNode);
+			}
+	}
+
+	public void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
+		classNode.setColor(styleInfoClassNode.getNamesColor());
+		classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
+
+		final List<MAttribute> mAttributes = classNode.cls().attributes();
+		for (int i = 0; i < mAttributes.size(); i++) {
+			final MAttribute mAttribute = mAttributes.get(i);
+			classNode.setAttributeColor(mAttribute, styleInfoClassNode.getAttributeColor()[i]);
+		}
+
+		final List<MOperation> mOperations = classNode.cls().operations();
+		for (int i = 0; i < mOperations.size(); i++) {
+			final MOperation mOperation = mOperations.get(i);
+			classNode.setOperationColor(mOperation, styleInfoClassNode.getOperationColor()[i]);
+		}
+
 	}
 
 	private class RestoreHandler {
@@ -1880,7 +1908,7 @@ public class ClassDiagram extends DiagramView
 	/**
 	 * Returns <code>true</code>, if the given classifier <code>cs</code> is
 	 * currently visible in the diagram.
-	 * 
+	 *
 	 * @param cs
 	 * @return
 	 */
@@ -1914,7 +1942,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Check if one association is hidden
-	 * 
+	 *
 	 * @param association
 	 * @return true, if association in hiddenData, else return false
 	 */

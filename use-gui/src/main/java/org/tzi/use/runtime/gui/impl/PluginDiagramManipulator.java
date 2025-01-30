@@ -38,6 +38,10 @@ public abstract class PluginDiagramManipulator {
      */
     public abstract void onClosure();
 
+    protected void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider){
+        DiagramExtensionPoint.getInstance().addStyleInfoProvider(styleInfoProvider);
+    }
+
     protected DiagramOptions getDiagramOptions(){
         return diagramViews.get(0).getOptions();
     }
@@ -58,7 +62,7 @@ public abstract class PluginDiagramManipulator {
         return diagramViews.stream().map(view -> view.getGraph().getNodes().stream().filter(node -> node.name().equals(name)).findFirst().orElse(null)).toList();
     }
 
-
+    @Deprecated(forRemoval = true)
     protected final List<DiagramView.DiagramData> getDiagramDataByVisibility(final boolean isVisible) {
         return diagramViews.stream().map(isVisible ? DiagramView::getVisibleData : DiagramView::getHiddenData).toList();
     }
