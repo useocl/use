@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
@@ -10,13 +7,10 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.ToolBar?>
-
-
-<?import javafx.scene.web.WebView?>
 <?import javafx.scene.control.TabPane?>
-<?import org.kordamp.desktoppanefx.scene.layout.DesktopPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 <BorderPane fx:id="borderPaneID" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.tzi.use.gui.main.MainWindowFX">
@@ -56,7 +50,8 @@
                         </SplitPane>
                         <!-- Middle/Top VBox (RIGHT Display) -->
                         <VBox>
-                            <TabPane fx:id="fDesktopPane" VBox.vgrow="ALWAYS"/>
+                            <AnchorPane fx:id="fDesktopPane" style="-fx-background-color: #f0f0f0;" VBox.vgrow="ALWAYS"/>
+                            <HBox fx:id="fDesktopTaskbarPane" spacing="5" style="-fx-background-color: #ddd; -fx-padding: 5;" />
                         </VBox>
 
                     </items>

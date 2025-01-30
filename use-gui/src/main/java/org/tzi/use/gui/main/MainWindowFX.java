@@ -27,8 +27,11 @@ import javafx.application.Platform;
 
 import javax.swing.*;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.print.*;
@@ -42,13 +45,14 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.kordamp.desktoppanefx.scene.layout.InternalWindow;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
@@ -111,7 +115,10 @@ public class MainWindowFX {
     private TreeView<String> folderTreeView;
 
     @FXML
-    private TabPane fDesktopPane;
+    private AnchorPane fDesktopPane;
+
+    @FXML
+    private HBox fDesktopTaskbarPane;
 
     @FXML
     private Label fStatusBar;
@@ -125,6 +132,12 @@ public class MainWindowFX {
     private final BooleanProperty fActionExportContentAsPDF = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionEditUndo = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionEditRedo = new SimpleBooleanProperty(false);
+
+    // Keep track of the currently active ResizableInternalWindow
+    private final ObjectProperty<ResizableInternalWindow> activeWindow = new SimpleObjectProperty<>(null);
+
+    // The List containing all ResizableInternalWindows
+    private final List<ResizableInternalWindow> internalWindows = new ArrayList<>();
 
     private static Session fSession;
     private static IRuntime fPluginRuntime;
@@ -206,10 +219,10 @@ public class MainWindowFX {
             }
         });
 
-        fDesktopPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab)-> {
-            if (newTab != null) {
-                String tabName = newTab.getText();
-                if ("Class diagram".equals(tabName) || "Object diagram".equals(tabName) || "Communication diagram".equals(tabName)) {
+        activeWindow.addListener((observable, oldWindow, newWindow)-> {
+            if (newWindow != null) {
+                String windowTitle = newWindow.getTitleText();
+                if ("Class diagram".equals(windowTitle) || "Object diagram".equals(windowTitle) || "Communication diagram".equals(windowTitle)) {
                     // show diagram printer and exportAsPdf if above tabs selected
                     fActionPrintDiagram.setValue(true);
                     fActionExportContentAsPDF.setValue(true);
@@ -218,7 +231,7 @@ public class MainWindowFX {
                     fActionPrintDiagram.setValue(false);
                     fActionExportContentAsPDF.setValue(false);
                 }
-                if ("Sequence diagram".equals(tabName)) {
+                if ("Sequence diagram".equals(windowTitle)) {
                     // show view printer if sequence diagram tab is selected
                     fActionPrintView.setValue(true);
                 } else {
@@ -258,10 +271,6 @@ public class MainWindowFX {
             }
         });
 
-//        fActionSpecificationLoaded.bind(Bindings.createBooleanBinding(
-//                () -> fSession != null && fSession.hasSystem(),
-//                fSession.systemProperty()
-//        ));
     }
 
     /**
@@ -758,6 +767,44 @@ public class MainWindowFX {
     }
 
     /**
+     * Creates a new ResizableInternalWindow and adds it to the desktop.
+     */
+    private void createNewWindow(String title, SwingNode swingNode) {
+        ResizableInternalWindow window = new ResizableInternalWindow(title, fDesktopPane, fDesktopTaskbarPane, swingNode,  this);
+
+        // Random or custom position in the desktop
+        window.setLayoutX(Math.random() * Math.max(0, (fDesktopPane.getWidth() - 300)));
+        window.setLayoutY(Math.random() * Math.max(0, (fDesktopPane.getHeight() - 200)));
+
+        // add Window to DesktopPane
+        fDesktopPane.getChildren().add(window);
+
+        // Mark this window as active for the controller (MainWindow)
+        window.toFront();
+        setActiveWindow(window); // sets window active for this controller
+        window.setActive(true);  // sets window active and marks the border
+
+        // add Window to list of Windows
+        internalWindows.add(window);
+
+        // Listener for the selected Tab
+        setupTabSelectionMessage(window, "Use left mouse button to move "
+                + "classes, right button for popup menu.");
+
+    }
+
+    /**
+     * Closes all windows, removing them from desktop and taskbar (if minimized).
+     */
+    private void closeAllWindows() {
+        // For each window in the list, call its closeWindow() or remove from desktop etc.
+        for (ResizableInternalWindow win : internalWindows) {
+            win.closeWindow();
+        }
+        internalWindows.clear();
+    }
+
+    /**
      * This Methode has the Logic for the Filechooser of the folderTreeView
      */
     private void openDirectoryChooser(TreeView<String> folderTreeView) {
@@ -825,7 +872,8 @@ public class MainWindowFX {
         } catch (MSystemException ex) {
             showAlert(ex.getMessage(), "Error");
         }
-
+        // keeping the BooleanProperty Updated
+        updateFActionSaveScript();
     }
 
     public void actionEditRedo() {
@@ -847,6 +895,7 @@ public class MainWindowFX {
         } catch (MSystemException ex) {
             showAlert(ex.getMessage(), "Error");
         }
+        updateFActionSaveScript();
     }
 
     public void createObject(String clsName) {
@@ -916,15 +965,10 @@ public class MainWindowFX {
         c.setLayout(new BorderLayout());
         c.add(cdv, BorderLayout.CENTER);
         swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
-        Tab classDiagramTab = new Tab("Class diagram", swingNode);
-
-        // Listener for the selected Tab
-        setupTabSelectionMessage(classDiagramTab, "Use left mouse button to move "
-                + "classes, right button for popup menu.");
-
-        // Add the tab to the TabPane
-        fDesktopPane.getTabs().add(classDiagramTab);
+        // creating the new Window with the swingNode
+        createNewWindow("Class diagram", swingNode);
     }
 
     /**
@@ -978,15 +1022,10 @@ public class MainWindowFX {
 
         // Add the Swing component to the SwingNode
         swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
-        // Create a new tab in the JavaFX TabPane for the object diagram
-        Tab objectDiagramTab = new Tab("Object diagram", swingNode);
-
-        // Show a temporary message in the status bar
-        setupTabSelectionMessage(objectDiagramTab, "Use left mouse button to move objects, right button for popup menu.");
-
-        // Add the tab to the TabPane
-        fDesktopPane.getTabs().add(objectDiagramTab);
+        // creating the new Window with the swingNode
+        createNewWindow("Object diagram", swingNode);
     }
 
     // Actions
@@ -1011,7 +1050,9 @@ public class MainWindowFX {
     protected boolean compile(final Path f) {
         // clearing the current state before compiling the new one
         fLogPanel.clear();
-        fDesktopPane.getTabs().clear();  // clearing the tabs
+
+        // clearing all the windows inside the desktoppane
+        closeAllWindows();
 
         fLogWriter.println("compiling specification " + f.toString() + "...");
 
@@ -1048,7 +1089,7 @@ public class MainWindowFX {
     }
     protected void initializeModelBrowserFX() {
         // check if specifications avaiable
-        //updateFActionSaveScript();
+        updateFActionSaveScript();
         updateFActionDiagramPrinter();
         updateFActionViewPrinter();
         updateFActionExportContentAsPDF();
@@ -1251,7 +1292,6 @@ public class MainWindowFX {
      */
     public PageLayout pageLayout(PrinterJob job) {
         if (fPageLayout == null) {
-
             // initialize with defaults
             Printer printer = job.getPrinter();
             Paper paper = job.getPrinter().getDefaultPageLayout().getPaper();
@@ -1265,23 +1305,19 @@ public class MainWindowFX {
                 pageOrientation = PageOrientation.REVERSE_LANDSCAPE;
 
             fPageLayout = printer.createPageLayout(paper, pageOrientation, Printer.MarginType.DEFAULT);
-
         }
-
-
-
         return fPageLayout;
     }
 
     /**
      * Sets up a tab to display a temporary message in the status bar when selected.
      *
-     * @param tab       the Tab to which the selection behavior will be applied
+     * @param window       the window to which the selection behavior will be applied
      * @param tmpMessage   the temporary message to display when the tab is selected
      */
-    private void setupTabSelectionMessage(Tab tab, String tmpMessage){
-        tab.setOnSelectionChanged(event -> {
-            if (tab.isSelected()) {
+    private void setupTabSelectionMessage(ResizableInternalWindow window, String tmpMessage){
+        window.setOnMouseClicked(event -> {
+            if (window.isActive()) {
                 fStatusBar.setText(tmpMessage);
                 Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> fStatusBar.setText("Ready.")));
                 timeline.setCycleCount(1);
@@ -1290,6 +1326,46 @@ public class MainWindowFX {
                 fStatusBar.setText("Ready.");
             }
         });
+    }
+
+    /**
+     * returns the active Window on the DesktopPan
+     */
+    public ResizableInternalWindow getActiveWindow() {
+        return activeWindow.get();
+    }
+
+    /**
+     * adding a new Window To the window List of the desktopPane
+     */
+    public void addWindowToList(ResizableInternalWindow window){
+        internalWindows.add(window);
+    }
+
+    /**
+     * deleting a Window from the window List of the desktopPane
+     */
+    public void deleteWindowFromList(ResizableInternalWindow window){
+        internalWindows.add(window);
+    }
+
+    /**
+     * setting the active Window
+     */
+    public void setActiveWindow(ResizableInternalWindow window) {
+        activeWindow.set(window);
+
+        // Deactivate all other windows
+        for (ResizableInternalWindow win : internalWindows) {
+            win.setActive(win == window);
+        }
+    }
+
+    /**
+     * returns the activeWindowProperty
+     */
+    public ObjectProperty<ResizableInternalWindow> activeWindowProperty() {
+        return activeWindow;
     }
 
     /**
