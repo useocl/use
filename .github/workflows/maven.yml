@@ -57,7 +57,7 @@ jobs:
     steps:
     # Checkout repository
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v3 # dont need to checkout if I put the postman collection into the artifact
 
     # Set up JDK
     - name: Set up Java
@@ -71,13 +71,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: Constructed use-api
-    # Build the application
-    - name: Build with Maven
-      run: mvn --batch-mode --update-snapshots verify
       
       #List target dir
     - name: List target directory
-      run: ls -l use-api/target/
+      run: ls -l testphase/
       
     # Start Spring Boot
     - name: Start Spring Boot
