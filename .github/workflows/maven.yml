@@ -44,8 +44,6 @@ jobs:
         name: constructed_use-api
         path: testphase
         
-    - name: List files
-      run: ls -R $GITHUB_WORKSPACE
 
   test:
     needs: build
@@ -77,11 +75,11 @@ jobs:
       
       #List target dir
     - name: List directory
-      run: ls -l constructed_use-api
+      run: ls -l testphase
       
     # Start Spring Boot
     - name: Start Spring Boot
-      run: java -Dspring.profiles.active=test -jar constructed_use-api/use-api-7.1.1.jar &
+      run: java -Dspring.profiles.active=test -jar testphase/use-api-7.1.1.jar &
       env:
         SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
 
