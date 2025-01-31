@@ -20,7 +20,7 @@ jobs:
         build_time=$((end_time - start_time))
         echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
       run: mvn --batch-mode --update-snapshots verify
-    - name: Upload build result
+    - name: Upload build result use-assembly
       run: mkdir staging && cp use-assembly/target/*.zip staging
     - uses: actions/upload-artifact@v4
       with:
@@ -36,3 +36,68 @@ jobs:
         path: |
           docs/archunit-results/cycles-current-failure-report.txt
           docs/archunit-results/layers-current-failure-report.txt
+        
+    - name: Upload build result use-api
+      run: mkdir testphase && cp use-api/target/use-api-7.1.1.jar testphase
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Constructed use-api
+        path: testphase
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+
+    steps:
+    # Checkout repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up JDK
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'adopt'
+        cache: maven
+
+    - name: Download Artifact use-api
+      uses: actions/download-artifact@v4
+      with:
+        name: Constructed use-api
+    # Build the application
+    - name: Build with Maven
+      run: mvn --batch-mode --update-snapshots verify
+      
+      #List target dir
+    - name: List target directory
+      run: ls -l use-api/target/
+      
+    # Start Spring Boot
+    - name: Start Spring Boot
+      run: java -Dspring.profiles.active=test -jar testphase/use-api-7.1.1.jar &
+      env:
+        SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
+
+    # Wait for Spring Boot to start
+    - name: Wait for Spring Boot
+      run: |
+        for i in {1..4}; do
+          curl --fail http://localhost:8080/actuator/health && break || sleep 10;
+        done
+
+    # Run Postman Tests with Newman
+    - name: Run Postman tests
+      run: |
+        npm install -g newman
+        newman run use-api/src/main/resources/postman_collection/use-webapi.postman_collection.json
+
+
+    # Cleanup
+    - name: Stop Spring Boot
+      run: pkill -f 'java -Dspring.profiles.active=test'  
