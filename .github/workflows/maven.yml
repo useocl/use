@@ -41,7 +41,7 @@ jobs:
       run: mkdir testphase && cp use-api/target/use-api-7.1.1.jar testphase
     - uses: actions/upload-artifact@v4
       with:
-        name: Constructed use-api
+        name: constructed_use-api
         path: testphase
 
   test:
@@ -70,15 +70,15 @@ jobs:
     - name: Download Artifact use-api
       uses: actions/download-artifact@v4
       with:
-        name: Constructed use-api
+        name: constructed_use-api
       
       #List target dir
     - name: List directory
-      run: ls -R "Constructed use-api"
+      run: ls -l constructed_use-api
       
     # Start Spring Boot
     - name: Start Spring Boot
-      run: java -Dspring.profiles.active=test -jar "Constructed use-api/use-api-7.1.1.jar" &
+      run: java -Dspring.profiles.active=test -jar constructed_use-api/use-api-7.1.1.jar &
       env:
         SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
 
