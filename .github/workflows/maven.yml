@@ -73,12 +73,12 @@ jobs:
         name: Constructed use-api
       
       #List target dir
-    - name: List target directory
-      run: ls -l testphase/
+    - name: List directory
+      run: ls -R "Constructed use-api"
       
     # Start Spring Boot
     - name: Start Spring Boot
-      run: java -Dspring.profiles.active=test -jar testphase/use-api-7.1.1.jar &
+      run: java -Dspring.profiles.active=test -jar "Constructed use-api/use-api-7.1.1.jar" &
       env:
         SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
 
