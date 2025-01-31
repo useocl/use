@@ -43,6 +43,9 @@ jobs:
       with:
         name: constructed_use-api
         path: testphase
+        
+    - name: List files
+      run: ls -R $GITHUB_WORKSPACE
 
   test:
     needs: build
