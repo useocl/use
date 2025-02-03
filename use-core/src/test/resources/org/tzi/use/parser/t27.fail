@@ -1,1 +1,1 @@
-t27.use:8:9: Constructor `B' is missing parent attribute(s).
+t27.use:8:9: Instance constructor `B' is missing parent attribute(s).
