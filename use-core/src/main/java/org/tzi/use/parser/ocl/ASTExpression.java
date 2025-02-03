@@ -70,7 +70,7 @@ public abstract class ASTExpression extends AST {
     }
     
     public void setStringRep(String stringRep) {
-    	fStringRep = stringRep.trim().replaceAll("  ", " ");
+    	fStringRep = stringRep.trim().replaceAll(" {2}", " ");
     }
 
     public void setIsPre() {
@@ -93,7 +93,7 @@ public abstract class ASTExpression extends AST {
     public abstract Expression gen(Context ctx) throws SemanticException;
         
     /**
-     * Used by template method {@link getFreeVariables()} to create
+     * Used by template method {@link #getFreeVariables()} to create
      * a set of all free variables of an expression by asking its
      * sub-expressions.
      * <p>Implementors need to add all free variables to the provided set <code>freeVars</code>.</p>
@@ -107,7 +107,7 @@ public abstract class ASTExpression extends AST {
      * @return A <code>Set</code> of all free variables.
      */
     public Set<String> getFreeVariables() {
-    	Set<String> result = new HashSet<String>();
+    	Set<String> result = new HashSet<>();
     	getFreeVariables(result);
     	return result;
     }
@@ -122,7 +122,7 @@ public abstract class ASTExpression extends AST {
                                          Expression[] args) 
         throws SemanticException
     {
-        Expression res = null;
+        Expression res;
         try {
             // lookup operation
             res = ExpStdOp.create(opname, args);
@@ -166,7 +166,7 @@ public abstract class ASTExpression extends AST {
                                         Expression srcExpr,
                                         MNavigableElement dst ) 
             throws SemanticException {
-        return genNavigation( null, rolenameToken, srcClass, srcExpr, dst, Collections.<ASTExpression>emptyList(), Collections.<ASTExpression>emptyList() );
+        return genNavigation( null, rolenameToken, srcClass, srcExpr, dst, Collections.emptyList(), Collections.emptyList() );
     }
 
     protected Expression genNavigation(Context ctx, Token rolenameToken,
@@ -177,17 +177,17 @@ public abstract class ASTExpression extends AST {
                                        List<ASTExpression> qualifiers )
         throws SemanticException
     {
-        Expression res = null;
+        Expression res;
 
         // find source end
-        MNavigableElement src = null;
+        MNavigableElement src;
         
         if (srcClass.equals(dst.association())) {
         	return new ExpNavigationClassifierSource(dst.cls(), srcExpr, dst);
         }
         
         if (navigationNeedsExplicitRolename(srcClass, dst)) {
-			if (explicitRolenameOrQualifiers.size() == 0) {
+			if (explicitRolenameOrQualifiers.isEmpty()) {
 				// an explicit rolename is needed, but not provided
 				throw new SemanticException(
 						rolenameToken,
@@ -211,16 +211,15 @@ public abstract class ASTExpression extends AST {
 								+ " was given. May be you interchanged it with qualifier values?");
 			}
         	
-        	ASTExpression explicitRolenameExp = explicitRolenameOrQualifiers.get(0);
+        	ASTExpression explicitRolenameExp = explicitRolenameOrQualifiers.getFirst();
         	
-        	if (!(explicitRolenameExp instanceof ASTOperationExpression)) {
+        	if (!(explicitRolenameExp instanceof ASTOperationExpression explicitRolenameOpExp)) {
         		// Must be a OperationExpression which encapsulates an IDENT
         		throw new SemanticException(rolenameToken,
                         "Invalid qualification given");
         	}
-        	
-        	ASTOperationExpression explicitRolenameOpExp = (ASTOperationExpression)explicitRolenameExp;
-        	Token explicitRolenameToken = explicitRolenameOpExp.getOpToken();
+
+            Token explicitRolenameToken = explicitRolenameOpExp.getOpToken();
 
         	src = dst.association().getSourceEnd(srcClass, dst, explicitRolenameToken.getText());
         	
@@ -250,7 +249,7 @@ public abstract class ASTExpression extends AST {
         if (qualifiers.isEmpty()) {
         	qualifierExpressions = Collections.emptyList();
         } else {
-        	qualifierExpressions = new ArrayList<Expression>();
+        	qualifierExpressions = new ArrayList<>();
         	for (ASTExpression qualifierExp : qualifiers) {
         		qualifierExpressions.add(qualifierExp.gen(ctx));
         	}
@@ -269,11 +268,11 @@ public abstract class ASTExpression extends AST {
     }
 
     /**
-	 * True if a navigation from an object of class <code>srcClass</code> to
-	 * the association end <code>dst</code> needs an explicit rolename.
+	 * <p>True if a navigation from an object of class <code>srcClass</code> to
+	 * the association end <code>dst</code> needs an explicit rolename.</p>
 	 * 
-	 * Only reflexive associations with more then two reachable ends
-     * can have an ambiguous path.
+	 * <p>Only reflexive associations with more then two reachable ends
+     * can have an ambiguous path.</p>
 	 * @param srcClass The <code>MClass</code> to navigate from
 	 * @param dst The <code>MNavigableElement</code> to navigate to.
 	 * @return <code>true</code> if the navigation needs a rolename, otherwise <code>false</code>.
@@ -304,7 +303,7 @@ public abstract class ASTExpression extends AST {
      * @param srcExpr the source collection
      * @param expr the argument expression for collect
      * @param elemType type of elements of the source collection 
-     * @throws SemanticException 
+     * @throws SemanticException If the internal used instance of <code>ExpCollect</code> could not be created.
      */
     protected Expression genImplicitCollect(Expression srcExpr, 
                                             Expression expr, 
