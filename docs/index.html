@@ -27,10 +27,10 @@
     <!-- Cycles Over Time Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Cycles Over Time</h3>
+        <h3 class="card-title">Cyclic Dependencies without Tests</h3>
       </div>
       <p class="card-description">
-        Tracks the number of dependency cycles in the codebase over time,
+        Tracks the number of dependency cycles in the codebase (excluding tests) over time,
         helping identify architectural improvements or degradation.
       </p>
       <div class="chart-container">
@@ -41,11 +41,11 @@
     <!-- Complexity Metrics Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Complexity Metrics</h3>
+        <h3 class="card-title">Cyclic Dependencies with Tests</h3>
       </div>
       <p class="card-description">
-        Various complexity metrics showing the current state of the codebase,
-        including cyclomatic complexity and dependency measures.
+        Tracks the number of dependency cycles in the entire codebase over time,
+        helping identify architectural improvements or degradation.
       </p>
       <div class="chart-container">
         <canvas id="complexityMetricsChart"></canvas>
@@ -55,7 +55,7 @@
     <!-- Trend Analysis Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Trend Analysis</h3>
+        <h3 class="card-title">Layer Architecture Violations</h3>
       </div>
       <p class="card-description">
         Analysis of architectural trends over time, highlighting patterns
@@ -69,7 +69,7 @@
     <!-- Comparative Metrics Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Comparative Metrics</h3>
+        <h3 class="card-title">Build Time</h3>
       </div>
       <p class="card-description">
         Comparison of different architectural metrics across versions
