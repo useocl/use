@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USE Fitness Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+<!-- Header Section -->
+<header class="header">
+  <h1>USE Fitness Dashboard</h1>
+  <p>Analysis and Visualization of Software Quality Metrics</p>
+</header>
+
+<div class="container">
+  <!-- Overview Section -->
+  <section class="info-section">
+    <h2>Dashboard Overview</h2>
+    <p>This dashboard provides comprehensive insights into the software quality metrics of the USE project.
+      The visualizations below highlight key aspects of the codebase structure and its evolution over time.</p>
+  </section>
+
+  <!-- Main Dashboard Grid -->
+  <div class="dashboard-grid">
+    <!-- Cycles Over Time Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Cycles Over Time</h3>
+      </div>
+      <p class="card-description">
+        Tracks the number of dependency cycles in the codebase over time,
+        helping identify architectural improvements or degradation.
+      </p>
+      <div class="chart-container">
+        <canvas id="cyclesOverTimeChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Complexity Metrics Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Complexity Metrics</h3>
+      </div>
+      <p class="card-description">
+        Various complexity metrics showing the current state of the codebase,
+        including cyclomatic complexity and dependency measures.
+      </p>
+      <div class="chart-container">
+        <canvas id="complexityMetricsChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Trend Analysis Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Trend Analysis</h3>
+      </div>
+      <p class="card-description">
+        Analysis of architectural trends over time, highlighting patterns
+        and potential areas for improvement.
+      </p>
+      <div class="chart-container">
+        <canvas id="trendAnalysisChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Comparative Metrics Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Comparative Metrics</h3>
+      </div>
+      <p class="card-description">
+        Comparison of different architectural metrics across versions
+        or components of the system.
+      </p>
+      <div class="chart-container">
+        <canvas id="comparativeMetricsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Information Section -->
+  <section class="info-section">
+    <h2>Interpretation Guide</h2>
+    <p>The metrics displayed above help in understanding the architectural health of the system:
+      Lower cycle counts generally indicate better architectural design, while trending metrics
+      show the evolution of the system over time. Use these insights to guide refactoring
+      efforts and architectural decisions.</p>
+  </section>
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>
