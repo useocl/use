@@ -25,7 +25,7 @@ const chartConfigs = {
                 x: {
                     title: {
                         display: true,
-                        text: 'Time Period'
+                        text: 'Date'
                     }
                 }
             }
@@ -81,63 +81,92 @@ const chartConfigs = {
     }
 };
 
-// Sample data - replace with real data later
-const sampleData = {
-    cyclesOverTime: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+// Function to fetch and parse CSV data
+async function loadMetricsData() {
+    try {
+        const response = await fetch('mock-metrics.csv');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const csvText = await response.text();
+        console.log('Fetched CSV:', csvText); // Debug log
+
+        return new Promise((resolve, reject) => {
+            Papa.parse(csvText, {
+                complete: (results) => {
+                    console.log('Parsed results:', results); // Debug log
+                    const data = processMetricsData(results.data);
+                    resolve(data);
+                },
+                error: (error) => {
+                    console.error('Papa Parse error:', error); // Debug log
+                    reject(error);
+                },
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true // Automatically convert numbers
+            });
+        });
+    } catch (error) {
+        console.error('Error loading metrics:', error);
+        throw error;
+    }
+}
+
+// Process the raw CSV data into chart format
+function processMetricsData(rawData) {
+    console.log('Processing data:', rawData); // Debug log
+    return {
+        labels: rawData.map(row => row.date),
         datasets: [{
             label: 'Number of Cycles',
-            data: [12, 19, 3, 5, 2, 3],
-            borderColor: '#3498db',
-            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+            data: rawData.map(row => row.cycles),
+            borderColor: '#4169E1',
+            backgroundColor: 'rgba(65, 105, 225, 0.2)',
             tension: 0.4
         }]
-    },
-    complexityMetrics: {
-        labels: ['Metric A', 'Metric B', 'Metric C', 'Metric D'],
-        datasets: [{
-            label: 'Complexity Score',
-            data: [65, 59, 80, 81],
-            backgroundColor: 'rgba(46, 204, 113, 0.2)',
-            borderColor: '#2ecc71',
-            borderWidth: 1
-        }]
-    },
-    trendAnalysis: {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
-        datasets: [{
-            label: 'Trend',
-            data: [10, 15, 13, 17, 20],
-            borderColor: '#e74c3c',
-            backgroundColor: 'rgba(231, 76, 60, 0.2)',
-            tension: 0.4
-        }]
-    },
-    comparativeMetrics: {
-        labels: ['Metric 1', 'Metric 2', 'Metric 3', 'Metric 4', 'Metric 5'],
-        datasets: [{
-            label: 'Current',
-            data: [65, 59, 90, 81, 56],
-            backgroundColor: 'rgba(52, 152, 219, 0.2)',
-            borderColor: '#3498db'
-        }, {
-            label: 'Previous',
-            data: [28, 48, 40, 19, 96],
-            backgroundColor: 'rgba(231, 76, 60, 0.2)',
-            borderColor: '#e74c3c'
-        }]
+    };
+}
+
+// Initialize and update chart
+async function initializeChart() {
+    try {
+        // Create initial empty chart
+        const ctx = document.getElementById('cyclesOverTimeChart');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Number of Cycles',
+                    data: [],
+                    borderColor: '#4169E1',
+                    backgroundColor: 'rgba(65, 105, 225, 0.2)',
+                    tension: 0.4
+                }]
+            },
+            options: chartConfigs.cyclesOverTime.options
+        });
+
+        // Load and update with real data
+        const metricsData = await loadMetricsData();
+        chart.data = metricsData;
+        chart.update();
+
+        console.log('Chart updated with data:', metricsData); // Debug log
+    } catch (error) {
+        console.error('Error initializing chart:', error);
+        // Show error in UI
+        const errorMessage = document.createElement('div');
+        errorMessage.style.color = 'red';
+        errorMessage.style.padding = '20px';
+        errorMessage.textContent = 'Error loading data: ' + error.message;
+        document.getElementById('cyclesOverTimeChart').parentNode.appendChild(errorMessage);
     }
-};
+}
 
 // Initialize charts when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all charts
-    const charts = Object.keys(chartConfigs).map(id => {
-        const ctx = document.getElementById(`${id}Chart`);
-        return new Chart(ctx, {
-            type: chartConfigs[id].type,
-            data: sampleData[id],
-            options: chartConfigs[id].options
-        });
-    });
+    console.log('Document loaded, initializing chart...');
+    initializeChart();
 });
