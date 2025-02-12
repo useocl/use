@@ -80,6 +80,9 @@ import java.awt.print.Paper;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyVetoException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -2223,12 +2226,48 @@ public class MainWindow extends JFrame {
 	public static MainWindow create(Session session, IRuntime pluginRuntime) {
 		final MainWindow win = new MainWindow(session, pluginRuntime);
 
+        win.setIcon();
         win.pack();
         win.setLocationRelativeTo(null);
         win.setVisible(true);
+
         return win;
     }
-    
+
+    /**
+     * Sets the icon of the JFrame to the USE logo
+     * defined in resources/images/use_icon.png
+     *
+     * <p>OSs different from Windows are handled in a special way,
+     * but this is untested. <a href="https://stackoverflow.com/questions/41190574/put-a-program-icon-depending-on-the-platform">Source</a></p>
+     */
+    private void setIcon() {
+        URL url = ClassLoader.getSystemResource("images/use_icon.png");
+
+        String name = System.getProperty("os.name");
+        if (name.startsWith("Win")) {
+            Toolkit kit = Toolkit.getDefaultToolkit();
+            Image img = kit.createImage(url);
+            this.setIconImage(img);
+        } else {
+            Image imgIcon = new ImageIcon(url).getImage();
+
+            Class<?> appCls = null;
+            try {
+                appCls = Class.forName("com.apple.eawt.Application");
+                Method getApplication = appCls.getMethod("getApplication");
+                Object app = getApplication.invoke(null);
+
+                Method setDockIconImage = app.getClass().getMethod("setDockIconImage");
+
+                setDockIconImage.invoke(app, imgIcon);
+            } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
+                     IllegalAccessException e) {
+                // If the icon could not be set, no worries...
+            }
+        }
+    }
+
     public void showStateMachineView(MProtocolStateMachine sm, MObject instance) {
     	StateMachineDiagramView dv = showStateMachineView(sm);
     	dv.setMonitoredInstance(instance);
