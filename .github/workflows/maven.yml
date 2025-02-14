@@ -56,9 +56,9 @@ jobs:
           - 27017:27017
 
     steps:
-    # Checkout repository
-    #- name: Checkout code
-      #uses: actions/checkout@v3 # dont need to checkout if I put the postman collection into the artifact
+     #Checkout repository
+    - name: Checkout code
+      uses: actions/checkout@v3 # dont need to checkout if I put the postman collection into the artifact
 
     # Set up JDK
     - name: Set up Java
@@ -84,7 +84,7 @@ jobs:
     # Wait for Spring Boot to start
     - name: Wait for Spring Boot
       run: |
-        for i in {1..4}; do
+        for i in {1..5}; do
           curl --fail http://localhost:8080/actuator/health && break || sleep 10;
         done
 
