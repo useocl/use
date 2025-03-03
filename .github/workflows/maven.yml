@@ -3,7 +3,9 @@
 
 name: Java CI with Maven
 
-on: push
+on: 
+  push:
+    branches: -archunit_tests # only tracks build on this branch
 
 jobs:
   build:
@@ -12,16 +14,60 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1 # if 0 then full commit history
+        
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         java-version: '21'
         distribution: 'adopt'
         cache: maven
-    - name: Build with Maven
-      run: mvn --batch-mode --update-snapshots verify
+
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+    
+    - name: Get current time
+      id: time
+      run: echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
+    
+    - name: Get current commit
+      id: commit
+      run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+    
+    - name: Build with Maven and measure time
+      id: build
+      run: |
+        start_time=$(date +%s)
+        mvn --batch-mode --update-snapshots verify
+        end_time=$(date +%s)
+        build_time=$((end_time - start_time))
+        echo "build_time=$build_time" >> $GITHUB_OUTPUT
+
+    - name: Update build time data
+      if: github.ref == 'refs/heads/archunit_tests'
+      run: |
+        # Check if file exists, create if it doesn't
+        if [ ! -f build-times.csv ]; then
+          echo "date,time,commit,buildtime" > build-times.csv
+        fi
+        
+        # Append the new build time data
+        echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> build-times.csv
+        
+        # Configure Git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Commit and push the updated CSV
+        git add build-times.csv
+        git commit -m "Update build time data [skip ci]" || echo "No changes to commit"
+        git push
+        
     - name: Upload build result
       run: mkdir staging && cp use-assembly/target/*.zip staging
+      
     - uses: actions/upload-artifact@v3
       with:
         name: Package
