@@ -298,5 +298,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'mock-cycles-without-tests.csv', 'cycles');
     initializeChart('complexityMetricsChart', 'complexityMetrics', 'mock-cycles-with-tests.csv', 'cycles');
     initializeChart('trendAnalysisChart', 'trendAnalysis', 'mock-layer-violations.csv', 'violations');
-    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'mock-build-time.csv', 'buildtime');
+    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
 });
