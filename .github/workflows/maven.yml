@@ -47,20 +47,22 @@ jobs:
     - name: Update build time data
       # if: github.ref == 'refs/heads/master'
       run: |
+        # Set file path
+        FILE_PATH="docs/build-times.csv"
         # Check if file exists, create if it doesn't
-        if [ ! -f build-times.csv ]; then
-          echo "date,time,commit,buildtime" > build-times.csv
+        if [ ! -f "$FILE_PATH" ]; then
+          echo "date,time,commit,buildtime" > "$FILE_PATH"
         fi
         
         # Append the new build time data
-        echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> build-times.csv
+        echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> "$FILE_PATH"
         
         # Configure Git
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
         # Commit and push the updated CSV
-        git add build-times.csv
+        git add "$FILE_PATH"
         git commit -m "Update build time data [skip ci]" || echo "No changes to commit"
         git push
     
