@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -25,15 +24,15 @@ jobs:
     
     - name: Get current date
       id: date
-      run: echo "date=$(date +'%Y-%m-%d')"
+      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
     
     - name: Get current time
       id: time
-      run: echo "time=$(date +'%H:%M:%S')"
+      run: echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
     
     - name: Get current commit
       id: commit
-      run: echo "sha=$(git rev-parse --short HEAD)"
+      run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     
     - name: Build with Maven and measure time
       id: build
@@ -42,17 +41,27 @@ jobs:
         mvn --batch-mode --update-snapshots verify
         end_time=$(date +%s)
         build_time=$((end_time - start_time))
-        echo "build_time=$build_time"
+        echo "build_time=$build_time" >> $GITHUB_OUTPUT
     
     - name: Update build time data
       # if: github.ref == 'refs/heads/master'
       run: |
+        # Ensure docs directory exists
+        mkdir -p docs
+        
         # Set file path
         FILE_PATH="docs/build-times.csv"
+        
         # Check if file exists, create if it doesn't
         if [ ! -f "$FILE_PATH" ]; then
           echo "date,time,commit,buildtime" > "$FILE_PATH"
         fi
+
+        # Debug outputs to see what values we're getting
+        echo "Date: ${{ steps.date.outputs.date }}"
+        echo "Time: ${{ steps.time.outputs.time }}"
+        echo "Commit: ${{ steps.commit.outputs.sha }}"
+        echo "Build time: ${{ steps.build.outputs.build_time }}"
         
         # Append the new build time data
         echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> "$FILE_PATH"
