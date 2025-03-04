@@ -45,7 +45,7 @@ jobs:
         echo "build_time=$build_time"
     
     - name: Update build time data
-      if: github.ref == 'refs/heads/main'
+      # if: github.ref == 'refs/heads/master'
       run: |
         # Check if file exists, create if it doesn't
         if [ ! -f build-times.csv ]; then
