@@ -10,6 +10,7 @@ import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
@@ -41,7 +42,7 @@ public class MavenCyclicDependenciesCoreTest {
     // Map to store all cycle counts
     private Map<String, Integer> cycleCounts = new HashMap<>();
 
-    @BeforeEach
+    @BeforeAll
     public void setup() {
         classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
