@@ -11,74 +11,103 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # This ensures we get the full commit history
-    
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'adopt'
-        cache: maven
-    
-    - name: Get current date
-      id: date
-      run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-    
-    - name: Get current time
-      id: time
-      run: echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
-    
-    - name: Get current commit
-      id: commit
-      run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-    
-    - name: Build with Maven and measure time
-      id: build
-      run: |
-        start_time=$(date +%s)
-        mvn --batch-mode --update-snapshots verify
-        end_time=$(date +%s)
-        build_time=$((end_time - start_time))
-        echo "build_time=$build_time" >> $GITHUB_OUTPUT
-    
-    - name: Update build time data
-      # if: github.ref == 'refs/heads/master'
-      run: |
-        # Ensure docs directory exists
-        mkdir -p docs
-        
-        # Set file path
-        FILE_PATH="docs/build-times.csv"
-        
-        # Check if file exists, create if it doesn't
-        if [ ! -f "$FILE_PATH" ]; then
-          echo "date,time,commit,buildtime" > "$FILE_PATH"
-        fi
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # This ensures we get the full commit history
 
-        # Debug outputs to see what values we're getting
-        echo "Date: ${{ steps.date.outputs.date }}"
-        echo "Time: ${{ steps.time.outputs.time }}"
-        echo "Commit: ${{ steps.commit.outputs.sha }}"
-        echo "Build time: ${{ steps.build.outputs.build_time }}"
-        
-        # Append the new build time data
-        echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> "$FILE_PATH"
-        
-        # Configure Git
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        
-        # Commit and push the updated CSV
-        git add "$FILE_PATH"
-        git commit -m "Update build time data [skip ci]" || echo "No changes to commit"
-        git push
-    
-    - name: Upload build result
-      run: mkdir staging && cp use-assembly/target/*.zip staging
-    
-    - uses: actions/upload-artifact@v4
-      with:
-        name: Package
-        path: staging
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Get current time
+        id: time
+        run: echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
+
+      - name: Get current commit
+        id: commit
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build with Maven and measure time
+        id: build
+        run: |
+          start_time=$(date +%s)
+          mvn --batch-mode --update-snapshots verify
+          end_time=$(date +%s)
+          build_time=$((end_time - start_time))
+          echo "build_time=$build_time" >> $GITHUB_OUTPUT
+
+      - name: Update metrics data
+        # if: github.ref == 'refs/heads/master'
+        run: |
+          # Ensure docs directory exists
+          mkdir -p docs
+
+          # Set file path
+          BUILD_TIMES_CSV="docs/build-times.csv"
+          CYCLES_CSV="docs/cycle-dependencies.csv"
+          JSON_FILE="use-core/cyclic_dependencies_results.json"
+
+          # Update build times dat
+          if [ ! -f "$BUILD_TIMES_CSV" ]; then
+            echo "date,time,commit,buildtime" > "$BUILD_TIMES_CSV"
+          fi
+
+          # Debug outputs to see what values we're getting
+          echo "Date: ${{ steps.date.outputs.date }}"
+          echo "Time: ${{ steps.time.outputs.time }}"
+          echo "Commit: ${{ steps.commit.outputs.sha }}"
+          echo "Build time: ${{ steps.build.outputs.build_time }}"
+
+          # Append the new build time data
+          echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> "$BUILD_TIMES_CSV"
+
+          # Process cycle dependency results if JSON file exists
+          if [ -f "$JSON_FILE" ]; then
+            # Create CSV header if file doesn't exist
+            if [ ! -f "$CYCLES_CSV" ]; then
+              echo "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util" > "$CYCLES_CSV"
+            fi
+
+            # Extract values from JSON using jq
+            ALL_MODULES=$(jq -r '.all_modules // 0' "$JSON_FILE")
+            ANALYSIS=$(jq -r '.analysis // 0' "$JSON_FILE")
+            API=$(jq -r '.api // 0' "$JSON_FILE")
+            CONFIG=$(jq -r '.config // 0' "$JSON_FILE")
+            GEN=$(jq -r '.gen // 0' "$JSON_FILE")
+            GRAPH=$(jq -r '.graph // 0' "$JSON_FILE")
+            MAIN=$(jq -r '.main // 0' "$JSON_FILE")
+            PARSER=$(jq -r '.parser // 0' "$JSON_FILE")
+            UML=$(jq -r '.uml // 0' "$JSON_FILE")
+            UTIL=$(jq -r '.util // 0' "$JSON_FILE")
+
+            # Append new row to CSV
+            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES,$ANALYSIS,$API,$CONFIG,$GEN,$GRAPH,$MAIN,$PARSER,$UML,$UTIL" >> "$CYCLES_CSV"
+
+            echo "Updated cycle dependency data in $CYCLES_CSV"
+          else
+            echo "Warning: JSON file with cycle dependency results not found at $JSON_FILE"
+          fi
+
+          # Configure Git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Commit and push the updated CSV files
+          git add docs/
+          git commit -m "Update metrics data [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Upload build result
+        run: mkdir staging && cp use-assembly/target/*.zip staging
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Package
+          path: staging
