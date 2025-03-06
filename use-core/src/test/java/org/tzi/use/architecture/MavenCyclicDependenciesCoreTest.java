@@ -10,6 +10,9 @@ import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,8 +20,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MavenCyclicDependenciesCoreTest {
 
     // hier sind keine Tests drin, überlegen, ob das so soll oder nicht
@@ -27,25 +35,23 @@ public class MavenCyclicDependenciesCoreTest {
     // also u.U. auch so einen Test f. gui
     private JavaClasses classes;
 
-    private static final String ALL_MODULES_RESULTS = "maven_cyclic_dependencies_results.csv";
-    private static final String ANALYSIS_MODULE_RESULTS = "maven_cyclic_dependencies_analysis_results.csv";
-    private static final String API_MODULE_RESULTS = "maven_cyclic_dependencies_api_results.csv";
-    private static final String CONFIG_MODULE_RESULTS = "maven_cyclic_dependencies_config_results.csv";
-    private static final String GEN_MODULE_RESULTS = "maven_cyclic_dependencies_gen_results.csv";
-    private static final String GRAPH_MODULE_RESULTS = "maven_cyclic_dependencies_graph_results.csv";
-    private static final String MAIN_MODULE_RESULTS = "maven_cyclic_dependencies_main_results.csv";
-    private static final String PARSER_MODULE_RESULTS = "maven_cyclic_dependencies_parser_results.csv";
-    private static final String UML_MODULE_RESULTS = "maven_cyclic_dependencies_uml_results.csv";
-    private static final String UTIL_MODULE_RESULTS = "maven_cyclic_dependencies_util_results.csv";
+    // Single json for all results
+    private static final String JSON_RESULTS_FILE = "cyclic_dependencies_results.json";
+
+    // Map to store all cycle counts
+    private Map<String, Integer> cycleCounts = new HashMap<>();
 
     @BeforeEach
     public void setup() {
-        // Delete the results file if it exists
         classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
 
-        File file = new File(ALL_MODULES_RESULTS);
+        // Initialize or reset the cycle counts map
+        cycleCounts = new HashMap<>();
+
+        // Delete the results file if it exists
+        File file = new File(JSON_RESULTS_FILE);
         if (file.exists()) {
             file.delete();
         }
@@ -54,18 +60,17 @@ public class MavenCyclicDependenciesCoreTest {
 
     @Test
     @ArchTest
-    public void count_cycles_in_core() {
+    public void count_cycles_in_core_without_tests() {
         int cycleCount = countCyclesForPackage("org.tzi.use");
-        writeResult(cycleCount, ALL_MODULES_RESULTS);
+        cycleCounts.put("all_modules", cycleCount);
         System.out.println("Cycles in core module : " + cycleCount);
-        //assertTrue("Cycle count should be non-negative", cycleCount >= 0);
     }
 
     @Test
     @ArchTest
     public void count_cycles_in_analysis_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.analysis");
-        writeResult(cycleCount, ANALYSIS_MODULE_RESULTS);
+        cycleCounts.put("analysis", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.analysis: " + cycleCount);
     }
 
@@ -73,7 +78,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_api_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.api");
-        writeResult(cycleCount, API_MODULE_RESULTS);
+        cycleCounts.put("api", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.api: " + cycleCount);
     }
 
@@ -81,7 +86,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_config_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.config");
-        writeResult(cycleCount, CONFIG_MODULE_RESULTS);
+        cycleCounts.put("config", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.config: " + cycleCount);
     }
 
@@ -89,7 +94,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_gen_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.gen");
-        writeResult(cycleCount, GEN_MODULE_RESULTS);
+        cycleCounts.put("gen", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.gen: " + cycleCount);
     }
 
@@ -97,7 +102,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_graph_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.graph");
-        writeResult(cycleCount, GRAPH_MODULE_RESULTS);
+        cycleCounts.put("graph", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.graph: " + cycleCount);
     }
 
@@ -105,7 +110,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_main_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.main");
-        writeResult(cycleCount, MAIN_MODULE_RESULTS);
+        cycleCounts.put("main", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.main: " + cycleCount);
     }
 
@@ -113,7 +118,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_parser_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.parser");
-        writeResult(cycleCount, PARSER_MODULE_RESULTS);
+        cycleCounts.put("parser", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.parser: " + cycleCount);
     }
 
@@ -121,7 +126,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_uml_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.uml");
-        writeResult(cycleCount, UML_MODULE_RESULTS);
+        cycleCounts.put("uml", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.uml: " + cycleCount);
     }
 
@@ -129,8 +134,14 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_util_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.util");
-        writeResult(cycleCount, UTIL_MODULE_RESULTS);
+        cycleCounts.put("util", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.util: " + cycleCount);
+    }
+
+    @AfterAll
+    public void writeAllResults() {
+        // Write the JSON file after all tests have completed
+        writeJsonResults();
     }
 
     private int countCyclesForPackage(String packageName) {
@@ -177,9 +188,23 @@ public class MavenCyclicDependenciesCoreTest {
         return cycleCount.get();
     }
 
-    private void writeResult(int result, String filename) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))){
-            out.println(result);
+    private void writeJsonResults() {
+        try (FileWriter writer = new FileWriter(JSON_RESULTS_FILE)) {
+            StringBuilder json = new StringBuilder();
+            json.append("{\n");
+
+            int count = 0;
+            for (Map.Entry<String, Integer> entry : cycleCounts.entrySet()) {
+                if (count > 0) {
+                    json.append(",\n");
+                }
+                json.append("  \"").append(entry.getKey()).append("\": ").append(entry.getValue());
+                count++;
+            }
+
+            json.append("\n}");
+            writer.write(json.toString());
+            System.out.println("Results written to " + JSON_RESULTS_FILE);
         } catch (IOException e) {
             e.printStackTrace();
         }
