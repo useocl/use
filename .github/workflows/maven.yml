@@ -51,8 +51,8 @@ jobs:
 
           # Set file path
           BUILD_TIMES_CSV="docs/build-times.csv"
-          CYCLES_CSV="docs/cycles-without-tests.csv"
-          JSON_FILE="use-core/cycles-without-tests-results.json"
+          CYCLES_CSV="docs/cycles-tests.csv"
+          JSON_FILE="use-core/cycles-tests-results.json"
 
           # Update build times dat
           if [ ! -f "$BUILD_TIMES_CSV" ]; then
@@ -72,23 +72,23 @@ jobs:
           if [ -f "$JSON_FILE" ]; then
             # Create CSV header if file doesn't exist
             if [ ! -f "$CYCLES_CSV" ]; then
-              echo "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util" > "$CYCLES_CSV"
+              echo "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests" > "$CYCLES_CSV"
             fi
 
             # Extract values from JSON using jq
-            ALL_MODULES=$(jq -r '.all_modules // 0' "$JSON_FILE")
-            ANALYSIS=$(jq -r '.analysis // 0' "$JSON_FILE")
-            API=$(jq -r '.api // 0' "$JSON_FILE")
-            CONFIG=$(jq -r '.config // 0' "$JSON_FILE")
-            GEN=$(jq -r '.gen // 0' "$JSON_FILE")
-            GRAPH=$(jq -r '.graph // 0' "$JSON_FILE")
-            MAIN=$(jq -r '.main // 0' "$JSON_FILE")
-            PARSER=$(jq -r '.parser // 0' "$JSON_FILE")
-            UML=$(jq -r '.uml // 0' "$JSON_FILE")
-            UTIL=$(jq -r '.util // 0' "$JSON_FILE")
+            ALL_MODULES_NO_TESTS=$(jq -r '.all_modules_no_tests // 0' "$JSON_FILE")
+            ANALYSIS_NO_TESTS=$(jq -r '.analysis_no_tests // 0' "$JSON_FILE")
+            API_NO_TESTS=$(jq -r '.api_no_tests // 0' "$JSON_FILE")
+            CONFIG_NO_TESTS=$(jq -r '.config_no_tests // 0' "$JSON_FILE")
+            GEN_NO_TESTS=$(jq -r '.gen_no_tests // 0' "$JSON_FILE")
+            GRAPH_NO_TESTS=$(jq -r '.graph_no_tests // 0' "$JSON_FILE")
+            MAIN_NO_TESTS=$(jq -r '.main_no_tests // 0' "$JSON_FILE")
+            PARSER_NO_TESTS=$(jq -r '.parser_no_tests // 0' "$JSON_FILE")
+            UML_NO_TESTS=$(jq -r '.uml_no_tests // 0' "$JSON_FILE")
+            UTIL_NO_TESTS=$(jq -r '.util_no_tests // 0' "$JSON_FILE")
 
             # Append new row to CSV
-            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES,$ANALYSIS,$API,$CONFIG,$GEN,$GRAPH,$MAIN,$PARSER,$UML,$UTIL" >> "$CYCLES_CSV"
+            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_NO_TESTS,$ANALYSIS_NO_TESTS,$API_NO_TESTS,$CONFIG_NO_TESTS,$GEN_NO_TESTS,$GRAPH_NO_TESTS,$MAIN_NO_TESTS,$PARSER_NO_TESTS,$UML_NO_TESTS,$UTIL_NO_TESTS" >> "$CYCLES_CSV"
 
             echo "Updated cycle dependency data in $CYCLES_CSV"
           else

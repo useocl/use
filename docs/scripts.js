@@ -42,6 +42,32 @@ const chartConfigs = {
             }
         }
     },
+    // New pie chart configuration
+    cyclesBreakdown: {
+        type: 'pie',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: 'Breakdown of Cycles per Package'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            return `${label}: ${value} cycles`;
+                        }
+                    }
+                }
+            }
+        }
+    },
     complexityMetrics: {
         type: 'line',
         options: {
@@ -237,10 +263,44 @@ function processChartData(rawData, valueKey) {
     };
 }
 
+// New function to process cycle breakdown data for pie chart
+function processCycleBreakdownData(rawData) {
+    // Get the most recent entry (last one in the array)
+    if (!rawData || rawData.length === 0) {
+        return { labels: [], datasets: [{ data: [], backgroundColor: [] }] };
+    }
+
+    const latestEntry = rawData[rawData.length - 1];
+
+    // Package names we want to include (excluding 'all_modules' and any with 0 cycles)
+    const packageNames = ['analysis', 'api', 'config', 'gen', 'graph', 'main', 'parser', 'uml', 'util'];
+
+    // Filter to only include packages with non-zero cycles
+    const packagesWithCycles = packageNames.filter(pkg => latestEntry[pkg] > 0);
+    const cycleValues = packagesWithCycles.map(pkg => latestEntry[pkg]);
+
+    // Generate colors for the pie chart
+    const colors = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+        '#9966FF', '#FF9F40', '#6A8D73', '#D9534F',
+        '#5BC0DE', '#F0AD4E'
+    ];
+
+    return {
+        labels: packagesWithCycles,
+        datasets: [{
+            data: cycleValues,
+            backgroundColor: colors.slice(0, packagesWithCycles.length)
+        }]
+    };
+}
+
 // Helper function to get the appropriate dataset label based on the value key
 function getDatasetLabel(valueKey) {
     switch(valueKey) {
         case 'cycles':
+            return 'Number of Cycles';
+        case 'all_modules':
             return 'Number of Cycles';
         case 'violations':
             return 'Violations';
@@ -290,12 +350,61 @@ async function initializeChart(chartId, configKey, csvFile, valueKey) {
     }
 }
 
+// New function to initialize the cycle breakdown pie chart
+async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
+    try {
+        // Create initial empty chart
+        const ctx = document.getElementById(chartId);
+        const chart = new Chart(ctx, {
+            type: chartConfigs[configKey].type,
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: []
+                }]
+            },
+            options: chartConfigs[configKey].options
+        });
+
+        // Load and update with real data
+        const rawData = await fetchCSVData(csvFile);
+        const chartData = processCycleBreakdownData(rawData);
+        chart.data = chartData;
+        chart.update();
+
+        // Add subtitle for the current test run
+        if (rawData && rawData.length > 0) {
+            const latestEntry = rawData[rawData.length - 1];
+
+            // Find the existing description element within the same card
+            const cardElement = ctx.closest('.card');
+            const descriptionElement = cardElement.querySelector('.card-description');
+
+            if (descriptionElement) {
+                // Update the existing description
+                descriptionElement.textContent = `Distribution of cyclic dependencies across different packages for the most current ArchUnit test run (${formatDateTime(latestEntry.date, latestEntry.time)}, commit: ${latestEntry.commit})`;
+            }
+        }
+        console.log(`Pie chart ${chartId} updated with data:`, chartData); // Debug log
+    } catch (error) {
+        console.error(`Error initializing pie chart ${chartId}:`, error);
+        // Show error in UI
+        const errorMessage = document.createElement('div');
+        errorMessage.style.color = 'red';
+        errorMessage.style.padding = '20px';
+        errorMessage.textContent = `Error loading data for ${chartId}: ${error.message}`;
+        document.getElementById(chartId).parentNode.appendChild(errorMessage);
+    }
+}
+
 // Initialize all charts when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded, initializing charts...');
 
     // Initialize each chart with appropriate data source and value key
     initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-without-tests.csv', 'all_modules');
+    initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
     initializeChart('complexityMetricsChart', 'complexityMetrics', 'mock-cycles-with-tests.csv', 'cycles');
     initializeChart('trendAnalysisChart', 'trendAnalysis', 'mock-layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
