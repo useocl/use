@@ -37,7 +37,7 @@ public class MavenCyclicDependenciesCoreTest {
     private JavaClasses classes;
 
     // Single json for all results
-    private static final String JSON_RESULTS_FILE = "cyclic_dependencies_results.json";
+    private static final String JSON_RESULTS_FILE = "cycles-without-tests-results.json";
 
     // Map to store all cycle counts
     private Map<String, Integer> cycleCounts = new HashMap<>();

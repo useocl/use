@@ -51,8 +51,8 @@ jobs:
 
           # Set file path
           BUILD_TIMES_CSV="docs/build-times.csv"
-          CYCLES_CSV="docs/cycle-dependencies.csv"
-          JSON_FILE="use-core/cyclic_dependencies_results.json"
+          CYCLES_CSV="docs/cycles-without-tests.csv"
+          JSON_FILE="use-core/cycles-without-tests-results.json"
 
           # Update build times dat
           if [ ! -f "$BUILD_TIMES_CSV" ]; then

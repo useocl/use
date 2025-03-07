@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded, initializing charts...');
 
     // Initialize each chart with appropriate data source and value key
-    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'mock-cycles-without-tests.csv', 'cycles');
+    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-without-tests.csv', 'cycles');
     initializeChart('complexityMetricsChart', 'complexityMetrics', 'mock-cycles-with-tests.csv', 'cycles');
     initializeChart('trendAnalysisChart', 'trendAnalysis', 'mock-layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
