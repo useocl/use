@@ -86,9 +86,19 @@ jobs:
             PARSER_NO_TESTS=$(jq -r '.parser_no_tests // 0' "$JSON_FILE")
             UML_NO_TESTS=$(jq -r '.uml_no_tests // 0' "$JSON_FILE")
             UTIL_NO_TESTS=$(jq -r '.util_no_tests // 0' "$JSON_FILE")
+            ALL_MODULES_WITH_TESTS=$(jq -r '.all_modules_with_tests // 0' "$JSON_FILE")
+            ANALYSIS_WITH_TESTS=$(jq -r '.analysis_with_tests // 0' "$JSON_FILE")
+            API_WITH_TESTS=$(jq -r '.api_with_tests // 0' "$JSON_FILE")
+            CONFIG_WITH_TESTS=$(jq -r '.config_with_tests // 0' "$JSON_FILE")
+            GEN_WITH_TESTS=$(jq -r '.gen_with_tests // 0' "$JSON_FILE")
+            GRAPH_WITH_TESTS=$(jq -r '.graph_with_tests // 0' "$JSON_FILE")
+            MAIN_WITH_TESTS=$(jq -r '.main_with_tests // 0' "$JSON_FILE")
+            PARSER_WITH_TESTS=$(jq -r '.parser_with_tests // 0' "$JSON_FILE")
+            UML_WITH_TESTS=$(jq -r '.uml_with_tests // 0' "$JSON_FILE")
+            UTIL_WITH_TESTS=$(jq -r '.util_with_tests // 0' "$JSON_FILE")
 
             # Append new row to CSV
-            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_NO_TESTS,$ANALYSIS_NO_TESTS,$API_NO_TESTS,$CONFIG_NO_TESTS,$GEN_NO_TESTS,$GRAPH_NO_TESTS,$MAIN_NO_TESTS,$PARSER_NO_TESTS,$UML_NO_TESTS,$UTIL_NO_TESTS" >> "$CYCLES_CSV"
+            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_NO_TESTS,$ALL_MODULES_WITH_TESTS,$ANALYSIS_NO_TESTS,$ANALYSIS_WITH_TESTS,$API_NO_TESTS,$API_WITH_TESTS,$CONFIG_NO_TESTS,$CONFIG_WITH_TESTS,$GEN_NO_TESTS,$GEN_WITH_TESTS,$GRAPH_NO_TESTS,$GRAPH_WITH_TESTS,$MAIN_NO_TESTS,$MAIN_WITH_TESTS,$PARSER_NO_TESTS,$PARSER_WITH_TESTS,$UML_NO_TESTS,$UML_WITH_TESTS,$UTIL_NO_TESTS,$UTIL_WITH_TESTS" >> "$CYCLES_CSV"
 
             echo "Updated cycle dependency data in $CYCLES_CSV"
           else
