@@ -61,7 +61,7 @@ public class MavenCyclicDependenciesCoreTest {
     }
 
     private void deleteFileIfExists(String filename) {
-        File file = new File(TESTS_RESULTS_JSON);
+        File file = new File(filename);
         if (file.exists()) {
             file.delete();
         }
