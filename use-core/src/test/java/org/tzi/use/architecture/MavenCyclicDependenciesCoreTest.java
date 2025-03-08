@@ -35,8 +35,9 @@ public class MavenCyclicDependenciesCoreTest {
     // Single json for all results
     private static final String TESTS_RESULTS_JSON = "cycles-tests-results.json";
 
-    // Map to store all cycle counts
-    private Map<String, Integer> cycleCountsMap = new HashMap<>();
+    // Maps to store all cycle counts
+    private Map<String, Integer> cycleCountsWithoutTests = new HashMap<>();
+    private Map<String, Integer> cycleCountsWithTests = new HashMap<>();
 
     @BeforeAll
     public void setup() {
@@ -50,8 +51,9 @@ public class MavenCyclicDependenciesCoreTest {
                 //.withImportOption(ImportOption.Predefined.ONLY_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
 
-        // Initialize or reset the cycle counts map
-        cycleCountsMap = new HashMap<>();
+        // Initialize or reset the cycle counts maps
+        cycleCountsWithoutTests = new HashMap<>();
+        cycleCountsWithTests = new HashMap<>();
 
         // Delete the results files if they exists
         deleteFileIfExists(TESTS_RESULTS_JSON);
@@ -69,7 +71,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_core_without_tests() {
         int cycleCount = countCyclesForPackage("org.tzi.use", classesWithoutTests);
-        cycleCountsMap.put("all_modules_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("all_modules", cycleCount);
         System.out.println("Cycles in core module without tests : " + cycleCount);
     }
 
@@ -77,7 +79,7 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_core_with_tests() {
         int cycleCount = countCyclesForPackage("org.tzi.use", classesWithTests);
-        cycleCountsMap.put("all_modules_with_tests", cycleCount);
+        cycleCountsWithTests.put("all_modules", cycleCount);
         System.out.println("Cycles in core module with tests : " + cycleCount);
     }
 
@@ -85,11 +87,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_analysis_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.analysis", classesWithoutTests);
-        cycleCountsMap.put("analysis_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("analysis", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.analysis without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.analysis", classesWithTests);
-        cycleCountsMap.put("analysis_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("analysis", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.analysis with tests: " + cycleCountWithTests);
     }
 
@@ -97,11 +99,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_api_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.api", classesWithoutTests);
-        cycleCountsMap.put("api_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("api", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.api without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.api", classesWithTests);
-        cycleCountsMap.put("api_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("api", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.api with tests: " + cycleCountWithTests);
     }
 
@@ -109,11 +111,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_config_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.config", classesWithoutTests);
-        cycleCountsMap.put("config_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("config", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.config without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.config", classesWithTests);
-        cycleCountsMap.put("config_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("config", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.config with tests: " + cycleCountWithTests);
     }
 
@@ -121,11 +123,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_gen_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.gen", classesWithoutTests);
-        cycleCountsMap.put("gen_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("gen", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.gen without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.gen", classesWithTests);
-        cycleCountsMap.put("gen_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("gen", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.gen with tests: " + cycleCountWithTests);
     }
 
@@ -133,11 +135,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_graph_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.graph", classesWithoutTests);
-        cycleCountsMap.put("graph_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("graph", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.graph without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.graph", classesWithTests);
-        cycleCountsMap.put("graph_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("graph", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.graph with tests: " + cycleCountWithTests);
     }
 
@@ -145,11 +147,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_main_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.main", classesWithoutTests);
-        cycleCountsMap.put("main_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("main", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.main without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.main", classesWithTests);
-        cycleCountsMap.put("main_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("main", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.main with tests: " + cycleCountWithTests);
     }
 
@@ -157,11 +159,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_parser_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.parser", classesWithoutTests);
-        cycleCountsMap.put("parser_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("parser", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.parser without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.parser", classesWithTests);
-        cycleCountsMap.put("parser_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("parser", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.parser with tests: " + cycleCountWithTests);
     }
 
@@ -169,11 +171,11 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_uml_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.uml", classesWithoutTests);
-        cycleCountsMap.put("uml_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("uml", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.uml without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.uml", classesWithTests);
-        cycleCountsMap.put("uml_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("uml", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.uml with tests: " + cycleCountWithTests);
     }
 
@@ -181,18 +183,18 @@ public class MavenCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_util_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.util", classesWithoutTests);
-        cycleCountsMap.put("util_no_tests", cycleCount);
+        cycleCountsWithoutTests.put("util", cycleCount);
         System.out.println("Number of cycles in org.tzi.use.util without tests: " + cycleCount);
 
         int cycleCountWithTests = countCyclesForPackage("org.tzi.use.util", classesWithTests);
-        cycleCountsMap.put("util_with_tests", cycleCountWithTests);
+        cycleCountsWithTests.put("util", cycleCountWithTests);
         System.out.println("Number of cycles in org.tzi.use.util with tests: " + cycleCountWithTests);
     }
 
     @AfterAll
     public void writeAllResults() {
         // Write the JSON files after all tests have completed
-        writeJsonResults(TESTS_RESULTS_JSON, cycleCountsMap);
+        writeJsonResults(TESTS_RESULTS_JSON, cycleCountsWithoutTests, cycleCountsWithTests);
     }
 
     private int countCyclesForPackage(String packageName, JavaClasses classes) {
@@ -239,21 +241,34 @@ public class MavenCyclicDependenciesCoreTest {
         return cycleCount.get();
     }
 
-    private void writeJsonResults(String filename, Map<String, Integer> cycleCounts) {
+    private void writeJsonResults(String filename, Map<String, Integer> cycleCountsWithoutTests, Map<String, Integer> cycleCountsWithTests) {
         try (FileWriter writer = new FileWriter(filename)) {
             StringBuilder json = new StringBuilder();
             json.append("{\n");
 
-            int count = 0;
-            for (Map.Entry<String, Integer> entry : cycleCounts.entrySet()) {
-                if (count > 0) {
+            json.append("  \"without_tests\": {\n");
+            int countWithout = 0;
+            for (Map.Entry<String, Integer> entry : cycleCountsWithoutTests.entrySet()) {
+                if (countWithout > 0) {
                     json.append(",\n");
                 }
                 json.append("  \"").append(entry.getKey()).append("\": ").append(entry.getValue());
-                count++;
+                countWithout++;
             }
+            json.append("\n  },\n");
 
-            json.append("\n}");
+            json.append("  \"with_tests\": {\n");
+            int countWith = 0;
+            for (Map.Entry<String, Integer> entry : cycleCountsWithTests.entrySet()) {
+                if (countWith > 0) {
+                    json.append(",\n");
+                }
+                json.append("    \"").append(entry.getKey()).append("\": ").append(entry.getValue());
+                countWith++;
+            }
+            json.append("\n  }\n");
+
+            json.append("}");
             writer.write(json.toString());
             System.out.println("Results written to " + filename);
         } catch (IOException e) {

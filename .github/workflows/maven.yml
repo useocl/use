@@ -54,16 +54,16 @@ jobs:
           CYCLES_CSV="docs/cycles-tests.csv"
           JSON_FILE="use-core/cycles-tests-results.json"
 
-          # Update build times dat
+          # Update build times data
           if [ ! -f "$BUILD_TIMES_CSV" ]; then
             echo "date,time,commit,buildtime" > "$BUILD_TIMES_CSV"
           fi
 
           # Debug outputs to see what values we're getting
-          echo "Date: ${{ steps.date.outputs.date }}"
-          echo "Time: ${{ steps.time.outputs.time }}"
-          echo "Commit: ${{ steps.commit.outputs.sha }}"
-          echo "Build time: ${{ steps.build.outputs.build_time }}"
+#          echo "Date: ${{ steps.date.outputs.date }}"
+#          echo "Time: ${{ steps.time.outputs.time }}"
+#          echo "Commit: ${{ steps.commit.outputs.sha }}"
+#          echo "Build time: ${{ steps.build.outputs.build_time }}"
 
           # Append the new build time data
           echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> "$BUILD_TIMES_CSV"
@@ -76,26 +76,27 @@ jobs:
             fi
 
             # Extract values from JSON using jq
-            ALL_MODULES_NO_TESTS=$(jq -r '.all_modules_no_tests // 0' "$JSON_FILE")
-            ANALYSIS_NO_TESTS=$(jq -r '.analysis_no_tests // 0' "$JSON_FILE")
-            API_NO_TESTS=$(jq -r '.api_no_tests // 0' "$JSON_FILE")
-            CONFIG_NO_TESTS=$(jq -r '.config_no_tests // 0' "$JSON_FILE")
-            GEN_NO_TESTS=$(jq -r '.gen_no_tests // 0' "$JSON_FILE")
-            GRAPH_NO_TESTS=$(jq -r '.graph_no_tests // 0' "$JSON_FILE")
-            MAIN_NO_TESTS=$(jq -r '.main_no_tests // 0' "$JSON_FILE")
-            PARSER_NO_TESTS=$(jq -r '.parser_no_tests // 0' "$JSON_FILE")
-            UML_NO_TESTS=$(jq -r '.uml_no_tests // 0' "$JSON_FILE")
-            UTIL_NO_TESTS=$(jq -r '.util_no_tests // 0' "$JSON_FILE")
-            ALL_MODULES_WITH_TESTS=$(jq -r '.all_modules_with_tests // 0' "$JSON_FILE")
-            ANALYSIS_WITH_TESTS=$(jq -r '.analysis_with_tests // 0' "$JSON_FILE")
-            API_WITH_TESTS=$(jq -r '.api_with_tests // 0' "$JSON_FILE")
-            CONFIG_WITH_TESTS=$(jq -r '.config_with_tests // 0' "$JSON_FILE")
-            GEN_WITH_TESTS=$(jq -r '.gen_with_tests // 0' "$JSON_FILE")
-            GRAPH_WITH_TESTS=$(jq -r '.graph_with_tests // 0' "$JSON_FILE")
-            MAIN_WITH_TESTS=$(jq -r '.main_with_tests // 0' "$JSON_FILE")
-            PARSER_WITH_TESTS=$(jq -r '.parser_with_tests // 0' "$JSON_FILE")
-            UML_WITH_TESTS=$(jq -r '.uml_with_tests // 0' "$JSON_FILE")
-            UTIL_WITH_TESTS=$(jq -r '.util_with_tests // 0' "$JSON_FILE")
+            ALL_MODULES_NO_TESTS=$(jq -r '.without_tests.all_modules // 0' "$JSON_FILE")
+            ANALYSIS_NO_TESTS=$(jq -r '.without_tests.analysis // 0' "$JSON_FILE")
+            API_NO_TESTS=$(jq -r '.without_tests.api // 0' "$JSON_FILE")
+            CONFIG_NO_TESTS=$(jq -r '.without_tests.config // 0' "$JSON_FILE")
+            GEN_NO_TESTS=$(jq -r '.without_tests.gen // 0' "$JSON_FILE")
+            GRAPH_NO_TESTS=$(jq -r '.without_tests.graph // 0' "$JSON_FILE")
+            MAIN_NO_TESTS=$(jq -r '.without_tests.main // 0' "$JSON_FILE")
+            PARSER_NO_TESTS=$(jq -r '.without_tests.parser // 0' "$JSON_FILE")
+            UML_NO_TESTS=$(jq -r '.without_tests.uml // 0' "$JSON_FILE")
+            UTIL_NO_TESTS=$(jq -r '.without_tests.util // 0' "$JSON_FILE")
+
+            ALL_MODULES_WITH_TESTS=$(jq -r '.with_tests.all_modules // 0' "$JSON_FILE")
+            ANALYSIS_WITH_TESTS=$(jq -r '.with_tests.analysis // 0' "$JSON_FILE")
+            API_WITH_TESTS=$(jq -r '.with_tests.api // 0' "$JSON_FILE")
+            CONFIG_WITH_TESTS=$(jq -r '.with_tests.config // 0' "$JSON_FILE")
+            GEN_WITH_TESTS=$(jq -r '.with_tests.gen // 0' "$JSON_FILE")
+            GRAPH_WITH_TESTS=$(jq -r '.with_tests.graph // 0' "$JSON_FILE")
+            MAIN_WITH_TESTS=$(jq -r '.with_tests.main // 0' "$JSON_FILE")
+            PARSER_WITH_TESTS=$(jq -r '.with_tests.parser // 0' "$JSON_FILE")
+            UML_WITH_TESTS=$(jq -r '.with_tests.uml // 0' "$JSON_FILE")
+            UTIL_WITH_TESTS=$(jq -r '.with_tests.util // 0' "$JSON_FILE")
 
             # Append new row to CSV
             echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_NO_TESTS,$ALL_MODULES_WITH_TESTS,$ANALYSIS_NO_TESTS,$ANALYSIS_WITH_TESTS,$API_NO_TESTS,$API_WITH_TESTS,$CONFIG_NO_TESTS,$CONFIG_WITH_TESTS,$GEN_NO_TESTS,$GEN_WITH_TESTS,$GRAPH_NO_TESTS,$GRAPH_WITH_TESTS,$MAIN_NO_TESTS,$MAIN_WITH_TESTS,$PARSER_NO_TESTS,$PARSER_WITH_TESTS,$UML_NO_TESTS,$UML_WITH_TESTS,$UTIL_NO_TESTS,$UTIL_WITH_TESTS" >> "$CYCLES_CSV"
