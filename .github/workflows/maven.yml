@@ -51,7 +51,8 @@ jobs:
 
           # Set file path
           BUILD_TIMES_CSV="docs/build-times.csv"
-          CYCLES_CSV="docs/cycles-tests.csv"
+          CYCLES_WITHOUT_TESTS_CSV="docs/cycles-without-tests.csv"
+          CYCLES_WITH_TESTS_CSV="docs/cycles-with-tests.csv"
           JSON_FILE="use-core/cycles-tests-results.json"
 
           # Update build times data
@@ -71,8 +72,11 @@ jobs:
           # Process cycle dependency results if JSON file exists
           if [ -f "$JSON_FILE" ]; then
             # Create CSV header if file doesn't exist
-            if [ ! -f "$CYCLES_CSV" ]; then
-              echo "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests" > "$CYCLES_CSV"
+            if [ ! -f "$CYCLES_WITHOUT_TESTS_CSV" ]; then
+              echo "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util" > "$CYCLES_WITHOUT_TESTS_CSV"
+            fi
+            if [ ! -f "$CYCLES_WITH_TESTS_CSV" ]; then
+              echo "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util" > "$CYCLES_WITH_TESTS_CSV"
             fi
 
             # Extract values from JSON using jq
@@ -98,10 +102,11 @@ jobs:
             UML_WITH_TESTS=$(jq -r '.with_tests.uml // 0' "$JSON_FILE")
             UTIL_WITH_TESTS=$(jq -r '.with_tests.util // 0' "$JSON_FILE")
 
-            # Append new row to CSV
-            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_NO_TESTS,$ALL_MODULES_WITH_TESTS,$ANALYSIS_NO_TESTS,$ANALYSIS_WITH_TESTS,$API_NO_TESTS,$API_WITH_TESTS,$CONFIG_NO_TESTS,$CONFIG_WITH_TESTS,$GEN_NO_TESTS,$GEN_WITH_TESTS,$GRAPH_NO_TESTS,$GRAPH_WITH_TESTS,$MAIN_NO_TESTS,$MAIN_WITH_TESTS,$PARSER_NO_TESTS,$PARSER_WITH_TESTS,$UML_NO_TESTS,$UML_WITH_TESTS,$UTIL_NO_TESTS,$UTIL_WITH_TESTS" >> "$CYCLES_CSV"
+            # Append new row to CSVs
+            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_NO_TESTS,$ANALYSIS_NO_TESTS,$API_NO_TESTS,$CONFIG_NO_TESTS,$GEN_NO_TESTS,$GRAPH_NO_TESTS,$MAIN_NO_TESTS,$PARSER_NO_TESTS,$UML_NO_TESTS,$UTIL_NO_TESTS" >> "$CYCLES_WITHOUT_TESTS_CSV"
+            echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},$ALL_MODULES_WITH_TESTS,$ANALYSIS_WITH_TESTS,$API_WITH_TESTS,$CONFIG_WITH_TESTS,$GEN_WITH_TESTS,$GRAPH_WITH_TESTS,$MAIN_WITH_TESTS,$PARSER_WITH_TESTS,$UML_WITH_TESTS,$UTIL_WITH_TESTS" >> "$CYCLES_WITH_TESTS_CSV"
 
-            echo "Updated cycle dependency data in $CYCLES_CSV"
+            echo "Updated cycle dependency data in $CYCLES_WITHOUT_TESTS_CSV and $CYCLES_WITH_TESTS_CSV"
           else
             echo "Warning: JSON file with cycle dependency results not found at $JSON_FILE"
           fi

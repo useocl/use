@@ -68,7 +68,7 @@ const chartConfigs = {
             }
         }
     },
-    complexityMetrics: {
+    cyclesOverTimeWithTests: {
         type: 'line',
         options: {
             responsive: true,
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize each chart with appropriate data source and value key
     initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', 'all_modules');
     initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
-    initializeChart('complexityMetricsChart', 'complexityMetrics', 'cycles-tests.csv', 'cycles');
+    initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'cycles');
     initializeChart('trendAnalysisChart', 'trendAnalysis', 'mock-layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
 });
