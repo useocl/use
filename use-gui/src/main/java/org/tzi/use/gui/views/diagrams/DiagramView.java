@@ -392,21 +392,17 @@ public abstract class DiagramView extends JPanel
             return;
         }
 
-        //TODO: BUG - Each node gets called a second time
-        //get all provider
         final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
-
-        // TODO accumulate changes from all provider
-        // TODO read their (StyleInfo:)change if present
-        if (!styleInfoProviders.isEmpty()) {
-            StyleInfoBase currentStyleInfo = null;
-            final StyleInfoBase styleInfoForDiagramElement = styleInfoProviders.get(0).getStyleInfoForDiagramElement(node, currentStyleInfo);
-            // TODO recolor respective element
-            recolorPlaceableNode(node, styleInfoForDiagramElement);
+        if (!styleInfoProviders.isEmpty()){
+            // accumulate changes from all provider
+            Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(node)).reduce((accumulated, current) -> {
+                accumulated.merge(current);
+                return accumulated;
+            });
+            // recolor respective element
+            accStyleInfo.ifPresent(styleInfoBase -> recolorPlaceableNode(node, styleInfoBase));
         }
-
-
     }
 
     protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {

@@ -11,13 +11,14 @@ import java.awt.*;
 @Getter
 public abstract class StyleInfoBase {
 
-
     protected Color namesColor;
     //protected Color namesFont;
 
     protected StyleInfoBase(Color namesColor) {
         this.namesColor = namesColor;
     }
+
+    public abstract void merge(StyleInfoBase other);
 
     //<T extends StyleInfoBase> T merge(T other);
     //StyleInfoClassNode merge(StyleInfoClassNode other);

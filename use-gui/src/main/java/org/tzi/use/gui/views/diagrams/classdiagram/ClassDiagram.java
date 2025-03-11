@@ -1494,13 +1494,21 @@ public class ClassDiagram extends DiagramView
 
 	@Override
 	protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement){
-		if (placeableNode instanceof ClassNode classNode)
+		if (placeableNode instanceof ClassNode classNode) {
 			if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode){
+				styleInfoClassNode.merge(StyleInfoClassNode.createFromClassNode(classNode));
 				adaptClassNodeToStyleInfo(classNode, styleInfoClassNode);
 			}
+		} else if (placeableNode instanceof EnumNode enumNode) {
+			if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode){
+				throw new UnsupportedOperationException();
+				//adaptEnumNodeToStyleInfo(enumNode, styleInfoClassNode);
+			}
+		}
 	}
 
 	public void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
+		// TODO: how to handle default values aka null values (e.g. in attribute color)
 		classNode.setColor(styleInfoClassNode.getNamesColor());
 		classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
 
@@ -1516,6 +1524,10 @@ public class ClassDiagram extends DiagramView
 			classNode.setOperationColor(mOperation, styleInfoClassNode.getOperationColor()[i]);
 		}
 
+	}
+
+	public void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoClassNode styleInfoClassNode) {
+		throw new UnsupportedOperationException();
 	}
 
 	private class RestoreHandler {

@@ -31,8 +31,8 @@ public class StyleInfoClassNode extends StyleInfoBase {
      * @return {@link StyleInfoClassNode} with the information of the given {@link ClassNode}
      */
     public static StyleInfoClassNode createFromClassNode(final ClassNode classNode) {
-        final Color[] attributeColor = classNode.cls().attributes().stream().map(classNode::getAttributeColor).toList().toArray(new Color[0]);
-        final Color[] operationColor = classNode.cls().operations().stream().map(classNode::getOperationColor).toList().toArray(new Color[0]);
+        final Color[] attributeColor = classNode.cls().allAttributes().stream().map(classNode::getAttributeColor).toList().toArray(new Color[0]);
+        final Color[] operationColor = classNode.cls().allOperations().stream().map(classNode::getOperationColor).toList().toArray(new Color[0]);
         return new StyleInfoClassNode(classNode.getTextColor(), classNode.getBackColor(), attributeColor, operationColor);
     }
 
@@ -73,6 +73,11 @@ public class StyleInfoClassNode extends StyleInfoBase {
         for (int i = 0; i < this.operationColor.length; i++) {
             this.operationColor[i] = Optional.ofNullable(this.operationColor[i]).orElse(otherOperationColors[i]);
         }
+    }
+
+    @Override
+    public void merge(StyleInfoBase other) {
+        merge(((StyleInfoClassNode) other));
     }
 }
 
