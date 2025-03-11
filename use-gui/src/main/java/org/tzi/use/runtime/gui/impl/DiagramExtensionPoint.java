@@ -22,9 +22,6 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
         return INSTANCE;
     }
 
-    private DiagramExtensionPoint() {
-    }
-
     @Override
     public <T extends DiagramView> void registerView(T diagramView) {
         PluginDiagramManipulator.ALL_REGISTERED_DIAGRAM_VIEWS.add(diagramView);
@@ -61,7 +58,6 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
     public List<StyleInfoProvider> getStyleInfoProvider(final Class<? extends DiagramView> targetClass) {
         return styleInfoProviders.getOrDefault(targetClass, List.of());
     }
-
 
     @Override
     public void registerPlugin(final IPluginDescriptor pluginDescriptor) {

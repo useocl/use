@@ -30,13 +30,17 @@ public abstract class PluginDiagramManipulator {
      * This has to be implemented by the Plugin!
      * Executes the plugins behaviour after initialisation of given diagram.
      */
-    public abstract void onInitialisation();
+    public void onInitialisation(){
+        // override to use
+    };
 
     /**
      * This has to be implemented by the Plugin!
      * Executes the plugins behaviour when the diagram is being closed.
      */
-    public abstract void onClosure();
+    public void onClosure(){
+        // override to use
+    };
 
     protected void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider){
         DiagramExtensionPoint.getInstance().addStyleInfoProvider(styleInfoProvider);
