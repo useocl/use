@@ -298,10 +298,10 @@ function processCycleBreakdownData(rawData) {
 // Helper function to get the appropriate dataset label based on the value key
 function getDatasetLabel(valueKey) {
     switch(valueKey) {
-        case 'cycles':
-            return 'Number of Cycles';
-        case 'all_modules':
-            return 'Number of Cycles';
+        case 'all_modules_no_tests':
+            return 'Number of Cycles Without Tests';
+        case 'all_modules_with_tests':
+            return 'Number of Cycles With Tests';
         case 'violations':
             return 'Violations';
         case 'buildtime':
@@ -403,9 +403,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded, initializing charts...');
 
     // Initialize each chart with appropriate data source and value key
-    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', 'all_modules');
+    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', 'all_modules_no_tests');
     initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
-    initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'cycles');
+    initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'all_modules_with_tests');
     initializeChart('trendAnalysisChart', 'trendAnalysis', 'mock-layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
 });
