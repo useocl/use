@@ -23,6 +23,7 @@ public abstract class PluginDiagramManipulator {
      * @param clazz type of the requested diagram view
      */
     protected PluginDiagramManipulator(Class<? extends DiagramView> clazz) {
+        //TODO: bug: if the plugin is constructed (aka this constructor called) before the diagram is initiated, the plugin cannot attain the diagrams information
         diagramViews = ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(view -> view.getClass().equals(clazz)).toList();
     }
 

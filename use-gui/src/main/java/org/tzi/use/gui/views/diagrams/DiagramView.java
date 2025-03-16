@@ -381,10 +381,33 @@ public abstract class DiagramView extends JPanel
         }
     }
 
-    private void checkForPluginColorChanges(final EdgeBase e) {
+    private void checkForPluginColorChanges(final EdgeBase edge) {
         if (pluginRuntime == null){
             return;
         }
+
+        final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
+        final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
+
+//        Optional<StyleInfoBase> styleInfoForDiagramElement;
+//        for (StyleInfoProvider sp : styleInfoProviders) {
+//            styleInfoForDiagramElement = Optional.ofNullable(sp.getStyleInfoForDiagramElement(edge));
+//
+//        }
+
+        if (!styleInfoProviders.isEmpty()){
+            // accumulate changes from all provider
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(edge)).reduce((accumulated, current) -> {
+                accumulated.merge(current);
+                return accumulated;
+            });
+            // recolor respective element
+            accStyleInfo.ifPresent(styleInfoBase -> recolorEdgeBase(edge, styleInfoBase));
+        }
+    }
+
+    protected void recolorEdgeBase(final EdgeBase node, final StyleInfoBase styleInfoForDiagramElement) {
+        //TODO: abstract and implement for all diagrams
     }
 
     private void checkForPluginColorChanges(final PlaceableNode node){
@@ -396,7 +419,7 @@ public abstract class DiagramView extends JPanel
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
         if (!styleInfoProviders.isEmpty()){
             // accumulate changes from all provider
-            Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(node)).reduce((accumulated, current) -> {
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(node)).reduce((accumulated, current) -> {
                 accumulated.merge(current);
                 return accumulated;
             });

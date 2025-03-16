@@ -63,6 +63,7 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.StyleInfoBase;
 import org.tzi.use.gui.views.diagrams.StyleInfoClassNode;
+import org.tzi.use.gui.views.diagrams.StyleInfoEdge;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions.ShowCoverage;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -1524,8 +1525,20 @@ public class ClassDiagram extends DiagramView
 			classNode.setOperationColor(mOperation, styleInfoClassNode.getOperationColor()[i]);
 		}
 
+		styleInfoClassNode.getRoleNameColorMap().forEach(EdgeProperty::setColor);
 	}
 
+	@Override
+	protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement){
+		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge){
+			styleInfoEdge.merge(StyleInfoEdge.createFromEdge(edgeBase));
+			final EdgeBase diagramsEdge = visibleData.getEdges().stream().filter(edgeBase::equals).findFirst().orElseThrow();
+			//TODO: what about names color ?
+			diagramsEdge.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE).stream().iterator().next().setColor(styleInfoEdge.getEgdeColor());
+			}
+	}
+
+	// TODO
 	public void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoClassNode styleInfoClassNode) {
 		throw new UnsupportedOperationException();
 	}

@@ -2,23 +2,29 @@ package org.tzi.use.gui.views.diagrams;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
+import org.tzi.use.gui.views.diagrams.elements.Rolename;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Getter
-public class StyleInfoClassNode extends StyleInfoBase {
+public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
 
     private Color backgroundColor;
 
+    //TODO: instead of implicit mapping via index, use a map with direct mapping
     private final Color[] attributeColor;
 
     private final Color[] operationColor;
 
     @Builder(setterPrefix = "with")
-    private StyleInfoClassNode(Color namesColor, Color backgroundColor, Color[] attributeColor, Color[] operationColor) {
-        super(namesColor);
+    private StyleInfoClassNode(Color namesColor, Map<Rolename, Color> roleNameColorMap, Color backgroundColor, Color[] attributeColor, Color[] operationColor) {
+        // RoleNames are not supported as of yet
+        super(namesColor, roleNameColorMap);
         this.backgroundColor = backgroundColor;
         this.attributeColor = attributeColor;
         this.operationColor = operationColor;
@@ -33,7 +39,7 @@ public class StyleInfoClassNode extends StyleInfoBase {
     public static StyleInfoClassNode createFromClassNode(final ClassNode classNode) {
         final Color[] attributeColor = classNode.cls().allAttributes().stream().map(classNode::getAttributeColor).toList().toArray(new Color[0]);
         final Color[] operationColor = classNode.cls().allOperations().stream().map(classNode::getOperationColor).toList().toArray(new Color[0]);
-        return new StyleInfoClassNode(classNode.getTextColor(), classNode.getBackColor(), attributeColor, operationColor);
+        return new StyleInfoClassNode(classNode.getTextColor(), new HashMap<>(), classNode.getBackColor(), attributeColor, operationColor);
     }
 
     /**
@@ -42,8 +48,9 @@ public class StyleInfoClassNode extends StyleInfoBase {
      *
      * @param other the other {@link StyleInfoClassNode}
      */
-    public void merge(final StyleInfoClassNode other) {
+    private void merge(final StyleInfoClassNode other) {
         this.namesColor = Optional.ofNullable(this.namesColor).orElse(other.getNamesColor());
+//        this.roleNameColorMap = Optional.ofNullable(this.roleNameColorMap).orElse(other.getRoleNameColorMap());
         this.backgroundColor = Optional.ofNullable(this.backgroundColor).orElse(other.getBackgroundColor());
         mergeAttributeColors(other.getAttributeColor());
         mergeOperationColors(other.getOperationColor());
@@ -76,8 +83,11 @@ public class StyleInfoClassNode extends StyleInfoBase {
     }
 
     @Override
-    public void merge(StyleInfoBase other) {
-        merge(((StyleInfoClassNode) other));
+    public void merge(@NonNull StyleInfoBase other) {
+        super.merge(other);
+        if (other instanceof StyleInfoClassNode styleInfoClassNode) {
+            merge(styleInfoClassNode);
+        }
     }
 }
 
