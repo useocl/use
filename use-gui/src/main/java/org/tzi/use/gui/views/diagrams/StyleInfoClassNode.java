@@ -14,12 +14,10 @@ import java.util.Optional;
 @Getter
 public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
 
-    private Color backgroundColor;
-
     //TODO: instead of implicit mapping via index, use a map with direct mapping
     private final Color[] attributeColor;
-
     private final Color[] operationColor;
+    private Color backgroundColor;
 
     @Builder(setterPrefix = "with")
     private StyleInfoClassNode(Color namesColor, Map<Rolename, Color> roleNameColorMap, Color backgroundColor, Color[] attributeColor, Color[] operationColor) {
@@ -63,9 +61,11 @@ public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
      * @param otherAttributeColors the other attribute colors
      */
     private void mergeAttributeColors(final Color[] otherAttributeColors) {
-        assert this.attributeColor.length == otherAttributeColors.length;
-        for (int i = 0; i < this.attributeColor.length; i++) {
-            this.attributeColor[i] = Optional.ofNullable(this.attributeColor[i]).orElse(otherAttributeColors[i]);
+        if (otherAttributeColors != null && otherAttributeColors.length >= 1) {
+            assert this.attributeColor.length == otherAttributeColors.length;
+            for (int i = 0; i < this.attributeColor.length; i++) {
+                this.attributeColor[i] = Optional.ofNullable(this.attributeColor[i]).orElse(otherAttributeColors[i]);
+            }
         }
     }
 
@@ -76,9 +76,11 @@ public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
      * @param otherOperationColors the other operation colors
      */
     private void mergeOperationColors(final Color[] otherOperationColors) {
-        assert this.operationColor.length == otherOperationColors.length;
-        for (int i = 0; i < this.operationColor.length; i++) {
-            this.operationColor[i] = Optional.ofNullable(this.operationColor[i]).orElse(otherOperationColors[i]);
+        if (otherOperationColors != null && otherOperationColors.length >= 1) {
+            assert this.operationColor.length == otherOperationColors.length;
+            for (int i = 0; i < this.operationColor.length; i++) {
+                this.operationColor[i] = Optional.ofNullable(this.operationColor[i]).orElse(otherOperationColors[i]);
+            }
         }
     }
 

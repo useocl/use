@@ -389,15 +389,9 @@ public abstract class DiagramView extends JPanel
         final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
 
-//        Optional<StyleInfoBase> styleInfoForDiagramElement;
-//        for (StyleInfoProvider sp : styleInfoProviders) {
-//            styleInfoForDiagramElement = Optional.ofNullable(sp.getStyleInfoForDiagramElement(edge));
-//
-//        }
-
         if (!styleInfoProviders.isEmpty()){
             // accumulate changes from all provider
-            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(edge)).reduce((accumulated, current) -> {
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(edge)).filter(Objects::nonNull).reduce((accumulated, current) -> {
                 accumulated.merge(current);
                 return accumulated;
             });
@@ -419,7 +413,7 @@ public abstract class DiagramView extends JPanel
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
         if (!styleInfoProviders.isEmpty()){
             // accumulate changes from all provider
-            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(node)).reduce((accumulated, current) -> {
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(node)).filter(Objects::nonNull).reduce((accumulated, current) -> {
                 accumulated.merge(current);
                 return accumulated;
             });
