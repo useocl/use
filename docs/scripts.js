@@ -110,7 +110,7 @@ const chartConfigs = {
             }
         }
     },
-    trendAnalysis: {
+    layerViolationsOverTime: {
         type: 'line',
         options: {
             responsive: true,
@@ -138,13 +138,12 @@ const chartConfigs = {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 1,
                     ticks: {
                         stepSize: 1
                     },
                     title: {
                         display: true,
-                        text: 'Violations Present (0/1)'
+                        text: 'No. of Violations)'
                     }
                 },
                 x: {
@@ -406,6 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', 'all_modules_no_tests');
     initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
     initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'all_modules_with_tests');
-    initializeChart('trendAnalysisChart', 'trendAnalysis', 'mock-layer-violations.csv', 'violations');
+    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'mock-layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
 });

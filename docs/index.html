@@ -42,10 +42,10 @@
     <!-- Cycles Breakdown Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Breakdown of Cycles per Package</h3>
+        <h3 class="card-title">Breakdown of Cycles per Package Excluding Tests</h3>
       </div>
       <p class="card-description">
-        Distribution of cyclic dependencies across different packages for the most current archunit test run.
+        Distribution of cyclic dependencies across different packages (no tests) for the most current archunit test run.
       </p>
       <div class="chart-container">
         <canvas id="cyclesBreakdownChart"></canvas>
@@ -72,11 +72,10 @@
         <h3 class="card-title">Layer Architecture Violations</h3>
       </div>
       <p class="card-description">
-        Analysis of architectural trends over time, highlighting patterns
-        and potential areas for improvement.
+        Analysis of violations of USE's Layered Architecture, highlighting architectural trends over time.
       </p>
       <div class="chart-container">
-        <canvas id="trendAnalysisChart"></canvas>
+        <canvas id="layerViolationsChart"></canvas>
       </div>
     </div>
 
