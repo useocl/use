@@ -25,7 +25,7 @@
 
   <!-- Main Dashboard Grid -->
   <div class="dashboard-grid">
-    <!-- Cycles Over Time Card -->
+    <!-- Cycles No Tests Card -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Cyclic Dependencies without Tests</h3>
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <!-- Cycles Breakdown Card -->
+    <!-- Cycles No Tests Breakdown Card -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Breakdown of Cycles per Package Excluding Tests</h3>
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <!-- Complexity Metrics Card -->
+    <!-- Cycles With Tests Card -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Cyclic Dependencies with Tests</h3>
@@ -66,10 +66,23 @@
       </div>
     </div>
 
-    <!-- Trend Analysis Card -->
+    <!-- Cycles With Tests Breakdown Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Layer Architecture Violations</h3>
+        <h3 class="card-title">Breakdown of Cycles per Package Incl. Tests</h3>
+      </div>
+      <p class="card-description">
+        Distribution of cyclic dependencies across all different packages (with tests) for the most current archunit test run.
+      </p>
+      <div class="chart-container">
+        <canvas id="cyclesWithTestsBreakdownChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Layer Violations Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Layered Architecture Violations</h3>
       </div>
       <p class="card-description">
         Analysis of violations of USE's Layered Architecture, highlighting architectural trends over time.
@@ -79,7 +92,7 @@
       </div>
     </div>
 
-    <!-- Comparative Metrics Card -->
+    <!-- Buildtime Card -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Build Time</h3>

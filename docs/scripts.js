@@ -110,6 +110,31 @@ const chartConfigs = {
             }
         }
     },
+    cyclesWithTestsBreakdown: {
+        type: 'pie',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: 'Breakdown of Cycles per Package Incl. Tests'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            return `${label}: ${value} cycles`;
+                        }
+                    }
+                }
+            }
+        }
+    },
     layerViolationsOverTime: {
         type: 'line',
         options: {
@@ -405,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', 'all_modules_no_tests');
     initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
     initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'all_modules_with_tests');
+    initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'cycles-without-tests.csv');
     initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'mock-layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
 });
