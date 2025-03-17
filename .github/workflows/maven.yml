@@ -38,16 +38,16 @@ jobs:
         id: build
         run: |
           start_time=$(date +%s)
-          mvn --batch-mode --update-snapshots verify
+          # Save build output to a file to extract test results later
+          mvn --batch-mode --update-snapshots verify | tee build_output.log
           end_time=$(date +%s)
           build_time=$((end_time - start_time))
           echo "build_time=$build_time" >> $GITHUB_OUTPUT
-      - name: Run layer architecture test & capture output
-        id: layer_test
-        run: |
-          output=$(mvn --batch-mode test -pl use-gui -Dtest=org.tzi.use.architecture.MavenLayeredArchitectureTest)
-          violation_count=$(echo "$output" | grep "Number of core-to-gui dependency violations:" | awk '{print $NF}')
+
+          # Extract the violation count directly
+          violation_count=$(grep -A 1 "Running org.tzi.use.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
           echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
+          
       - name: Update metrics data
         # if: github.ref == 'refs/heads/master'
         run: |
@@ -69,7 +69,7 @@ jobs:
           echo "Time: ${{ steps.time.outputs.time }}"
           echo "Commit: ${{ steps.commit.outputs.sha }}"
           echo "Build time: ${{ steps.build.outputs.build_time }}"
-          echo "Layer violations: ${{ steps.layer_test.outputs.violation_count }}"
+          echo "Layer violations: ${{ steps.build.outputs.violation_count }}"
 
           # Append the new build time data
           echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.build_time }}" >> "$BUILD_TIMES_CSV"
@@ -80,7 +80,7 @@ jobs:
           fi
 
           # Append new layer violations data directly
-          echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.layer_test.outputs.violation_count }}" >> "$LAYER_VIOLATIONS_CSV"
+          echo "${{ steps.date.outputs.date }},${{ steps.time.outputs.time }},${{ steps.commit.outputs.sha }},${{ steps.build.outputs.violation_count }}" >> "$LAYER_VIOLATIONS_CSV"
           echo "Updated layer violations data in $LAYER_VIOLATIONS_CSV"
 
           # Process cycle dependency results if JSON file exists
