@@ -431,6 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
     initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'all_modules_with_tests');
     initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'cycles-without-tests.csv');
-    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'mock-layer-violations.csv', 'violations');
+    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'layer-violations.csv', 'violations');
     initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
 });
