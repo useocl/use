@@ -45,7 +45,7 @@ jobs:
       - name: Run layer architecture test & capture output
         id: layer_test
         run: |
-          output=$(mvn --batch-mode test -Dtest=org.tzi.use.architecture.MavenLayeredArchitectureTest)
+          output=$(mvn --batch-mode test -Dtest=org.tzi.use.architecture.MavenLayeredArchitectureTest.java)
           violation_count=$(echo "$output" | grep "Number of core-to-gui dependency violations:" | awk '{print $NF}')
           echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
       - name: Update metrics data
