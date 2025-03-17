@@ -16,7 +16,6 @@ import java.io.IOException;
 
 public class MavenLayeredArchitectureTest {
     private JavaClasses classes;
-    private static final String TEST_RESULT_CSV = "layer-violations.csv";
 
     @BeforeEach
     void setUp() {
@@ -24,16 +23,7 @@ public class MavenLayeredArchitectureTest {
         classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
-        System.out.println("Classes found: " + classes.size());
-
-        deleteFileIfExists(TEST_RESULT_CSV);
-    }
-
-    private void deleteFileIfExists(String filename) {
-        File file = new File(filename);
-        if (file.exists()) {
-            file.delete();
-        }
+        //System.out.println("Classes found: " + classes.size());
     }
 
     @Test
@@ -55,25 +45,11 @@ public class MavenLayeredArchitectureTest {
 
         int violationCount = result.getFailureReport().getDetails().size();
 
-        System.out.println("Number of core-to-gui dependency violations: " + violationCount);
-
-        writeResultToCSV(violationCount);
+        System.out.println(violationCount);
 
         if (violationCount > 0) {
-            System.out.println("\nViolation details:");
-            result.getFailureReport().getDetails().forEach(System.out::println);
-        }
-    }
-
-    private void writeResultToCSV(int violationCount) {
-        try (FileWriter writer = new FileWriter(TEST_RESULT_CSV)) {
-            writer.append("rule,violations\n");
-
-            writer.append("core_to_gui,").append(String.valueOf(violationCount)).append("\n");
-
-            System.out.println("CSV file written successfully: " + TEST_RESULT_CSV);
-        } catch (IOException e) {
-            System.err.println("Error writing to CSB file: " + e.getMessage());
+            System.err.println("\nViolation details:");
+            result.getFailureReport().getDetails().forEach(System.err::println);
         }
     }
 }
