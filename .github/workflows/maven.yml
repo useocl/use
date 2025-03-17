@@ -45,7 +45,7 @@ jobs:
           echo "build_time=$build_time" >> $GITHUB_OUTPUT
 
           # Extract the violation count directly
-          violation_count=$(grep -A 1 "Running org.tzi.use.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
+          violation_count=$(grep -A 1 "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
           echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
           
       - name: Update metrics data
