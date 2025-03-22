@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]);
 
     // Initialize historical layer violations chart
-    initializeHistoricalChart('historicalViolationsChart', 'historicalViolations', 'layer-violations.csv', [
+    initializeHistoricalChart('historicalViolationsChart', 'historicalViolations', 'layer_violations_history.csv', [
         { key: 'violations', label: 'Layer Violations' }
     ]);
 
