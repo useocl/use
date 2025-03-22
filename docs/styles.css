@@ -42,6 +42,39 @@ body {
     font-weight: 400;
 }
 
+.navigation {
+    margin-top: 15px;
+}
+
+.navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.navigation li {
+    margin: 0 15px;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.navigation a:hover {
+    background-color: #f0f0f0;
+}
+
+.navigation a.active {
+    background-color: #e0e0e0;
+}
+
 /* Main Content Layout */
 .container {
     max-width: 1600px;
