@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]);
 
     // Initialize historical build time chart
-    initializeHistoricalChart('historicalBuildTimeChart', 'historicalBuildTime', 'build-times.csv', [
+    initializeHistoricalChart('historicalBuildTimeChart', 'historicalBuildTime', 'build_time_history.csv', [
         { key: 'buildtime', label: 'Build Time (seconds)' }
     ]);
 });
