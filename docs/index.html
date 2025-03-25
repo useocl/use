@@ -34,7 +34,7 @@
     <!-- Cycles No Tests Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Cyclic Dependencies without Tests</h3>
+        <h3 class="card-title">Cyclic Dependencies with & without Tests</h3>
       </div>
       <p class="card-description">
         Tracks the number of dependency cycles in the codebase (excluding tests) over time,
@@ -55,20 +55,6 @@
       </p>
       <div class="chart-container">
         <canvas id="cyclesBreakdownChart"></canvas>
-      </div>
-    </div>
-
-    <!-- Cycles With Tests Card -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">Cyclic Dependencies with Tests</h3>
-      </div>
-      <p class="card-description">
-        Tracks the number of dependency cycles in the entire codebase over time,
-        helping identify architectural improvements or degradation.
-      </p>
-      <div class="chart-container">
-        <canvas id="cyclesOverTimeWithTestsChart"></canvas>
       </div>
     </div>
 

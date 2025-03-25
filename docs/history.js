@@ -177,13 +177,6 @@ async function fetchCSVData(filename) {
 function processHistoricalData(rawData, valueKeys) {
     console.log(`Processing historical data for ${valueKeys}:`, rawData);
 
-    // Sort data by date and time to ensure chronological order
-    rawData.sort((a, b) => {
-        const dateA = new Date(`${a.date}T${a.time}`);
-        const dateB = new Date(`${b.date}T${b.time}`);
-        return dateA - dateB;
-    });
-
     // Format dates for x-axis
     const labels = rawData.map(row => formatDateTime(row.date, row.time));
 
@@ -191,8 +184,6 @@ function processHistoricalData(rawData, valueKeys) {
     const datasets = valueKeys.map((keyInfo, index) => {
         const colors = [
             { border: '#4169E1', background: 'rgba(65, 105, 225, 0.2)' },  // Royal Blue
-            { border: '#FF6384', background: 'rgba(255, 99, 132, 0.2)' },  // Red
-            { border: '#36A2EB', background: 'rgba(54, 162, 235, 0.2)' },  // Blue
             { border: '#FFCE56', background: 'rgba(255, 206, 86, 0.2)' }   // Yellow
         ];
 

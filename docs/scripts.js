@@ -11,7 +11,7 @@ const chartConfigs = {
                 },
                 title: {
                     display: true,
-                    text: 'Cyclic Dependencies without Tests'
+                    text: 'Cyclic Dependencies'
                 },
                 tooltip: {
                     callbacks: {
@@ -63,48 +63,6 @@ const chartConfigs = {
                             const value = context.raw;
                             return `${label}: ${value} cycles`;
                         }
-                    }
-                }
-            }
-        }
-    },
-    cyclesOverTimeWithTests: {
-        type: 'line',
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Cyclic Dependencies with Tests'
-                },
-                tooltip: {
-                    callbacks: {
-                        // Customize the tooltip to show commit information
-                        label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.parsed.y;
-                            const commit = context.dataset.commitInfo[context.dataIndex];
-                            return `${label}: ${value}\nCommit: ${commit}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Cycles'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date & Time'
                     }
                 }
             }
@@ -269,23 +227,35 @@ async function fetchCSVData(filename) {
     }
 }
 
-// Generic function to process CSV data into chart format
-function processChartData(rawData, valueKey) {
-    console.log(`Processing data for ${valueKey}:`, rawData); // Debug log
-    return {
-        // Format dates for x-axis as DD/MM/YY HH:MM
-        labels: rawData.map(row => formatDateTime(row.date, row.time)),
-        datasets: [{
-            label: getDatasetLabel(valueKey),
-            data: rawData.map(row => row[valueKey]),
-            borderColor: '#4169E1',
-            backgroundColor: 'rgba(65, 105, 225, 0.2)',
+// Process data for charts with multiple datasets
+function processMultiDatasetChartData(rawData, valueKeys) {
+    console.log(`Processing data for multiple datasets:`, rawData);
+
+    // Format dates for x-axis
+    const labels = rawData.map(row => formatDateTime(row.date, row.time));
+
+    // Create datasets for each value key
+    const datasets = valueKeys.map((keyInfo, index) => {
+        const colors = [
+            { border: '#4169E1', background: 'rgba(65, 105, 225, 0.2)' },  // Royal Blue
+            { border: '#FFCE56', background: 'rgba(255, 206, 86, 0.2)' }   // Yellow
+        ];
+
+        return {
+            label: keyInfo.label,
+            data: rawData.map(row => row[keyInfo.key]),
+            borderColor: colors[index % colors.length].border,
+            backgroundColor: colors[index % colors.length].background,
             tension: 0.4,
             // Store commit information for each data point
             commitInfo: rawData.map(row => row.commit)
-        }]
-    };
+        };
+    });
+
+    return { labels, datasets };
 }
+
+// We can remove this function since we're using processMultiDatasetChartData for all charts
 
 // New function to process cycle breakdown data for pie chart
 function processCycleBreakdownData(rawData) {
@@ -335,8 +305,8 @@ function getDatasetLabel(valueKey) {
     }
 }
 
-// Initialize a single chart
-async function initializeChart(chartId, configKey, csvFile, valueKey) {
+// Initialize a chart with multiple datasets (similar to history.js approach)
+async function initializeChart(chartId, configKey, csvFile, valueKeys) {
     try {
         // Create initial empty chart
         const ctx = document.getElementById(chartId);
@@ -344,25 +314,18 @@ async function initializeChart(chartId, configKey, csvFile, valueKey) {
             type: chartConfigs[configKey].type,
             data: {
                 labels: [],
-                datasets: [{
-                    label: getDatasetLabel(valueKey),
-                    data: [],
-                    borderColor: '#4169E1',
-                    backgroundColor: 'rgba(65, 105, 225, 0.2)',
-                    tension: 0.4,
-                    commitInfo: [] // Initialize empty commit info array
-                }]
+                datasets: []
             },
             options: chartConfigs[configKey].options
         });
 
         // Load and update with real data
         const rawData = await fetchCSVData(csvFile);
-        const chartData = processChartData(rawData, valueKey);
+        const chartData = processMultiDatasetChartData(rawData, valueKeys);
         chart.data = chartData;
         chart.update();
 
-        console.log(`Chart ${chartId} updated with data:`, chartData); // Debug log
+        console.log(`Chart ${chartId} updated with multiple datasets:`, chartData);
     } catch (error) {
         console.error(`Error initializing chart ${chartId}:`, error);
         // Show error in UI
@@ -374,7 +337,9 @@ async function initializeChart(chartId, configKey, csvFile, valueKey) {
     }
 }
 
-// New function to initialize the cycle breakdown pie chart
+// We can remove this function since we're using initializeChart for all charts
+
+// Initialize the cycle breakdown pie chart
 async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
     try {
         // Create initial empty chart
@@ -426,11 +391,21 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded, initializing charts...');
 
-    // Initialize each chart with appropriate data source and value key
-    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', 'all_modules_no_tests');
+    // Initialize cyclic dependencies chart with both metrics (with and without tests)
+    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', [
+        { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
+        { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
+    ]);
+
+    // Initialize pie charts for breakdown analysis
     initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
-    initializeChart('cyclesOverTimeWithTestsChart', 'cyclesOverTimeWithTests', 'cycles-tests.csv', 'all_modules_with_tests');
     initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'cycles-without-tests.csv');
-    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'layer-violations.csv', 'violations');
-    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', 'buildtime');
+
+    // Initialize other charts - now using the multi-dataset function with single items
+    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'layer-violations.csv', [
+        { key: 'violations', label: 'Violations' }
+    ]);
+    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', [
+        { key: 'buildtime', label: 'Build Time (seconds)' }
+    ]);
 });
