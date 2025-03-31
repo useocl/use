@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('History page loaded, initializing historical charts...');
 
     // Initialize historical cycles chart with both metrics (with and without tests)
-    initializeHistoricalChart('historicalCyclesChart', 'historicalCycles', 'cycles-tests.csv', [
+    initializeHistoricalChart('historicalCyclesChart', 'historicalCycles', 'cycles_history.csv', [
         { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
         { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
     ]);
