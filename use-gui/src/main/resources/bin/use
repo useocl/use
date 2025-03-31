@@ -16,7 +16,7 @@ if [ ! -f "$USE_JAR" ]; then
 	exit 1
 fi
 
-export LD_LIBRARY_PATH="$USE_HOME/lib:$LD_LIBRARY_PATH"
+CLASSPATH="$USE_JAR:$(echo "$USE_HOME/lib/"*.jar | tr ' ' ':')"
 
 # set cmd for running USE
-java $VMARGS -jar "$USE_JAR" "$@"
+java --add-exports jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED $VMARGS -cp "$CLASSPATH" org.tzi.use.main.Main "$@"

@@ -74,5 +74,13 @@
                 <include>*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <!-- Plugin dependencies that should be shipped with the USE archive are located here -->
+            <directory>${project.basedir}/src/main/resources/plugin_deps</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
