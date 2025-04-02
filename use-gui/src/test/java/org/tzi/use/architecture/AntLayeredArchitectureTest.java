@@ -4,6 +4,8 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,14 +24,22 @@ public class AntLayeredArchitectureTest {
     @Test
     @ArchTest
     public void core_should_not_depend_on_gui() {
-        ArchRuleDefinition.noClasses()
+        ArchRule rule = ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
                         "org.tzi.use.config..", "org.tzi.use.gen..", "org.tzi.use.graph..", "org.tzi.use.parser..",
                         "org.tzi.use.uml..", "org.tzi.use.main..", "org.tzi.use.util..")
                 .should().dependOnClassesThat().resideInAnyPackage("org.tzi.use.gui..")
-                .because("Core packages should not depend on GUI packages")
-                .check(classes);
+                .because("Core packages should not depend on GUI packages");
 
+        EvaluationResult result = rule.evaluate(classes);
+
+        int violationCount = result.getFailureReport().getDetails().size();
+
+        System.out.println("Number of violations: " + violationCount);
+
+        if (violationCount > 0) {
+            System.err.println("\nViolation details:");
+            result.getFailureReport().getDetails().forEach(System.err::println);
+        }
     }
-
 }
