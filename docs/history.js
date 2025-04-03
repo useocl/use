@@ -41,6 +41,50 @@ const historyChartConfigs = {
             }
         }
     },
+    antHistoricalViolations: {
+        type: 'line',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Ant Historical Layer Violations Trend'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            const commit = context.dataset.commitInfo[context.dataIndex];
+                            return `${label}: ${value}\nCommit: ${commit}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Violations'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date & Time'
+                    }
+                }
+            }
+        }
+    },
     historicalViolations: {
         type: 'line',
         options: {
@@ -241,6 +285,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeHistoricalChart('historicalCyclesChart', 'historicalCycles', 'cycles_history.csv', [
         { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
         { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
+    ]);
+
+    // Initialize historical layer violations chart
+    initializeHistoricalChart('antLayerViolationsChart', 'antHistoricalViolations', 'ant_layer_violations_history.csv', [
+        { key: 'violations', label: 'Layer Violations' }
     ]);
 
     // Initialize historical layer violations chart

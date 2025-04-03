@@ -16,8 +16,8 @@ public class AntLayeredArchitectureTest {
     @Before
     public void setUp() {
         classes = new ClassFileImporter()
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
+        // .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
         System.out.println("Classes found: " + classes.size());
     }
 
