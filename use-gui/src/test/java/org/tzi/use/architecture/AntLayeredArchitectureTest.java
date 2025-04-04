@@ -41,8 +41,8 @@ public class AntLayeredArchitectureTest {
             System.err.println("\nViolation details:");
             //not compatible with java 6
             //result.getFailureReport().getDetails().forEach(System.err::println);
-            for (String detail : result.getFailureReport().getDetails()) {
-                System.err.println(detail);
+            for (Object detail : result.getFailureReport().getDetails()) {
+                System.err.println(detail.toString());
             }
         }
     }
