@@ -2,8 +2,6 @@ package org.tzi.use.architecture;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
-import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
@@ -22,7 +20,6 @@ public class AntLayeredArchitectureTest {
     }
 
     @Test
-    @ArchTest
     public void core_should_not_depend_on_gui() {
         ArchRule rule = ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
