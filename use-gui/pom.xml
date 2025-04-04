@@ -73,6 +73,9 @@
                         <manifest>
                             <mainClass>org.tzi.use.main.Main</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Class-Path>../lib/</Class-Path>
+                        </manifestEntries>
                     </archive>
                     <finalName>use-gui</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
