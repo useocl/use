@@ -2,6 +2,7 @@ package org.tzi.use.architecture;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
@@ -20,6 +21,7 @@ public class AntLayeredArchitectureTest {
     }
 
     @Test
+    @ArchTest
     public void core_should_not_depend_on_gui() {
         ArchRule rule = ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
@@ -38,8 +40,8 @@ public class AntLayeredArchitectureTest {
             System.err.println("\nViolation details:");
             //not compatible with java 6
             //result.getFailureReport().getDetails().forEach(System.err::println);
-            for (Object detail : result.getFailureReport().getDetails()) {
-                System.err.println(detail.toString());
+            for (String detail : result.getFailureReport().getDetails()) {
+                System.err.println(detail);
             }
         }
     }
