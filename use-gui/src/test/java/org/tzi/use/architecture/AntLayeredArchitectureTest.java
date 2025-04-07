@@ -36,12 +36,9 @@ public class AntLayeredArchitectureTest {
 
         System.out.println("Number of violations: " + violationCount);
 
-/*        if (violationCount > 0) {
-            System.out.println("\nViolation details:");
-            System.out.println(result.getFailureReport().getDetails());
-//            for (String detail : result.getFailureReport().getDetails()) {
-//                System.err.println(detail);
-//            }
-        }*/
+        if (violationCount > 0) {
+            System.err.println("\nViolation details:");
+            result.getFailureReport().getDetails().forEach(System.err::println);
+        }
     }
 }
