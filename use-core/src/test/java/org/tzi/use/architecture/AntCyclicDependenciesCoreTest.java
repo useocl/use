@@ -16,48 +16,30 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AntCyclicDependenciesCoreTest {
 
-    private final JavaClasses classes = new ClassFileImporter()
-            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages("org.tzi.use")
-            .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
-            .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
-
-    private static final String PROJECT_ROOT = new File("").getAbsolutePath();
-    private static final String ALL_MODULES_RESULTS_FILE = new File(PROJECT_ROOT, "ant_cyclic_dependencies_results.csv").getAbsolutePath();
-    private static final String ANALYSIS_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_analysis_results.csv").getAbsolutePath();
-    private static final String API_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_api_results.csv").getAbsolutePath();
-    private static final String CONFIG_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_config_results.csv").getAbsolutePath();
-    private static final String GEN_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_gen_results.csv").getAbsolutePath();
-    private static final String GRAPH_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_graph_results.csv").getAbsolutePath();
-    private static final String MAIN_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_main_results.csv").getAbsolutePath();
-    private static final String PARSER_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_parser_results.csv").getAbsolutePath();
-    private static final String UML_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_uml_results.csv").getAbsolutePath();
-    private static final String UTIL_MODULE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_util_results.csv").getAbsolutePath();
+    //private static final String PROJECT_ROOT = new File("").getAbsolutePath();
+    //private static final String ALL_MODULES_RESULTS_FILE = new File(PROJECT_ROOT, "ant_cyclic_dependencies_results.csv").getAbsolutePath();
+    // Single json for all results
+    private JavaClasses classesWithTests;
 
     @Before
     public void setup() {
-        try {
-            File file = new File(ALL_MODULES_RESULTS_FILE);
-            System.out.println("CSV FILE CREATED IN: " + file.getAbsolutePath());
-            if (file.exists()) {
-                file.delete();
-            }
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        classesWithTests = new ClassFileImporter()
+                //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                .importPackages("org.tzi.use")
+                .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
+                .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
     }
 
     @Test
     @ArchTest
     public void count_cycles_in_core() {
-        System.out.println("Counting cycles in core...");
 /*        try {
             File file = new File(ALL_MODULES_RESULTS_FILE);
             System.out.println("Attempting to write to: " + file.getAbsolutePath());
@@ -77,18 +59,14 @@ public class AntCyclicDependenciesCoreTest {
             e.printStackTrace();
             throw e;
         }*/
-        System.out.println("Attempting to write to " + ALL_MODULES_RESULTS_FILE);
         int cycleCount = countCyclesForPackage("org.tzi.use");
-        writeResult(cycleCount, ALL_MODULES_RESULTS_FILE);
-        System.out.println("Number of cycles in core: " + cycleCount);
-
+        System.out.println("Cycles in core module: " + cycleCount);
     }
 
     @Test
     @ArchTest
     public void count_cycles_in_analysis_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.analysis");
-        writeResult(cycleCount, ANALYSIS_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.analysis: " + cycleCount);
     }
 
@@ -96,7 +74,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_api_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.api");
-        writeResult(cycleCount, API_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.api: " + cycleCount);
     }
 
@@ -104,7 +81,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_config_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.config");
-        writeResult(cycleCount, CONFIG_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.config: " + cycleCount);
     }
 
@@ -112,7 +88,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_gen_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.gen");
-        writeResult(cycleCount, GEN_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.gen: " + cycleCount);
     }
 
@@ -120,7 +95,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_graph_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.graph");
-        writeResult(cycleCount, GRAPH_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.graph: " + cycleCount);
     }
 
@@ -128,7 +102,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_main_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.main");
-        writeResult(cycleCount, MAIN_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.main: " + cycleCount);
     }
 
@@ -136,7 +109,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_parser_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.parser");
-        writeResult(cycleCount, PARSER_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.parser: " + cycleCount);
     }
 
@@ -144,7 +116,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_uml_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.uml");
-        writeResult(cycleCount, UML_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.uml: " + cycleCount);
     }
 
@@ -152,7 +123,6 @@ public class AntCyclicDependenciesCoreTest {
     @ArchTest
     public void count_cycles_in_util_package() {
         int cycleCount = countCyclesForPackage("org.tzi.use.util");
-        writeResult(cycleCount, UTIL_MODULE_RESULTS);
         System.out.println("Number of cycles in org.tzi.use.util: " + cycleCount);
     }
 
@@ -183,20 +153,12 @@ public class AntCyclicDependenciesCoreTest {
                 .assignedFrom(sliceAssignment)
                 .should().beFreeOfCycles()
                 .allowEmptyShould(true)
-                .evaluate(classes)
+                .evaluate(classesWithTests)
                 .handleViolations((violatingObjects, violationHandler) -> {
                     cycleCount.incrementAndGet();
                     String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
                     cycleDetails.add(cycleInfo);
                 });
         return cycleCount.get();
-    }
-
-    private void writeResult(int result, String filename) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
-            out.println(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
