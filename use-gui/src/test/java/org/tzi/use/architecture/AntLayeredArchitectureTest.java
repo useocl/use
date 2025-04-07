@@ -38,11 +38,10 @@ public class AntLayeredArchitectureTest {
 
         if (violationCount > 0) {
             System.out.println("\nViolation details:");
-            //not compatible with java 6
-            //result.getFailureReport().getDetails().forEach(System.out::println);
-            for (String detail : result.getFailureReport().getDetails()) {
-                System.out.println(detail);
-            }
+            System.out.println(result.getFailureReport().getDetails());
+//            for (String detail : result.getFailureReport().getDetails()) {
+//                System.err.println(detail);
+//            }
         }
     }
 }
