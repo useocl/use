@@ -5,6 +5,7 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ViolationHandler;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
@@ -15,10 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AntCyclicDependenciesCoreTest {
@@ -154,11 +152,20 @@ public class AntCyclicDependenciesCoreTest {
                 .should().beFreeOfCycles()
                 .allowEmptyShould(true)
                 .evaluate(classesWithTests)
-                .handleViolations((violatingObjects, violationHandler) -> {
-                    cycleCount.incrementAndGet();
-                    String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
-                    cycleDetails.add(cycleInfo);
+                .handleViolations(new ViolationHandler<Object>() {
+                    @Override
+                    public void handle(Collection<Object> violatingObjects, String violationDescription) {
+                        cycleCount.incrementAndGet();
+                        String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
+                        cycleDetails.add(cycleInfo);
+                    }
                 });
+                // not compatible with java 7
+//                .handleViolations((violatingObjects, violationHandler) -> {
+//                    cycleCount.incrementAndGet();
+//                    String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
+//                    cycleDetails.add(cycleInfo);
+//                });
         return cycleCount.get();
     }
 }
