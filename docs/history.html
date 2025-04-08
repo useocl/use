@@ -31,55 +31,69 @@
 
     <!-- Main Dashboard Grid -->
     <div class="dashboard-grid">
-        <!-- Historical Architectural Cycles Chart -->
+
+        <!-- Ant Historical Cycles Chart -->
         <div class="card full-width">
             <div class="card-header">
-                <h3 class="card-title">Historical Cyclic Dependencies</h3>
+                <h3 class="card-title">Historical Cyclic Dependencies - Ant</h3>
             </div>
             <p class="card-description">
                 Long-term trend analysis of architectural cycles in the codebase, comparing metrics with and without test code.
             </p>
             <div class="chart-container">
-                <canvas id="historicalCyclesChart"></canvas>
+                <canvas id="antHistoricalCyclesChart"></canvas>
             </div>
         </div>
 
-        <!-- Ant Layer Violations Card -->
+        <!-- Maven Historical Cycles Chart -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h3 class="card-title">Historical Cyclic Dependencies - Maven</h3>
+            </div>
+            <p class="card-description">
+                Long-term trend analysis of architectural cycles in the codebase, comparing metrics with and without test code.
+            </p>
+            <div class="chart-container">
+                <canvas id="mavenHistoricalCyclesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Ant Layer Violations Chart -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Layered Architecture Violations for Ant Commits</h3>
+                <h3 class="card-title">Historical Architecture Layer Violations - Ant</h3>
             </div>
             <p class="card-description">
                 Analysis of violations of USE's Layered Architecture for Ant Commits.
             </p>
             <div class="chart-container">
-                <canvas id="antLayerViolationsChart"></canvas>
+                <canvas id="antHistoricalLayerViolationsChart"></canvas>
             </div>
         </div>
 
-        <!-- Historical Layer Violations Chart -->
+        <!-- Maven Layer Violations Chart -->
         <div class="card full-width">
             <div class="card-header">
-                <h3 class="card-title">Historical Layer Violations</h3>
+                <h3 class="card-title">Historical Architecture Layer Violations - Maven</h3>
             </div>
             <p class="card-description">
                 Extended timeline of layered architecture violations, showing architectural degradation or improvement trends.
             </p>
             <div class="chart-container">
-                <canvas id="historicalViolationsChart"></canvas>
+                <canvas id="mavenHistoricalLayerViolationsChart"></canvas>
             </div>
         </div>
 
-        <!-- Historical Build Time Chart -->
+        <!-- Maven Historical Build Time Chart -->
         <div class="card full-width">
             <div class="card-header">
-                <h3 class="card-title">Historical Build Time</h3>
+                <h3 class="card-title">Historical Build Time - Maven</h3>
             </div>
             <p class="card-description">
                 Long-term analysis of build times, which can indicate codebase complexity and build efficiency.
             </p>
             <div class="chart-container">
-                <canvas id="historicalBuildTimeChart"></canvas>
+                <canvas id="mavenHistoricalBuildTimeChart"></canvas>
             </div>
         </div>
     </div>
