@@ -124,8 +124,8 @@ public class AntCyclicDependenciesCoreTest {
         System.out.println("Number of cycles in org.tzi.use.util: " + cycleCount);
     }
 
-    private int countCyclesForPackage(String packageName) {
-        SliceAssignment sliceAssignment = new SliceAssignment() {
+    private int countCyclesForPackage(final String packageName) {
+        final SliceAssignment sliceAssignment = new SliceAssignment() {
             @Override
             public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
                 if (javaClass.getPackageName().startsWith(packageName)) {
@@ -144,8 +144,8 @@ public class AntCyclicDependenciesCoreTest {
             public String getDescription() { return "Slices for " + packageName; }
         };
 
-        AtomicInteger cycleCount = new AtomicInteger(0);
-        List<String> cycleDetails = new ArrayList<>();
+        final AtomicInteger cycleCount = new AtomicInteger(0);
+        final List<String> cycleDetails = new ArrayList<>();
 
         SlicesRuleDefinition.slices()
                 .assignedFrom(sliceAssignment)
