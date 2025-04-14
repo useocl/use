@@ -8,19 +8,17 @@ import org.tzi.use.gui.views.diagrams.elements.Rolename;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 @Getter
 public class StyleInfoPlaceableNode extends StyleInfoBase {
 
-    protected Map<Rolename, Color> roleNameColorMap = new HashMap<>();
+    private final Map<Rolename, Color> roleNameColorMap = new HashMap<>();
 
     @Builder(setterPrefix = "with", builderMethodName = "SIPlaceableNodeBuilder")
     protected StyleInfoPlaceableNode(Color namesColor, Map<Rolename, Color> roleNameColorMap) {
         super(namesColor);
-        if (roleNameColorMap != null) {
-            this.roleNameColorMap.putAll(roleNameColorMap);
-        }
+        Optional.ofNullable(roleNameColorMap).ifPresent(this.roleNameColorMap::putAll);
     }
 
     @Override
