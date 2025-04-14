@@ -5,39 +5,51 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.Rolename;
+import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.mm.MOperation;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Getter
 public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
 
-    //TODO: instead of implicit mapping via index, use a map with direct mapping
-    private final Color[] attributeColor;
-    private final Color[] operationColor;
+    private final Map<MAttribute, Color> attributeColor = new HashMap<>();
+    private final Map<MOperation, Color> operationColor = new HashMap<>();
+    private Color nodesColor;
     private Color backgroundColor;
 
     @Builder(setterPrefix = "with")
-    private StyleInfoClassNode(Color namesColor, Map<Rolename, Color> roleNameColorMap, Color backgroundColor, Color[] attributeColor, Color[] operationColor) {
+    private StyleInfoClassNode(Color namesColor, Map<Rolename, Color> roleNameColorMap, Color nodesColor, Color backgroundColor, Map<MAttribute, Color> attributeColor, Map<MOperation, Color> operationColor) {
         // RoleNames are not supported as of yet
         super(namesColor, roleNameColorMap);
+        this.nodesColor = nodesColor;
         this.backgroundColor = backgroundColor;
-        this.attributeColor = attributeColor;
-        this.operationColor = operationColor;
+        Optional.ofNullable(attributeColor).ifPresent(this.attributeColor::putAll);
+        Optional.ofNullable(operationColor).ifPresent(this.operationColor::putAll);
     }
 
     /**
-     * Creates a {@link StyleInfoClassNode} from an existing {@link ClassNode}.
+     * Creates a {@link StyleInfoClassNode} of an existing {@link ClassNode}.
      *
      * @param classNode the {@link ClassNode} to take the information from
      * @return {@link StyleInfoClassNode} with the information of the given {@link ClassNode}
      */
-    public static StyleInfoClassNode createFromClassNode(final ClassNode classNode) {
-        final Color[] attributeColor = classNode.cls().allAttributes().stream().map(classNode::getAttributeColor).toList().toArray(new Color[0]);
-        final Color[] operationColor = classNode.cls().allOperations().stream().map(classNode::getOperationColor).toList().toArray(new Color[0]);
-        return new StyleInfoClassNode(classNode.getTextColor(), new HashMap<>(), classNode.getBackColor(), attributeColor, operationColor);
+    public static StyleInfoClassNode createFromClassNode(@NonNull final ClassNode classNode) {
+        final Map<MAttribute, Color> attributeColor = classNode.cls()
+                                                               .allAttributes()
+                                                               .stream()
+                                                               .collect(Collectors.toMap(Function.identity(), classNode::getAttributeColor));
+        final Map<MOperation, Color> operationColor = classNode.cls()
+                                                               .allOperations()
+                                                               .stream()
+                                                               .collect(Collectors.toMap(Function.identity(), classNode::getOperationColor));
+        ;
+        return new StyleInfoClassNode(classNode.getTextColor(), new HashMap<>(), classNode.getColor(), classNode.getBackColor(), attributeColor, operationColor);
     }
 
     /**
@@ -46,43 +58,14 @@ public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
      *
      * @param other the other {@link StyleInfoClassNode}
      */
-    private void merge(final StyleInfoClassNode other) {
+    private void merge(@NonNull final StyleInfoClassNode other) {
         this.namesColor = Optional.ofNullable(this.namesColor).orElse(other.getNamesColor());
-//        this.roleNameColorMap = Optional.ofNullable(this.roleNameColorMap).orElse(other.getRoleNameColorMap());
+        this.nodesColor = Optional.ofNullable(this.nodesColor).orElse(other.getNodesColor());
         this.backgroundColor = Optional.ofNullable(this.backgroundColor).orElse(other.getBackgroundColor());
-        mergeAttributeColors(other.getAttributeColor());
-        mergeOperationColors(other.getOperationColor());
+        other.getAttributeColor().forEach(attributeColor::putIfAbsent);
+        other.getOperationColor().forEach(operationColor::putIfAbsent);
     }
 
-    /**
-     * Merges the attribute colors fo two {@link StyleInfoClassNode}s.
-     * This method prioritizes the {@link StyleInfoClassNode} it has been called on.
-     *
-     * @param otherAttributeColors the other attribute colors
-     */
-    private void mergeAttributeColors(final Color[] otherAttributeColors) {
-        if (otherAttributeColors != null && otherAttributeColors.length >= 1) {
-            assert this.attributeColor.length == otherAttributeColors.length;
-            for (int i = 0; i < this.attributeColor.length; i++) {
-                this.attributeColor[i] = Optional.ofNullable(this.attributeColor[i]).orElse(otherAttributeColors[i]);
-            }
-        }
-    }
-
-    /**
-     * Merges the operation colors fo two {@link StyleInfoClassNode}s.
-     * This method prioritizes the {@link StyleInfoClassNode} it has been called on.
-     *
-     * @param otherOperationColors the other operation colors
-     */
-    private void mergeOperationColors(final Color[] otherOperationColors) {
-        if (otherOperationColors != null && otherOperationColors.length >= 1) {
-            assert this.operationColor.length == otherOperationColors.length;
-            for (int i = 0; i < this.operationColor.length; i++) {
-                this.operationColor[i] = Optional.ofNullable(this.operationColor[i]).orElse(otherOperationColors[i]);
-            }
-        }
-    }
 
     @Override
     public void merge(@NonNull StyleInfoBase other) {

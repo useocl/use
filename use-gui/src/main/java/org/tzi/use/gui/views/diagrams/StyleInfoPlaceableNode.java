@@ -8,6 +8,7 @@ import org.tzi.use.gui.views.diagrams.elements.Rolename;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Getter
 public class StyleInfoPlaceableNode extends StyleInfoBase {
@@ -23,11 +24,11 @@ public class StyleInfoPlaceableNode extends StyleInfoBase {
     }
 
     @Override
-    public void merge(@NonNull StyleInfoBase other){
+    public void merge(@NonNull StyleInfoBase other) {
         if (other instanceof StyleInfoPlaceableNode styleInfoPlaceableNode) {
             styleInfoPlaceableNode.getRoleNameColorMap().forEach(roleNameColorMap::putIfAbsent);
         }
-    };
+    }
 
 
 }

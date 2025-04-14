@@ -56,7 +56,7 @@ public final class GeneralizationEdge extends EdgeBase {
     	if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
         } else {
-            g.setColor( fOpt.getEDGE_COLOR() );
+            g.setColor(getEdgeColor());
         }
 
         // draw all line segments

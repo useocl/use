@@ -1510,19 +1510,19 @@ public class ClassDiagram extends DiagramView
 
 	public void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
 		// TODO: how to handle default values aka null values (e.g. in attribute color)
-		classNode.setColor(styleInfoClassNode.getNamesColor());
+		classNode.setColor(styleInfoClassNode.getNodesColor());
 		classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
 
 		final List<MAttribute> mAttributes = classNode.cls().attributes();
 		for (int i = 0; i < mAttributes.size(); i++) {
 			final MAttribute mAttribute = mAttributes.get(i);
-			classNode.setAttributeColor(mAttribute, styleInfoClassNode.getAttributeColor()[i]);
+			classNode.setAttributeColor(mAttribute, styleInfoClassNode.getAttributeColor().get(mAttribute));
 		}
 
 		final List<MOperation> mOperations = classNode.cls().operations();
 		for (int i = 0; i < mOperations.size(); i++) {
 			final MOperation mOperation = mOperations.get(i);
-			classNode.setOperationColor(mOperation, styleInfoClassNode.getOperationColor()[i]);
+			classNode.setOperationColor(mOperation, styleInfoClassNode.getOperationColor().get(mOperation));
 		}
 
 		styleInfoClassNode.getRoleNameColorMap().forEach(EdgeProperty::setColor);
@@ -1532,10 +1532,15 @@ public class ClassDiagram extends DiagramView
 	protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement){
 		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge){
 			styleInfoEdge.merge(StyleInfoEdge.createFromEdge(edgeBase));
-			final EdgeBase diagramsEdge = visibleData.getEdges().stream().filter(edgeBase::equals).findFirst().orElseThrow();
 			//TODO: what about names color ?
-			diagramsEdge.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE).stream().iterator().next().setColor(styleInfoEdge.getEgdeColor());
-			}
+
+			// edges color
+			edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
+
+			// role names
+			edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.SOURCE).stream().filter(Rolename.class::isInstance).findFirst().ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+			edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.TARGET).stream().filter(Rolename.class::isInstance).findFirst().ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+		}
 	}
 
 	// TODO

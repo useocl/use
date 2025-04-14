@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.util.Map;
 
 import org.tzi.use.gui.util.PersistHelper;
@@ -110,6 +110,10 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 		associationClassEdge.setSelected(selected);
 	}
 
+	public void setEdgesColor(final Color color){
+        associationClassEdge.setColor(color);
+	}
+
 	/**
      * Draws this edge and the dashed edge to the association class.
      */
@@ -117,7 +121,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     protected void onDraw( Graphics2D g ) {
     	super.onDraw(g);
     	// begin by restoring the default color for the small line
-    	associationClassEdge.setColor(fOpt.getEDGE_COLOR());
+    	associationClassEdge.setColor(getEdgeColor());
     	
     	if(fAssociationClassOrObjectNode instanceof ObjectNode) {
     		if(((ObjectNode) fAssociationClassOrObjectNode).isGreyed()) {

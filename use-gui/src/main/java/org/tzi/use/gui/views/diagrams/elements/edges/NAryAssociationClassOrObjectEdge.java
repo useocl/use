@@ -111,7 +111,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
 		} else if(isPartOfGreyedNode()) {
 			dashedEdge.setColor( fOpt.getGREYED_LINE_COLOR());
         } else {
-        	dashedEdge.setColor( fOpt.getEDGE_COLOR() );
+        	dashedEdge.setColor(getEdgeColor());
         }
                 
         dashedEdge.onDraw( g );
