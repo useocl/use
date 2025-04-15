@@ -5,6 +5,7 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
@@ -197,7 +198,7 @@ public class MavenCyclicDependenciesCoreTest {
         writeJsonResults(TESTS_RESULTS_JSON, cycleCountsWithoutTests, cycleCountsWithTests);
     }
 
-    private int countCyclesForPackage(String packageName, JavaClasses classes) {
+/*    private int countCyclesForPackage(String packageName, JavaClasses classes) {
         SliceAssignment sliceAssignment = new SliceAssignment() {
             @Override
             public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
@@ -234,11 +235,47 @@ public class MavenCyclicDependenciesCoreTest {
                     //System.out.println(cycleInfo);
                 });
 
-//        System.out.println("Cycle details for " + packageName + ":");
-//        cycleDetails.forEach(System.out::println);
+        //System.out.println("Cycle details for " + packageName + ":");
+        cycleDetails.forEach(System.out::println);
 //        System.out.println("Total cycles found: " + cycleCount.get());
 
         return cycleCount.get();
+    }*/
+
+    // use this function if a failure report needs to be generated
+    private int countCyclesForPackage(String packageName, JavaClasses classes) {
+        SliceAssignment sliceAssignment = new SliceAssignment() {
+            @Override
+            public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
+                if (javaClass.getPackageName().startsWith(packageName)) {
+                    String subPackage = javaClass.getPackageName().substring(packageName.length());
+                    if (subPackage.isEmpty()) {
+                        return SliceIdentifier.of("root");
+                    }
+
+                    String[] parts = subPackage.substring(1).split("\\.");
+                    return SliceIdentifier.of(parts.length > 0 ? parts[0] : "root");
+                }
+                return SliceIdentifier.ignore();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Slices for " + packageName;
+            }
+        };
+
+        EvaluationResult result = SlicesRuleDefinition.slices()
+                .assignedFrom(sliceAssignment)
+                .should().beFreeOfCycles()
+                .allowEmptyShould(true)
+                .evaluate(classes);
+
+        int cycleCount = result.getFailureReport().getDetails().size();
+
+        result.getFailureReport().getDetails().forEach(System.out::println);
+        System.out.println("Cycle count: " + cycleCount);
+        return cycleCount;
     }
 
     private void writeJsonResults(String filename, Map<String, Integer> cycleCountsWithoutTests, Map<String, Integer> cycleCountsWithTests) {
