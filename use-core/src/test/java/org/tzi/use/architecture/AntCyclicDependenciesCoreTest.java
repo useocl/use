@@ -21,15 +21,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AntCyclicDependenciesCoreTest {
 
-    //private static final String PROJECT_ROOT = new File("").getAbsolutePath();
-    //private static final String ALL_MODULES_RESULTS_FILE = new File(PROJECT_ROOT, "ant_cyclic_dependencies_results.csv").getAbsolutePath();
-    // Single json for all results
     private JavaClasses classesWithTests;
 
     @Before
     public void setup() {
         classesWithTests = new ClassFileImporter()
-                //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .importPackages("org.tzi.use")
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
@@ -38,25 +35,6 @@ public class AntCyclicDependenciesCoreTest {
     @Test
     @ArchTest
     public void count_cycles_in_core() {
-/*        try {
-            File file = new File(ALL_MODULES_RESULTS_FILE);
-            System.out.println("Attempting to write to: " + file.getAbsolutePath());
-
-            System.out.println("No. of classes analysed: " + classes.size());
-            // classes.forEach(clazz -> System.out.println("Found class: " + clazz.getName()));
-
-            int cycleCount = countCyclesForPackage("org.tzi.use");
-            System.out.println("CYCLES COUNTED: " + cycleCount);
-
-            writeResult(cycleCount, ALL_MODULES_RESULTS_FILE);
-            System.out.println("Write complete");
-
-            assertTrue("Cycle count should not be negative", cycleCount >= 0);
-        } catch (Exception e) {
-            System.err.println("ERROR IN ARCHUNIT TEST: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }*/
         int cycleCount = countCyclesForPackage("org.tzi.use");
         System.out.println("Cycles in core module: " + cycleCount);
     }
