@@ -37,7 +37,6 @@ public class AntCyclicDependenciesCoreTest {
                         "org.tzi.use.api..", "org.tzi.use.config..", "org.tzi.use.gen..",
                         "org.tzi.use.graph..", "org.tzi.use.main..", "org.tzi.use.parser..",
                         "org.tzi.use.uml..", "org.tzi.use.util.."));
-        System.out.println("--- setup method called ---");
         System.out.println("No of classes incl.: " + classesWithTests.size());
     }
 
@@ -166,39 +165,14 @@ class CustomTestExclusionOption implements ImportOption {
 
         String path = location.toString();
 
-//        String className = extractClassName(path);
-//        System.out.println("!!! Extracted class name: " + className);
-
         // SystemManipulator does not exist in later project
         // TestModelUtil is moved to core in later project
         if (path.contains("Test") ||
                 path.contains("ObjectCreation")
-                ||
-                path.contains("AllTests")
         ) {
-            System.out.println("+++ Excluding test file: " + path);
-            System.out.println("+++ path ends with called +++");
             return false;
         }
 
         return true;
     }
-
-    // Helper method to extract the class name without .class extension
-/*    private String extractClassName(String path) {
-        // Get the filename part (after the last slash or backslash)
-        int lastSlashIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
-        if (lastSlashIndex == -1) {
-            return path;
-        }
-
-        String fileName = path.substring(lastSlashIndex + 1);
-
-        // Remove .class extension if present
-        if (fileName.endsWith(".class")) {
-            return fileName.substring(0, fileName.length() - 6); // 6 is the length of ".class"
-        }
-
-        return fileName;
-    }*/
 }
