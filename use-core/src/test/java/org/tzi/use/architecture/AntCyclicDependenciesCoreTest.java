@@ -166,30 +166,31 @@ class CustomTestExclusionOption implements ImportOption {
 
         String path = location.toString();
 
+        // kann man auch weglassen, da die kompilierten pfade nie test enthalten
         if (path.toLowerCase().contains("/test/") || path.toLowerCase().contains("\\test\\")) {
             System.out.println("!!! location contains /test/ !!!");
             return false;
         }
 
-        //String className = extractClassName(path);
-        //System.out.println("!!! Extracted class name: " + className);
+//        String className = extractClassName(path);
+//        System.out.println("!!! Extracted class name: " + className);
 
         // SystemManipulator does not exist in later project
         // TestModelUtil is moved to core in later project
         if (path.endsWith("Test") ||
-                path.endsWith("Tests")
+                path.contains("Tests")
                 ||
-                path.endsWith("TestSystem")
+                path.contains("TestSystem")
                 ||
-                path.endsWith("ObjectCreation")
+                path.contains("ObjectCreation")
                 ||
                 path.contains("AllTests")
                 ||
-                path.endsWith(".fail")
+                path.contains(".fail")
                 ||
-                path.endsWith(".use")
+                path.contains(".use")
                 ||
-                path.endsWith(".in")
+                path.contains(".in")
         ) {
             System.out.println("+++ Excluding test file: " + path);
             System.out.println("+++ path ends with called +++");
