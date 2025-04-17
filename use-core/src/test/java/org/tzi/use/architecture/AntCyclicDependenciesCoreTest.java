@@ -33,6 +33,8 @@ public class AntCyclicDependenciesCoreTest {
                 .importPackages("org.tzi.use")
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
+        System.out.println("--- setup method called ---");
+        System.out.println("No of classes incl.: " + classesWithTests.size());
     }
 
     @Test
@@ -157,6 +159,8 @@ class CustomTestExclusionOption implements ImportOption {
 
     @Override
     public boolean includes(Location location) {
+        System.out.println("!!! custom import option called !!!");
+
         if (location.contains("/test/")) {
             return false;
         }
