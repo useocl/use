@@ -163,24 +163,25 @@ class CustomTestExclusionOption implements ImportOption {
 
     @Override
     public boolean includes(Location location) {
-        //System.out.println("!!! custom import option called !!!");
 
         String path = location.toString();
-        System.out.println("!!! Examining location: " + path);
 
         if (path.toLowerCase().contains("/test/") || path.toLowerCase().contains("\\test\\")) {
             System.out.println("!!! location contains /test/ !!!");
             return false;
         }
 
+        //String className = extractClassName(path);
+        //System.out.println("!!! Extracted class name: " + className);
+
         // SystemManipulator does not exist in later project
         // TestModelUtil is moved to core in later project
-        if (path.endsWith("Test.class") ||
-                path.endsWith("Tests.class")
+        if (path.endsWith("Test") ||
+                path.endsWith("Tests")
                 ||
-                path.endsWith("TestSystem.class")
+                path.endsWith("TestSystem")
                 ||
-                path.endsWith("ObjectCreation.class")
+                path.endsWith("ObjectCreation")
                 ||
                 path.contains("AllTests")
                 ||
@@ -197,4 +198,22 @@ class CustomTestExclusionOption implements ImportOption {
 
         return true;
     }
+
+    // Helper method to extract the class name without .class extension
+/*    private String extractClassName(String path) {
+        // Get the filename part (after the last slash or backslash)
+        int lastSlashIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+        if (lastSlashIndex == -1) {
+            return path;
+        }
+
+        String fileName = path.substring(lastSlashIndex + 1);
+
+        // Remove .class extension if present
+        if (fileName.endsWith(".class")) {
+            return fileName.substring(0, fileName.length() - 6); // 6 is the length of ".class"
+        }
+
+        return fileName;
+    }*/
 }
