@@ -28,8 +28,8 @@ public class AntCyclicDependenciesCoreTest {
     @Before
     public void setup() {
         classesWithTests = new ClassFileImporter()
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                //.withImportOption(new CustomTestExclusionOption())
+                //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                .withImportOption(new CustomTestExclusionOption())
                 .importPackages("org.tzi.use")
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."))
@@ -165,12 +165,14 @@ class CustomTestExclusionOption implements ImportOption {
     public boolean includes(Location location) {
         //System.out.println("!!! custom import option called !!!");
 
-        if (location.contains("/test/")) {
+        String path = location.toString();
+        System.out.println("!!! Examining location: " + path);
+
+        if (path.toLowerCase().contains("/test/") || path.toLowerCase().contains("\\test\\")) {
             System.out.println("!!! location contains /test/ !!!");
             return false;
         }
 
-        String path = location.toString();
         // SystemManipulator does not exist in later project
         // TestModelUtil is moved to core in later project
         if (path.endsWith("Test.class") ||
@@ -180,12 +182,15 @@ class CustomTestExclusionOption implements ImportOption {
                 ||
                 path.endsWith("ObjectCreation.class")
                 ||
+                path.contains("AllTests")
+                ||
                 path.endsWith(".fail")
                 ||
                 path.endsWith(".use")
                 ||
                 path.endsWith(".in")
         ) {
+            System.out.println("+++ Excluding test file: " + path);
             System.out.println("+++ path ends with called +++");
             return false;
         }
