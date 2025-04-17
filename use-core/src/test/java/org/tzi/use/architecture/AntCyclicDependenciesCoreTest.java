@@ -122,7 +122,9 @@ public class AntCyclicDependenciesCoreTest {
             }
 
             @Override
-            public String getDescription() { return "Slices for " + packageName; }
+            public String getDescription() {
+                return "Slices for " + packageName;
+            }
         };
 
         final AtomicInteger cycleCount = new AtomicInteger(0);
@@ -141,7 +143,7 @@ public class AntCyclicDependenciesCoreTest {
                         cycleDetails.add(cycleInfo);
                     }
                 });
-                // not compatible with java 7
+        // not compatible with java 7
 //                .handleViolations((violatingObjects, violationHandler) -> {
 //                    cycleCount.incrementAndGet();
 //                    String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
@@ -159,11 +161,24 @@ class CustomTestExclusionOption implements ImportOption {
             return false;
         }
 
-/*        String path = location.toString();
+        String path = location.toString();
+        // SystemManipulator does not exist in later project
+        // TestModelUtil is moved to core in later project
         if (path.endsWith("Test.class") ||
-                path.endsWith("Tests.class")) {
+                path.endsWith("Tests.class")
+                ||
+                path.endsWith("TestSystem.class")
+                ||
+                path.endsWith("ObjectCreation.class")
+                ||
+                path.endsWith(".fail")
+                ||
+                path.endsWith(".use")
+                ||
+                path.endsWith(".in")
+        ) {
             return false;
-        }*/
+        }
 
         return true;
     }
