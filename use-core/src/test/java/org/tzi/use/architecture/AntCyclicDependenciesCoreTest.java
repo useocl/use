@@ -28,8 +28,8 @@ public class AntCyclicDependenciesCoreTest {
     @Before
     public void setup() {
         classesWithTests = new ClassFileImporter()
-                //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .withImportOption(new CustomTestExclusionOption())
+                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                //.withImportOption(new CustomTestExclusionOption())
                 .importPackages("org.tzi.use")
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."))
