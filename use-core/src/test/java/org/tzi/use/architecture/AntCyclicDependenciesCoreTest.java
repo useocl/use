@@ -159,9 +159,10 @@ class CustomTestExclusionOption implements ImportOption {
 
     @Override
     public boolean includes(Location location) {
-        System.out.println("!!! custom import option called !!!");
+        //System.out.println("!!! custom import option called !!!");
 
         if (location.contains("/test/")) {
+            System.out.println("!!! location contains /test/ !!!");
             return false;
         }
 
@@ -181,6 +182,7 @@ class CustomTestExclusionOption implements ImportOption {
                 ||
                 path.endsWith(".in")
         ) {
+            System.out.println("+++ path ends with called +++");
             return false;
         }
 
