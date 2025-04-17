@@ -172,10 +172,6 @@ class CustomTestExclusionOption implements ImportOption {
         // SystemManipulator does not exist in later project
         // TestModelUtil is moved to core in later project
         if (path.contains("Test") ||
-                path.contains("Tests")
-                ||
-                path.contains("TestSystem")
-                ||
                 path.contains("ObjectCreation")
                 ||
                 path.contains("AllTests")
