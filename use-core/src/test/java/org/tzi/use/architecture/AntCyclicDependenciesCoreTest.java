@@ -4,11 +4,13 @@ import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.Location;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ViolationHandler;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
+import com.tngtech.archunit.core.importer.ImportOption;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +28,8 @@ public class AntCyclicDependenciesCoreTest {
     @Before
     public void setup() {
         classesWithTests = new ClassFileImporter()
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                .withImportOption(new CustomTestExclusionOption())
                 .importPackages("org.tzi.use")
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
@@ -145,5 +148,23 @@ public class AntCyclicDependenciesCoreTest {
 //                    cycleDetails.add(cycleInfo);
 //                });
         return cycleCount.get();
+    }
+}
+
+class CustomTestExclusionOption implements ImportOption {
+
+    @Override
+    public boolean includes(Location location) {
+        if (location.contains("/test/")) {
+            return false;
+        }
+
+/*        String path = location.toString();
+        if (path.endsWith("Test.class") ||
+                path.endsWith("Tests.class")) {
+            return false;
+        }*/
+
+        return true;
     }
 }
