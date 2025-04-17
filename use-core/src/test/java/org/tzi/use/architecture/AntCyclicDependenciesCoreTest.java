@@ -166,12 +166,6 @@ class CustomTestExclusionOption implements ImportOption {
 
         String path = location.toString();
 
-        // kann man auch weglassen, da die kompilierten pfade nie test enthalten
-        if (path.toLowerCase().contains("/test/") || path.toLowerCase().contains("\\test\\")) {
-            System.out.println("!!! location contains /test/ !!!");
-            return false;
-        }
-
 //        String className = extractClassName(path);
 //        System.out.println("!!! Extracted class name: " + className);
 
@@ -185,12 +179,6 @@ class CustomTestExclusionOption implements ImportOption {
                 path.contains("ObjectCreation")
                 ||
                 path.contains("AllTests")
-                ||
-                path.contains(".fail")
-                ||
-                path.contains(".use")
-                ||
-                path.contains(".in")
         ) {
             System.out.println("+++ Excluding test file: " + path);
             System.out.println("+++ path ends with called +++");
