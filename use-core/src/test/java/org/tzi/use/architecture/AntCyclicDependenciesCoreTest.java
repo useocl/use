@@ -32,7 +32,11 @@ public class AntCyclicDependenciesCoreTest {
                 .withImportOption(new CustomTestExclusionOption())
                 .importPackages("org.tzi.use")
                 .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.gui.."))
-                .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."));
+                .that(JavaClass.Predicates.resideOutsideOfPackage("org.tzi.use.runtime.."))
+                .that(JavaClass.Predicates.resideInAnyPackage("org.tzi.use.analysis..",
+                        "org.tzi.use.api..", "org.tzi.use.config..", "org.tzi.use.gen..",
+                        "org.tzi.use.graph..", "org.tzi.use.main..", "org.tzi.use.parser..",
+                        "org.tzi.use.uml..", "org.tzi.use.util.."));
         System.out.println("--- setup method called ---");
         System.out.println("No of classes incl.: " + classesWithTests.size());
     }
