@@ -1,0 +1,21 @@
+import Date from "Dates.use"
+import { Member } from "MemberManagement.use"
+
+model LibraryManagement
+
+class Book
+    attributes
+        isbn : String
+        title : String
+        author : String
+        publishedDate : Date
+end
+
+associationclass Borrow
+between
+    Member[*] role borrower
+    Book[*] role books
+attributes
+    borrowDate : Date
+    dueDate : Date
+end

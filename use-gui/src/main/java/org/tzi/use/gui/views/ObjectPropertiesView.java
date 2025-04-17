@@ -53,6 +53,7 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
@@ -254,9 +255,10 @@ public class ObjectPropertiesView extends JPanel implements View {
         	if (!newValue.equals(oldValue)) {
         		
         		StringWriter errorOutput = new StringWriter();
+            MModel model = fObject.cls().model() != null ? fObject.cls().model() : fSystem.model();
         		Expression valueAsExpression = 
         			OCLCompiler.compileExpression(
-        					fSystem.model(),
+                  model,
         					fSystem.state(),
         					newValue, 
         					"<input>", 

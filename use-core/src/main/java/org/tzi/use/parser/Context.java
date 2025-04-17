@@ -20,9 +20,7 @@
 package org.tzi.use.parser;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.antlr.runtime.Token;
@@ -46,7 +44,7 @@ public class Context {
     private ExprContext fExprContext; 
     private int fErrorCount;
     private String fFilename;
-    
+
     private PrintWriter fErr;
     private PrintWriter fOut;
     
@@ -75,7 +73,11 @@ public class Context {
         fTypeTable = new Symtable();
         fExprContext = new ExprContext();
         fModelFactory = factory;
-        fLoopVarNames = new ArrayList<String>();
+        fLoopVarNames = new ArrayList<>();
+     }
+
+     public PrintWriter getErr() {
+        return fErr;
      }
 
     public void setOut(PrintWriter out) {
@@ -193,7 +195,6 @@ public class Context {
 	public boolean isAssertExpression() {
 		return fIsAssertExpression;
 	}
-
 
 	public void setIsAssertExpression(boolean fIsAssertExpression) {
 		this.fIsAssertExpression = fIsAssertExpression;

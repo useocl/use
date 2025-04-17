@@ -1,0 +1,3 @@
+import * from "imports/t35_import1.use"
+
+model A

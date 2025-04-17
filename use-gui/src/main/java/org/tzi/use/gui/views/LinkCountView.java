@@ -45,7 +45,7 @@ public class LinkCountView extends BarChartView implements View {
     public LinkCountView(MSystem system) {
         super("Association", "# Links", Color.red);
         fSystem = system;
-        Collection<MAssociation> associations = fSystem.model().associations();
+        Collection<MAssociation> associations = fSystem.model().getAssociationsIncludingImports();
         fAssociations = associations.toArray(new MAssociation[associations.size()]);
         Arrays.sort(fAssociations);
         setNames(fAssociations);
