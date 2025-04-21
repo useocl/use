@@ -3,55 +3,42 @@ package org.tzi.use.gui.views.diagrams;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.EnumNode;
-import org.tzi.use.gui.views.diagrams.elements.Rolename;
 
-import java.awt.*;
-import java.util.Collections;
-import java.util.Map;
+import java.awt.Color;
 import java.util.Optional;
 
 @Getter
-public class StyleInfoEnumNode extends StyleInfoPlaceableNode {
+public class StyleInfoEnumNode extends StyleInfoBase {
 
     private Color frameColor;
     private Color nodesColor;
 
     @Builder(setterPrefix = "with")
-    private StyleInfoEnumNode(Color namesColor, Map<Rolename, Color> roleNameColorMap, Color frameColor, Color nodesColor) {
-        super(namesColor, roleNameColorMap);
+    private StyleInfoEnumNode(final Color namesColor, final Color frameColor, final Color nodesColor) {
+        super(namesColor);
         this.frameColor = frameColor;
         this.nodesColor = nodesColor;
     }
 
-    /**
-     * Creates a {@link StyleInfoEnumNode} of an existing {@link EnumNode}.
-     *
-     * @param enumNode the {@link ClassNode} to take the information from
-     * @return {@link StyleInfoEnumNode} with the information of the given {@link ClassNode}
-     */
-    public static StyleInfoEnumNode createFromEnumNode(@NonNull final EnumNode enumNode) {
-        return new StyleInfoEnumNode(enumNode.getTextColor(), Collections.emptyMap(), enumNode.getFrameColor(), enumNode.getColor());
+    public StyleInfoEnumNode(@NonNull final EnumNode enumNode) {
+        super(enumNode);
     }
 
-    private void merge(@NonNull final StyleInfoEnumNode other) {
-        this.namesColor = Optional.ofNullable(this.namesColor).orElse(other.namesColor);
-        this.frameColor = Optional.ofNullable(this.frameColor).orElse(other.frameColor);
-        this.nodesColor = Optional.ofNullable(this.nodesColor).orElse(other.nodesColor);
-    }
-
-    /**
-     * Merges the information of two {@link StyleInfoEnumNode}
-     * This method prioritizes the {@link StyleInfoEnumNode} it has been called on.
-     *
-     * @param other the other {@link StyleInfoEnumNode}
-     */
     @Override
-    public void merge(@NonNull StyleInfoBase other) {
-        super.merge(other);
+    protected void createFrom(@NonNull final Selectable selectable) {
+        EnumNode enumNode = (EnumNode) selectable;
+        this.namesColor = enumNode.getTextColor();
+        this.frameColor = enumNode.getFrameColor();
+        this.nodesColor = enumNode.getColor();
+    }
+
+    @Override
+    public void merge(@NonNull final StyleInfoBase other) {
         if (other instanceof StyleInfoEnumNode styleInfoEnumNode) {
-            merge(styleInfoEnumNode);
+            this.namesColor = Optional.ofNullable(this.namesColor).orElse(styleInfoEnumNode.namesColor);
+            this.frameColor = Optional.ofNullable(this.frameColor).orElse(styleInfoEnumNode.frameColor);
+            this.nodesColor = Optional.ofNullable(this.nodesColor).orElse(styleInfoEnumNode.nodesColor);
         }
     }
 }

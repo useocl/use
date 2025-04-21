@@ -1494,13 +1494,13 @@ public class ClassDiagram extends DiagramView
     protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement) {
         if (placeableNode instanceof ClassNode classNode) {
             if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode) {
-                styleInfoClassNode.merge(StyleInfoClassNode.createFromClassNode(classNode));
+                styleInfoClassNode.merge(new StyleInfoClassNode(classNode));
                 adaptClassNodeToStyleInfo(classNode, styleInfoClassNode);
             }
 
         } else if (placeableNode instanceof EnumNode enumNode) {
             if (styleInfoForDiagramElement instanceof StyleInfoEnumNode styleInfoEnumNode) {
-                styleInfoEnumNode.merge(StyleInfoEnumNode.createFromEnumNode(enumNode));
+                styleInfoEnumNode.merge(new StyleInfoEnumNode(enumNode));
                 adaptEnumNodeToStyleInfo(enumNode, styleInfoEnumNode);
             }
         }
@@ -1512,13 +1512,19 @@ public class ClassDiagram extends DiagramView
         classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
         styleInfoClassNode.getAttributeColors().forEach(classNode::setAttributeColor);
         styleInfoClassNode.getOperationColors().forEach(classNode::setOperationColor);
-        styleInfoClassNode.getRoleNameColorMap().forEach(Rolename::setColor);
+        styleInfoClassNode.getRoleNameColors().forEach(Rolename::setColor);
     }
+
+	private void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoEnumNode styleInfoEnumNode) {
+		enumNode.setTextColor(styleInfoEnumNode.getNamesColor());
+		enumNode.setColor(styleInfoEnumNode.getNodesColor());
+		enumNode.setFrameColor(styleInfoEnumNode.getFrameColor());
+	}
 
     @Override
     protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement) {
         if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
-            styleInfoEdge.merge(StyleInfoEdge.createFromEdge(edgeBase));
+            styleInfoEdge.merge(new StyleInfoEdge(edgeBase));
             //TODO: what about names color ?
 
             // edges color
@@ -1532,13 +1538,6 @@ public class ClassDiagram extends DiagramView
 					.flatMap(coll -> coll.stream().filter(Rolename.class::isInstance).findFirst())
 					.ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
         }
-    }
-
-    private void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoEnumNode styleInfoEnumNode) {
-        enumNode.setTextColor(styleInfoEnumNode.getNamesColor());
-        enumNode.setColor(styleInfoEnumNode.getNodesColor());
-        enumNode.setFrameColor(styleInfoEnumNode.getFrameColor());
-
     }
 
 	private class RestoreHandler {
