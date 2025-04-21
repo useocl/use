@@ -40,12 +40,12 @@ public final class StyleInfoClassNode extends StyleInfoPlaceableNode {
      */
     public static StyleInfoClassNode createFromClassNode(@NonNull final ClassNode classNode) {
         final Map<MAttribute, Color> attributeColors = classNode.cls()
-                .allAttributes()
+                .attributes()
                 .stream()
                 .filter(attribute -> classNode.getAttributeColor(attribute) != null)
                 .collect(Collectors.toMap(Function.identity(), classNode::getAttributeColor));
         final Map<MOperation, Color> operationColors = classNode.cls()
-                .allOperations()
+                .operations()
                 .stream()
                 .filter(operation -> classNode.getOperationColor(operation) != null)
                 .collect(Collectors.toMap(Function.identity(), classNode::getOperationColor));

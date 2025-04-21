@@ -1524,21 +1524,13 @@ public class ClassDiagram extends DiagramView
             // edges color
             edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
 
-            // role names
-            edgeBase.getPropertiesGrouped()
-                    .asMap()
-                    .get(EdgeBase.PropertyOwner.SOURCE)
-                    .stream()
-                    .filter(Rolename.class::isInstance)
-                    .findFirst()
-                    .ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
-            edgeBase.getPropertiesGrouped()
-                    .asMap()
-                    .get(EdgeBase.PropertyOwner.TARGET)
-                    .stream()
-                    .filter(Rolename.class::isInstance)
-                    .findFirst()
-                    .ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+			// role names
+			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.SOURCE))
+					.flatMap(coll -> coll.stream().filter(Rolename.class::isInstance).findFirst())
+					.ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.TARGET))
+					.flatMap(coll -> coll.stream().filter(Rolename.class::isInstance).findFirst())
+					.ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
         }
     }
 
