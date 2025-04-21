@@ -60,10 +60,7 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.StyleInfoBase;
-import org.tzi.use.gui.views.diagrams.StyleInfoClassNode;
-import org.tzi.use.gui.views.diagrams.StyleInfoEdge;
+import org.tzi.use.gui.views.diagrams.*;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions.ShowCoverage;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -1493,49 +1490,64 @@ public class ClassDiagram extends DiagramView
 		}
 	}
 
-	@Override
-	protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement){
-		if (placeableNode instanceof ClassNode classNode) {
-			if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode){
-				styleInfoClassNode.merge(StyleInfoClassNode.createFromClassNode(classNode));
-				adaptClassNodeToStyleInfo(classNode, styleInfoClassNode);
-			}
-		} else if (placeableNode instanceof EnumNode enumNode) {
-			if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode){
-				throw new UnsupportedOperationException();
-				//adaptEnumNodeToStyleInfo(enumNode, styleInfoClassNode);
-			}
-		}
-	}
+    @Override
+    protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement) {
+        if (placeableNode instanceof ClassNode classNode) {
+            if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode) {
+                styleInfoClassNode.merge(StyleInfoClassNode.createFromClassNode(classNode));
+                adaptClassNodeToStyleInfo(classNode, styleInfoClassNode);
+            }
 
-	public void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
-		// TODO: how to handle default values aka null values (e.g. in attribute color)
-		classNode.setColor(styleInfoClassNode.getNodesColor());
-		classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
-		styleInfoClassNode.getAttributeColors().forEach(classNode::setAttributeColor);
-		styleInfoClassNode.getOperationColors().forEach(classNode::setOperationColor);
-		styleInfoClassNode.getRoleNameColorMap().forEach(Rolename::setColor);
-	}
+        } else if (placeableNode instanceof EnumNode enumNode) {
+            if (styleInfoForDiagramElement instanceof StyleInfoEnumNode styleInfoEnumNode) {
+                styleInfoEnumNode.merge(StyleInfoEnumNode.createFromEnumNode(enumNode));
+                adaptEnumNodeToStyleInfo(enumNode, styleInfoEnumNode);
+            }
+        }
+    }
 
-	@Override
-	protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement){
-		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge){
-			styleInfoEdge.merge(StyleInfoEdge.createFromEdge(edgeBase));
-			//TODO: what about names color ?
+    private void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
+        // TODO: how to handle default values aka null values (e.g. in attribute color)
+        classNode.setColor(styleInfoClassNode.getNodesColor());
+        classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
+        styleInfoClassNode.getAttributeColors().forEach(classNode::setAttributeColor);
+        styleInfoClassNode.getOperationColors().forEach(classNode::setOperationColor);
+        styleInfoClassNode.getRoleNameColorMap().forEach(Rolename::setColor);
+    }
 
-			// edges color
-			edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
+    @Override
+    protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement) {
+        if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
+            styleInfoEdge.merge(StyleInfoEdge.createFromEdge(edgeBase));
+            //TODO: what about names color ?
 
-			// role names
-			edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.SOURCE).stream().filter(Rolename.class::isInstance).findFirst().ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
-			edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.TARGET).stream().filter(Rolename.class::isInstance).findFirst().ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
-		}
-	}
+            // edges color
+            edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
 
-	// TODO
-	public void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoClassNode styleInfoClassNode) {
-		throw new UnsupportedOperationException();
-	}
+            // role names
+            edgeBase.getPropertiesGrouped()
+                    .asMap()
+                    .get(EdgeBase.PropertyOwner.SOURCE)
+                    .stream()
+                    .filter(Rolename.class::isInstance)
+                    .findFirst()
+                    .ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+            edgeBase.getPropertiesGrouped()
+                    .asMap()
+                    .get(EdgeBase.PropertyOwner.TARGET)
+                    .stream()
+                    .filter(Rolename.class::isInstance)
+                    .findFirst()
+                    .ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+        }
+    }
+
+    private void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoEnumNode styleInfoEnumNode) {
+        enumNode.setTextColor(styleInfoEnumNode.getNamesColor());
+        enumNode.setColor(styleInfoEnumNode.getNodesColor());
+        enumNode.setFrameColor(styleInfoEnumNode.getFrameColor());
+
+    }
 
 	private class RestoreHandler {
 		protected AutoPilot ap;
