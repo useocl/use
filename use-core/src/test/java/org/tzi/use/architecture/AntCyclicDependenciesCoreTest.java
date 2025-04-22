@@ -6,28 +6,20 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.core.importer.Location;
 import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.lang.ViolationHandler;
+import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
-import com.tngtech.archunit.core.importer.ImportOption;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class AntCyclicDependenciesCoreTest {
 
-    private JavaClasses classesWithTests;
+    private JavaClasses classes;
 
     @Before
     public void setup() {
-        classesWithTests = new ClassFileImporter()
+        classes = new ClassFileImporter()
                 //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .withImportOption(new CustomTestExclusionOption())
                 .importPackages("org.tzi.use")
@@ -37,7 +29,7 @@ public class AntCyclicDependenciesCoreTest {
                         "org.tzi.use.api..", "org.tzi.use.config..", "org.tzi.use.gen..",
                         "org.tzi.use.graph..", "org.tzi.use.main..", "org.tzi.use.parser..",
                         "org.tzi.use.uml..", "org.tzi.use.util.."));
-        System.out.println("No of classes incl.: " + classesWithTests.size());
+        System.out.println("No of classes incl.: " + classes.size());
     }
 
     @Test
@@ -110,7 +102,7 @@ public class AntCyclicDependenciesCoreTest {
         System.out.println("Number of cycles in org.tzi.use.util: " + cycleCount);
     }
 
-    private int countCyclesForPackage(final String packageName) {
+/*    private int countCyclesForPackage(final String packageName) {
         final SliceAssignment sliceAssignment = new SliceAssignment() {
             @Override
             public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
@@ -148,31 +140,64 @@ public class AntCyclicDependenciesCoreTest {
                         cycleDetails.add(cycleInfo);
                     }
                 });
-        // not compatible with java 7
-//                .handleViolations((violatingObjects, violationHandler) -> {
-//                    cycleCount.incrementAndGet();
-//                    String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
-//                    cycleDetails.add(cycleInfo);
-//                });
         return cycleCount.get();
     }
-}
+}*/
 
-class CustomTestExclusionOption implements ImportOption {
+    // use this function if a failure report needs to be generated
+    private int countCyclesForPackage(String packageName) {
+        SliceAssignment sliceAssignment = new SliceAssignment() {
+            @Override
+            public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
+                if (javaClass.getPackageName().startsWith(packageName)) {
+                    String subPackage = javaClass.getPackageName().substring(packageName.length());
+                    if (subPackage.isEmpty()) {
+                        return SliceIdentifier.of("root");
+                    }
 
-    @Override
-    public boolean includes(Location location) {
+                    String[] parts = subPackage.substring(1).split("\\.");
+                    return SliceIdentifier.of(parts.length > 0 ? parts[0] : "root");
+                }
+                return SliceIdentifier.ignore();
+            }
 
-        String path = location.toString();
+            @Override
+            public String getDescription() {
+                return "Slices for " + packageName;
+            }
+        };
 
-        // SystemManipulator does not exist in later project
-        // TestModelUtil is moved to core in later project
-        if (path.contains("Test") ||
-                path.contains("ObjectCreation")
-        ) {
-            return false;
+        EvaluationResult result = SlicesRuleDefinition.slices()
+                .assignedFrom(sliceAssignment)
+                .should().beFreeOfCycles()
+                .allowEmptyShould(true)
+                .evaluate(classes);
+
+        int cycleCount = result.getFailureReport().getDetails().size();
+
+        for (Object detail : result.getFailureReport().getDetails()) {
+            System.out.println(detail);
         }
+        System.out.println("Cycle count: " + cycleCount);
+        return cycleCount;
+    }
 
-        return true;
+    class CustomTestExclusionOption implements ImportOption {
+
+        @Override
+        public boolean includes(Location location) {
+
+            String path = location.toString();
+
+            // SystemManipulator does not exist in later project
+            // TestModelUtil is moved to core in later project
+            if (path.contains("Test") ||
+                    path.contains("ObjectCreation")
+            ) {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
