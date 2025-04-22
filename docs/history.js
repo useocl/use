@@ -318,6 +318,66 @@ async function initializeHistoricalChart(chartId, configKey, csvFile, valueKeys)
     }
 }
 
+async function initializeHistoricalChartMultiFile(chartId, configKey, csvFiles, valueKeys) {
+    try {
+        // Create initial empty chart
+        const ctx = document.getElementById(chartId);
+        const chart = new Chart(ctx, {
+            type: historyChartConfigs[configKey].type,
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: historyChartConfigs[configKey].options
+        });
+
+        // Load and process data from all CSV files
+        const allData = [];
+
+        // If csvFiles is a string (single file), convert to array for consistent processing
+        const filesArray = Array.isArray(csvFiles) ? csvFiles : [csvFiles];
+        const valuesArray = Array.isArray(valueKeys[0]) ? valueKeys : [valueKeys];
+
+        // Load data from each file
+        for (let i = 0; i < filesArray.length; i++) {
+            const rawData = await fetchCSVData(filesArray[i]);
+            const fileValueKeys = valuesArray[i] || valueKeys;
+
+            // For first file, set the labels (assuming all files have same dates)
+            if (i === 0) {
+                chart.data.labels = rawData.map(row => formatDateTime(row.date, row.time));
+            }
+
+            // Process data for this file
+            const chartData = processHistoricalData(rawData, fileValueKeys);
+
+            // Apply specific colors based on dataset labels
+            chartData.datasets.forEach(dataset => {
+                if (dataset.label === 'Cycles With Tests') {
+                    dataset.borderColor = '#FFCE56'; // Yellow
+                    dataset.backgroundColor = 'rgba(255, 206, 86, 0.2)';
+                } else if (dataset.label === 'Cycles Without Tests') {
+                    dataset.borderColor = '#4169E1'; // Royal Blue
+                    dataset.backgroundColor = 'rgba(65, 105, 225, 0.2)';
+                }
+            });
+
+            chart.data.datasets = chart.data.datasets.concat(chartData.datasets);
+        }
+
+        chart.update();
+        console.log(`Historical chart ${chartId} updated with data from multiple files`);
+    } catch (error) {
+        console.error(`Error initializing historical chart ${chartId}:`, error);
+        // Show error in UI
+        const errorMessage = document.createElement('div');
+        errorMessage.style.color = 'red';
+        errorMessage.style.padding = '20px';
+        errorMessage.textContent = `Error loading data for ${chartId}: ${error.message}`;
+        document.getElementById(chartId).parentNode.appendChild(errorMessage);
+    }
+}
+
 // Initialize all historical charts when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('History page loaded, initializing historical charts...');
@@ -328,10 +388,14 @@ document.addEventListener('DOMContentLoaded', () => {
         { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
     ]);
 
-    // Initialize historical layer violations chart
-    initializeHistoricalChart('antHistoricalCyclesChart', 'antHistoricalCycles', 'ant_cycles_with_tests_history.csv', [
-        { key: 'all_modules', label: 'Cycles With Tests' }
-    ]);
+    // Initialize Ant historical cycles chart with data from two files
+    initializeHistoricalChartMultiFile('antHistoricalCyclesChart', 'antHistoricalCycles',
+        ['ant_cycles_history_no_tests.csv', 'ant_cycles_history_with_tests.csv'],
+        [
+            [{ key: 'all_modules', label: 'Cycles Without Tests' }],
+            [{ key: 'all_modules', label: 'Cycles With Tests' }]
+        ]
+    );
 
     // Initialize historical layer violations chart
     initializeHistoricalChart('antHistoricalLayerViolationsChart', 'antHistoricalViolations', 'ant_layer_violations_history.csv', [
