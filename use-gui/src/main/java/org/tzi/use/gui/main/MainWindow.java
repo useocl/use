@@ -2238,33 +2238,43 @@ public class MainWindow extends JFrame {
      * Sets the icon of the JFrame to the USE logo
      * defined in resources/images/use_icon.png
      *
-     * <p>OSs different from Windows are handled in a special way,
+     * <p>OSs different from Windows are handled specially,
      * but this is untested. <a href="https://stackoverflow.com/questions/41190574/put-a-program-icon-depending-on-the-platform">Source</a></p>
      */
     private void setIcon() {
         URL url = ClassLoader.getSystemResource("images/use_icon.png");
+        if (url == null) {
+            Log.warn("Icon resource not found: images/use_icon.png");
+            return;
+        }
 
-        String name = System.getProperty("os.name");
-        if (name.startsWith("Win")) {
-            Toolkit kit = Toolkit.getDefaultToolkit();
-            Image img = kit.createImage(url);
-            this.setIconImage(img);
-        } else {
-            Image imgIcon = new ImageIcon(url).getImage();
+        Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
 
-            Class<?> appCls = null;
+        if (iconImage == null) {
+            Log.warn("Failed to create image from resource: images/use_icon.png");
+            return;
+        }
+
+        String osName = System.getProperty("os.name").toLowerCase();
+
+        if (osName.contains("win")) {
+            // Windows: Set the icon for the JFrame
+            this.setIconImage(iconImage);
+        } else if (osName.contains("mac")) {
+            // macOS: Set the dock icon
             try {
-                appCls = Class.forName("com.apple.eawt.Application");
-                Method getApplication = appCls.getMethod("getApplication");
+                Class<?> appClass = Class.forName("com.apple.eawt.Application");
+                Method getApplication = appClass.getMethod("getApplication");
                 Object app = getApplication.invoke(null);
 
-                Method setDockIconImage = app.getClass().getMethod("setDockIconImage");
-
-                setDockIconImage.invoke(app, imgIcon);
-            } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                     IllegalAccessException e) {
-                // If the icon could not be set, no worries...
+                Method setDockIconImage = app.getClass().getMethod("setDockIconImage", Image.class);
+                setDockIconImage.invoke(app, iconImage);
+            } catch (Exception e) {
+                Log.warn("Could not set macOS dock icon: " + e.getMessage());
             }
+        } else {
+            // Other OS: Set the icon for the JFrame as a fallback
+            this.setIconImage(iconImage);
         }
     }
 
