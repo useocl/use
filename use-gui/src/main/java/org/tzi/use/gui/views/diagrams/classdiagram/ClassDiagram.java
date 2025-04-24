@@ -1508,11 +1508,11 @@ public class ClassDiagram extends DiagramView
 
     private void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
         // TODO: how to handle default values aka null values (e.g. in attribute color)
+		classNode.setTextColor(styleInfoClassNode.getNamesColor());
         classNode.setColor(styleInfoClassNode.getNodesColor());
         classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
         styleInfoClassNode.getAttributeColors().forEach(classNode::setAttributeColor);
         styleInfoClassNode.getOperationColors().forEach(classNode::setOperationColor);
-        styleInfoClassNode.getRoleNameColors().forEach(Rolename::setColor);
     }
 
 	private void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoEnumNode styleInfoEnumNode) {
@@ -1525,18 +1525,12 @@ public class ClassDiagram extends DiagramView
     protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement) {
         if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
             styleInfoEdge.merge(new StyleInfoEdge(edgeBase));
-            //TODO: what about names color ?
 
-            // edges color
+			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE))
+					.flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())
+					.ifPresent(associationName -> associationName.setColor(styleInfoEdge.getNamesColor()));
             edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
-
-			// role names
-			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.SOURCE))
-					.flatMap(coll -> coll.stream().filter(Rolename.class::isInstance).findFirst())
-					.ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
-			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.TARGET))
-					.flatMap(coll -> coll.stream().filter(Rolename.class::isInstance).findFirst())
-					.ifPresent(edgeProperty -> edgeProperty.setColor(styleInfoEdge.getAssociationTargetRolenameColor()));
+			styleInfoEdge.getRoleNameColors().forEach(Rolename::setColor);
         }
     }
 

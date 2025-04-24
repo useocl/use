@@ -4,11 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
-import org.tzi.use.gui.views.diagrams.elements.Rolename;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MOperation;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,21 +21,18 @@ public final class StyleInfoClassNode extends StyleInfoBase {
     private Color backgroundColor;
     private Map<MAttribute, Color> attributeColors;
     private Map<MOperation, Color> operationColors;
-    private Map<Rolename, Color> roleNameColors;
 
     @Builder(setterPrefix = "with")
     private StyleInfoClassNode(final Color namesColor,
                                final Color nodesColor,
                                final Color backgroundColor,
                                final Map<MAttribute, Color> attributeColor,
-                               final Map<MOperation, Color> operationColor,
-                               final Map<Rolename, Color> roleNameColors) {
+                               final Map<MOperation, Color> operationColor) {
         super(namesColor);
         this.nodesColor = nodesColor;
         this.backgroundColor = backgroundColor;
         this.attributeColors = Optional.ofNullable(attributeColor).orElseGet(HashMap::new);
         this.operationColors = Optional.ofNullable(operationColor).orElseGet(HashMap::new);
-        this.roleNameColors = Optional.ofNullable(roleNameColors).orElseGet(HashMap::new);
     }
 
 
@@ -57,8 +53,7 @@ public final class StyleInfoClassNode extends StyleInfoBase {
                 .stream()
                 .filter(operation -> classNode.getOperationColor(operation) != null)
                 .collect(Collectors.toMap(Function.identity(), classNode::getOperationColor));
-        //TODO
-        this.roleNameColors = new HashMap<>();
+
     }
 
     @Override
@@ -69,7 +64,6 @@ public final class StyleInfoClassNode extends StyleInfoBase {
             this.backgroundColor = Optional.ofNullable(this.backgroundColor).orElse(styleInfoClassNode.backgroundColor);
             styleInfoClassNode.attributeColors.forEach(attributeColors::putIfAbsent);
             styleInfoClassNode.operationColors.forEach(operationColors::putIfAbsent);
-            styleInfoClassNode.roleNameColors.forEach(roleNameColors::putIfAbsent);
         }
     }
 
