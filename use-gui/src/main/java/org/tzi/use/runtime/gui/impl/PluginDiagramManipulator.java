@@ -1,12 +1,13 @@
 package org.tzi.use.runtime.gui.impl;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The plugin has to extend this class to get a handle to manipulate given parts of a diagram.
@@ -15,7 +16,9 @@ public abstract class PluginDiagramManipulator {
 
     final static List<DiagramView> ALL_REGISTERED_DIAGRAM_VIEWS = new ArrayList<>();
 
-    private final List<DiagramView> diagramViews;
+    private final Set<DiagramView> diagramViews;
+
+    private final Class<? extends DiagramView> targetClass;
 
     /**
      * Constructs a handle to the requested diagram view by setting the class variable.
@@ -23,48 +26,41 @@ public abstract class PluginDiagramManipulator {
      * @param clazz type of the requested diagram view
      */
     protected PluginDiagramManipulator(Class<? extends DiagramView> clazz) {
-        //TODO: bug: if the plugin is constructed (aka this constructor called) before the diagram is initiated, the plugin cannot attain the diagrams information
-        diagramViews = ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(view -> view.getClass().equals(clazz)).toList();
+        this.targetClass = clazz;
+        diagramViews = new HashSet<>();
+        diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
+    }
+
+    protected void updateRegisteredDiagramViews() {
+        diagramViews.clear();
+        diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
     }
 
     /**
-     * This has to be implemented by the Plugin!
      * Executes the plugins behaviour after initialisation of given diagram.
      */
-    public void onInitialisation(){
+    public void onInitialisation() {
         // override to use
-    };
+    }
 
     /**
-     * This has to be implemented by the Plugin!
-     * Executes the plugins behaviour when the diagram is being closed.
+     * Executes the plugins behaviour when the diagram is being closed / detached.
      */
-    public void onClosure(){
+    public void onClosure() {
         // override to use
-    };
+    }
 
-    protected void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider){
+    protected void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
         DiagramExtensionPoint.getInstance().addStyleInfoProvider(styleInfoProvider);
     }
 
-    protected DiagramOptions getDiagramOptions(){
-        return diagramViews.get(0).getOptions();
-    }
 
     protected final void repaint() {
         diagramViews.forEach(DiagramView::repaint);
     }
 
-    protected final List<PlaceableNode> getGraphNodes() {
-        return diagramViews.stream().flatMap(view -> view.getGraph().getNodes().stream()).toList();
-    }
-
     protected final void addNodeToGraph(final PlaceableNode node) {
         diagramViews.forEach(view -> view.getGraph().add(node));
-    }
-
-    protected final List<PlaceableNode> findNodesByName(final String name) {
-        return diagramViews.stream().map(view -> view.getGraph().getNodes().stream().filter(node -> node.name().equals(name)).findFirst().orElse(null)).toList();
     }
 
     @Deprecated(forRemoval = true)

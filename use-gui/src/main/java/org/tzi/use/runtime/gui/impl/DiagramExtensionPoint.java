@@ -28,6 +28,11 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
     }
 
     @Override
+    public <T extends DiagramView> void removeView(T diagramView) {
+        PluginDiagramManipulator.ALL_REGISTERED_DIAGRAM_VIEWS.remove(diagramView);
+    }
+
+    @Override
     public void runPluginsOnInitialisation() {
         for (final IDiagramPlugin diagramPlugin : registeredPlugins) {
             diagramPlugin.getPluginDiagramManipulator().onInitialisation();

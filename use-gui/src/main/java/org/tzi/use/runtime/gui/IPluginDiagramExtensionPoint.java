@@ -13,6 +13,9 @@ public interface IPluginDiagramExtensionPoint extends IExtensionPoint {
 
     <T extends DiagramView> void registerView(T diagramView);
 
+    @Deprecated(forRemoval = true)
+    <T extends DiagramView> void removeView(T diagramView);
+
     void runPluginsOnInitialisation();
 
     void runPluginsOnClosure();
