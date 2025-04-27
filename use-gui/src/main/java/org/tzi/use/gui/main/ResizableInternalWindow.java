@@ -9,7 +9,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import org.tzi.use.gui.views.diagrams.DiagramType;
 
 
 public class ResizableInternalWindow extends Pane {
@@ -67,6 +70,9 @@ public class ResizableInternalWindow extends Pane {
     private boolean maximized = false;              // whether the window is maximized
     private Button taskbarButton;                   // taskbar representation when minimized
 
+    // DiagramType to know which toolbarItems and menuItems need to be visible
+    private final DiagramType diagramType;
+
     // controller
     private MainWindowFX controller;
 
@@ -78,11 +84,12 @@ public class ResizableInternalWindow extends Pane {
      * @param taskbarPane The taskbar to hold minimized windows.
      * @param content     The Swing content for this window
      */
-    public ResizableInternalWindow(String title, Pane desktopPane, HBox taskbarPane, SwingNode content, MainWindowFX controller) {
+    public ResizableInternalWindow(String title, Pane desktopPane, HBox taskbarPane, SwingNode content, MainWindowFX controller, DiagramType diagramType) {
         this.desktopPane = desktopPane;
         this.taskbarPane = taskbarPane;
         this.controller = controller;
         this.content = content;
+        this.diagramType = diagramType;
         lblTitle.setText(title);
 
         initWindow();
@@ -129,6 +136,9 @@ public class ResizableInternalWindow extends Pane {
 
         // Adjust button visibility based on window size
         addSizeListenerForButtonVisibility();
+
+        // integration of the drag/drop future for Object Diagram Windows
+        dragRecognition();
     }
 
     /**
@@ -427,8 +437,14 @@ public class ResizableInternalWindow extends Pane {
         }
         restorePreviousGeometry();
         minimized = false;
-        controller.getActiveWindow().setActive(false);
+
+        // focus on new active window
+        ResizableInternalWindow currentActive = controller.getActiveWindow();
+        if (currentActive != null && currentActive != this) {
+            currentActive.setActive(false);
+        }
         this.setActive(true);
+        controller.setActiveWindow(this);
     }
 
     private void maximizeWindow() {
@@ -538,6 +554,38 @@ public class ResizableInternalWindow extends Pane {
         btnClose.setTextOverrun(OverrunStyle.CLIP);
     }
 
+    public void dragRecognition(){
+        //if (diagramType == DiagramType.OBJECT_DIAGRAM){
+            content.setOnDragOver(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasString() && db.getString().startsWith("CLASS-")) {
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+                event.consume();
+            });
+
+            content.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+
+                if (db.hasString() && db.getString().startsWith("CLASS-")) {
+                    String className = db.getString().substring("CLASS-".length());
+
+                    // mouse position to have the object created to that position in the object diagram window TODO
+                    double mouseX = event.getX();
+                    double mouseY = event.getY();
+
+                    // creating the dragged object with its name
+                    controller.createObject(className);
+                    success = true;
+                }
+
+                event.setDropCompleted(success);
+                event.consume();
+            });
+        //}
+    }
+
     public void setActive(Boolean active) {
         isActive.set(active);
     }
@@ -557,6 +605,16 @@ public class ResizableInternalWindow extends Pane {
     // --- returning the Title of the Window ---
     public String getTitleText() {
         return lblTitle.getText();
+    }
+
+    // --- returning if the window is minimized ---
+    public boolean isMinimized() {
+        return minimized;
+    }
+
+    // --- returning the DiagramType of the Window ---
+    public DiagramType getDiagramType() {
+        return diagramType;
     }
 }
 

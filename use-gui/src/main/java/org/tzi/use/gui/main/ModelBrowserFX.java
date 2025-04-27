@@ -6,6 +6,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.web.WebView;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.MMHTMLPrintVisitor;
@@ -38,45 +41,6 @@ public class ModelBrowserFX {
         return this.modelCollections;
     }
 
-
-//    public MModelElement getSelectedModelElement() {
-//        TreeItem<Object> selectedItem = folderTreeView.getSelectionModel().getSelectedItem();
-//        if (selectedItem != null && selectedItem.getValue() instanceof MModelElement) {
-//            return (MModelElement) selectedItem.getValue();
-//        }
-//        return null;
-//    }
-
-//    public void dragGestureRecognized() {
-//        // Set up a drag-and-drop action for the tree
-//        folderTreeView.setOnDragDetected(event -> {
-//            TreeItem<Object> selectedItem = folderTreeView.getSelectionModel().getSelectedItem();
-//
-//            if (selectedItem == null || !(selectedItem.getValue() instanceof MClass)) {
-//                event.consume();
-//                return;
-//            }
-//
-//            // Start drag-and-drop gesture
-//            Dragboard db = fFolderTreeView.startDragAndDrop(TransferMode.MOVE);
-//
-//            // Put a string representation of the MClass into the dragboard
-//            ClipboardContent content = new ClipboardContent();
-//            MClass cls = (MClass) selectedItem.getValue();
-//            content.putString("CLASS-" + cls.name());
-//            db.setContent(content);
-//
-//            event.consume();
-//        });
-//
-//        // Set up event for when the drag is done
-//        fFolderTreeView.setOnDragDone(event -> {
-//            if (event.getTransferMode() == TransferMode.MOVE) {
-//                System.out.println("Drag successful");
-//            }
-//            event.consume();
-//        });
-//    }
 
     public ModelBrowserFX() {
         instance = this;
@@ -230,6 +194,8 @@ public class ModelBrowserFX {
 
         treeLeafIconForClassNodes(rootItem);
 
+        activateDragAndDropFeatures();
+
         // Add sorting and mouse handling
         //applySorting(MainWindowFX.getInstance().getFolderTreeView()); // Call sorting method
         //setupMouseHandling(MainWindowFX.getInstance().getFolderTreeView()); // Set up mouse event handlers
@@ -365,25 +331,26 @@ public class ModelBrowserFX {
         });
     }
 
-//    // Set up mouse handling
-//    private void setupMouseHandling(TreeView<String> folderTreeView) {
-//        folderTreeView.setOnMouseClicked(event -> {
-//            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-//                // Handle double-click event
-//                TreeItem<String> selectedItem = MainWindowFX.getInstance().getFolderTreeView().getSelectionModel().getSelectedItem();
-//                if (selectedItem != null) {
-//                    // Perform an action with the selected item
-//                    System.out.println("Double-clicked on: " + selectedItem.getValue() + selectedItem.toString() + selectedItem.getChildren().toString());
-//                }
-//            }
-//        });
-//
-//        // Example of handling right-click
-//        folderTreeView.setOnContextMenuRequested(event -> {
-//            // Show context menu or perform actions
-//            System.out.println("Right-clicked at: " + event.getScreenX() + ", " + event.getScreenY());
-//        });
-//    }
+    public void activateDragAndDropFeatures() {
+        TreeView<String> folderTreeView = MainWindowFX.getInstance().getFolderTreeView();
+
+        folderTreeView.setOnDragDetected(event -> {
+            TreeItem<String> selectedItem = folderTreeView.getSelectionModel().getSelectedItem();
+            if (selectedItem == null) {
+                return;
+            }
+
+            MModelElement element = modelElementMap.get(selectedItem.getValue());
+            if (element instanceof MClass) {
+                Dragboard db = folderTreeView.startDragAndDrop(TransferMode.COPY);
+                ClipboardContent content = new ClipboardContent();
+                content.putString("CLASS-" + ((MClass) element).name());
+                db.setContent(content);
+
+                event.consume();
+            }
+        });
+    }
 
     /**
      * Initializes the TreeView with a root item and potential child nodes.

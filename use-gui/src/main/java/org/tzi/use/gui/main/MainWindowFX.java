@@ -27,7 +27,6 @@ import javafx.application.Platform;
 
 import javax.swing.*;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -57,7 +56,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
 import org.tzi.use.config.RecentItems;
-import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
+import org.tzi.use.gui.views.diagrams.DiagramType;
 
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
@@ -137,7 +136,7 @@ public class MainWindowFX {
     private final ObjectProperty<ResizableInternalWindow> activeWindow = new SimpleObjectProperty<>(null);
 
     // The List containing all ResizableInternalWindows
-    private final List<ResizableInternalWindow> internalWindows = new ArrayList<>();
+    private final List<ResizableInternalWindow> allDesktopWindows = new ArrayList<>();
 
     private static Session fSession;
     private static IRuntime fPluginRuntime;
@@ -158,10 +157,6 @@ public class MainWindowFX {
     private static String specificationDir = System.getProperty("user.dir");
 
     private static boolean wasUsed;
-
-    private final List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
-    private final List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
-    private final List<CommunicationDiagramView> communicationDiagrams = new ArrayList<CommunicationDiagramView>();
 
     private static final String DEFAULT_UNDO_TEXT = "Undo last statement";
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
@@ -221,23 +216,10 @@ public class MainWindowFX {
 
         activeWindow.addListener((observable, oldWindow, newWindow)-> {
             if (newWindow != null) {
-                String windowTitle = newWindow.getTitleText();
-                if ("Class diagram".equals(windowTitle) || "Object diagram".equals(windowTitle) || "Communication diagram".equals(windowTitle)) {
-                    // show diagram printer and exportAsPdf if above tabs selected
-                    fActionPrintDiagram.setValue(true);
-                    fActionExportContentAsPDF.setValue(true);
-                } else {
-                    // don't show diagram printer and exportAsPdf if not selected
-                    fActionPrintDiagram.setValue(false);
-                    fActionExportContentAsPDF.setValue(false);
-                }
-                if ("Sequence diagram".equals(windowTitle)) {
-                    // show view printer if sequence diagram tab is selected
-                    fActionPrintView.setValue(true);
-                } else {
-                    // don't show view printer if sequence diagram tab is not selected
-                    fActionPrintView.setValue(false);
-                }
+                DiagramType type = newWindow.getDiagramType();
+                fActionPrintDiagram.setValue(type.isDiagram());
+                fActionPrintView.setValue(type.isView());
+                fActionExportContentAsPDF.setValue(type.isExportable());
             } else {
                 // when no tabs open
                 fActionPrintDiagram.setValue(false);
@@ -535,6 +517,14 @@ public class MainWindowFX {
         MenuItem tile = new MenuItem("Tile");
         MenuItem closeAll = new MenuItem("Close all");
 
+        tile.setOnAction(e -> {
+            tileAllWindows();
+        });
+
+        closeAll.setOnAction(e -> {
+            closeAllWindows();
+        });
+
         MenuItem createClassDiagramViewItem = new MenuItem("Class diagram", getIcon("ClassDiagram.gif"));
         createClassDiagramViewItem.setOnAction(e -> {
             instance.createClassDiagram();
@@ -769,8 +759,8 @@ public class MainWindowFX {
     /**
      * Creates a new ResizableInternalWindow and adds it to the desktop.
      */
-    private void createNewWindow(String title, SwingNode swingNode) {
-        ResizableInternalWindow window = new ResizableInternalWindow(title, fDesktopPane, fDesktopTaskbarPane, swingNode,  this);
+    private void createNewWindow(String title, SwingNode swingNode, DiagramType diagramType) {
+        ResizableInternalWindow window = new ResizableInternalWindow(title, fDesktopPane, fDesktopTaskbarPane, swingNode,  this, diagramType);
 
         // Random or custom position in the desktop
         window.setLayoutX(Math.random() * Math.max(0, (fDesktopPane.getWidth() - 300)));
@@ -785,7 +775,7 @@ public class MainWindowFX {
         window.setActive(true);  // sets window active and marks the border
 
         // add Window to list of Windows
-        internalWindows.add(window);
+        allDesktopWindows.add(window);
 
         // Listener for the selected Tab
         setupTabSelectionMessage(window, "Use left mouse button to move "
@@ -798,11 +788,62 @@ public class MainWindowFX {
      */
     private void closeAllWindows() {
         // For each window in the list, call its closeWindow() or remove from desktop etc.
-        for (ResizableInternalWindow win : internalWindows) {
+        for (ResizableInternalWindow win : allDesktopWindows) {
             win.closeWindow();
         }
-        internalWindows.clear();
+        allDesktopWindows.clear();
     }
+
+    /**
+     * Tile all windows, inside the custom desktopPane and taskbar (if minimized).
+     */
+    private void tileAllWindows() {
+        List<ResizableInternalWindow> windowsToTile = new ArrayList<>();
+
+        // 1) Re-add minimized windows to desktop and collect all windows
+        for (ResizableInternalWindow win : allDesktopWindows) {
+            if (win.isMinimized()) {
+                win.restoreFromMinimized();
+            }
+            // Make sure the window is on the desktop
+            if (!fDesktopPane.getChildren().contains(win)) {
+                fDesktopPane.getChildren().add(win);
+            }
+            windowsToTile.add(win);
+        }
+
+
+        // 2) Performs the tile arrangement
+        // sorting by name of the title
+        windowsToTile.sort(Comparator.comparing(ResizableInternalWindow::getTitleText));
+
+        // Grid-Positioning
+        int count = windowsToTile.size();
+        if (count == 0) return;
+
+        int cols = (int) Math.ceil(Math.sqrt(count));
+        int rows = (int) Math.ceil((double) count / cols);
+
+        double paneWidth = fDesktopPane.getWidth();
+        double paneHeight = fDesktopPane.getHeight();
+
+        double tileWidth = paneWidth / cols;
+        double tileHeight = paneHeight / rows;
+
+        for (int i = 0; i < count; i++) {
+            ResizableInternalWindow win = windowsToTile.get(i);
+            int col = i % cols;
+            int row = i / cols;
+
+            win.setLayoutX(col * tileWidth);
+            win.setLayoutY(row * tileHeight);
+            win.setPrefWidth(tileWidth);
+            win.setPrefHeight(tileHeight);
+            win.toFront();
+        }
+    }
+
+
 
     /**
      * This Methode has the Logic for the Filechooser of the folderTreeView
@@ -968,7 +1009,7 @@ public class MainWindowFX {
         swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
         // creating the new Window with the swingNode
-        createNewWindow("Class diagram", swingNode);
+        createNewWindow("Class diagram", swingNode, DiagramType.CLASS_DIAGRAM);
     }
 
     /**
@@ -1025,7 +1066,7 @@ public class MainWindowFX {
         swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
         // creating the new Window with the swingNode
-        createNewWindow("Object diagram", swingNode);
+        createNewWindow("Object diagram", swingNode, DiagramType.OBJECT_DIAGRAM);
     }
 
     // Actions
@@ -1336,27 +1377,13 @@ public class MainWindowFX {
     }
 
     /**
-     * adding a new Window To the window List of the desktopPane
-     */
-    public void addWindowToList(ResizableInternalWindow window){
-        internalWindows.add(window);
-    }
-
-    /**
-     * deleting a Window from the window List of the desktopPane
-     */
-    public void deleteWindowFromList(ResizableInternalWindow window){
-        internalWindows.add(window);
-    }
-
-    /**
      * setting the active Window
      */
     public void setActiveWindow(ResizableInternalWindow window) {
         activeWindow.set(window);
 
         // Deactivate all other windows
-        for (ResizableInternalWindow win : internalWindows) {
+        for (ResizableInternalWindow win : allDesktopWindows) {
             win.setActive(win == window);
         }
     }
