@@ -2,7 +2,8 @@ model t25
 
 dataType D
 operations
-  D(a : Integer, b : Integer)
+  D(a : Integer, b : Integer) =
+    D(a, b)
 end
 
 class C

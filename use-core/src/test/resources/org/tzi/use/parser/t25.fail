@@ -1,1 +1,2 @@
-t25.use:8:6: Definition of constructor `C' only possible in data types.
+t25.use:9:6: Definition of constructor `C' only possible in data types.
+t25.use:5:2: Instance constructor `D' must not have body.
