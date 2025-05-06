@@ -1,6 +1,6 @@
-package org.tzi.use.gui.main.runtime;
+package org.tzi.use.gui.mainFX.runtime;
 
-import org.tzi.use.gui.main.ModelBrowserFX;
+import org.tzi.use.gui.mainFX.ModelBrowser;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModelElement;
 
@@ -13,7 +13,7 @@ import java.io.PrintWriter;
  * @author Roman Asendorf
  */
 
-public interface IPluginMMVisitorFX extends MMVisitor {
+public interface IPluginMMVisitor extends MMVisitor {
 
 	/**
 	 * Method processing the MModelElements not especially processed by the
@@ -29,7 +29,7 @@ public interface IPluginMMVisitorFX extends MMVisitor {
 	 * 
 	 * @return The ModelBrowser object.
 	 */
-	public ModelBrowserFX modelBrowser();
+	public ModelBrowser modelBrowser();
 
 	/**
 	 * Method to get the PrintWriter.

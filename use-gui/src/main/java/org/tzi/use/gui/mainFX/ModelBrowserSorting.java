@@ -19,7 +19,7 @@
 
 /* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.mainFX;
 
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
@@ -36,10 +36,10 @@ import java.util.*;
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
-public class ModelBrowserSortingFX {
+public class ModelBrowserSorting {
 
 
-    private static ModelBrowserSortingFX fModelBrowserSorting = null;
+    private static ModelBrowserSorting fModelBrowserSorting = null;
     private EventListenerList fListenerList;
 
     /**
@@ -144,13 +144,13 @@ public class ModelBrowserSortingFX {
     public static final int COND_USE_ORDER = 10;
 
 
-    ModelBrowserSortingFX() {
+    ModelBrowserSorting() {
         fListenerList = new EventListenerList();
     }
  
-    public static ModelBrowserSortingFX getInstance() {
+    public static ModelBrowserSorting getInstance() {
         if ( fModelBrowserSorting == null ) {
-            fModelBrowserSorting = new ModelBrowserSortingFX();
+            fModelBrowserSorting = new ModelBrowserSorting();
         }
         return fModelBrowserSorting;
     }

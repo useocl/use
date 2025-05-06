@@ -1,4 +1,4 @@
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.mainFX;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -74,7 +74,7 @@ public class ResizableInternalWindow extends Pane {
     private final DiagramType diagramType;
 
     // controller
-    private MainWindowFX controller;
+    private MainWindow controller;
 
     /**
      * Constructor for the resizable internal window.
@@ -84,7 +84,7 @@ public class ResizableInternalWindow extends Pane {
      * @param taskbarPane The taskbar to hold minimized windows.
      * @param content     The Swing content for this window
      */
-    public ResizableInternalWindow(String title, Pane desktopPane, HBox taskbarPane, SwingNode content, MainWindowFX controller, DiagramType diagramType) {
+    public ResizableInternalWindow(String title, Pane desktopPane, HBox taskbarPane, SwingNode content, MainWindow controller, DiagramType diagramType) {
         this.desktopPane = desktopPane;
         this.taskbarPane = taskbarPane;
         this.controller = controller;

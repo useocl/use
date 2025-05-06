@@ -17,9 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.util;
+package org.tzi.use.gui.utilFX;
 
-import org.tzi.use.gui.main.ModelBrowserSortingFX;
+import org.tzi.use.gui.mainFX.ModelBrowserSorting;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMPrintVisitor;
@@ -37,9 +37,9 @@ import java.util.List;
  *
  * @author      Mark Richters 
  */
-public class MMHTMLPrintVisitorFX extends MMPrintVisitor {
+public class MMHTMLPrintVisitor extends MMPrintVisitor {
 
-    public MMHTMLPrintVisitorFX(PrintWriter out) {
+    public MMHTMLPrintVisitor(PrintWriter out) {
         super(out);
     }
 
@@ -100,11 +100,11 @@ public class MMHTMLPrintVisitorFX extends MMPrintVisitor {
     }
     
     public List<MAttribute> getAttributesForClass( MClass c ) {
-		return ModelBrowserSortingFX.getInstance().sortAttributes(c.attributes());
+		return ModelBrowserSorting.getInstance().sortAttributes(c.attributes());
     }
 
     public List<MOperation> getOperationsForClass( MClass c ) {
-		return ModelBrowserSortingFX.getInstance().sortOperations(c.operations());
+		return ModelBrowserSorting.getInstance().sortOperations(c.operations());
     }
     
     @Override

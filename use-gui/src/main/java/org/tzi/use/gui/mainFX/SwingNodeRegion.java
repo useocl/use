@@ -1,4 +1,4 @@
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.mainFX;
 
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.Region;

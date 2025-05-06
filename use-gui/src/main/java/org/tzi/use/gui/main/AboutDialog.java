@@ -1,85 +1,110 @@
+/*
+ * USE - UML based specification environment
+ * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 package org.tzi.use.gui.main;
 
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.tzi.use.config.Options;
-import org.tzi.use.main.gui.Main;
+import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 
-import java.util.Objects;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * About dialog.
  *
- * @author  Akif Aydin
+ * @author  Mark Richters
  */
-public class AboutDialog extends Stage {
+@SuppressWarnings("serial")
+class AboutDialog extends JDialog {
 
-    public AboutDialog(Stage owner) {
-        super(StageStyle.UTILITY); // Remove decorations for a simpler dialog
+    AboutDialog(JFrame parent) {
+        super(parent, "About");
 
-        setTitle("About");
+        JPanel logoBox = new JPanel();
+        logoBox.setLayout(new BoxLayout(logoBox, BoxLayout.Y_AXIS));
+        //logoBox.setBackground(new Color(0xe0, 0xe0, 0xff));
+        logoBox.add(new JLabel(new ImageIcon(Options.getIconPath("use1.gif").toString())));
+        logoBox.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
-        HBox logoBox = new HBox();
-        logoBox.setPadding(new javafx.geometry.Insets(0, 5, 0, 5));
-        logoBox.getChildren().add(new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif")))));
+        JPanel infoBox = new JPanel();
+        infoBox.setLayout(new BoxLayout(infoBox, BoxLayout.Y_AXIS));
+        //infoBox.setBackground(Color.white);
+        infoBox.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        JLabel l = line("USE - UML Based Specification Environment");
+        l.setFont(l.getFont().deriveFont(Font.BOLD));
+        infoBox.add(l);
 
-        VBox infoBox = new VBox();
-        infoBox.setPadding(new javafx.geometry.Insets(0, 5, 0, 5));
-        Label titleLabel = new Label("USE - UML Based Specification Environment");
-        titleLabel.setFont(Font.font(titleLabel.getFont().getName(), FontWeight.BOLD, titleLabel.getFont().getSize()));
-        infoBox.getChildren().addAll(titleLabel,
-                new Label(Options.COPYRIGHT),
-                new Label("Version " + Options.RELEASE_VERSION),
-                new Label("For more information see:"),
-                new Label("http://www.db.informatik.uni-bremen.de/projects/USE/"),
-                new Label(" "), // Spacer
-                new Label("This program is free software; you can redistribute it and/or"),
-                new Label("modify it under the terms of the GNU General Public License as"),
-                new Label("published by the Free Software Foundation; either version 2 of the"),
-                new Label("License, or (at your option) any later version."),
-                new Label(" "), // Spacer
-                new Label("This program is distributed in the hope that it will be useful, but"),
-                new Label("WITHOUT ANY WARRANTY; without even the implied warranty of"),
-                new Label("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."),
-                new Label("See the GNU General Public License for more details."));
+        infoBox.add(line(Options.COPYRIGHT));
+        infoBox.add(line("Version " + Options.RELEASE_VERSION));
+        infoBox.add(line("For more information see:"));
+        infoBox.add(line("http://www.db.informatik.uni-bremen.de/projects/USE/"));
+        infoBox.add(Box.createRigidArea(new Dimension(0,5)));
+        infoBox.add(line("This program is free software; you can redistribute it and/or"));
+        infoBox.add(line("modify it under the terms of the GNU General Public License as"));
+        infoBox.add(line("published by the Free Software Foundation; either version 2 of the"));
+        infoBox.add(line("License, or (at your option) any later version."));
+        infoBox.add(Box.createRigidArea(new Dimension(0,5)));
+        infoBox.add(line("This program is distributed in the hope that it will be useful, but"));
+        infoBox.add(line("WITHOUT ANY WARRANTY; without even the implied warranty of"));
+        infoBox.add(line("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."));
+        infoBox.add(line("See the GNU General Public License for more details."));
+        infoBox.add(Box.createRigidArea(new Dimension(0,5)));
 
-        Button closeBtn = new Button("Close");
-        closeBtn.setOnAction(event -> close());
-        //closeBtn.setAlignment(Pos.CENTER);
 
-        HBox btnBox = new HBox();
-        btnBox.setAlignment(Pos.CENTER);
-        btnBox.setPadding(new javafx.geometry.Insets(5, 5, 5, 5));
-        btnBox.setHgrow(closeBtn, Priority.ALWAYS);
-        btnBox.getChildren().add(closeBtn);
+        // add close button
+        Box btnBox = Box.createHorizontalBox();
+        JButton closeBtn = new JButton("Close");
+        btnBox.add(Box.createGlue());
+        btnBox.add(closeBtn);
+        btnBox.add(Box.createGlue());
+        closeBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                setVisible(false);
+                dispose();
+            }
+        });
 
-        BorderPane contentPane = new BorderPane();
-        contentPane.setPadding(new javafx.geometry.Insets(5, 5, 5, 5));
-        contentPane.setLeft(logoBox);
-        contentPane.setCenter(infoBox);
-        contentPane.setBottom(btnBox);
+        // Layout and set the content pane
+        JPanel contentPane = new JPanel();
+        contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(logoBox, BorderLayout.WEST);
+        contentPane.add(infoBox, BorderLayout.CENTER);
+        contentPane.add(btnBox, BorderLayout.SOUTH);
+        setContentPane(contentPane);
+        getRootPane().setDefaultButton(closeBtn);
 
-        setScene(new Scene(contentPane));
+        // allow dialog close on escape key
+        CloseOnEscapeKeyListener ekl = new CloseOnEscapeKeyListener(this);
+        addKeyListener(ekl);
 
-        initOwner(owner); // Set owner for positioning relative to parent stage
-        sizeToScene(); // Ensure size fits content
-        centerOnScreen(); // Center the dialog on the screen
+        pack();
+        //setSize(getSize());   // hack for layout bug with fvwm2
+        setLocationRelativeTo(parent);
+        closeBtn.requestFocus();
     }
-    public static void main(String[] args){
-        Application.launch(args);
-    }
 
+    private JLabel line(String s) {
+        JLabel l = new JLabel(s);
+        l.setForeground(Color.black);
+        return l;
+    }
 }
-
-
-

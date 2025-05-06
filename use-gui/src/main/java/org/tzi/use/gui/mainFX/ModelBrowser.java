@@ -1,4 +1,4 @@
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.mainFX;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -10,7 +10,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.web.WebView;
-import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.MMHTMLPrintVisitor;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.uml.mm.*;
@@ -20,15 +19,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-public class ModelBrowserFX {
+public class ModelBrowser {
 
     private WebView fHtmlPane;
     private MModel fModel;
     private Map<String, Collection<?>> modelCollections = new HashMap<String, Collection<?>>();
-    private ModelBrowserSortingFX fMbs;
+    private ModelBrowserSorting fMbs;
     private final ObservableList<SelectionChangedListener> listeners = FXCollections.observableArrayList();
 
-    private static ModelBrowserFX instance;
+    private static ModelBrowser instance;
 
     private static TreeView<String> fFolderTreeView;
 
@@ -42,24 +41,24 @@ public class ModelBrowserFX {
     }
 
 
-    public ModelBrowserFX() {
+    public ModelBrowser() {
         instance = this;
     }
 
     /**
      * Creates a browser with no model.
      */
-    public ModelBrowserFX(MModel model, IRuntime pluginRuntime) {
+    public ModelBrowser(MModel model, IRuntime pluginRuntime) {
         setPluginRuntime(pluginRuntime);
         setModel(model);
-        MainWindowFX.getInstance().setMode();
+        MainWindow.getInstance().setMode();
 
         // Apply CSS styling for angled lines (can be defined in an external CSS file)
-        MainWindowFX.getInstance().setStyleSheet();
+        MainWindow.getInstance().setStyleSheet();
 
         // Listen for selection changes
 
-        MainWindowFX.getInstance().getFolderTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        MainWindow.getInstance().getFolderTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             //TreeItem<String> selectedItem = newValue;
 
             //Object nodeInfo = selectedItem.getValue();
@@ -80,7 +79,7 @@ public class ModelBrowserFX {
 
 
         // Wrap the TreeView in a ScrollPane
-        ScrollPane treeViewScrollPane = new ScrollPane(MainWindowFX.getInstance().getFolderTreeView());
+        ScrollPane treeViewScrollPane = new ScrollPane(MainWindow.getInstance().getFolderTreeView());
         treeViewScrollPane.setFitToWidth(true);
 
 //        // Create the WebView (equivalent to JEditorPane)
@@ -89,7 +88,7 @@ public class ModelBrowserFX {
         // Wrap the WebView in a ScrollPane
         Platform.runLater(() -> {
 
-                    ScrollPane htmlViewScrollPane = new ScrollPane(MainWindowFX.getInstance().getWebViewFromPlaceholder());
+                    ScrollPane htmlViewScrollPane = new ScrollPane(MainWindow.getInstance().getWebViewFromPlaceholder());
                     htmlViewScrollPane.setFitToWidth(true);
 
                     // Set minimum sizes for the split panes
@@ -119,7 +118,7 @@ public class ModelBrowserFX {
         String spec = sw.toString();
 
         // Set the HTML content in the WebView
-        MainWindowFX.getInstance().getWebViewFromPlaceholder().getEngine().loadContent(spec);
+        MainWindow.getInstance().getWebViewFromPlaceholder().getEngine().loadContent(spec);
     }
 
     public void fireSelectionChanged(MModelElement elem) {
@@ -171,13 +170,13 @@ public class ModelBrowserFX {
         // Set the model
         this.fModel = model;
 
-        fMbs = ModelBrowserSortingFX.getInstance();
+        fMbs = ModelBrowserSorting.getInstance();
         //fMbs.addSortChangeListener(this);
 
         // Check if the model is null
         if (model == null) {
             TreeItem<String> rootItem = new TreeItem<>("No model available");
-            MainWindowFX.getInstance().updateTreeView(rootItem);
+            MainWindow.getInstance().updateTreeView(rootItem);
 
             return;
         }
@@ -187,7 +186,7 @@ public class ModelBrowserFX {
 
         editDropDownGraphic(rootItem);
 
-        MainWindowFX.getInstance().updateTreeView(rootItem);
+        MainWindow.getInstance().updateTreeView(rootItem);
 
         // Populate the tree with nodes
         createNodes(rootItem);
@@ -201,8 +200,8 @@ public class ModelBrowserFX {
         //setupMouseHandling(MainWindowFX.getInstance().getFolderTreeView()); // Set up mouse event handlers
 
         // Reset HTML pane
-        if (MainWindowFX.getInstance().getWebViewFromPlaceholder() != null) {
-            MainWindowFX.getInstance().getWebViewFromPlaceholder().getEngine().loadContent(""); // Clear the WebView content
+        if (MainWindow.getInstance().getWebViewFromPlaceholder() != null) {
+            MainWindow.getInstance().getWebViewFromPlaceholder().getEngine().loadContent(""); // Clear the WebView content
         }
     }
 
@@ -332,7 +331,7 @@ public class ModelBrowserFX {
     }
 
     public void activateDragAndDropFeatures() {
-        TreeView<String> folderTreeView = MainWindowFX.getInstance().getFolderTreeView();
+        TreeView<String> folderTreeView = MainWindow.getInstance().getFolderTreeView();
 
         folderTreeView.setOnDragDetected(event -> {
             TreeItem<String> selectedItem = folderTreeView.getSelectionModel().getSelectedItem();
@@ -370,8 +369,8 @@ public class ModelBrowserFX {
         }
 
         rootItem.setExpanded(true); // Expands the root item
-        MainWindowFX.getInstance().updateTreeView(rootItem);
-        MainWindowFX.getInstance().getFolderTreeView().refresh(); // Refresh the TreeView to display the changes
+        MainWindow.getInstance().updateTreeView(rootItem);
+        MainWindow.getInstance().getFolderTreeView().refresh(); // Refresh the TreeView to display the changes
     }
 
     public interface SelectionChangedListener {
@@ -387,12 +386,12 @@ public class ModelBrowserFX {
      */
     private static ImageView getIcon(String name) {
         // Load the image from the resource path
-        Image image = new Image(Objects.requireNonNull(MainWindowFX.class.getResourceAsStream("/images/" + name)));
+        Image image = new Image(Objects.requireNonNull(MainWindow.class.getResourceAsStream("/images/" + name)));
         // Create an ImageView to display the image
         return new ImageView(image);
     }
 
-    public static ModelBrowserFX getInstance(){
+    public static ModelBrowser getInstance(){
         return instance;
     }
 

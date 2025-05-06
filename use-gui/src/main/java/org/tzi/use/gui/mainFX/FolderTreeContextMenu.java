@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.mainFX;
 
 
 import javafx.scene.control.*;
@@ -27,21 +27,31 @@ import org.tzi.use.main.runtime.IRuntime;
 import java.util.ArrayList;
 
 /**
- * The main application window of USE.
+ * Creates a context menu for sorting elements in the model browser tree (JavaFX version).
+ * Supports sorting of classes, associations, invariants, and conditions.
+ * Also preserves expanded tree nodes after sorting.
  *
  * @author Akif Aydin
  */
 @SuppressWarnings("serial")
-public class FolderTreeContextMenuFX {
+public class FolderTreeContextMenu {
 
     private final Session session;
     private final IRuntime pluginRuntime;
 
-    public FolderTreeContextMenuFX(Session session, IRuntime pluginRuntime) {
+    /**
+     * Constructor initializes the context menu with session and runtime info.
+     */
+    public FolderTreeContextMenu(Session session, IRuntime pluginRuntime) {
         this.session = session;
         this.pluginRuntime = pluginRuntime;
     }
 
+    /**
+     * Builds and returns the right-click context menu with sorting options.
+     * Sorting can be switched between alphabetical and USE file order.
+     * Also refreshes the model browser and restores the expanded tree state.
+     */
     public ContextMenu createContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
 
@@ -55,12 +65,11 @@ public class FolderTreeContextMenuFX {
         inUseFileOrderClasses.setSelected(true);
 
         inAlphabeticOrderClasses.setOnAction(event -> {
-            //inAlphabeticOrderClasses.setSelected(true); //Abhaken somit nicht möglich
             if (inAlphabeticOrderClasses.isSelected()) {
                 inUseFileOrderClasses.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setClsOrder(1);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setClsOrder(1);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -69,8 +78,8 @@ public class FolderTreeContextMenuFX {
             if (inUseFileOrderClasses.isSelected()) {
                 inAlphabeticOrderClasses.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setClsOrder(2);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setClsOrder(2);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -87,8 +96,8 @@ public class FolderTreeContextMenuFX {
             if (srtClsSrtAttrAlph.isSelected()) {
                 srtClsSrtAttrUse.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setAttrOrder(1);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setAttrOrder(1);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -97,8 +106,8 @@ public class FolderTreeContextMenuFX {
             if (srtClsSrtAttrUse.isSelected()) {
                 srtClsSrtAttrAlph.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setAttrOrder(2);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setAttrOrder(2);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -111,8 +120,8 @@ public class FolderTreeContextMenuFX {
             if (srtClsSrtOperAlph.isSelected()) {
                 srtClsSrtOperUse.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setOprOrder(1);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setOprOrder(1);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -121,8 +130,8 @@ public class FolderTreeContextMenuFX {
             if (srtClsSrtOperUse.isSelected()) {
                 srtClsSrtOperAlph.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setOprOrder(2);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setOprOrder(2);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -135,8 +144,8 @@ public class FolderTreeContextMenuFX {
             if (srtClsSrtSmAlph.isSelected()) {
                 srtClsSrtSmUse.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setStateMachineOrder(ModelBrowserSortingFX.StateMachineOrder.ALPHABETIC);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setStateMachineOrder(ModelBrowserSorting.StateMachineOrder.ALPHABETIC);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -145,8 +154,8 @@ public class FolderTreeContextMenuFX {
             if (srtClsSrtSmUse.isSelected()) {
                 srtClsSrtSmAlph.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setStateMachineOrder(ModelBrowserSortingFX.StateMachineOrder.USE);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setStateMachineOrder(ModelBrowserSorting.StateMachineOrder.USE);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -165,8 +174,8 @@ public class FolderTreeContextMenuFX {
             if (srtAsoAlph.isSelected()) {
                 srtAsoUse.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setAssocOrder(1);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setAssocOrder(1);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -175,8 +184,8 @@ public class FolderTreeContextMenuFX {
             if (srtAsoUse.isSelected()) {
                 srtAsoAlph.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setAssocOrder(2);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setAssocOrder(2);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -193,8 +202,8 @@ public class FolderTreeContextMenuFX {
                 srtInvAlphInvNameFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtInvUse.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setInvOrder(1);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setInvOrder(1);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -204,8 +213,8 @@ public class FolderTreeContextMenuFX {
                 srtInvAlphClsNameFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtInvUse.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setInvOrder(5);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setInvOrder(5);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -215,8 +224,8 @@ public class FolderTreeContextMenuFX {
                 srtInvAlphClsNameFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtInvAlphInvNameFirst.setSelected(false); //Unchecks other CheckMenuItem
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setInvOrder(2);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setInvOrder(2);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -235,8 +244,8 @@ public class FolderTreeContextMenuFX {
                 srtPPCAlphPreCondFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtPPCUse.setSelected(false);
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setCondOrder(7);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setCondOrder(7);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -247,8 +256,8 @@ public class FolderTreeContextMenuFX {
                 srtPPCAlphPreCondFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtPPCUse.setSelected(false);
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setCondOrder(8);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setCondOrder(8);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -259,8 +268,8 @@ public class FolderTreeContextMenuFX {
                 srtPPCAlphOpNameFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtPPCUse.setSelected(false);
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setCondOrder(9);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setCondOrder(9);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -271,8 +280,8 @@ public class FolderTreeContextMenuFX {
                 srtPPCAlphPreCondFirst.setSelected(false); //Unchecks other CheckMenuItem
                 srtPPCAlphOpNameFirst.setSelected(false);
                 ArrayList<String> lstofExpanded = saveCurrentState();
-                ModelBrowserSortingFX.getInstance().setCondOrder(10);
-                new ModelBrowserFX(session.system().model(), pluginRuntime);
+                ModelBrowserSorting.getInstance().setCondOrder(10);
+                new ModelBrowser(session.system().model(), pluginRuntime);
                 stateChanged(lstofExpanded);
             }
         });
@@ -285,15 +294,16 @@ public class FolderTreeContextMenuFX {
     }
 
     /**
-     * saving the current state of the TreeViews Expanded Items
+     * Saves which items in the TreeView are currently expanded.
+     * This helps preserve user view when reloading the tree.
      */
     public ArrayList<String> saveCurrentState() {
         ArrayList<String> lstofExpanded = new ArrayList<>();
 
-        if (MainWindowFX.getInstance().getFolderTreeView().getRoot().isExpanded()) {
-            lstofExpanded.add(MainWindowFX.getInstance().getFolderTreeView().getRoot().getValue());
+        if (MainWindow.getInstance().getFolderTreeView().getRoot().isExpanded()) {
+            lstofExpanded.add(MainWindow.getInstance().getFolderTreeView().getRoot().getValue());
         }
-        for (TreeItem<String> child : MainWindowFX.getInstance().getFolderTreeView().getRoot().getChildren()) {
+        for (TreeItem<String> child : MainWindow.getInstance().getFolderTreeView().getRoot().getChildren()) {
             if (child.isExpanded()) {
                 lstofExpanded.add(child.getValue());
             }
@@ -303,17 +313,17 @@ public class FolderTreeContextMenuFX {
     }
 
     /**
-     * If an event occurs the trees state will be reloaded
+     * If an event occurs the trees state will be restored
      */
     public void stateChanged(ArrayList<String> lstofExpanded) {
 
         // check if the root was Expanded, then set Expanded True
-        if (lstofExpanded.get(0).equals(MainWindowFX.getInstance().getFolderTreeView().getRoot().getValue())){
-            MainWindowFX.getInstance().getFolderTreeView().getRoot().setExpanded(true);
+        if (lstofExpanded.get(0).equals(MainWindow.getInstance().getFolderTreeView().getRoot().getValue())){
+            MainWindow.getInstance().getFolderTreeView().getRoot().setExpanded(true);
         }
 
         // check if the TreeItems were Expanded, If a TreeItem was Expanded, set Expand True
-        for (TreeItem<String> child : MainWindowFX.getInstance().getFolderTreeView().getRoot().getChildren()) {
+        for (TreeItem<String> child : MainWindow.getInstance().getFolderTreeView().getRoot().getChildren()) {
             if (lstofExpanded.contains(child.getValue())) {
                 child.setExpanded(true);
             }

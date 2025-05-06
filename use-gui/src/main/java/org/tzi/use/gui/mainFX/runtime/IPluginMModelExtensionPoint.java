@@ -1,6 +1,6 @@
-package org.tzi.use.gui.main.runtime;
+package org.tzi.use.gui.mainFX.runtime;
 
-import org.tzi.use.gui.main.ModelBrowserFX;
+import org.tzi.use.gui.mainFX.ModelBrowser;
 import org.tzi.use.main.runtime.IExtensionPoint;
 
 import java.io.PrintWriter;
@@ -11,7 +11,7 @@ import java.io.PrintWriter;
  * @author Roman Asendorf
  */
 
-public interface IPluginMModelExtensionPointFX extends IExtensionPoint {
+public interface IPluginMModelExtensionPoint extends IExtensionPoint {
 
 	/**
 	 * Method to create a MMPrintVisitor
@@ -22,8 +22,8 @@ public interface IPluginMModelExtensionPointFX extends IExtensionPoint {
 	 *            The ModelBrowser object
 	 * @return The MMPrintVisitor instance.
 	 */
-	IPluginMMVisitorFX createMMPrintVisitorFX(PrintWriter printWriter,
-			ModelBrowserFX modelBrowser);
+	IPluginMMVisitor createMMPrintVisitorFX(PrintWriter printWriter,
+											ModelBrowser modelBrowser);
 
 	/**
 	 * Method to create a MMHTMLPrintVisitor
@@ -34,7 +34,7 @@ public interface IPluginMModelExtensionPointFX extends IExtensionPoint {
 	 *            The ModelBrowser object
 	 * @return The MMHTMLPrintVisitor instance.
 	 */
-	IPluginMMVisitorFX createMMHTMLPrintVisitorFX(PrintWriter printWriter,
-			ModelBrowserFX modelBrowser);
+	IPluginMMVisitor createMMHTMLPrintVisitorFX(PrintWriter printWriter,
+												ModelBrowser modelBrowser);
 
 }

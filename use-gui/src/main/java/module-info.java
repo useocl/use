@@ -8,7 +8,6 @@ module use.gui {
     requires javafx.web;
     requires org.kordamp.desktoppanefx.core;
     requires javafx.swing;
-    requires org.checkerframework.checker.qual;
     requires annotations;
     requires jline;
     opens org.tzi.use.gui.main to javafx.fxml;
@@ -22,5 +21,11 @@ module use.gui {
     exports org.tzi.use.runtime.gui.impl;
     exports org.tzi.use.runtime;
     exports org.tzi.use.main.shell;
+    exports org.tzi.use.main.gui.fx;
+    exports org.tzi.use.gui.mainFX;
+    exports org.tzi.use.gui.mainFX.runtime;
+    opens org.tzi.use.gui.mainFX to javafx.fxml;
+    exports org.tzi.use.runtime.guiFX.impl;
+    exports org.tzi.use.gui.utilFX;
 
 }

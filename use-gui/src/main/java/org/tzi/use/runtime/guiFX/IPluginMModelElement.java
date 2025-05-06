@@ -1,6 +1,6 @@
-package org.tzi.use.runtime.gui;
+package org.tzi.use.runtime.guiFX;
 
-import org.tzi.use.gui.main.runtime.IPluginMMVisitorFX;
+import org.tzi.use.gui.mainFX.runtime.IPluginMMVisitor;
 import org.tzi.use.uml.mm.MModelElement;
 
 /**
@@ -10,7 +10,7 @@ import org.tzi.use.uml.mm.MModelElement;
  * @author Roman Asendorf
  */
 
-public interface IPluginMModelElementFX extends MModelElement {
+public interface IPluginMModelElement extends MModelElement {
 
 	/**
 	 * Method to print PluginMModelElement's information with the given
@@ -19,5 +19,5 @@ public interface IPluginMModelElementFX extends MModelElement {
 	 * @param pluginMMVisitor
 	 *            the PluginMMVisitor object
 	 */
-	void displayInfo(IPluginMMVisitorFX pluginMMVisitor);
+	void displayInfo(IPluginMMVisitor pluginMMVisitor);
 }

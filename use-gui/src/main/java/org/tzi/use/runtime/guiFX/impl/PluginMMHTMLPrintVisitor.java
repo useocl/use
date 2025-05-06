@@ -1,9 +1,9 @@
-package org.tzi.use.runtime.gui.impl;
+package org.tzi.use.runtime.guiFX.impl;
 
-import org.tzi.use.gui.main.ModelBrowserFX;
-import org.tzi.use.gui.main.runtime.IPluginMMVisitorFX;
-import org.tzi.use.gui.util.MMHTMLPrintVisitorFX;
-import org.tzi.use.runtime.gui.IPluginMModelElementFX;
+import org.tzi.use.gui.mainFX.runtime.IPluginMMVisitor;
+import org.tzi.use.gui.mainFX.ModelBrowser;
+import org.tzi.use.gui.utilFX.MMHTMLPrintVisitor;
+import org.tzi.use.runtime.guiFX.IPluginMModelElement;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.util.Log;
 
@@ -16,10 +16,10 @@ import java.io.PrintWriter;
  * @author Roman Asendorf
  */
 
-public class PluginMMHTMLPrintVisitorFX extends MMHTMLPrintVisitorFX implements
-        IPluginMMVisitorFX {
+public class PluginMMHTMLPrintVisitor extends MMHTMLPrintVisitor implements
+		IPluginMMVisitor {
 
-	private ModelBrowserFX modelBrowser;
+	private ModelBrowser modelBrowser;
 
 	/**
 	 * Constructor creating the PluginMMHTMLPrintVisitor with the given
@@ -30,27 +30,27 @@ public class PluginMMHTMLPrintVisitorFX extends MMHTMLPrintVisitorFX implements
 	 * @param modelBrowser
 	 *            The ModelBrowser object
 	 */
-	public PluginMMHTMLPrintVisitorFX(PrintWriter out, ModelBrowserFX modelBrowser) {
+	public PluginMMHTMLPrintVisitor(PrintWriter out, ModelBrowser modelBrowser) {
 		super(out);
 		setModelBrowser(modelBrowser);
 
 	}
 
-	private void setModelBrowser(ModelBrowserFX modelBrowser) {
+	private void setModelBrowser(ModelBrowser modelBrowser) {
 		this.modelBrowser = modelBrowser;
 
 	}
 
-	public ModelBrowserFX modelBrowser() {
+	public ModelBrowser modelBrowser() {
 		return this.modelBrowser;
 	}
 
 	public void visitMModelElement(MModelElement e) {
 
 		Log.debug("testing instance of MModelElement");
-		if (e instanceof IPluginMModelElementFX) {
+		if (e instanceof IPluginMModelElement) {
 			Log.debug("Casting to IPluginMModelElement");
-			IPluginMModelElementFX ie = (IPluginMModelElementFX) e;
+			IPluginMModelElement ie = (IPluginMModelElement) e;
 			Log.debug("Calling method displayInfo in plugin MModelElement");
 			ie.displayInfo(this);
 		}

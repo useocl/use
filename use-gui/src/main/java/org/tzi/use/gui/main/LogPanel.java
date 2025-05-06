@@ -19,42 +19,42 @@
 
 package org.tzi.use.gui.main;
 
-import javafx.application.Platform;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import java.io.IOException;
-import java.io.Writer;
-
-/**
+/** 
  * A Log panel with a scrollable text area.
  * 
- * @author  Akif Aydin [old:Mark Richters]
+ * @author  Mark Richters
  */
 @SuppressWarnings("serial")
-public class LogPanel extends Writer {
-    private final TextArea fTextLog;
-    private final ContextMenu fPopupMenu; // context menu on right mouse click
+public class LogPanel extends JPanel {
+    private JTextArea fTextLog;
+    private JPopupMenu fPopupMenu; // context menu on right mouse click
 
-    public LogPanel(TextArea fTextLog) {
-
-        this.fTextLog = fTextLog;
-
+    public LogPanel() {
+        setLayout(new BorderLayout());
+        fTextLog = new JTextArea();
         fTextLog.setEditable(false);
+        add(new JLabel(" Log "), BorderLayout.NORTH);
+        add(new JScrollPane(fTextLog), BorderLayout.CENTER);
 
         // create the popup menu
-        fPopupMenu = new ContextMenu();
-
-        // Füge die "Clear" Option hinzu
-        MenuItem clearItem = new MenuItem("Clear");
-        clearItem.setOnAction(event -> fTextLog.clear());
-        fPopupMenu.getItems().addAll(clearItem);
-        fTextLog.setContextMenu(fPopupMenu);
-
+        fPopupMenu = new JPopupMenu();
+        JMenuItem mi = new JMenuItem("Clear");
+        mi.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    clear();
+                }});
+        fPopupMenu.add(mi);
+        fTextLog.addMouseListener(new PopupListener());
     }
 
-    public TextArea getTextComponent() {
+    public JTextArea getTextComponent() {
         return fTextLog;
     }
 
@@ -65,20 +65,19 @@ public class LogPanel extends Writer {
         fTextLog.setText(null);
     }
 
-    @Override
-    public void write(char[] cbuf, int off, int len) {
-        String text = new String(cbuf, off, len);
-        // Ensure UI updates are done on the JavaFX Application Thread
-        Platform.runLater(() -> fTextLog.appendText(text));
-    }
+    class PopupListener extends MouseAdapter {
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
 
-    @Override
-    public void flush() throws IOException {
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
 
-    }
-
-    @Override
-    public void close() throws IOException {
-
+        private void maybeShowPopup(MouseEvent e) {
+            if (e.isPopupTrigger() ) {
+                fPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
     }
 }

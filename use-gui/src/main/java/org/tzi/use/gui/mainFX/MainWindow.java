@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.mainFX;
 
 // Notwendig für die Einbindung von Java Swing Content in einer JavaFX Anwendung
 
@@ -56,6 +56,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
 import org.tzi.use.config.RecentItems;
+import org.tzi.use.gui.main.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
@@ -96,7 +97,7 @@ import java.util.*;
  * @author Akif Aydin
  */
 @SuppressWarnings("serial")
-public class MainWindowFX {
+public class MainWindow {
 
     @FXML
     private TextArea fLogTextArea;
@@ -141,7 +142,7 @@ public class MainWindowFX {
     private static Session fSession;
     private static IRuntime fPluginRuntime;
     private Stage primaryStage;  // Reference to the primary stage
-    private static MainWindowFX instance;
+    private static MainWindow instance;
     private PageLayout fPageLayout;
     private SwingNode swingNode;
     private static PrintWriter fLogWriter;
@@ -151,7 +152,7 @@ public class MainWindowFX {
     private MenuItem fMenuItemEditUndo;
     private MenuItem fMenuItemEditRedo;
     private static Menu recentFilesMenu;
-    private ModelBrowserFX fModelBrowser;
+    private ModelBrowser fModelBrowser;
 
     // Static variable to store the last selected directory path
     private static String specificationDir = System.getProperty("user.dir");
@@ -167,7 +168,7 @@ public class MainWindowFX {
             new HashMap<Map<String, String>, PluginActionProxy>();
 
 
-    public MainWindowFX() {
+    public MainWindow() {
         instance = this;
     }
 
@@ -192,7 +193,7 @@ public class MainWindowFX {
         primaryStage = getPrimaryStage();
 
         if (fSession != null && fSession.hasSystem()) {
-            fModelBrowser = new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
+            fModelBrowser = new ModelBrowser(fSession.system().model(), fPluginRuntime);
             fModelBrowser.setModel(fSession.system().model());
         }
 
@@ -242,14 +243,16 @@ public class MainWindowFX {
 
     }
 
+    /**
+     * Dynamic bindings for actions
+     */
     private void bindActionProperties() {
-        // **[MARKER: DYNAMIC BINDINGS FOR ACTIONS]**
         Options.getRecentFiles().addObserver(new RecentItemsObserver() {
             @Override
             public void onRecentItemChange(RecentItems src) {
                 setRecentFiles();
-                fActionFileReload.set(!Options.getRecentFiles().isEmpty());
-                fActionSpecificationLoaded.set(!Options.getRecentFiles().isEmpty());
+                fActionFileReload.set(fSession.hasSystem());
+                fActionSpecificationLoaded.set(fSession.hasSystem());
             }
         });
 
@@ -266,6 +269,8 @@ public class MainWindowFX {
                 currentAction.calculateEnabled();
             }
         }
+
+        fActionSpecificationLoaded.set(on);
 
         //TODO
         setUndoRedoButtons();
@@ -993,11 +998,11 @@ public class MainWindowFX {
         boolean loadLayout = (ActionEvent.SHIFT_MASK) == 0;
 
         //setting the visiility of the MainWindow (Swing Gui) to false because we dont want it to be shown
-        MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
         ClassDiagram.setJavaFxCall(true); // so that class diagrams dont save any state
 
         // Calling the Swing MainWindow to get the ClassDiagram out of it
-        MainWindow mainwindow = MainWindow.create(fSession,fPluginRuntime);
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession,fPluginRuntime);
 
         ClassDiagramView cdv = new ClassDiagramView(mainwindow, fSession.system(), loadLayout);
         ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
@@ -1021,11 +1026,11 @@ public class MainWindowFX {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we doesn't want it to be shown
-        MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        MainWindow mainwindow = MainWindow.create(fSession,fPluginRuntime);
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession,fPluginRuntime);
 
         // Create the NewObjectDiagramView and the enclosing ViewFrame
         NewObjectDiagramView odv = new NewObjectDiagramView(mainwindow, fSession.system());
@@ -1135,9 +1140,9 @@ public class MainWindowFX {
         updateFActionViewPrinter();
         updateFActionExportContentAsPDF();
         if (fSession.system() != null && fSession.system().model() != null) {
-            new ModelBrowserFX(fSession.system().model(), fPluginRuntime);
+            new ModelBrowser(fSession.system().model(), fPluginRuntime);
         } else {
-            new ModelBrowserFX(null, fPluginRuntime);
+            new ModelBrowser(null, fPluginRuntime);
         }
     }
 
@@ -1166,7 +1171,7 @@ public class MainWindowFX {
         folderTreeView.setRoot(rootItem);
 
         // Verwende die neue Klasse, um das Kontextmenü zu erstellen
-        FolderTreeContextMenuFX contextMenuHandler = new FolderTreeContextMenuFX(fSession, fPluginRuntime);
+        FolderTreeContextMenu contextMenuHandler = new FolderTreeContextMenu(fSession, fPluginRuntime);
         ContextMenu contextMenu = contextMenuHandler.createContextMenu();
 
         folderTreeView.setContextMenu(contextMenu);
@@ -1316,7 +1321,7 @@ public class MainWindowFX {
      */
     private static ImageView getIcon(String name) {
         // Load the image from the resource path
-        Image image = new Image(Objects.requireNonNull(MainWindowFX.class.getResourceAsStream("/images/" + name)));
+        Image image = new Image(Objects.requireNonNull(MainWindow.class.getResourceAsStream("/images/" + name)));
         // Create an ImageView to display the image
         return new ImageView(image);
     }
@@ -1324,7 +1329,7 @@ public class MainWindowFX {
     /**
      * Returns the instance of MainWindow.
      */
-    public static MainWindowFX getInstance() {
+    public static MainWindow getInstance() {
         return instance;
     }
 
