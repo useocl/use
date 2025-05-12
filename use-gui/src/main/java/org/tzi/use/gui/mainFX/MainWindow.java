@@ -81,6 +81,7 @@ import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.util.Log;
 import org.tzi.use.util.USEWriter;
 
 
@@ -163,7 +164,6 @@ public class MainWindow {
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
 
-
     private Map<Map<String, String>, PluginActionProxy> pluginActions =
             new HashMap<Map<String, String>, PluginActionProxy>();
 
@@ -174,7 +174,11 @@ public class MainWindow {
 
     @FXML
     public void initialize() throws IOException {
-        Options.getRecentFiles().getItems().clear();
+        // Only clear if we started with no specification
+        if (Options.specFilename == null) {
+            Options.getRecentFiles().getItems().clear();
+        }
+
         // update the status for the visibility of the menu- and tab-items
         updateFActionDiagramPrinter();
         updateFActionViewPrinter();
@@ -215,7 +219,7 @@ public class MainWindow {
             }
         });
 
-        activeWindow.addListener((observable, oldWindow, newWindow)-> {
+        activeWindow.addListener((observable, oldWindow, newWindow) -> {
             if (newWindow != null) {
                 DiagramType type = newWindow.getDiagramType();
                 fActionPrintDiagram.setValue(type.isDiagram());
@@ -233,13 +237,14 @@ public class MainWindow {
          * for soil statements
          */
         fSession.addEvaluatedStatementListener(
-                new Session.EvaluatedStatementListener(){
+                new Session.EvaluatedStatementListener() {
                     @Override
                     public void evaluatedStatement(Session.EvaluatedStatement event) {
                         Platform.runLater(() -> {
                             setUndoRedoButtons();
                         });
-                    }});
+                    }
+                });
 
     }
 
@@ -271,6 +276,7 @@ public class MainWindow {
         }
 
         fActionSpecificationLoaded.set(on);
+        fActionFileReload.set(on);
 
         //TODO
         setUndoRedoButtons();
@@ -288,8 +294,8 @@ public class MainWindow {
 
     }
 
-    private void setUndoRedoButtons() {
-        if(!fSession.hasSystem()){
+    public void setUndoRedoButtons() {
+        if (!fSession.hasSystem()) {
             disableUndo();
             disableRedo();
             return;
@@ -395,29 +401,30 @@ public class MainWindow {
         MenuItem saveScript = new MenuItem("Save script (.soil)...");
         saveScript.setGraphic(getIcon("save.png"));
         saveScript.disableProperty().bind(fActionSaveScript.not());
+        saveScript.setOnAction(e -> {
+            saveScript();
+        });
 
         MenuItem saveProtocol = new MenuItem("Save protocol...");
         saveProtocol.setGraphic(getIcon("save.png"));
+        saveProtocol.setOnAction(e -> {
+            saveProtocol();
+        });
 
         MenuItem printerSetup = new MenuItem("Printer Setup...");
         printerSetup.setGraphic(getIcon("document-print.png"));
         printerSetup.setOnAction(e -> {
-
             PrinterJob job = PrinterJob.createPrinterJob();
-
             // initialize page format if necessary
             fPageLayout = pageLayout(job);
-
             // Set the job's current page layout before showing the dialog
             job.getJobSettings().setPageLayout(fPageLayout);
-
             // Show page setup dialog
             boolean proceed = job.showPageSetupDialog(null);
             if (proceed) {
                 // Apply the configured layout to the job
                 fPageLayout = job.getJobSettings().getPageLayout();
             }
-
         });
 
         MenuItem printDiagram = new MenuItem("Print diagram...");
@@ -510,7 +517,6 @@ public class MainWindow {
         reset.disableProperty().bind(fActionSpecificationLoaded.not());
 
 
-
         stateMenuItems.getItems().addAll(createObject, evaluateOCLexpr, checkSN, checkSAEC, checkSMT, checkSIAEC, determine_states, checkStateInvariants, reset);
     }
 
@@ -536,7 +542,8 @@ public class MainWindow {
         });
 
         Menu createStateMachineDiagramViewItem = new Menu("State machine diagram", getIcon("Diagram.gif"));
-        createStateMachineDiagramViewItem.setOnAction(e -> {});
+        createStateMachineDiagramViewItem.setOnAction(e -> {
+        });
 
         MenuItem createObjectDiagramViewItem = new MenuItem("Object diagram ", getIcon("ObjectDiagram.gif"));
         createObjectDiagramViewItem.setOnAction(e -> {
@@ -544,9 +551,6 @@ public class MainWindow {
         });
 
         MenuItem createClassInvariantViewItem = new MenuItem("Class invariant", getIcon("invariant-view.png"));
-        MenuItem createObjectCountViewItem = new MenuItem("Object count", getIcon("blue-chart-icon.png"));
-        MenuItem createLinkCountViewItem = new MenuItem("Link count", getIcon("red-chart-icon.png"));
-        MenuItem createStateEvolutionViewItem = new MenuItem("State evolution", getIcon("line-chart.png"));
         MenuItem createObjectPropertiesViewItem = new MenuItem("Object properties", getIcon("ObjectProperties.gif"));
         MenuItem createClassExtentViewItem = new MenuItem("Class extent", getIcon("ClassExtentView.gif"));
         MenuItem createSequenceDiagramViewItem = new MenuItem("Sequence diagram", getIcon("SequenceDiagram.gif"));
@@ -557,8 +561,8 @@ public class MainWindow {
 
 
         // Add MenuItems objects to the SubMenu
-        createView.getItems().addAll(createClassDiagramViewItem, createStateMachineDiagramViewItem, createObjectDiagramViewItem, createClassInvariantViewItem, createObjectCountViewItem,
-                createLinkCountViewItem, createStateEvolutionViewItem, createObjectPropertiesViewItem, createClassExtentViewItem, createSequenceDiagramViewItem, createCommunicationDiagramViewItem,
+        createView.getItems().addAll(createClassDiagramViewItem, createStateMachineDiagramViewItem, createObjectDiagramViewItem, createClassInvariantViewItem,
+                createObjectPropertiesViewItem, createClassExtentViewItem, createSequenceDiagramViewItem, createCommunicationDiagramViewItem,
                 createCallStackViewItem, createCommandListViewItem, associationEndsInformation);
 
         createView.getItems().iterator().forEachRemaining(menuItem -> {
@@ -608,9 +612,6 @@ public class MainWindow {
         toolbarItems.put("Create statemachine diagram view", getIcon("Diagram.gif"));
         toolbarItems.put("Create object diagram view", getIcon("ObjectDiagram.gif"));
         toolbarItems.put("Create class invariant view", getIcon("invariant-view.png"));
-        toolbarItems.put("Create object count view", getIcon("blue-chart-icon.png"));
-        toolbarItems.put("Create link count view", getIcon("red-chart-icon.png"));
-        toolbarItems.put("Create state evolution view", getIcon("line-chart.png"));
         toolbarItems.put("Create object properties view", getIcon("ObjectProperties.gif"));
         toolbarItems.put("Create class extent view", getIcon("ClassExtentView.gif"));
         toolbarItems.put("Create sequence diagram view", getIcon("SequenceDiagram.gif"));
@@ -639,7 +640,7 @@ public class MainWindow {
                 case "Reload current specification":
                     button.disableProperty().bind(fActionFileReload.not());
                     button.setOnAction(e -> {
-                        instance.compile(Options.getRecentFile("use"));
+                        instance.compile(Objects.requireNonNull(Options.getRecentFile("use")));
                         initializeModelBrowserFX(); //reinitializing after compiling
                     });
                     toolBar.getItems().add(button);
@@ -663,7 +664,7 @@ public class MainWindow {
                     fBtnEditUndo = button;
                     fBtnEditUndo.disableProperty().bind(fActionEditUndo.not());
                     fBtnEditUndo.setTooltip(new Tooltip(DEFAULT_UNDO_TEXT));
-                    fBtnEditUndo.setOnAction(e->{
+                    fBtnEditUndo.setOnAction(e -> {
                         actionEditUndo();
                     });
                     toolBar.getItems().add(fBtnEditUndo);
@@ -672,7 +673,7 @@ public class MainWindow {
                     fBtnEditRedo = button;
                     fBtnEditRedo.disableProperty().bind(fActionEditRedo.not());
                     fBtnEditRedo.setTooltip(new Tooltip(DEFAULT_REDO_TEXT));
-                    fBtnEditRedo.setOnAction(e->{
+                    fBtnEditRedo.setOnAction(e -> {
                         actionEditRedo();
                     });
                     toolBar.getItems().add(fBtnEditRedo);
@@ -701,21 +702,6 @@ public class MainWindow {
                 case "Create class invariant view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
                     //TODO "Create class invariant view"
-                    toolBar.getItems().add(button);
-                    break;
-                case "Create object count view":
-                    button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create object count view"
-                    toolBar.getItems().add(button);
-                    break;
-                case "Create link count view":
-                    button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create link count view"
-                    toolBar.getItems().add(button);
-                    break;
-                case "Create state evolution view":
-                    button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create state evolution view"
                     toolBar.getItems().add(button);
                     break;
                 case "Create object properties view":
@@ -765,7 +751,7 @@ public class MainWindow {
      * Creates a new ResizableInternalWindow and adds it to the desktop.
      */
     private void createNewWindow(String title, SwingNode swingNode, DiagramType diagramType) {
-        ResizableInternalWindow window = new ResizableInternalWindow(title, fDesktopPane, fDesktopTaskbarPane, swingNode,  this, diagramType);
+        ResizableInternalWindow window = new ResizableInternalWindow(title, fDesktopPane, fDesktopTaskbarPane, swingNode, this, diagramType);
 
         // Random or custom position in the desktop
         window.setLayoutX(Math.random() * Math.max(0, (fDesktopPane.getWidth() - 300)));
@@ -849,7 +835,6 @@ public class MainWindow {
     }
 
 
-
     /**
      * This Methode has the Logic for the Filechooser of the folderTreeView
      */
@@ -904,10 +889,141 @@ public class MainWindow {
     }
 
     /**
+     * Opens a “Save script” dialog, confirms overwriting if required,
+     * and writes the current USE session to a *.soil* file.
+     */
+    private void saveScript() {
+        String path;
+
+        /* ------------------------------------------------------------------
+         * 1. Build a fresh FileChooser configured for *.soil files
+         * ------------------------------------------------------------------ */
+        FileChooser fChooser = new FileChooser();
+        // Start in the directory the user visited last time
+        fChooser.setInitialDirectory(Options.getLastDirectory().toFile());
+        // Filter so the user sees only “soil scripts (*.soil)”
+        fChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("soil scripts (*.soil)", "*.soil"));
+        fChooser.setTitle("Save script");
+
+        /* ------------------------------------------------------------------
+         * 2. Show the “Save” dialog
+         * ------------------------------------------------------------------ */
+        File chosen = fChooser.showSaveDialog(primaryStage);
+        // null == user pressed Cancel or closed the dialog
+        if (chosen == null) {
+            return;
+        }
+
+        /* ------------------------------------------------------------------
+         * 3. Normalise path/filename and log for diagnostics
+         * ------------------------------------------------------------------ */
+        path = chosen.getParent();
+        String filename = chosen.getName();
+        if (!filename.endsWith(".soil")) {
+            filename += ".soil";    // force the extension
+        }
+        File f = new File(path, filename);
+        Log.verbose("File " + f);
+
+        /* ------------------------------------------------------------------
+         * 4. Confirm overwrite if the file already exists
+         * ------------------------------------------------------------------ */
+        if (f.exists()) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Overwrite existing file" + f + "?",
+                    ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            confirm.initOwner(primaryStage);
+            confirm.setHeaderText(null);
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.YES) {
+                return;
+            }
+        }
+
+        /* ------------------------------------------------------------------
+         * 5. Write the script file
+         * ------------------------------------------------------------------ */
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f)))) {
+            // Header comment + blank line
+            out.println("-- Script generated by USE " + Options.RELEASE_VERSION);
+            out.println();
+
+            // Dump the session’s SOIL statements
+            fSession.system().writeSoilStatements(out);
+
+            // Append a line to the GUI log area
+            fLogTextArea.appendText("Wrote script " + f + "\n");
+
+        } catch (IOException ex) {
+            /* --------------------------------------------------------------
+             * 6. Show any I/O error to the user
+             * -------------------------------------------------------------- */
+            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+            alert.initOwner(primaryStage);
+            alert.setHeaderText("Error");
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Opens a “Save protocol” dialog, confirms overwriting, and writes the
+     * protocol text file produced by {@code USEWriter}.
+     */
+    private void saveProtocol() {
+        String path;
+
+        FileChooser fChooser = new FileChooser();
+        fChooser.setInitialDirectory(Options.getLastDirectory().toFile());
+        fChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Textfiles (*.txt)", "*.txt"));
+        fChooser.setTitle("Save protocol");
+
+
+        // Show the Save dialog
+        File chosen = fChooser.showSaveDialog(primaryStage);
+        if (chosen == null) {
+            return; // user cancelled
+        }
+
+        // normalise filename & build target File
+        path = chosen.getParent();
+        String filename = chosen.getName();
+        if (!filename.endsWith(".txt")) {
+            filename += ".txt";
+        }
+        File f = new File(path, filename);
+
+        // check if file exists and ask before overwriting it
+        if (f.exists()) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Overwrite existing file" + f + "?",
+                    ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            confirm.initOwner(primaryStage);
+            confirm.setHeaderText(null);
+
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.YES) {
+                return;
+            }
+        }
+
+        // Write the protocol file
+        try (FileOutputStream fOut = new FileOutputStream(f)) {
+            USEWriter.getInstance().writeProtocolFile(fOut);
+            // auto-flush + auto-close | Because try-catch handles it automatically
+        } catch (IOException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+            alert.initOwner(primaryStage);
+            alert.setHeaderText("Error");
+            alert.showAndWait();
+        }
+    }
+
+    /**
      * Undoes the last executed statement in the system.
      * Shows alerts if the system is busy or an error occurs.
      */
-    public void actionEditUndo(){
+    public void actionEditUndo() {
         if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
             showAlert("The system is currently executing a statement.\nPlease end the execution before undoing.", "USE is executing");
         }
@@ -1002,7 +1118,7 @@ public class MainWindow {
         ClassDiagram.setJavaFxCall(true); // so that class diagrams dont save any state
 
         // Calling the Swing MainWindow to get the ClassDiagram out of it
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession,fPluginRuntime);
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
 
         ClassDiagramView cdv = new ClassDiagramView(mainwindow, fSession.system(), loadLayout);
         ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
@@ -1030,7 +1146,7 @@ public class MainWindow {
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession,fPluginRuntime);
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the NewObjectDiagramView and the enclosing ViewFrame
         NewObjectDiagramView odv = new NewObjectDiagramView(mainwindow, fSession.system());
@@ -1042,7 +1158,7 @@ public class MainWindow {
         });
 
         // Check if the system has too many objects and prompt the user
-        int OBJECTS_LARGE_SYSTEM = 1;
+        int OBJECTS_LARGE_SYSTEM = 100;
         if (fSession.system().state().allObjects().size() > OBJECTS_LARGE_SYSTEM) {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1133,6 +1249,7 @@ public class MainWindow {
             return false;
         }
     }
+
     protected void initializeModelBrowserFX() {
         // check if specifications avaiable
         updateFActionSaveScript();
@@ -1165,7 +1282,7 @@ public class MainWindow {
     /**
      * Initializes the FolderTreeView (WebViews Right Click Context Menu)
      */
-    public void initFolderTreeView(){
+    public void initFolderTreeView() {
 
         TreeItem<String> rootItem = new TreeItem<>("No model available");
         folderTreeView.setRoot(rootItem);
@@ -1179,13 +1296,13 @@ public class MainWindow {
     }
 
     /**
-     *  this Method creates menu-items for each recent specification and
-     *  ads a seperator after each has been created, to include at last an
-     *  menu-item (clearRecentSpecifications) to clear these menu-items
-     *  (also the recent files in the Options)
+     * this Method creates menu-items for each recent specification and
+     * ads a seperator after each has been created, to include at last an
+     * menu-item (clearRecentSpecifications) to clear these menu-items
+     * (also the recent files in the Options)
      */
     public void setRecentFiles() {
-        if (recentFilesMenu.getItems() != null){
+        if (recentFilesMenu.getItems() != null) {
             recentFilesMenu.getItems().clear();
         }
 
@@ -1215,7 +1332,7 @@ public class MainWindow {
 
     // Setter für Session
     public void setSession(Session session) {
-        this.fSession = session;
+        fSession = session;
         // Now that session is set, initialize session-dependent components
         if (fSession != null && fSession.hasSystem()) {
             initializeSessionDependentComponents();
@@ -1358,10 +1475,10 @@ public class MainWindow {
     /**
      * Sets up a tab to display a temporary message in the status bar when selected.
      *
-     * @param window       the window to which the selection behavior will be applied
-     * @param tmpMessage   the temporary message to display when the tab is selected
+     * @param window     the window to which the selection behavior will be applied
+     * @param tmpMessage the temporary message to display when the tab is selected
      */
-    private void setupTabSelectionMessage(ResizableInternalWindow window, String tmpMessage){
+    private void setupTabSelectionMessage(ResizableInternalWindow window, String tmpMessage) {
         window.setOnMouseClicked(event -> {
             if (window.isActive()) {
                 fStatusBar.setText(tmpMessage);
@@ -1394,10 +1511,10 @@ public class MainWindow {
     }
 
     /**
-     * returns the activeWindowProperty
+     * removing closed window out of the desktopWindowsList
      */
-    public ObjectProperty<ResizableInternalWindow> activeWindowProperty() {
-        return activeWindow;
+    public void removeClosedWindow(ResizableInternalWindow window) {
+        allDesktopWindows.remove(window);
     }
 
     /**
