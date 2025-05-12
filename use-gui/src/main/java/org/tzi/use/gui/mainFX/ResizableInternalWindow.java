@@ -163,7 +163,10 @@ public class ResizableInternalWindow extends Pane {
      */
     private void initHandlers() {
         // --- Close button action ---
-        btnClose.setOnAction(e -> closeWindow());
+        btnClose.setOnAction(e -> {
+            controller.removeClosedWindow(this);
+            closeWindow();
+        });
 
         // --- Minimize button action ---
         btnMinimize.setOnAction(e -> {
@@ -575,8 +578,10 @@ public class ResizableInternalWindow extends Pane {
                     double mouseX = event.getX();
                     double mouseY = event.getY();
 
-                    // creating the dragged object with its name
+                    // creating the dragged object with its name and updating undo, redo and save script menu-/taskbar-item
                     controller.createObject(className);
+                    controller.setUndoRedoButtons();
+                    controller.updateFActionSaveScript();
                     success = true;
                 }
 
