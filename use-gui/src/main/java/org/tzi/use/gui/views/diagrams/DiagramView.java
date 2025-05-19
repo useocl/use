@@ -390,8 +390,12 @@ public abstract class DiagramView extends JPanel
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
 
         if (!styleInfoProviders.isEmpty()){
+            final UIElementIntermediate<?> intermediate = diagramsOwnMapping(edge);
             // accumulate changes from all provider
-            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(edge)).filter(Objects::nonNull).reduce((accumulated, current) -> {
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
+                    .map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(intermediate))
+                    .filter(Objects::nonNull)
+                    .reduce((accumulated, current) -> {
                 accumulated.merge(current);
                 return accumulated;
             });
@@ -411,9 +415,17 @@ public abstract class DiagramView extends JPanel
 
         final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
+
         if (!styleInfoProviders.isEmpty()){
+            //FIXME: ClassDiagram: Model -> UI, here its in reverse: UI -> Model, this method need functional abstracting
+            final UIElementIntermediate<?> intermediate = diagramsOwnMapping(node);
             // accumulate changes from all provider
-            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream().map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(node)).filter(Objects::nonNull).reduce((accumulated, current) -> {
+            // StyleInfoBase needs to work for all types of possible inputs
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
+                    // in mapping: UI
+                    .map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(intermediate))
+                    .filter(Objects::nonNull)
+                    .reduce((accumulated, current) -> {
                 accumulated.merge(current);
                 return accumulated;
             });
@@ -421,9 +433,19 @@ public abstract class DiagramView extends JPanel
             accStyleInfo.ifPresent(styleInfoBase -> recolorPlaceableNode(node, styleInfoBase));
         }
     }
+    protected UIElementIntermediate<?> diagramsOwnMapping(final PlaceableNode node) {
+        //TODO: abstract and implement for all diagrams
+        throw new UnsupportedOperationException("not implemented for desired descendent of DiagramView");
+    }
+
+    protected UIElementIntermediate<?> diagramsOwnMapping(final EdgeBase edgeBase) {
+        //TODO: abstract and implement for all diagrams
+        throw new UnsupportedOperationException("not implemented for desired descendent of DiagramView");
+    }
 
     protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {
         //TODO: abstract and implement for all diagrams
+        throw new UnsupportedOperationException("not implemented for desired descendent of DiagramView");
     }
 
     /**

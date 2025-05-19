@@ -20,22 +20,6 @@ public abstract class StyleInfoBase {
     //protected Color namesFont;
 
     /**
-     * This constructor is used to create a concrete type of {@link StyleInfoBase}
-     *
-     * @param selectable the {@link Selectable} to take the information from
-     */
-    protected StyleInfoBase(@NonNull final Selectable selectable) {
-        createFrom(selectable);
-    }
-
-    /**
-     * Creates a concrete type of {@link StyleInfoBase} from an existing {@link Selectable}.
-     *
-     * @param selectable the {@link Selectable} to take the information from
-     */
-    abstract protected void createFrom(@NonNull final Selectable selectable);
-
-    /**
      * Merges the information of two of the same concrete types of {@link StyleInfoBase} into the former.
      * This method prioritizes the {@link StyleInfoBase} it has been called on.
      *

@@ -32,6 +32,7 @@ public abstract class PluginDiagramManipulator {
     }
 
     protected void updateRegisteredDiagramViews() {
+        //FIXME: does not update, when reopening OCLHighlights window
         diagramViews.clear();
         diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
     }

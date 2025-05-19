@@ -19,6 +19,7 @@ public final class StyleInfoClassNode extends StyleInfoBase {
 
     private Color nodesColor;
     private Color backgroundColor;
+    //TODO: revert changes of nullable maps
     private Map<MAttribute, Color> attributeColors;
     private Map<MOperation, Color> operationColors;
 
@@ -37,12 +38,9 @@ public final class StyleInfoClassNode extends StyleInfoBase {
 
 
     public StyleInfoClassNode(@NonNull final ClassNode classNode) {
-        super(classNode);
-    }
-
-    @Override
-    protected void createFrom(@NonNull final Selectable selectable) {
-        final ClassNode classNode = (ClassNode) selectable;
+        super(classNode.getColor());
+        this.nodesColor = classNode.getColor();
+        this.backgroundColor = classNode.getBackColor();
         this.attributeColors = classNode.cls()
                 .attributes()
                 .stream()
@@ -53,7 +51,6 @@ public final class StyleInfoClassNode extends StyleInfoBase {
                 .stream()
                 .filter(operation -> classNode.getOperationColor(operation) != null)
                 .collect(Collectors.toMap(Function.identity(), classNode::getOperationColor));
-
     }
 
     @Override

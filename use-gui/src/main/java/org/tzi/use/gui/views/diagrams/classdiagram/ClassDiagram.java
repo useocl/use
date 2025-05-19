@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -1483,7 +1484,43 @@ public class ClassDiagram extends DiagramView
 		}
 	}
 
-    @Override
+	@Override
+	protected UIElementIntermediate<MClassifier> diagramsOwnMapping(final PlaceableNode node) {
+		return Optional.of(node)
+				.filter(ClassifierNode.class::isInstance)
+				.map(ClassifierNode.class::cast)
+				.map(ClassifierNode::getClassifier)
+				.map(UIElementIntermediate::new)
+				.orElseThrow();
+	}
+
+	@Override
+	protected UIElementIntermediate<?> diagramsOwnMapping(final EdgeBase edgeBase) {
+		if (edgeBase instanceof GeneralizationEdge generalizationEdge) {
+			// returns MGeneralization, the relation between an abstract and an implementing model element
+			return Stream.of(visibleData, hiddenData)
+					.map(classDiagramData -> classDiagramData.fGenToGeneralizationEdge.entrySet())
+					.flatMap(Collection::stream)
+					.filter(entry -> entry.getValue().equals(generalizationEdge))
+					.map(Map.Entry::getKey)
+					.filter(Objects::nonNull)
+					.findAny()
+					.map(UIElementIntermediate::new)
+					.orElseThrow();
+		} else if (edgeBase instanceof AssociationOrLinkPartEdge associationOrLinkPartEdge) {
+			// returns MAssociation, the relation between two model elements
+            return associationOrLinkPartEdge.getProperties()
+                    .stream()
+                    .map(EdgeProperty::getAssociation)
+                    .filter(Objects::nonNull)
+                    .findAny()
+                    .map(UIElementIntermediate::new)
+                    .orElseThrow();
+		}
+		throw new UnsupportedOperationException(String.format("The type of edge %s is not supported!", edgeBase.getClass().getName()));
+	}
+
+	@Override
     protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement) {
         if (placeableNode instanceof ClassNode classNode) {
             if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode) {
@@ -1514,18 +1551,24 @@ public class ClassDiagram extends DiagramView
 		enumNode.setFrameColor(styleInfoEnumNode.getFrameColor());
 	}
 
-    @Override
-    protected void recolorEdgeBase(final EdgeBase edgeBase, StyleInfoBase styleInfoForDiagramElement) {
-        if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
-            styleInfoEdge.merge(new StyleInfoEdge(edgeBase));
+	@Override
+	protected void recolorEdgeBase(final EdgeBase edgeBase, final StyleInfoBase styleInfoForDiagramElement) {
+		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
+			styleInfoEdge.merge(new StyleInfoEdge(edgeBase));
 
+			edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
+			// Association Name
 			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE))
 					.flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())
 					.ifPresent(associationName -> associationName.setColor(styleInfoEdge.getNamesColor()));
-            edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
-			styleInfoEdge.getRoleNameColors().forEach(Rolename::setColor);
-        }
-    }
+			// Role Name
+			edgeBase.getProperties()
+					.stream()
+					.filter(Rolename.class::isInstance)
+					.map(Rolename.class::cast)
+					.forEach(roleName -> Optional.ofNullable(styleInfoEdge.getRoleNameColors().get(roleName.getEnd())).ifPresent(roleName::setColor));
+		}
+	}
 
 	private class RestoreHandler {
 		protected AutoPilot ap;

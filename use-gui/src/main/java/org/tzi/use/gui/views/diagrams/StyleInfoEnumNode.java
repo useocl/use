@@ -22,13 +22,7 @@ public class StyleInfoEnumNode extends StyleInfoBase {
     }
 
     public StyleInfoEnumNode(@NonNull final EnumNode enumNode) {
-        super(enumNode);
-    }
-
-    @Override
-    protected void createFrom(@NonNull final Selectable selectable) {
-        EnumNode enumNode = (EnumNode) selectable;
-        this.namesColor = enumNode.getTextColor();
+        super(enumNode.getTextColor());
         this.frameColor = enumNode.getFrameColor();
         this.nodesColor = enumNode.getColor();
     }
