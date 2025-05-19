@@ -1,7 +1,6 @@
 package org.tzi.use.runtime.gui.impl;
 
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import java.util.Set;
 public abstract class PluginDiagramManipulator {
 
     final static List<DiagramView> ALL_REGISTERED_DIAGRAM_VIEWS = new ArrayList<>();
+
 
     private final Set<DiagramView> diagramViews;
 
@@ -31,8 +31,7 @@ public abstract class PluginDiagramManipulator {
         diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
     }
 
-    protected void updateRegisteredDiagramViews() {
-        //FIXME: does not update, when reopening OCLHighlights window
+    protected final void updateRegisteredDiagramViews() {
         diagramViews.clear();
         diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
     }
@@ -56,38 +55,14 @@ public abstract class PluginDiagramManipulator {
     }
 
 
-    protected final void repaint() {
+    /**
+     * Causes a repaint of all current diagram views as soon as possible.
+     */
+    protected final void markForRepainting() {
         diagramViews.forEach(DiagramView::repaint);
     }
 
     protected final void addNodeToGraph(final PlaceableNode node) {
         diagramViews.forEach(view -> view.getGraph().add(node));
-    }
-
-    @Deprecated(forRemoval = true)
-    protected final List<DiagramView.DiagramData> getDiagramDataByVisibility(final boolean isVisible) {
-        return diagramViews.stream().map(isVisible ? DiagramView::getVisibleData : DiagramView::getHiddenData).toList();
-    }
-
-    /**
-     * TODO: ClassNode only for certain use case. Abstract method to return node type
-     *  i can build my own mapper
-     */
-    protected final void resetClassNodesColor() {
-        getDiagramDataByVisibility(true).stream().map(DiagramView.DiagramData::getNodes).forEach(placeableNode -> placeableNode.forEach(node -> {
-            if (placeableNode instanceof ClassNode classNode) {
-                // or generalize methods to use those of PlaceableNode
-                classNode.setColor(null);
-                classNode.resetAttributeColor();
-                classNode.resetOperationColor();
-            }
-        }));
-        getDiagramDataByVisibility(true).stream().map(DiagramView.DiagramData::getNodes).forEach(placeableNode -> placeableNode.forEach(node -> {
-            if (placeableNode instanceof ClassNode classNode) {
-                classNode.setColor(null);
-                classNode.resetAttributeColor();
-                classNode.resetOperationColor();
-            }
-        }));
     }
 }
