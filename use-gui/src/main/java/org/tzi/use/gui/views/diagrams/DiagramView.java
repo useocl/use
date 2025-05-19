@@ -73,6 +73,8 @@ import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -337,7 +339,7 @@ public abstract class DiagramView extends JPanel
             Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
             while (edgeIterator.hasNext()) {
                 EdgeBase e = edgeIterator.next();
-                checkForPluginColorChanges(e);
+                checkForPluginColorChanges(e, this::diagramsOwnMapping, this::recolorEdgeBase);
                 e.draw(g2d);
             }
 
@@ -348,7 +350,7 @@ public abstract class DiagramView extends JPanel
             Iterator<PlaceableNode> nodeIterator = fGraph.iterator();
             while (nodeIterator.hasNext()) {
                 PlaceableNode n = nodeIterator.next();
-                checkForPluginColorChanges(n);
+                checkForPluginColorChanges(n, this::diagramsOwnMapping, this::recolorPlaceableNode);
                 n.draw(g2d);
                 maxX = Math.max(maxX, n.getX() + n.getWidth());
                 maxY = Math.max(maxY, n.getY() + n.getHeight());
@@ -381,71 +383,48 @@ public abstract class DiagramView extends JPanel
         }
     }
 
-    private void checkForPluginColorChanges(final EdgeBase edge) {
-        if (pluginRuntime == null){
+
+    private <T> void checkForPluginColorChanges(final T element, final Function<T, UIElementIntermediate<?>> mappingFunction, final BiConsumer<T, StyleInfoBase> recolorFunction) {
+        if (pluginRuntime == null) {
             return;
         }
 
         final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
 
-        if (!styleInfoProviders.isEmpty()){
-            final UIElementIntermediate<?> intermediate = diagramsOwnMapping(edge);
+        if (!styleInfoProviders.isEmpty()) {
+            final UIElementIntermediate<?> intermediate = mappingFunction.apply(element);
             // accumulate changes from all provider
             final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
-                    .map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(intermediate))
+                    .map(provider -> provider.getStyleInfoForDiagramElement(intermediate))
                     .filter(Objects::nonNull)
                     .reduce((accumulated, current) -> {
-                accumulated.merge(current);
-                return accumulated;
-            });
+                        accumulated.merge(current);
+                        return accumulated;
+                    });
             // recolor respective element
-            accStyleInfo.ifPresent(styleInfoBase -> recolorEdgeBase(edge, styleInfoBase));
+            accStyleInfo.ifPresent(styleInfo -> recolorFunction.accept(element, styleInfo));
         }
     }
 
-    protected void recolorEdgeBase(final EdgeBase node, final StyleInfoBase styleInfoForDiagramElement) {
-        //TODO: abstract and implement for all diagrams
-    }
-
-    private void checkForPluginColorChanges(final PlaceableNode node){
-        if (pluginRuntime == null){
-            return;
-        }
-
-        final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
-        final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
-
-        if (!styleInfoProviders.isEmpty()){
-            //FIXME: ClassDiagram: Model -> UI, here its in reverse: UI -> Model, this method need functional abstracting
-            final UIElementIntermediate<?> intermediate = diagramsOwnMapping(node);
-            // accumulate changes from all provider
-            // StyleInfoBase needs to work for all types of possible inputs
-            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
-                    // in mapping: UI
-                    .map(styleInfoProvider -> styleInfoProvider.getStyleInfoForDiagramElement(intermediate))
-                    .filter(Objects::nonNull)
-                    .reduce((accumulated, current) -> {
-                accumulated.merge(current);
-                return accumulated;
-            });
-            // recolor respective element
-            accStyleInfo.ifPresent(styleInfoBase -> recolorPlaceableNode(node, styleInfoBase));
-        }
-    }
     protected UIElementIntermediate<?> diagramsOwnMapping(final PlaceableNode node) {
-        //TODO: abstract and implement for all diagrams
-        throw new UnsupportedOperationException("not implemented for desired descendent of DiagramView");
+        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
     protected UIElementIntermediate<?> diagramsOwnMapping(final EdgeBase edgeBase) {
-        //TODO: abstract and implement for all diagrams
-        throw new UnsupportedOperationException("not implemented for desired descendent of DiagramView");
+        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
     protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {
-        //TODO: abstract and implement for all diagrams
-        throw new UnsupportedOperationException("not implemented for desired descendent of DiagramView");
+        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+    }
+
+    protected void recolorEdgeBase(final EdgeBase node, final StyleInfoBase styleInfoForDiagramElement) {
+        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
     /**
