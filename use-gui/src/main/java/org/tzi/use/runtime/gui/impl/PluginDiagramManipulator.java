@@ -50,10 +50,13 @@ public abstract class PluginDiagramManipulator {
         // override to use
     }
 
-    protected void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
+    protected final void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
         DiagramExtensionPoint.getInstance().addStyleInfoProvider(styleInfoProvider);
     }
 
+    protected final void removeStyleInfoProvider(final StyleInfoProvider styleInfoProvider){
+        DiagramExtensionPoint.getInstance().removeStyleInfoProvider(styleInfoProvider);
+    }
 
     /**
      * Causes a repaint of all current diagram views as soon as possible.

@@ -5,22 +5,20 @@ import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.gui.IDiagramPlugin;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
+public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
 
     private static final DiagramExtensionPoint INSTANCE = new DiagramExtensionPoint();
-
-    private final List<IDiagramPlugin> registeredPlugins = new ArrayList<>();
-
-    private final Map<Class<? extends DiagramView>, List<StyleInfoProvider>> styleInfoProviders = new HashMap<>();
 
     public static IPluginDiagramExtensionPoint getInstance() {
         return INSTANCE;
     }
+
+
+    private final List<IDiagramPlugin> registeredPlugins = new ArrayList<>();
+
+    private final Map<Class<? extends DiagramView>, List<StyleInfoProvider>> styleInfoProviders = new HashMap<>();
 
     @Override
     public <T extends DiagramView> void registerView(T diagramView) {
@@ -34,16 +32,12 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
 
     @Override
     public void runPluginsOnInitialisation() {
-        for (final IDiagramPlugin diagramPlugin : registeredPlugins) {
-            diagramPlugin.getPluginDiagramManipulator().onInitialisation();
-        }
+        registeredPlugins.stream().map(IDiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onInitialisation);
     }
 
     @Override
     public void runPluginsOnClosure() {
-        for (final IDiagramPlugin diagramPlugin : registeredPlugins) {
-            diagramPlugin.getPluginDiagramManipulator().onClosure();
-        }
+        registeredPlugins.stream().map(IDiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onClosure);
     }
 
     @Override
@@ -56,7 +50,12 @@ public final class DiagramExtensionPoint implements IPluginDiagramExtensionPoint
             return value;
         });
         // if no entry exists: create, else: skip
-        styleInfoProviders.putIfAbsent(targetClass, List.of(styleInfoProvider));
+        styleInfoProviders.putIfAbsent(targetClass, new ArrayList<>(List.of(styleInfoProvider)));
+    }
+
+    @Override
+    public void removeStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
+        styleInfoProviders.get(styleInfoProvider.getTargetClass()).remove(styleInfoProvider);
     }
 
     @Override
