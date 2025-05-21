@@ -27,5 +27,7 @@ module use.gui {
     opens org.tzi.use.gui.mainFX to javafx.fxml;
     exports org.tzi.use.runtime.guiFX.impl;
     exports org.tzi.use.gui.utilFX;
+    exports org.tzi.use.gui.viewsFX.evalbrowser;
+
 
 }

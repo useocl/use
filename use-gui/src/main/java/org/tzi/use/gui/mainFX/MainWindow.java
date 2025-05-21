@@ -145,6 +145,7 @@ public class MainWindow {
     private Stage primaryStage;  // Reference to the primary stage
     private static MainWindow instance;
     private PageLayout fPageLayout;
+    private PrinterJob fPrinterJob;
     private SwingNode swingNode;
     private static PrintWriter fLogWriter;
     private LogPanel fLogPanel;
@@ -414,16 +415,14 @@ public class MainWindow {
         MenuItem printerSetup = new MenuItem("Printer Setup...");
         printerSetup.setGraphic(getIcon("document-print.png"));
         printerSetup.setOnAction(e -> {
-            PrinterJob job = PrinterJob.createPrinterJob();
-            // initialize page format if necessary
-            fPageLayout = pageLayout(job);
-            // Set the job's current page layout before showing the dialog
-            job.getJobSettings().setPageLayout(fPageLayout);
-            // Show page setup dialog
-            boolean proceed = job.showPageSetupDialog(null);
-            if (proceed) {
-                // Apply the configured layout to the job
-                fPageLayout = job.getJobSettings().getPageLayout();
+            // check if Printer exists, if not than create one
+            if (fPrinterJob == null){
+                fPrinterJob = PrinterJob.createPrinterJob();
+            }
+
+            // if printer exists set it up
+            if (fPrinterJob != null){
+                pageLayout();
             }
         });
 
@@ -496,7 +495,8 @@ public class MainWindow {
         evaluateOCLexpr.setAccelerator(KeyCombination.keyCombination("F8"));
         evaluateOCLexpr.setGraphic(getIcon("OCL.gif"));
         evaluateOCLexpr.setOnAction(e -> {
-            System.out.println("F8 Succesfully pressed");
+            EvalOCLDialog dlg = new EvalOCLDialog(fSession, primaryStage);
+            dlg.showAndWait();
         });
 
         MenuItem checkSN = new MenuItem("Check structure now");
@@ -679,7 +679,10 @@ public class MainWindow {
                     toolBar.getItems().add(fBtnEditRedo);
                     break;
                 case "Evaluate OCL expression":
-                    //TODO "Print view"
+                    button.setOnAction(e -> {
+                        EvalOCLDialog dlg = new EvalOCLDialog(fSession, primaryStage);
+                        dlg.showAndWait();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create class diagram view":
@@ -1451,25 +1454,29 @@ public class MainWindow {
     }
 
     /**
-     * Returns the page format for printing.
+     * Updates the page format for printing.
      */
-    public PageLayout pageLayout(PrinterJob job) {
-        if (fPageLayout == null) {
-            // initialize with defaults
-            Printer printer = job.getPrinter();
-            Paper paper = job.getPrinter().getDefaultPageLayout().getPaper();
+    private void pageLayout() {
+        boolean proceed = fPrinterJob.showPageSetupDialog(null); // Show printer setup dialog
+        if (proceed) {
+            fPageLayout = fPrinterJob.getJobSettings().getPageLayout();
 
-            // Default Portrait to initialize it
-            PageOrientation pageOrientation = PageOrientation.PORTRAIT;
+            // Update options with selected settings
+            Options.PRINT_PAGEFORMAT_WIDTH = fPageLayout.getPaper().getWidth();
+            Options.PRINT_PAGEFORMAT_HEIGHT = fPageLayout.getPaper().getHeight();
 
-            if (Options.PRINT_PAGEFORMAT_ORIENTATION.equals("landscape"))
-                pageOrientation = PageOrientation.LANDSCAPE;
-            else if (Options.PRINT_PAGEFORMAT_ORIENTATION.equals("seascape"))
-                pageOrientation = PageOrientation.REVERSE_LANDSCAPE;
-
-            fPageLayout = printer.createPageLayout(paper, pageOrientation, Printer.MarginType.DEFAULT);
+            switch (fPageLayout.getPageOrientation()){
+                case PORTRAIT:
+                    Options.PRINT_PAGEFORMAT_ORIENTATION = "portrait";
+                    break;
+                case LANDSCAPE:
+                    Options.PRINT_PAGEFORMAT_ORIENTATION = "landscape";
+                    break;
+                case REVERSE_LANDSCAPE:
+                    Options.PRINT_PAGEFORMAT_ORIENTATION = "seascape";
+                    break;
+            }
         }
-        return fPageLayout;
     }
 
     /**
