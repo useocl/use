@@ -1,0 +1,18 @@
+import Time from "Time.use"
+
+model Meetings
+
+class Meeting
+    attributes
+        title: String
+        participants: Integer
+        startTime: Time
+        endTime: Time
+end
+
+constraints
+
+context Meeting
+    -- ensures the meeting title does not exceed 20 characters
+  inv TitleLengthLimit:
+    self.participants <= 20

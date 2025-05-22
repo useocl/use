@@ -46,7 +46,7 @@ public class ObjectCountView extends BarChartView implements View {
     public ObjectCountView(MSystem system) {
         super("Class", "# Objects", Color.blue);
         fSystem = system;
-        Collection<MClass> classes = fSystem.model().classes();
+        Collection<MClass> classes = fSystem.model().getClassesIncludingImports();
         fClasses = classes.toArray(new MClass[0]);
         Arrays.sort(fClasses);
         setNames(fClasses);

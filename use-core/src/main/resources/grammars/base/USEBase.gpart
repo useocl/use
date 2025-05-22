@@ -6,6 +6,31 @@
 // grammar start
 
 /* ------------------------------------
+  importStatement ::=
+    "import" id "from" artifact
+    | "import" { idList } "from" artifact
+    | "import" * "from" artifact
+*/
+importStatement returns [ASTImportStatement n]
+@init {
+    List<Token> symbols = new ArrayList<Token>();
+    boolean isWildcard = false;
+}
+:
+    'import'
+    (
+        id=IDENT { symbols.add($id); }
+        | STAR { isWildcard = true; }
+        | LBRACE i=IDENT { symbols.add($i); }
+        (COMMA i=IDENT { symbols.add($i); })*
+        RBRACE
+    )
+    'from' artifact=(STRING | NON_OCL_STRING) {
+        String artifactText = $artifact.getText().replaceAll("^['\"]|['\"]$", "");
+        $n = new ASTImportStatement(symbols, artifactText, isWildcard); }
+    ;
+
+/* ------------------------------------
   model ::= 
     "model" id
     {   
@@ -17,9 +42,20 @@
     } 
 */
 model returns [ASTModel n]
+@init {
+    List<ASTImportStatement> imports = new ArrayList<ASTImportStatement>();
+}
 :
+    (i = importStatement { imports.add($i.n); })*
 	as = annotationSet
-    'model' modelName=IDENT { $n = new ASTModel($modelName); $n.setAnnotations($as.annotations); }
+    'model' modelName=IDENT
+    {
+     $n = new ASTModel($modelName);
+     $n.setAnnotations($as.annotations);
+     for (ASTImportStatement imp : imports) {
+        $n.addImportStatement(imp);
+     }
+    }
     (   generalClassifierDefinition[$n]
       | a=associationDefinition { $n.addAssociation($a.n); }
       | ( 'constraints'
@@ -500,7 +536,7 @@ signalDefinition[boolean isAbstract] returns [ASTSignal n]:
     ( 'constraints'
       (
         inv=invariantClause { $n.addInvariantClause($inv.n); }
-      )*
+      )
     )?
     'end'
     ;  

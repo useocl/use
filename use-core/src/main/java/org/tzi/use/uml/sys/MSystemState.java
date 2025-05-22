@@ -111,7 +111,7 @@ public final class MSystemState {
 		fLinkSets = new HashMap<MAssociation, MLinkSet>();
 		
 		// create empty link sets
-		for(MAssociation assoc : fSystem.model().associations()) {
+		for(MAssociation assoc : fSystem.model().getAssociationsIncludingImports()) {
 			MLinkSet linkSet = new MLinkSet(assoc);
 			fLinkSets.put(assoc, linkSet);
 		}

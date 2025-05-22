@@ -1,0 +1,6 @@
+model t33_import
+
+dataType B
+    operations
+      B(b0 : Integer)
+end

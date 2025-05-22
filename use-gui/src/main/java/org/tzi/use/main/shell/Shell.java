@@ -1122,7 +1122,7 @@ public final class Shell implements Runnable, PPCHandler {
 						+ "contains no data!");
 				return;
 			}
-			if (firstWord.startsWith("model") || firstWord.startsWith("@")) {
+			if (firstWord.startsWith("model") || firstWord.startsWith("@") || firstWord.startsWith("import")) {
 				cmdOpenUseFile(token);
 			} else if (firstWord.startsWith("context")) {
 				cmdGenLoadInvariants(token, system(), doEcho);

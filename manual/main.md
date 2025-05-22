@@ -294,6 +294,51 @@ also allowed. OCL constraints may be defined inside a constraint block.
                      <classdefinition> |
                      constraints {<constraintdefinition>}}
 
+### Importing elements from external models
+
+In a USE specification import statements may be defined as a way to include elements 
+(e.g. data types, classes) specified in other models. An import statements comprises
+the elements to include and the source model file to import them from.
+
+#### Syntax
+
+    <importstatement> ::= import ( <elementname> | '{' <elementname> { , <elementname> } '}' | * ) from <artifactpath> 
+    <artifactpath> ::= <stringliteral>
+
+#### Examples:
+
+Import statements with one, or multiple elements to include.
+
+    import Date from "Dates.use"
+    import { Apple, Banana } from "Fruits.use"
+
+An import statement using the wildcard operator to include every element of a model.
+
+    import * from "Shapes.use"
+
+The following example shows a model `User` importing the data type `Date` from 
+an external model found under the path `imports/Dates.use` and using it in the class `User`.
+
+    import Date from "imports/Dates.use"
+
+    model User
+    
+    class User
+    attributes
+        name: String
+        birthday: Date
+    end
+
+#### Rules and Restrictions
+
+- Imports need to be declared at the top of the USE-file (before the model declaration).
+- Each element that is listed in the import statement must be defined in the referenced model file 
+(does not apply if the wildcard operator is used).
+- Imported element identifiers must be unique to the model that includes them.
+- Circular Imports `(model A -> model B -> model A)` are not permitted by the compiler.
+- The file path of referenced models may be specified as an absolute path or relative to the file path
+of the model importing them.
+
 ### Specification Elements
 
 The following sections describe all available elements, which can be

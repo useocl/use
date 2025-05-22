@@ -1,0 +1,17 @@
+import { Date } from "Dates.use"
+import { Meeting } from "Meetings.use"
+
+model User
+
+class User
+    attributes
+        name: String
+        birthday: Date
+        num: Integer
+end
+
+association ParticipatesIn
+    between
+        User[*] role participant
+        Meeting[*] role meeting
+    end

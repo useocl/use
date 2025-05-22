@@ -1,0 +1,17 @@
+model t30_import
+
+class B
+    attributes
+        x:Integer
+end
+
+class C
+    attributes
+        x:Integer
+end
+
+association D
+between
+  B[*] role h
+  C[*] role g
+end

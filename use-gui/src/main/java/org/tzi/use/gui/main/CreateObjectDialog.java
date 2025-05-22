@@ -78,7 +78,7 @@ class CreateObjectDialog extends JDialog {
 
         fClasses = new ArrayList<MClass>(fSystem.model().classes().size());
         // create class list and label
-        for (MClass cls : fSystem.model().classes()) {
+        for (MClass cls : fSystem.model().getClassesIncludingImports()) {
         	if (!(cls instanceof MAssociationClass))
         		fClasses.add(cls);
         }

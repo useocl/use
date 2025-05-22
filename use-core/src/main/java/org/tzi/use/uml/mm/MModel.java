@@ -29,6 +29,8 @@ import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A Model is a top-level package containing all other model elements.
@@ -71,6 +73,8 @@ public class MModel extends MModelElementImpl {
 
 	private final Map<String, MSignal> signals;
 
+	private final Map<String, MImportedModel> importedModels;
+
 	protected MModel(String name) {
 		super(name);
 		fEnumTypes = new TreeMap<>();
@@ -81,6 +85,7 @@ public class MModel extends MModelElementImpl {
 		fClassInvariants = new TreeMap<>();
 		fPrePostConditions = new TreeMap<>();
 		signals = new TreeMap<>();
+		importedModels = new TreeMap<>();
 
 		fFilename = "";
 	}
@@ -125,7 +130,29 @@ public class MModel extends MModelElementImpl {
 	 * @return <code>null</code> if class <code>name</code> does not exist.
 	 */
 	public MClass getClass(String name) {
-		return fClasses.get(name);
+		MClass cls = fClasses.get(name);
+		if (cls != null) {
+			return cls;
+		}
+
+		// Check direct imports
+		for (MImportedModel imp : importedModels.values()) {
+			cls = imp.getClass(name);
+			if (cls != null) {
+				return cls;
+			}
+		}
+
+		// Check transitive imports only via qualified name resolution
+		if (name.contains("::")) {
+			for (MImportedModel imp : importedModels.values()) {
+				cls = imp.resolveQualifiedClass(name);
+				if (cls != null) {
+					return cls;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -150,7 +177,29 @@ public class MModel extends MModelElementImpl {
 	 * @return <code>null</code> if data type <code>name</code> does not exist.
 	 */
 	public MDataType getDataType(String name) {
-		return fDataTypes.get(name);
+		MDataType dataType = fDataTypes.get(name);
+		if (dataType != null) {
+			return dataType;
+		}
+
+		// Check direct imports
+		for (MImportedModel imp : importedModels.values()) {
+			dataType = imp.getDataType(name);
+			if (dataType != null) {
+				return dataType;
+			}
+		}
+
+		// Check transitive imports only via qualified name resolution
+		if (name.contains("::")) {
+			for (MImportedModel imp : importedModels.values()) {
+				dataType = imp.resolveQualifiedDatatype(name);
+				if (dataType != null) {
+					return dataType;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -181,9 +230,16 @@ public class MModel extends MModelElementImpl {
 		MClass cls = fClasses.get(name);
 		if (cls instanceof MAssociationClass) {
 			return (MAssociationClass) cls;
-		} else {
-			return null;
 		}
+
+		for (MImportedModel imp : importedModels.values()) {
+			MAssociationClass assocCls = imp.getAssociationClass(name);
+			if (assocCls != null) {
+				return assocCls;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -196,6 +252,19 @@ public class MModel extends MModelElementImpl {
 	}
 
 	/**
+	 * Returns a collection containing all data types in this model including the data types it imports.
+	 *
+	 * @return collection of MDataType objects.
+	 */
+	public Collection<MDataType> getDataTypesIncludingImports() {
+		Set<MDataType> datatypes = new HashSet<>(fDataTypes.values());
+		for (MImportedModel importedModel : importedModels.values()) {
+			datatypes.addAll(importedModel.getDataTypes());
+		}
+		return datatypes;
+	}
+
+	/**
 	 * Returns a collection containing all classes in this model.
 	 * 
 	 * @return collection of MClass objects.
@@ -204,10 +273,28 @@ public class MModel extends MModelElementImpl {
 		return fClasses.values();
 	}
 
+	/**
+	 * Returns a collection containing all classes in this model including the classes it imports.
+	 *
+	 * @return collection of MClass objects.
+	 */
+	public Collection<MClass> getClassesIncludingImports() {
+		Set<MClass> classes = new HashSet<>(fClasses.values());
+		for (MImportedModel importedModel : importedModels.values()) {
+			classes.addAll(importedModel.getClasses());
+		}
+		return classes;
+	}
+
 	public Collection<MClassifier> classifiers() {
 		Set<MClassifier> col = new HashSet<>(dataTypes());
 		col.addAll(classes());
 		return col;
+	}
+
+	public Collection<MClassifier> getClassifiersIncludingImports() {
+		return Stream.concat(getDataTypesIncludingImports().stream(), getClassesIncludingImports().stream())
+				.collect(Collectors.toSet());
 	}
 
 	/**
@@ -321,6 +408,14 @@ public class MModel extends MModelElementImpl {
 		return fAssociations.values();
 	}
 
+	public Collection<MAssociation> getAssociationsIncludingImports() {
+		Set<MAssociation> associations = new HashSet<>(fAssociations.values());
+		for (MImportedModel importedModel : importedModels.values()) {
+			associations.addAll(importedModel.getAssociations());
+		}
+		return associations;
+	}
+
 	/**
 	 * Returns the specified association.
 	 * 
@@ -328,7 +423,15 @@ public class MModel extends MModelElementImpl {
 	 */
 	@Nullable
 	public MAssociation getAssociation(String name) {
-		return fAssociations.get(name);
+		MAssociation association = fAssociations.get(name);
+
+		if (association == null) {
+			// Check direct imports
+			for (MImportedModel imp : importedModels.values()) {
+				association = imp.getAssociation(name);
+			}
+		}
+		return association;
 	}
 
 	/**
@@ -457,7 +560,19 @@ public class MModel extends MModelElementImpl {
 	 * @return null if enumeration type does not exist.
 	 */
 	public EnumType enumType(String name) {
-		return fEnumTypes.get(name);
+		EnumType enumType = fEnumTypes.get(name);
+		if (enumType != null) {
+			return enumType;
+		}
+
+		// Check direct imports
+		for (MImportedModel importedModel: importedModels.values()) {
+			enumType = importedModel.getEnumType(name);
+			if (enumType != null) {
+				return enumType;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -480,6 +595,14 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Set<EnumType> enumTypes() {
         return new HashSet<>(fEnumTypes.values());
+	}
+
+	public Set<EnumType> getEnumTypesIncludingImports() {
+		Set<EnumType> enumTypes = new HashSet<>(fEnumTypes.values());
+		for (MImportedModel importedModel : importedModels.values()) {
+			enumTypes.addAll(importedModel.getEnumTypes());
+		}
+		return enumTypes;
 	}
 
 	/**
@@ -512,6 +635,14 @@ public class MModel extends MModelElementImpl {
 		return fClassInvariants.values();
 	}
 
+	public Collection<MClassInvariant> getClassInvariantsIncludingImports() {
+		Set<MClassInvariant> classInvariants = new HashSet<>(fClassInvariants.values());
+		for (MImportedModel importedModel : importedModels.values()) {
+			classInvariants.addAll(importedModel.getClassInvariants());
+		}
+		return classInvariants;
+	}
+
 	public Collection<MClassInvariant> classInvariants(boolean onlyActive) {
 		if (onlyActive) {
 			return Maps.filterValues(fClassInvariants,
@@ -536,11 +667,10 @@ public class MModel extends MModelElementImpl {
 	 */
 	public Set<MClassInvariant> classInvariants(MClass cls) {
 		Set<MClassInvariant> res = new HashSet<>();
-
-        for (MClassInvariant inv : fClassInvariants.values()) {
-            if (inv.cls().equals(cls))
-                res.add(inv);
-        }
+		for (MClassInvariant inv : fClassInvariants.values()) {
+				if (inv.cls().equals(cls))
+						res.add(inv);
+		}
 
 		return res;
 	}
@@ -557,10 +687,15 @@ public class MModel extends MModelElementImpl {
 		Set<MClass> parents = new HashSet<>(allP);
 		parents.add(cls);
 
-        for (MClassInvariant inv : fClassInvariants.values()) {
-            if (parents.contains(inv.cls()))
-                res.add(inv);
-        }
+		for (MClassInvariant inv : fClassInvariants.values()) {
+				if (parents.contains(inv.cls()))
+						res.add(inv);
+		}
+
+		// Check direct imports
+		for (MImportedModel importedModel: importedModels.values()) {
+			res.addAll(importedModel.getAllClassInvariants(parents));
+		}
 		return res;
 	}
 
@@ -570,7 +705,19 @@ public class MModel extends MModelElementImpl {
 	 * @return <code>null</code> if invariant <code>name</code> does not exist.
 	 */
 	public MClassInvariant getClassInvariant(String name) {
-		return fClassInvariants.get(name);
+		MClassInvariant inv = fClassInvariants.get(name);
+		if (inv != null) {
+			return inv;
+		}
+
+		// Check direct imports
+		for (MImportedModel importedModel: importedModels.values()) {
+			inv = importedModel.getClassInvariant(name);
+			if (inv != null) {
+				return inv;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -695,6 +842,14 @@ public class MModel extends MModelElementImpl {
 		return new HashSet<>(this.signals.values());
 	}
 
+	public Set<MSignal> getSignalsIncludingImports() {
+		HashSet<MSignal> signals = new HashSet<>(this.signals.values());
+		for (MImportedModel importedModel : importedModels.values()) {
+			signals.addAll(importedModel.getSignals());
+		}
+		return signals;
+	}
+
 	/**
 	 * Returns the signal with the given <code>name</code> or <code>null</code>,
 	 * if no such signal exists.
@@ -704,7 +859,58 @@ public class MModel extends MModelElementImpl {
 	 * @return The signal with the given name or <code>null</code>.
 	 */
 	public MSignal getSignal(String name) {
-		return this.signals.get(name);
+		MSignal signal = this.signals.get(name);
+		if (signal != null) {
+			return signal;
+		}
+
+		// Check direct imports
+		for (MImportedModel importedModel : importedModels.values()) {
+			signal = importedModel.getSignal(name);
+			if (signal != null) {
+				return signal;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Adds the <code>imported model</code> to the model.
+	 *
+	 * @param model
+	 *            The model to add.
+	 * @throws MInvalidModelException
+	 *             If a model with the same name is already imported.
+	 */
+	public void addImportedModel(MImportedModel model) throws MInvalidModelException {
+		if (this.importedModels.containsKey(model.name())) {
+			throw new MInvalidModelException("Model already contains an imported model names " +
+					StringUtil.inQuotes(model.name()));
+		}
+
+		this.importedModels.put(model.name(), model);
+	}
+
+	/**
+	 * Returns a copied set of all imported models.
+	 *
+	 * @return Set of imported model objects.
+	 */
+	public Set<MImportedModel> getImportedModels() {
+		return new HashSet<>(this.importedModels.values());
+	}
+
+	/**
+	 * Returns the imported model with the given <code>name</code> or <code>null</code>,
+	 * if no such model exists.
+	 *
+	 * @param name
+	 *            The name of the imported model to lookup.
+	 * @return The model with the given name or <code>null</code>.
+	 */
+	public MImportedModel getImportedModel(String name) {
+		return this.importedModels.get(name);
 	}
 
 	/**

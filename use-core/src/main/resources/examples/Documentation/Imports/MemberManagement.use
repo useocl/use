@@ -1,0 +1,18 @@
+import Date from "Dates.use"
+
+model MemberManagement
+
+class Member
+    attributes
+        memberId : String
+        name : String
+        email : String
+end
+
+associationclass Refers
+between
+    Member[*] role referrer
+    Member[*] role referred
+attributes
+    referralDate : Date
+end

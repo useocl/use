@@ -1,0 +1,16 @@
+import { B, C, D } from "imports/t30_import1.use"
+
+model t30 -- import and usage of class and association
+
+class A
+    attributes
+        x:Integer
+end
+
+association D
+between
+  A[*] role i
+  B[*] role j
+end
+
+

@@ -24,6 +24,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -64,6 +65,12 @@ public class ASTDataType extends ASTClassifier {
             for (Token id : fSuperClassifiers) {
                 // lookup parent by name
                 MDataType parent = ctx.model().getDataType(id.getText());
+                if (parent == null) {
+                    Type type = ctx.typeTable().lookup(id.getText());
+                    if (type instanceof MDataType) {
+                        parent = (MDataType) type;
+                    }
+                }
                 if (parent == null) {
                     ctx.reportError(id, "Undefined data type " + StringUtil.inQuotes(id.getText()) + ".");
                 } else {

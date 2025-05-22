@@ -38,6 +38,10 @@ public class ASTSimpleType extends ASTType {
         fName = name;
     }
 
+    public Token getfName() {
+        return fName;
+    }
+
     public Type gen(Context ctx) throws SemanticException {
         String name = fName.getText();
         Type res = TypeFactory.mkSimpleType(name);
@@ -50,6 +54,10 @@ public class ASTSimpleType extends ASTType {
             if (res == null ) {
                 // check for object type
                 res = ctx.model().getClassifier(name);
+
+                if (res == null) {
+                    res = ctx.typeTable().lookup(name);
+                }
                 
                 if (res == null )
                     throw new SemanticException(fName,

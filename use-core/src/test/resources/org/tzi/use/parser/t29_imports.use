@@ -1,0 +1,9 @@
+import { B, C } from "imports/t29_import1.use"
+
+model t29 -- import and usage of data type and enum type
+
+class A
+    attributes
+        x:B
+        y:C
+end

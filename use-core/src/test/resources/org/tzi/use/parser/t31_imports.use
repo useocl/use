@@ -1,0 +1,8 @@
+import { B } from "imports/t31_import1.use"
+
+model t31
+
+class A
+attributes
+    x:B
+end
