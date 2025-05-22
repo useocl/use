@@ -140,31 +140,6 @@ public class ModelBrowser {
         this.fPluginRuntime = pluginRuntime;
     }
 
-    /**
-     * If an event occures the tree will be reloaded.
-     */
-//    public void stateChanged(ArrayList<String> lstofExpanded) {
-//        // Store the expanded state and selection before reloading the tree
-//        List<TreeItem<String>> expandedItems = new ArrayList<>();
-//        TreeItem<String> selectedItem = MainWindowFX.getInstance().getFolderTreeView().getSelectionModel().getSelectedItem();
-//
-//        saveExpandedItems(MainWindowFX.getInstance().getFolderTreeView().getRoot(), expandedItems);
-//
-//        // Reload tree data
-//        MainWindowFX.getInstance().getFolderTreeView().getRoot().getChildren().clear();
-//        createNodes(MainWindowFX.getInstance().getFolderTreeView().getRoot()); // recreate the nodes as needed
-//
-//        // Restore expanded state
-//        restoreExpandedItems(MainWindowFX.getInstance().getFolderTreeView().getRoot(), expandedItems);
-//
-//        // Restore selection if any
-//        if (selectedItem != null) {
-//            selectItem(MainWindowFX.getInstance().getFolderTreeView().getRoot(), selectedItem.getValue());
-//        }
-//
-//    }
-
-
     void setModel(MModel model) {
         initializeTreeView(model.name());
         // Set the model
@@ -194,10 +169,6 @@ public class ModelBrowser {
         treeLeafIconForClassNodes(rootItem);
 
         activateDragAndDropFeatures();
-
-        // Add sorting and mouse handling
-        //applySorting(MainWindowFX.getInstance().getFolderTreeView()); // Call sorting method
-        //setupMouseHandling(MainWindowFX.getInstance().getFolderTreeView()); // Set up mouse event handlers
 
         // Reset HTML pane
         if (MainWindow.getInstance().getWebViewFromPlaceholder() != null) {

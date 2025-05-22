@@ -494,7 +494,7 @@ public class ResizableInternalWindow extends Pane {
 
         if (desktopPane.getChildren().isEmpty() && taskbarPane.getChildren().isEmpty()){
             // if no desktopPanes open
-            controller.setActiveWindow(null);
+            // controller.setActiveWindow(null); Not Needed I think
         } else if (!desktopPane.getChildren().isEmpty()) {
             controller.setActiveWindow((ResizableInternalWindow) desktopPane.getChildren().getLast());
             ResizableInternalWindow lastWindowInList = (ResizableInternalWindow) desktopPane.getChildren().getLast();

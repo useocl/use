@@ -28,6 +28,7 @@ module use.gui {
     exports org.tzi.use.runtime.guiFX.impl;
     exports org.tzi.use.gui.utilFX;
     exports org.tzi.use.gui.viewsFX.evalbrowser;
+    exports org.tzi.use.gui.views.diagrams;
 
 
 }

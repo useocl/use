@@ -26,6 +26,8 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -57,6 +59,8 @@ import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
 import org.tzi.use.config.RecentItems;
 import org.tzi.use.gui.main.*;
+import org.tzi.use.gui.views.ClassInvariantView;
+import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
@@ -87,6 +91,7 @@ import org.tzi.use.util.USEWriter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
@@ -416,12 +421,12 @@ public class MainWindow {
         printerSetup.setGraphic(getIcon("document-print.png"));
         printerSetup.setOnAction(e -> {
             // check if Printer exists, if not than create one
-            if (fPrinterJob == null){
+            if (fPrinterJob == null) {
                 fPrinterJob = PrinterJob.createPrinterJob();
             }
 
             // if printer exists set it up
-            if (fPrinterJob != null){
+            if (fPrinterJob != null) {
                 pageLayout();
             }
         });
@@ -550,8 +555,16 @@ public class MainWindow {
             instance.createObjectDiagram();
         });
 
-        MenuItem createClassInvariantViewItem = new MenuItem("Class invariant", getIcon("invariant-view.png"));
+        MenuItem createClassInvariantViewItem = new MenuItem("Class invariants", getIcon("invariant-view.png"));
+        createClassInvariantViewItem.setOnAction(e -> {
+            instance.createClassInvariantView();
+        });
+
         MenuItem createObjectPropertiesViewItem = new MenuItem("Object properties", getIcon("ObjectProperties.gif"));
+        createObjectPropertiesViewItem.setOnAction(e -> {
+            instance.createObjectPropertiesView();
+        });
+
         MenuItem createClassExtentViewItem = new MenuItem("Class extent", getIcon("ClassExtentView.gif"));
         MenuItem createSequenceDiagramViewItem = new MenuItem("Sequence diagram", getIcon("SequenceDiagram.gif"));
         MenuItem createCommunicationDiagramViewItem = new MenuItem("Communication diagram", getIcon("CommunicationDiagram.gif"));
@@ -704,12 +717,16 @@ public class MainWindow {
                     break;
                 case "Create class invariant view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create class invariant view"
+                    button.setOnAction(e -> {
+                        instance.createClassInvariantView();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create object properties view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create object properties view"
+                    button.setOnAction(e -> {
+                        instance.createObjectPropertiesView();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create class extent view":
@@ -772,8 +789,7 @@ public class MainWindow {
         allDesktopWindows.add(window);
 
         // Listener for the selected Tab
-        setupTabSelectionMessage(window, "Use left mouse button to move "
-                + "classes, right button for popup menu.");
+        setupTabSelectionMessage(window, diagramType);
 
     }
 
@@ -1116,9 +1132,9 @@ public class MainWindow {
         // Don't load layout if shift key is pressed
         boolean loadLayout = (ActionEvent.SHIFT_MASK) == 0;
 
-        //setting the visiility of the MainWindow (Swing Gui) to false because we dont want it to be shown
+        //setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
         org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
-        ClassDiagram.setJavaFxCall(true); // so that class diagrams dont save any state
+        ClassDiagram.setJavaFxCall(true); // so that class diagrams don't save any state
 
         // Calling the Swing MainWindow to get the ClassDiagram out of it
         org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
@@ -1144,7 +1160,7 @@ public class MainWindow {
         // to create an Intance of a SwingNode, which is used to hold the Swing-Components
         swingNode = new SwingNode();
 
-        // setting the visibility of the MainWindow (Swing Gui) to false because we doesn't want it to be shown
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
         org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
@@ -1154,6 +1170,7 @@ public class MainWindow {
         // Create the NewObjectDiagramView and the enclosing ViewFrame
         NewObjectDiagramView odv = new NewObjectDiagramView(mainwindow, fSession.system());
         ViewFrame f = new ViewFrame("Object diagram", odv, "ObjectDiagram.gif");
+
 
         // on changes of session the object view diagrams are being updated!
         fSession.addChangeListener(event -> {
@@ -1183,6 +1200,7 @@ public class MainWindow {
         // Set up the SwingNode content
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
+        c.requestFocusInWindow();
         c.add(odv, BorderLayout.CENTER);
 
         // Add the Swing component to the SwingNode
@@ -1191,6 +1209,76 @@ public class MainWindow {
 
         // creating the new Window with the swingNode
         createNewWindow("Object diagram", swingNode, DiagramType.OBJECT_DIAGRAM);
+    }
+
+    /**
+     * Creates a new statemachine diagram view.
+     */
+    private void createStatemachineDiagramView() {
+        // TODO
+    }
+
+    /**
+     * Creates a new class invariant view.
+     */
+    private void createClassInvariantView() {
+        // to create an Intance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the ClassInvariantView and the enclosing ViewFrame
+        ClassInvariantView civ = new ClassInvariantView(mainwindow, fSession.system());
+        ViewFrame f = new ViewFrame("Class invariants", civ, "InvariantView.gif");
+        civ.setViewFrame(f);
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(civ, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Class invariants", swingNode, DiagramType.CLASS_INVARIANT_VIEW);
+    }
+
+    /**
+     * Creates a new Object Properties view.
+     */
+    private void createObjectPropertiesView() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the ClassInvariantView and the enclosing ViewFrame
+        ObjectPropertiesView opv = new ObjectPropertiesView(mainwindow, fSession.system());
+        ViewFrame f = new ViewFrame("Object properties", opv, "ObjectProperties.gif");
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(opv, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
     }
 
     // Actions
@@ -1465,7 +1553,7 @@ public class MainWindow {
             Options.PRINT_PAGEFORMAT_WIDTH = fPageLayout.getPaper().getWidth();
             Options.PRINT_PAGEFORMAT_HEIGHT = fPageLayout.getPaper().getHeight();
 
-            switch (fPageLayout.getPageOrientation()){
+            switch (fPageLayout.getPageOrientation()) {
                 case PORTRAIT:
                     Options.PRINT_PAGEFORMAT_ORIENTATION = "portrait";
                     break;
@@ -1482,20 +1570,35 @@ public class MainWindow {
     /**
      * Sets up a tab to display a temporary message in the status bar when selected.
      *
-     * @param window     the window to which the selection behavior will be applied
-     * @param tmpMessage the temporary message to display when the tab is selected
+     * @param window      the window to which the selection behavior will be applied
+     * @param diagramType the temporary message to display filtered by DiagramType of the selected tab
      */
-    private void setupTabSelectionMessage(ResizableInternalWindow window, String tmpMessage) {
-        window.setOnMouseClicked(event -> {
-            if (window.isActive()) {
-                fStatusBar.setText(tmpMessage);
-                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> fStatusBar.setText("Ready.")));
-                timeline.setCycleCount(1);
-                timeline.play();
+    public void setupTabSelectionMessage(ResizableInternalWindow window, DiagramType diagramType) {
+        String tmpMessage;
+        if (window.isActive()) {
+            if (diagramType == DiagramType.CLASS_DIAGRAM) {
+                tmpMessage = "Use left mouse button to move classes, right button for popup menu.";
+            } else if (diagramType == DiagramType.OBJECT_DIAGRAM) {
+                tmpMessage = "Use left mouse button to move objects, right button for popup menu.";
+            } else if (diagramType == DiagramType.COMMUNICATION_DIAGRAM) {
+                tmpMessage = "Use left mouse button to move actor, object and link boxes, right button for popup menu.";
+            } else if (diagramType == DiagramType.CLASS_INVARIANT_VIEW) {
+                tmpMessage = "Use right mouse button for popup menu.";
+            } else if (diagramType == DiagramType.CLASS_EXTENT_VIEW) {
+                tmpMessage = "Use right mouse button for popup menu.";
+            } else if (diagramType == DiagramType.STATE_MACHINE_DIAGRAM) {
+                tmpMessage = "Use left mouse button to move objects, right button for popup menu.";
             } else {
-                fStatusBar.setText("Ready.");
+                tmpMessage = "Ready.";
             }
-        });
+
+            fStatusBar.setText(tmpMessage);
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> fStatusBar.setText("Ready.")));
+            timeline.setCycleCount(1);
+            timeline.play();
+        } else {
+            fStatusBar.setText("Ready.");
+        }
     }
 
     /**
@@ -1515,6 +1618,9 @@ public class MainWindow {
         for (ResizableInternalWindow win : allDesktopWindows) {
             win.setActive(win == window);
         }
+
+        // Updating the StatusBar
+        setupTabSelectionMessage(window, window.getDiagramType());
     }
 
     /**
