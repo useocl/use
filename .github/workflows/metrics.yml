@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ["Java CI with Maven"]
     types: [completed]
-    branches: [master, archunit_tests]
+    branches: [archunit_tests]
 
 jobs:
   collect-metrics:
