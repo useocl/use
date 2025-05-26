@@ -1,7 +1,6 @@
 name: Metrics Collection
 
 on:
-  push:
   workflow_run:
     workflows: ["Java CI with Maven"]
     types: [completed]
