@@ -2,14 +2,15 @@ name: Metrics Collection
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Java CI with Maven"]
-    types: [completed]
+  push:
+  # workflow_run:
+    # workflows: ["Java CI with Maven"]
+    # types: [completed]
     branches: [archunit_tests]
 
 jobs:
   collect-metrics:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     
     steps:
