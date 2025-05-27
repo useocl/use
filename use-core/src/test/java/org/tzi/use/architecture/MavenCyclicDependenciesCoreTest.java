@@ -179,20 +179,22 @@ public class MavenCyclicDependenciesCoreTest {
 
         int cycleCount = result.getFailureReport().getDetails().size();
 
-        // Extract package short name
-        String packageShortName = packageName.equals("org.tzi.use") ? "core" : packageName.substring(packageName.lastIndexOf('.')+1);
+        if (cycleCount > 0) {
+            // Extract package short name
+            String packageShortName = packageName.equals("org.tzi.use") ? "core" : packageName.substring(packageName.lastIndexOf('.')+1);
 
-        // Write failure report to file
-        String testSuffix = withTests ? "with_tests" : "without_tests";
-        String filename = String.format("target/archunit-reports/failure_report_maven_cycles_%s_%s.txt", packageShortName, testSuffix);
+            // Write failure report to file
+            String testSuffix = withTests ? "with_tests" : "without_tests";
+            String filename = String.format("target/archunit-reports/failure_report_maven_cycles_%s_%s.txt", packageShortName, testSuffix);
 
-        try (FileWriter writer = new FileWriter(filename)) {
-            for (String detail : result.getFailureReport().getDetails()) {
-                writer.write(detail + "\n");
+            try (FileWriter writer = new FileWriter(filename)) {
+                for (String detail : result.getFailureReport().getDetails()) {
+                    writer.write(detail + "\n");
+                }
+                writer.write("\nCycle count: " + cycleCount + "\n");
+            } catch (IOException e) {
+                System.err.println("Error writing report to " + filename + ": " + e.getMessage());
             }
-            writer.write("\nCycle count: " + cycleCount + "\n");
-        } catch (IOException e) {
-            System.err.println("Error writing report to " + filename + ": " + e.getMessage());
         }
         return cycleCount;
     }
