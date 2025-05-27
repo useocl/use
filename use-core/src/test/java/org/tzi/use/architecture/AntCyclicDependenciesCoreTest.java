@@ -12,6 +12,9 @@ import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.Before;
 import org.junit.Test;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class AntCyclicDependenciesCoreTest {
 
@@ -19,6 +22,12 @@ public class AntCyclicDependenciesCoreTest {
 
     @Before
     public void setup() {
+        // Create reports directory if it doesn't exist
+        File reportsDir = new File("target/archunit-reports");
+        if (!reportsDir.exists()) {
+            reportsDir.mkdirs();
+        }
+
         classes = new ClassFileImporter()
                 //.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .withImportOption(new CustomTestExclusionOption())
@@ -102,49 +111,6 @@ public class AntCyclicDependenciesCoreTest {
         System.out.println("Number of cycles in org.tzi.use.util: " + cycleCount);
     }
 
-/*    private int countCyclesForPackage(final String packageName) {
-        final SliceAssignment sliceAssignment = new SliceAssignment() {
-            @Override
-            public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
-                if (javaClass.getPackageName().startsWith(packageName)) {
-                    String subPackage = javaClass.getPackageName().substring(packageName.length());
-                    if (subPackage.isEmpty()) {
-                        return SliceIdentifier.of("root");
-                    }
-
-                    String[] parts = subPackage.substring(1).split("\\.");
-                    return SliceIdentifier.of(parts.length > 0 ? parts[0] : "root");
-                }
-                return SliceIdentifier.ignore();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Slices for " + packageName;
-            }
-        };
-
-        final AtomicInteger cycleCount = new AtomicInteger(0);
-        final List<String> cycleDetails = new ArrayList<>();
-
-        SlicesRuleDefinition.slices()
-                .assignedFrom(sliceAssignment)
-                .should().beFreeOfCycles()
-                .allowEmptyShould(true)
-                .evaluate(classesWithTests)
-                .handleViolations(new ViolationHandler<Object>() {
-                    @Override
-                    public void handle(Collection<Object> violatingObjects, String violationDescription) {
-                        cycleCount.incrementAndGet();
-                        String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
-                        cycleDetails.add(cycleInfo);
-                    }
-                });
-        return cycleCount.get();
-    }
-}*/
-
-    // use this function if a failure report needs to be generated
     private int countCyclesForPackage(String packageName) {
         SliceAssignment sliceAssignment = new SliceAssignment() {
             @Override
@@ -175,10 +141,18 @@ public class AntCyclicDependenciesCoreTest {
 
         int cycleCount = result.getFailureReport().getDetails().size();
 
-        for (Object detail : result.getFailureReport().getDetails()) {
-            System.out.println(detail);
+        //Extract package short name
+        String packageShortName = packageName.equals("org.tzi.use") ? "core" : packageName.substring(packageName.lastIndexOf('.')+1);
+        String filename = String.format("target/archunit-reports/failure_report_maven_cycles_%s.txt", packageShortName);
+
+        try (FileWriter writer = new FileWriter(filename)) {
+            for (String detail : result.getFailureReport().getDetails()) {
+                writer.write(detail + "\n");
+            }
+            writer.write("\nCycle count: " + cycleCount + "\n");
+        } catch (IOException e) {
+            System.err.println("Error writing report to " + filename + ": " + e.getMessage());
         }
-        System.out.println("Cycle count: " + cycleCount);
         return cycleCount;
     }
 

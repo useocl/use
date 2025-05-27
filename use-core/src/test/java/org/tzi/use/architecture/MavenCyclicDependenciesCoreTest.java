@@ -9,7 +9,6 @@ import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -29,10 +28,10 @@ public class MavenCyclicDependenciesCoreTest {
 
     @BeforeAll
     public void setup() {
-        // Create docs directory if it doesn't exist
-        File docsDir = new File("target/archunit-reports");
-        if (!docsDir.exists()) {
-            docsDir.mkdirs();
+        // Create reports directory if it doesn't exist
+        File reportsDir = new File("target/archunit-reports");
+        if (!reportsDir.exists()) {
+            reportsDir.mkdirs();
         }
 
         // Import classes without tests
