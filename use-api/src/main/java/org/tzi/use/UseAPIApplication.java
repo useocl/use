@@ -8,7 +8,7 @@ import org.tzi.use.model.Attribute;
 import org.tzi.use.model.UseClass;
 import org.tzi.use.model.Operation;
 import org.tzi.use.repository.ClassRepo;
-
+//localhost 8080 not in use anymore
 @SpringBootApplication
 public class UseAPIApplication {
     public static void main(String[] args) {
