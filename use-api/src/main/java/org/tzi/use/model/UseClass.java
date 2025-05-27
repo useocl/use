@@ -14,45 +14,75 @@ public class UseClass {
     private String name_mclass;
     // Unidirectional OneToMany relationship
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "mClass_id") // Foreign key column in the Employee table
+    @JoinColumn(name = "mClass_id")
     private List<Attribute> attributes = new ArrayList<>();
     // Unidirectional OneToMany relationship
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "mClass_id") // Foreign key column in the Employee table
+    @JoinColumn(name = "mClass_id")
     private List<Operation> operations = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "children", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<UseClass> parents = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "mClass_id")
+    private List<PrePostCondition> prePostConditions = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "associations", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<UseClass> associations = new ArrayList<>();
-
-
-    // Getters and Setters
+    @OneToMany(cascade  = CascadeType.ALL, orphanRemoval  = true)
+     @JoinColumn(name = "mClass_id")
+    private List<Invariant> invariants = new ArrayList<>();
 
     public String getName_mclass() {
         return name_mclass;
     }
 
-    public void setName_mclass(String name_mclass) {
-        this.name_mclass = name_mclass;
-    }
 
     public List<Attribute> getAttributes() {
         return attributes;
     }
-//
-//    public void setAttributes(List<Attribute> attributes) {
-//        this.attributes = attributes;
-//    }
-//
+
     public List<Operation> getOperations() {
         return operations;
     }
-//
-//    public void setOperations(List<Operation> operations) {
-//        this.operations = operations;
-//    }
+
+    public List<PrePostCondition> getPrePostConditions() {
+        return prePostConditions;
+    }
+
+    public List<Invariant> getInvariants() {
+        return invariants;
+    }
+
+    public void addAttribute(Attribute attribute) {
+        attributes.add(attribute);
+    }
+
+    public void removeAttribute(Attribute attribute) {
+        attributes.remove(attribute);
+    }
+
+    public void addOperation(Operation operation) {
+        operations.add(operation);
+    }
+
+    public void removeOperation(Operation operation) {
+        operations.remove(operation);
+    }
+
+    public void addPrePostCondition(PrePostCondition condition) {
+        prePostConditions.add(condition);
+    }
+
+    public void removePrePostCondition(PrePostCondition condition) {
+        prePostConditions.remove(condition);
+    }
+
+    public void addInvariant(Invariant invariant) {
+        invariants.add(invariant);
+    }
+
+    public void removeInvariant(Invariant invariant) {
+        invariants.remove(invariant);
+    }
+
+
 
     //Constructors
     public UseClass(String name_mclass, List<Attribute> attributes, List<Operation> operations) {
