@@ -9,12 +9,21 @@ import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class MavenLayeredArchitectureTest {
     private JavaClasses classes;
 
     @BeforeEach
     void setUp() {
+        // Create reports directory if it doesn't exist
+        File reportsDir = new File("target/archunit-reports");
+        if (!reportsDir.exists()) {
+            reportsDir.mkdirs();
+        }
+
         // DO_NOT_INCLUDE_TESTS lässt folgende Tests aus: alle in GUI plus Integrationtest ShellIT
         classes = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
@@ -44,8 +53,17 @@ public class MavenLayeredArchitectureTest {
         System.out.println(violationCount);
 
         if (violationCount > 0) {
-            System.err.println("\nViolation details:");
-            result.getFailureReport().getDetails().forEach(System.err::println);
+            // Write failure report to file
+            String filename = String.format("target/archunit-reports/failure_report_maven_layers.txt");
+
+            try (FileWriter writer = new FileWriter(filename)) {
+                for (String detail : result.getFailureReport().getDetails()) {
+                    writer.write(detail + "\n");
+                }
+                writer.write("\nLayer violations: " + violationCount + "\n");
+            } catch (IOException e) {
+                System.err.println("Error writing report to " + filename + ": " + e.getMessage());
+            }
         }
     }
 }
