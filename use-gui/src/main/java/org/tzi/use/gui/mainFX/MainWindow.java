@@ -26,13 +26,12 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.print.*;
@@ -46,10 +45,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -59,15 +55,21 @@ import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
 import org.tzi.use.config.RecentItems;
 import org.tzi.use.gui.main.*;
-import org.tzi.use.gui.views.ClassInvariantView;
-import org.tzi.use.gui.views.ObjectPropertiesView;
+import org.tzi.use.gui.utilFX.StatusBar;
+import org.tzi.use.gui.views.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
+import org.tzi.use.gui.main.ViewFrame;
 
+import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
+import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;
+import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SequenceDiagramView;
+import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 
+import org.tzi.use.gui.views.diagrams.statemachine.StateMachineDiagramView;
 import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;
@@ -86,12 +88,13 @@ import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
+import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.USEWriter;
 
 
 import java.awt.*;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
@@ -127,7 +130,7 @@ public class MainWindow {
     private HBox fDesktopTaskbarPane;
 
     @FXML
-    private Label fStatusBar;
+    private StatusBar fStatusBar;
 
     // Boolean Property's as Action Listeners to Update Visibility!!
     private final BooleanProperty fActionFileReload = new SimpleBooleanProperty(false);
@@ -160,6 +163,7 @@ public class MainWindow {
     private MenuItem fMenuItemEditRedo;
     private static Menu recentFilesMenu;
     private ModelBrowser fModelBrowser;
+    private Menu stateMachineDiagramMenu;
 
     // Static variable to store the last selected directory path
     private static String specificationDir = System.getProperty("user.dir");
@@ -210,7 +214,6 @@ public class MainWindow {
         //create the log panel
         fLogPanel = new LogPanel(fLogTextArea);
         fLogWriter = new PrintWriter(fLogPanel, true);
-
 
         // initialize application state to current system
         sessionChanged();
@@ -284,11 +287,9 @@ public class MainWindow {
         fActionSpecificationLoaded.set(on);
         fActionFileReload.set(on);
 
-        //TODO
         setUndoRedoButtons();
-//        closeAllViews();
-//        statemachineMenu.removeAll();
-//        createStateMachineMenuEntries(statemachineMenu);
+        closeAllWindows();
+
 
         if (fModelBrowser != null && primaryStage != null) {
             if (on) {
@@ -296,6 +297,16 @@ public class MainWindow {
                 fModelBrowser.setModel(system.model());
                 primaryStage.setTitle("USE: " + new File(system.model().filename()).getName());
             }
+        }
+
+        // for resetting the Application
+        stateMachineDiagramMenu.getItems().clear();
+        createStateMachineMenuEntries(stateMachineDiagramMenu.getItems());
+        fStatusBar.clearMessage();
+        repaintFolderTreeView();
+
+        if (MainWindow.getInstance().getWebViewFromPlaceholder() != null) {
+            MainWindow.getInstance().getWebViewFromPlaceholder().getEngine().loadContent("");
         }
 
     }
@@ -508,19 +519,29 @@ public class MainWindow {
         checkSN.setAccelerator(KeyCombination.keyCombination("F9"));
         checkSN.disableProperty().bind(fActionSpecificationLoaded.not());
         checkSN.setOnAction(e -> {
-            System.out.println("F9 Succesfully pressed");
+            checkStructure();
         });
 
         CheckMenuItem checkSAEC = new CheckMenuItem("Check structure after every change");
+        // TODO
         CheckMenuItem checkSMT = new CheckMenuItem("Check state machine transitions");
         CheckMenuItem checkSIAEC = new CheckMenuItem("Check state invariants after every change");
         MenuItem determine_states = new MenuItem("Determine states");
         determine_states.disableProperty().bind(fActionSpecificationLoaded.not());
         MenuItem checkStateInvariants = new MenuItem("Check state invariants");
         checkStateInvariants.disableProperty().bind(fActionSpecificationLoaded.not());
+
         MenuItem reset = new MenuItem("Reset");
         reset.disableProperty().bind(fActionSpecificationLoaded.not());
-
+        reset.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Reset system to its initial state and delete all objects and links?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            alert.setTitle("Please confirm");
+            alert.getDialogPane().setHeaderText(null); // drop default header
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+            // --- show & handle -------------------------------------------------------
+            alert.showAndWait().filter(btn -> btn == ButtonType.YES).ifPresent(btn -> fSession.reset());
+        });
 
         stateMenuItems.getItems().addAll(createObject, evaluateOCLexpr, checkSN, checkSAEC, checkSMT, checkSIAEC, determine_states, checkStateInvariants, reset);
     }
@@ -546,9 +567,9 @@ public class MainWindow {
             instance.createClassDiagram();
         });
 
-        Menu createStateMachineDiagramViewItem = new Menu("State machine diagram", getIcon("Diagram.gif"));
-        createStateMachineDiagramViewItem.setOnAction(e -> {
-        });
+        stateMachineDiagramMenu = new Menu("State machine diagram", getIcon("Diagram.gif"));
+        createStateMachineMenuEntries(stateMachineDiagramMenu.getItems());
+        stateMachineDiagramMenu.disableProperty().bind(fActionSpecificationLoaded.not());
 
         MenuItem createObjectDiagramViewItem = new MenuItem("Object diagram ", getIcon("ObjectDiagram.gif"));
         createObjectDiagramViewItem.setOnAction(e -> {
@@ -566,15 +587,33 @@ public class MainWindow {
         });
 
         MenuItem createClassExtentViewItem = new MenuItem("Class extent", getIcon("ClassExtentView.gif"));
+        createClassExtentViewItem.setOnAction(e -> {
+            instance.createClassExtentView();
+        });
         MenuItem createSequenceDiagramViewItem = new MenuItem("Sequence diagram", getIcon("SequenceDiagram.gif"));
+        createSequenceDiagramViewItem.setOnAction(e -> {
+            instance.createSequenceDiagramView();
+        });
         MenuItem createCommunicationDiagramViewItem = new MenuItem("Communication diagram", getIcon("CommunicationDiagram.gif"));
+        createCommunicationDiagramViewItem.setOnAction(e -> {
+            instance.createCommunicationDiagramView();
+        });
         MenuItem createCallStackViewItem = new MenuItem("Call stack", getIcon("CallStack.gif"));
+        createCallStackViewItem.setOnAction(e -> {
+            instance.createCallStackView();
+        });
         MenuItem createCommandListViewItem = new MenuItem("Command list ", getIcon("CmdList.gif"));
+        createCommandListViewItem.setOnAction(e -> {
+            instance.createCommandListView();
+        });
         MenuItem associationEndsInformation = new MenuItem("Association ends informations ", getIcon("CompositeAggregation.gif"));
+        associationEndsInformation.setOnAction(e -> {
+            instance.createAssociationEndsInformation();
+        });
 
 
         // Add MenuItems objects to the SubMenu
-        createView.getItems().addAll(createClassDiagramViewItem, createStateMachineDiagramViewItem, createObjectDiagramViewItem, createClassInvariantViewItem,
+        createView.getItems().addAll(createClassDiagramViewItem, stateMachineDiagramMenu, createObjectDiagramViewItem, createClassInvariantViewItem,
                 createObjectPropertiesViewItem, createClassExtentViewItem, createSequenceDiagramViewItem, createCommunicationDiagramViewItem,
                 createCallStackViewItem, createCommandListViewItem, associationEndsInformation);
 
@@ -704,9 +743,17 @@ public class MainWindow {
                     toolBar.getItems().add(button);
                     break;
                 case "Create statemachine diagram view":
-                    button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create statemachine diagram view"
-                    toolBar.getItems().add(button);
+
+                    // JavaFX has MenuButton / SplitMenuButton – we use MenuButton.
+                    MenuButton smBtn = new MenuButton();
+                    smBtn.setGraphic(imageKey);
+                    smBtn.setTooltip(new Tooltip(tooltipText));
+                    smBtn.disableProperty().bind(fActionSpecificationLoaded.not());
+
+                    // Re-populate each time the user opens the drop-down
+                    smBtn.setOnShowing(ev -> createStateMachineMenuEntries(smBtn.getItems()));
+
+                    toolBar.getItems().add(smBtn);
                     break;
                 case "Create object diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
@@ -731,27 +778,37 @@ public class MainWindow {
                     break;
                 case "Create class extent view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create class extent view"
+                    button.setOnAction(e -> {
+                        instance.createClassExtentView();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create sequence diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create sequence diagram view"
+                    button.setOnAction(e -> {
+                        instance.createSequenceDiagramView();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create communication diagram view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create communication diagram view"
+                    button.setOnAction(e -> {
+                        instance.createCommunicationDiagramView();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create call stack view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create call stack view"
+                    button.setOnAction(e -> {
+                        instance.createCallStackView();
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Create command list view":
                     button.disableProperty().bind(fActionSpecificationLoaded.not());
-                    //TODO "Create command list view"
+                    button.setOnAction(e -> {
+                        instance.createCommandListView();
+                    });
                     toolBar.getItems().add(button);
                     break;
             }
@@ -770,7 +827,7 @@ public class MainWindow {
     /**
      * Creates a new ResizableInternalWindow and adds it to the desktop.
      */
-    private void createNewWindow(String title, SwingNode swingNode, DiagramType diagramType) {
+    public void createNewWindow(String title, SwingNode swingNode, DiagramType diagramType) {
         ResizableInternalWindow window = new ResizableInternalWindow(title, fDesktopPane, fDesktopTaskbarPane, swingNode, this, diagramType);
 
         // Random or custom position in the desktop
@@ -802,6 +859,7 @@ public class MainWindow {
             win.closeWindow();
         }
         allDesktopWindows.clear();
+        setActiveWindow(null);
     }
 
     /**
@@ -1153,6 +1211,55 @@ public class MainWindow {
     }
 
     /**
+     * Rebuilds the list of state-machine menu-items for the given JavaFX Menu.
+     */
+    private void createStateMachineMenuEntries(ObservableList<MenuItem> destination) {
+        destination.clear();
+
+        int elems = 0;
+        if (fSession != null && fSession.hasSystem()) {
+            for (MClass cls : fSession.system().model().classes()) {
+                for (var sm : cls.getOwnedProtocolStateMachines()) {
+                    MenuItem item = new MenuItem(cls.name() + "::" + sm.name());
+                    item.setOnAction(ev -> showStateMachineView(sm));
+                    destination.add(item);
+                    ++elems;
+                }
+            }
+        }
+        if (elems == 0) {
+            MenuItem none = new MenuItem("No statemachines available");
+            none.setDisable(true);
+            destination.add(none);
+        }
+    }
+
+    /**
+     * Opens a State-Machine diagram for the given machine inside a ResizableInternalWindow.
+     */
+    private void showStateMachineView(org.tzi.use.uml.mm.statemachines.MStateMachine sm) {
+        SwingNode node = new SwingNode();
+
+        // Make Swing think we run head-less
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+
+        org.tzi.use.gui.main.MainWindow swingMW =
+                org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        StateMachineDiagramView dv = new StateMachineDiagramView(swingMW, fSession.system(), sm);
+
+        ViewFrame vf = new ViewFrame("State machine " + StringUtil.inQuotes(sm.name()), dv, "Diagram.gif");
+        JComponent content = (JComponent) vf.getContentPane();
+        content.setLayout(new java.awt.BorderLayout());
+        content.add(dv, java.awt.BorderLayout.CENTER);
+
+        node.setContent(content);
+        node.setCache(false);
+
+        createNewWindow("State machine " + StringUtil.inQuotes(sm.name()), node, DiagramType.STATE_MACHINE_DIAGRAM);
+    }
+
+    /**
      * Creates a new object diagram view.
      */
     private void createObjectDiagram() {
@@ -1185,6 +1292,7 @@ public class MainWindow {
             alert.setTitle("Large system state");
             Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
             alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+            alert.getDialogPane().setHeaderText(null);
             alert.setContentText("The current system state contains more than " + OBJECTS_LARGE_SYSTEM + " instances. " +
                     "This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?");
 
@@ -1281,7 +1389,192 @@ public class MainWindow {
         createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
     }
 
-    // Actions
+    /**
+     * Creates a new Class Extent view.
+     */
+    private void createClassExtentView() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the ClassExtentView and the enclosing ViewFrame
+        ClassExtentView cev = new ClassExtentView(mainwindow, fSession.system());
+        ViewFrame f = new ViewFrame("Class extent", cev, "ClassExtentView.gif");
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(cev, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Class extent", swingNode, DiagramType.CLASS_EXTENT_VIEW);
+    }
+
+    /**
+     * Creates a new Sequence Diagram view.
+     */
+    private void createSequenceDiagramView() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the ClassExtentView and the enclosing ViewFrame
+        SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(fSession.system(), mainwindow, null);
+        ViewFrame f = new ViewFrame("Sequence diagram", sdv, "SequenceDiagram.gif");
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(new SDScrollPane(sdv), BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
+    }
+
+    /**
+     * Creates a new Communication Diagram view.
+     */
+    private void createCommunicationDiagramView() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the ClassExtentView and the enclosing ViewFrame
+        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(mainwindow, fSession.system(), VisibleDataManager.createVisibleDataManager(fSession.system()));
+        ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(cdv, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Communication diagram", swingNode, DiagramType.COMMUNICATION_DIAGRAM);
+    }
+
+    /**
+     * Creates a new Call Stack view.
+     */
+    private void createCallStackView() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the CallStackView and the enclosing ViewFrame
+        CallStackView csv = new CallStackView(fSession.system());
+        ViewFrame f = new ViewFrame("Call stack", csv, "CallStack.gif");
+
+        // Set up the SwingNode content
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        JScrollPane jsp = new JScrollPane(csv);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
+        c.add(jsp, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Call stack", swingNode, DiagramType.CALL_STACK_VIEW);
+    }
+
+    /**
+     * Creates a new Command List view.
+     */
+    private void createCommandListView() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the ClassExtentView and the enclosing ViewFrame
+        CommandView clv = new CommandView(fSession.system());
+        ViewFrame f = new ViewFrame("Command list", clv, "CmdList.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        JScrollPane jsp = new JScrollPane(clv);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
+        c.setLayout(new BorderLayout());
+        c.add(clv, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Command list", swingNode, DiagramType.COMMAND_LIST_VIEW);
+    }
+
+    /**
+     * Creates a new Association Ends Information view.
+     */
+    private void createAssociationEndsInformation() {
+        // to create an instance of a SwingNode, which is used to hold the Swing-Components
+        swingNode = new SwingNode();
+
+        // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
+        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
+
+        // Create the Swing MainWindow instance
+        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+
+        // Create the ClassExtentView and the enclosing ViewFrame
+        AssociationEndsInfo clv = new AssociationEndsInfo(mainwindow, fSession.system());
+        ViewFrame f = new ViewFrame("Association ends information", clv, "Association.gif");
+        JComponent c = (JComponent) f.getContentPane();
+        c.setLayout(new BorderLayout());
+        JScrollPane jsp = new JScrollPane(clv);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
+        c.add(clv, BorderLayout.CENTER);
+
+        // Add the Swing component to the SwingNode
+        swingNode.setContent(c);
+        swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+        // creating the new Window with the swingNode
+        createNewWindow("Association ends information", swingNode, DiagramType.ASSOCIATION_INFO_VIEW);
+    }
+
+    // Actions //
 
     private boolean validateOpenPossible() {
         if (fSession != null) {
@@ -1347,6 +1640,7 @@ public class MainWindow {
         updateFActionDiagramPrinter();
         updateFActionViewPrinter();
         updateFActionExportContentAsPDF();
+        fStatusBar.clearMessage();
         if (fSession.system() != null && fSession.system().model() != null) {
             new ModelBrowser(fSession.system().model(), fPluginRuntime);
         } else {
@@ -1374,7 +1668,6 @@ public class MainWindow {
      * Initializes the FolderTreeView (WebViews Right Click Context Menu)
      */
     public void initFolderTreeView() {
-
         TreeItem<String> rootItem = new TreeItem<>("No model available");
         folderTreeView.setRoot(rootItem);
 
@@ -1383,7 +1676,34 @@ public class MainWindow {
         ContextMenu contextMenu = contextMenuHandler.createContextMenu();
 
         folderTreeView.setContextMenu(contextMenu);
+    }
 
+    /**
+     * closes all childnodes of the FolderTreeView recursively
+     */
+    public void repaintFolderTreeView() {
+        TreeItem<?> root = folderTreeView.getRoot();
+        if (root == null) return;
+
+        // closing all childnodes recursively
+        collapseRecursively(root);
+
+        // clearing selection
+        folderTreeView.getSelectionModel().clearSelection();
+
+        // refresh the tree
+        folderTreeView.refresh();
+    }
+
+    private void collapseRecursively(TreeItem<?> item) {
+        // starts with child first
+        for (TreeItem<?> child : item.getChildren()) {
+            collapseRecursively(child);
+        }
+        // all collapsed except root
+        if (item != folderTreeView.getRoot()) {
+            item.setExpanded(false);
+        }
     }
 
     /**
@@ -1424,17 +1744,6 @@ public class MainWindow {
     // Setter für Session
     public void setSession(Session session) {
         fSession = session;
-        // Now that session is set, initialize session-dependent components
-        if (fSession != null && fSession.hasSystem()) {
-            initializeSessionDependentComponents();
-        }
-    }
-
-    private void initializeSessionDependentComponents() {
-        // Initialize ModelBrowser and other session-related components
-//        fModelBrowser = new ModelBrowserFX(fSession.system().model(), folderTreeView, fPluginRuntime);
-//        fModelBrowser.fillTreeView();
-        //System.out.println("ModelBrowserFX has been initialized with system.");
     }
 
     // setter für IRuntime
@@ -1483,6 +1792,13 @@ public class MainWindow {
         return fPluginRuntime;
     }
 
+    private void checkStructure(){
+        boolean ok = fSession.system().state().checkStructure(fLogWriter);
+        fLogWriter.println("checking structure, "
+                + ((ok) ? "ok." : "found errors."));
+        fLogWriter.flush();
+    }
+
     /**
      * This Method updates the Status of the BooleanProperty (fActionSaveScript), according to if scripts are available.
      */
@@ -1497,8 +1813,6 @@ public class MainWindow {
      * This Method updates the Status of the BooleanProperty (fActionPrintDiagram), according to if Diagrams are available.
      */
     public void updateFActionDiagramPrinter() {
-        // TODO hier schauen auf welchem Tab man ist und wenn man auf einem tab ist welches für Printer geeignet ist dann halt true.
-        //fActionPrinter.set(fDesktopPane.getTabs().);
         fActionPrintDiagram.set(false);
     }
 
@@ -1506,8 +1820,6 @@ public class MainWindow {
      * This Method updates the Status of the BooleanProperty (fActionPrintView), according to if Views are available.
      */
     public void updateFActionViewPrinter() {
-        // TODO hier schauen auf welchem Tab man ist und wenn man auf einem tab ist welches für Printer geeignet ist dann halt true.
-        //fActionPrinter.set(fDesktopPane.getTabs().);
         fActionPrintView.set(false);
     }
 
@@ -1515,8 +1827,6 @@ public class MainWindow {
      * This Method updates the Status of the BooleanProperty (fActionExportContentAsPDF), according to if contents of View are available.
      */
     public void updateFActionExportContentAsPDF() {
-        // TODO hier schauen auf welchem Tab man ist und wenn man auf einem tab ist welches für Printer geeignet ist dann halt true.
-        //fActionPrinter.set(fDesktopPane.getTabs().);
         fActionExportContentAsPDF.set(false);
     }
 
@@ -1591,21 +1901,24 @@ public class MainWindow {
             } else {
                 tmpMessage = "Ready.";
             }
-
-            fStatusBar.setText(tmpMessage);
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> fStatusBar.setText("Ready.")));
-            timeline.setCycleCount(1);
-            timeline.play();
+            fStatusBar.showTmpMessage(tmpMessage);
         } else {
-            fStatusBar.setText("Ready.");
+            fStatusBar.clearMessage();
         }
     }
 
     /**
-     * returns the active Window on the DesktopPan
+     * returns the active Window on the DesktopPane
      */
     public ResizableInternalWindow getActiveWindow() {
         return activeWindow.get();
+    }
+
+    /**
+     * returns the active Statusbar
+     */
+    public StatusBar getfStatusBar() {
+        return fStatusBar;
     }
 
     /**
@@ -1619,8 +1932,10 @@ public class MainWindow {
             win.setActive(win == window);
         }
 
-        // Updating the StatusBar
-        setupTabSelectionMessage(window, window.getDiagramType());
+        if (window != null) {
+            // Updating the StatusBar
+            setupTabSelectionMessage(window, window.getDiagramType());
+        }
     }
 
     /**
@@ -1628,6 +1943,9 @@ public class MainWindow {
      */
     public void removeClosedWindow(ResizableInternalWindow window) {
         allDesktopWindows.remove(window);
+        if (allDesktopWindows.isEmpty()) {
+            setActiveWindow(null);
+        }
     }
 
     /**

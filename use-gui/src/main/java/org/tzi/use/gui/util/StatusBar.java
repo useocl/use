@@ -91,20 +91,12 @@ public class StatusBar extends JPanel {
         if (position.equals(BorderLayout.WEST) && fTimer.isRunning() )
             fTimer.stop();
     }
-    
-    /**
-     * Display a message. The message will be deleted only be a subsequent
-     * call to showTmpMessage or showMessage.
-     */
-    public void showMessage(String msg) {
-        showMessage(msg, BorderLayout.WEST);
-    }
 
     /**
      * Clear status bar and display a default message.
      */
     public void clearMessage() {
-        showMessage("Ready.");
+        showMessage("Ready.", BorderLayout.WEST);
         showMessage("", BorderLayout.EAST);
     }
 

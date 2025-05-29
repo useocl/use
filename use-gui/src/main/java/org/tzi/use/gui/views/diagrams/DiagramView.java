@@ -1516,7 +1516,7 @@ public abstract class DiagramView extends JPanel
     }
 
     class LayoutsOptionDialog extends JDialog {
-        public LayoutsOptionDialog(JFrame parent, final LayoutType layoutType) {
+        public LayoutsOptionDialog(Window parent, final LayoutType layoutType) {
             super(parent, "Layouts Settings");
             JPanel contentPane = new JPanel(new GridBagLayout());
 
@@ -1620,10 +1620,12 @@ public abstract class DiagramView extends JPanel
         // Different Layouts
         JMenu layouts = new JMenu("Layouts");
         final JMenuItem hierarchicalLayout = new JMenuItem("Hierarchical layout");
+        final Window owner =  MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+
         hierarchicalLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Hierarchical);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.Hierarchical);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1632,7 +1634,7 @@ public abstract class DiagramView extends JPanel
         hierarchicalUpsideDownLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.HierarchicalUpsideDown);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.HierarchicalUpsideDown);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1641,7 +1643,7 @@ public abstract class DiagramView extends JPanel
         horizontalLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Horizontal);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.Horizontal);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1650,7 +1652,7 @@ public abstract class DiagramView extends JPanel
         horizontalRightToLeftLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.HorizontalRightToLeft);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.HorizontalRightToLeft);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1659,7 +1661,7 @@ public abstract class DiagramView extends JPanel
         landscapeSwimlaneLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.LandscapeSwimlane);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.LandscapeSwimlane);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1669,7 +1671,7 @@ public abstract class DiagramView extends JPanel
         portraitSwimlaneLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.PortraitSwimlane);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.PortraitSwimlane);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }

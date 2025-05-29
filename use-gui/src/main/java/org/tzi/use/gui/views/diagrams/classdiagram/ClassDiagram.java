@@ -23,7 +23,7 @@ package org.tzi.use.gui.views.diagrams.classdiagram;
 
 import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -36,18 +36,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
+import javax.swing.*;
 
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
@@ -1289,6 +1281,13 @@ public class ClassDiagram extends DiagramView
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Window owner = null;
+				// setting owner for javafxCall, so that new Window is focused in front of the Application and not behind it
+				if (MainWindow.getJavaFxCall()){
+					// Schritt 1: Owner-Fenster holen aus dem Swing-Content
+					owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
+				}
+
 				int option = JOptionPane.YES_OPTION;
 
 				JFileChooser fChooser = new JFileChooser(Options.getLastDirectory().toFile());
@@ -1302,7 +1301,7 @@ public class ClassDiagram extends DiagramView
 				}
 
 				do {
-					int returnVal = fChooser.showSaveDialog(null);
+					int returnVal = fChooser.showSaveDialog(owner);
 
 					if (returnVal != JFileChooser.APPROVE_OPTION)
 						return;
@@ -1318,7 +1317,7 @@ public class ClassDiagram extends DiagramView
 					lastFile = Options.getLastDirectory().resolve(filename);
 
 					if (Files.isWritable(lastFile)) {
-						option = JOptionPane.showConfirmDialog(null, "Overwrite existing file " + lastFile + "?",
+						option = JOptionPane.showConfirmDialog(owner, "Overwrite existing file " + lastFile + "?",
 								"Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
 						if (option == JOptionPane.CANCEL_OPTION) {
 							return;
@@ -1340,12 +1339,19 @@ public class ClassDiagram extends DiagramView
 					exporter.export(lastFile, getSystem(), visibleData.fClassToNodeMap.keySet(),
 							visibleData.fDataTypeToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(ClassDiagram.this, e1.getMessage(), "Error saving the USE model",
-							JOptionPane.ERROR_MESSAGE);
+					if (MainWindow.getJavaFxCall()){
+						// Schritt 1: Owner-Fenster holen aus dem Swing-Content
+						owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
+						JOptionPane.showMessageDialog(owner, e1.getMessage(), "Error saving the USE model",
+								JOptionPane.ERROR_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(ClassDiagram.this, e1.getMessage(), "Error saving the USE model",
+								JOptionPane.ERROR_MESSAGE);
+					}
 					return;
 				}
 
-				JOptionPane.showMessageDialog(null, "Export succesfull", "Export successfull",
+				JOptionPane.showMessageDialog(owner, "Export succesfull", "Export successfull",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});

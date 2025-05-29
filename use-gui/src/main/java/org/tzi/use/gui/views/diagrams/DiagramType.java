@@ -16,6 +16,11 @@ public enum DiagramType {
     COMMAND_LIST_VIEW(false, false, false),
     ASSOCIATION_INFO_VIEW(false, false, false),
     OCL_EVALUATION(false, false, false),
+    SELECTED_CLASS_PATH_VIEW(false, false, false),
+    SELECTED_CLASS_VIEW(false, false, false),
+    SELECTED_OBJECT_PATH_VIEW(false, false, false),
+    SELECTED_OBJECT_VIEW(false, false, false),
+    SELECTED_OCL_VIEW(false, false, false),
     OTHER(false, false, false);
 
     private final boolean isDiagram;

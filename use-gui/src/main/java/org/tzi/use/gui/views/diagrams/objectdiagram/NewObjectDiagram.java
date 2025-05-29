@@ -21,7 +21,7 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -67,12 +67,16 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
+import javafx.application.Platform;
+import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.ObjectPropertiesView;
+import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
@@ -93,6 +97,7 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
+import org.tzi.use.main.gui.Main;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationClassImpl;
@@ -1056,8 +1061,33 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			ObjectPropertiesView v = MainWindow.instance().showObjectPropertiesView();
-			v.selectObject(fObject.name());
+			if (MainWindow.getJavaFxCall()){
+				Platform.runLater(()->{
+					// to create an instance of a SwingNode, which is used to hold the Swing-Components
+					SwingNode swingNode = new SwingNode();
+
+					// Create the ClassInvariantView and the enclosing ViewFrame in the javaFX DesktopPane
+					ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.instance(), org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system());
+					opv.selectObject(fObject.name()); //selecting the focused Object
+
+					ViewFrame f = new ViewFrame("Object properties", opv, "ObjectProperties.gif");
+
+					// Set up the SwingNode content
+					JComponent c = (JComponent) f.getContentPane();
+					c.setLayout(new BorderLayout());
+					c.add(opv, BorderLayout.CENTER);
+
+					// Add the Swing component to the SwingNode
+					swingNode.setContent(c);
+					swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+
+					// creating the new Window with the swingNode
+					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
+				});
+			} else {
+				ObjectPropertiesView v = MainWindow.instance().showObjectPropertiesView();
+				v.selectObject(fObject.name());
+			}
 		}
 	}
 

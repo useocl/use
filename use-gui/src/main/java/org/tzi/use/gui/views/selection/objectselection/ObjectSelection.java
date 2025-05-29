@@ -21,9 +21,12 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import javafx.application.Platform;
+import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.util.AlphanumComparator;
+import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -97,8 +100,19 @@ public class ObjectSelection {
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
-			MainWindow.instance().addNewViewFrame(f);
-			f.setSize(450, 200);
+
+			if (MainWindow.getJavaFxCall()){
+				Platform.runLater(() -> {
+					SwingNode swingNode = new SwingNode();
+					swingNode.setContent(opv);
+					swingNode.setCache(false);
+
+					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by path length",swingNode, DiagramType.SELECTED_OBJECT_PATH_VIEW);
+				});
+			} else {
+				MainWindow.instance().addNewViewFrame(f);
+				f.setSize(450, 200);
+			}
 		}
 	}
 
@@ -118,9 +132,19 @@ public class ObjectSelection {
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
-			MainWindow.instance().addNewViewFrame(f);
 
-			f.setSize(530, 230);
+			if (MainWindow.getJavaFxCall()){
+				Platform.runLater(() -> {
+					SwingNode swingNode = new SwingNode();
+					swingNode.setContent(opv);
+					swingNode.setCache(false);
+
+					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
+				});
+			} else {
+				MainWindow.instance().addNewViewFrame(f);
+				f.setSize(530, 230);
+			}
 		}
 	}
 
@@ -144,8 +168,19 @@ public class ObjectSelection {
 
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
-			MainWindow.instance().addNewViewFrame(f);
-			f.setSize(370, 250);
+
+			if (MainWindow.getJavaFxCall()){
+				Platform.runLater(() -> {
+					SwingNode swingNode = new SwingNode();
+					swingNode.setContent(opv);
+					swingNode.setCache(false);
+
+					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by OCL expression",swingNode, DiagramType.SELECTED_OCL_VIEW);
+				});
+			} else {
+				MainWindow.instance().addNewViewFrame(f);
+				f.setSize(370, 250);
+			}
 		}
 	}
 

@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
@@ -74,7 +75,7 @@ public class ResizableInternalWindow extends Pane {
     private final DiagramType diagramType;
 
     // controller
-    private MainWindow controller;
+    private final MainWindow controller;
 
     /**
      * Constructor for the resizable internal window.
@@ -129,7 +130,19 @@ public class ResizableInternalWindow extends Pane {
 
         // Style and set default size for the window
         setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;");
-        setPrefSize(300, 200);
+
+        // Different Size on different Windows
+        if (diagramType == DiagramType.SELECTED_CLASS_PATH_VIEW || diagramType == DiagramType.SELECTED_OBJECT_PATH_VIEW){
+            setPrefSize(450, 200);
+        } else if (diagramType == DiagramType.SELECTED_CLASS_VIEW){
+            setPrefSize(580, 230);
+        } else if (diagramType == DiagramType.SELECTED_OBJECT_VIEW){
+            setPrefSize(530, 230);
+        } else if (diagramType == DiagramType.SELECTED_OCL_VIEW){
+            setPrefSize(370, 250);
+        }else {
+            setPrefSize(300, 200);
+        }
 
         // Bind the title bar width to match the window
         titleBar.prefWidthProperty().bind(widthProperty());
@@ -232,58 +245,16 @@ public class ResizableInternalWindow extends Pane {
             draggingWindow = false;
         });
 
-        // --- Detect edges on mouse move (for changing cursor) ---
-        setOnMouseMoved(e -> {
-            if (minimized || maximized) {
-                // No resizing in minimized or maximized state
-                setCursor(Cursor.DEFAULT);
-                return;
-            }
+        // detect Mouse Movement and update Cursor Appearance
+        mouseMovementRecognition();
 
-            // If the user is dragging the window by the title bar, skip
-            if (draggingWindow) {
-                return;
-            }
-
-            double x = e.getX();
-            double y = e.getY();
-            double width = getWidth();
-            double height = getHeight();
-
-            boolean nearLeft   = (x < RESIZE_MARGIN);
-            boolean nearRight  = (x > width - RESIZE_MARGIN);
-            boolean nearTop    = (y < RESIZE_MARGIN);
-            boolean nearBottom = (y > height - RESIZE_MARGIN);
-
-            resizeLeft   = nearLeft;
-            resizeRight  = nearRight;
-            resizeTop    = nearTop;
-            resizeBottom = nearBottom;
-
-            // Update cursor based on which edges
-            if (nearLeft && nearTop) {
-                setCursor(Cursor.NW_RESIZE);
-            } else if (nearRight && nearTop) {
-                setCursor(Cursor.NE_RESIZE);
-            } else if (nearLeft && nearBottom) {
-                setCursor(Cursor.SW_RESIZE);
-            } else if (nearRight && nearBottom) {
-                setCursor(Cursor.SE_RESIZE);
-            } else if (nearLeft) {
-                setCursor(Cursor.W_RESIZE);
-            } else if (nearRight) {
-                setCursor(Cursor.E_RESIZE);
-            } else if (nearTop) {
-                setCursor(Cursor.N_RESIZE);
-            } else if (nearBottom) {
-                setCursor(Cursor.S_RESIZE);
-            } else {
-                setCursor(Cursor.DEFAULT);
-            }
+        content.setOnMousePressed(e -> {
+            setWindowToFront();
         });
 
-        content.setOnMousePressed(e->{
-            setWindowToFront();
+        // when leaving the window, clear the statusbar to default.
+        setOnMouseExited(e -> {
+             controller.getfStatusBar().clearMessage();
         });
 
         // --- Record initial geometry on mouse press if we might resize ---
@@ -379,6 +350,71 @@ public class ResizableInternalWindow extends Pane {
         });
     }
 
+    // --- Detect edges on mouse move (for changing cursor) ---
+    private void mouseMovementRecognition() {
+        // No resizing in minimized or maximized state
+        if (minimized || maximized) {
+            setCursor(Cursor.DEFAULT);
+            return;
+        }
+
+        // If the user is dragging the window by the title bar, skip
+        if (draggingWindow) {
+            return;
+        }
+
+        //no resizing cursor inside the content
+        content.setOnMouseMoved(e -> {
+            setCursor(Cursor.DEFAULT);
+
+            updateMousePositionHandler(e);
+        });
+
+        content.setOnMouseDragged(this::updateMousePositionHandler);
+
+        // show resizing Cursor and update the statusBars mouse location on Window
+        setOnMouseMoved(e -> {
+            double x = e.getX();
+            double y = e.getY();
+
+            double width = getWidth();
+            double height = getHeight();
+
+            boolean nearLeft = (x < RESIZE_MARGIN);
+            boolean nearRight = (x > width - RESIZE_MARGIN);
+            boolean nearTop = (y < RESIZE_MARGIN);
+            boolean nearBottom = (y > height - RESIZE_MARGIN);
+
+            resizeLeft = nearLeft;
+            resizeRight = nearRight;
+            resizeTop = nearTop;
+            resizeBottom = nearBottom;
+
+            // Update cursor based on which edges
+            if (nearLeft && nearTop) {
+                setCursor(Cursor.NW_RESIZE);
+            } else if (nearRight && nearTop) {
+                setCursor(Cursor.NE_RESIZE);
+            } else if (nearLeft && nearBottom) {
+                setCursor(Cursor.SW_RESIZE);
+            } else if (nearRight && nearBottom) {
+                setCursor(Cursor.SE_RESIZE);
+            } else if (nearLeft) {
+                setCursor(Cursor.W_RESIZE);
+            } else if (nearRight) {
+                setCursor(Cursor.E_RESIZE);
+            } else if (nearTop) {
+                setCursor(Cursor.N_RESIZE);
+            } else if (nearBottom) {
+                setCursor(Cursor.S_RESIZE);
+            } else {
+                setCursor(Cursor.DEFAULT);
+            }
+        });
+
+
+    }
+
     private void setupContent() {
         Pane contentPane = new Pane();
 
@@ -393,7 +429,7 @@ public class ResizableInternalWindow extends Pane {
 
         // And reduce the height by 5px at the bottom
         contentPane.prefHeightProperty().bind(
-                heightProperty().subtract(titleBar.getPrefHeight() + EDGE_MARGIN*2)
+                heightProperty().subtract(titleBar.getPrefHeight() + EDGE_MARGIN * 2)
         );
 
         getChildren().add(contentPane);
@@ -427,6 +463,8 @@ public class ResizableInternalWindow extends Pane {
             controller.setActiveWindow((ResizableInternalWindow) desktopPane.getChildren().getLast());
             ResizableInternalWindow lastWindowInList = (ResizableInternalWindow) desktopPane.getChildren().getLast();
             lastWindowInList.setActive(true);
+        } else {
+            controller.setActiveWindow(null);
         }
     }
 
@@ -492,7 +530,7 @@ public class ResizableInternalWindow extends Pane {
         // remove from desktop
         desktopPane.getChildren().remove(this);
 
-        if (desktopPane.getChildren().isEmpty() && taskbarPane.getChildren().isEmpty()){
+        if (desktopPane.getChildren().isEmpty() && taskbarPane.getChildren().isEmpty()) {
             // if no desktopPanes open
             // controller.setActiveWindow(null); Not Needed I think
         } else if (!desktopPane.getChildren().isEmpty()) {
@@ -557,16 +595,16 @@ public class ResizableInternalWindow extends Pane {
         btnClose.setTextOverrun(OverrunStyle.CLIP);
     }
 
-    public void dragRecognition(){
-        //if (diagramType == DiagramType.OBJECT_DIAGRAM){
-            content.setOnDragOver(event -> {
-                Dragboard db = event.getDragboard();
-                if (db.hasString() && db.getString().startsWith("CLASS-")) {
-                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-                event.consume();
-            });
+    public void dragRecognition() {
+        content.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasString() && db.getString().startsWith("CLASS-")) {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            event.consume();
+        });
 
+        if (diagramType == DiagramType.OBJECT_DIAGRAM) {
             content.setOnDragDropped(event -> {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
@@ -588,7 +626,19 @@ public class ResizableInternalWindow extends Pane {
                 event.setDropCompleted(success);
                 event.consume();
             });
-        //}
+        }
+    }
+
+    private void updateMousePositionHandler(MouseEvent e) {
+        boolean isValidDiagramtype = diagramType == DiagramType.CLASS_DIAGRAM || diagramType == DiagramType.OBJECT_DIAGRAM || diagramType == DiagramType.COMMUNICATION_DIAGRAM;
+        if (isValidDiagramtype) {
+            double x = e.getX();
+            double y = e.getY();
+
+            // update statusbars right side mouse position (x + y)
+            String posMsg = String.format("[x=%.1f, y=%.1f]", x, y);
+            controller.getfStatusBar().showMessage(posMsg, Pos.BASELINE_RIGHT);
+        }
     }
 
     public void setActive(Boolean active) {
@@ -600,7 +650,7 @@ public class ResizableInternalWindow extends Pane {
     }
 
     // --- Setting Window to Front ---
-    public void setWindowToFront(){
+    public void setWindowToFront() {
         // Mark this window as active for the controller (MainWindow)
         toFront();
         setActive(true);

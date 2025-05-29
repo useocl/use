@@ -7,10 +7,10 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import org.tzi.use.gui.utilFX.StatusBar?>
 <BorderPane fx:id="borderPaneID" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.tzi.use.gui.mainFX.MainWindow">
@@ -61,10 +61,10 @@
                     <HBox>
                         <Label text="Log" />
                     </HBox>
-                    <TextArea fx:id="fLogTextArea" VBox.vgrow="ALWAYS">
+                    <TextArea fx:id="fLogTextArea" HBox.hgrow="ALWAYS">
                     </TextArea>
                     <HBox>
-                        <Label fx:id="fStatusBar" text="Ready." />
+                        <StatusBar fx:id="fStatusBar" HBox.hgrow="ALWAYS"/>
                     </HBox>
                 </VBox>
             </items>

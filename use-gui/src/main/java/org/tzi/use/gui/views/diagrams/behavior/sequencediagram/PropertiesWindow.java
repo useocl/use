@@ -19,33 +19,17 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
+import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.diagrams.behavior.shared.CancelButton;
 import org.tzi.use.gui.views.diagrams.behavior.shared.OKButton;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -110,8 +94,9 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 	/**
 	 * Constructs a new Properties-Window.
 	 */
-	public PropertiesWindow(SequenceDiagram seqDiag) {
-		super(seqDiag.getMainWindow(), true);
+	public PropertiesWindow(Window owner, SequenceDiagram seqDiag) {
+		super(owner);
+		setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("Properties...");
 		fSeqDiag = seqDiag;
 		fC = getContentPane();
@@ -682,8 +667,10 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 	 * Shows the Window.
 	 */
 	public void showWindow() {
-		PropertiesWindow propW = new PropertiesWindow(fSeqDiag);
+		Window owner = MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+		PropertiesWindow propW = new PropertiesWindow(owner, fSeqDiag);
 		propW.setLocation(300, 200);
+		propW.setLocationRelativeTo(getOwner());
 		propW.setVisible(true);
 	}
 
