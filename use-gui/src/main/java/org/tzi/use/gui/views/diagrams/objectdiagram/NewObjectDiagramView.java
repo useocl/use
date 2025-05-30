@@ -306,7 +306,7 @@ public class NewObjectDiagramView extends JPanel
     }
 
     void createObject(String clsName) {
-        org.tzi.use.gui.mainFX.MainWindow.getInstance().createObject(clsName);
+        MainWindow.instance().createObject(clsName);
     }
 
     @Override
