@@ -21,6 +21,7 @@ package org.tzi.use.gui.mainFX;
 
 // Notwendig für die Einbindung von Java Swing Content in einer JavaFX Anwendung
 
+import com.google.common.eventbus.Subscribe;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -83,6 +84,8 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
+import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
@@ -141,6 +144,8 @@ public class MainWindow {
     private final BooleanProperty fActionExportContentAsPDF = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionEditUndo = new SimpleBooleanProperty(false);
     private final BooleanProperty fActionEditRedo = new SimpleBooleanProperty(false);
+    private final BooleanProperty autoCheckStructure = new SimpleBooleanProperty();
+    private final BooleanProperty autoCheckStateInvariants = new SimpleBooleanProperty();
 
     // Keep track of the currently active ResizableInternalWindow
     private final ObjectProperty<ResizableInternalWindow> activeWindow = new SimpleObjectProperty<>(null);
@@ -154,6 +159,7 @@ public class MainWindow {
     private static MainWindow instance;
     private PageLayout fPageLayout;
     private PrinterJob fPrinterJob;
+    private CheckMenuItem fCbMenuItemCheckStructure;
     private SwingNode swingNode;
     private static PrintWriter fLogWriter;
     private LogPanel fLogPanel;
@@ -293,12 +299,13 @@ public class MainWindow {
 
         if (fModelBrowser != null && primaryStage != null) {
             if (on) {
+                fSession.system().getEventBus().unregister(this); // unregister old System before creating new one
                 MSystem system = fSession.system();
                 fModelBrowser.setModel(system.model());
+                system.getEventBus().register(this);
                 primaryStage.setTitle("USE: " + new File(system.model().filename()).getName());
             }
         }
-
         // for resetting the Application
         stateMachineDiagramMenu.getItems().clear();
         createStateMachineMenuEntries(stateMachineDiagramMenu.getItems());
@@ -522,14 +529,32 @@ public class MainWindow {
             checkStructure();
         });
 
-        CheckMenuItem checkSAEC = new CheckMenuItem("Check structure after every change");
-        // TODO
+        fCbMenuItemCheckStructure = new CheckMenuItem("Check structure after every change");
+        autoCheckStructure.bind(fCbMenuItemCheckStructure.selectedProperty());
+
         CheckMenuItem checkSMT = new CheckMenuItem("Check state machine transitions");
+        checkSMT.setSelected(Options.getCheckTransitions());
+        // Whenever the user toggles the item, update the preference
+        checkSMT.selectedProperty().addListener(
+                (obs, wasSelected, isSelected) ->
+                        Options.setCheckTransitions(isSelected));
+
         CheckMenuItem checkSIAEC = new CheckMenuItem("Check state invariants after every change");
+        checkSIAEC.setSelected(Options.getCheckStateInvariants());
+        autoCheckStateInvariants.bind(checkSIAEC.selectedProperty());
+        checkSIAEC.selectedProperty().addListener((obs, oldVal, newVal) -> Options.setCheckStateInvariants(newVal));
+
         MenuItem determine_states = new MenuItem("Determine states");
         determine_states.disableProperty().bind(fActionSpecificationLoaded.not());
+        determine_states.setOnAction(e -> {
+            fSession.system().determineStates(fLogWriter);
+        });
+
         MenuItem checkStateInvariants = new MenuItem("Check state invariants");
         checkStateInvariants.disableProperty().bind(fActionSpecificationLoaded.not());
+        checkStateInvariants.setOnAction(e -> {
+            fSession.system().state().checkStateInvariants(fLogWriter);
+        });
 
         MenuItem reset = new MenuItem("Reset");
         reset.disableProperty().bind(fActionSpecificationLoaded.not());
@@ -543,7 +568,7 @@ public class MainWindow {
             alert.showAndWait().filter(btn -> btn == ButtonType.YES).ifPresent(btn -> fSession.reset());
         });
 
-        stateMenuItems.getItems().addAll(createObject, evaluateOCLexpr, checkSN, checkSAEC, checkSMT, checkSIAEC, determine_states, checkStateInvariants, reset);
+        stateMenuItems.getItems().addAll(createObject, evaluateOCLexpr, checkSN, fCbMenuItemCheckStructure, checkSMT, checkSIAEC, determine_states, checkStateInvariants, reset);
     }
 
     /**
@@ -1596,6 +1621,7 @@ public class MainWindow {
     protected boolean compile(final Path f) {
         // clearing the current state before compiling the new one
         fLogPanel.clear();
+        //TODO
 
         // clearing all the windows inside the desktoppane
         closeAllWindows();
@@ -1617,6 +1643,7 @@ public class MainWindow {
             fLogWriter.println(model.getStats());
             // create system
             system = new MSystem(model);
+            system.getEventBus().register(this);
         } else {
             system = null;
         }
@@ -1792,7 +1819,23 @@ public class MainWindow {
         return fPluginRuntime;
     }
 
-    private void checkStructure(){
+    @Subscribe
+    public void onStructureChanged(SystemStructureChangedEvent e) {
+        if (!autoCheckStructure.get()) return;
+        Platform.runLater(this::checkStructure);
+    }
+
+    @Subscribe
+    public void onSystemChanged(SystemStateChangedEvent ev){
+        if (!autoCheckStateInvariants.get()) return;
+        Platform.runLater(() -> {
+            fLogWriter.println("Checking state invariants.");
+            fSession.system().state().checkStateInvariants(fLogWriter);
+        });
+    }
+
+
+    private void checkStructure() {
         boolean ok = fSession.system().state().checkStructure(fLogWriter);
         fLogWriter.println("checking structure, "
                 + ((ok) ? "ok." : "found errors."));
