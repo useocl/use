@@ -22,8 +22,6 @@ package org.tzi.use.gui.mainFX;
 // Notwendig für die Einbindung von Java Swing Content in einer JavaFX Anwendung
 
 import com.google.common.eventbus.Subscribe;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 
 import javax.swing.*;
@@ -39,7 +37,6 @@ import javafx.print.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
@@ -50,12 +47,10 @@ import javafx.scene.layout.*;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
 import org.tzi.use.config.RecentItems;
-import org.tzi.use.gui.main.*;
 import org.tzi.use.gui.utilFX.StatusBar;
 import org.tzi.use.gui.views.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
@@ -96,7 +91,6 @@ import org.tzi.use.util.USEWriter;
 
 
 import java.awt.*;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.file.*;
@@ -453,16 +447,40 @@ public class MainWindow {
         printDiagram.setGraphic(getIcon("document-print.png"));
         printDiagram.disableProperty().bind(fActionPrintDiagram.not());
         printDiagram.setOnAction(e -> {
-            // TODO
+            ResizableInternalWindow activeWindow = getActiveWindow();
+            if (activeWindow != null && activeWindow.getDiagramType().isDiagram()) {
+                if (fPageLayout == null) {
+                    fPageLayout = Printer.getDefaultPrinter().getDefaultPageLayout();
+                }
+                activeWindow.print(fPageLayout);
+            }
         });
 
         MenuItem printView = new MenuItem("Print View...");
         printView.setGraphic(getIcon("document-print.png"));
         printView.disableProperty().bind(fActionPrintView.not());
+        printView.setOnAction(e -> {
+            ResizableInternalWindow activeWindow = getActiveWindow();
+            if (activeWindow != null && activeWindow.getDiagramType().isView()) {
+                if (fPageLayout == null) {
+                    fPageLayout = Printer.getDefaultPrinter().getDefaultPageLayout();
+                }
+                activeWindow.print(fPageLayout);
+            }
+        });
 
         MenuItem exportAsPdf = new MenuItem("Export view as PDF...");
         exportAsPdf.setGraphic(getIcon("export_pdf.png"));
         exportAsPdf.disableProperty().bind(fActionExportContentAsPDF.not());
+        exportAsPdf.setOnAction(e -> {
+            ResizableInternalWindow activeWindow = getActiveWindow();
+            if (activeWindow != null && activeWindow.getDiagramType().isExportable()) {
+                if (fPageLayout == null) {
+                    fPageLayout = Printer.getDefaultPrinter().getDefaultPageLayout();
+                }
+                activeWindow.exportAsPdf(false);
+            }
+        });
 
 
         MenuItem exit = new MenuItem("Exit");
@@ -724,17 +742,41 @@ public class MainWindow {
                     break;
                 case "Print diagram":
                     button.disableProperty().bind(fActionPrintDiagram.not());
-                    //TODO "Print diagram"
+                    button.setOnAction(e -> {
+                        ResizableInternalWindow activeWindow = getActiveWindow();
+                        if (activeWindow != null && activeWindow.getDiagramType().isDiagram()) {
+                            if (fPageLayout == null) {
+                                fPageLayout = Printer.getDefaultPrinter().getDefaultPageLayout();
+                            }
+                            activeWindow.print(fPageLayout);
+                        }
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Print view":
                     button.disableProperty().bind(fActionPrintView.not());
-                    //TODO "Print view"
+                    button.setOnAction(e -> {
+                        ResizableInternalWindow activeWindow = getActiveWindow();
+                        if (activeWindow != null && activeWindow.getDiagramType().isView()) {
+                            if (fPageLayout == null) {
+                                fPageLayout = Printer.getDefaultPrinter().getDefaultPageLayout();
+                            }
+                            activeWindow.print(fPageLayout);
+                        }
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Export content of view as PDF":
                     button.disableProperty().bind(fActionExportContentAsPDF.not());
-                    //TODO "Export content of view as PDF"
+                    button.setOnAction(e -> {
+                        ResizableInternalWindow activeWindow = getActiveWindow();
+                        if (activeWindow != null && activeWindow.getDiagramType().isExportable()) {
+                            if (fPageLayout == null) {
+                                fPageLayout = Printer.getDefaultPrinter().getDefaultPageLayout();
+                            }
+                            activeWindow.exportAsPdf(true);
+                        }
+                    });
                     toolBar.getItems().add(button);
                     break;
                 case "Undo last statement":
@@ -1345,13 +1387,6 @@ public class MainWindow {
     }
 
     /**
-     * Creates a new statemachine diagram view.
-     */
-    private void createStatemachineDiagramView() {
-        // TODO
-    }
-
-    /**
      * Creates a new class invariant view.
      */
     private void createClassInvariantView() {
@@ -1621,7 +1656,6 @@ public class MainWindow {
     protected boolean compile(final Path f) {
         // clearing the current state before compiling the new one
         fLogPanel.clear();
-        //TODO
 
         // clearing all the windows inside the desktoppane
         closeAllWindows();
@@ -1826,7 +1860,7 @@ public class MainWindow {
     }
 
     @Subscribe
-    public void onSystemChanged(SystemStateChangedEvent ev){
+    public void onSystemChanged(SystemStateChangedEvent ev) {
         if (!autoCheckStateInvariants.get()) return;
         Platform.runLater(() -> {
             fLogWriter.println("Checking state invariants.");
@@ -1846,7 +1880,6 @@ public class MainWindow {
      * This Method updates the Status of the BooleanProperty (fActionSaveScript), according to if scripts are available.
      */
     public void updateFActionSaveScript() {
-        // TODO hier schauen wann angezeigt werden soll
         if (fSession.hasSystem()) {
             fActionSaveScript.set(fSession.system().numEvaluatedStatements() > 0);
         }

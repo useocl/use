@@ -1,19 +1,47 @@
 package org.tzi.use.gui.mainFX;
 
+import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.geometry.Pos;
+import javafx.print.*;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import org.tzi.use.gui.views.diagrams.DiagramType;
+import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
+import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SequenceDiagramView;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;
+import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
+import org.tzi.use.gui.views.diagrams.statemachine.StateMachineDiagramView;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 public class ResizableInternalWindow extends Pane {
@@ -132,15 +160,15 @@ public class ResizableInternalWindow extends Pane {
         setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;");
 
         // Different Size on different Windows
-        if (diagramType == DiagramType.SELECTED_CLASS_PATH_VIEW || diagramType == DiagramType.SELECTED_OBJECT_PATH_VIEW){
+        if (diagramType == DiagramType.SELECTED_CLASS_PATH_VIEW || diagramType == DiagramType.SELECTED_OBJECT_PATH_VIEW) {
             setPrefSize(450, 200);
-        } else if (diagramType == DiagramType.SELECTED_CLASS_VIEW){
+        } else if (diagramType == DiagramType.SELECTED_CLASS_VIEW) {
             setPrefSize(580, 230);
-        } else if (diagramType == DiagramType.SELECTED_OBJECT_VIEW){
+        } else if (diagramType == DiagramType.SELECTED_OBJECT_VIEW) {
             setPrefSize(530, 230);
-        } else if (diagramType == DiagramType.SELECTED_OCL_VIEW){
+        } else if (diagramType == DiagramType.SELECTED_OCL_VIEW) {
             setPrefSize(370, 250);
-        }else {
+        } else {
             setPrefSize(300, 200);
         }
 
@@ -254,7 +282,7 @@ public class ResizableInternalWindow extends Pane {
 
         // when leaving the window, clear the statusbar to default.
         setOnMouseExited(e -> {
-             controller.getfStatusBar().clearMessage();
+            controller.getfStatusBar().clearMessage();
         });
 
         // --- Record initial geometry on mouse press if we might resize ---
@@ -670,6 +698,147 @@ public class ResizableInternalWindow extends Pane {
     // --- returning the DiagramType of the Window ---
     public DiagramType getDiagramType() {
         return diagramType;
+    }
+
+    /**
+     * Prints the window’s content
+     */
+    public void print(PageLayout pageLayout) {
+        // 1. Get the Swing content
+        JComponent root = content.getContent();
+
+        // 3. Use preferred size to render entire content
+        // TODO might want to get the preferredSizes of not the root but the actual content found inside renderingSwingContent
+        Dimension preferredSize = root.getPreferredSize();
+        double scale = 3.0;
+        int width = (int) (preferredSize.width * scale);
+        int height = (int) (preferredSize.height * scale);
+
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        // 4. Render the Swing content at full size
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.scale(scale, scale); // Paint with 3x detail
+        renderingSwingContent(root, g2d);
+        g2d.dispose();
+
+        // 5. Convert to JavaFX image and scale for display/printing
+        WritableImage fxImage = SwingFXUtils.toFXImage(image, null);
+        ImageView imageView = new ImageView(fxImage);
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(pageLayout.getPrintableWidth());
+        imageView.setFitHeight(pageLayout.getPrintableHeight());
+
+        // 6. Print with JavaFX PrinterJob
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null && job.showPrintDialog(this.getScene().getWindow())) {
+            job.getJobSettings().setPageLayout(pageLayout);
+            job.getJobSettings().setJobName(diagramType.toString());
+            boolean success = job.printPage(imageView);
+            if (success) {
+                job.endJob();
+            }
+        }
+    }
+
+
+    /**
+     * Renders the Swing content of the specified component by painting it onto the provided graphics context.
+     */
+    private void renderingSwingContent(JComponent root, Graphics2D g2d) {
+        Component[] components = root.getComponents();
+
+        for (Component comp : components) {
+            if (comp instanceof ClassDiagramView cdv) {
+                cdv.getClassDiagram().paint(g2d);
+                return;
+            } else if (comp instanceof StateMachineDiagramView smdv) {
+                smdv.getStateMachineDiagram().drawDiagram(g2d);
+                return;
+            } else if (comp instanceof CommunicationDiagramView commdv) {
+                commdv.getCommunicationDiagram().paint(g2d);
+                return;
+            } else if (comp instanceof NewObjectDiagramView odv) {
+                odv.getDiagram().paint(g2d);
+                return;
+            } else if (comp instanceof JScrollPane scrollPane) {
+                Component inner = scrollPane.getViewport().getView();
+                if (inner instanceof SequenceDiagramView sdv) {
+                    sdv.getSequenceDiagram().paint(g2d);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void exportAsPdf(boolean exportAll) {
+        Window ownerWindow = this.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export to PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+        File selectedFile = fileChooser.showSaveDialog(ownerWindow);
+        if (selectedFile == null) return;
+
+        if (!selectedFile.getName().toLowerCase().endsWith(".pdf")) {
+            selectedFile = new File(selectedFile.getAbsolutePath() + ".pdf");
+        }
+
+        if (selectedFile.exists()) {
+            Alert overwriteAlert = new Alert(Alert.AlertType.CONFIRMATION, "Overwrite existing file?\n" + selectedFile.getName());
+            overwriteAlert.setHeaderText("Please confirm");
+            overwriteAlert.initOwner(ownerWindow);
+            overwriteAlert.showAndWait().ifPresent(result -> {
+                if (!result.getText().equalsIgnoreCase("OK") && !result.getText().equalsIgnoreCase("Yes")) {
+                    return;
+                }
+            });
+        }
+
+        try {
+            // Step 1: Determine the size
+            JComponent root = content.getContent();
+            Dimension preferredSize = exportAll ? root.getPreferredSize() : root.getVisibleRect().getSize();
+
+            // high-resolution scaling
+            double scale = 3.0;
+            int width = (int) (preferredSize.width * scale);
+            int height = (int) (preferredSize.height * scale);
+
+            Rectangle pdfSize = new com.itextpdf.text.Rectangle(width, height);
+            Document document = new Document(pdfSize);
+
+            // Step 2: Create writer
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(selectedFile));
+            document.open();
+
+            // Step 3: Render content
+            PdfContentByte canvas = writer.getDirectContent();
+            Graphics2D g2 = new PdfGraphics2D(canvas, width, height);
+            renderingSwingContent(root, g2);
+
+            g2.scale(scale, scale);
+            renderingSwingContent(root, g2);
+            g2.dispose();
+
+            // Step 4: Finish
+            document.close();
+
+            Alert done = new Alert(Alert.AlertType.INFORMATION, "Export finished.");
+            done.setHeaderText("USE - Export Complete");
+            done.initOwner(ownerWindow);
+            done.showAndWait();
+
+        } catch (IOException | DocumentException ex) {
+            Alert error = new Alert(Alert.AlertType.ERROR, "Error exporting PDF: " + ex.getMessage());
+            error.setHeaderText("Export Failed");
+            error.initOwner(ownerWindow);
+            error.showAndWait();
+            ex.printStackTrace();
+        }
     }
 }
 
