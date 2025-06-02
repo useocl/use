@@ -74,5 +74,15 @@
                 <include>*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <!-- javafx sdk that should be shipped with the USE archive is located here -->
+            <directory>${project.basedir}/../use-gui/lib/javafx-sdk-21.0.5</directory>
+            <outputDirectory>lib/javafx-sdk-21.0.5</outputDirectory>
+            <includes>
+                <include>lib/**</include>
+                <include>bin/**</include>
+                <include>legal/**</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

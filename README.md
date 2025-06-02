@@ -41,6 +41,13 @@ cd examples
 ../bin/use -v Documentation/Demo/Demo.use
 ```
 
+The command above starts USE in its default Swing UI.
+To start the JavaFX UI instead, add the -jfx Parameter before all other USE options
+
+```bash
+../bin/use -jfx -v Documentation/Demo/Demo.use
+```
+
 The last command will compile and check the file Demo.use in the
 examples directory. It contains a USE specification for a simple model
 of a company. The -v switch is used to increase verbosity of

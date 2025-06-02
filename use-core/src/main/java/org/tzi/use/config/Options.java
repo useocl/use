@@ -222,7 +222,7 @@ public class Options {
     	Preferences userRoot = Preferences.userRoot();
     	System.setErr(originalStream);
     	
-    	return new RecentItems(10, userRoot.node( "/org/tzi/use/main" ));
+    	return new RecentItems(10, userRoot.node("/org/tzi/use/main"));
     }
     
     /** no instances */

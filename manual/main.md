@@ -61,6 +61,17 @@ specification.[^2]
 
     use ../examples/Documentation/Cars/Cars.use
 
+> **Choosing the UI variant**  
+> By default USE starts with its classic **Swing** window layer.  
+> If you prefer the new **JavaFX** interface, add the parameter `-jfx`
+> **before any other USE option**, e.g.
+>
+> ```bash
+> use -jfx ../examples/Documentation/Cars/Cars.use
+> ```
+> Both UIs are functionally identical and can even be opened in parallel
+> on the same model, so you can pick whichever fits your workflow.
+
 This command will compile and check the file `Cars.use`. There are
 currently two kinds of user interfaces which can be used simultaneously.
 The first one is a command line interface where you enter commands at a

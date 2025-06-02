@@ -27,9 +27,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** 
+/**
  * About dialog.
- * 
+ *
  * @author  Mark Richters
  */
 @SuppressWarnings("serial")
@@ -51,7 +51,7 @@ class AboutDialog extends JDialog {
         JLabel l = line("USE - UML Based Specification Environment");
         l.setFont(l.getFont().deriveFont(Font.BOLD));
         infoBox.add(l);
-          
+
         infoBox.add(line(Options.COPYRIGHT));
         infoBox.add(line("Version " + Options.RELEASE_VERSION));
         infoBox.add(line("For more information see:"));
@@ -76,11 +76,11 @@ class AboutDialog extends JDialog {
         btnBox.add(closeBtn);
         btnBox.add(Box.createGlue());
         closeBtn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ev) {
-                    setVisible(false);
-                    dispose();
-                }
-            });
+            public void actionPerformed(ActionEvent ev) {
+                setVisible(false);
+                dispose();
+            }
+        });
 
         // Layout and set the content pane
         JPanel contentPane = new JPanel();

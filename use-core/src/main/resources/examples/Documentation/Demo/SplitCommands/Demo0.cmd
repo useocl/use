@@ -4,4 +4,4 @@
 -- Creates the object diagram:
 -- read examples/Documentation/Demo/SplitCommands/Demo0.cmd
 
-!create cs:Department
+!create cs : Department

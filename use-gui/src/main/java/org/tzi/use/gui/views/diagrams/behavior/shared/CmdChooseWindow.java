@@ -19,9 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.shared;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -76,7 +74,8 @@ public class CmdChooseWindow extends JDialog implements ActionListener {
 	 * Constructs an new CmdChooseWindow.
 	 * 
 	 */
-	public CmdChooseWindow(CmdChooseWindowDelegate delegate) {
+	public CmdChooseWindow(Window owner, CmdChooseWindowDelegate delegate) {
+		super(owner);
 		setTitle("Choose Commands...");
 		this.delegate = delegate;
 		contentContainer = getContentPane();
@@ -120,7 +119,7 @@ public class CmdChooseWindow extends JDialog implements ActionListener {
 	 */
 	public void showWindow() {
 		this.setSize(200, 150);
-		this.setLocation(300, 200);
+		setLocationRelativeTo(getOwner()); // so that its positioned relative to the owner window
 		this.setVisible(true);
 	}
 

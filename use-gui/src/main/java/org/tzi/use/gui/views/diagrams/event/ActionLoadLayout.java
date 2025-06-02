@@ -25,48 +25,54 @@ import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
  * Loads the current layout from a file.
- * 
+ *
  * @author Fabian Gutsche
  */
 @SuppressWarnings("serial")
 public class ActionLoadLayout extends AbstractAction {
-	
+
     private String fTitle = "";
     private String fAppendix = "";
     private DiagramView fDiagram;
-    
+
     private Path lastFile = null;
-    
+
     public ActionLoadLayout(String title, String appendix, DiagramView diagram) {
         super("Load layout...");
         fTitle = title;
-        fAppendix = appendix;        
+        fAppendix = appendix;
         fDiagram = diagram;
     }
 
     public void actionPerformed(ActionEvent e) {
         // reuse chooser if possible
-    	JFileChooser fileChooser;
-    	
+        JFileChooser fileChooser;
+
         fileChooser = new JFileChooser(Options.getLastDirectory().toFile());
-        
-        ExtFileFilter filter = new ExtFileFilter( fAppendix, fTitle );
+
+        ExtFileFilter filter = new ExtFileFilter(fAppendix, fTitle);
         fileChooser.setFileFilter(filter);
         fileChooser.setDialogTitle("Load layout");
-        
-		if (   lastFile != null 
-			&& Files.isReadable(lastFile)
-			&& lastFile.getParent().equals(Options.getLastDirectory())) {
-			fileChooser.setSelectedFile(lastFile.toFile());
-		}
-        
-        int returnVal = fileChooser.showOpenDialog( MainWindow.instance() );
+
+        if (lastFile != null
+                && Files.isReadable(lastFile)
+                && lastFile.getParent().equals(Options.getLastDirectory())) {
+            fileChooser.setSelectedFile(lastFile.toFile());
+        }
+
+        Window owner = MainWindow.instance(); // default for swing
+        if (MainWindow.getJavaFxCall()) {
+            owner = SwingUtilities.getWindowAncestor(fDiagram);
+        }
+
+        int returnVal = fileChooser.showOpenDialog(owner);
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return;
 
@@ -75,5 +81,5 @@ public class ActionLoadLayout extends AbstractAction {
 
         fDiagram.loadLayout(lastFile);
     }
- 
+
 }

@@ -152,6 +152,13 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView,
 		fSeqDia.printView(pf);
 	}
 
+	/**
+	 * Retrieves the sequence diagram associated with this view.
+	 */
+	public SequenceDiagram getSequenceDiagram() {
+		return fSeqDia;
+	}
+
 	@Override
 	public float getContentHeight() {
 		return fSeqDia.getPreferredSize().height;

@@ -19,13 +19,12 @@
 
 package org.tzi.use.gui.views.diagrams.event;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
@@ -60,6 +59,10 @@ public class ActionSaveLayout extends AbstractAction {
 		ExtFileFilter filter = new ExtFileFilter(fAppendix, fTitle);
 		fChooser.setFileFilter(filter);
 		fChooser.setDialogTitle("Save layout");
+        Window owner = MainWindow.instance(); // default for swing
+        if (MainWindow.getJavaFxCall()) {
+            owner = SwingUtilities.getWindowAncestor(fDiagram);
+        }
         
         if (   lastFile != null 
         	&& Files.exists(lastFile)
@@ -69,7 +72,7 @@ public class ActionSaveLayout extends AbstractAction {
 		}
         
         do {
-            int returnVal = fChooser.showSaveDialog( MainWindow.instance() );
+            int returnVal = fChooser.showSaveDialog( owner );
             if (returnVal != JFileChooser.APPROVE_OPTION)
                 return;
 
@@ -84,7 +87,7 @@ public class ActionSaveLayout extends AbstractAction {
             lastFile = Options.getLastDirectory().resolve(filename);
             
             if (Files.exists(lastFile)) {
-                option = JOptionPane.showConfirmDialog(MainWindow.instance(),
+                option = JOptionPane.showConfirmDialog(owner,
                         "Overwrite existing file " + lastFile + "?",
                         "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (option == JOptionPane.CANCEL_OPTION) {

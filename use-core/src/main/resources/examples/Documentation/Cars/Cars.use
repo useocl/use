@@ -1,0 +1,22 @@
+-- $ Akif Aydin Demo Cars $
+
+model Cars
+
+-- classes
+
+class Car
+attributes
+	mileage : Integer
+operations
+	increaseMileage(kilometers : Integer)
+end
+
+-- OCL constraints
+
+constraints
+
+context Car 
+    -- the Mileage of Cars must be positive
+	-- and can not be negative
+  inv MileageNotNegative:
+    self.mileage >= 0 
