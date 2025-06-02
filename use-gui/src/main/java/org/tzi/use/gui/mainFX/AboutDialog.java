@@ -34,7 +34,7 @@ public class AboutDialog extends Stage {
 
         HBox logoBox = new HBox();
         logoBox.setPadding(new javafx.geometry.Insets(0, 5, 0, 5));
-        logoBox.getChildren().add(new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif")))));
+        logoBox.getChildren().add(new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.png")))));
 
         VBox infoBox = new VBox();
         infoBox.setPadding(new javafx.geometry.Insets(0, 5, 0, 5));

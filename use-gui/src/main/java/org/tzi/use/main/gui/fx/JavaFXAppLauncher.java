@@ -138,7 +138,7 @@ public class JavaFXAppLauncher extends Application {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/style.css")).toExternalForm());
 
             primaryStage.setTitle("USE");
-            primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/use_icon.gif"))));
+            primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/use_icon.png"))));
             primaryStage.setScene(scene);
 
             Rectangle2D bounds = Screen.getPrimary().getVisualBounds();

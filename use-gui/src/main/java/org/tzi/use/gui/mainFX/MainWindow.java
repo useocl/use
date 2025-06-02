@@ -734,7 +734,7 @@ public class MainWindow {
             alert.setTitle("Please confirm");
             alert.getDialogPane().setHeaderText(null); // drop default header
             Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.png"))));
             // --- show & handle -------------------------------------------------------
             alert.showAndWait().filter(btn -> btn == ButtonType.YES).ifPresent(btn -> fSession.reset());
         });
@@ -1392,7 +1392,7 @@ public class MainWindow {
         } catch (MSystemException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.png"))));
             alert.setTitle("Error");
             alert.setHeaderText(null);
             alert.setContentText(e.getMessage());
@@ -1512,7 +1512,7 @@ public class MainWindow {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Large system state");
             Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
+            alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.png"))));
             alert.getDialogPane().setHeaderText(null);
             alert.setContentText("The current system state contains more than " + OBJECTS_LARGE_SYSTEM + " instances. " +
                     "This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?");
@@ -2189,7 +2189,7 @@ public class MainWindow {
         alert.setHeaderText(null);
         alert.setContentText(content);
         Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-        alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
+        alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.png"))));
         alert.showAndWait();
     }
 

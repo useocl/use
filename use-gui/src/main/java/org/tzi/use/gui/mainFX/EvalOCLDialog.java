@@ -166,7 +166,7 @@ public class EvalOCLDialog extends Stage {
         fTextIn.requestFocus();
 
         // setting Logo:
-        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
+        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.png"))));
 
     }
 
