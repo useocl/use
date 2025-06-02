@@ -129,6 +129,7 @@ public class JavaFXAppLauncher extends Application {
         if (Options.doGUI) {
             MainWindow mainWindowFX = new MainWindow();
             mainWindowFX.setSession(session);
+            mainWindowFX.setPluginRuntime(pluginRuntime);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
             Parent root = loader.load();

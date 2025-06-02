@@ -31,6 +31,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.print.*;
@@ -51,6 +52,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;
 
 import org.tzi.use.config.RecentItems;
+import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.utilFX.StatusBar;
 import org.tzi.use.gui.views.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
@@ -92,6 +94,7 @@ import org.tzi.use.util.USEWriter;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
@@ -151,6 +154,7 @@ public class MainWindow {
     private static IRuntime fPluginRuntime;
     private Stage primaryStage;  // Reference to the primary stage
     private static MainWindow instance;
+    private org.tzi.use.gui.main.MainWindow swingMainWindow; // just for Loading Plugins
     private PageLayout fPageLayout;
     private PrinterJob fPrinterJob;
     private CheckMenuItem fCbMenuItemCheckStructure;
@@ -218,6 +222,11 @@ public class MainWindow {
         // initialize application state to current system
         sessionChanged();
 
+        // Build plug-in UI now – runtime is guaranteed non-null here
+        if (Options.doPLUGIN) {
+            buildPluginToolbarAndMenu();
+        }
+
         // the session may be changed from the shell
         fSession.addChangeListener(new ChangeListener() {
             @Override
@@ -255,6 +264,150 @@ public class MainWindow {
                     }
                 });
 
+    }
+
+    /**
+     * Builds toolbar-buttons and menu entries for all plug-in actions.
+     */
+    private void buildPluginToolbarAndMenu() {
+        // Nothing to do if plugins were switched off or runtime failed to start
+        if (!Options.doPLUGIN) {
+            return;
+        }
+
+        // 1. Fetch the “action” extension-point from the runtime
+        IPluginActionExtensionPoint actionEP = (IPluginActionExtensionPoint) fPluginRuntime.getExtensionPoint("action");
+
+        // 1.2 If we don’t yet have a Swing MainWindow, create a hidden one
+        if (swingMainWindow == null) {
+            org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);   // suppress UI
+            swingMainWindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        }
+
+        /*  actionEP.createPluginActions(..) returns exactly the same structure the
+         *  Swing implementation expects:  a Map<descriptor-map, PluginActionProxy>.
+         *  We hold on to that Map so that sessionChanged() can still call
+         *  calculateEnabled() later on.                                             */
+        pluginActions = actionEP.createPluginActions(fSession, swingMainWindow); //currently using the swing Main
+
+        /* ------------------------------------------------------------
+         * 2.  Make sure there is a “Plugins” menu and a separator at
+         *     the end of the existing toolbar – identical to Swing.
+         * ------------------------------------------------------------ */
+        if (!fToolBar.getItems().isEmpty()) {
+            Region spacer = new Region();
+            spacer.setPrefWidth(10);
+            fToolBar.getItems().add(spacer);
+        }
+        //  pluginsMenuItems is already defined in FXML -> make sure it is empty
+        pluginsMenuItems.getItems().clear();
+
+        /* ------------------------------------------------------------
+         * 3.  Iterate over all plug-in actions and materialise them
+         *     as (a) toolbar buttons, (b) menu items / sub-menus.
+         * ------------------------------------------------------------ */
+        for (Map.Entry<Map<String, String>, PluginActionProxy> entry : pluginActions.entrySet()) {
+            Map<String, String> desc = entry.getKey();     // {menu, menuitem, tooltip, …}
+            PluginActionProxy act = entry.getValue();   // Glue object that fires the action
+
+            /* ---- 3a  Toolbar button ------------------------------------------ */
+            Button btn = new Button();                     // 30×30 like the rest
+            btn.setMaxSize(30, 30);
+            btn.setTooltip(new Tooltip(desc.get("tooltip")));
+
+            // Grab the Swing ImageIcon from the Action’s SMALL_ICON
+            Object iconObj = act.getValue(Action.SMALL_ICON);
+            if (iconObj instanceof ImageIcon swingIcon) {
+                java.awt.Image awtImg = swingIcon.getImage();
+
+                // Convert AWT Image ⇒ BufferedImage
+                BufferedImage buff = new BufferedImage(
+                        awtImg.getWidth(null),
+                        awtImg.getHeight(null),
+                        BufferedImage.TYPE_INT_ARGB
+                );
+                Graphics2D g2 = buff.createGraphics();
+                g2.drawImage(awtImg, 0, 0, null);
+                g2.dispose();
+
+                // Convert BufferedImage ⇒ JavaFX Image
+                Image fxImg = SwingFXUtils.toFXImage(buff, null);
+                ImageView iv = new ImageView(fxImg);
+                iv.setFitWidth(20);
+                iv.setFitHeight(20);
+                btn.setGraphic(iv);
+            }
+
+            btn.setOnAction(evt -> act.actionPerformed(new ActionEvent(btn, ActionEvent.ACTION_PERFORMED, desc.getOrDefault("menuitem", "")))); // delegate
+            fToolBar.getItems().add(btn);
+
+            /* ---- 3b  Menu entry  --------------------------------------------- */
+            if (desc.get("menu") == null || desc.get("menu").isBlank()) {
+                /*  No sub-menu requested → add directly to the top-level
+                 *  “Plugins” menu (this mirrors the Swing branch where
+                 *  currentActionDescMap.get("menu") == null).                    */
+                MenuItem mi = new MenuItem(desc.get("menuitem"));
+
+                // Convert the Swing ImageIcon → JavaFX ImageView
+                if (iconObj instanceof ImageIcon swingIcon2) {
+                    java.awt.Image awtImg2 = swingIcon2.getImage();
+                    BufferedImage buff2 = new BufferedImage(
+                            awtImg2.getWidth(null),
+                            awtImg2.getHeight(null),
+                            BufferedImage.TYPE_INT_ARGB
+                    );
+                    Graphics2D g2b = buff2.createGraphics();
+                    g2b.drawImage(awtImg2, 0, 0, null);
+                    g2b.dispose();
+
+                    Image fxImg2 = SwingFXUtils.toFXImage(buff2, null);
+                    ImageView iv2 = new ImageView(fxImg2);
+                    iv2.setFitWidth(16);
+                    iv2.setFitHeight(16);
+                    mi.setGraphic(iv2);
+                }
+
+                mi.setOnAction(evt -> act.actionPerformed(new ActionEvent(btn, ActionEvent.ACTION_PERFORMED, desc.getOrDefault("menuitem", ""))));
+                pluginsMenuItems.getItems().add(mi);
+
+            } else {
+                /*  Sub-menu requested.  Re-use it if it already exists, otherwise
+                 *  create a fresh one—just like the Swing loop.                 */
+                String desiredSub = desc.get("menu");
+                Menu sub = null;
+                for (MenuItem child : pluginsMenuItems.getItems()) {
+                    if (child instanceof Menu && desiredSub.equals(child.getText())) {
+                        sub = (Menu) child;
+                        break;
+                    }
+                }
+                if (sub == null) {
+                    sub = new Menu(desiredSub);
+                    pluginsMenuItems.getItems().add(sub);
+                }
+                MenuItem mi = new MenuItem(desc.get("menuitem"));
+                // Convert the Swing ImageIcon → JavaFX ImageView
+                if (iconObj instanceof ImageIcon swingIcon2) {
+                    java.awt.Image awtImg2 = swingIcon2.getImage();
+                    BufferedImage buff2 = new BufferedImage(
+                            awtImg2.getWidth(null),
+                            awtImg2.getHeight(null),
+                            BufferedImage.TYPE_INT_ARGB
+                    );
+                    Graphics2D g2b = buff2.createGraphics();
+                    g2b.drawImage(awtImg2, 0, 0, null);
+                    g2b.dispose();
+
+                    Image fxImg2 = SwingFXUtils.toFXImage(buff2, null);
+                    ImageView iv2 = new ImageView(fxImg2);
+                    iv2.setFitWidth(16);
+                    iv2.setFitHeight(16);
+                    mi.setGraphic(iv2);
+                }
+                mi.setOnAction(evt -> act.actionPerformed(new ActionEvent(btn, ActionEvent.ACTION_PERFORMED, desc.getOrDefault("menuitem", ""))));
+                sub.getItems().add(mi);
+            }
+        }
     }
 
     /**
@@ -672,7 +825,8 @@ public class MainWindow {
      * TODO
      */
     private void initPluginsMenuItems(Menu pluginMenuItems) {
-        //Currently Empty
+        //Currently Emptyb
+
     }
 
     /**
@@ -883,7 +1037,7 @@ public class MainWindow {
             // Add spacing between specific buttons
             if (i == 4 || i == 6 || i == 7) {
                 Region spacer = new Region();
-                spacer.setPrefWidth(10); // Adjust as needed
+                spacer.setPrefWidth(10);
                 toolBar.getItems().add(spacer);
             }
             i++;
@@ -1809,7 +1963,7 @@ public class MainWindow {
 
     // setter für IRuntime
     public void setPluginRuntime(IRuntime pluginRuntime) {
-        this.fPluginRuntime = pluginRuntime;
+        fPluginRuntime = pluginRuntime;
     }
 
     // setter for primaryStage
