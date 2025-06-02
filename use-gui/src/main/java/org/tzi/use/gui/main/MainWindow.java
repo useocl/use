@@ -30,7 +30,6 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
-import org.tzi.use.gui.main.LogPanel;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.StatusBar;
 import org.tzi.use.gui.util.TextComponentWriter;
@@ -81,6 +80,8 @@ import java.awt.print.Paper;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyVetoException;
 import java.io.*;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -1495,7 +1496,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-
+    
     /**
      * Exit application.
      */
@@ -2226,6 +2227,7 @@ public class MainWindow extends JFrame {
     public static MainWindow create(Session session, IRuntime pluginRuntime) {
         final MainWindow win = new MainWindow(session, pluginRuntime);
 
+        win.setIcon();
         win.pack();
         win.setLocationRelativeTo(null);
         if (javaFxCall){
@@ -2234,6 +2236,50 @@ public class MainWindow extends JFrame {
             win.setVisible(true);
         }
         return win;
+    }
+
+    /**
+     * Sets the icon of the JFrame to the USE logo
+     * defined in resources/images/use_icon.png
+     *
+     * <p>OSs different from Windows are handled specially,
+     * but this is untested. <a href="https://stackoverflow.com/questions/41190574/put-a-program-icon-depending-on-the-platform">Source</a></p>
+     */
+    private void setIcon() {
+        URL url = ClassLoader.getSystemResource("images/use_icon.png");
+        if (url == null) {
+            Log.warn("Icon resource not found: images/use_icon.png");
+            return;
+        }
+
+        Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
+
+        if (iconImage == null) {
+            Log.warn("Failed to create image from resource: images/use_icon.png");
+            return;
+        }
+
+        String osName = System.getProperty("os.name").toLowerCase();
+
+        if (osName.contains("win")) {
+            // Windows: Set the icon for the JFrame
+            this.setIconImage(iconImage);
+        } else if (osName.contains("mac")) {
+            // macOS: Set the dock icon
+            try {
+                Class<?> appClass = Class.forName("com.apple.eawt.Application");
+                Method getApplication = appClass.getMethod("getApplication");
+                Object app = getApplication.invoke(null);
+
+                Method setDockIconImage = app.getClass().getMethod("setDockIconImage", Image.class);
+                setDockIconImage.invoke(app, iconImage);
+            } catch (Exception e) {
+                Log.warn("Could not set macOS dock icon: " + e.getMessage());
+            }
+        } else {
+            // Other OS: Set the icon for the JFrame as a fallback
+            this.setIconImage(iconImage);
+        }
     }
 
     public void showStateMachineView(MProtocolStateMachine sm, MObject instance) {

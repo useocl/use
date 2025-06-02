@@ -75,7 +75,7 @@ class CreateObjectDialog extends Stage{
         initStyle(StageStyle.DECORATED); // only exit button visible on top right side
         setResizable(false);             // deactivate minimize/maximize feature
         initModality(Modality.APPLICATION_MODAL); // Make it a modal dialog (You cant interact with anything else until this window is closed)
-        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif")))); // same icon as the MainWindow
+        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif")))); // same icon as the MainWindow
 
         // closes the stage
         setOnCloseRequest(windowEvent -> close());
@@ -184,7 +184,7 @@ class CreateObjectDialog extends Stage{
         alert.setHeaderText(null);
         alert.setContentText(content);
         Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-        alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+        alertStage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
         alert.showAndWait();
     }
 }

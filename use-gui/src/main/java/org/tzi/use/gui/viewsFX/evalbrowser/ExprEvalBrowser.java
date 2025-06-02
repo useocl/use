@@ -264,7 +264,7 @@ public class ExprEvalBrowser extends BorderPane {
         stage.setScene(new Scene(view));
         stage.setWidth(800);
         stage.setHeight(600);
-        stage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
         stage.show();
         return stage;
     }

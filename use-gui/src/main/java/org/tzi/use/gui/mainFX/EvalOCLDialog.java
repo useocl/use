@@ -29,8 +29,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -168,7 +166,7 @@ public class EvalOCLDialog extends Stage {
         fTextIn.requestFocus();
 
         // setting Logo:
-        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/useLogo.gif"))));
+        getIcons().add(new Image(Objects.requireNonNull(Main.class.getResourceAsStream("/images/use_icon.gif"))));
 
     }
 
