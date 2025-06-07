@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded, initializing charts...');
 
     // Initialize cyclic dependencies chart with both metrics (with and without tests)
-    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'cycles-tests.csv', [
+    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'archunit-results/cycles-tests.csv', [
         { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
         { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
     ]);
@@ -402,10 +402,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'cycles-without-tests.csv');
 
     // Initialize other charts - now using the multi-dataset function with single items
-    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'layer-violations.csv', [
+    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'archunit-results/layer-violations.csv', [
         { key: 'violations', label: 'Violations' }
     ]);
-    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'build-times.csv', [
+    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'archunit-results/build-times.csv', [
         { key: 'buildtime', label: 'Build Time (seconds)' }
     ]);
 });

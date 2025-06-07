@@ -383,14 +383,14 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('History page loaded, initializing historical charts...');
 
     // Initialize historical cycles chart with both metrics (with and without tests)
-    initializeHistoricalChart('mavenHistoricalCyclesChart', 'historicalCycles', 'cycles_history.csv', [
+    initializeHistoricalChart('mavenHistoricalCyclesChart', 'historicalCycles', 'archunit-history/maven_cycles_history.csv', [
         { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
         { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
     ]);
 
     // Initialize Ant historical cycles chart with data from two files
     initializeHistoricalChartMultiFile('antHistoricalCyclesChart', 'antHistoricalCycles',
-        ['ant_cycles_history_no_tests.csv', 'ant_cycles_history_with_tests.csv'],
+        ['archunit-history/ant_cycles_history_no_tests.csv', 'archunit-history/ant_cycles_history_with_tests.csv'],
         [
             [{ key: 'all_modules', label: 'Cycles Without Tests' }],
             [{ key: 'all_modules', label: 'Cycles With Tests' }]
@@ -398,17 +398,17 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Initialize historical layer violations chart
-    initializeHistoricalChart('antHistoricalLayerViolationsChart', 'antHistoricalViolations', 'ant_layer_violations_history.csv', [
+    initializeHistoricalChart('antHistoricalLayerViolationsChart', 'antHistoricalViolations', 'archunit-history/ant_layers_history.csv', [
         { key: 'violations', label: 'Layer Violations' }
     ]);
 
     // Initialize historical layer violations chart
-    initializeHistoricalChart('mavenHistoricalLayerViolationsChart', 'historicalViolations', 'layer_violations_history.csv', [
+    initializeHistoricalChart('mavenHistoricalLayerViolationsChart', 'historicalViolations', 'archunit-history/maven_layers_history.csv', [
         { key: 'violations', label: 'Layer Violations' }
     ]);
 
     // Initialize historical build time chart
-    initializeHistoricalChart('mavenHistoricalBuildTimeChart', 'historicalBuildTime', 'build_time_history.csv', [
+    initializeHistoricalChart('mavenHistoricalBuildTimeChart', 'historicalBuildTime', 'archunit-history/maven_build_time_history.csv', [
         { key: 'buildtime', label: 'Build Time (seconds)' }
     ]);
 });
