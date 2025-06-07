@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>USE Fitness Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
@@ -15,18 +15,24 @@
   <p>Analysis and Visualization of Software Quality Metrics</p>
   <nav class="navigation">
     <ul>
-      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="index.html" class="active">Dashboard</a></li>
       <li><a href="history.html">History</a></li>
     </ul>
   </nav>
+  <div class="last-updated" id="lastUpdated">
+    <span>Loading update info...</span>
+  </div>
 </header>
 
 <div class="container">
   <!-- Overview Section -->
   <section class="info-section">
     <h2>Dashboard Overview</h2>
-    <p>This dashboard provides comprehensive insights into the software quality metrics of the USE project.
-      The visualizations below highlight key aspects of the codebase structure and its evolution over time.</p>
+    <p>This dashboard provides detailed insights into the software quality metrics of the USE project.
+      The diagrams below highlight key aspects of the structure of the codebase and its evolution over time.
+      The metrics represent this branch only, no other branches are taken into consideration.
+      The goal of this dashboard is to encourage developers to pay attention to how their changes impact architecture
+      and to eventually guide them to adopt an evolutionary architecture approach according to <a href="https://evolutionaryarchitecture.com/index.html" target="_blank">Neal Ford et.al.</a></p>
   </section>
 
   <!-- Main Dashboard Grid -->
@@ -109,6 +115,6 @@
   </section>
 </div>
 
-<script src="scripts.js"></script>
+<script src="js/scripts.js"></script>
 </body>
 </html>

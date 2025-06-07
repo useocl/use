@@ -42,15 +42,15 @@ const chartConfigs = {
             }
         }
     },
-    // New pie chart configuration
+    // Bar chart configuration (ersetzt die pie chart configs)
     cyclesBreakdown: {
-        type: 'pie',
+        type: 'bar',
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right',
+                    display: false, // Bei single dataset nicht nötig
                 },
                 title: {
                     display: true,
@@ -65,17 +65,32 @@ const chartConfigs = {
                         }
                     }
                 }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Cycles'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Packages'
+                    }
+                }
             }
         }
     },
     cyclesWithTestsBreakdown: {
-        type: 'pie',
+        type: 'bar',
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right',
+                    display: false, // Bei single dataset nicht nötig
                 },
                 title: {
                     display: true,
@@ -88,6 +103,21 @@ const chartConfigs = {
                             const value = context.raw;
                             return `${label}: ${value} cycles`;
                         }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Cycles'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Packages'
                     }
                 }
             }
@@ -257,8 +287,8 @@ function processMultiDatasetChartData(rawData, valueKeys) {
 
 // We can remove this function since we're using processMultiDatasetChartData for all charts
 
-// New function to process cycle breakdown data for pie chart
-function processCycleBreakdownData(rawData) {
+// Process cycle breakdown data for pie chart with support for "no_tests" or "with_tests"
+function processCycleBreakdownData(rawData, includeTests = false) {
     // Get the most recent entry (last one in the array)
     if (!rawData || rawData.length === 0) {
         return { labels: [], datasets: [{ data: [], backgroundColor: [] }] };
@@ -266,12 +296,15 @@ function processCycleBreakdownData(rawData) {
 
     const latestEntry = rawData[rawData.length - 1];
 
-    // Package names we want to include (excluding 'all_modules' and any with 0 cycles)
+    // Determine suffix based on includeTests parameter
+    const suffix = includeTests ? '_with_tests' : '_no_tests';
+
+    // Package names and their corresponding values
     const packageNames = ['analysis', 'api', 'config', 'gen', 'graph', 'main', 'parser', 'uml', 'util'];
 
     // Filter to only include packages with non-zero cycles
-    const packagesWithCycles = packageNames.filter(pkg => latestEntry[pkg] > 0);
-    const cycleValues = packagesWithCycles.map(pkg => latestEntry[pkg]);
+    const packagesWithCycles = packageNames.filter(pkg => latestEntry[pkg + suffix] > 0);
+    const cycleValues = packagesWithCycles.map(pkg => latestEntry[pkg + suffix]);
 
     // Generate colors for the pie chart
     const colors = [
@@ -338,9 +371,8 @@ async function initializeChart(chartId, configKey, csvFile, valueKeys) {
 }
 
 // We can remove this function since we're using initializeChart for all charts
-
 // Initialize the cycle breakdown pie chart
-async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
+async function initializeCycleBreakdownChart(chartId, configKey, csvFile, includeTests = false) {
     try {
         // Create initial empty chart
         const ctx = document.getElementById(chartId);
@@ -358,13 +390,14 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
 
         // Load and update with real data
         const rawData = await fetchCSVData(csvFile);
-        const chartData = processCycleBreakdownData(rawData);
+        const chartData = processCycleBreakdownData(rawData, includeTests);
         chart.data = chartData;
         chart.update();
 
         // Add subtitle for the current test run
         if (rawData && rawData.length > 0) {
             const latestEntry = rawData[rawData.length - 1];
+            const testType = includeTests ? "including tests" : "excluding tests";
 
             // Find the existing description element within the same card
             const cardElement = ctx.closest('.card');
@@ -372,10 +405,10 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
 
             if (descriptionElement) {
                 // Update the existing description
-                descriptionElement.textContent = `Distribution of cyclic dependencies across different packages for the most current ArchUnit test run (${formatDateTime(latestEntry.date, latestEntry.time)}, commit: ${latestEntry.commit})`;
+                descriptionElement.textContent = `Distribution of cyclic dependencies across different packages (${testType}) for the most current ArchUnit test run (${formatDateTime(latestEntry.date, latestEntry.time)}, commit: ${latestEntry.commit})`;
             }
         }
-        console.log(`Pie chart ${chartId} updated with data:`, chartData); // Debug log
+        console.log(`Pie chart ${chartId} updated with data:`, chartData);
     } catch (error) {
         console.error(`Error initializing pie chart ${chartId}:`, error);
         // Show error in UI
@@ -387,9 +420,56 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile) {
     }
 }
 
+// Function to get the latest update time from CSV data
+async function getLatestUpdateTime() {
+    try {
+        const rawData = await fetchCSVData('archunit-results/cycles-tests.csv');
+
+        if (rawData && rawData.length > 0) {
+            // Get the most recent entry (last in array)
+            const latestEntry = rawData[rawData.length - 1];
+            return {
+                date: latestEntry.date,
+                time: latestEntry.time,
+                commit: latestEntry.commit
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching latest update time:', error);
+        return null;
+    }
+}
+
+// Function to update the "Last Updated" display
+async function updateLastUpdatedDisplay() {
+    const lastUpdatedElement = document.getElementById('lastUpdated');
+
+    try {
+        const updateInfo = await getLatestUpdateTime();
+
+        if (updateInfo) {
+            const formattedDateTime = formatDateTime(updateInfo.date, updateInfo.time);
+            const shortCommit = updateInfo.commit.substring(0, 7); // Show first 7 chars of commit
+
+            lastUpdatedElement.innerHTML = `
+                <span>Last updated: </span>
+                <span class="update-time">${formattedDateTime}</span>
+                <span> (Commit: ${shortCommit})</span>
+            `;
+        } else {
+            lastUpdatedElement.innerHTML = '<span>Update time unavailable</span>';
+        }
+    } catch (error) {
+        console.error('Error updating last updated display:', error);
+        lastUpdatedElement.innerHTML = '<span>Error loading update time</span>';
+    }
+}
+
 // Initialize all charts when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Document loaded, initializing charts...');
+    updateLastUpdatedDisplay();
 
     // Initialize cyclic dependencies chart with both metrics (with and without tests)
     initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'archunit-results/cycles-tests.csv', [
@@ -397,9 +477,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
     ]);
 
-    // Initialize pie charts for breakdown analysis
-    initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'cycles-without-tests.csv');
-    initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'cycles-without-tests.csv');
+// Initialize pie charts for breakdown analysis
+    initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'archunit-results/cycles-tests.csv', false);
+    initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'archunit-results/cycles-tests.csv', true);
 
     // Initialize other charts - now using the multi-dataset function with single items
     initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'archunit-results/layer-violations.csv', [
