@@ -15,7 +15,6 @@ const chartConfigs = {
                 },
                 tooltip: {
                     callbacks: {
-                        // Customize the tooltip to show commit information
                         label: function(context) {
                             const label = context.dataset.label || '';
                             const value = context.parsed.y;
@@ -42,7 +41,6 @@ const chartConfigs = {
             }
         }
     },
-    // Bar chart configuration (ersetzt die pie chart configs)
     cyclesBreakdown: {
         type: 'bar',
         options: {
@@ -50,7 +48,7 @@ const chartConfigs = {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false, // Bei single dataset nicht nötig
+                    display: false,
                 },
                 title: {
                     display: true,
@@ -93,7 +91,7 @@ const chartConfigs = {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false, // Bei single dataset nicht nötig
+                    display: false,
                 },
                 title: {
                     display: true,
@@ -144,7 +142,6 @@ const chartConfigs = {
                 },
                 tooltip: {
                     callbacks: {
-                        // Customize the tooltip to show commit information
                         label: function(context) {
                             const label = context.dataset.label || '';
                             const value = context.parsed.y;
@@ -189,7 +186,6 @@ const chartConfigs = {
                 },
                 tooltip: {
                     callbacks: {
-                        // Customize the tooltip to show commit information
                         label: function(context) {
                             const label = context.dataset.label || '';
                             const value = context.parsed.y;
@@ -218,21 +214,16 @@ const chartConfigs = {
     }
 };
 
-// Function to format date and time in the requested format (DD/MM/YY HH:MM)
+// Format date & time as DD/MM/YY HH:MM
 function formatDateTime(dateStr, timeStr) {
-    // Parse the date (assuming format is YYYY-MM-DD)
     const [year, month, day] = dateStr.split('-');
-
-    // Extract only hours and minutes from time
     const timeParts = timeStr.split(':');
     const hours = timeParts[0];
     const minutes = timeParts[1];
-
-    // Format as DD/MM/YY HH:MM
     return `${day}/${month}/${year.substring(2)} ${hours}:${minutes}`;
 }
 
-// Function to fetch and parse CSV data
+// Fetch & parse CSV data
 async function fetchCSVData(filename) {
     try {
         const response = await fetch(filename);
@@ -240,12 +231,10 @@ async function fetchCSVData(filename) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const csvText = await response.text();
-        console.log(`Fetched CSV from ${filename}:`, csvText); // Debug log
 
         return new Promise((resolve, reject) => {
             Papa.parse(csvText, {
                 complete: (results) => {
-                    console.log('Parsed results:', results); // Debug log
                     resolve(results.data);
                 },
                 error: (error) => {
@@ -254,7 +243,7 @@ async function fetchCSVData(filename) {
                 },
                 header: true,
                 skipEmptyLines: true,
-                dynamicTyping: true // Automatically convert numbers
+                dynamicTyping: true
             });
         });
     } catch (error) {
@@ -263,14 +252,11 @@ async function fetchCSVData(filename) {
     }
 }
 
-// Process data for charts with multiple datasets
-function processMultiDatasetChartData(rawData, valueKeys) {
-    console.log(`Processing data for multiple datasets:`, rawData);
+// Process data for line charts with optional threshold
+function processLineChartData(rawData, valueKeys, threshold = null) {
 
-    // Format dates for x-axis
     const labels = rawData.map(row => formatDateTime(row.date, row.time));
 
-    // Create datasets for each value key
     const datasets = valueKeys.map((keyInfo, index) => {
         const colors = [
             { border: '#4169E1', background: 'rgba(65, 105, 225, 0.2)' },  // Royal Blue
@@ -283,36 +269,39 @@ function processMultiDatasetChartData(rawData, valueKeys) {
             borderColor: colors[index % colors.length].border,
             backgroundColor: colors[index % colors.length].background,
             tension: 0.4,
-            // Store commit information for each data point
             commitInfo: rawData.map(row => row.commit)
         };
     });
 
+    // Add threshold line if specified
+    if (threshold !== null) {
+        datasets.push({
+            label: 'Threshold',
+            data: new Array(rawData.length).fill(threshold),
+            borderColor: '#FF0000',  // Red
+            backgroundColor: 'transparent',
+            //borderDash: [5, 5],  // Dashed line
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0,
+            commitInfo: rawData.map(row => row.commit)
+        });
+    }
+
     return { labels, datasets };
 }
 
-// We can remove this function since we're using processMultiDatasetChartData for all charts
-
-// Process cycle breakdown data for pie chart with support for "no_tests" or "with_tests"
-function processCycleBreakdownData(rawData, includeTests = false) {
-    // Get the most recent entry (last one in the array)
+// Process data for bar charts (breakdown by package)
+function processBarChartData(rawData, includeTests = false) {
     if (!rawData || rawData.length === 0) {
         return { labels: [], datasets: [{ data: [], backgroundColor: [] }] };
     }
 
     const latestEntry = rawData[rawData.length - 1];
-
-    // Determine suffix based on includeTests parameter
     const suffix = includeTests ? '_with_tests' : '_no_tests';
-
-    // Package names and their corresponding values
     const packageNames = ['analysis', 'api', 'config', 'gen', 'graph', 'main', 'parser', 'uml', 'util'];
-
-    // Filter to only include packages with non-zero cycles
     const packagesWithCycles = packageNames.filter(pkg => latestEntry[pkg + suffix] > 0);
     const cycleValues = packagesWithCycles.map(pkg => latestEntry[pkg + suffix]);
-
-    // Generate colors for the pie chart
     const colors = [
         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
         '#9966FF', '#FF9F40', '#6A8D73', '#D9534F',
@@ -328,26 +317,9 @@ function processCycleBreakdownData(rawData, includeTests = false) {
     };
 }
 
-// Helper function to get the appropriate dataset label based on the value key
-function getDatasetLabel(valueKey) {
-    switch(valueKey) {
-        case 'all_modules_no_tests':
-            return 'Number of Cycles Without Tests';
-        case 'all_modules_with_tests':
-            return 'Number of Cycles With Tests';
-        case 'violations':
-            return 'Violations';
-        case 'buildtime':
-            return 'Build Time';
-        default:
-            return 'Value';
-    }
-}
-
-// Initialize a chart with multiple datasets (similar to history.js approach)
-async function initializeChart(chartId, configKey, csvFile, valueKeys) {
+// Initialize line charts
+async function initializeLineChart(chartId, configKey, csvFile, valueKeys, threshold = null) {
     try {
-        // Create initial empty chart
         const ctx = document.getElementById(chartId);
         const chart = new Chart(ctx, {
             type: chartConfigs[configKey].type,
@@ -357,17 +329,12 @@ async function initializeChart(chartId, configKey, csvFile, valueKeys) {
             },
             options: chartConfigs[configKey].options
         });
-
-        // Load and update with real data
         const rawData = await fetchCSVData(csvFile);
-        const chartData = processMultiDatasetChartData(rawData, valueKeys);
+        const chartData = processLineChartData(rawData, valueKeys, threshold);
         chart.data = chartData;
         chart.update();
-
-        console.log(`Chart ${chartId} updated with multiple datasets:`, chartData);
     } catch (error) {
         console.error(`Error initializing chart ${chartId}:`, error);
-        // Show error in UI
         const errorMessage = document.createElement('div');
         errorMessage.style.color = 'red';
         errorMessage.style.padding = '20px';
@@ -376,11 +343,9 @@ async function initializeChart(chartId, configKey, csvFile, valueKeys) {
     }
 }
 
-// We can remove this function since we're using initializeChart for all charts
-// Initialize the cycle breakdown pie chart
-async function initializeCycleBreakdownChart(chartId, configKey, csvFile, includeTests = false) {
+// Initialize bar charts (breakdown charts)
+async function initializeBarChart(chartId, configKey, csvFile, includeTests = false) {
     try {
-        // Create initial empty chart
         const ctx = document.getElementById(chartId);
         const chart = new Chart(ctx, {
             type: chartConfigs[configKey].type,
@@ -393,26 +358,12 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile, includ
             },
             options: chartConfigs[configKey].options
         });
-
-        // Load and update with real data
         const rawData = await fetchCSVData(csvFile);
-        const chartData = processCycleBreakdownData(rawData, includeTests);
+        const chartData = processBarChartData(rawData, includeTests);
         chart.data = chartData;
         chart.update();
-
-        // Add subtitle for the current test run
-        if (rawData && rawData.length > 0) {
-            const latestEntry = rawData[rawData.length - 1];
-            const testType = includeTests ? "including tests" : "excluding tests";
-
-            // Find the existing description element within the same card
-            const cardElement = ctx.closest('.card');
-            const descriptionElement = cardElement.querySelector('.card-description');
-        }
-        console.log(`Pie chart ${chartId} updated with data:`, chartData);
     } catch (error) {
         console.error(`Error initializing pie chart ${chartId}:`, error);
-        // Show error in UI
         const errorMessage = document.createElement('div');
         errorMessage.style.color = 'red';
         errorMessage.style.padding = '20px';
@@ -421,13 +372,11 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile, includ
     }
 }
 
-// Function to get the latest update time from CSV data
 async function getLatestUpdateTime() {
     try {
         const rawData = await fetchCSVData('archunit-results/cycles-tests.csv');
 
         if (rawData && rawData.length > 0) {
-            // Get the most recent entry (last in array)
             const latestEntry = rawData[rawData.length - 1];
             return {
                 date: latestEntry.date,
@@ -442,7 +391,6 @@ async function getLatestUpdateTime() {
     }
 }
 
-// Function to update the "Last Updated" display
 async function updateLastUpdatedDisplay() {
     const lastUpdatedElement = document.getElementById('lastUpdated');
 
@@ -451,7 +399,7 @@ async function updateLastUpdatedDisplay() {
 
         if (updateInfo) {
             const formattedDateTime = formatDateTime(updateInfo.date, updateInfo.time);
-            const shortCommit = updateInfo.commit.substring(0, 7); // Show first 7 chars of commit
+            const shortCommit = updateInfo.commit.substring(0, 7);
 
             lastUpdatedElement.innerHTML = `
                 <span>Last updated: </span>
@@ -469,24 +417,17 @@ async function updateLastUpdatedDisplay() {
 
 // Initialize all charts when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Document loaded, initializing charts...');
     updateLastUpdatedDisplay();
-
-    // Initialize cyclic dependencies chart with both metrics (with and without tests)
-    initializeChart('cyclesOverTimeChart', 'cyclesOverTime', 'archunit-results/cycles-tests.csv', [
+    initializeLineChart('cyclesOverTimeChart', 'cyclesOverTime', 'archunit-results/cycles-tests.csv', [
         { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
-        { key: 'all_modules_with_tests', label: 'Cycles With Tests' }
-    ]);
-
-// Initialize pie charts for breakdown analysis
-    initializeCycleBreakdownChart('cyclesBreakdownChart', 'cyclesBreakdown', 'archunit-results/cycles-tests.csv', false);
-    initializeCycleBreakdownChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'archunit-results/cycles-tests.csv', true);
-
-    // Initialize other charts - now using the multi-dataset function with single items
-    initializeChart('layerViolationsChart', 'layerViolationsOverTime', 'archunit-results/layer-violations.csv', [
+        //{ key: 'all_modules_with_tests', label: 'Cycles With Tests' }
+    ], 56);
+    initializeBarChart('cyclesBreakdownChart', 'cyclesBreakdown', 'archunit-results/cycles-tests.csv', false);
+    initializeBarChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'archunit-results/cycles-tests.csv', true);
+    initializeLineChart('layerViolationsChart', 'layerViolationsOverTime', 'archunit-results/layer-violations.csv', [
         { key: 'violations', label: 'Violations' }
-    ]);
-    initializeChart('comparativeMetricsChart', 'comparativeMetrics', 'archunit-results/build-times.csv', [
+    ], 1);
+    initializeLineChart('comparativeMetricsChart', 'comparativeMetrics', 'archunit-results/build-times.csv', [
         { key: 'buildtime', label: 'Build Time (seconds)' }
     ]);
 });
