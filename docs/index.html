@@ -42,39 +42,46 @@
       <div class="card-header">
         <h3 class="card-title">Cyclic Dependencies with & without Tests</h3>
       </div>
-      <p class="card-description">
-        Tracks the number of dependency cycles in the codebase (excluding tests) over time,
-        helping identify architectural improvements or degradation.
-      </p>
       <div class="chart-container">
         <canvas id="cyclesOverTimeChart"></canvas>
       </div>
+      <p class="card-description">
+        Tracks the number of dependency cycles in the entire use-core module. Yellow represents number of cycles
+        including tests, blue cycles without tests. Cyclic dependencies are not desirable and currently a threshold
+        of 55 cycles without tests is recommended to at least not erode the architecture further.
+      </p>
     </div>
 
     <!-- Cycles No Tests Breakdown Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Breakdown of Cycles per Package Excluding Tests</h3>
+        <h3 class="card-title">Cycles per Package Excl. Tests</h3>
       </div>
-      <p class="card-description">
-        Distribution of cyclic dependencies across different packages (no tests) for the most current archunit test run.
-      </p>
       <div class="chart-container">
         <canvas id="cyclesBreakdownChart"></canvas>
       </div>
+      <p class="card-description">
+        Breakdown of cyclic dependencies across different packages for the most recent ArchUnit test run.
+        Tests are not included. Please note: This breakdown only represents the cycles that are within one of the nine
+        main packages of use-core. Cross-package dependencies are included in the line chart "Cyclic Dependencies
+        with & without Tests".
+      </p>
     </div>
 
     <!-- Cycles With Tests Breakdown Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Breakdown of Cycles per Package Incl. Tests</h3>
+        <h3 class="card-title">Cycles per Package Incl. Tests</h3>
       </div>
-      <p class="card-description">
-        Distribution of cyclic dependencies across all different packages (with tests) for the most current archunit test run.
-      </p>
       <div class="chart-container">
         <canvas id="cyclesWithTestsBreakdownChart"></canvas>
       </div>
+      <p class="card-description">
+        Breakdown of cyclic dependencies across different packages for the most recent ArchUnit test run.
+        Tests are included. Please note: This breakdown only represents the cycles that are within one of the nine
+        main packages of use-core. Cross-package dependencies are included in the line chart "Cyclic Dependencies
+        with & without Tests".
+      </p>
     </div>
 
     <!-- Layer Violations Card -->
@@ -82,12 +89,14 @@
       <div class="card-header">
         <h3 class="card-title">Layered Architecture Violations</h3>
       </div>
-      <p class="card-description">
-        Analysis of violations of USE's Layered Architecture, highlighting architectural trends over time.
-      </p>
       <div class="chart-container">
         <canvas id="layerViolationsChart"></canvas>
       </div>
+      <p class="card-description">
+        Tracks whether any classes in use-gui access any classes in use-core which would equal a violation of the
+        layered architecture. Tests not included. Currently a threshold of 0 is recommended to keep up the clear
+        separation of concerns.
+      </p>
     </div>
 
     <!-- Buildtime Card -->
@@ -95,13 +104,13 @@
       <div class="card-header">
         <h3 class="card-title">Build Time</h3>
       </div>
-      <p class="card-description">
-        Comparison of different architectural metrics across versions
-        or components of the system.
-      </p>
       <div class="chart-container">
         <canvas id="comparativeMetricsChart"></canvas>
       </div>
+      <p class="card-description">
+        Tracks all the build times over time. For each commit the build time is measured using time stamps and includes
+        the building as well as the testing stage.
+      </p>
     </div>
   </div>
 

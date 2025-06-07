@@ -69,6 +69,9 @@ const chartConfigs = {
             scales: {
                 y: {
                     beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
                     title: {
                         display: true,
                         text: 'Number of Cycles'
@@ -109,6 +112,9 @@ const chartConfigs = {
             scales: {
                 y: {
                     beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
                     title: {
                         display: true,
                         text: 'Number of Cycles'
@@ -402,11 +408,6 @@ async function initializeCycleBreakdownChart(chartId, configKey, csvFile, includ
             // Find the existing description element within the same card
             const cardElement = ctx.closest('.card');
             const descriptionElement = cardElement.querySelector('.card-description');
-
-            if (descriptionElement) {
-                // Update the existing description
-                descriptionElement.textContent = `Distribution of cyclic dependencies across different packages (${testType}) for the most current ArchUnit test run (${formatDateTime(latestEntry.date, latestEntry.time)}, commit: ${latestEntry.commit})`;
-            }
         }
         console.log(`Pie chart ${chartId} updated with data:`, chartData);
     } catch (error) {
