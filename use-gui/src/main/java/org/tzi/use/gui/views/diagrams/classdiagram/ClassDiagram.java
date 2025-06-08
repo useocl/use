@@ -1491,7 +1491,7 @@ public class ClassDiagram extends DiagramView
 				.map(ClassifierNode.class::cast)
 				.map(ClassifierNode::getClassifier)
 				.map(UIElementIntermediate::new)
-				.orElseThrow();
+				.orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + node.getClass()));
 	}
 
 	@Override
@@ -1506,7 +1506,7 @@ public class ClassDiagram extends DiagramView
 					.filter(Objects::nonNull)
 					.findAny()
 					.map(UIElementIntermediate::new)
-					.orElseThrow();
+					.orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + edgeBase.getClass()));
 		} else if (edgeBase instanceof AssociationOrLinkPartEdge associationOrLinkPartEdge) {
 			// returns MAssociation, the relation between two model elements
             return associationOrLinkPartEdge.getProperties()
@@ -1515,7 +1515,7 @@ public class ClassDiagram extends DiagramView
                     .filter(Objects::nonNull)
                     .findAny()
                     .map(UIElementIntermediate::new)
-                    .orElseThrow();
+                    .orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + edgeBase.getClass()));
 		}
 		throw new UnsupportedOperationException(String.format("The type of edge %s is not supported!", edgeBase.getClass().getName()));
 	}
