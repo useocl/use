@@ -195,6 +195,19 @@ public class MavenCyclicDependenciesCoreTest {
             } catch (IOException e) {
                 System.err.println("Error writing report to " + filename + ": " + e.getMessage());
             }
+            if (packageName.equals("org.tzi.use") && !withTests) {
+                File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
+                File reportFile = new File(projectRoot, "docs/archunit-results/cycles-current-failure-report.txt");
+
+                try (FileWriter writer = new FileWriter(reportFile)) {
+                    for (String detail : result.getFailureReport().getDetails()) {
+                        writer.write(detail + "\n");
+                    }
+                    writer.write("\nCycle count: " + cycleCount + "\n");
+                } catch (IOException e) {
+                    System.err.println("Error writing report to " + reportFile + ": " + e.getMessage());
+                }
+            }
         }
         return cycleCount;
     }

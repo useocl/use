@@ -19,7 +19,8 @@ public class MavenLayeredArchitectureTest {
     @BeforeEach
     void setUp() {
         // Create reports directory if it doesn't exist
-        File reportsDir = new File("target/archunit-reports");
+        File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
+        File reportsDir = new File(projectRoot,"docs/archunit-results");
         if (!reportsDir.exists()) {
             reportsDir.mkdirs();
         }
@@ -53,16 +54,16 @@ public class MavenLayeredArchitectureTest {
         System.out.println(violationCount);
 
         if (violationCount > 0) {
-            // Write failure report to file
-            String filename = String.format("target/archunit-reports/failure_report_maven_layers.txt");
+            File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
+            File reportFile = new File(projectRoot, "docs/archunit-results/layers-current-failure-report.txt");
 
-            try (FileWriter writer = new FileWriter(filename)) {
+            try (FileWriter writer = new FileWriter(reportFile)) {
                 for (String detail : result.getFailureReport().getDetails()) {
                     writer.write(detail + "\n");
                 }
                 writer.write("\nLayer violations: " + violationCount + "\n");
             } catch (IOException e) {
-                System.err.println("Error writing report to " + filename + ": " + e.getMessage());
+                System.err.println("Error writing report to " + reportFile.getAbsolutePath() + ": " + e.getMessage());
             }
         }
     }

@@ -116,11 +116,20 @@
 
   <!-- Additional Information Section -->
   <section class="info-section">
-    <h2>Interpretation Guide</h2>
-    <p>The metrics displayed above help in understanding the architectural health of the system:
-      Lower cycle counts generally indicate better architectural design, while trending metrics
-      show the evolution of the system over time. Use these insights to guide refactoring
-      efforts and architectural decisions.</p>
+    <h2>Detailed Test Reports</h2>
+    <p>The metrics displayed above help in understanding the architectural health of the system. However,
+    they might not be enough to fully understand where the problems stem from. The output of the failure
+    reports tends to be very verbose. That's why they are linked here (if they exist) as .txt-files.</p>
+    <p>For a detailed test report of the cyclic dependencies in the entire use-core without tests, refer to
+      <a href="archunit-results/cycles-current-failure-report.txt" target="_blank">Cycles Test Report</a>.
+      Please note that detailed test reports for the individual packages are not available. If you wish to
+      generate them, execute the MavenCyclicDependenciesCoreTest locally and you will find them in the
+      target folder.
+    </p>
+    <p>For a detailed test report of the layer violations without tests, refer to
+      <a href="archunit-results/layers-current-failure-report.txt" target="_blank">Layer Violations Report</a>.
+      Please note that this file (like other test reports) is only available if a layer violation exists.
+    </p>
   </section>
 </div>
 
