@@ -329,10 +329,6 @@ public abstract class DiagramView extends JPanel
             }
             fGraph.clearInvalidated();
 
-            // TODO: after the computation of the position of each element in the diagram
-            //  but before the drawing
-
-
             // draw edges
             // they need to be drawn first otherwise the association will
             // be drawn above the nodes
@@ -383,7 +379,6 @@ public abstract class DiagramView extends JPanel
         }
     }
 
-
     private <T> void checkForPluginColorChanges(final T element, final Function<T, UIElementIntermediate<?>> mappingFunction, final BiConsumer<T, StyleInfoBase> recolorFunction) {
         if (pluginRuntime == null) {
             return;
@@ -394,7 +389,7 @@ public abstract class DiagramView extends JPanel
 
         if (!styleInfoProviders.isEmpty()) {
             final UIElementIntermediate<?> intermediate = mappingFunction.apply(element);
-            // accumulate changes from all provider
+            // accumulate changes from all providers
             final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
                     .map(provider -> provider.getStyleInfoForDiagramElement(intermediate))
                     .filter(Objects::nonNull)
@@ -407,22 +402,37 @@ public abstract class DiagramView extends JPanel
         }
     }
 
+    /**
+     * Provides a mapping between the diagram-specific node element and the equivalent ???
+     * This method has to be overridden by a concrete DiagramView to use StyleInfos
+     * @param node
+     * @return
+     */
     protected UIElementIntermediate<?> diagramsOwnMapping(final PlaceableNode node) {
-        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        //TODO: throwing an exception each time a descendent is crated is probably not the right decision
         throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
     protected UIElementIntermediate<?> diagramsOwnMapping(final EdgeBase edgeBase) {
-        // this method has to be overridden by a concrete DiagramView to use StyleInfos
         throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
+    /**
+     * Recolors the node with equivalent containers values.
+     * @param node the given node to recolor
+     * @param styleInfoForDiagramElement the container with values the node should be colored into
+     */
     protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {
         // this method has to be overridden by a concrete DiagramView to use StyleInfos
         throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
-    protected void recolorEdgeBase(final EdgeBase node, final StyleInfoBase styleInfoForDiagramElement) {
+    /**
+     * Recolors the edge with equivalent containers values.
+     * @param edge the given edge to recolor
+     * @param styleInfoForDiagramElement the container with values the edge should be colored into
+     */
+    protected void recolorEdgeBase(final EdgeBase edge, final StyleInfoBase styleInfoForDiagramElement) {
         // this method has to be overridden by a concrete DiagramView to use StyleInfos
         throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }

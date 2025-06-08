@@ -1552,21 +1552,21 @@ public class ClassDiagram extends DiagramView
 	}
 
 	@Override
-	protected void recolorEdgeBase(final EdgeBase edgeBase, final StyleInfoBase styleInfoForDiagramElement) {
+	protected void recolorEdgeBase(final EdgeBase edge, final StyleInfoBase styleInfoForDiagramElement) {
 		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
-			styleInfoEdge.merge(new StyleInfoEdge(edgeBase));
+			styleInfoEdge.merge(new StyleInfoEdge(edge));
 
-			edgeBase.setEdgeColor(styleInfoEdge.getEgdeColor());
+			edge.setEdgeColor(styleInfoEdge.getEgdeColor());
 			// Association Name
-			Optional.ofNullable(edgeBase.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE))
+			Optional.ofNullable(edge.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE))
 					.flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())
 					.ifPresent(associationName -> associationName.setColor(styleInfoEdge.getNamesColor()));
 			// Role Name
-			edgeBase.getProperties()
-					.stream()
-					.filter(Rolename.class::isInstance)
-					.map(Rolename.class::cast)
-					.forEach(roleName -> Optional.ofNullable(styleInfoEdge.getRoleNameColors().get(roleName.getEnd())).ifPresent(roleName::setColor));
+			edge.getProperties()
+				.stream()
+				.filter(Rolename.class::isInstance)
+				.map(Rolename.class::cast)
+				.forEach(roleName -> Optional.ofNullable(styleInfoEdge.getRoleNameColors().get(roleName.getEnd())).ifPresent(roleName::setColor));
 		}
 	}
 
