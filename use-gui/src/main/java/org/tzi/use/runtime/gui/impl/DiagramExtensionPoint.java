@@ -2,7 +2,7 @@ package org.tzi.use.runtime.gui.impl;
 
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.runtime.IPluginDescriptor;
-import org.tzi.use.runtime.gui.IDiagramPlugin;
+import org.tzi.use.runtime.gui.DiagramPlugin;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
     }
 
 
-    private final List<IDiagramPlugin> registeredPlugins = new ArrayList<>();
+    private final List<DiagramPlugin> registeredPlugins = new ArrayList<>();
 
     private final Map<Class<? extends DiagramView>, List<StyleInfoProvider>> styleInfoProviders = new HashMap<>();
 
@@ -32,12 +32,12 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
 
     @Override
     public void runPluginsOnInitialisation() {
-        registeredPlugins.stream().map(IDiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onInitialisation);
+        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onInitialisation);
     }
 
     @Override
     public void runPluginsOnClosure() {
-        registeredPlugins.stream().map(IDiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onClosure);
+        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onClosure);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
 
     @Override
     public void registerPlugin(final IPluginDescriptor pluginDescriptor) {
-        if (pluginDescriptor.getPluginClass() instanceof IDiagramPlugin iDiagramPlugin) {
-            registeredPlugins.add(iDiagramPlugin);
+        if (pluginDescriptor.getPluginClass() instanceof DiagramPlugin diagramPlugin) {
+            registeredPlugins.add(diagramPlugin);
         }
     }
 
