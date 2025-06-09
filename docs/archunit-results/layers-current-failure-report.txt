@@ -1,1 +1,1 @@
-No violations - failure report nonexistent.
+No violations - failure report does not exist.

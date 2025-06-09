@@ -176,17 +176,25 @@ public class MavenCyclicDependenciesCoreTest {
                 .should().beFreeOfCycles()
                 .allowEmptyShould(true)
                 .evaluate(classes);
-
         int cycleCount = result.getFailureReport().getDetails().size();
+        writeResultsToFile(cycleCount, result, packageName, withTests);
 
-        if (cycleCount > 0) {
-            // Extract package short name
-            String packageShortName = packageName.equals("org.tzi.use") ? "core" : packageName.substring(packageName.lastIndexOf('.')+1);
+        return cycleCount;
+    }
 
-            // Write failure report to file
-            String testSuffix = withTests ? "with_tests" : "without_tests";
-            String filename = String.format("target/archunit-reports/failure_report_maven_cycles_%s_%s.txt", packageShortName, testSuffix);
+    private void writeResultsToFile(int cycleCount, EvaluationResult result, String packageName, boolean withTests) {
+        boolean coreNoTests = isCoreNoTests(packageName, withTests);
+        String packageShortName = coreNoTests ? "core" : packageName.substring(packageName.lastIndexOf('.')+1);
+        String testSuffix = withTests ? "with_tests" : "without_tests";
+        String filename;
+        if (coreNoTests) {
+            File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
+            filename = new File(projectRoot, "docs/archunit-results/cycles-current-failure-report.txt").toString();
+        } else {
+            filename = String.format("target/archunit-reports/failure_report_maven_cycles_%s_%s.txt", packageShortName, testSuffix);
 
+        }
+        if (cycleCount > 0 || coreNoTests) {
             try (FileWriter writer = new FileWriter(filename)) {
                 for (String detail : result.getFailureReport().getDetails()) {
                     writer.write(detail + "\n");
@@ -195,20 +203,14 @@ public class MavenCyclicDependenciesCoreTest {
             } catch (IOException e) {
                 System.err.println("Error writing report to " + filename + ": " + e.getMessage());
             }
-            if (packageName.equals("org.tzi.use") && !withTests) {
-                File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
-                File reportFile = new File(projectRoot, "docs/archunit-results/cycles-current-failure-report.txt");
-
-                try (FileWriter writer = new FileWriter(reportFile)) {
-                    for (String detail : result.getFailureReport().getDetails()) {
-                        writer.write(detail + "\n");
-                    }
-                    writer.write("\nCycle count: " + cycleCount + "\n");
-                } catch (IOException e) {
-                    System.err.println("Error writing report to " + reportFile + ": " + e.getMessage());
-                }
-            }
         }
-        return cycleCount;
+    }
+
+    private boolean isCoreNoTests(String packageName, boolean withTests) {
+        if (packageName.equals("org.tzi.use") && !withTests) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

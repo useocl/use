@@ -48,23 +48,26 @@ public class MavenLayeredArchitectureTest {
                 .because("Core packages should not depend on GUI packages");
 
         EvaluationResult result = rule.evaluate(classes);
-
         int violationCount = result.getFailureReport().getDetails().size();
-
         System.out.println(violationCount);
+        writeResultsToFile(violationCount, result);
+    }
 
-        if (violationCount > 0) {
-            File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
-            File reportFile = new File(projectRoot, "docs/archunit-results/layers-current-failure-report.txt");
+    private void writeResultsToFile(int violationCount, EvaluationResult result) {
+        File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
+        File reportFile = new File(projectRoot, "docs/archunit-results/layers-current-failure-report.txt");
 
-            try (FileWriter writer = new FileWriter(reportFile)) {
+        try (FileWriter writer = new FileWriter(reportFile)) {
+            if (violationCount > 0) {
                 for (String detail : result.getFailureReport().getDetails()) {
                     writer.write(detail + "\n");
                 }
                 writer.write("\nLayer violations: " + violationCount + "\n");
-            } catch (IOException e) {
-                System.err.println("Error writing report to " + reportFile.getAbsolutePath() + ": " + e.getMessage());
+            } else {
+                writer.write("No violations - failure report does not exist.");
             }
+        } catch (IOException e) {
+            System.err.println("Error writing report to " + reportFile.getAbsolutePath() + ": " + e.getMessage());
         }
     }
 }
