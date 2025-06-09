@@ -84,6 +84,47 @@ const chartConfigs = {
             }
         }
     },
+    cyclesWithTests: {
+        type: 'line',
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Cyclic Dependencies with Tests'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            const commit = context.dataset.commitInfo[context.dataIndex];
+                            return `${label}: ${value}\nCommit: ${commit}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Cycles'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date & Time'
+                    }
+                }
+            }
+        }
+    },
     cyclesWithTestsBreakdown: {
         type: 'bar',
         options: {
@@ -259,8 +300,7 @@ function processLineChartData(rawData, valueKeys, threshold = null) {
 
     const datasets = valueKeys.map((keyInfo, index) => {
         const colors = [
-            { border: '#4169E1', background: 'rgba(65, 105, 225, 0.2)' },  // Royal Blue
-            { border: '#FFCE56', background: 'rgba(255, 206, 86, 0.2)' }   // Yellow
+            { border: '#4169E1', background: 'rgba(65, 105, 225, 0.2)' }
         ];
 
         return {
@@ -418,15 +458,21 @@ async function updateLastUpdatedDisplay() {
 // Initialize all charts when document is loaded
 document.addEventListener('DOMContentLoaded', () => {
     updateLastUpdatedDisplay();
+
+    // 1. All cycles without tests
     initializeLineChart('cyclesOverTimeChart', 'cyclesOverTime', 'archunit-results/cycles-tests.csv', [
-        { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },
-        //{ key: 'all_modules_with_tests', label: 'Cycles With Tests' }
-    ], 56);
+        { key: 'all_modules_no_tests', label: 'Cycles Without Tests' },], 56);
+    // 2. Breakdown without tests
     initializeBarChart('cyclesBreakdownChart', 'cyclesBreakdown', 'archunit-results/cycles-tests.csv', false);
+    // 3. All cycles with tests
+    initializeLineChart('cyclesWithTestsChart', 'cyclesWithTests', 'archunit-results/cycles-tests.csv', [{ key: 'all_modules_with_tests', label: 'Cycles With Tests' }]);
+    // 4. Breakdown with tests
     initializeBarChart('cyclesWithTestsBreakdownChart', 'cyclesWithTestsBreakdown', 'archunit-results/cycles-tests.csv', true);
+    // 5. Layer violations
     initializeLineChart('layerViolationsChart', 'layerViolationsOverTime', 'archunit-results/layer-violations.csv', [
         { key: 'violations', label: 'Violations' }
     ], 1);
+    // 6. Build times
     initializeLineChart('comparativeMetricsChart', 'comparativeMetrics', 'archunit-results/build-times.csv', [
         { key: 'buildtime', label: 'Build Time (seconds)' }
     ]);

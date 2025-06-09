@@ -40,15 +40,15 @@
     <!-- Cycles No Tests Card -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Cyclic Dependencies with & without Tests</h3>
+        <h3 class="card-title">Cyclic Dependencies without Tests</h3>
       </div>
       <div class="chart-container">
         <canvas id="cyclesOverTimeChart"></canvas>
       </div>
       <p class="card-description">
-        Tracks the number of dependency cycles in the entire use-core module. Yellow represents number of cycles
-        including tests, blue cycles without tests. Cyclic dependencies are not desirable and currently a threshold
-        of 55 cycles without tests is recommended to at least not erode the architecture further.
+        Tracks the number of dependency cycles in the entire use-core module excluding tests.Cyclic dependencies are
+        not desirable and currently a threshold of 55 cycles without tests is recommended to at least not erode the
+        architecture further.
       </p>
     </div>
 
@@ -65,6 +65,21 @@
         Tests are not included. Please note: This breakdown only represents the cycles that are within one of the nine
         main packages of use-core. Cross-package dependencies are included in the line chart "Cyclic Dependencies
         with & without Tests".
+      </p>
+    </div>
+
+    <!-- Cycles With Tests Line Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Cyclic Dependencies with Tests</h3>
+      </div>
+      <div class="chart-container">
+        <canvas id="cyclesWithTestsChart"></canvas>
+      </div>
+      <p class="card-description">
+        Tracks the number of dependency cycles in the entire use-core module including tests. Currently
+        no threshold is displayed or recommended due to the major amount of cycles. Current objective:
+        Resolve cycles as much as possible, then find reasonable threshold.
       </p>
     </div>
 
