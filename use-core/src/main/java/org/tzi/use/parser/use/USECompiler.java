@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URI;
 
 /** 
  * Compiler for USE specifications, expressions, and commands. The
@@ -65,7 +66,7 @@ public class USECompiler {
     }
 
     /**
-     * Compiles a specification.
+     * Compiles a specification. This method will not work with specifications that contain imported elements.
      *
      * @param  in the source to be compiled
      * @param  inName name of the source stream
@@ -114,6 +115,62 @@ public class USECompiler {
                         e.getMessage());
         }
         
+        err.flush();
+        return model;
+    }
+
+    /**
+     * Compiles a specification. Use this method if the models to be compiled contain imported elements.
+     *
+     * @param  in the source to be compiled
+     * @param  inName name of the source stream
+     * @param  fileUri URI of the specification file
+     * @param  err output stream for error messages
+     * @return MModel null if there were any errors
+     */
+    public static MModel compileSpecification(InputStream in,
+                                              String inName,
+                                              URI fileUri,
+                                              PrintWriter err,
+                                              ModelFactory factory) {
+        MModel model = null;
+        ParseErrorHandler errHandler = new ParseErrorHandler(inName, err);
+
+        ANTLRInputStream aInput;
+        try {
+            aInput = new ANTLRInputStream(in);
+            aInput.name = inName;
+        } catch (IOException e1) {
+            err.println(e1.getMessage());
+            return null;
+        }
+
+        USELexer lexer = new USELexer(aInput);
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        USEParser parser = new USEParser(tokenStream);
+
+        lexer.init(errHandler);
+        parser.init(errHandler);
+
+        try {
+            // Parse the specification
+            ASTModel astModel = parser.model();
+            if (errHandler.errorCount() == 0 ) {
+
+                // Generate code
+                Context ctx = new Context(inName, fileUri, err, null, factory);
+                model = astModel.gen(ctx);
+                if (ctx.errorCount() > 0 ) {
+                    model = null;
+                }
+            }
+        } catch (RecognitionException e) {
+            err.println(parser.getSourceName() +":" +
+                    e.line + ":" +
+                    e.charPositionInLine + ": " +
+                    e.getMessage());
+        }
+
         err.flush();
         return model;
     }
@@ -196,6 +253,7 @@ public class USECompiler {
      */
     public static MModel compileImportedSpecification(InputStream in,
                                               String inName,
+                                              URI fileUri,
                                               Context parentContext,
                                               ImportContext importContext) {
         MModel model = null;
@@ -223,7 +281,7 @@ public class USECompiler {
             ASTModel astModel = parser.model();
             if (errHandler.errorCount() == 0 ) {
                 // Generate code
-                Context localContext = new Context(inName, err, null, parentContext.modelFactory());
+                Context localContext = new Context(inName, fileUri, err, null, parentContext.modelFactory());
                 model = astModel.genImported(importContext, localContext);
                 if (localContext.errorCount() > 0 ) {
                     model = null;

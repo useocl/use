@@ -19,9 +19,6 @@
 
 package org.tzi.use.parser.use;
 
-import java.io.IOException;
-import java.util.*;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ImportContext;
@@ -31,6 +28,11 @@ import org.tzi.use.parser.use.statemachines.ASTSignal;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -115,7 +117,7 @@ public class ASTModel extends ASTAnnotatable {
         for (ASTImportStatement imp : fImportStatements) {
             if (imp != null) {
                 try {
-                    ImportContext importContext = new ImportContext(model.filename());
+                    ImportContext importContext = new ImportContext(ctx.getfFileUri().toString());
                     imp.resolveAndImport(importContext, ctx, model);
                 } catch (SemanticException ex) {
                     ctx.reportError(ex);

@@ -40,9 +40,14 @@ public abstract class TypeImpl implements Type {
         return toString();
     }
 
+		@Override
+		public String qualifiedName() {
+			return toString();
+		}
+
     /** 
      * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'.
-     * For complex string operations see {@link toString(StringBuilder)}
+     * For complex string operations see {@link #toString(StringBuilder)}
      */
     @Override
 	public final String toString() {

@@ -19,33 +19,10 @@
 
 package org.tzi.use.gui.views;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.Subscribe;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
@@ -53,21 +30,21 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.Subscribe;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.List;
 
 /** 
  * A view for showing and changing object properties (attributes).
@@ -255,10 +232,9 @@ public class ObjectPropertiesView extends JPanel implements View {
         	if (!newValue.equals(oldValue)) {
         		
         		StringWriter errorOutput = new StringWriter();
-            MModel model = fObject.cls().model() != null ? fObject.cls().model() : fSystem.model();
         		Expression valueAsExpression = 
         			OCLCompiler.compileExpression(
-                  model,
+                  fSystem.model(),
         					fSystem.state(),
         					newValue, 
         					"<input>", 

@@ -13,16 +13,16 @@
 */
 importStatement returns [ASTImportStatement n]
 @init {
-    List<Token> symbols = new ArrayList<Token>();
+    List<String> symbols = new ArrayList<String>();
     boolean isWildcard = false;
 }
 :
     'import'
     (
-        id=IDENT { symbols.add($id); }
+        id=qualifiedIdent { symbols.add($id.n); }
         | STAR { isWildcard = true; }
-        | LBRACE i=IDENT { symbols.add($i); }
-        (COMMA i=IDENT { symbols.add($i); })*
+        | LBRACE i=qualifiedIdent { symbols.add($i.n); }
+        (COMMA i=qualifiedIdent { symbols.add($i.n); })*
         RBRACE
     )
     'from' artifact=(STRING | NON_OCL_STRING) {
@@ -539,7 +539,14 @@ signalDefinition[boolean isAbstract] returns [ASTSignal n]:
       )
     )?
     'end'
-    ;  
+    ;
+
+qualifiedIdent returns [String n]:
+    modelQualifier=IDENT HASH name=IDENT {
+        $n = $modelQualifier.getText() + "#" + $name.getText();
+    }
+    | name=IDENT { $n = $name.getText(); }
+    ;
 
 keyUnion:
   {input.LT(1).getText().equals("union")}? IDENT ;

@@ -1,0 +1,9 @@
+import B from "imports/t128_import1.use"
+import C from "imports/t128_import2.use"
+
+model t128
+
+class A
+    attributes
+        a : C
+end

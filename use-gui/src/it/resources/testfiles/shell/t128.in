@@ -1,0 +1,11 @@
+# Both models import the same data type, attributes should be comparable
+
+!create a : A
+!create b : B
+!set a.a := C(1,1)
+!set b.b := C(1,1)
+? a.a = b.b
+*-> true : Boolean
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.

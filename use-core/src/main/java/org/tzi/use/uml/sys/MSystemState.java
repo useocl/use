@@ -1579,9 +1579,9 @@ public final class MSystemState {
 		Collection<MClassInvariant> source;
 		
 		if (invNames.isEmpty()) {
-			source = fSystem.model().classInvariants();
+			source = fSystem.model().getClassInvariantsIncludingImports();
 		} else {
-			source = Collections2.filter(fSystem.model().classInvariants(), 
+			source = Collections2.filter(fSystem.model().getClassInvariantsIncludingImports(),
 					new Predicate<MClassInvariant>() {
 						@Override
 						public boolean apply(MClassInvariant input) {
@@ -1807,7 +1807,7 @@ public final class MSystemState {
 		}
 		
 		// check all associations
-		for (MAssociation assoc : fSystem.model().associations()) {
+		for (MAssociation assoc : fSystem.model().getAssociationsIncludingImports()) {
 			res = checkStructure(assoc, out, reportAllErrors) && res;
 			if (!reportAllErrors && !res) return false;
 		}

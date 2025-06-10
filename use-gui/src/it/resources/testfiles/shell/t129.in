@@ -1,0 +1,8 @@
+# Test creation of fully classes that are imported using their model qualified name
+
+!create b : t129_import#B
+? b
+*-> b : B
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.

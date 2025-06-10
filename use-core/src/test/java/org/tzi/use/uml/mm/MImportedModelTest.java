@@ -87,6 +87,23 @@ public class MImportedModelTest {
     }
 
     @Test
+    public void testGetClassesWithQualifiedClass() {
+        MModel rootModel = createRootModel();
+        MModel model = TestModelUtil.getInstance().createModelWithClassAndAssocClass();
+        MImportedModel importedModel = new MImportedModel(model, false, Set.of("PersonCompany#Person", "Job"));
+        try {
+            rootModel.addImportedModel(importedModel);
+            Collection<MClass> classes = rootModel.getClassesIncludingImports();
+            assertEquals(2, classes.size());
+            assertTrue(classes.contains(rootModel.getClass("RootClass")));
+            assertTrue(classes.contains(rootModel.getClass("PersonCompany#Person")));
+            assertFalse(classes.contains(model.getClass("Job")));
+        } catch (MInvalidModelException e) {
+            throw new Error(e);
+        }
+    }
+
+    @Test
     public void testGetClassWithWildcard() {
         MModel rootModel = createRootModel();
         MModel model = TestModelUtil.getInstance().createModelWithClasses();
@@ -153,6 +170,20 @@ public class MImportedModelTest {
     }
 
     @Test
+    public void testGetClassWithQualifiedClass() {
+        MModel rootModel = createRootModel();
+        MModel model = TestModelUtil.getInstance().createModelWithClassAndAssocClass();
+        MImportedModel importedModel = new MImportedModel(model, false, Set.of("PersonCompany#Person", "Job"));
+        try {
+            rootModel.addImportedModel(importedModel);
+            assertEquals(rootModel.getClass("PersonCompany#Person"), model.getClass("Person"));
+            assertNull(rootModel.getClass("Person"));
+        } catch (MInvalidModelException e) {
+            throw new Error(e);
+        }
+    }
+
+    @Test
     public void testResolveQualifiedClass() {
         MModel rootModel = createRootModel();
         MModel model = TestModelUtil.getInstance().createModelWithClasses();
@@ -163,7 +194,7 @@ public class MImportedModelTest {
             MImportedModel importedModel = new MImportedModel(model, false, Set.of("Company"));
             rootModel.addImportedModel(importedModel);
             assertEquals(transitiveModel.getClass("TransitiveClass"),
-                    rootModel.getClass("TransitiveModel::TransitiveClass"));
+                    rootModel.getClass("TransitiveModel#TransitiveClass"));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -199,6 +230,23 @@ public class MImportedModelTest {
             assertTrue(dataTypes.contains(rootModel.getDataType("RootDataType")));
             assertTrue(dataTypes.contains(model.getDataType("Date")));
             assertFalse(dataTypes.contains(model.getDataType("Time")));
+        } catch (MInvalidModelException e) {
+            throw new Error(e);
+        }
+    }
+
+    @Test
+    public void testGetDataTypesWithQualifiedDataType() {
+        MModel rootModel = createRootModel();
+        MModel model = TestModelUtil.getInstance().createModelWithDataType();
+        MImportedModel importedModel = new MImportedModel(model, false, Set.of("Date", "Dates#Time"));
+        try {
+            rootModel.addImportedModel(importedModel);
+            Collection<MDataType> dataTypes = rootModel.getDataTypesIncludingImports();
+            assertEquals(3, dataTypes.size());
+            assertTrue(dataTypes.contains(rootModel.getDataType("RootDataType")));
+            assertTrue(dataTypes.contains(model.getDataType("Date")));
+            assertTrue(dataTypes.contains(rootModel.getDataType("Dates#Time")));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -254,7 +302,7 @@ public class MImportedModelTest {
             MImportedModel importedModel = new MImportedModel(model, false, Set.of("Company"));
             rootModel.addImportedModel(importedModel);
             assertEquals(transitiveModel.getDataType("TransitiveDataType"),
-                    rootModel.getDataType("TransitiveModel::TransitiveDataType"));
+                    rootModel.getDataType("TransitiveModel#TransitiveDataType"));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -301,13 +349,15 @@ public class MImportedModelTest {
 
     @Test
     public void testGetClassifierWithWildcard() {
+        // Tests getClassifier on root model, since the method calls getClass, getDataType, etc. which also check
+        // imported models
         MModel rootModel = createRootModel();
         MModel model = TestModelUtil.getInstance().createModelWithClassesAndDataType();
         MImportedModel importedModel = new MImportedModel(model, true, null);
         try {
             rootModel.addImportedModel(importedModel);
-            assertEquals(model.getClass("Person"), rootModel.getClass("Person"));
-            assertEquals(model.getDataType("Date"), rootModel.getDataType("Date"));
+            assertEquals(model.getClassifier("Person"), rootModel.getClass("Person"));
+            assertEquals(model.getClassifier("Date"), rootModel.getDataType("Date"));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -321,7 +371,7 @@ public class MImportedModelTest {
         try {
             rootModel.addImportedModel(importedModel);
             assertEquals(model.getClass("Person"), rootModel.getClass("Person"));
-            assertEquals(model.getDataType("Date"), rootModel.getDataType("Date"));
+            assertEquals(model.getClassifier("Date"), rootModel.getDataType("Date"));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -334,7 +384,7 @@ public class MImportedModelTest {
         MImportedModel importedModel = new MImportedModel(model, false, Set.of("Person", "Date"));
         try {
             rootModel.addImportedModel(importedModel);
-            assertNull(rootModel.getClass("Company"));
+            assertNull(rootModel.getClassifier("Company"));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -350,10 +400,12 @@ public class MImportedModelTest {
             model.addImportedModel(transitiveImportedModel);
             MImportedModel importedModel = new MImportedModel(model, false, Set.of("Company"));
             rootModel.addImportedModel(importedModel);
-            assertEquals(transitiveModel.getClass("TransitiveClass"),
-                    rootModel.getClassifier("TransitiveModel::TransitiveClass"));
-            assertEquals(transitiveModel.getDataType("TransitiveDataType"),
-                    rootModel.getClassifier("TransitiveModel::TransitiveDataType"));
+            assertEquals(transitiveModel.getClassifier("TransitiveModel#TransitiveClass"),
+                    rootModel.getClassifier("TransitiveClass")
+                    );
+            assertEquals(transitiveModel.getClassifier("TransitiveModel#TransitiveDataType"),
+                    rootModel.getClassifier("TransitiveDataType")
+                    );
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }
@@ -389,6 +441,40 @@ public class MImportedModelTest {
             assertTrue(enums.contains(rootModel.enumType("RootEnum")));
             assertTrue(enums.contains(rootModel.enumType("colors")));
             assertFalse(enums.contains(rootModel.enumType("colors2")));
+        } catch (MInvalidModelException e) {
+            throw new Error(e);
+        }
+    }
+
+    @Test
+    public void testGetEnumTypesWithQualifiedEnumType() {
+        MModel rootModel = createRootModel();
+        MModel model = TestModelUtil.getInstance().createModelWithEnum();
+        MImportedModel importedModel = new MImportedModel(model, false, Set.of("Color#colors"));
+        try {
+            rootModel.addImportedModel(importedModel);
+            Collection<EnumType> enums = rootModel.getEnumTypesIncludingImports();
+            assertEquals(2, enums.size());
+            assertTrue(enums.contains(rootModel.enumType("RootEnum")));
+            assertTrue(enums.contains(rootModel.enumType("Color#colors")));
+            assertFalse(enums.contains(rootModel.enumType("colors2")));
+        } catch (MInvalidModelException e) {
+            throw new Error(e);
+        }
+    }
+
+    @Test
+    public void testResolveQualifiedEnumType() {
+        MModel rootModel = createRootModel();
+        MModel model = TestModelUtil.getInstance().createModelWithClasses();
+        MModel transitiveModel = createTransitiveImportedModel();
+        MImportedModel transitiveImportedModel = new MImportedModel(transitiveModel, true, null);
+        try {
+            model.addImportedModel(transitiveImportedModel);
+            MImportedModel importedModel = new MImportedModel(model, false, Set.of("TransitiveEnum"));
+            rootModel.addImportedModel(importedModel);
+            assertEquals(transitiveModel.getDataType("TransitiveEnum"),
+                    rootModel.getDataType("TransitiveModel#TransitiveEnum"));
         } catch (MInvalidModelException e) {
             throw new Error(e);
         }

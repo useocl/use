@@ -142,16 +142,6 @@ public class MModel extends MModelElementImpl {
 				return cls;
 			}
 		}
-
-		// Check transitive imports only via qualified name resolution
-		if (name.contains("::")) {
-			for (MImportedModel imp : importedModels.values()) {
-				cls = imp.resolveQualifiedClass(name);
-				if (cls != null) {
-					return cls;
-				}
-			}
-		}
 		return null;
 	}
 
@@ -190,15 +180,6 @@ public class MModel extends MModelElementImpl {
 			}
 		}
 
-		// Check transitive imports only via qualified name resolution
-		if (name.contains("::")) {
-			for (MImportedModel imp : importedModels.values()) {
-				dataType = imp.resolveQualifiedDatatype(name);
-				if (dataType != null) {
-					return dataType;
-				}
-			}
-		}
 		return null;
 	}
 
@@ -552,6 +533,7 @@ public class MModel extends MModelElementImpl {
 			throw new MInvalidModelException("Model already contains a type `"
 					+ e.name() + "'.");
 		fEnumTypes.put(e.name(), e);
+		e.setModel(this);
 	}
 
 	/**
@@ -640,7 +622,7 @@ public class MModel extends MModelElementImpl {
 		for (MImportedModel importedModel : importedModels.values()) {
 			classInvariants.addAll(importedModel.getClassInvariants());
 		}
-		return classInvariants;
+		return classInvariants.stream().sorted(Comparator.comparing(MClassInvariant::qualifiedName)).collect(Collectors.toList());
 	}
 
 	public Collection<MClassInvariant> classInvariants(boolean onlyActive) {

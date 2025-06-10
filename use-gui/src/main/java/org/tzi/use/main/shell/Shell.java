@@ -49,7 +49,10 @@ import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.testsuite.MTestSuite;
-import org.tzi.use.util.*;
+import org.tzi.use.util.Log;
+import org.tzi.use.util.Report;
+import org.tzi.use.util.StringUtil;
+import org.tzi.use.util.USEWriter;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.SocketReadline;
@@ -59,6 +62,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
@@ -1227,7 +1231,7 @@ public final class Shell implements Runnable, PPCHandler {
 		try (BufferedInputStream specStream = new BufferedInputStream(new FileInputStream(filename))){
 			Log.println("compiling specification...");
 			handleBOM(specStream);
-			model = USECompiler.compileSpecification(specStream, filename,
+			model = USECompiler.compileSpecification(specStream, filename, Path.of(filename).toUri(),
 					new PrintWriter(System.err), new ModelFactory());
 			Log.println("done");
 		} catch (FileNotFoundException e) {

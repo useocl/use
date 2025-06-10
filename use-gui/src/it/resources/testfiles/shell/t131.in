@@ -1,0 +1,12 @@
+# Tests setting of attributes with imported model qualified data type and enum
+
+!create a : A
+!set a.b := t131_import#B(1,1)
+? a.b
+*-> B{x=1, y=1} : B
+!set a.c := t131_import#C::H
+? a.c
+*-> C::H : C
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.

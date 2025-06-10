@@ -24,7 +24,10 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.mm.MMPrintVisitor;
+import org.tzi.use.uml.mm.MMVisitor;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.extension.ExtensionManager;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.Log;
@@ -117,7 +120,7 @@ public final class Main {
 			try (FileInputStream specStream = new FileInputStream(Options.specFilename)){
 				Log.verbose("compiling specification...");
 				model = USECompiler.compileSpecification(specStream,
-						file.getFileName().toString(), new PrintWriter(System.err),
+						file.getFileName().toString(), file.toAbsolutePath().toUri(), new PrintWriter(System.err),
 						new ModelFactory());
 			} catch (FileNotFoundException e) {
 				Log.error("File `" + Options.specFilename + "' not found.");

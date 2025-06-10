@@ -1,2 +1,2 @@
-<MODEL_PATH>\t31_imports.use:1:9: Could not find element for imported symbol: B in model t31_import.
-<MODEL_PATH>\t31_imports.use:7:6: Expected type name, found `B'.
+Could not find element for imported symbol: B in model t31_import.
+t31_imports.use:7:6: Expected type name, found `B'.

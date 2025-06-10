@@ -1,7 +1,9 @@
 package org.tzi.use.parser.use;
 
-import org.antlr.runtime.Token;
-import org.tzi.use.parser.*;
+import org.tzi.use.parser.AST;
+import org.tzi.use.parser.Context;
+import org.tzi.use.parser.ImportContext;
+import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MImportedModel;
 import org.tzi.use.uml.mm.MInvalidModelException;
@@ -11,11 +13,12 @@ import org.tzi.use.uml.ocl.type.EnumType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -23,17 +26,17 @@ import java.util.stream.Collectors;
  * of external model files and their specified elements.
  */
 public class ASTImportStatement extends AST {
-    private final List<Token> fSymbols;
+    private final List<String> fSymbols;
     private final String artifact;
     private final boolean isWildcard;
 
-    public ASTImportStatement(List<Token> symbols, String artifact, boolean isWildcard) {
+    public ASTImportStatement(List<String> symbols, String artifact, boolean isWildcard) {
         this.fSymbols = symbols;
         this.artifact = artifact;
         this.isWildcard = isWildcard;
     }
 
-    public List<Token> getfSymbols() {
+    public List<String> getfSymbols() {
         return fSymbols;
     }
 
@@ -54,19 +57,20 @@ public class ASTImportStatement extends AST {
      * @throws IOException            If there are issues accessing the specified file representing the artifact.
      */
     public void resolveAndImport(ImportContext importContext, Context ctx, MModel currentModel) throws SemanticException, MInvalidModelException, IOException {
-        Path resolvedIdentifier = resolvePath(artifact, currentModel.filename());
+        Path resolvedIdentifier = resolveURI(artifact, ctx.getfFileUri());
         try (InputStream iStream = Files.newInputStream(resolvedIdentifier)) {
             // Check import context for already compiled models to avoid redundant compilation.
             MModel model = importContext.importedModels().stream().filter(mModel -> mModel.filename().equals(resolvedIdentifier.toString())).findFirst().orElse(null);
             if (model == null) {
                 // Cycle detection
-                if (importContext.isModelBeingCompiled(resolvedIdentifier.toString())) {
+                if (importContext.isModelBeingCompiled(resolvedIdentifier.toUri().toString())) {
                     throw new SemanticException("Cycle detected in model imports for model " + currentModel.name() + ".");
                 } else {
-                    importContext.addModelBeingCompiled(resolvedIdentifier.toString());
+                    importContext.addModelBeingCompiled(resolvedIdentifier.toUri().toString());
                 }
 
-                model = USECompiler.compileImportedSpecification(iStream, resolvedIdentifier.toString(), ctx, importContext);
+                model = USECompiler.compileImportedSpecification(iStream, resolvedIdentifier.toString(),
+                        resolvedIdentifier.toUri(), ctx, importContext);
                 // model may be null if compilation failed (e.g. a cycle is detected)
                 if (model == null) {
                     return;
@@ -77,15 +81,19 @@ public class ASTImportStatement extends AST {
                 importContext.removeModelBeingCompiled(resolvedIdentifier.toString());
             }
 
-            MImportedModel importedModel = new MImportedModel(model, isWildcard, fSymbols.stream().map(Token::getText).collect(Collectors.toSet()));
+            MImportedModel importedModel = new MImportedModel(model, isWildcard, new HashSet<>(fSymbols));
 
             // Check if every specified symbol is present in the model
             if (!isWildcard) {
-                for (Token token : fSymbols) {
-                    String elementName = token.getText();
+                for (String symbol : fSymbols) {
+                    String elementName = getElementName(symbol, model.name());
                     MClassifier element = findElementInModel(model, elementName);
                     if (element == null) {
-                        throw new SemanticException(new SrcPos(token), "Could not find element for imported symbol: " + token.getText() + " in model " + importedModel.name() + ".");
+                        throw new SemanticException("Could not find element for imported symbol: " + symbol
+                                + " in model " + importedModel.name() + ".");
+                    }
+                    if (symbol.contains("#")) {
+                        element.setQualifiedAccess(true);
                     }
                 }
             }
@@ -94,15 +102,15 @@ public class ASTImportStatement extends AST {
 
             // Add imported types to parent context
             for (MClassifier cls : importedModel.getClassifiers()) {
-                ctx.typeTable().add(cls.name(), cls, null);
+                ctx.typeTable().add(getElementNameForSymTable(cls.name()), cls, null);
             }
 
             for (EnumType enumType : importedModel.getEnumTypes()) {
-                ctx.typeTable().add(enumType.name(), enumType, null);
+                ctx.typeTable().add(getElementNameForSymTable(enumType.name()), enumType, null);
             }
 
             for (MSignal signal : importedModel.getSignals()) {
-                ctx.typeTable().add(signal.name(), signal, null);
+                ctx.typeTable().add(getElementNameForSymTable(signal.name()), signal, null);
             }
 
         } catch (IOException e) {
@@ -110,7 +118,10 @@ public class ASTImportStatement extends AST {
         }
     }
 
-    private Path resolvePath(String artifactPath, String currentModelPath) {
+    private Path resolveURI(String artifactPath, URI currentModelUri) throws IOException {
+        if (!currentModelUri.getScheme().equals("file")) {
+            throw new IOException("URI scheme is invalid. Currently only file URIs are supported for importing models.");
+        }
         if (!artifactPath.endsWith(".use")) {
             artifactPath += ".use";
         }
@@ -121,7 +132,31 @@ public class ASTImportStatement extends AST {
             return artifactPathResolved;
         }
 
-        return Paths.get(currentModelPath).toAbsolutePath().getParent().resolve(artifactPathResolved).normalize();
+        return Paths.get(currentModelUri).toAbsolutePath().getParent().resolve(artifactPathResolved).normalize();
+    }
+
+    private String getElementName(String token, String modelName) throws SemanticException {
+        String[] parts = token.split("#");
+        if (parts.length != 2) {
+            return parts[0];
+        } else {
+            if (!parts[0].equals(modelName)) {
+                throw new SemanticException("Model qualifier " + parts[0] + " does not match model name: " + modelName);
+            }
+            return parts[1];
+        }
+    }
+
+    private String getElementNameForSymTable(String elementName) {
+        for (String symbol : getfSymbols()) {
+            String[] parts = symbol.split("#");
+            if (parts.length == 2) {
+                if (elementName.equals(parts[1])) {
+                    return symbol;
+                }
+            }
+        }
+        return elementName;
     }
 
     private MClassifier findElementInModel(MModel model, String elementName) {
@@ -131,6 +166,9 @@ public class ASTImportStatement extends AST {
         }
         if (element == null) {
             element = model.getSignal(elementName);
+        }
+        if (element == null) {
+            element = model.getAssociation(elementName);
         }
         return element;
     }

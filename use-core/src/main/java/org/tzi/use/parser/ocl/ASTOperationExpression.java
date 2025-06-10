@@ -60,6 +60,7 @@ import java.util.Set;
  * @author  Lars Hamann
  */
 public class ASTOperationExpression extends ASTExpression {
+    private final Token fModelQualifier;
     private final Token fOp;
     private final ASTExpression fSrcExpr;
     private final List<ASTExpression> fArgs;
@@ -77,10 +78,23 @@ public class ASTOperationExpression extends ASTExpression {
      * self.employeeRanking[employee]['123']
      */
     private List<ASTExpression> fQualifiers = Collections.emptyList();
+
+    public ASTOperationExpression(Token op,
+                                  ASTExpression source,
+                                  boolean followsArrow) {
+        fModelQualifier = null;
+        fOp = op;
+        fSrcExpr = source;
+        fArgs = new ArrayList<>();
+        fHasParentheses = false;
+        fFollowsArrow = followsArrow;
+    }
     
-    public ASTOperationExpression(Token op, 
+    public ASTOperationExpression(Token modelQualifier,
+                                  Token op,
                                   ASTExpression source, 
                                   boolean followsArrow) {
+        fModelQualifier = modelQualifier;
         fOp = op;
         fSrcExpr = source;
         fArgs = new ArrayList<>();
@@ -191,7 +205,8 @@ public class ASTOperationExpression extends ASTExpression {
             // assumed to be the source expression?
             if (res == null ) {
                 ExprContext ec = ctx.exprContext();
-                MClassifier cf = ctx.model().getClassifier(opname);
+                String name = fModelQualifier != null ? fModelQualifier.getText() + "#" + opname : opname;
+                MClassifier cf = ctx.model().getClassifier(name);
                 if (! ec.isEmpty() ) {
                     // construct source expression
                     ExprContext.Entry e = ec.peek();
@@ -596,7 +611,8 @@ public class ASTOperationExpression extends ASTExpression {
         MOperation op;
 
         // check for constructor call
-        MClassifier cf = ctx.model().getClassifier(opname);
+        MClassifier cf = srcClassifier.model() != null ? srcClassifier.model().getClassifier(opname)
+                : ctx.model().getClassifier(opname);
         if (cf == null) {
             op = srcClassifier.operation(opname, true);
         } else {

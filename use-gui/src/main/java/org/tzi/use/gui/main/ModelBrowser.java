@@ -19,37 +19,6 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.datatransfer.StringSelection;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
-
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.ToolTipManager;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
@@ -60,6 +29,18 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.uml.mm.*;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.dnd.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 /** 
  * A ModelBrowser provides a tree view of classes, associations, and constraints
@@ -73,7 +54,6 @@ import org.tzi.use.uml.mm.*;
 public class ModelBrowser extends JPanel 
     implements DragSourceListener, DragGestureListener, SortChangeListener {
     private MModel fModel;
-    private List<MModel> fImportedModels;
     private JTree fTree;
     private JEditorPane fHtmlPane;
     private ModelBrowserSorting fMbs;
@@ -295,7 +275,7 @@ public class ModelBrowser extends JPanel
             createNodes(fTop, fModel);
 
             if (!fModel.getImportedModels().isEmpty()) {
-                addImportedModels(fTop, fModel);
+                addImportedModels(fTop);
             }
         } else {
             fTop = new DefaultMutableTreeNode("No model available");
@@ -320,11 +300,11 @@ public class ModelBrowser extends JPanel
             fHtmlPane.setText("");
     }
 
-    private void addImportedModels(DefaultMutableTreeNode fTop, MModel model) {
+    private void addImportedModels(DefaultMutableTreeNode fTop) {
         DefaultMutableTreeNode importsNode = new DefaultMutableTreeNode("Imported models");
         for (MImportedModel importedModel : fModel.getImportedModels()) {
             DefaultMutableTreeNode importedRoot = new DefaultMutableTreeNode(importedModel.name());
-            createNodes(importedRoot, importedModel.getModel());
+            createImportedModelNodes(importedRoot, importedModel);
             importsNode.add(importedRoot);
         }
         fTop.add(importsNode);
@@ -400,31 +380,31 @@ public class ModelBrowser extends JPanel
 
     public void createImportedModelNodes(final DefaultMutableTreeNode top, MImportedModel model) {
         final Collection<MClassifier> sortedDataTypes =
-                fMbs.sortClasses( new ArrayList<>(model.getDataTypes()) );
-        addChildNodes( top, "Data types", sortedDataTypes );
+                fMbs.sortClasses(new ArrayList<>(model.getDataTypes()));
+        addChildNodes(top, "Data types", sortedDataTypes);
 
         final Collection<MClassifier> sortedClasses =
-                fMbs.sortClasses( new ArrayList<>(model.getClasses()) );
-        addChildNodes( top, "Classes", sortedClasses );
+                fMbs.sortClasses(new ArrayList<>(model.getClasses()));
+        addChildNodes(top, "Classes", sortedClasses);
 
         final ArrayList<MAssociation> sortedAssociations =
                 fMbs.sortAssociations(new ArrayList<>(model.getAssociations()));
 
-        addChildNodes( top, "Associations", sortedAssociations );
+        addChildNodes(top, "Associations", sortedAssociations);
 
         final Collection<MClassInvariant> sortedInvariants =
-                fMbs.sortInvariants( model.getClassInvariants() );
+                fMbs.sortInvariants(model.getClassInvariants());
 
-        addChildNodes( top, "Invariants", sortedInvariants );
+        addChildNodes(top, "Invariants", sortedInvariants);
 
         final Collection<MPrePostCondition> sortedConditions =
                 fMbs.sortPrePostConditions(model.getPrePostConditions());
-        addChildNodes( top, "Pre-/Postconditions", sortedConditions );
+        addChildNodes(top, "Pre-/Postconditions", sortedConditions);
 
         final Collection<MOperation> queryOperations = new ArrayList<MOperation>();
         for (MClass mClass : model.getClasses()) {
             for (MOperation mOperation : mClass.operations()) {
-                if(mOperation.hasExpression()){
+                if (mOperation.hasExpression()) {
                     queryOperations.add(mOperation);
                 }
             }
@@ -479,7 +459,7 @@ public class ModelBrowser extends JPanel
             createNodes(fTop, fModel);
 
             if (!fModel.getImportedModels().isEmpty()) {
-                addImportedModels(fTop, fModel);
+                addImportedModels(fTop);
             }
         }
         fTreeModel.reload();

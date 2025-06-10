@@ -1,0 +1,8 @@
+import WrongModel#A from "imports/t37_import1.use"
+
+model t37
+
+class A
+    attributes
+        a : WrongModel#A
+end

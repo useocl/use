@@ -66,7 +66,7 @@ import java.util.stream.Stream;
 public class USECompilerTest extends TestCase {
     // Set this to true to see more details about what is tested.
     private static final boolean VERBOSE = false;
-    private static final int EXPECTED = 47;
+    private static final int EXPECTED = 49;
 
     private static File TEST_PATH;
     private static File EXAMPLES_PATH;
@@ -147,10 +147,6 @@ public class USECompilerTest extends TestCase {
                 System.err.println(e.getMessage());
             }
         }
-    }
-
-    public void testSpecificationWithImports() {
-
     }
 
     public void testExpression() throws IOException {
@@ -276,7 +272,6 @@ public class USECompilerTest extends TestCase {
 
     private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) {
         List<String> actualErrors = Arrays.stream(errStr.toString().split("\n|(\r\n)"))
-                .map(this::normalizePaths)
                 .toList();
 
         try (Stream<String> lines = Files.lines(failFile.toPath())) {
@@ -314,10 +309,9 @@ public class USECompilerTest extends TestCase {
 
         try (FileInputStream specStream = new FileInputStream(specFile)){
             // Models with imports currently need absolute paths as the file name.
-            String inName = specFile.getName().endsWith("_imports.use")
-                    ? specFile.getAbsolutePath() : specFile.getName();
+            String inName = specFile.getName();
             result = USECompiler.compileSpecification(specStream,
-                    inName, newErr, new ModelFactory());
+                    inName, specFile.toPath().toUri(), newErr, new ModelFactory());
         } catch (IOException e) {
             // This can be ignored
             e.printStackTrace();

@@ -1,0 +1,9 @@
+import { B, C } from "imports/t125_import.use"
+
+model t125
+
+class A
+    attributes
+        b : B
+        c : C
+end

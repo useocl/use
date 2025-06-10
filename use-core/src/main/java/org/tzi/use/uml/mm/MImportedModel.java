@@ -30,8 +30,8 @@ public class MImportedModel extends MModelElementImpl {
      * @return collection of MClass objects based on filter criteria.
      */
     public Collection<MClass> getClasses() {
-        return model.classes().stream().filter(c -> (isWildcard || importedSymbols.contains(c.name())
-                && isImportableIfAssociationClass(c))).toList();
+        return model.classes().stream().filter(c -> isElementImported(c.name()) &&
+                isImportableIfAssociationClass(c)).toList();
     }
 
     /**
@@ -40,6 +40,10 @@ public class MImportedModel extends MModelElementImpl {
      * @return MClass with the specified name if found, otherwise null
      */
     public MClass getClass(String name) {
+        // Check if specified name contains model qualifier
+        if (name.contains("#")) {
+            return resolveQualifiedClass(name);
+        }
         if (isWildcard || importedSymbols.contains(name)) {
             return model.classes().stream().filter(c -> c.name().equals(name) &&
                     isImportableIfAssociationClass(c)).findFirst().orElse(null);
@@ -56,16 +60,13 @@ public class MImportedModel extends MModelElementImpl {
      * @return resolved MClass object if found, otherwise null.
      */
     public MClass resolveQualifiedClass(String name) {
-        String[] parts = name.split("::");
-        if (parts.length != 2) {
-            return null;
-        }
-
-        String modelName = parts[0];
-        String className = parts[1];
-
-        if (model.name().equals(modelName)) {
-            return model.classes().stream().filter(c -> c.name().equals(className)).findFirst().orElse(null);
+        if (isElementImported(name)) {
+            MClass res = model.classes().stream()
+                    .filter(c -> c.qualifiedName().equals(name))
+                    .findFirst().orElse(null);
+            if (res != null) {
+                return res;
+            }
         }
 
         for (MImportedModel importedModel : model.getImportedModels()) {
@@ -80,7 +81,7 @@ public class MImportedModel extends MModelElementImpl {
      * @return collection of MDataType objects based on filter criteria.
      */
     public Collection<MDataType> getDataTypes() {
-        return model.dataTypes().stream().filter(c -> isWildcard || importedSymbols.contains(c.name())).toList();
+        return model.dataTypes().stream().filter(c -> isElementImported(c.name())).toList();
     }
 
     /**
@@ -89,6 +90,9 @@ public class MImportedModel extends MModelElementImpl {
      * @return MDatatype with the specified name if found, otherwise null
      */
     public MDataType getDataType(String name) {
+        if (name.contains("#")) {
+            return resolveQualifiedDatatype(name);
+        }
         if (isWildcard || importedSymbols.contains(name)) {
             return model.dataTypes().stream().filter(c -> c.name().equals(name)).findFirst().orElse(null);
         }
@@ -104,15 +108,13 @@ public class MImportedModel extends MModelElementImpl {
      * @return resolved MDataType object if found, otherwise null.
      */
     public MDataType resolveQualifiedDatatype(String name) {
-        String[] parts = name.split("::");
-        if (parts.length != 2) {
-            return null;
-        }
-        String modelName = parts[0];
-        String typeName = parts[1];
-
-        if (model.name().equals(modelName)) {
-            return model.dataTypes().stream().filter(c -> c.name().equals(typeName)).findFirst().orElse(null);
+        if (isElementImported(name)) {
+            MDataType res = model.dataTypes().stream()
+                    .filter(c -> c.qualifiedName().equals(name))
+                    .findFirst().orElse(null);
+            if (res != null) {
+                return res;
+            }
         }
 
         for (MImportedModel importedModel : model.getImportedModels()) {
@@ -127,16 +129,7 @@ public class MImportedModel extends MModelElementImpl {
      * @return collection of MClassifier objects based on filter criteria.
      */
     public Collection<MClassifier> getClassifiers() {
-        return model.classifiers().stream().filter(c -> isWildcard || importedSymbols.contains(c.name())).toList();
-    }
-
-    /**
-     * Returns a collection of classifiers from the model that match the import criteria.
-     *
-     * @return collection of MClassifier objects based on filter criteria.
-     */
-    public Collection<MClassifier> getClassifier(String name) {
-        return model.classifiers().stream().filter(c -> c.name().equals(name)).toList();
+        return model.classifiers().stream().filter(c -> isElementImported(c.name())).toList();
     }
 
     /**
@@ -145,7 +138,7 @@ public class MImportedModel extends MModelElementImpl {
      * @return collection of EnumType objects based on filter criteria.
      */
     public Collection<EnumType> getEnumTypes() {
-        return model.enumTypes().stream().filter(c -> isWildcard || importedSymbols.contains(c.name())).toList();
+        return model.enumTypes().stream().filter(c -> isElementImported(c.name())).toList();
     }
 
     /**
@@ -154,8 +147,31 @@ public class MImportedModel extends MModelElementImpl {
      * @return EnumType with the specified name if found, otherwise null
      */
     public EnumType getEnumType(String name) {
+        if (name.contains("#")) {
+            return resolveQualifiedEnumType(name);
+        }
         if (isWildcard || importedSymbols.contains(name)) {
             return model.enumTypes().stream().filter(c -> c.name().equals(name)).findFirst().orElse(null);
+        }
+        return null;
+    }
+    /**
+     * Resolves and returns the data type corresponding to the given qualified data type name
+     * by searching in this model if the specified model name matches and otherwise iterating
+     * through this model's imports.
+     *
+     * @param name The qualified name of the data type to resolve, in the format "modelName::datatypeName".
+     * @return resolved MDataType object if found, otherwise null.
+     */
+    public EnumType resolveQualifiedEnumType(String name) {
+        EnumType res = model.enumTypes().stream()
+                .filter(c -> c.qualifiedName().equals(name)).findFirst().orElse(null);
+        if (res != null) {
+            return res;
+        }
+
+        for (MImportedModel importedModel : model.getImportedModels()) {
+            return importedModel.resolveQualifiedEnumType(name);
         }
         return null;
     }
@@ -168,15 +184,12 @@ public class MImportedModel extends MModelElementImpl {
      * @return a collection of MAssociation objects filtered based on the import criteria
      */
     public Collection<MAssociation> getAssociations() {
-        return model.associations().stream().filter(c -> {
-            if (isWildcard) {
-                return c.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null);
-            } else {
-                return importedSymbols.contains(c.name()) &&
-                        c.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null
-                                && importedSymbols.contains(ae.cls().name()));
-            }
-        }).toList();
+        return model.associations().stream()
+                .filter(c -> isElementImported(c.name()) &&
+                        c.associationEnds().stream()
+                                .allMatch(ae -> getClass(ae.cls().name()) != null
+                                && isElementImported(ae.cls().name())))
+                .toList();
     }
 
     /**
@@ -187,18 +200,15 @@ public class MImportedModel extends MModelElementImpl {
      * @return the MAssociation object with the specified name if it meets the criteria, otherwise null
      */
     public MAssociation getAssociation(String name) {
-        if (isWildcard) {
-            return model.associations().stream().filter(c -> c.name().equals(name) &&
-                    c.associationEnds().stream()
-                            .allMatch(ae -> getClass(ae.cls().name()) != null))
+        if (isWildcard || importedSymbols.contains(name)) {
+            return model.associations().stream()
+                    .filter(c -> c.name().equals(name)
+                            && c.associationEnds().stream()
+                            .allMatch(ae -> getClass(ae.cls().name()) != null
+                                    && isElementImported(ae.cls().name())))
                     .findFirst().orElse(null);
-        } else {
-            return model.associations().stream().filter(c -> c.name().equals(name)
-                    && c.associationEnds().stream()
-                    .allMatch(ae -> getClass(ae.cls().name()) != null
-                            && importedSymbols.contains(ae.cls().name()))
-                    && importedSymbols.contains(c.name())).findFirst().orElse(null);
         }
+        return null;
     }
 
     /**
@@ -212,15 +222,9 @@ public class MImportedModel extends MModelElementImpl {
     public MAssociationClass getAssociationClass(String name) {
         MClass cls = getClass(name);
         if (cls instanceof MAssociationClass associationClass) {
-            if (isWildcard) {
-                if (associationClass.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null)) {
-                    return associationClass;
-                }
-            } else {
-                if (associationClass.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null
-                                && importedSymbols.contains(ae.cls().name()))) {
-                    return associationClass;
-                }
+            if (associationClass.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null
+                            && isElementImported(ae.cls().name()))) {
+                return associationClass;
             }
         }
         return null;
@@ -234,8 +238,7 @@ public class MImportedModel extends MModelElementImpl {
      * @return collection of MClassInvariant objects filtered based on the import criteria.
      */
     public Collection<MClassInvariant> getClassInvariants() {
-        return model.classInvariants().stream().filter(c -> isWildcard
-                || importedSymbols.contains(c.cls().name())).toList();
+        return model.classInvariants().stream().filter(c -> isElementImported(c.cls().name())).toList();
     }
 
     /**
@@ -257,10 +260,9 @@ public class MImportedModel extends MModelElementImpl {
      */
     public MClassInvariant getClassInvariant(String name) {
         return model.classInvariants().stream().filter(c ->
-                (isWildcard || importedSymbols.contains(c.cls().name()))
+                (isElementImported(c.cls().name()))
                 && c.qualifiedName().equals(name)).findFirst().orElse(null);
     }
-
 
     /**
      * Returns a collection of pre- and postconditions that match the import criteria.
@@ -271,7 +273,7 @@ public class MImportedModel extends MModelElementImpl {
      */
     public Collection<MPrePostCondition> getPrePostConditions() {
         return model.prePostConditions().stream()
-                .filter(c -> isWildcard || importedSymbols.contains(c.cls().name())).toList();
+                .filter(c -> isElementImported(c.cls().name())).toList();
     }
 
     /**
@@ -280,7 +282,7 @@ public class MImportedModel extends MModelElementImpl {
      * @return collection of MSignal objects based on filter criteria.
      */
     public Collection<MSignal> getSignals() {
-        return model.getSignals().stream().filter(c -> isWildcard || importedSymbols.contains(c.name())).toList();
+        return model.getSignals().stream().filter(c -> isElementImported(c.name())).toList();
     }
 
     /**
@@ -290,9 +292,41 @@ public class MImportedModel extends MModelElementImpl {
      */
     public MSignal getSignal(String name) {
         if (isWildcard || importedSymbols.contains(name)) {
-            return model.getSignals().stream().filter(c -> c.name().equals(name)).findFirst().orElse(null);
+            return model.getSignals().stream().filter(c -> c.name().equals(name))
+                    .findFirst().orElse(null);
         }
         return null;
+    }
+
+    /**
+     * Helper method to determine if element is imported, i.e. either the wildcard symbol is used or the element
+     * is imported explicitly (Unqualified/Qualified). This method should only be used when the distinction
+     * between qualified and unqualified elements does not matter. When retrieving classes, cls.name() should
+     * be checked for un-/qualified import, or when name argument is qualified anyway.
+     */
+    private boolean isElementImported(String name) {
+        if (isWildcard) {
+            return true;
+        }
+
+        String[] parts = name.split("#");
+        if (parts.length == 2) {
+            if (!parts[0].equals(model.name())) {
+                return false;
+            }
+            return importedSymbols.contains(name) || importedSymbols.contains(parts[1]);
+        }
+
+        return importedSymbols.contains(parts[0]) || importedSymbols.contains(model.name() + "#" + parts[0]);
+    }
+
+    private boolean isImportableIfAssociationClass(MClass cls) {
+        if (cls instanceof MAssociationClass associationClass) {
+            return associationClass.associationEnds().stream()
+                    .allMatch(ae -> getClass(ae.cls().name()) != null
+                    && isElementImported(ae.cls().name()));
+        }
+        return true;
     }
 
     public MModel getModel() {
@@ -302,17 +336,5 @@ public class MImportedModel extends MModelElementImpl {
     @Override
     public void processWithVisitor(MMVisitor v) {
         v.visitModel(model);
-    }
-
-    private boolean isImportableIfAssociationClass(MClass cls) {
-        if (cls instanceof MAssociationClass associationClass) {
-            if (isWildcard) {
-                return associationClass.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null);
-            } else {
-                return associationClass.associationEnds().stream().allMatch(ae -> getClass(ae.cls().name()) != null
-                        && importedSymbols.contains(ae.cls().name()));
-            }
-        }
-        return true;
     }
 }
