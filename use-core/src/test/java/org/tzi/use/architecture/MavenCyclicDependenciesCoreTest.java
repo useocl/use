@@ -4,11 +4,14 @@ import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.Location;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.EvaluationResult;
+import com.tngtech.archunit.lang.FailureReport;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,17 +22,13 @@ import java.io.IOException;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MavenCyclicDependenciesCoreTest {
 
-    // hier sind keine Tests drin, überlegen, ob das so soll oder nicht
-    // mit Tests: 293 Zyklen, ohne 55 ! und ohne uml sogar nur 5
-    // hier sind nur core Klassen drin, weil core keinen Zugriff auf gui hat
-    // also u.U. auch so einen Test f. gui
     private JavaClasses classesWithoutTests;
     private JavaClasses classesWithTests;
 
     @BeforeAll
     public void setup() {
         // Create reports directory if it doesn't exist
-        File reportsDir = new File("target/archunit-reports");
+        File reportsDir = new File("target/archunit-results");
         if (!reportsDir.exists()) {
             reportsDir.mkdirs();
         }
@@ -41,7 +40,6 @@ public class MavenCyclicDependenciesCoreTest {
 
         // Import classes with tests
         classesWithTests = new ClassFileImporter()
-                //.withImportOption(ImportOption.Predefined.ONLY_INCLUDE_TESTS)
                 .importPackages("org.tzi.use");
     }
 
@@ -191,8 +189,7 @@ public class MavenCyclicDependenciesCoreTest {
             File projectRoot = new File(System.getProperty("user.dir")).getParentFile();
             filename = new File(projectRoot, "docs/archunit-results/cycles-current-failure-report.txt").toString();
         } else {
-            filename = String.format("target/archunit-reports/failure_report_maven_cycles_%s_%s.txt", packageShortName, testSuffix);
-
+            filename = String.format("target/archunit-results/failure_report_maven_cycles_%s_%s.txt", packageShortName, testSuffix);
         }
         if (cycleCount > 0 || coreNoTests) {
             try (FileWriter writer = new FileWriter(filename)) {
@@ -212,5 +209,19 @@ public class MavenCyclicDependenciesCoreTest {
         } else {
             return false;
         }
+    }
+}
+class CustomTestExclusionOption implements ImportOption {
+    @Override
+    public boolean includes(Location location) {
+        String path = location.toString();
+        // SystemManipulator does not exist in later project
+        // TestModelUtil is moved to core in later project
+        if (path.contains("Test") ||
+                path.contains("ObjectCreation")
+        ) {
+            return false;
+        }
+        return true;
     }
 }
