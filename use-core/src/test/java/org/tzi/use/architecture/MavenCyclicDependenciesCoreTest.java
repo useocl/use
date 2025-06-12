@@ -4,7 +4,6 @@ import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.core.importer.Location;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.FailureReport;
@@ -209,19 +208,5 @@ public class MavenCyclicDependenciesCoreTest {
         } else {
             return false;
         }
-    }
-}
-class CustomTestExclusionOption implements ImportOption {
-    @Override
-    public boolean includes(Location location) {
-        String path = location.toString();
-        // SystemManipulator does not exist in later project
-        // TestModelUtil is moved to core in later project
-        if (path.contains("Test") ||
-                path.contains("ObjectCreation")
-        ) {
-            return false;
-        }
-        return true;
     }
 }
