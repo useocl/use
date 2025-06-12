@@ -38,6 +38,11 @@ jobs:
           # Extract violation count
           violation_count=$(grep -A 1 "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
           echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
+          
+      - name: Check for layer violations
+        if: steps.metrics.outputs.violation_count != '0'
+        run: |
+          echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.violation_count }} layer violations!"
 
       - name: Update CSV files
         run: |
