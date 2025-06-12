@@ -86,12 +86,14 @@ jobs:
             
             echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},$ALL_MODULES_NO_TESTS,$ALL_MODULES_WITH_TESTS,$ANALYSIS_NO_TESTS,$ANALYSIS_WITH_TESTS,$API_NO_TESTS,$API_WITH_TESTS,$CONFIG_NO_TESTS,$CONFIG_WITH_TESTS,$GEN_NO_TESTS,$GEN_WITH_TESTS,$GRAPH_NO_TESTS,$GRAPH_WITH_TESTS,$MAIN_NO_TESTS,$MAIN_WITH_TESTS,$PARSER_NO_TESTS,$PARSER_WITH_TESTS,$UML_NO_TESTS,$UML_WITH_TESTS,$UTIL_NO_TESTS,$UTIL_WITH_TESTS" >> "docs/archunit-results/cycles-tests.csv"
           fi
-
+          
+  
       - name: Commit and push metrics
         run: |
+          git checkout -B metrics-data
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
           git add docs/archunit-results/
           git commit -m "Update metrics data [skip ci]" || echo "No changes to commit"
-          git push
+          git push origin metrics-data
