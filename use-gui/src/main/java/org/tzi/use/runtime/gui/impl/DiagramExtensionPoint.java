@@ -18,8 +18,6 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
 
     private final List<DiagramPlugin> registeredPlugins = new ArrayList<>();
 
-    private final Map<Class<? extends DiagramView>, List<StyleInfoProvider>> styleInfoProviders = new HashMap<>();
-
     @Override
     public <T extends DiagramView> void registerView(T diagramView) {
         PluginDiagramManipulator.ALL_REGISTERED_DIAGRAM_VIEWS.add(diagramView);
@@ -32,35 +30,23 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
 
     @Override
     public void runPluginsOnInitialisation() {
-        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onInitialisation);
+        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulators).flatMap(Collection::stream).forEach(PluginDiagramManipulator::onInitialisation);
     }
 
     @Override
     public void runPluginsOnClosure() {
-        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulator).filter(Objects::nonNull).forEach(PluginDiagramManipulator::onClosure);
-    }
-
-    @Override
-    public void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
-        final Class<? extends DiagramView> targetClass = styleInfoProvider.getTargetClass();
-
-        // if an entry for this target class already exists: add, else: skip
-        styleInfoProviders.computeIfPresent(targetClass, (key, value) -> {
-            value.add(styleInfoProvider);
-            return value;
-        });
-        // if no entry exists: create, else: skip
-        styleInfoProviders.putIfAbsent(targetClass, new ArrayList<>(List.of(styleInfoProvider)));
-    }
-
-    @Override
-    public void removeStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
-        styleInfoProviders.get(styleInfoProvider.getTargetClass()).remove(styleInfoProvider);
+        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulators).flatMap(Collection::stream).forEach(PluginDiagramManipulator::onClosure);
     }
 
     @Override
     public List<StyleInfoProvider> getStyleInfoProvider(final Class<? extends DiagramView> targetClass) {
-        return styleInfoProviders.getOrDefault(targetClass, List.of());
+        return registeredPlugins.stream()
+                                .map(DiagramPlugin::getPluginDiagramManipulators)
+                                .flatMap(Collection::stream)
+                                .filter(pluginDiagramManipulator -> pluginDiagramManipulator.getTargetClass().equals(targetClass))
+                                .map(PluginDiagramManipulator::getStyleInfoProvider)
+                                .filter(Objects::nonNull)
+                                .toList();
     }
 
     @Override

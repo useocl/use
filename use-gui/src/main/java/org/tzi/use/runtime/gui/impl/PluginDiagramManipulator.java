@@ -1,5 +1,6 @@
 package org.tzi.use.runtime.gui.impl;
 
+import lombok.Getter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 
@@ -18,7 +19,11 @@ public abstract class PluginDiagramManipulator {
 
     private final Set<DiagramView> diagramViews;
 
+    @Getter
     private final Class<? extends DiagramView> targetClass;
+
+    @Getter
+    protected StyleInfoProvider styleInfoProvider;
 
     /**
      * Constructs a handle to the requested diagram view by setting the class variable.
@@ -37,25 +42,17 @@ public abstract class PluginDiagramManipulator {
     }
 
     /**
-     * Executes the plugins behaviour after initialisation of given diagram.
+     * Gets called when the graphical panel diagram initializes.
      */
     public void onInitialisation() {
         // override to use
     }
 
     /**
-     * Executes the plugins behaviour when the diagram is being closed / detached.
+     * Gets called when the graphical panel diagram closes.
      */
     public void onClosure() {
         // override to use
-    }
-
-    protected final void addStyleInfoProvider(final StyleInfoProvider styleInfoProvider) {
-        DiagramExtensionPoint.getInstance().addStyleInfoProvider(styleInfoProvider);
-    }
-
-    protected final void removeStyleInfoProvider(final StyleInfoProvider styleInfoProvider){
-        DiagramExtensionPoint.getInstance().removeStyleInfoProvider(styleInfoProvider);
     }
 
     /**
