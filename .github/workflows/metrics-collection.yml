@@ -91,10 +91,10 @@ jobs:
   
       - name: Commit and push metrics
         run: |
-          git checkout -B metrics-data
+          git checkout -B architecture-metrics
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
           git add docs/archunit-results/
           git commit -m "Update metrics data [skip ci]" || echo "No changes to commit"
-          git push origin metrics-data
+          git push origin architecture-metrics
