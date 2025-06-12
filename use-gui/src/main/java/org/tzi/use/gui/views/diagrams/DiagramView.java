@@ -42,6 +42,7 @@ import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
 import org.tzi.use.runtime.gui.impl.StyleInfoProvider;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
@@ -335,7 +336,7 @@ public abstract class DiagramView extends JPanel
             Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
             while (edgeIterator.hasNext()) {
                 EdgeBase e = edgeIterator.next();
-                checkForPluginColorChanges(e, this::diagramsOwnMapping, this::recolorEdgeBase);
+                checkForPluginColorChanges(e, this::getEdgeIdentifier, this::recolorEdgeBase);
                 e.draw(g2d);
             }
 
@@ -346,7 +347,7 @@ public abstract class DiagramView extends JPanel
             Iterator<PlaceableNode> nodeIterator = fGraph.iterator();
             while (nodeIterator.hasNext()) {
                 PlaceableNode n = nodeIterator.next();
-                checkForPluginColorChanges(n, this::diagramsOwnMapping, this::recolorPlaceableNode);
+                checkForPluginColorChanges(n, this::getNodeIdentifier, this::recolorPlaceableNode);
                 n.draw(g2d);
                 maxX = Math.max(maxX, n.getX() + n.getWidth());
                 maxY = Math.max(maxY, n.getY() + n.getHeight());
@@ -379,7 +380,7 @@ public abstract class DiagramView extends JPanel
         }
     }
 
-    private <T> void checkForPluginColorChanges(final T element, final Function<T, UIElementIntermediate<?>> mappingFunction, final BiConsumer<T, StyleInfoBase> recolorFunction) {
+    private <T> void checkForPluginColorChanges(final T element, final Function<T, Object> mappingFunction, final BiConsumer<T, StyleInfoBase> recolorFunction) {
         if (pluginRuntime == null) {
             return;
         }
@@ -388,10 +389,10 @@ public abstract class DiagramView extends JPanel
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
 
         if (!styleInfoProviders.isEmpty()) {
-            final UIElementIntermediate<?> intermediate = mappingFunction.apply(element);
+            final Object diagramElementIdentifier = mappingFunction.apply(element);
             // accumulate changes from all providers
             final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
-                    .map(provider -> provider.getStyleInfoForDiagramElement(intermediate))
+                    .map(provider -> provider.getStyleInfoForDiagramElement(diagramElementIdentifier))
                     .filter(Objects::nonNull)
                     .reduce((accumulated, current) -> {
                         accumulated.merge(current);
@@ -403,17 +404,24 @@ public abstract class DiagramView extends JPanel
     }
 
     /**
-     * Provides a mapping between the diagram-specific node element and the equivalent ???
-     * This method has to be overridden by a concrete DiagramView to use StyleInfos
-     * @param node
-     * @return
+     * Maps the given {@link PlaceableNode} to an identifier.
+     * This ID can be targeted for changes, and the element is protected from write access.
+     * This method has to be overridden by an inheritor of {@link DiagramView} to make use of the {@link DiagramExtensionPoint}
+     * @param node the {@link PlaceableNode} to map an ID to
+     * @return the ID to a {@link PlaceableNode}
      */
-    protected UIElementIntermediate<?> diagramsOwnMapping(final PlaceableNode node) {
-        //TODO: throwing an exception each time a descendent is crated is probably not the right decision
+    protected Object getNodeIdentifier(final PlaceableNode node) {
         throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
-    protected UIElementIntermediate<?> diagramsOwnMapping(final EdgeBase edgeBase) {
+    /**
+     * Maps the given {@link EdgeBase} to an identifier.
+     * This ID can be targeted for changes, and the element is protected from write access.
+     * This method has to be overridden by an inheritor of {@link DiagramView} to make use of the {@link DiagramExtensionPoint}
+     * @param edge the {@link EdgeBase} to map an ID to
+     * @return the ID to a {@link EdgeBase}
+     */
+    protected Object getEdgeIdentifier(final EdgeBase edge) {
         throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 

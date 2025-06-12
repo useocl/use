@@ -1485,17 +1485,16 @@ public class ClassDiagram extends DiagramView
 	}
 
 	@Override
-	protected UIElementIntermediate<MClassifier> diagramsOwnMapping(final PlaceableNode node) {
+	protected MClassifier getNodeIdentifier(final PlaceableNode node) {
 		return Optional.of(node)
 				.filter(ClassifierNode.class::isInstance)
 				.map(ClassifierNode.class::cast)
 				.map(ClassifierNode::getClassifier)
-				.map(UIElementIntermediate::new)
 				.orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + node.getClass()));
 	}
 
 	@Override
-	protected UIElementIntermediate<?> diagramsOwnMapping(final EdgeBase edgeBase) {
+	protected Object getEdgeIdentifier(final EdgeBase edgeBase) {
 		if (edgeBase instanceof GeneralizationEdge generalizationEdge) {
 			// returns MGeneralization, the relation between an abstract and an implementing model element
 			return Stream.of(visibleData, hiddenData)
@@ -1505,7 +1504,6 @@ public class ClassDiagram extends DiagramView
 					.map(Map.Entry::getKey)
 					.filter(Objects::nonNull)
 					.findAny()
-					.map(UIElementIntermediate::new)
 					.orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + edgeBase.getClass()));
 		} else if (edgeBase instanceof AssociationOrLinkPartEdge associationOrLinkPartEdge) {
 			// returns MAssociation, the relation between two model elements
@@ -1514,7 +1512,6 @@ public class ClassDiagram extends DiagramView
                     .map(EdgeProperty::getAssociation)
                     .filter(Objects::nonNull)
                     .findAny()
-                    .map(UIElementIntermediate::new)
                     .orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + edgeBase.getClass()));
 		}
 		throw new UnsupportedOperationException(String.format("The type of edge %s is not supported!", edgeBase.getClass().getName()));
