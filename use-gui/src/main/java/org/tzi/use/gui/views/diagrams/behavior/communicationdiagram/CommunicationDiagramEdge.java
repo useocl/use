@@ -173,7 +173,7 @@ public class CommunicationDiagramEdge extends EdgeBase {
 			g.setColor(new Color(80, 136, 252));
 			g.setStroke(new BasicStroke((float) 1.3));
 		} else {
-			g.setColor(fOpt.getEDGE_COLOR());
+			g.setColor(getEdgeColor());
 		}
 
 		drawEdge(g);

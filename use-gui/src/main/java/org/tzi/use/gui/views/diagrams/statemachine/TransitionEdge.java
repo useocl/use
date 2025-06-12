@@ -155,7 +155,7 @@ public class TransitionEdge extends EdgeBase {
 		if (this.isSelected()) {
 			g.setColor(fOpt.getEDGE_SELECTED_COLOR());
 		} else {
-			g.setColor(Color.BLACK);
+			g.setColor(getEdgeColor());
 		}
 		
 		EdgeProperty n1 = null;

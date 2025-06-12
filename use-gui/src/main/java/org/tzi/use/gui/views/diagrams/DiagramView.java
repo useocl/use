@@ -40,6 +40,10 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
+import org.tzi.use.runtime.gui.impl.StyleInfoProvider;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,7 +72,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -106,6 +113,8 @@ public abstract class DiagramView extends JPanel
 
     protected DiagramOptions fOpt;
 
+    private final IRuntime pluginRuntime;
+
     /**
      * This value is read from the system properties file.
      * It determines the minimum width of a class node
@@ -125,7 +134,12 @@ public abstract class DiagramView extends JPanel
      */
     private boolean hasUserDefinedLayout = false;
 
-    public DiagramView(DiagramOptions opt, PrintWriter log) {
+    public DiagramView(final DiagramOptions opt, final PrintWriter log){
+        this(opt, log, null);
+    }
+
+    public DiagramView(DiagramOptions opt, PrintWriter log, final IRuntime pluginRuntime) {
+        this.pluginRuntime = pluginRuntime;
         fOpt = opt;
         fGraph = new DiagramGraph();
         fLog = log;
@@ -189,6 +203,7 @@ public abstract class DiagramView extends JPanel
      */
     @Override
     public void paintComponent(Graphics g) {
+        //1
         drawDiagram(g);
     }
 
@@ -321,6 +336,7 @@ public abstract class DiagramView extends JPanel
             Iterator<EdgeBase> edgeIterator = fGraph.edgeIterator();
             while (edgeIterator.hasNext()) {
                 EdgeBase e = edgeIterator.next();
+                checkForPluginColorChanges(e, this::getEdgeIdentifier, this::recolorEdgeBase);
                 e.draw(g2d);
             }
 
@@ -331,6 +347,7 @@ public abstract class DiagramView extends JPanel
             Iterator<PlaceableNode> nodeIterator = fGraph.iterator();
             while (nodeIterator.hasNext()) {
                 PlaceableNode n = nodeIterator.next();
+                checkForPluginColorChanges(n, this::getNodeIdentifier, this::recolorPlaceableNode);
                 n.draw(g2d);
                 maxX = Math.max(maxX, n.getX() + n.getWidth());
                 maxY = Math.max(maxY, n.getY() + n.getHeight());
@@ -361,6 +378,71 @@ public abstract class DiagramView extends JPanel
                 this.revalidate();
             }
         }
+    }
+
+    private <T> void checkForPluginColorChanges(final T element, final Function<T, Object> mappingFunction, final BiConsumer<T, StyleInfoBase> recolorFunction) {
+        if (pluginRuntime == null) {
+            return;
+        }
+
+        final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
+        final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
+
+        if (!styleInfoProviders.isEmpty()) {
+            final Object diagramElementIdentifier = mappingFunction.apply(element);
+            // accumulate changes from all providers
+            final Optional<StyleInfoBase> accStyleInfo = styleInfoProviders.stream()
+                    .map(provider -> provider.getStyleInfoForDiagramElement(diagramElementIdentifier))
+                    .filter(Objects::nonNull)
+                    .reduce((accumulated, current) -> {
+                        accumulated.merge(current);
+                        return accumulated;
+                    });
+            // recolor respective element
+            accStyleInfo.ifPresent(styleInfo -> recolorFunction.accept(element, styleInfo));
+        }
+    }
+
+    /**
+     * Maps the given {@link PlaceableNode} to an identifier.
+     * This ID can be targeted for changes, and the element is protected from write access.
+     * This method has to be overridden by an inheritor of {@link DiagramView} to make use of the {@link DiagramExtensionPoint}
+     * @param node the {@link PlaceableNode} to map an ID to
+     * @return the ID to a {@link PlaceableNode}
+     */
+    protected Object getNodeIdentifier(final PlaceableNode node) {
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+    }
+
+    /**
+     * Maps the given {@link EdgeBase} to an identifier.
+     * This ID can be targeted for changes, and the element is protected from write access.
+     * This method has to be overridden by an inheritor of {@link DiagramView} to make use of the {@link DiagramExtensionPoint}
+     * @param edge the {@link EdgeBase} to map an ID to
+     * @return the ID to a {@link EdgeBase}
+     */
+    protected Object getEdgeIdentifier(final EdgeBase edge) {
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+    }
+
+    /**
+     * Recolors the node with equivalent containers values.
+     * @param node the given node to recolor
+     * @param styleInfoForDiagramElement the container with values the node should be colored into
+     */
+    protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {
+        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+    }
+
+    /**
+     * Recolors the edge with equivalent containers values.
+     * @param edge the given edge to recolor
+     * @param styleInfoForDiagramElement the container with values the edge should be colored into
+     */
+    protected void recolorEdgeBase(final EdgeBase edge, final StyleInfoBase styleInfoForDiagramElement) {
+        // this method has to be overridden by a concrete DiagramView to use StyleInfos
+        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
     }
 
     /**
@@ -1204,6 +1286,7 @@ public abstract class DiagramView extends JPanel
 
         hasUserDefinedLayout = false;
     }
+
 
     /**
      * Resets the diagram to a random layout.

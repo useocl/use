@@ -1,7 +1,6 @@
 package org.tzi.use.runtime;
 
 
-
 /**
  * This interface provides the basic startup class behaviour for the Plugin's
  * startup classes. - This interface should be implemented by a Plugin class if
