@@ -30,8 +30,9 @@ jobs:
       - name: Parse metrics from build log
         id: metrics
         run: |
-          echo "build_time=0" >> $GITHUB_OUTPUT
-
+          build_time=$(grep "BUILD_TIME_SECONDS=" build_output.log | cut -d'=' -f2)
+          echo "build_time=$build_time" >> $GITHUB_OUTPUT
+          
           violation_count=$(grep -A 1 "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
           echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
 
