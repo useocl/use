@@ -1,0 +1,97 @@
+name: Metrics Collection
+on:
+  workflow_run:
+    workflows: ["Java CI with Maven"]
+    types:
+      - completed
+    branches: [ master ]
+
+jobs:
+  collect-metrics:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Get metadata
+        id: meta
+        run: |
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Run build and collect metrics
+        id: metrics
+        run: |
+          start_time=$(date +%s)
+          mvn --batch-mode --update-snapshots verify | tee build_output.log
+          end_time=$(date +%s)
+          build_time=$((end_time - start_time))
+          echo "build_time=$build_time" >> $GITHUB_OUTPUT
+
+          violation_count=$(grep -A 1 "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
+          echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
+
+      - name: Check for layer violations
+        if: steps.metrics.outputs.violation_count != '0'
+        run: |
+          echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.violation_count }} layer violations! Please check your architecture compliance."
+
+      - name: Update CSV files
+        run: |
+          mkdir -p docs/archunit-results
+          
+          if [ ! -f "docs/archunit-results/build-times.csv" ]; then
+            echo "date,time,commit,buildtime" > "docs/archunit-results/build-times.csv"
+          fi
+          echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},${{ steps.metrics.outputs.build_time }}" >> "docs/archunit-results/build-times.csv"
+
+          if [ ! -f "docs/archunit-results/layer-violations.csv" ]; then
+            echo "date,time,commit,violations" > "docs/archunit-results/layer-violations.csv"
+          fi
+          echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},${{ steps.metrics.outputs.violation_count }}" >> "docs/archunit-results/layer-violations.csv"
+
+          if grep -q "cycle" build_output.log; then
+            if [ ! -f "docs/archunit-results/cycles-tests.csv" ]; then
+              echo "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests" > "docs/archunit-results/cycles-tests.csv"
+            fi
+            
+            ALL_MODULES_NO_TESTS=$(grep "core module without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            ALL_MODULES_WITH_TESTS=$(grep "core module with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            ANALYSIS_NO_TESTS=$(grep "org.tzi.use.analysis without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            ANALYSIS_WITH_TESTS=$(grep "org.tzi.use.analysis with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            API_NO_TESTS=$(grep "org.tzi.use.api without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            API_WITH_TESTS=$(grep "org.tzi.use.api with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            CONFIG_NO_TESTS=$(grep "org.tzi.use.config without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            CONFIG_WITH_TESTS=$(grep "org.tzi.use.config with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            GEN_NO_TESTS=$(grep "org.tzi.use.gen without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            GEN_WITH_TESTS=$(grep "org.tzi.use.gen with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            GRAPH_NO_TESTS=$(grep "org.tzi.use.graph without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            GRAPH_WITH_TESTS=$(grep "org.tzi.use.graph with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            MAIN_NO_TESTS=$(grep "org.tzi.use.main without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            MAIN_WITH_TESTS=$(grep "org.tzi.use.main with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            PARSER_NO_TESTS=$(grep "org.tzi.use.parser without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            PARSER_WITH_TESTS=$(grep "org.tzi.use.parser with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            UML_NO_TESTS=$(grep "org.tzi.use.uml without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            UML_WITH_TESTS=$(grep "org.tzi.use.uml with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            UTIL_NO_TESTS=$(grep "org.tzi.use.util without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            UTIL_WITH_TESTS=$(grep "org.tzi.use.util with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+            
+            echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},$ALL_MODULES_NO_TESTS,$ALL_MODULES_WITH_TESTS,$ANALYSIS_NO_TESTS,$ANALYSIS_WITH_TESTS,$API_NO_TESTS,$API_WITH_TESTS,$CONFIG_NO_TESTS,$CONFIG_WITH_TESTS,$GEN_NO_TESTS,$GEN_WITH_TESTS,$GRAPH_NO_TESTS,$GRAPH_WITH_TESTS,$MAIN_NO_TESTS,$MAIN_WITH_TESTS,$PARSER_NO_TESTS,$PARSER_WITH_TESTS,$UML_NO_TESTS,$UML_WITH_TESTS,$UTIL_NO_TESTS,$UTIL_WITH_TESTS" >> "docs/archunit-results/cycles-tests.csv"
+          fi
+
+      - name: Commit and push metrics
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          git add docs/archunit-results/
+          git commit -m "Update metrics data [skip ci]" || echo "No changes to commit"
+          git push
