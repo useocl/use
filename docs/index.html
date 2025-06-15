@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="js/dashboard-utils.js"></script>
 </head>
 <body>
 <!-- Header Section -->
@@ -30,7 +31,7 @@
     <h2>Dashboard Overview</h2>
     <p>This dashboard provides detailed insights into the software quality metrics of the USE project.
       The diagrams below highlight key aspects of the structure of the codebase and its evolution over time.
-      The metrics represent this branch only, no other branches are taken into consideration.
+      The metrics represent the master branch only, no other branches are taken into consideration.
       The goal of this dashboard is to encourage developers to pay attention to how their changes impact architecture
       and to eventually guide them to adopt an evolutionary architecture approach according to <a href="https://evolutionaryarchitecture.com/index.html" target="_blank">Neal Ford et.al.</a></p>
   </section>
@@ -43,7 +44,7 @@
         <h3 class="card-title">Cyclic Dependencies without Tests</h3>
       </div>
       <div class="chart-container">
-        <canvas id="cyclesOverTimeChart"></canvas>
+        <canvas id="cyclesWithoutTestsChart"></canvas>
       </div>
       <p class="card-description">
         Tracks the number of dependency cycles in the entire use-core module excluding tests.Cyclic dependencies are
@@ -58,7 +59,7 @@
         <h3 class="card-title">Cycles per Package Excl. Tests</h3>
       </div>
       <div class="chart-container">
-        <canvas id="cyclesBreakdownChart"></canvas>
+        <canvas id="cyclesWithoutTestsBreakdownChart"></canvas>
       </div>
       <p class="card-description">
         Breakdown of cyclic dependencies across different packages for the most recent ArchUnit test run.
@@ -120,7 +121,7 @@
         <h3 class="card-title">Build Time</h3>
       </div>
       <div class="chart-container">
-        <canvas id="comparativeMetricsChart"></canvas>
+        <canvas id="buildTimesChart"></canvas>
       </div>
       <p class="card-description">
         Tracks all the build times over time. For each commit the build time is measured using time stamps and includes
