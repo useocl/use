@@ -1,5 +1,4 @@
 // === HISTORY DASHBOARD ===
-// Vereinfachte Version - nur Line-Charts, keine Klassen
 
 // === KONFIGURATION ===
 const CSV_PATHS = {

@@ -1,5 +1,4 @@
 // === INDEX DASHBOARD ===
-// Vereinfachte Version ohne unnötige Klassen und Komplexität
 
 // === KONFIGURATION ===
 const CSV_PATHS = {
@@ -14,7 +13,7 @@ const PACKAGE_NAMES = ['analysis', 'api', 'config', 'gen', 'graph', 'main', 'par
 const CHART_CONFIGS = [
     {
         type: 'line',
-        canvasId: 'cyclesOverTimeChart',
+        canvasId: 'cyclesWithoutTestsChart',
         title: 'Cyclic Dependencies',
         csvPath: CSV_PATHS.CYCLES_TESTS,
         valueKey: 'all_modules_no_tests',
@@ -24,7 +23,7 @@ const CHART_CONFIGS = [
     },
     {
         type: 'bar',
-        canvasId: 'cyclesBreakdownChart',
+        canvasId: 'cyclesWithoutTestsBreakdownChart',
         title: 'Breakdown of Cycles per Package',
         csvPath: CSV_PATHS.CYCLES_TESTS,
         packageNames: PACKAGE_NAMES,
@@ -59,7 +58,7 @@ const CHART_CONFIGS = [
     },
     {
         type: 'line',
-        canvasId: 'comparativeMetricsChart',
+        canvasId: 'buildTimesChart',
         title: 'Build Time',
         csvPath: CSV_PATHS.BUILD_TIMES,
         valueKey: 'buildtime',

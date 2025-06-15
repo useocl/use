@@ -44,7 +44,7 @@
         <h3 class="card-title">Cyclic Dependencies without Tests</h3>
       </div>
       <div class="chart-container">
-        <canvas id="cyclesOverTimeChart"></canvas>
+        <canvas id="cyclesWithoutTestsChart"></canvas>
       </div>
       <p class="card-description">
         Tracks the number of dependency cycles in the entire use-core module excluding tests.Cyclic dependencies are
@@ -59,7 +59,7 @@
         <h3 class="card-title">Cycles per Package Excl. Tests</h3>
       </div>
       <div class="chart-container">
-        <canvas id="cyclesBreakdownChart"></canvas>
+        <canvas id="cyclesWithoutTestsBreakdownChart"></canvas>
       </div>
       <p class="card-description">
         Breakdown of cyclic dependencies across different packages for the most recent ArchUnit test run.
@@ -121,7 +121,7 @@
         <h3 class="card-title">Build Time</h3>
       </div>
       <div class="chart-container">
-        <canvas id="comparativeMetricsChart"></canvas>
+        <canvas id="buildTimesChart"></canvas>
       </div>
       <p class="card-description">
         Tracks all the build times over time. For each commit the build time is measured using time stamps and includes
