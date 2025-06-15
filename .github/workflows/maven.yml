@@ -12,10 +12,19 @@ jobs:
         distribution: 'adopt'
         cache: maven
     - name: Build with Maven
-      run: mvn --batch-mode --update-snapshots verify
+      run: |
+        start_time=$(date +%s)
+        mvn --batch-mode --update-snapshots verify | tee build_output.log
+        end_time=$(date +%s)
+        build_time=$((end_time - start_time))
+        echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
     - name: Upload build result
       run: mkdir staging && cp use-assembly/target/*.zip staging
     - uses: actions/upload-artifact@v4
       with:
         name: Package
         path: staging
+    - uses: actions/upload-artifact@v4
+      with: 
+        name: build-log
+        path: build_output.log

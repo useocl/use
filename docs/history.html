@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="js/dashboard-utils.js"></script>
+
 </head>
 <body>
 <!-- Header Section -->
@@ -25,50 +27,83 @@
     <!-- Overview Section -->
     <section class="info-section">
         <h2>Historical Metrics Overview</h2>
-        <p>This page provides in-depth historical analysis of the most important software quality metrics for the USE project.
-            The visualizations below track key architectural health indicators over an extended time period.</p>
+        <p>his page provides detailed insights into the historical development of software quality metrics for USE.
+            The diagrams below depict the evolution of metrics over the last 15 years, dating back to 2010.
+            All metrics were collected only for the master branch commits. Two different build systems were identified -
+            Ant and Maven - and metrics collection is additionally divided by those categories.
+            </p>
     </section>
 
     <!-- Main Dashboard Grid -->
     <div class="dashboard-grid">
 
-        <!-- Ant Historical Cycles Chart -->
+        <!-- Ant Historical Cycles Chart (no tests) -->
         <div class="card full-width">
             <div class="card-header">
-                <h3 class="card-title">Historical Cyclic Dependencies - Ant</h3>
+                <h3 class="card-title">Historical Cyclic Dependencies - Ant, No Tests</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="antHistoricalCyclesNoTestsChart"></canvas>
             </div>
             <p class="card-description">
-                Long-term trend analysis of architectural cycles in the codebase, comparing metrics with and without test code.
-            </p>
-            <div class="chart-container">
-                <canvas id="antHistoricalCyclesChart"></canvas>
-            </div>
+                Displays the historical numbers of dependency cycles in the entire core module of the Ant-version
+                project, excluding tests. The core is defined as the packages in the src folder, excluding
+                org.tzi.use.runtime and org.tzi.use.gui.</p>
         </div>
 
         <!-- Maven Historical Cycles Chart -->
         <div class="card full-width">
             <div class="card-header">
-                <h3 class="card-title">Historical Cyclic Dependencies - Maven</h3>
+                <h3 class="card-title">Historical Cyclic Dependencies - Maven, No Tests</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="mavenHistoricalCyclesNoTestsChart"></canvas>
             </div>
             <p class="card-description">
-                Long-term trend analysis of architectural cycles in the codebase, comparing metrics with and without test code.
-            </p>
-            <div class="chart-container">
-                <canvas id="mavenHistoricalCyclesChart"></canvas>
+                Displays the historical numbers of dependency cycles in the entire use-core module of the Maven-version
+                project, excluding tests.</p>
+        </div>
+
+        <!-- 3. Ant Historical Cycles Chart (With Tests) -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h3 class="card-title">Historical Cyclic Dependencies - Ant (With Tests)</h3>
             </div>
+            <div class="chart-container">
+                <canvas id="antHistoricalCyclesWithTestsChart"></canvas>
+            </div>jz65
+            <p class="card-description">
+                Displays the historical numbers of dependency cycles in the entire core module of the Ant-version
+                project, including tests. The core is defined as the packages in the src folder, excluding
+                org.tzi.use.runtime and org.tzi.use.gui.</p>
+        </div>
+
+        <!-- 4. Maven Historical Cycles Chart (With Tests) -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h3 class="card-title">Historical Cyclic Dependencies - Maven (With Tests)</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="mavenHistoricalCyclesWithTestsChart"></canvas>
+            </div>
+            <p class="card-description">
+                Displays the historical numbers of dependency cycles in the entire use-core module of the Maven-version
+                project, including tests.</p>
         </div>
 
         <!-- Ant Layer Violations Chart -->
-        <div class="card">
+        <div class="card full-width">
             <div class="card-header">
                 <h3 class="card-title">Historical Architecture Layer Violations - Ant</h3>
             </div>
-            <p class="card-description">
-                Analysis of violations of USE's Layered Architecture for Ant Commits.
-            </p>
             <div class="chart-container">
                 <canvas id="antHistoricalLayerViolationsChart"></canvas>
             </div>
+            <p class="card-description">
+                Extended timeline of whether any classes in the core module access any classes in the GUI module which
+                would equal a violation of the layered architecture. Tests not included. The core in the Ant-version is
+                defined as the packages in the src-folder, excluding those in org.tzi.use.runtime and org.tzi.use.gui.
+                The GUI is defined as the packages in the org.tzi.use.gui package.</p>
         </div>
 
         <!-- Maven Layer Violations Chart -->
@@ -76,12 +111,12 @@
             <div class="card-header">
                 <h3 class="card-title">Historical Architecture Layer Violations - Maven</h3>
             </div>
-            <p class="card-description">
-                Extended timeline of layered architecture violations, showing architectural degradation or improvement trends.
-            </p>
             <div class="chart-container">
                 <canvas id="mavenHistoricalLayerViolationsChart"></canvas>
             </div>
+            <p class="card-description">
+                Extended timeline of whether any classes in the use-core module access any classes in the Maven use-gui
+                module which would equal a violation of the layered architecture. Tests not included.</p>
         </div>
 
         <!-- Maven Historical Build Time Chart -->
@@ -89,21 +124,21 @@
             <div class="card-header">
                 <h3 class="card-title">Historical Build Time - Maven</h3>
             </div>
-            <p class="card-description">
-                Long-term analysis of build times, which can indicate codebase complexity and build efficiency.
-            </p>
             <div class="chart-container">
                 <canvas id="mavenHistoricalBuildTimeChart"></canvas>
             </div>
+            <p class="card-description">
+                Long-term analysis of build times in the Maven USE-project. For each commit the build time is measured
+                using time stamps and includes the building as well as the testing stage.
+            </p>
         </div>
     </div>
 
     <!-- Additional Information Section -->
     <section class="info-section">
         <h2>Historical Analysis Guide</h2>
-        <p>These historical metrics provide valuable insights into the long-term trends of the codebase:
-            By analyzing extended time periods, you can identify patterns, correlate architectural changes with specific events,
-            and make data-driven decisions about refactoring priorities and architectural direction.</p>
+        <p>The scripts for reproducing these metrics can be found in the USE-repository under docs/scripts. Please make sure you have Powershell 7+
+            installed for the execution.</p>
     </section>
 </div>
 

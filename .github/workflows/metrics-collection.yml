@@ -1,6 +1,5 @@
 name: Metrics Collection
 on:
-  workflow_dispatch:
   workflow_run:
     workflows: ["Java CI with Maven"]
     types:
@@ -14,12 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - name: Download build log
+        uses: actions/download-artifact@v4
         with:
-          java-version: '21'
-          distribution: 'adopt'
-          cache: maven
+          name: build-log
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Get metadata
         id: meta
@@ -28,15 +27,12 @@ jobs:
           echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
           echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Run build and collect metrics
+      - name: Parse metrics from build log
         id: metrics
         run: |
-          start_time=$(date +%s)
-          mvn --batch-mode --update-snapshots verify | tee build_output.log
-          end_time=$(date +%s)
-          build_time=$((end_time - start_time))
+          build_time=$(grep "BUILD_TIME_SECONDS=" build_output.log | cut -d'=' -f2)
           echo "build_time=$build_time" >> $GITHUB_OUTPUT
-
+          
           violation_count=$(grep -A 1 "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
           echo "violation_count=$violation_count" >> $GITHUB_OUTPUT
 
@@ -45,6 +41,11 @@ jobs:
         run: |
           echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.violation_count }} layer violations! Please check your architecture compliance."
 
+      - name: Switch to metrics branch  
+        run: |
+          git fetch origin architecture-metrics:architecture-metrics 2>/dev/null || git checkout -B architecture-metrics
+          git checkout architecture-metrics
+    
       - name: Update CSV files
         run: |
           mkdir -p docs/archunit-results
@@ -91,10 +92,9 @@ jobs:
   
       - name: Commit and push metrics
         run: |
-          git checkout -B metrics-data
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
           git add docs/archunit-results/
           git commit -m "Update metrics data [skip ci]" || echo "No changes to commit"
-          git push origin metrics-data
+          git push origin architecture-metrics
