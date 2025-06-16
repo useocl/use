@@ -187,6 +187,19 @@ public class MModel extends MModelElementImpl {
 	}
 
 	/**
+	 * Returns a collection containing all associationclasses in this model.
+	 *
+	 * @return collection of MAssociationClass objects.
+	 */
+	public Collection<MAssociationClass> getAssociationClassesOnly() {
+
+		return fClasses.values().stream()
+				.filter(MAssociationClass.class::isInstance)
+				.map(MAssociationClass.class::cast)
+				.toList();
+	}
+
+	/**
 	 * Returns a collection containing all data types in this model.
 	 *
 	 * @return collection of MDataType objects.
