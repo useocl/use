@@ -120,23 +120,6 @@ function Ensure-Dependencies-For-Maven {
     }
 }
 
-function Has-RelevantChanges {
-    param (
-        [string]$CommitHash,
-        [string]$PreviousCommitHash
-    )
-    $changedFiles = git diff --name-only $PreviousCommitHash $CommitHash
-
-    foreach ($file in $changedFiles) {
-        foreach ($path in $RELEVANT_PATHS) {
-            if ($file.StartsWith($path) -and $file.EndsWith(".java")) {
-                return $true
-            }
-        }
-    }
-    return $false
-}
-
 function Update-Java-Version {
 
     $pomFiles = @(
