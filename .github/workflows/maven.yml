@@ -92,7 +92,7 @@ jobs:
     - name: Run Postman tests
       run: |
         npm install -g newman
-        newman run use-api/src/main/resources/postman_collection/use-webapi.postman_collection.json
+        newman run use-api/src/it/java/org.tzi.use/postman_collection/use-webapi.postman_collection.json
 
 
     # Cleanup

@@ -1,13 +1,12 @@
 package org.tzi.use.model;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Operation {
     @Id
-    private String head;
+    private String name;
 
     private String body;
 
@@ -26,12 +25,12 @@ public class Operation {
         this.body = body;
     }
 
-    public String getHead() {
-        return head;
+    public String getName() {
+        return name;
     }
 
-    public void setHead(String head) {
-        this.head = head;
+    public void setName(String name) {
+        this.name = name;
     }
 
 //    public UseClass getMclass() {
@@ -43,16 +42,16 @@ public class Operation {
 //    }
 
     //Constructors
-    public Operation(String head, String body) {
-        this.head = head;
+    public Operation(String name, String body) {
+        this.name = name;
         this.body = body;
     }
-    public Operation(String head, UseClass mclass) {
-        this.head = head;
+    public Operation(String name, UseClass mclass) {
+        this.name = name;
 //        this.mclass = mclass;
     }
-    public Operation(String head) {
-        this.head = head;
+    public Operation(String name) {
+        this.name = name;
     }
     public Operation() {}
 

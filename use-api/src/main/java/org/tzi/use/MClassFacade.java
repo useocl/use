@@ -3,10 +3,8 @@ package org.tzi.use;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.model.*;
-import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.mm.MOperation;
 
 public class MClassFacade {
 
@@ -18,8 +16,9 @@ public class MClassFacade {
             useModelApi.createAttribute(mClass.name(), attribute.getName_attr(), attribute.getType());
 
         }
+        //parameter liste wird noch nicht unterstützt. -> daher new String [][]
         for (Operation operation : aClass.getOperations()) {
-            useModelApi.createOperation(mClass.name(), operation.getHead(), new String[0][0], operation.getBody());
+            useModelApi.createOperation(mClass.name(), operation.getName(), new String[0][0], operation.getBody());
         }
 
         for(PrePostCondition prePostCondition : aClass.getPrePostConditions()) {
