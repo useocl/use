@@ -1,19 +1,48 @@
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 param(
-    [int]$StartCommit = 0
+    [string]$StartCommitHash = "",
+    [string]$StartLoop = "y",
+    [string]$OriginalUseDir = "",
+    [string]$ResultsDir = ""
 )
 
 $ErrorActionPreference = "Stop"
-$ORIGINAL_USE_DIR = "C:\Users\alici\Uni\BA\use"
-$RESULTS_DIR = "C:\Users\alici\Uni\BA"
+# Set paths based on parameters or use defaults
+$ORIGINAL_USE_DIR = if ($OriginalUseDir -ne "") { 
+    $OriginalUseDir 
+} else { 
+    Join-Path (Get-Location) "use" 
+}
+
+# Validate that the original use directory exists
+if (-not (Test-Path $ORIGINAL_USE_DIR)) {
+    Write-Host "Error: Original USE directory not found at: $ORIGINAL_USE_DIR"
+    Write-Host "Please specify the correct path using -OriginalUseDir parameter"
+    exit 1
+}
+
+$RESULTS_DIR = if ($ResultsDir -ne "") { 
+    $ResultsDir 
+} else { 
+    Get-Location 
+}
+
+# Create results directory if it doesn't exist
+if (-not (Test-Path $RESULTS_DIR)) {
+    New-Item -ItemType Directory -Force -Path $RESULTS_DIR | Out-Null
+}
+
 $TEMP_DIR = Join-Path $RESULTS_DIR "USE_TEMP_$(Get-Random)"
 $RESULTS_FILE = Join-Path $RESULTS_DIR "build_time_history.csv"
 $LOG_FILE = Join-Path $RESULTS_DIR "test_log_maven_buildtime.txt"
-$RELEVANT_PATHS = @(
-    ("use-gui/src/"),
-    ("use-core/src/"),
-    ("src/main")
-)
+
+#########################################
+# Functions start here #
+#########################################
+
+#########################################
+# Util Functions #
+#########################################
 
 function Log-Message {
     param([string]$message)
@@ -59,6 +88,10 @@ function Remove-BOM {
         Log-Message "Removed BOM from $full_path"
     }
 }
+
+#########################################
+# Dependency Functions #
+#########################################
 
 function Ensure-Dependencies-For-Maven {
     $pom_files = @("pom.xml", "use-core/pom.xml", "use-gui/pom.xml")
@@ -146,6 +179,10 @@ function Update-Java-Version {
     }
 }
 
+#########################################
+# Build & Execution Functions #
+#########################################
+
 function Measure-Build-Time {
     param(
         [string]$CommitHash
@@ -153,13 +190,11 @@ function Measure-Build-Time {
     
     Log-Message "Measuring build time..."
     
-    # Measure the time it takes to build the project
+    # Measure time it takes to build & test the project
     $startTime = Get-Date
     $buildOutput = mvn --batch-mode --update-snapshots verify
     $endTime = Get-Date
-    $buildTime = $endTime - $startTime
-    $buildTimeSec = $buildTime.TotalSeconds
-    
+    $buildTime = $endTime - $startTime    
     # Convert to seconds
     $buildTimeSec = [int]$buildTime.TotalSeconds
     
@@ -168,9 +203,6 @@ function Measure-Build-Time {
         Record-Result -CommitHash $CommitHash -BuildTimeSec $buildTimeSec
         return $true
     } else {
-        Log-Message "Build failed. Recording -1 for build time."
-        Record-Result -CommitHash $CommitHash -BuildTimeSec -1
-        $buildOutput | ForEach-Object { Log-Message $_ }
         return $false
     }
 }
@@ -217,7 +249,6 @@ function Process-Commit {
     git checkout -q $CommitHash
     $is_maven = Test-Path (Join-Path $TEMP_DIR "pom.xml")
 
-    # Check for pom.xml
     if (-not $is_maven) {
         Log-Message "No pom.xml found. Skipping this commit because it's not Maven..."
         return $false
@@ -227,19 +258,25 @@ function Process-Commit {
     Ensure-Dependencies-For-Maven
     $mavenBuildSuccess = Measure-Build-Time -CommitHash $CommitHash
 
+    # Clean up after processing
     git reset -q --hard
     git clean -qfd
     Log-Message "#####################################################################################"
     return $mavenBuildSuccess
 }
 
-# Main script execution
+#########################################
+# Setup starts here #
+#########################################
+
+# Initialize results file with headers
+Initialize-Results-File
+
+# Create & move to temp directory
 New-Item -ItemType Directory -Force -Path $TEMP_DIR | Out-Null
 Set-Location $TEMP_DIR
 Log-Message "Created & moved to temporary directory: $TEMP_DIR"
 
-# Initialize results file with headers
-Initialize-Results-File
 
 Log-Message "Attempting to clone repository from $ORIGINAL_USE_DIR"
 $gitOutput = & {
@@ -257,26 +294,46 @@ else {
 }
 
 git checkout -q master
-$current_branch = git rev-parse --abbrev-ref HEAD
 
-$COMMITS = git log --first-parent $current_branch --format="%H" --reverse
-$TOTAL_COMMITS = ($COMMITS | Measure-Object -Line).Lines
-$CURRENT_COMMIT = $StartCommit
-$previousCommit = if ($StartCommit -gt 1) {
-    ($COMMITS | Select-Object -Skip ($StartCommit - 1) -First 1)
-} else {
-    $null
+#########################################
+# Main Loop starts here #
+#########################################
+
+# Verify that the start commit exists
+if ($StartCommitHash -ne "") {
+    $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
+        exit 1
+    }
+    Log-Message "Found start commit $StartCommitHash"
 }
 
+# Determine which commits to process
+$CommitsToProcess = if ($StartCommitHash -eq "") {
+    # Process all commits from the beginning
+    git log --first-parent $current_branch --format="%H"
+} elseif ($StartLoop.ToLower() -eq "n") {
+    # Process only the specified commit
+    @($StartCommitHash)
+} else {
+    # Process from the specified commit onwards
+    git log --first-parent --format="%H" $StartCommitHash --reverse
+}
+
+$TOTAL_COMMITS = ($CommitsToProcess | Measure-Object).Count
+$CURRENT_COMMIT = 1
+
 try {
-    foreach ($COMMIT in $COMMITS | Select-Object -Skip $StartCommit) {
+    foreach ($COMMIT in $CommitsToProcess) {
         Log-Message "[$CURRENT_COMMIT/$TOTAL_COMMITS] Processing commit: $COMMIT"
         
         $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT
         if (-not $commitProcessedSuccessfully) {
             Log-Message "Build failed for commit $COMMIT"
+            Record-Result -CommitHash $COMMIT -BuildTimeSec -1
+
         }
-        $previousCommit = $COMMIT
         $CURRENT_COMMIT++
     }
 }
@@ -285,6 +342,7 @@ catch {
     Log-Message "Stack Trace: $($_.ScriptStackTrace)"
 }
 finally {
+    # Clean up
     Set-Location $RESULTS_DIR
     if (Test-Path $TEMP_DIR) {
         Remove-Item -Recurse -Force $TEMP_DIR

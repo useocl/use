@@ -301,9 +301,9 @@ function Maven-Build-And-Test {
     if ($cycleMetrics.Count -gt 0) {
         Record-Result -CommitHash $CommitHash -CycleCounts $cycleMetrics
         return $true
+    } else {
+        return $false
     }
-    
-    return $false
 }
 
 function Process-Commit {
@@ -315,7 +315,6 @@ function Process-Commit {
     git checkout -q $CommitHash
     $is_maven = Test-Path (Join-Path $TEMP_DIR "pom.xml")
 
-    # Check for pom.xml
     if (-not $is_maven) {
         Log-Message "No pom.xml found. Skipping this commit..."
         return $false
@@ -390,9 +389,8 @@ git checkout -q $current_branch
 # Main Loop starts here #
 #########################################
 
-# Determine which commits to process
+# Verify that the start commit exists
 if ($StartCommitHash -ne "") {
-    # Verify that the start commit exists
     $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
     if ($LASTEXITCODE -ne 0) {
         Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
@@ -401,6 +399,7 @@ if ($StartCommitHash -ne "") {
     Log-Message "Found start commit $StartCommitHash"
 }
 
+# Determine which commits to process
 $CommitsToProcess = if ($StartCommitHash -eq "") {
     # Process all commits from the beginning
     git log --first-parent $current_branch --format="%H"
