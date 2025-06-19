@@ -11,8 +11,8 @@ $ErrorActionPreference = "Stop"
 $ORIGINAL_USE_DIR = if ($OriginalUseDir -ne "") { 
     $OriginalUseDir 
 } else { 
-    Join-Path (Get-Location) "use" 
-}
+    # Scripts are in docs/scripts/maven, go 3 levels up to repo root
+    Join-Path (Get-Location) "../../.."}
 
 # Validate that the original use directory exists
 if (-not (Test-Path $ORIGINAL_USE_DIR)) {
@@ -72,8 +72,6 @@ function Record-Result {
     # Format the result
     $resultLine = "$commitDate,$commitTime,$CommitHash,$BuildTimeSec"
     $resultLine | Out-File -FilePath $RESULTS_FILE -Append
-    
-    Log-Message "Recorded result: date=$commitDate, time=$commitTime, commit=$CommitHash, build_time=$BuildTimeSec s"
 }
 
 function Remove-BOM {
@@ -85,7 +83,6 @@ function Remove-BOM {
     if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
         $content = $content[3..$content.Length]
         [System.IO.File]::WriteAllBytes($full_path, $content)
-        Log-Message "Removed BOM from $full_path"
     }
 }
 
@@ -99,7 +96,7 @@ function Ensure-Dependencies-For-Maven {
     foreach ($pom_file in $pom_files) {
         $full_path = Join-Path $TEMP_DIR $pom_file
         if (Test-Path $full_path) {
-            Log-Message "Checking dependencies in $full_path"
+            Log-Message "Checking and adding dependencies in $full_path"
             $pom = [xml](Get-Content $full_path)
 
             if ($null -eq $pom.project) {
@@ -112,13 +109,11 @@ function Ensure-Dependencies-For-Maven {
                 $dependencies = $pom.CreateElement("dependencies", $pom.DocumentElement.NamespaceURI)
                 $pom.project.AppendChild($dependencies)
             } else {
-                Log-Message "Dependencies already in pom"
                 $dependencies = $pom.project.dependencies
             }
 
             $junit_jupiter_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "junit-jupiter" }
             if (-not $junit_jupiter_present) {
-                Log-Message "Adding JUnit 5 dependency to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.8.2</version><scope>test</scope>"
                 $dependencies.AppendChild($new_dep)
@@ -126,7 +121,6 @@ function Ensure-Dependencies-For-Maven {
 
             $slf4j_nop_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "slf4j-nop" }
             if (-not $slf4j_nop_present) {
-                Log-Message "Adding SLF4J NOP binding to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>org.slf4j</groupId><artifactId>slf4j-nop</artifactId><version>1.7.32</version><scope>test</scope>"
                 $dependencies.AppendChild($new_dep)
@@ -164,17 +158,13 @@ function Update-Java-Version {
 
     foreach ($pomFile in $pomFiles) {
         if (Test-Path $pomFile) {
+            Log-Message "Changing invalid Java Version 15 to 14..."
             $content = Get-Content $pomFile -Raw
             
             $content = $content -replace '<maven\.compiler\.source>15</maven\.compiler\.source>', '<maven.compiler.source>14</maven.compiler.source>'
             $content = $content -replace '<maven\.compiler\.target>15</maven\.compiler\.target>', '<maven.compiler.target>14</maven.compiler.target>'
             
             $content | Set-Content $pomFile
-            
-            Log-Message "Called method Update-Java-Version for ${pomFile} "
-        }
-        else {
-            Log-Message "Warning: ${pomFile} not found."
         }
     }
 }
@@ -206,40 +196,6 @@ function Measure-Build-Time {
         return $false
     }
 }
-
-# function Maven-Build-And-Measure {
-#     param(
-#         [string]$CommitHash
-#     )
-    
-#     Log-Message "Found pom.xml. Preparing for build time measurement..."
-    
-#     # Build & install parent pom
-#     $parent_output = mvn -N clean install 2>&1
-
-#     if ($LASTEXITCODE -ne 0) {
-#         Log-Message "Parent pom installation failed:"
-#         $parent_output | ForEach-Object { Log-Message $_ }
-#         Record-Result -CommitHash $CommitHash -BuildTimeSec -2
-#         return $false
-#     }
-
-#     # Install core module to local repository (without tests)
-#     Log-Message "Installing use-core module to local repo..."
-#     $core_install_output = mvn -pl use-core clean install -DskipTests 2>&1
-
-#     if ($LASTEXITCODE -ne 0) {
-#         Log-Message "Maven core module installation failed:"
-#         $core_install_output | ForEach-Object {Log-Message $_ }
-#         Record-Result -CommitHash $CommitHash -BuildTimeSec -2
-#         return $false
-#     }
-
-#     Log-Message "Core module installed successfully. Measuring build time now..."
-#     Measure-Build-Time -CommitHash $CommitHash
-    
-#     return $true
-# }
 
 function Process-Commit {
     param(
@@ -283,7 +239,8 @@ $gitOutput = & {
     $ErrorActionPreference = 'SilentlyContinue'
     git clone $ORIGINAL_USE_DIR . 2>&1
 }
-$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
+# Comment in for debugging
+# $gitOutput | ForEach-Object { Log-Message "Git output: $_" }
 
 if ($LASTEXITCODE -ne 0) {
     Log-Message "Failed to clone repository. Exit code: $LASTEXITCODE"
@@ -312,13 +269,13 @@ if ($StartCommitHash -ne "") {
 # Determine which commits to process
 $CommitsToProcess = if ($StartCommitHash -eq "") {
     # Process all commits from the beginning
-    git log --first-parent $current_branch --format="%H"
+    git log --first-parent --reverse --format="%H"
 } elseif ($StartLoop.ToLower() -eq "n") {
     # Process only the specified commit
     @($StartCommitHash)
 } else {
     # Process from the specified commit onwards
-    git log --first-parent --format="%H" $StartCommitHash --reverse
+    git log --first-parent --reverse --format="%H" $StartCommitHash
 }
 
 $TOTAL_COMMITS = ($CommitsToProcess | Measure-Object).Count
