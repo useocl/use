@@ -1,10 +1,15 @@
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+# First Maven Commit is 132ab9b
 param(
     [string]$StartCommitHash = "",
     [string]$StartLoop = "y",
     [string]$OriginalUseDir = "",
     [string]$ResultsDir = ""
 )
+
+#########################################
+# Global variables start here #
+#########################################
 
 $ErrorActionPreference = "Stop"
 # Set paths based on parameters or use defaults
@@ -72,18 +77,6 @@ function Record-Result {
     # Format the result
     $resultLine = "$commitDate,$commitTime,$CommitHash,$BuildTimeSec"
     $resultLine | Out-File -FilePath $RESULTS_FILE -Append
-}
-
-function Remove-BOM {
-    param (
-        [string]$FilePath
-    )
-    $full_path = Join-Path $TEMP_DIR $FilePath
-    $content = [System.IO.File]::ReadAllBytes($full_path)
-    if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
-        $content = $content[3..$content.Length]
-        [System.IO.File]::WriteAllBytes($full_path, $content)
-    }
 }
 
 #########################################

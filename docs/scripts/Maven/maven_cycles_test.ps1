@@ -1,5 +1,5 @@
-# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 # JAVA_HOME will need to be set to Java 21
+# First Maven Commit is 132ab9b
 param(
     [string]$StartCommitHash = "",
     [string]$StartLoop = "y",
@@ -16,7 +16,8 @@ $ErrorActionPreference = "Stop"
 $ORIGINAL_USE_DIR = if ($OriginalUseDir -ne "") { 
     $OriginalUseDir 
 } else { 
-    Join-Path (Get-Location) "use" 
+    # Scripts are in docs/scripts/maven, go 3 levels up to repo root
+    Join-Path (Get-Location) "../../.."
 }
 
 # Validate that the original use directory exists
@@ -116,7 +117,6 @@ function Remove-BOM {
     if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
         $content = $content[3..$content.Length]
         [System.IO.File]::WriteAllBytes($full_path, $content)
-        Log-Message "Removed BOM from $full_path"
     }
 }
 
@@ -190,7 +190,7 @@ function Ensure-Dependencies-For-Maven {
     foreach ($pom_file in $pom_files) {
         $full_path = Join-Path $TEMP_DIR $pom_file
         if (Test-Path $full_path) {
-            Log-Message "Checking dependencies in $full_path"
+            Log-Message "Checking and adding dependencies in $full_path"
             $pom = [xml](Get-Content $full_path)
 
             if ($null -eq $pom.project) {
@@ -203,13 +203,11 @@ function Ensure-Dependencies-For-Maven {
                 $dependencies = $pom.CreateElement("dependencies", $pom.DocumentElement.NamespaceURI)
                 $pom.project.AppendChild($dependencies)
             } else {
-                Log-Message "Dependencies already in pom"
                 $dependencies = $pom.project.dependencies
             }
             
             $archunit_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "archunit-junit5" }
             if (-not $archunit_present) {
-                Log-Message "Adding ArchUnit dependency to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>com.tngtech.archunit</groupId><artifactId>archunit-junit5</artifactId><version>1.0.1</version>"
                 $dependencies.AppendChild($new_dep)
@@ -217,7 +215,6 @@ function Ensure-Dependencies-For-Maven {
 
             $junit_jupiter_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "junit-jupiter" }
             if (-not $junit_jupiter_present) {
-                Log-Message "Adding JUnit 5 dependency to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.8.2</version><scope>test</scope>"
                 $dependencies.AppendChild($new_dep)
@@ -225,7 +222,6 @@ function Ensure-Dependencies-For-Maven {
 
             $slf4j_nop_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "slf4j-nop" }
             if (-not $slf4j_nop_present) {
-                Log-Message "Adding SLF4J NOP binding to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>org.slf4j</groupId><artifactId>slf4j-nop</artifactId><version>1.7.32</version><scope>test</scope>"
                 $dependencies.AppendChild($new_dep)
@@ -250,9 +246,8 @@ function Prepare-Directory-For-Maven-Build-And-Test {
     # Add archunit test to commit
     $test_file_path = Join-Path $test_file_dir "MavenCyclicDependenciesCoreTest.java"
     $test_file_content | Out-File -FilePath $test_file_path -Encoding UTF8
-    # maybe change URI to test_file_path
     Remove-BOM -FilePath "use-core\src\test\java\org\tzi\use\architecture\MavenCyclicDependenciesCoreTest.java"
-    Log-Message "Successfully added test to commit $COMMIT"
+    Log-Message "Added test to commit $COMMIT"
 
     # Add archunit.properties file
     $properties_file_path = Join-Path $TEMP_DIR "use-core\src\test\resources\archunit.properties"
@@ -268,7 +263,6 @@ function Prepare-Directory-For-Maven-Build-And-Test {
 function Run-ArchUnit-Test {
     Log-Message "Running ArchUnit test..."
     $test_output = mvn -pl use-core test "-Dtest=org.tzi.use.architecture.MavenCyclicDependenciesCoreTest#count_cycles_in_core_without_tests" -DfailIfNoTests=false 2>&1    
-    $test_output | ForEach-Object { Log-Message $_ }
     
     # Parse metrics directly from test output
     $cycleMetrics = Parse-CycleResults -OutputLines $test_output
@@ -287,7 +281,6 @@ function Maven-Build-And-Test {
         [string]$CommitHash
     )
     
-    Log-Message "Found pom.xml. Attempting compilation with Maven..."
     $compile_output = mvn clean compile 2>&1
     if ($LASTEXITCODE -ne 0) {
         Log-Message "Maven compilation failed. Error output:"
@@ -295,7 +288,6 @@ function Maven-Build-And-Test {
         return $false
     }
     
-    Log-Message "Maven compile successful."
     $cycleMetrics = Run-ArchUnit-Test
     
     if ($cycleMetrics.Count -gt 0) {
@@ -320,11 +312,8 @@ function Process-Commit {
         return $false
     }
 
-    # Update dependencies and prepare test files
     Ensure-Dependencies-For-Maven
     Prepare-Directory-For-Maven-Build-And-Test
-    
-    # Run Maven build and tests
     $mavenBuildSuccess = Maven-Build-And-Test -CommitHash $CommitHash
 
     # Clean up after processing
@@ -352,7 +341,8 @@ $gitOutput = & {
     $ErrorActionPreference = 'SilentlyContinue'
     git clone $ORIGINAL_USE_DIR . 2>&1
 }
-$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
+# Comment in for debugging
+#$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
 
 if ($LASTEXITCODE -ne 0) {
     Log-Message "Failed to clone repository. Exit code: $LASTEXITCODE"
@@ -367,23 +357,17 @@ else {
 #########################################
 
 git checkout -q master
-$current_branch = git rev-parse --abbrev-ref HEAD
 
-# Get test files from archunit branch
-git checkout -q archunit_tests
 $test_file_path = Join-Path $TEMP_DIR "use-core\src\test\java\org\tzi\use\architecture\MavenCyclicDependenciesCoreTest.java"
 $properties_file_path = Join-Path $TEMP_DIR "use-core\src\test\resources\archunit.properties"
 
 if (-not (Test-Path $test_file_path) -or -not (Test-Path $properties_file_path)) {
-    Log-Message "Required files not found in archunit_tests branch. Exiting."
+    Log-Message "Required files not found in master branch. Exiting."
     exit 1
 }
 
 $test_file_content = Get-Content $test_file_path -Raw -Encoding UTF8
 $properties_file_content = Get-Content $properties_file_path -Raw -Encoding UTF8
-
-# back to main
-git checkout -q $current_branch
 
 #########################################
 # Main Loop starts here #
@@ -402,13 +386,13 @@ if ($StartCommitHash -ne "") {
 # Determine which commits to process
 $CommitsToProcess = if ($StartCommitHash -eq "") {
     # Process all commits from the beginning
-    git log --first-parent $current_branch --format="%H"
+    git log --first-parent --reverse --format="%H"
 } elseif ($StartLoop.ToLower() -eq "n") {
     # Process only the specified commit
     @($StartCommitHash)
 } else {
     # Process from the specified commit onwards
-    git log --first-parent --format="%H" $StartCommitHash
+    git log --first-parent --reverse --format="%H" "$StartCommitHash^..HEAD"
 }
 
 $TOTAL_COMMITS = ($CommitsToProcess | Measure-Object).Count
@@ -425,9 +409,9 @@ try {
             $previousCommit = $null
         }
 
-        # TODO auch wenn wir ab StartCommit processen!
         # Process commit if it's the first or has relevant changes
-        if ($previousCommit -eq $null -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit)) {
+        $isStartCommit = ($StartCommitHash -ne "" -and $COMMIT -eq $StartCommitHash)
+        if ($previousCommit -eq $null -or $isStartCommit -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit)) {
             $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT -PreviousCycleCounts $previousCycleCounts
             if (-not $commitProcessedSuccessfully) {
                 $failureMetrics = @{}

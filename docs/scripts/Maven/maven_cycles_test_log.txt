@@ -1,0 +1,866 @@
+Created results file with header
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2078864377
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  46% (897/1939)
+Git output: Updating files:  47% (912/1939)
+Git output: Updating files:  48% (931/1939)
+Git output: Updating files:  49% (951/1939)
+Git output: Updating files:  50% (970/1939)
+Git output: Updating files:  51% (989/1939)
+Git output: Updating files:  52% (1009/1939)
+Git output: Updating files:  53% (1028/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files:  99% (1934/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+[1/927] Processing commit: 1a6047c7f31741335c9ff7603df4455ecd8c077a
+No pom.xml found. Skipping this commit...
+Recorded result for commit 1a6047c7f31741335c9ff7603df4455ecd8c077a with all metrics
+[2/927] Processing commit: c31a998614da0c1f439c5258464bb4f2e243399c
+No relevant changes in commit c31a998614da0c1f439c5258464bb4f2e243399c. Using previous cycle counts.
+Recorded result for commit c31a998614da0c1f439c5258464bb4f2e243399c with all metrics
+[3/927] Processing commit: 7206c582657fac075d83ce538f6342dc0d9063bb
+No relevant changes in commit 7206c582657fac075d83ce538f6342dc0d9063bb. Using previous cycle counts.
+Recorded result for commit 7206c582657fac075d83ce538f6342dc0d9063bb with all metrics
+[4/927] Processing commit: 95a199565819f704bba6c7eb49571b6c368ff69c
+No relevant changes in commit 95a199565819f704bba6c7eb49571b6c368ff69c. Using previous cycle counts.
+Recorded result for commit 95a199565819f704bba6c7eb49571b6c368ff69c with all metrics
+[5/927] Processing commit: 8eabaa7e47bc89c1a968132c83f94074ab616395
+No relevant changes in commit 8eabaa7e47bc89c1a968132c83f94074ab616395. Using previous cycle counts.
+Recorded result for commit 8eabaa7e47bc89c1a968132c83f94074ab616395 with all metrics
+[6/927] Processing commit: d1d451b650149b1f0c663b9aabd86c0ba939ec24
+No relevant changes in commit d1d451b650149b1f0c663b9aabd86c0ba939ec24. Using previous cycle counts.
+Recorded result for commit d1d451b650149b1f0c663b9aabd86c0ba939ec24 with all metrics
+[7/927] Processing commit: 999c247826cc3b5a7cecd902ad4859e6165335e7
+No relevant changes in commit 999c247826cc3b5a7cecd902ad4859e6165335e7. Using previous cycle counts.
+Recorded result for commit 999c247826cc3b5a7cecd902ad4859e6165335e7 with all metrics
+[8/927] Processing commit: 5546e90ec32f1649d705694fd8c372d9b372dfc4
+No relevant changes in commit 5546e90ec32f1649d705694fd8c372d9b372dfc4. Using previous cycle counts.
+Recorded result for commit 5546e90ec32f1649d705694fd8c372d9b372dfc4 with all metrics
+[9/927] Processing commit: 3566a2b6eaf7e231e066082358e6f07d0fb68c73
+No relevant changes in commit 3566a2b6eaf7e231e066082358e6f07d0fb68c73. Using previous cycle counts.
+Recorded result for commit 3566a2b6eaf7e231e066082358e6f07d0fb68c73 with all metrics
+[10/927] Processing commit: 651cc0e24585079af5fd4852d8027a1e912499e8
+No relevant changes in commit 651cc0e24585079af5fd4852d8027a1e912499e8. Using previous cycle counts.
+Recorded result for commit 651cc0e24585079af5fd4852d8027a1e912499e8 with all metrics
+[11/927] Processing commit: 990ad858e8b708049c546a1c9bc92dfa1f7cfe32
+No relevant changes in commit 990ad858e8b708049c546a1c9bc92dfa1f7cfe32. Using previous cycle counts.
+Recorded result for commit 990ad858e8b708049c546a1c9bc92dfa1f7cfe32 with all metrics
+[12/927] Processing commit: c3d3126926d35326609990e1f4f0989da0dcc6f5
+No relevant changes in commit c3d3126926d35326609990e1f4f0989da0dcc6f5. Using previous cycle counts.
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2078864377
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_157992242
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  47% (924/1939)
+Git output: Updating files:  48% (931/1939)
+Git output: Updating files:  49% (951/1939)
+Git output: Updating files:  50% (970/1939)
+Git output: Updating files:  51% (989/1939)
+Git output: Updating files:  52% (1009/1939)
+Git output: Updating files:  53% (1028/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+[1/927] Processing commit: 1a6047c7f31741335c9ff7603df4455ecd8c077a
+No pom.xml found. Skipping this commit...
+Recorded result for commit 1a6047c7f31741335c9ff7603df4455ecd8c077a with all metrics
+[2/927] Processing commit: c31a998614da0c1f439c5258464bb4f2e243399c
+No relevant changes in commit c31a998614da0c1f439c5258464bb4f2e243399c. Using previous cycle counts.
+Recorded result for commit c31a998614da0c1f439c5258464bb4f2e243399c with all metrics
+[3/927] Processing commit: 7206c582657fac075d83ce538f6342dc0d9063bb
+No relevant changes in commit 7206c582657fac075d83ce538f6342dc0d9063bb. Using previous cycle counts.
+Recorded result for commit 7206c582657fac075d83ce538f6342dc0d9063bb with all metrics
+[4/927] Processing commit: 95a199565819f704bba6c7eb49571b6c368ff69c
+No relevant changes in commit 95a199565819f704bba6c7eb49571b6c368ff69c. Using previous cycle counts.
+Recorded result for commit 95a199565819f704bba6c7eb49571b6c368ff69c with all metrics
+[5/927] Processing commit: 8eabaa7e47bc89c1a968132c83f94074ab616395
+No relevant changes in commit 8eabaa7e47bc89c1a968132c83f94074ab616395. Using previous cycle counts.
+Recorded result for commit 8eabaa7e47bc89c1a968132c83f94074ab616395 with all metrics
+[6/927] Processing commit: d1d451b650149b1f0c663b9aabd86c0ba939ec24
+No relevant changes in commit d1d451b650149b1f0c663b9aabd86c0ba939ec24. Using previous cycle counts.
+Recorded result for commit d1d451b650149b1f0c663b9aabd86c0ba939ec24 with all metrics
+[7/927] Processing commit: 999c247826cc3b5a7cecd902ad4859e6165335e7
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_157992242
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1529894016
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  46% (894/1939)
+Git output: Updating files:  47% (912/1939)
+Git output: Updating files:  48% (931/1939)
+Git output: Updating files:  49% (951/1939)
+Git output: Updating files:  50% (970/1939)
+Git output: Updating files:  51% (989/1939)
+Git output: Updating files:  52% (1009/1939)
+Git output: Updating files:  53% (1028/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  96% (1880/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+Found start commit d23acad
+[1/874] Processing commit: 1a6047c7f31741335c9ff7603df4455ecd8c077a
+No pom.xml found. Skipping this commit...
+Recorded result for commit 1a6047c7f31741335c9ff7603df4455ecd8c077a with all metrics
+[2/874] Processing commit: c31a998614da0c1f439c5258464bb4f2e243399c
+No relevant changes in commit c31a998614da0c1f439c5258464bb4f2e243399c. Using previous cycle counts.
+Recorded result for commit c31a998614da0c1f439c5258464bb4f2e243399c with all metrics
+[3/874] Processing commit: 7206c582657fac075d83ce538f6342dc0d9063bb
+No relevant changes in commit 7206c582657fac075d83ce538f6342dc0d9063bb. Using previous cycle counts.
+Recorded result for commit 7206c582657fac075d83ce538f6342dc0d9063bb with all metrics
+[4/874] Processing commit: 95a199565819f704bba6c7eb49571b6c368ff69c
+No relevant changes in commit 95a199565819f704bba6c7eb49571b6c368ff69c. Using previous cycle counts.
+Recorded result for commit 95a199565819f704bba6c7eb49571b6c368ff69c with all metrics
+[5/874] Processing commit: 8eabaa7e47bc89c1a968132c83f94074ab616395
+No relevant changes in commit 8eabaa7e47bc89c1a968132c83f94074ab616395. Using previous cycle counts.
+Recorded result for commit 8eabaa7e47bc89c1a968132c83f94074ab616395 with all metrics
+[6/874] Processing commit: d1d451b650149b1f0c663b9aabd86c0ba939ec24
+No relevant changes in commit d1d451b650149b1f0c663b9aabd86c0ba939ec24. Using previous cycle counts.
+Recorded result for commit d1d451b650149b1f0c663b9aabd86c0ba939ec24 with all metrics
+[7/874] Processing commit: 999c247826cc3b5a7cecd902ad4859e6165335e7
+No relevant changes in commit 999c247826cc3b5a7cecd902ad4859e6165335e7. Using previous cycle counts.
+Recorded result for commit 999c247826cc3b5a7cecd902ad4859e6165335e7 with all metrics
+[8/874] Processing commit: 5546e90ec32f1649d705694fd8c372d9b372dfc4
+No relevant changes in commit 5546e90ec32f1649d705694fd8c372d9b372dfc4. Using previous cycle counts.
+Recorded result for commit 5546e90ec32f1649d705694fd8c372d9b372dfc4 with all metrics
+[9/874] Processing commit: 3566a2b6eaf7e231e066082358e6f07d0fb68c73
+No relevant changes in commit 3566a2b6eaf7e231e066082358e6f07d0fb68c73. Using previous cycle counts.
+Recorded result for commit 3566a2b6eaf7e231e066082358e6f07d0fb68c73 with all metrics
+[10/874] Processing commit: 651cc0e24585079af5fd4852d8027a1e912499e8
+No relevant changes in commit 651cc0e24585079af5fd4852d8027a1e912499e8. Using previous cycle counts.
+Recorded result for commit 651cc0e24585079af5fd4852d8027a1e912499e8 with all metrics
+[11/874] Processing commit: 990ad858e8b708049c546a1c9bc92dfa1f7cfe32
+No relevant changes in commit 990ad858e8b708049c546a1c9bc92dfa1f7cfe32. Using previous cycle counts.
+Recorded result for commit 990ad858e8b708049c546a1c9bc92dfa1f7cfe32 with all metrics
+[12/874] Processing commit: c3d3126926d35326609990e1f4f0989da0dcc6f5
+No relevant changes in commit c3d3126926d35326609990e1f4f0989da0dcc6f5. Using previous cycle counts.
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1529894016
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  48% (938/1939)
+Git output: Updating files:  49% (951/1939)
+Git output: Updating files:  50% (970/1939)
+Git output: Updating files:  51% (989/1939)
+Git output: Updating files:  52% (1009/1939)
+Git output: Updating files:  53% (1028/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+Found start commit d23acad
+[1/53] Processing commit: 36d8a155b1fd77daadf48158e6d3de4dc952ae98
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\pom.xml
+No dependencies in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\pom.xml
+Adding JUnit 5 dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-core\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-core\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-core\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-gui\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-gui\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241\use-core\src\test\java\org\tzi\use\architecture
+Successfully added test to commit 36d8a155b1fd77daadf48158e6d3de4dc952ae98
+Added archunit.properties file to commit 36d8a155b1fd77daadf48158e6d3de4dc952ae98
+Found pom.xml. Attempting compilation with Maven...
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_203819241
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  52% (1013/1939)
+Git output: Updating files:  53% (1028/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+Found start commit d23acad
+[1/54] Processing commit: d23acadbc1f0406a82189abe3d65decd6d17d111
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\pom.xml
+No dependencies in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\pom.xml
+Adding JUnit 5 dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-core\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-core\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-core\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-gui\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-gui\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368\use-core\src\test\java\org\tzi\use\architecture
+Successfully added test to commit d23acadbc1f0406a82189abe3d65decd6d17d111
+Added archunit.properties file to commit d23acadbc1f0406a82189abe3d65decd6d17d111
+Found pom.xml. Attempting compilation with Maven...
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1873712368
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  48% (943/1939)
+Git output: Updating files:  49% (951/1939)
+Git output: Updating files:  50% (970/1939)
+Git output: Updating files:  51% (989/1939)
+Git output: Updating files:  52% (1009/1939)
+Git output: Updating files:  53% (1028/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+Found start commit d23acad
+[1/54] Processing commit: d23acadbc1f0406a82189abe3d65decd6d17d111
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\pom.xml
+No dependencies in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\pom.xml
+Adding JUnit 5 dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-core\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-core\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-core\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-gui\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-gui\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611\use-core\src\test\java\org\tzi\use\architecture
+Successfully added test to commit d23acadbc1f0406a82189abe3d65decd6d17d111
+Added archunit.properties file to commit d23acadbc1f0406a82189abe3d65decd6d17d111
+Found pom.xml. Attempting compilation with Maven...
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_522895611
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Git output: Cloning into '.'...
+Git output: done.
+Git output: Updating files:  53% (1035/1939)
+Git output: Updating files:  54% (1048/1939)
+Git output: Updating files:  55% (1067/1939)
+Git output: Updating files:  56% (1086/1939)
+Git output: Updating files:  57% (1106/1939)
+Git output: Updating files:  58% (1125/1939)
+Git output: Updating files:  59% (1145/1939)
+Git output: Updating files:  60% (1164/1939)
+Git output: Updating files:  61% (1183/1939)
+Git output: Updating files:  62% (1203/1939)
+Git output: Updating files:  63% (1222/1939)
+Git output: Updating files:  64% (1241/1939)
+Git output: Updating files:  65% (1261/1939)
+Git output: Updating files:  66% (1280/1939)
+Git output: Updating files:  67% (1300/1939)
+Git output: Updating files:  68% (1319/1939)
+Git output: Updating files:  69% (1338/1939)
+Git output: Updating files:  70% (1358/1939)
+Git output: Updating files:  71% (1377/1939)
+Git output: Updating files:  72% (1397/1939)
+Git output: Updating files:  73% (1416/1939)
+Git output: Updating files:  74% (1435/1939)
+Git output: Updating files:  75% (1455/1939)
+Git output: Updating files:  76% (1474/1939)
+Git output: Updating files:  77% (1494/1939)
+Git output: Updating files:  78% (1513/1939)
+Git output: Updating files:  79% (1532/1939)
+Git output: Updating files:  80% (1552/1939)
+Git output: Updating files:  81% (1571/1939)
+Git output: Updating files:  82% (1590/1939)
+Git output: Updating files:  83% (1610/1939)
+Git output: Updating files:  84% (1629/1939)
+Git output: Updating files:  85% (1649/1939)
+Git output: Updating files:  86% (1668/1939)
+Git output: Updating files:  87% (1687/1939)
+Git output: Updating files:  88% (1707/1939)
+Git output: Updating files:  89% (1726/1939)
+Git output: Updating files:  90% (1746/1939)
+Git output: Updating files:  91% (1765/1939)
+Git output: Updating files:  92% (1784/1939)
+Git output: Updating files:  93% (1804/1939)
+Git output: Updating files:  94% (1823/1939)
+Git output: Updating files:  95% (1843/1939)
+Git output: Updating files:  96% (1862/1939)
+Git output: Updating files:  97% (1881/1939)
+Git output: Updating files:  98% (1901/1939)
+Git output: Updating files:  99% (1920/1939)
+Git output: Updating files: 100% (1939/1939)
+Git output: Updating files: 100% (1939/1939), done.
+Repository cloned successfully.
+Found start commit 132ab9b
+[1/91] Processing commit: 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Adding JUnit 5 dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-gui\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-gui\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\src\test\java\org\tzi\use\architecture
+Successfully added test to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Added archunit.properties file to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Found pom.xml. Attempting compilation with Maven...
+Maven compile successful.
+Running ArchUnit test...
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< org.tzi.use:use-core >------------------------
+[INFO] Building use-core 7.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- merge:1.2.0:merge (merge-grammar-files) @ use-core ---
+[INFO] 
+[INFO] --- antlr3:3.5.2:antlr (antlr) @ use-core ---
+[INFO] ANTLR: Processing source directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\grammars
+[INFO] 
+[INFO] --- copy-rename:1.0:rename (move-antlr-parser-use) @ use-core ---
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\USELexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\use\USELexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\USEParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\use\USEParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\GeneratorLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\generator\GeneratorLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\GeneratorParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\generator\GeneratorParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\OCLLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\ocl\OCLLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\OCLParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\ocl\OCLParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\ShellCommandLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\shell\ShellCommandLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\ShellCommandParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\shell\ShellCommandParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\SoilLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\soil\SoilLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\SoilParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\soil\SoilParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\TestSuiteLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\testsuite\TestSuiteLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\TestSuiteParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\target\generated-sources\antlr3\org\tzi\use\parser\testsuite\TestSuiteParser.java
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ use-core ---
+[INFO] Copying 479 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- build-helper:1.5:add-test-source (add-test-source) @ use-core ---
+[INFO] Test Source directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\src\it\java added.
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ use-core ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 567 source files with javac [debug target 15] to target\classes
+[WARNING] Systemmodulpfad nicht zusammen mit -source 15 festgelegt
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_1440637327/use-core/src/main/java/org/tzi/use/gen/assl/dynamics/GEvalInstrTry_Attribute.java: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\src\main\java\org\tzi\use\gen\assl\dynamics\GEvalInstrTry_Attribute.java verwendet oder ³berschreibt eine veraltete API.
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_1440637327/use-core/src/main/java/org/tzi/use/gen/assl/dynamics/GEvalInstrTry_Attribute.java: Wiederholen Sie die Kompilierung mit -Xlint:deprecation, um Details zu erhalten.
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_1440637327/use-core/target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java: Einige Eingabedateien verwenden nicht gepr³fte oder unsichere Vorgõnge.
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_1440637327/use-core/target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java: Wiederholen Sie die Kompilierung mit -Xlint:unchecked, um Details zu erhalten.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ use-core ---
+[INFO] Copying 53 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ use-core ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 49 source files with javac [debug target 15] to target\test-classes
+[WARNING] Systemmodulpfad nicht zusammen mit -source 15 festgelegt
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ use-core ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.tzi.use.architecture.MavenCyclicDependenciesCoreTest
+Error writing report to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\docs\archunit-results\cycles-current-failure-report.txt: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\docs\archunit-results\cycles-current-failure-report.txt (Das System kann den angegebenen Pfad nicht finden)
+Cycles in core module without tests : 64
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.259 s -- in org.tzi.use.architecture.MavenCyclicDependenciesCoreTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  34.066 s
+[INFO] Finished at: 2025-06-19T22:56:40+02:00
+[INFO] ------------------------------------------------------------------------
+Successfully parsed cycle metrics from output
+Recorded result for commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46 with all metrics
+#####################################################################################
+[2/91] Processing commit: cd21ed86413d28551e810791ea90c948f8f12c5c
+No relevant changes in commit cd21ed86413d28551e810791ea90c948f8f12c5c. Using previous cycle counts.
+Recorded result for commit cd21ed86413d28551e810791ea90c948f8f12c5c with all metrics
+[3/91] Processing commit: 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c
+No relevant changes in commit 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c. Using previous cycle counts.
+Recorded result for commit 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c with all metrics
+[4/91] Processing commit: 6cc35f11047ded64f18da8b15f25a6fda46a693a
+No relevant changes in commit 6cc35f11047ded64f18da8b15f25a6fda46a693a. Using previous cycle counts.
+Recorded result for commit 6cc35f11047ded64f18da8b15f25a6fda46a693a with all metrics
+[5/91] Processing commit: d37826ca43d618508314e5d12d13e2b4b6f53700
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Adding JUnit 5 dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\pom.xml
+Checking dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-gui\pom.xml
+Dependencies already in pom
+Adding ArchUnit dependency to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-gui\pom.xml
+Adding SLF4J NOP binding to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327\use-core\src\test\java\org\tzi\use\architecture
+Successfully added test to commit d37826ca43d618508314e5d12d13e2b4b6f53700
+Added archunit.properties file to commit d37826ca43d618508314e5d12d13e2b4b6f53700
+Found pom.xml. Attempting compilation with Maven...
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_1440637327
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_26846177
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Repository cloned successfully.
+Found start commit 132ab9b
+[1/91] Processing commit: 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_26846177\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_26846177\use-core\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_26846177\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_26846177\use-core\src\test\java\org\tzi\use\architecture
+Added test to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Added archunit.properties file to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_26846177
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_731887290
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Repository cloned successfully.
+[1/927] Processing commit: 1a6047c7f31741335c9ff7603df4455ecd8c077a
+No pom.xml found. Skipping this commit...
+Recorded result for commit 1a6047c7f31741335c9ff7603df4455ecd8c077a with all metrics
+[2/927] Processing commit: c31a998614da0c1f439c5258464bb4f2e243399c
+No relevant changes in commit c31a998614da0c1f439c5258464bb4f2e243399c. Using previous cycle counts.
+Recorded result for commit c31a998614da0c1f439c5258464bb4f2e243399c with all metrics
+[3/927] Processing commit: 7206c582657fac075d83ce538f6342dc0d9063bb
+No relevant changes in commit 7206c582657fac075d83ce538f6342dc0d9063bb. Using previous cycle counts.
+Recorded result for commit 7206c582657fac075d83ce538f6342dc0d9063bb with all metrics
+[4/927] Processing commit: 95a199565819f704bba6c7eb49571b6c368ff69c
+No relevant changes in commit 95a199565819f704bba6c7eb49571b6c368ff69c. Using previous cycle counts.
+Recorded result for commit 95a199565819f704bba6c7eb49571b6c368ff69c with all metrics
+[5/927] Processing commit: 8eabaa7e47bc89c1a968132c83f94074ab616395
+No relevant changes in commit 8eabaa7e47bc89c1a968132c83f94074ab616395. Using previous cycle counts.
+Recorded result for commit 8eabaa7e47bc89c1a968132c83f94074ab616395 with all metrics
+[6/927] Processing commit: d1d451b650149b1f0c663b9aabd86c0ba939ec24
+No relevant changes in commit d1d451b650149b1f0c663b9aabd86c0ba939ec24. Using previous cycle counts.
+Recorded result for commit d1d451b650149b1f0c663b9aabd86c0ba939ec24 with all metrics
+[7/927] Processing commit: 999c247826cc3b5a7cecd902ad4859e6165335e7
+No relevant changes in commit 999c247826cc3b5a7cecd902ad4859e6165335e7. Using previous cycle counts.
+Recorded result for commit 999c247826cc3b5a7cecd902ad4859e6165335e7 with all metrics
+[8/927] Processing commit: 5546e90ec32f1649d705694fd8c372d9b372dfc4
+No relevant changes in commit 5546e90ec32f1649d705694fd8c372d9b372dfc4. Using previous cycle counts.
+Recorded result for commit 5546e90ec32f1649d705694fd8c372d9b372dfc4 with all metrics
+[9/927] Processing commit: 3566a2b6eaf7e231e066082358e6f07d0fb68c73
+No relevant changes in commit 3566a2b6eaf7e231e066082358e6f07d0fb68c73. Using previous cycle counts.
+Recorded result for commit 3566a2b6eaf7e231e066082358e6f07d0fb68c73 with all metrics
+[10/927] Processing commit: 651cc0e24585079af5fd4852d8027a1e912499e8
+No relevant changes in commit 651cc0e24585079af5fd4852d8027a1e912499e8. Using previous cycle counts.
+Recorded result for commit 651cc0e24585079af5fd4852d8027a1e912499e8 with all metrics
+[11/927] Processing commit: 990ad858e8b708049c546a1c9bc92dfa1f7cfe32
+No relevant changes in commit 990ad858e8b708049c546a1c9bc92dfa1f7cfe32. Using previous cycle counts.
+Recorded result for commit 990ad858e8b708049c546a1c9bc92dfa1f7cfe32 with all metrics
+[12/927] Processing commit: c3d3126926d35326609990e1f4f0989da0dcc6f5
+No relevant changes in commit c3d3126926d35326609990e1f4f0989da0dcc6f5. Using previous cycle counts.
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_731887290
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Repository cloned successfully.
+Found start commit 132ab9b
+[1/91] Processing commit: 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\src\test\java\org\tzi\use\architecture
+Added test to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Added archunit.properties file to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Running ArchUnit test...
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< org.tzi.use:use-core >------------------------
+[INFO] Building use-core 7.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- merge:1.2.0:merge (merge-grammar-files) @ use-core ---
+[INFO] 
+[INFO] --- antlr3:3.5.2:antlr (antlr) @ use-core ---
+[INFO] ANTLR: Processing source directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\grammars
+[INFO] 
+[INFO] --- copy-rename:1.0:rename (move-antlr-parser-use) @ use-core ---
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\USELexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\use\USELexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\USEParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\use\USEParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\GeneratorLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\generator\GeneratorLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\GeneratorParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\generator\GeneratorParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\OCLLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\ocl\OCLLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\OCLParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\ocl\OCLParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\ShellCommandLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\shell\ShellCommandLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\ShellCommandParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\shell\ShellCommandParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\SoilLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\soil\SoilLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\SoilParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\soil\SoilParser.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\TestSuiteLexer.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\testsuite\TestSuiteLexer.java
+[INFO] Renamed C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\TestSuiteParser.java to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\target\generated-sources\antlr3\org\tzi\use\parser\testsuite\TestSuiteParser.java
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ use-core ---
+[INFO] Copying 479 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- build-helper:1.5:add-test-source (add-test-source) @ use-core ---
+[INFO] Test Source directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\src\it\java added.
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ use-core ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 567 source files with javac [debug target 15] to target\classes
+[WARNING] Systemmodulpfad nicht zusammen mit -source 15 festgelegt
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_2084912139/use-core/src/main/java/org/tzi/use/gen/assl/dynamics/GEvalInstrTry_Attribute.java: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\use-core\src\main\java\org\tzi\use\gen\assl\dynamics\GEvalInstrTry_Attribute.java verwendet oder ³berschreibt eine veraltete API.
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_2084912139/use-core/src/main/java/org/tzi/use/gen/assl/dynamics/GEvalInstrTry_Attribute.java: Wiederholen Sie die Kompilierung mit -Xlint:deprecation, um Details zu erhalten.
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_2084912139/use-core/target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java: Einige Eingabedateien verwenden nicht gepr³fte oder unsichere Vorgõnge.
+[INFO] /C:/Users/alici/Uni/BA/aktuell/use/docs/scripts/Maven/USE_TEMP_2084912139/use-core/target/generated-sources/antlr3/org/tzi/use/parser/generator/GeneratorParser.java: Wiederholen Sie die Kompilierung mit -Xlint:unchecked, um Details zu erhalten.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ use-core ---
+[INFO] Copying 53 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ use-core ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 49 source files with javac [debug target 15] to target\test-classes
+[WARNING] Systemmodulpfad nicht zusammen mit -source 15 festgelegt
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ use-core ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.tzi.use.architecture.MavenCyclicDependenciesCoreTest
+Error writing report to C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\docs\archunit-results\cycles-current-failure-report.txt: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139\docs\archunit-results\cycles-current-failure-report.txt (Das System kann den angegebenen Pfad nicht finden)
+Cycles in core module without tests : 64
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.68 s -- in org.tzi.use.architecture.MavenCyclicDependenciesCoreTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  41.063 s
+[INFO] Finished at: 2025-06-19T23:26:30+02:00
+[INFO] ------------------------------------------------------------------------
+Successfully parsed cycle metrics from output
+Recorded result for commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46 with all metrics
+#####################################################################################
+[2/91] Processing commit: cd21ed86413d28551e810791ea90c948f8f12c5c
+No relevant changes in commit cd21ed86413d28551e810791ea90c948f8f12c5c. Using previous cycle counts.
+Recorded result for commit cd21ed86413d28551e810791ea90c948f8f12c5c with all metrics
+[3/91] Processing commit: 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c
+No relevant changes in commit 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c. Using previous cycle counts.
+Recorded result for commit 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c with all metrics
+[4/91] Processing commit: 6cc35f11047ded64f18da8b15f25a6fda46a693a
+No relevant changes in commit 6cc35f11047ded64f18da8b15f25a6fda46a693a. Using previous cycle counts.
+Recorded result for commit 6cc35f11047ded64f18da8b15f25a6fda46a693a with all metrics
+[5/91] Processing commit: d37826ca43d618508314e5d12d13e2b4b6f53700
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_2084912139
+Created & moved to temporary directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759
+Attempting to clone repository from C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\..\..\..
+Repository cloned successfully.
+Found start commit 132ab9b
+[1/91] Processing commit: 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\use-core\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\use-core\src\test\java\org\tzi\use\architecture
+Added test to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Added archunit.properties file to commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46
+Running ArchUnit test...
+Successfully parsed cycle metrics from output
+Recorded result for commit 132ab9ba06b4f090f109b3abf663ee7f1d064a46 with all metrics
+#####################################################################################
+[2/91] Processing commit: cd21ed86413d28551e810791ea90c948f8f12c5c
+No relevant changes in commit cd21ed86413d28551e810791ea90c948f8f12c5c. Using previous cycle counts.
+Recorded result for commit cd21ed86413d28551e810791ea90c948f8f12c5c with all metrics
+[3/91] Processing commit: 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c
+No relevant changes in commit 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c. Using previous cycle counts.
+Recorded result for commit 520d753c9841210f9eb6dfa6dc2b9f1518a04b6c with all metrics
+[4/91] Processing commit: 6cc35f11047ded64f18da8b15f25a6fda46a693a
+No relevant changes in commit 6cc35f11047ded64f18da8b15f25a6fda46a693a. Using previous cycle counts.
+Recorded result for commit 6cc35f11047ded64f18da8b15f25a6fda46a693a with all metrics
+[5/91] Processing commit: d37826ca43d618508314e5d12d13e2b4b6f53700
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\use-core\pom.xml
+Checking and adding dependencies in C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\use-gui\pom.xml
+Created directory: C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759\use-core\src\test\java\org\tzi\use\architecture
+Added test to commit d37826ca43d618508314e5d12d13e2b4b6f53700
+Added archunit.properties file to commit d37826ca43d618508314e5d12d13e2b4b6f53700
+Cleaned up temporary directory C:\Users\alici\Uni\BA\aktuell\use\docs\scripts\Maven\USE_TEMP_10514759
