@@ -40,9 +40,11 @@ import java.util.List;
  * @author Mark Richters
  * @author Lars Hamann
  * @author Stefan Schoon
+ * @author Matthias Marschalk
  */
 public class ASTModel extends ASTAnnotatable {
     private final Token fName;
+    private final List<ASTImportStatement> importStatements;
     private final List<ASTEnumTypeDefinition> fEnumTypeDefs;
     private final List<ASTDataType> fDataTypes;
     private final List<ASTClass> fClasses;
@@ -51,7 +53,6 @@ public class ASTModel extends ASTAnnotatable {
     private final List<ASTSignal> signals;
     private final List<ASTConstraintDefinition> fConstraints;
     private final List<ASTPrePost> fPrePosts;
-    private final List<ASTImportStatement> fImportStatements;
 
     public ASTModel(Token name) {
         fName = name;
@@ -63,11 +64,11 @@ public class ASTModel extends ASTAnnotatable {
         fConstraints = new ArrayList<>();
         fPrePosts = new ArrayList<>();
         signals = new ArrayList<>();
-        fImportStatements = new ArrayList<>();
+        importStatements = new ArrayList<>();
     }
 
     public void addImportStatement(ASTImportStatement imps) {
-        this.fImportStatements.add(imps);
+        this.importStatements.add(imps);
     }
 
     public void addEnumTypeDef(ASTEnumTypeDefinition etd) {
@@ -114,7 +115,7 @@ public class ASTModel extends ASTAnnotatable {
         this.genAnnotations(model);
 
         // (0) import external models
-        for (ASTImportStatement imp : fImportStatements) {
+        for (ASTImportStatement imp : importStatements) {
             if (imp != null) {
                 try {
                     ImportContext importContext = new ImportContext(ctx.getfFileUri().toString());
@@ -140,7 +141,7 @@ public class ASTModel extends ASTAnnotatable {
         this.genAnnotations(model);
 
         // (0) import external models
-        for (ASTImportStatement imp : fImportStatements) {
+        for (ASTImportStatement imp : importStatements) {
             if (imp != null) {
                 try {
                     imp.resolveAndImport(importContext, localContext, model);

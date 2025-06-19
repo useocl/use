@@ -611,6 +611,7 @@ public class ASTOperationExpression extends ASTExpression {
         MOperation op;
 
         // check for constructor call
+        // every classifier should have its associated model set, so model from context is only tried as a fallback
         MClassifier cf = srcClassifier.model() != null ? srcClassifier.model().getClassifier(opname)
                 : ctx.model().getClassifier(opname);
         if (cf == null) {

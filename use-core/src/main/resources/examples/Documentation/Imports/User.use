@@ -14,4 +14,4 @@ association ParticipatesIn
     between
         User[*] role participant
         Meeting[*] role meeting
-    end
+end

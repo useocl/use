@@ -1,3 +1,21 @@
+/*
+ * USE - UML based specification environment
+ * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 package org.tzi.use.parser.use;
 
 import org.tzi.use.parser.AST;
@@ -24,20 +42,21 @@ import java.util.List;
  * Node of the abstract syntax tree constructed by the parser.
  * Represents an import statement used for the resolution and inclusion
  * of external model files and their specified elements.
+ * @author Matthias Marschalk
  */
 public class ASTImportStatement extends AST {
-    private final List<String> fSymbols;
+    private final List<String> elementIdentifiers;
     private final String artifact;
     private final boolean isWildcard;
 
-    public ASTImportStatement(List<String> symbols, String artifact, boolean isWildcard) {
-        this.fSymbols = symbols;
+    public ASTImportStatement(List<String> elementIdentifiers, String artifact, boolean isWildcard) {
+        this.elementIdentifiers = elementIdentifiers;
         this.artifact = artifact;
         this.isWildcard = isWildcard;
     }
 
-    public List<String> getfSymbols() {
-        return fSymbols;
+    public List<String> getElementIdentifiers() {
+        return elementIdentifiers;
     }
 
     public String getArtifact() {
@@ -81,11 +100,11 @@ public class ASTImportStatement extends AST {
                 importContext.removeModelBeingCompiled(resolvedIdentifier.toString());
             }
 
-            MImportedModel importedModel = new MImportedModel(model, isWildcard, new HashSet<>(fSymbols));
+            MImportedModel importedModel = new MImportedModel(model, isWildcard, new HashSet<>(elementIdentifiers));
 
             // Check if every specified symbol is present in the model
             if (!isWildcard) {
-                for (String symbol : fSymbols) {
+                for (String symbol : elementIdentifiers) {
                     String elementName = getElementName(symbol, model.name());
                     MClassifier element = findElementInModel(model, elementName);
                     if (element == null) {
@@ -148,7 +167,7 @@ public class ASTImportStatement extends AST {
     }
 
     private String getElementNameForSymTable(String elementName) {
-        for (String symbol : getfSymbols()) {
+        for (String symbol : getElementIdentifiers()) {
             String[] parts = symbol.split("#");
             if (parts.length == 2) {
                 if (elementName.equals(parts[1])) {

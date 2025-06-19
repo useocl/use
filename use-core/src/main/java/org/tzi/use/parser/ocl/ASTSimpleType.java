@@ -32,18 +32,18 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
  * @author Lars Hamann
  */
 public class ASTSimpleType extends ASTType {
-    private Token fName;
+    private Token name;
 
     public ASTSimpleType(Token name) {
-        fName = name;
+        this.name = name;
     }
 
-    public Token getfName() {
-        return fName;
+    public Token getName() {
+        return name;
     }
 
     public Type gen(Context ctx) throws SemanticException {
-        String name = fName.getText();
+        String name = this.name.getText();
         Type res = TypeFactory.mkSimpleType(name);
 
         if (res == null) { 
@@ -60,7 +60,7 @@ public class ASTSimpleType extends ASTType {
                 }
                 
                 if (res == null )
-                    throw new SemanticException(fName,
+                    throw new SemanticException(this.name,
                                                 "Expected type name, found `" + name + "'.");
             }
         }
@@ -69,6 +69,6 @@ public class ASTSimpleType extends ASTType {
     }
 
     public String toString() {
-        return fName.getText();
+        return name.getText();
     }
 }

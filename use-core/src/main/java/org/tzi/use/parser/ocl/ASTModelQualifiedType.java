@@ -11,15 +11,15 @@ import org.tzi.use.uml.ocl.type.Type;
  * the model name matches.
  */
 public class ASTModelQualifiedType extends ASTSimpleType {
-    private final Token fModelQualifier;
+    private final Token modelQualifier;
 
     public ASTModelQualifiedType(Token modelQualifier, Token name) {
         super(name);
-        this.fModelQualifier = modelQualifier;
+        this.modelQualifier = modelQualifier;
     }
 
     public Type gen(Context ctx) throws SemanticException {
-        String name = fModelQualifier.getText() + "#" + getfName().getText();
+        String name = modelQualifier.getText() + "#" + getName().getText();
 
         Type res = ctx.model().enumType(name);
         if (res != null) {
@@ -35,6 +35,6 @@ public class ASTModelQualifiedType extends ASTSimpleType {
         if (res != null) {
             return res;
         }
-        throw new SemanticException(getfName(), "Could not find model qualified type '" + getfName().getText() + "'.");
+        throw new SemanticException(getName(), "Could not find model qualified type '" + getName().getText() + "'.");
     }
 }
