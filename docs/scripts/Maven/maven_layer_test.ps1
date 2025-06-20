@@ -1,20 +1,58 @@
 # Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 # First Maven Commit is 132ab9b
 param(
-    [int]$StartCommit = 0
+    [string]$StartCommitHash = "",
+    [string]$StartLoop = "y",
+    [string]$OriginalUseDir = "",
+    [string]$ResultsDir = ""
 )
 
+#########################################
+# Global variables start here #
+#########################################
+
 $ErrorActionPreference = "Stop"
-$ORIGINAL_USE_DIR = "C:\Users\alici\Uni\BA\use"
-$RESULTS_DIR = "C:\Users\alici\Uni\BA"
+# Set paths based on parameters or use defaults
+$ORIGINAL_USE_DIR = if ($OriginalUseDir -ne "") { 
+    $OriginalUseDir 
+} else { 
+    # Scripts are in docs/scripts/maven, go 3 levels up to repo root
+    Join-Path (Get-Location) "../../.."
+}
+
+# Validate that the original use directory exists
+if (-not (Test-Path $ORIGINAL_USE_DIR)) {
+    Write-Host "Error: Original USE directory not found at: $ORIGINAL_USE_DIR"
+    Write-Host "Please specify the correct path using -OriginalUseDir parameter"
+    exit 1
+}
+
+$RESULTS_DIR = if ($ResultsDir -ne "") { 
+    $ResultsDir 
+} else { 
+    Get-Location 
+}
+
+# Create results directory if it doesn't exist
+if (-not (Test-Path $RESULTS_DIR)) {
+    New-Item -ItemType Directory -Force -Path $RESULTS_DIR | Out-Null
+}
+
 $TEMP_DIR = Join-Path $RESULTS_DIR "USE_TEMP_$(Get-Random)"
-$RESULTS_FILE = Join-Path $RESULTS_DIR "layer_violations_history.csv"
-$LOG_FILE = Join-Path $RESULTS_DIR "test_log.txt"
+$RESULTS_FILE = Join-Path $RESULTS_DIR "maven_layers_history.csv"
+$LOG_FILE = Join-Path $RESULTS_DIR "mave_layers_test_log.txt"
 $RELEVANT_PATHS = @(
     ("use-gui/src/"),
-    ("use-core/src/"),
-    ("src/main")
+    ("use-core/src/")
 )
+
+#########################################
+# Functions start here #
+#########################################
+
+#########################################
+# Util Functions #
+#########################################
 
 function Log-Message {
     param([string]$message)
@@ -30,7 +68,6 @@ function Initialize-Results-File {
     }
 }
 
-# Record commit data and violation count to CSV
 function Record-Result {
     param(
         [string]$CommitHash,
@@ -57,9 +94,29 @@ function Remove-BOM {
     if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
         $content = $content[3..$content.Length]
         [System.IO.File]::WriteAllBytes($full_path, $content)
-        Log-Message "Removed BOM from $full_path"
     }
 }
+
+function Has-RelevantChanges {
+    param (
+        [string]$CommitHash,
+        [string]$PreviousCommitHash
+    )
+    $changedFiles = git diff --name-only $PreviousCommitHash $CommitHash
+
+    foreach ($file in $changedFiles) {
+        foreach ($path in $RELEVANT_PATHS) {
+            if ($file.StartsWith($path) -and $file.EndsWith(".java")) {
+                return $true
+            }
+        }
+    }
+    return $false
+}
+
+#########################################
+# Dependency Functions #
+#########################################
 
 function Ensure-Dependencies-For-Maven {
     $pom_files = @("pom.xml", "use-core/pom.xml", "use-gui/pom.xml")
@@ -67,7 +124,7 @@ function Ensure-Dependencies-For-Maven {
     foreach ($pom_file in $pom_files) {
         $full_path = Join-Path $TEMP_DIR $pom_file
         if (Test-Path $full_path) {
-            Log-Message "Checking dependencies in $full_path"
+            Log-Message "Checking and adding dependencies in $full_path"
             $pom = [xml](Get-Content $full_path)
 
             if ($null -eq $pom.project) {
@@ -80,13 +137,11 @@ function Ensure-Dependencies-For-Maven {
                 $dependencies = $pom.CreateElement("dependencies", $pom.DocumentElement.NamespaceURI)
                 $pom.project.AppendChild($dependencies)
             } else {
-                Log-Message "Dependencies already in pom"
                 $dependencies = $pom.project.dependencies
             }
             
             $archunit_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "archunit-junit5" }
             if (-not $archunit_present) {
-                Log-Message "Adding ArchUnit dependency to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>com.tngtech.archunit</groupId><artifactId>archunit-junit5</artifactId><version>1.0.1</version>"
                 $dependencies.AppendChild($new_dep)
@@ -94,7 +149,6 @@ function Ensure-Dependencies-For-Maven {
 
             $junit_jupiter_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "junit-jupiter" }
             if (-not $junit_jupiter_present) {
-                Log-Message "Adding JUnit 5 dependency to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.8.2</version><scope>test</scope>"
                 $dependencies.AppendChild($new_dep)
@@ -102,7 +156,6 @@ function Ensure-Dependencies-For-Maven {
 
             $slf4j_nop_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "slf4j-nop" }
             if (-not $slf4j_nop_present) {
-                Log-Message "Adding SLF4J NOP binding to $full_path"
                 $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
                 $new_dep.InnerXml = "<groupId>org.slf4j</groupId><artifactId>slf4j-nop</artifactId><version>1.7.32</version><scope>test</scope>"
                 $dependencies.AppendChild($new_dep)
@@ -129,36 +182,7 @@ function Ensure-Dependencies-For-Maven {
     }
 }
 
-function Has-RelevantChanges {
-    param (
-        [string]$CommitHash,
-        [string]$PreviousCommitHash
-    )
-    $changedFiles = git diff --name-only $PreviousCommitHash $CommitHash
-
-    foreach ($file in $changedFiles) {
-        foreach ($path in $RELEVANT_PATHS) {
-            if ($file.StartsWith($path) -and $file.EndsWith(".java")) {
-                return $true
-            }
-        }
-    }
-    return $false
-}
-
-function Fix-BagInterface {
-    param (
-        [System.IO.FileInfo]$BagFile
-    )
-    
-    Log-Message "Fixing Bag interface..."
-    $content = Get-Content $BagFile.FullName -Raw
-    $content = $content -replace 'boolean contains\(T obj\)', 'boolean contains(Object obj)'
-    $content = $content -replace 'boolean remove\(T o\)', 'boolean remove(Object o)'
-    $content | Set-Content $BagFile.FullName
-}
-
-function Update-Java-Version {
+<# function Update-Java-Version {
 
     $pomFiles = @(
         "$TEMP_DIR\pom.xml",
@@ -185,7 +209,7 @@ function Update-Java-Version {
             Log-Message "Warning: ${pomFile} not found."
         }
     }
-}
+} #>
 
 function Prepare-Directory-For-Maven-Build-And-Test {
     # Add architecture directory if it doesn't exist
@@ -203,17 +227,12 @@ function Prepare-Directory-For-Maven-Build-And-Test {
     Log-Message "Successfully added test to commit $COMMIT"
 }
 
-function Run-ArchUnit-Test {
+function Parse-Test-Results {
     param(
-        [string]$CommitHash
+        [string[]]$TestOutput
     )
-    
-    Log-Message "Running ArchUnit test..."
-    $test_output = mvn -pl use-gui test "-Dtest=org.tzi.use.architecture.MavenLayeredArchitectureTest" -DfailIfNoTests=false -o 2>&1    
-    Log-Message "Test Output: $test_output"
 
-    # Extract the violation count from the output
-    # The number appears alone on the line after the "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" line
+    # Violation count appears alone on the line after the "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" line
     $violation_count = -1
     $running_line_found = $false
     
@@ -230,9 +249,25 @@ function Run-ArchUnit-Test {
             $running_line_found = $true
         }
     }
-    
+    return $violation_count
+}
+
+#########################################
+# Build & Execution Functions #
+#########################################
+
+function Run-ArchUnit-Test {
+    param(
+        [string]$CommitHash
+    )
+    Log-Message "Running ArchUnit test..."
+    $test_output = mvn -pl use-gui test "-Dtest=org.tzi.use.architecture.MavenLayeredArchitectureTest" -DfailIfNoTests=false -o 2>&1    
+
+    # Parse metrics directly from test output
+    $violation_count = Parse-Test-Results -TestOutput $test_output
+
     if ($violation_count -ge 0) {
-        Log-Message "Found violation count: $violation_count"
+        Log-Message "Successfully parsed violation count from test output"
         Record-Result -CommitHash $CommitHash -ViolationCount $violation_count
     } else {
         Log-Message "Failed to extract violation count from test output"
@@ -297,7 +332,7 @@ function Process-Commit {
         return $false
     }
 
-    Update-Java-Version
+    #Update-Java-Version
     Ensure-Dependencies-For-Maven
     Prepare-Directory-For-Maven-Build-And-Test
     $mavenBuildSuccess = Maven-Build-And-Test -CommitHash $CommitHash
@@ -308,20 +343,25 @@ function Process-Commit {
     return $mavenBuildSuccess
 }
 
-# Main script execution
+#########################################
+# Setup starts here #
+#########################################
+
+# Initialize results file with header
+Initialize-Results-File
+
+# Create & move to temp directory
 New-Item -ItemType Directory -Force -Path $TEMP_DIR | Out-Null
 Set-Location $TEMP_DIR
 Log-Message "Created & moved to temporary directory: $TEMP_DIR"
-
-# Initialize results file with headers
-Initialize-Results-File
 
 Log-Message "Attempting to clone repository from $ORIGINAL_USE_DIR"
 $gitOutput = & {
     $ErrorActionPreference = 'SilentlyContinue'
     git clone $ORIGINAL_USE_DIR . 2>&1
 }
-$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
+# Comment in for debugging
+#$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
 
 if ($LASTEXITCODE -ne 0) {
     Log-Message "Failed to clone repository. Exit code: $LASTEXITCODE"
@@ -331,10 +371,12 @@ else {
     Log-Message "Repository cloned successfully."
 }
 
-git checkout -q master
-$current_branch = git rev-parse --abbrev-ref HEAD
+#########################################
+# Store ArchUnit Test #
+#########################################
 
-git checkout -q archunit_tests
+git checkout -q master
+
 $test_file_path = Join-Path $TEMP_DIR "use-gui\src\test\java\org\tzi\use\architecture\MavenLayeredArchitectureTest.java"
 
 if (-not (Test-Path $test_file_path)) {
@@ -344,27 +386,54 @@ if (-not (Test-Path $test_file_path)) {
 
 $test_file_content = Get-Content $test_file_path -Raw -Encoding UTF8
 
-# back to main
-git checkout -q $current_branch
+#########################################
+# Main Loop starts here #
+#########################################
 
-$COMMITS = git log --first-parent $current_branch --format="%H" --reverse
-$TOTAL_COMMITS = ($COMMITS | Measure-Object -Line).Lines
-$CURRENT_COMMIT = $StartCommit
-$previousCommit = if ($StartCommit -gt 1) {
-    ($COMMITS | Select-Object -Skip ($StartCommit - 1) -First 1)
-} else {
-    $null
+# Verify that the start commit exists
+if ($StartCommitHash -ne "") {
+    $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
+        exit 1
+    }
+    Log-Message "Found start commit $StartCommitHash"
 }
 
+# Determine which commits to process
+$CommitsToProcess = if ($StartCommitHash -eq "") {
+    # Process all commits from the beginning
+    git log --first-parent --reverse --format="%H"
+} elseif ($StartLoop.ToLower() -eq "n") {
+    # Process only the specified commit
+    @($StartCommitHash)
+} else {
+    # Process from the specified commit onwards
+    git log --first-parent --reverse --format="%H" "$StartCommitHash^..HEAD"
+}
+
+$TOTAL_COMMITS = ($CommitsToProcess | Measure-Object).Count
+$CURRENT_COMMIT = 1
+
 try {
-    foreach ($COMMIT in $COMMITS | Select-Object -Skip $StartCommit) {
+    foreach ($COMMIT in $CommitsToProcess) {
         Log-Message "[$CURRENT_COMMIT/$TOTAL_COMMITS] Processing commit: $COMMIT"
         
-        $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT
-        if (-not $commitProcessedSuccessfully) {
-            Log-Message "Build failed for commit $COMMIT"
+        # Get previous commit hash
+        $previousCommit = git log -1 --format="%H" "$COMMIT^" 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            $previousCommit = $null
         }
-        $previousCommit = $COMMIT
+
+        $isStartCommit = ($StartCommitHash -ne "" -and $COMMIT -eq $StartCommitHash)
+        if ($previousCommit -eq $null -or $isStartCommit -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit)) {
+            $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT
+            if (-not $commitProcessedSuccessfully) {
+                Log-Message "Build failed for commit $COMMIT"
+            }
+        } else {
+            Log-Message "No relevant changes in commit $COMMIT. Skipping..."
+        }
         $CURRENT_COMMIT++
     }
 }
@@ -373,6 +442,7 @@ catch {
     Log-Message "Stack Trace: $($_.ScriptStackTrace)"
 }
 finally {
+    # Clean up
     Set-Location $RESULTS_DIR
     if (Test-Path $TEMP_DIR) {
         Remove-Item -Recurse -Force $TEMP_DIR

@@ -39,7 +39,7 @@ if (-not (Test-Path $RESULTS_DIR)) {
 }
 
 $TEMP_DIR = Join-Path $RESULTS_DIR "USE_TEMP_$(Get-Random)"
-$RESULTS_FILE = Join-Path $RESULTS_DIR "maven_cycles_test_results.csv"
+$RESULTS_FILE = Join-Path $RESULTS_DIR "maven_cycles_history.csv"
 $LOG_FILE = Join-Path $RESULTS_DIR "maven_cycles_test_log.txt"
 $RELEVANT_PATHS = @(
     ("use-gui/src/"),
@@ -60,7 +60,7 @@ function Log-Message {
     $message | Out-File -FilePath $LOG_FILE -Append
 }
 
-# Create header line in CSV file if it doesn't exist
+# Initialize the results CSV with headers
 function Initialize-Results-File {
     if (-not (Test-Path $RESULTS_FILE)) {
         $header = "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests"
@@ -69,7 +69,6 @@ function Initialize-Results-File {
     }
 }
 
-# Records results to CSV in the new format
 function Record-Result {
     param(
         [string]$CommitHash,
@@ -176,7 +175,6 @@ function Parse-CycleResults {
             $metrics["$($package)_with_tests"] = [int]$matches[2]
         }
     }
-    
     return $metrics
 }
 
