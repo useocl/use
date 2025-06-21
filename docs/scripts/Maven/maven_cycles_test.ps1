@@ -187,21 +187,12 @@ function Process-Commit {
         [string]$CommitHash,
         [hashtable]$PreviousCycleCounts
     )
-    
-    git checkout -q $CommitHash
-    $is_maven = Test-Path (Join-Path $TEMP_DIR "pom.xml")
-
-    if (-not $is_maven) {
-        Log-Message "No pom.xml found. Skipping this commit..."
-        return $false
-    }
 
     Update-Java-Version-For-Maven
     Ensure-Dependencies-For-Maven -TempDir $TEMP_DIR
     Prepare-Directory-For-Maven-Build-And-Test -TempDir $TEMP_DIR -ArchTestDir "use-core\src\test\java\org\tzi\use\architecture" -ArchTestName "MavenCyclicDependenciesCoreTest.java" -ArchTestContent $test_file_content -PropertiesPath "use-core\src\test\resources\archunit.properties" -PropertiesContent $properties_file_content
     $mavenBuildSuccess = Maven-Build-And-Test -CommitHash $CommitHash
 
-    Cleanup-Commit
     return $mavenBuildSuccess
 }
 
@@ -245,28 +236,37 @@ try {
             $previousCommit = $null
         }
 
-        # Process commit if it's the first or has relevant changes
+        $isFirstCommitInRepo = ($previousCommit -eq $null)
         $isStartCommit = ($StartCommitHash -ne "" -and $COMMIT -eq $StartCommitHash)
-        if ($previousCommit -eq $null -or $isStartCommit -or (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)) {
-            $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT -PreviousCycleCounts $previousCycleCounts
-            if (-not $commitProcessedSuccessfully) {
-                $failureMetrics = @{}
-                $metrics = @(
-                    "all_modules_no_tests", "all_modules_with_tests",
-                    "analysis_no_tests", "analysis_with_tests",
-                    "api_no_tests", "api_with_tests",
-                    "config_no_tests", "config_with_tests",
-                    "gen_no_tests", "gen_with_tests",
-                    "graph_no_tests", "graph_with_tests",
-                    "main_no_tests", "main_with_tests", 
-                    "parser_no_tests", "parser_with_tests",
-                    "uml_no_tests", "uml_with_tests",
-                    "util_no_tests", "util_with_tests"
-                )
-                foreach ($metric in $metrics) {
-                    $failureMetrics[$metric] = -1
+        $hasRelevantChanges = (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)
+
+        if ($isFirstCommitInRepo -or $isStartCommit -or $hasRelevantChanges) {
+            git checkout -q $CommitHash
+            $is_maven = Test-Path (Join-Path $TEMP_DIR "pom.xml")
+
+            if ($is_maven) {
+                $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT -PreviousCycleCounts $previousCycleCounts
+                if (-not $commitProcessedSuccessfully) {
+                    $failureMetrics = @{}
+                    $metrics = @(
+                        "all_modules_no_tests", "all_modules_with_tests",
+                        "analysis_no_tests", "analysis_with_tests",
+                        "api_no_tests", "api_with_tests",
+                        "config_no_tests", "config_with_tests",
+                        "gen_no_tests", "gen_with_tests",
+                        "graph_no_tests", "graph_with_tests",
+                        "main_no_tests", "main_with_tests", 
+                        "parser_no_tests", "parser_with_tests",
+                        "uml_no_tests", "uml_with_tests",
+                        "util_no_tests", "util_with_tests"
+                    )
+                    foreach ($metric in $metrics) {
+                        $failureMetrics[$metric] = -1
+                    }
+                    Record-Result -CommitHash $COMMIT -CycleCounts $failureMetrics
                 }
-                Record-Result -CommitHash $COMMIT -CycleCounts $failureMetrics
+            } else {
+                Log-Message "No pom.xml found. Skipping this commit..."
             }
         } else {
             Log-Message "No relevant changes in commit $COMMIT. Using previous cycle counts."
@@ -275,6 +275,7 @@ try {
             }
         }
         $CURRENT_COMMIT++
+        Cleanup-Commit
     }
 }
 catch {

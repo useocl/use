@@ -14,8 +14,8 @@ function Ensure-Dependencies-For-Maven {
             $pom = [xml](Get-Content $full_path)
 
             if ($null -eq $pom.project) {
-                Log-Message "Project node not found in $full_path"
-                continue
+                Log-Message "Project node not found in $full_path. Exiting..."
+                exit 1
             }
 
             if ($null -eq $pom.project.dependencies) {
@@ -62,7 +62,8 @@ function Ensure-Dependencies-For-Maven {
             $pom.Save($full_path)
         }
         else {
-            Log-Message "pom.xml not found at $full_path"
+            Log-Message "pom.xml not found at $full_path. Exiting..."
+            exit 1
         }
     }
 }
@@ -118,7 +119,8 @@ function Update-Java-Version-For-Maven {
             Log-Message "Changed problematic Java Version 15 to 14"
         }
         else {
-            Log-Message "Warning: ${pomFile} not found."
+            Log-Message "Warning: ${pomFile} not found. Exiting..."
+            exit 1
         }
     }
 }
