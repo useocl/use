@@ -7,6 +7,9 @@ param(
     [string]$ResultsDir = ""
 )
 
+. ".\general_utilities.ps1"
+. ".\maven_utilities.ps1"
+
 #########################################
 # Global variables start here #
 #########################################
@@ -41,10 +44,13 @@ if (-not (Test-Path $RESULTS_DIR)) {
 $TEMP_DIR = Join-Path $RESULTS_DIR "USE_TEMP_$(Get-Random)"
 $RESULTS_FILE = Join-Path $RESULTS_DIR "maven_cycles_history.csv"
 $LOG_FILE = Join-Path $RESULTS_DIR "maven_cycles_test_log.txt"
+
 $RELEVANT_PATHS = @(
     ("use-gui/src/"),
     ("use-core/src/")
 )
+$TEST_FILE_PATH = Join-Path $TEMP_DIR "use-core\src\test\java\org\tzi\use\architecture\MavenCyclicDependenciesCoreTest.java"
+$PROPERTIES_FILE_PATH = Join-Path $TEMP_DIR "use-core\src\test\resources\archunit.properties"
 
 #########################################
 # Functions start here #
@@ -53,21 +59,6 @@ $RELEVANT_PATHS = @(
 #########################################
 # Util Functions #
 #########################################
-
-function Log-Message {
-    param([string]$message)
-    Write-Host $message
-    $message | Out-File -FilePath $LOG_FILE -Append
-}
-
-# Initialize the results CSV with headers
-function Initialize-Results-File {
-    if (-not (Test-Path $RESULTS_FILE)) {
-        $header = "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests"
-        $header | Out-File -FilePath $RESULTS_FILE -Encoding UTF8
-        Log-Message "Created results file with header"
-    }
-}
 
 function Record-Result {
     param(
@@ -105,35 +96,6 @@ function Record-Result {
     
     # Save the cycle counts to use for the next commit if needed
     $script:previousCycleCounts = $CycleCounts.Clone()
-}
-
-function Remove-BOM {
-    param (
-        [string]$FilePath
-    )
-    $full_path = Join-Path $TEMP_DIR $FilePath
-    $content = [System.IO.File]::ReadAllBytes($full_path)
-    if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
-        $content = $content[3..$content.Length]
-        [System.IO.File]::WriteAllBytes($full_path, $content)
-    }
-}
-
-function Has-RelevantChanges {
-    param (
-        [string]$CommitHash,
-        [string]$PreviousCommitHash
-    )
-    $changedFiles = git diff --name-only $PreviousCommitHash $CommitHash
-
-    foreach ($file in $changedFiles) {
-        foreach ($path in $RELEVANT_PATHS) {
-            if ($file.StartsWith($path) -and $file.EndsWith(".java")) {
-                return $true
-            }
-        }
-    }
-    return $false
 }
 
 function Parse-CycleResults {
@@ -176,82 +138,6 @@ function Parse-CycleResults {
         }
     }
     return $metrics
-}
-
-#########################################
-# Dependency Functions #
-#########################################
-
-function Ensure-Dependencies-For-Maven {
-    $pom_files = @("pom.xml", "use-core/pom.xml", "use-gui/pom.xml")
-    
-    foreach ($pom_file in $pom_files) {
-        $full_path = Join-Path $TEMP_DIR $pom_file
-        if (Test-Path $full_path) {
-            Log-Message "Checking and adding dependencies in $full_path"
-            $pom = [xml](Get-Content $full_path)
-
-            if ($null -eq $pom.project) {
-                Log-Message "Project node not found in $full_path"
-                continue
-            }
-
-            if ($null -eq $pom.project.dependencies) {
-                Log-Message "No dependencies in pom"
-                $dependencies = $pom.CreateElement("dependencies", $pom.DocumentElement.NamespaceURI)
-                $pom.project.AppendChild($dependencies)
-            } else {
-                $dependencies = $pom.project.dependencies
-            }
-            
-            $archunit_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "archunit-junit5" }
-            if (-not $archunit_present) {
-                $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
-                $new_dep.InnerXml = "<groupId>com.tngtech.archunit</groupId><artifactId>archunit-junit5</artifactId><version>1.0.1</version>"
-                $dependencies.AppendChild($new_dep)
-            }
-
-            $junit_jupiter_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "junit-jupiter" }
-            if (-not $junit_jupiter_present) {
-                $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
-                $new_dep.InnerXml = "<groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.8.2</version><scope>test</scope>"
-                $dependencies.AppendChild($new_dep)
-            }
-
-            $slf4j_nop_present = $dependencies.dependency | Where-Object { $_.artifactId -eq "slf4j-nop" }
-            if (-not $slf4j_nop_present) {
-                $new_dep = $pom.CreateElement("dependency", $pom.DocumentElement.NamespaceURI)
-                $new_dep.InnerXml = "<groupId>org.slf4j</groupId><artifactId>slf4j-nop</artifactId><version>1.7.32</version><scope>test</scope>"
-                $dependencies.AppendChild($new_dep)
-            }
-
-            $pom.Save($full_path)
-        }
-        else {
-            Log-Message "pom.xml not found at $full_path"
-        }
-    }
-}
-
-function Prepare-Directory-For-Maven-Build-And-Test {
-    # Add architecture directory if it doesn't exist
-    $test_file_dir = Join-Path $TEMP_DIR "use-core\src\test\java\org\tzi\use\architecture"
-    if (-not (Test-Path $test_file_dir)) {
-        New-Item -ItemType Directory -Force -Path $test_file_dir | Out-Null
-        Log-Message "Created directory: $test_file_dir"
-    }
-
-    # Add archunit test to commit
-    $test_file_path = Join-Path $test_file_dir "MavenCyclicDependenciesCoreTest.java"
-    $test_file_content | Out-File -FilePath $test_file_path -Encoding UTF8
-    Remove-BOM -FilePath "use-core\src\test\java\org\tzi\use\architecture\MavenCyclicDependenciesCoreTest.java"
-    Log-Message "Added test to commit $COMMIT"
-
-    # Add archunit.properties file
-    $properties_file_path = Join-Path $TEMP_DIR "use-core\src\test\resources\archunit.properties"
-    $properties_file_content | Out-File -FilePath $properties_file_path -Encoding UTF8
-    Remove-BOM -FilePath "use-core\src\test\resources\archunit.properties"
-    Log-Message "Added archunit.properties file to commit $COMMIT"
 }
 
 #########################################
@@ -310,14 +196,12 @@ function Process-Commit {
         return $false
     }
 
-    Ensure-Dependencies-For-Maven
-    Prepare-Directory-For-Maven-Build-And-Test
+    Update-Java-Version-For-Maven
+    Ensure-Dependencies-For-Maven -TempDir $TEMP_DIR
+    Prepare-Directory-For-Maven-Build-And-Test -TempDir $TEMP_DIR -ArchTestDir "use-core\src\test\java\org\tzi\use\architecture" -ArchTestName "MavenCyclicDependenciesCoreTest.java" -ArchTestContent $test_file_content -PropertiesPath "use-core\src\test\resources\archunit.properties" -PropertiesContent $properties_file_content
     $mavenBuildSuccess = Maven-Build-And-Test -CommitHash $CommitHash
 
-    # Clean up after processing
-    git reset -q --hard
-    git clean -qfd
-    Log-Message "#####################################################################################"
+    Cleanup-Commit
     return $mavenBuildSuccess
 }
 
@@ -327,71 +211,25 @@ function Process-Commit {
 #########################################
 
 # Initialize results file with header
-Initialize-Results-File
-
-# Create & move to temp directory
-New-Item -ItemType Directory -Force -Path $TEMP_DIR | Out-Null
-Set-Location $TEMP_DIR
-Log-Message "Created & moved to temporary directory: $TEMP_DIR"
-
-Log-Message "Attempting to clone repository from $ORIGINAL_USE_DIR"
-$gitOutput = & {
-    $ErrorActionPreference = 'SilentlyContinue'
-    git clone $ORIGINAL_USE_DIR . 2>&1
-}
-# Comment in for debugging
-#$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
-
-if ($LASTEXITCODE -ne 0) {
-    Log-Message "Failed to clone repository. Exit code: $LASTEXITCODE"
-    exit 1
-}
-else {
-    Log-Message "Repository cloned successfully."
-}
+Initialize-Results-File -FilePath $RESULTS_FILE -Header "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests"
+# Create and move to use copy
+Setup-Repo -TempDir $TEMP_DIR -OriginalUseDir $ORIGINAL_USE_DIR
 
 #########################################
 # Store ArchUnit Test #
 #########################################
 
-git checkout -q master
-
-$test_file_path = Join-Path $TEMP_DIR "use-core\src\test\java\org\tzi\use\architecture\MavenCyclicDependenciesCoreTest.java"
-$properties_file_path = Join-Path $TEMP_DIR "use-core\src\test\resources\archunit.properties"
-
-if (-not (Test-Path $test_file_path) -or -not (Test-Path $properties_file_path)) {
-    Log-Message "Required files not found in master branch. Exiting."
-    exit 1
-}
-
-$test_file_content = Get-Content $test_file_path -Raw -Encoding UTF8
-$properties_file_content = Get-Content $properties_file_path -Raw -Encoding UTF8
+$test_file_content = Store-ArchTest -TestFilePath $TEST_FILE_PATH
+$properties_file_content = Store-ArchTest -TestFilePath $PROPERTIES_FILE_PATH
 
 #########################################
 # Main Loop starts here #
 #########################################
 
-# Verify that the start commit exists
-if ($StartCommitHash -ne "") {
-    $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
-        exit 1
-    }
-    Log-Message "Found start commit $StartCommitHash"
-}
+Verify-StartCommit -StartCommit $StartCommitHash
 
 # Determine which commits to process
-$CommitsToProcess = if ($StartCommitHash -eq "") {
-    # Process all commits from the beginning
-    git log --first-parent --reverse --format="%H"
-} elseif ($StartLoop.ToLower() -eq "n") {
-    # Process only the specified commit
-    @($StartCommitHash)
-} else {
-    # Process from the specified commit onwards
-    git log --first-parent --reverse --format="%H" "$StartCommitHash^..HEAD"
-}
+$CommitsToProcess = Determine-Commits-To-Process -StartCommitHash $StartCommitHash -StartLoop $StartLoop
 
 $TOTAL_COMMITS = ($CommitsToProcess | Measure-Object).Count
 $CURRENT_COMMIT = 1
@@ -409,7 +247,7 @@ try {
 
         # Process commit if it's the first or has relevant changes
         $isStartCommit = ($StartCommitHash -ne "" -and $COMMIT -eq $StartCommitHash)
-        if ($previousCommit -eq $null -or $isStartCommit -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit)) {
+        if ($previousCommit -eq $null -or $isStartCommit -or (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)) {
             $commitProcessedSuccessfully = Process-Commit -CommitHash $COMMIT -PreviousCycleCounts $previousCycleCounts
             if (-not $commitProcessedSuccessfully) {
                 $failureMetrics = @{}
@@ -444,10 +282,5 @@ catch {
     Log-Message "Stack Trace: $($_.ScriptStackTrace)"
 }
 finally {
-    # Clean up
-    Set-Location $RESULTS_DIR
-    if (Test-Path $TEMP_DIR) {
-        Remove-Item -Recurse -Force $TEMP_DIR
-        Log-Message "Cleaned up temporary directory $TEMP_DIR"
-    }
+    Final-Cleanup -ResultsDir $RESULTS_DIR -TempDir $TEMP_DIR
 }

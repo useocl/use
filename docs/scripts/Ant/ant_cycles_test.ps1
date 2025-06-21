@@ -7,6 +7,8 @@ param(
     [string]$ResultsDir = ""
 )
 
+. ".\general_utilities.ps1"
+
 #########################################
 # Global variables start here #
 #########################################
@@ -16,13 +18,13 @@ $ErrorActionPreference = "Stop"
 $ORIGINAL_USE_DIR = if ($OriginalUseDir -ne "") { 
     $OriginalUseDir 
 } else { 
-    Join-Path (Get-Location) "use" 
-}
+    # Scripts are in docs/scripts/maven, go 3 levels up to repo root
+    Join-Path (Get-Location) "../../.."}
 
 # Validate that the original use directory exists
 if (-not (Test-Path $ORIGINAL_USE_DIR)) {
-    Write-Host "Error: Original USE directory not found at: $ORIGINAL_USE_DIR"
-    Write-Host "Please specify the correct path using -OriginalUseDir parameter"
+    Log-Message "Error: Original USE directory not found at: $ORIGINAL_USE_DIR"
+    Log-Message "Please specify the correct path using -OriginalUseDir parameter"
     exit 1
 }
 
@@ -40,6 +42,7 @@ if (-not (Test-Path $RESULTS_DIR)) {
 $TEMP_DIR = Join-Path $RESULTS_DIR "USE_TEMP_$(Get-Random)"
 $RESULTS_FILE = Join-Path $RESULTS_DIR "ant_cycles_test_results.csv"
 $LOG_FILE = Join-Path $RESULTS_DIR "ant_cycles_test_log.txt"
+
 $RELEVANT_PATHS = @(("src/main"))
 $TEST_FILE_PATH = Join-Path $TEMP_DIR "use-core\src\test\java\org\tzi\use\architecture\AntCyclicDependenciesCoreTest.java"
 $PROPERTIES_FILE_PATH = Join-Path $TEMP_DIR "use-core\src\test\resources\archunit.properties"
@@ -57,21 +60,6 @@ $SLF4J_SIMPLE_PATH = ""
 # Util Functions #
 #########################################
 
-function Log-Message {
-    param([string]$message)
-    Write-Host $message
-    $message | Out-File -FilePath $LOG_FILE -Append
-}
-
-# Create header line in CSV file if it doesn't exist
-function Initialize-Results-File {
-    if (-not (Test-Path $RESULTS_FILE)) {
-        $header = "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util"
-        $header | Out-File -FilePath $RESULTS_FILE -Encoding UTF8
-        Log-Message "Created results file with header"
-    }
-}
-
 function Record-Result {
     param(
         [string]$CommitHash,
@@ -83,7 +71,6 @@ function Record-Result {
     
     $csvLine = "$commitDate,$commitTime,$CommitHash"
     
-    # Add metrics in the correct order for CSV
     $metrics = @(
         "all_modules",
         "analysis",
@@ -108,36 +95,6 @@ function Record-Result {
     
     # Save the cycle counts to use for the next commit if needed
     $script:previousCycleCounts = $CycleCounts.Clone()
-}
-
-function Has-RelevantChanges {
-    param (
-        [string]$CommitHash,
-        [string]$PreviousCommitHash
-    )
-    $changedFiles = git diff --name-only $PreviousCommitHash $CommitHash
-
-    foreach ($file in $changedFiles) {
-        foreach ($path in $RELEVANT_PATHS) {
-            if ($file.StartsWith($path) -and $file.EndsWith(".java")) {
-                return $true
-            }
-        }
-    }
-    return $false
-}
-
-function Remove-BOM-From-New-Test-File {
-    param (
-        [string]$FilePath
-    )
-    $full_path = Join-Path $TEMP_DIR $FilePath
-    $content = [System.IO.File]::ReadAllBytes($full_path)
-    if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
-        $content = $content[3..$content.Length]
-        [System.IO.File]::WriteAllBytes($full_path, $content)
-        Log-Message "Removed BOM from $full_path"
-    }
 }
 
 function Parse-CycleResults {
@@ -529,7 +486,7 @@ function Cleanup {
 #########################################
 
 # Initialize csv file with header
-Initialize-Results-File
+Initialize-Results-File -FilePath $RESULTS_FILE -Header "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util"
 
 # Create & move to temp dir
 New-Item -ItemType Directory -Force -Path $TEMP_DIR | Out-Null
@@ -610,7 +567,7 @@ try {
         }
 
         # Process commit if it's the first or has relevant changes
-        if ($previousCommit -eq $null -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit)) {
+        if ($previousCommit -eq $null -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)) {
             git checkout -q $COMMIT
             $is_ant = Test-Path (Join-Path $TEMP_DIR "build.xml")
             
@@ -656,23 +613,6 @@ try {
                 }
             } else {
                 Log-Message "No build.xml found. Skipping this commit..."
-                $failureMetrics = @{}
-                $metrics = @(
-                    "all_modules",
-                    "analysis",
-                    "api",
-                    "config",
-                    "gen",
-                    "graph",
-                    "main", 
-                    "parser",
-                    "uml",
-                    "util"
-                )
-                foreach ($metric in $metrics) {
-                    $failureMetrics[$metric] = -1
-                }
-                Record-Result -CommitHash $COMMIT -CycleCounts $failureMetrics
             }
         } else {
             Log-Message "No relevant changes in commit $COMMIT. Using previous cycle counts."

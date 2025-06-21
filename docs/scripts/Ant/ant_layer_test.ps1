@@ -1,23 +1,55 @@
+# JAVA_HOME will need to be set to Java 14 / 8
+
 param(
-    [int]$StartCommit = 0
+    [string]$StartCommitHash = "",
+    [string]$StartLoop = "y",
+    [string]$OriginalUseDir = "",
+    [string]$ResultsDir = ""
 )
+
+. ".\general_utilities.ps1"
 
 #########################################
 # Global variables start here #
 #########################################
 
 $ErrorActionPreference = "Stop"
-$ORIGINAL_USE_DIR = "C:\Users\alici\Uni\BA\use"
-$RESULTS_DIR = "C:\Users\alici\Uni\BA"
+# Set paths based on parameters or use defaults
+$ORIGINAL_USE_DIR = if ($OriginalUseDir -ne "") { 
+    $OriginalUseDir 
+} else { 
+    # Scripts are in docs/scripts/maven, go 3 levels up to repo root
+    Join-Path (Get-Location) "../../.."}
+
+# Validate that the original use directory exists
+if (-not (Test-Path $ORIGINAL_USE_DIR)) {
+    Log-Message "Error: Original USE directory not found at: $ORIGINAL_USE_DIR"
+    Log-Message "Please specify the correct path using -OriginalUseDir parameter"
+    exit 1
+}
+
+$RESULTS_DIR = if ($ResultsDir -ne "") { 
+    $ResultsDir 
+} else { 
+    Get-Location 
+}
+
+# Create results directory if it doesn't exist
+if (-not (Test-Path $RESULTS_DIR)) {
+    New-Item -ItemType Directory -Force -Path $RESULTS_DIR | Out-Null
+}
+
 $TEMP_DIR = Join-Path $RESULTS_DIR "USE_TEMP_$(Get-Random)"
 $RESULTS_FILE = Join-Path $RESULTS_DIR "ant_layer_violations_history.csv"
 $LOG_FILE = Join-Path $RESULTS_DIR "ant_layer_test_log.txt"
+
 $RELEVANT_PATHS = @(("src/main"), ("src/gui"))
 $TEST_FILE_PATH = Join-Path $TEMP_DIR "use-gui\src\test\java\org\tzi\use\architecture\AntLayeredArchitectureTest.java"
-$ARCHUNIT_JUNIT_PATH = "C:\Users\alici\.m2\repository\com\tngtech\archunit\archunit-junit4\0.23.1\archunit-junit4-0.23.1.jar"
-$ARCHUNIT_CORE_PATH = "C:\Users\alici\.m2\repository\com\tngtech\archunit\archunit\0.23.1\archunit-0.23.1.jar"
-$SLF4J_API_PATH = "C:\Users\alici\.m2\repository\org\slf4j\slf4j-api\1.7.25\slf4j-api-1.7.25.jar"
-$SLF4J_SIMPLE_PATH = "C:\Users\alici\.m2\repository\org\slf4j\slf4j-simple\1.7.25\slf4j-simple-1.7.25.jar"
+
+$ARCHUNIT_JUNIT_PATH = ""
+$ARCHUNIT_CORE_PATH = ""
+$SLF4J_API_PATH = ""
+$SLF4J_SIMPLE_PATH = ""
 
 #########################################
 # Functions start here #
@@ -26,20 +58,6 @@ $SLF4J_SIMPLE_PATH = "C:\Users\alici\.m2\repository\org\slf4j\slf4j-simple\1.7.2
 #########################################
 # Util Functions #
 #########################################
-
-function Log-Message {
-    param([string]$message)
-    Write-Host $message
-    $message | Out-File -FilePath $LOG_FILE -Append
-}
-
-# Initialize the results CSV with headers
-function Initialize-Results-File {
-    if (-not (Test-Path $RESULTS_FILE)) {
-        "date,time,commit,violations" | Out-File -FilePath $RESULTS_FILE
-        Log-Message "Created results file with headers"
-    }
-}
 
 # Record commit data and violation count to CSV
 function Record-Result {
@@ -57,36 +75,6 @@ function Record-Result {
     $resultLine | Out-File -FilePath $RESULTS_FILE -Append
     
     Log-Message "Recorded result: date=$commitDate, time=$commitTime, commit=$CommitHash, violations=$ViolationCount"
-}
-
-function Has-RelevantChanges {
-    param (
-        [string]$CommitHash,
-        [string]$PreviousCommitHash
-    )
-    $changedFiles = git diff --name-only $PreviousCommitHash $CommitHash
-
-    foreach ($file in $changedFiles) {
-        foreach ($path in $RELEVANT_PATHS) {
-            if ($file.StartsWith($path) -and $file.EndsWith(".java")) {
-                return $true
-            }
-        }
-    }
-    return $false
-}
-
-function Remove-BOM-From-New-Test-File {
-    param (
-        [string]$FilePath
-    )
-    $full_path = Join-Path $TEMP_DIR $FilePath
-    $content = [System.IO.File]::ReadAllBytes($full_path)
-    if ($content.Length -ge 3 -and $content[0] -eq 0xEF -and $content[1] -eq 0xBB -and $content[2] -eq 0xBF) {
-        $content = $content[3..$content.Length]
-        [System.IO.File]::WriteAllBytes($full_path, $content)
-        Log-Message "Removed BOM from $full_path"
-    }
 }
 
 #########################################
@@ -160,20 +148,50 @@ function Remove-Id-Tags {
 }
 
 #########################################
-# Directory and Build.xml Functions #
+# Dependency Functions #
 #########################################
 
-function Add-ArchUnit-Dependencies {
-    $lib_dir = Join-Path $TEMP_DIR "lib"
-    if (-not (Test-Path $lib_dir)) {
-        New-Item -ItemType Directory -Force -Path $lib_dir | Out-Null
+function Download-Jar {
+    param(
+        [string]$GroupId,
+        [string]$ArtifactId,
+        [string]$Version,
+        [string]$TargetDir
+    )
+    
+    $groupPath = $GroupId -replace '\.', '/'
+    $jarName = "$ArtifactId-$Version.jar"
+    $url = "https://repo1.maven.org/maven2/$groupPath/$ArtifactId/$Version/$jarName"
+    $targetPath = Join-Path $TargetDir $jarName
+    
+    Log-Message "Downloading $jarName from Maven Central..."
+    try {
+        Invoke-WebRequest -Uri $url -OutFile $targetPath -UseBasicParsing
+        Log-Message "Successfully downloaded $jarName"
+        return $targetPath
+    }
+    catch {
+        Log-Message "Failed to download $jarName`: $_"
+        exit 1
+    }
+}
+
+function Setup-Dependencies {
+    Log-Message "Setting up dependencies..."
+    
+    # Create a shared lib directory for downloads
+    $shared_lib_dir = Join-Path $RESULTS_DIR "dependencies"
+    if (-not (Test-Path $shared_lib_dir)) {
+        New-Item -ItemType Directory -Force -Path $shared_lib_dir | Out-Null
     }
 
-    Copy-Item $ARCHUNIT_JUNIT_PATH (Join-Path $lib_dir "archunit-junit4-0.23.1.jar")
-    Copy-Item $ARCHUNIT_CORE_PATH (Join-Path $lib_dir "archunit-0.23.1.jar")
-    Copy-Item $SLF4J_API_PATH (Join-Path $lib_dir "slf4j-api-1.7.25.jar")
-    Copy-Item $SLF4J_SIMPLE_PATH (Join-Path $lib_dir "slf4j-simple-1.7.25.jar")
-    Log-Message "Copied ArchUnit & SLF4J dependencies from local Maven repository to lib directory"
+    # Download dependencies once and store paths in global variables
+    $script:ARCHUNIT_JUNIT_PATH = Download-Jar "com.tngtech.archunit" "archunit-junit4" "1.0.1" $shared_lib_dir
+    $script:ARCHUNIT_CORE_PATH = Download-Jar "com.tngtech.archunit" "archunit" "1.0.1" $shared_lib_dir
+    $script:SLF4J_API_PATH = Download-Jar "org.slf4j" "slf4j-api" "1.7.25" $shared_lib_dir
+    $script:SLF4J_SIMPLE_PATH = Download-Jar "org.slf4j" "slf4j-nop" "1.7.25" $shared_lib_dir
+    
+    Log-Message "Dependencies setup completed"
 }
 
 function Inject-ArchUnit-Test {
@@ -183,8 +201,7 @@ function Inject-ArchUnit-Test {
         Log-Message "Created directory: $test_dir"
     }
 
-    $new_test_file = Join-Path $test_dir "AntLayeredArchitectureTest.java"
-    $test_file_content | Out-File -FilePath $new_test_file -Encoding UTF8
+    $test_file_content | Out-File -FilePath $TEST_FILE_PATH -Encoding UTF8
     Remove-BOM-From-New-Test-File -FilePath "src\test\org\tzi\use\architecture\AntLayeredArchitectureTest.java"
     if (Test-Path $new_test_file) {
         Log-Message "Successfully added test to commit $COMMIT"
@@ -446,7 +463,7 @@ Set-Location $TEMP_DIR
 Log-Message "Created & moved to temporary directory: $TEMP_DIR"
 
 # Initialize results file with headers
-Initialize-Results-File
+Initialize-Results-File -FilePath $RESULTS_FILE -Header "date,time,commit,violations"
 
 Log-Message "Attempting to clone repository from $ORIGINAL_USE_DIR"
 $gitOutput = & {
