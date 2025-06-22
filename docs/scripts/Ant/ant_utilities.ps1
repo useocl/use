@@ -138,23 +138,27 @@ function Add-Dependencies-To-Lib {
 }
 
 # Creates new architecture test dir, new ArchTest file and copies pre-stored test content into that file
-function Inject-ArchUnit-Test {
+# Alternatively same for properties file
+function Inject-File {
     param(
         [string]$TempDir,
-        [string]$ArchTestName,
-        [string]$ArchTestContent
+        [string]$RelativePath,
+        [string]$FileName,
+        [string]$FileContent
     )
-    $arch_test_dir = Join-Path $TempDir "src\test\org\tzi\use\architecture"
-    if (-not (Test-Path $arch_test_dir)) {
-        New-Item -ItemType Directory -Force -Path $arch_test_dir | Out-Null
-        Log-Message "Created directory: $arch_test_dir"
+    
+    $target_dir = Join-Path $TempDir $RelativePath
+    if (-not (Test-Path $target_dir)) {
+        New-Item -ItemType Directory -Force -Path $target_dir | Out-Null
+        Log-Message "Created directory: $target_dir"
     }
 
-    $new_test_file = Join-Path $arch_test_dir $ArchTestName
+    $target_file = Join-Path $target_dir $FileName
     $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $false
-    [System.IO.File]::WriteAllText($new_test_file, $ArchTestContent, $utf8NoBomEncoding)
-    if (Test-Path $new_test_file) {
-        Log-Message "Successfully added test to commit"
+    [System.IO.File]::WriteAllText($target_file, $FileContent, $utf8NoBomEncoding)
+    
+    if (Test-Path $target_file) {
+        Log-Message "Successfully added $FileName to commit"
     }
 }
 

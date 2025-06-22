@@ -132,21 +132,6 @@ function Parse-CycleResults {
 # Dependency Functions #
 #########################################
 
-function Inject-ArchUnit-Properties {
-    $resources_dir = Join-Path $TEMP_DIR "src\test\resources"
-    if (-not (Test-Path $resources_dir)) {
-        New-Item -ItemType Directory -Force -Path $resources_dir | Out-Null
-        Log-Message "Created directory: $resources_dir"
-    }
-
-    $new_properties_file = Join-Path $resources_dir "archunit.properties"
-    $properties_file_content | Out-File -FilePath $new_properties_file -Encoding UTF8
-    Remove-BOM -FilePath "src\test\resources\archunit.properties"
-    if (Test-Path $new_properties_file) {
-        Log-Message "Successfully added properties file to commit"
-    }
-}
-
 function Check-Buildxml-Classpath {
     $buildXml = Get-Content "build.xml" -Raw
     
@@ -167,26 +152,13 @@ function Check-Buildxml-Classpath {
 # Build & Execution Functions #
 #########################################
 
-function Execute-Ant-Build {
-    Log-Message "Executing ant build..."
-    $ErrorActionPreference = 'Continue'
-    $build_output = ant build 2>&1
-    $ErrorActionPreference = 'Stop'
-    $build_output | ForEach-Object { Log-Message $_ }
-    return ($LASTEXITCODE -eq 0)
-}
-
 function Execute-ArchUnit-Test {
     param(
         [string]$CommitHash
     )
     
     Log-Message "Executing ant test-junit for ArchUnit test..."
-    $ErrorActionPreference = 'Continue'
-    $all_output = ant test-junit -Dtest.case="org.tzi.use.architecture.AntCyclicDependenciesCoreTest" 2>&1  
-    $test_output = $all_output | Where-Object {$_.GetType().Name -eq "String"}
-    $ErrorActionPreference = 'Stop'
-    $test_output | ForEach-Object { Log-Message "Test output: $_" }
+    $test_output = ant test-junit -Dtest.case="org.tzi.use.architecture.AntCyclicDependenciesCoreTest" 2>&1  
     
     # Parse metrics directly from test output
     $cycleMetrics = Parse-CycleResults -OutputLines $test_output
@@ -194,7 +166,7 @@ function Execute-ArchUnit-Test {
     if ($cycleMetrics.Count -gt 0) {
         Log-Message "Successfully parsed cycle metrics from output"
         Record-Result -CommitHash $CommitHash -CycleCounts $cycleMetrics
-        return $true
+        return
     } else {
         Log-Message "No cycle metrics found in test output"
         $failureMetrics = @{}
@@ -214,8 +186,27 @@ function Execute-ArchUnit-Test {
             $failureMetrics[$metric] = -1
         }
         Record-Result -CommitHash $CommitHash -CycleCounts $failureMetrics
-        return $false
+        return
     }
+}
+
+function Process-Commit {
+    param(
+        [string]$CommitHash
+    )
+    Add-CombinatoricsLib-If-Missing
+    Inject-File -TempDir $TEMP_DIR -RelativePath "src\test\org\tzi\use\architecture" -FileName "AntCyclicDependenciesCoreTest.java" -FileContent $test_file_content
+    Inject-File -TempDir $TEMP_DIR -RelativePath "src\test\resources" -FileName "archunit.properties" -FileContent $properties_file_content
+    Remove-Id-Tags
+    Update-Java-Version
+    Add-Dependencies-To-Lib -TempDir $TEMP_DIR
+    Update-Dependencies-In-Buildxml
+    Add-Missing-Test-Target-To-Buildxml
+    Check-Buildxml-Classpath
+    Check-And-Fix-Bag-File
+    Check-And-Fix-DiagramView-File
+    Check-And-Fix-ExtendedJTable-File
+    Execute-ArchUnit-Test -CommitHash $CommitHash
 }
 
 #########################################
@@ -226,18 +217,6 @@ function Execute-ArchUnit-Test {
 Initialize-Results-File -FilePath $RESULTS_FILE -Header "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util"
 # Create and move to use copy
 Setup-Repo -TempDir $TEMP_DIR -OriginalUseDir $ORIGINAL_USE_DIR
-
-# Determine which commits to process
-if ($StartCommitHash -ne "") {
-    # Verify that the start commit exists
-    $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
-        exit 1
-    }
-    Log-Message "Found start commit $StartCommitHash"
-}
-
 # Download dependencies once
 Setup-Dependencies-In-Shared-Dir -ResultsDir $RESULTS_DIR
 
@@ -245,39 +224,22 @@ Setup-Dependencies-In-Shared-Dir -ResultsDir $RESULTS_DIR
 # Store ArchUnit Test #
 #########################################
 
-git checkout -q master
-$current_branch = git rev-parse --abbrev-ref HEAD
-    
-git checkout -q archunit_tests
-
-if (-not (Test-Path $TEST_FILE_PATH) -or -not (Test-Path $PROPERTIES_FILE_PATH)) {
-    Log-Message "Required files not found in archunit_tests branch. Exiting."
-    exit 1
-}
-
-$test_file_content = Get-Content $TEST_FILE_PATH -Raw -Encoding UTF8
-$properties_file_content = Get-Content $PROPERTIES_FILE_PATH -Raw -Encoding UTF8
-
-git checkout -q $current_branch
+$test_file_content = Store-ArchTest -TestFilePath $TEST_FILE_PATH
+$properties_file_content = Store-ArchTest -TestFilePath $PROPERTIES_FILE_PATH
 
 #########################################
 # Main Loop starts here #
 #########################################
 
-$CommitsToProcess = if ($StartCommitHash -eq "") {
-    # Process all commits from the beginning
-    git log --first-parent $current_branch --format="%H"
-} elseif ($StartLoop.ToLower() -eq "n") {
-    # Process only the specified commit
-    @($StartCommitHash)
-} else {
-    # Process from the specified commit onwards
-    git log --first-parent --format="%H" $StartCommitHash
-}
+Verify-StartCommit -StartCommit $StartCommitHash
+
+# Determine which commits to process
+$CommitsToProcess = Determine-Commits-To-Process -StartCommitHash $StartCommitHash -StartLoop $StartLoop
 
 $TOTAL_COMMITS = ($CommitsToProcess | Measure-Object).Count
 $CURRENT_COMMIT = 1
 $previousCycleCounts = @{}
+
 try {
     foreach ($COMMIT in $CommitsToProcess) {
         Log-Message "[$CURRENT_COMMIT/$TOTAL_COMMITS] Processing commit: $COMMIT"
@@ -288,50 +250,16 @@ try {
             $previousCommit = $null
         }
 
-        # Process commit if it's the first or has relevant changes
-        if ($previousCommit -eq $null -or (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)) {
+        $isFirstCommitInRepo = ($previousCommit -eq $null)
+        $isStartCommit = ($StartCommitHash -ne "" -and $COMMIT -eq $StartCommitHash)
+        $hasRelevantChanges = (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)
+
+        if ($isFirstCommitInRepo -or $isStartCommit -or $hasRelevantChanges) {
             git checkout -q $COMMIT
             $is_ant = Test-Path (Join-Path $TEMP_DIR "build.xml")
             
             if ($is_ant) {
-                Add-CombinatoricsLib-If-Missing
-                Inject-ArchUnit-Test -TempDir $TEMP_DIR -ArchTestName "AntCyclicDependenciesCoreTest.java" -ArchTestContent $test_file_content
-                Inject-ArchUnit-Properties
-                Remove-Id-Tags
-                Update-Java-Version
-                Add-Dependencies-To-Lib -TempDir $TEMP_DIR
-                Update-Dependencies-In-Buildxml
-                Add-Missing-Test-Target-To-Buildxml
-                Check-Buildxml-Classpath
-                Check-And-Fix-Bag-File
-                Check-And-Fix-DiagramView-File
-                # dont know if necessary
-                Check-And-Fix-ExtendedJTable-File
-                $buildSuccess = Execute-Ant-Build
-                
-                if ($buildSuccess) {
-                    Log-Message "Ant build successful."
-                    Execute-ArchUnit-Test -CommitHash $COMMIT
-                } else {
-                    Log-Message "Ant build failed. Recording failure for this commit..."
-                    $failureMetrics = @{}
-                    $metrics = @(
-                        "all_modules",
-                        "analysis",
-                        "api",
-                        "config",
-                        "gen",
-                        "graph",
-                        "main", 
-                        "parser",
-                        "uml",
-                        "util"
-                    )
-                    foreach ($metric in $metrics) {
-                        $failureMetrics[$metric] = -1
-                    }
-                    Record-Result -CommitHash $COMMIT -CycleCounts $failureMetrics
-                }
+                Process-Commit -CommitHash $COMMIT
             } else {
                 Log-Message "No build.xml found. Skipping this commit..."
             }

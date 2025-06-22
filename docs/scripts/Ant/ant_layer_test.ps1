@@ -102,10 +102,9 @@ function Process-Commit {
     )
     
     Add-CombinatoricsLib-If-Missing
-    Inject-ArchUnit-Test -TempDir $TEMP_DIR -ArchTestName "AntLayeredArchitectureTest.java" -ArchTestContent $test_file_content
+    Inject-File -TempDir $TEMP_DIR -RelativePath "src\test\org\tzi\use\architecture" -FileName "AntLayeredArchitectureTest.java" -FileContent $test_file_content
     Remove-Id-Tags
     Update-Java-Version
-    Setup-Dependencies-In-Shared-Dir -ResultsDir $RESULTS_DIR
     Add-Dependencies-To-Lib -TempDir $TEMP_DIR
     Update-Dependencies-In-Buildxml
     Add-Missing-Test-Target-To-Buildxml
@@ -131,6 +130,8 @@ function Process-Commit {
 Initialize-Results-File -FilePath $RESULTS_FILE -Header "date,time,commit,violations"
 # Create and move to use copy
 Setup-Repo -TempDir $TEMP_DIR -OriginalUseDir $ORIGINAL_USE_DIR
+# Download dependencies once
+Setup-Dependencies-In-Shared-Dir -ResultsDir $RESULTS_DIR
 
 #########################################
 # Store ArchUnit Test #
@@ -155,7 +156,7 @@ try {
         $previousCommit = git log -1 --format="%H" "$COMMIT^" 2>$null
 
         $isFirstCommitInRepo = ($previousCommit -eq $null)
-        $isStartCommit = ($StartCommitHash -ne "" -and ($COMMIT -eq $StartCommitHash -or $COMMIT.StartsWith($StartCommitHash)))
+        $isStartCommit = ($StartCommitHash -ne "" -and $COMMIT -eq $StartCommitHash)
         $hasRelevantChanges = (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)
 
         if($isFirstCommitInRepo -or $isStartCommit -or $hasRelevantChanges) {

@@ -241,7 +241,7 @@ try {
         $hasRelevantChanges = (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)
 
         if ($isFirstCommitInRepo -or $isStartCommit -or $hasRelevantChanges) {
-            git checkout -q $CommitHash
+            git checkout -q $COMMIT
             $is_maven = Test-Path (Join-Path $TEMP_DIR "pom.xml")
 
             if ($is_maven) {
