@@ -1,5 +1,9 @@
 # Load with . ".\general_utilities.ps1"
 
+#########################################
+# Utility Functions #
+#########################################
+
 function Log-Message {
     param([string]$message)
     Write-Host $message
@@ -48,6 +52,10 @@ function Remove-BOM {
     }
 }
 
+#########################################
+# Commit Functions #
+#########################################
+
 # Compares two commit hashes and checks whether there are changes to the source code
 function Has-Relevant-Changes {
     param(
@@ -67,11 +75,65 @@ function Has-Relevant-Changes {
     return $false
 }
 
+function Verify-StartCommit {
+    param(
+        $StartCommit
+    )
+    # Verify that the start commit exists
+    if ($StartCommitHash -ne "") {
+        $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
+            exit 1
+        }
+        Log-Message "Found start commit $StartCommitHash"
+    }
+}
+
+function Determine-Commits-To-Process {
+    param(
+        $StartCommitHash,
+        $StartLoop
+    )
+    # Determine which commits to process
+    $CommitsToProcess = if ($StartCommitHash -eq "") {
+        # Process all commits from the beginning
+        git log --first-parent --reverse --format="%H"
+    } elseif ($StartLoop.ToLower() -eq "n") {
+            # Process only the specified commit
+            @($StartCommitHash)
+    } else {
+        # Process from the specified commit onwards
+        git log --first-parent --reverse --format="%H" "$StartCommitHash^..HEAD"
+    }
+    return $CommitsToProcess
+}
+
+#########################################
+# Cleanup Functions #
+#########################################
+
 function Cleanup-Commit {
     git reset -q --hard
     git clean -qfd
     Log-Message "#####################################################################################"
 }
+
+function Final-Cleanup {
+    param(
+        $ResultsDir,
+        $TempDir
+    )
+    Set-Location $ResultsDir
+    if (Test-Path $TempDir) {
+        Remove-Item -Recurse -Force $TempDir
+        Log-Message "Cleaned up directory $TempDir"
+    }
+}
+
+#########################################
+# Setup Functions #
+#########################################
 
 function Setup-Repo {
     param(
@@ -114,52 +176,6 @@ function Store-ArchTest {
 
     $test_file_content = Get-Content $TestFilePath -Raw -Encoding UTF8
     return $test_file_content
-}
-
-function Verify-StartCommit {
-    param(
-        $StartCommit
-    )
-    # Verify that the start commit exists
-    if ($StartCommitHash -ne "") {
-        $commitExists = git cat-file -e "$StartCommitHash^{commit}" 2>$null
-        if ($LASTEXITCODE -ne 0) {
-            Log-Message "Start commit hash $StartCommitHash not found in repository. Exiting."
-            exit 1
-        }
-        Log-Message "Found start commit $StartCommitHash"
-    }
-}
-
-function Determine-Commits-To-Process {
-    param(
-        $StartCommitHash,
-        $StartLoop
-    )
-    # Determine which commits to process
-    $CommitsToProcess = if ($StartCommitHash -eq "") {
-        # Process all commits from the beginning
-        git log --first-parent --reverse --format="%H"
-    } elseif ($StartLoop.ToLower() -eq "n") {
-            # Process only the specified commit
-            @($StartCommitHash)
-    } else {
-        # Process from the specified commit onwards
-        git log --first-parent --reverse --format="%H" "$StartCommitHash^..HEAD"
-    }
-    return $CommitsToProcess
-}
-
-function Final-Cleanup {
-    param(
-        $ResultsDir,
-        $TempDir
-    )
-    Set-Location $ResultsDir
-    if (Test-Path $TempDir) {
-        Remove-Item -Recurse -Force $TempDir
-        Log-Message "Cleaned up directory $TempDir"
-    }
 }
 
 # Creates new architecture test dir, new ArchTest file and copies pre-stored test content into that file

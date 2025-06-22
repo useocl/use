@@ -1,5 +1,9 @@
 . "..\general_utilities.ps1"
 
+#########################################
+# Dependency Functions #
+#########################################
+
 function Ensure-Dependencies-For-Maven {
     param(
         [string]$TempDir
@@ -68,37 +72,9 @@ function Ensure-Dependencies-For-Maven {
     }
 }
 
-# TODO: Replace with Inject-File in general_utilities
-function Prepare-Directory-For-Maven-Build-And-Test {
-    param(
-        [string]$TempDir,
-        [string]$ArchTestDir,
-        [string]$ArchTestName,
-        [string]$ArchTestContent,
-        [string]$PropertiesPath = "",
-        [string]$PropertiesContent = ""
-    )
-    # Add architecture directory if it doesn't exist
-    $test_file_dir = Join-Path $TempDir $ArchTestDir
-    if (-not (Test-Path $test_file_dir)) {
-        New-Item -ItemType Directory -Force -Path $test_file_dir | Out-Null
-        Log-Message "Created directory: $test_file_dir"
-    }
-
-    # Add archunit test to commit
-    $test_file_path = Join-Path $test_file_dir $ArchTestName
-    $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $false
-    [System.IO.File]::WriteAllText($test_file_path, $ArchTestContent, $utf8NoBomEncoding)
-    Log-Message "Added test to commit"
-
-    if ($PropertiesPath -and $PropertiesContent) {
-    # Add archunit.properties file
-    $properties_file_path = Join-Path $TempDir $PropertiesPath
-    $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $false
-    [System.IO.File]::WriteAllText($properties_file_path, $PropertiesContent, $utf8NoBomEncoding)
-    Log-Message "Added archunit.properties file to commit"
-    }
-}
+#########################################
+# Updating Functions #
+#########################################
 
 function Update-Java-Version-For-Maven {
 
@@ -120,8 +96,7 @@ function Update-Java-Version-For-Maven {
             Log-Message "Changed problematic Java Version 15 to 14"
         }
         else {
-            Log-Message "Warning: ${pomFile} not found. Exiting..."
-            exit 1
+            Log-Message "Warning: ${pomFile} not found."
         }
     }
 }

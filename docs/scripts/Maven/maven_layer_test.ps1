@@ -144,7 +144,7 @@ function Process-Commit {
 
     Update-Java-Version-For-Maven
     Ensure-Dependencies-For-Maven -TempDir $TEMP_DIR
-    Prepare-Directory-For-Maven-Build-And-Test -TempDir $TEMP_DIR -ArchTestDir "use-gui\src\test\java\org\tzi\use\architecture" -ArchTestName "MavenLayeredArchitectureTest.java" -ArchTestContent $test_file_content    
+    Inject-File -TempDir $TEMP_DIR -RelativePath "use-gui\src\test\java\org\tzi\use\architecture" -FileName "MavenLayeredArchitectureTest.java" -FileContent $test_file_content
     $mavenBuildSuccess = Maven-Build-And-Test -CommitHash $CommitHash
 
     return $mavenBuildSuccess
