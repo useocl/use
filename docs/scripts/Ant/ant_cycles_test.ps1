@@ -8,6 +8,7 @@ param(
 )
 
 . ".\general_utilities.ps1"
+. ".\ant_utilities.ps1"
 
 #########################################
 # Global variables start here #
@@ -128,152 +129,8 @@ function Parse-CycleResults {
 }
 
 #########################################
-# Fixing Functions #
-#########################################
-
-function Check-And-Fix-Bag-File {
-    $bagFile = Get-ChildItem -Recurse -Filter "Bag.java" | Select-Object -First 1
-
-    if ($bagFile) {   
-    $content = Get-Content $bagFile.FullName -Raw
-    $needsFixing = $content -match 'boolean contains\(T obj\)' -or
-                   $content -match 'boolean remove\(T o\)' -or
-                   (-not ($content -match '@Override.*boolean contains\(Object obj\)' -or
-                         $content -match '@Override.*boolean remove\(Object o\)'))
-
-        if ($needsFixing) {
-            Log-Message "Faulty Bag interface - Applying fix..."
-            $content = $content -replace 'boolean contains\(T obj\)', 'boolean contains(Object obj)'
-            $content = $content -replace 'boolean remove\(T o\)', 'boolean remove(Object o)'
-            $content | Set-Content $bagFile.FullName
-        }
-    }
-}
-
-function Check-And-Fix-DiagramView-File {
-    $diagramViewFile = Get-ChildItem -Recurse -Filter "DiagramView.java" | Select-Object -First 1
-
-    if ($diagramViewFile) {   
-    $content = Get-Content $diagramViewFile.FullName -Raw
-    $needsFixing = $content -match 'new OutputFormat\(doc\);'
-
-        if ($needsFixing) {
-            Log-Message "Faulty DiagramView file - Applying fix..."
-            $content = $content -replace 'new OutputFormat\(doc\);', 'new OutputFormat();'
-            $content | Set-Content $diagramViewFile.FullName
-        }
-    }
-}
-
-function Check-And-Fix-ExtendedJTable-File {
-    $extendedJTableFile = Get-ChildItem -Recurse -Filter "ExtendedJTable.java" | Select-Object -First 1
-
-    if ($extendedJTableFile) {
-        $content = Get-Content $extendedJTableFile.FullName -Raw
-        $needsFixing = $content -match 'public ExtendedJTable\(Vector\<\?\> rowData\, Vector\<\?\> columnNames\)'
-
-        if ($needsFixing) {
-            Log-Message "Faulty ExtendedJTable constructor - Applying fix..."
-            $content = $content -replace 'public ExtendedJTable\(Vector\<\?\> rowData\, Vector\<\?\> columnNames\)', 'public ExtendedJTable(Vector<? extends Vector<?>> rowData, Vector<?> columnNames)'
-            $content | Set-Content $extendedJTableFile.FullName
-        }
-    }
-}
-
-function Remove-Id-Tags {
-    Get-ChildItem -Recurse -Filter *.java | ForEach-Object {
-        $content = Get-Content $_.FullName -Raw
-        if ($content -match '\$Id\$') {
-            $content = $content -replace '\$Id\$', ''
-            $content | Set-Content $_.FullName
-        }
-    }
-    if (Test-Path "build.xml") {
-        $content = Get-Content "build.xml" -Raw
-        if ($content -match '<!--\$Id\$ -->') {
-            $content = $content -replace '<!--\$Id\$-->\s*\n', ''
-            $content | Set-Content "build.xml"
-        }
-    }
-}
-
-#########################################
 # Dependency Functions #
 #########################################
-
-function Download-Jar {
-    param(
-        [string]$GroupId,
-        [string]$ArtifactId,
-        [string]$Version,
-        [string]$TargetDir
-    )
-    
-    $groupPath = $GroupId -replace '\.', '/'
-    $jarName = "$ArtifactId-$Version.jar"
-    $url = "https://repo1.maven.org/maven2/$groupPath/$ArtifactId/$Version/$jarName"
-    $targetPath = Join-Path $TargetDir $jarName
-    
-    Log-Message "Downloading $jarName from Maven Central..."
-    try {
-        Invoke-WebRequest -Uri $url -OutFile $targetPath -UseBasicParsing
-        Log-Message "Successfully downloaded $jarName"
-        return $targetPath
-    }
-    catch {
-        Log-Message "Failed to download $jarName`: $_"
-        exit 1
-    }
-}
-
-function Setup-Dependencies {
-    Log-Message "Setting up dependencies..."
-    
-    # Create a shared lib directory for downloads
-    $shared_lib_dir = Join-Path $RESULTS_DIR "dependencies"
-    if (-not (Test-Path $shared_lib_dir)) {
-        New-Item -ItemType Directory -Force -Path $shared_lib_dir | Out-Null
-    }
-
-    # Download dependencies once and store paths in global variables
-    $script:ARCHUNIT_JUNIT_PATH = Download-Jar "com.tngtech.archunit" "archunit-junit4" "1.0.1" $shared_lib_dir
-    $script:ARCHUNIT_CORE_PATH = Download-Jar "com.tngtech.archunit" "archunit" "1.0.1" $shared_lib_dir
-    $script:SLF4J_API_PATH = Download-Jar "org.slf4j" "slf4j-api" "1.7.25" $shared_lib_dir
-    $script:SLF4J_SIMPLE_PATH = Download-Jar "org.slf4j" "slf4j-nop" "1.7.25" $shared_lib_dir
-    
-    Log-Message "Dependencies setup completed"
-}
-
-
-function Add-ArchUnit-Dependencies {
-    $lib_dir = Join-Path $TEMP_DIR "lib"
-    if (-not (Test-Path $lib_dir)) {
-        New-Item -ItemType Directory -Force -Path $lib_dir | Out-Null
-    }
-
-    # Copy pre-downloaded dependencies to temp lib directory
-    Copy-Item $ARCHUNIT_JUNIT_PATH (Join-Path $lib_dir "archunit-junit4-0.23.1.jar")
-    Copy-Item $ARCHUNIT_CORE_PATH (Join-Path $lib_dir "archunit-0.23.1.jar")
-    Copy-Item $SLF4J_API_PATH (Join-Path $lib_dir "slf4j-api-1.7.25.jar")
-    Copy-Item $SLF4J_SIMPLE_PATH (Join-Path $lib_dir "slf4j-simple-1.7.25.jar")
-    
-    Log-Message "Copied ArchUnit & SLF4J dependencies to temp lib directory"
-}
-
-function Inject-ArchUnit-Test {
-    $test_dir = Join-Path $TEMP_DIR "src\test\org\tzi\use\architecture"
-    if (-not (Test-Path $test_dir)) {
-        New-Item -ItemType Directory -Force -Path $test_dir | Out-Null
-        Log-Message "Created directory: $test_dir"
-    }
-
-    $new_test_file = Join-Path $test_dir "AntCyclicDependenciesCoreTest.java"
-    $test_file_content | Out-File -FilePath $new_test_file -Encoding UTF8
-    Remove-BOM-From-New-Test-File -FilePath "src\test\org\tzi\use\architecture\AntCyclicDependenciesCoreTest.java"
-    if (Test-Path $new_test_file) {
-        Log-Message "Successfully added test to commit"
-    }
-}
 
 function Inject-ArchUnit-Properties {
     $resources_dir = Join-Path $TEMP_DIR "src\test\resources"
@@ -284,29 +141,9 @@ function Inject-ArchUnit-Properties {
 
     $new_properties_file = Join-Path $resources_dir "archunit.properties"
     $properties_file_content | Out-File -FilePath $new_properties_file -Encoding UTF8
-    Remove-BOM-From-New-Test-File -FilePath "src\test\resources\archunit.properties"
+    Remove-BOM -FilePath "src\test\resources\archunit.properties"
     if (Test-Path $new_properties_file) {
         Log-Message "Successfully added properties file to commit"
-    }
-}
-
-function Update-Java-Version-And-Encoding {
-    $buildXml = Get-Content "build.xml" -Raw
-
-    $buildXml = $buildXml -replace 'source="(1\.)?(\d+)"', 'source="8"'
-    $buildXml = $buildXml -replace 'target="(1\.)?(\d+)"', 'target="8"'
-    $buildXml = $buildXml -replace '(java\.targetversion"\s+value=")1\.?\d+(")', 'java.targetversion" value="8"'
-    $buildXml = $buildXml -replace '(java\.sourceversion"\s+value=")1\.?\d+(")', 'java.sourceversion" value="8"'
-    $buildXml = $buildXml -replace 'value="1\.[0-7]"', 'value="8"'
-    $buildXml = $buildXml -replace 'value="1\.[0-7]\s*"', 'value="8"'
-    
-    $buildXml | Set-Content "build.xml"
-
-    $content = Get-Content "build.xml" -Raw
-    if ($content -match 'value="7"') {
-        Log-Message "Successfully updated Java version to 8"
-    } else {
-        Log-Message "Warning: Java version update may not have worked"
     }
 }
 
@@ -324,100 +161,6 @@ function Check-Buildxml-Classpath {
     Log-Message "Has archunit.jar property: $hasArchunitJar"
     Log-Message "Has archunit-junit4.jar property: $hasArchunitJunit4Jar"
     Log-Message "Compile classpath includes ArchUnit: $compileClasspathHasArchUnit"
-}
-
-function Update-Buildxml-For-ArchUnit-Dependencies {
-    $buildXml = Get-Content "build.xml" -Raw
-    
-    $buildXml = $buildXml -replace '(<target name="test-classcycles".*?>)[\s\S]*?</target>', '$1</target>'
-    
-    if ($buildXml -match "archunit-junit4-0.23.1.jar|archunit-0.23.1.jar") {
-        Log-Message "ArchUnit dependencies already present in build.xml"
-        return
-    }
-    
-    $propertyInsert = @"
-    <property name="archunit.jar" location="`${lib.dir}/archunit-0.23.1.jar"/>
-    <property name="archunit-junit4.jar" location="`${lib.dir}/archunit-junit4-0.23.1.jar"/>
-    <property name="slf4j-api.jar" location="`${lib.dir}/slf4j-api-1.7.25.jar"/>
-    <property name="slf4j-simple.jar" location="`${lib.dir}/slf4j-simple-1.7.25.jar"/>
-    <property name="src.test.resources.dir" location="`${src.test.dir}/resources"/>
-"@
-
-    # either replace with antlr or have two versions and check which one is in buildxml
-    $buildXml = $buildXml -replace '(<property name="guava.jar".*?/>)', "`$1`n$propertyInsert"
-    $buildXml = $buildXml -replace '(<property name="combinatoricslib\.jar".*?/>)', "`$1`n$propertyInsert"
-
-    $newDeps = ':${archunit.jar}:${archunit-junit4.jar}:${slf4j-api.jar}:${slf4j-simple.jar}:${src.test.resources.dir}'
-    
-    $buildXml = $buildXml -replace '(classpath="\$\{antlr\.jar\}:\$\{junit\.jar\}:\$\{gsbase\.jar\}:\$\{combinatoricslib\.jar\}:\$\{vtd-xml\.jar\}:\$\{itextpdf\.jar\})', "`$1$newDeps"
-    $buildXml = $buildXml -replace '(classpath="\$\{antlr\.jar\}:\$\{junit\.jar\}:\$\{gsbase\.jar\}:\$\{combinatoricslib\.jar\})', "`$1$newDeps"
-    
-    $buildXml = $buildXml -replace '(classpath path="\$\{antlr\.jar\}:\$\{build\.classes\.dir\}:\$\{gsbase\.jar\}:\$\{jruby\.jar\}:\$\{junit\.jar\}:\$\{guava\.jar\})', "`$1$newDeps"
-    $buildXml = $buildXml -replace '(classpath path="\$\{antlr\.jar\}:\$\{build\.classes\.dir\}:\$\{gsbase\.jar\}:\$\{jruby\.jar\}:\$\{junit\.jar\})', "`$1$newDeps"
-    
-    $buildXml | Set-Content "build.xml" -Force
-    Log-Message "Successfully added ArchUnit dependencies to build.xml"
-}
-
-function Add-Test-Target-If-Missing {
-    $buildXml = Get-Content "build.xml" -Raw
-    
-    if ($buildXml -notmatch '<target\s+name="test-junit"') {
-        # Add a test-junit target if it doesn't exist
-        $testJunitTarget = @"
-    <target name="test-junit" depends="build" description="Runs the JUnit tests">
-        <junit fork="yes" haltonfailure="no" printsummary="yes">
-            <classpath>
-                <pathelement location="`${build.classes.dir}"/>
-                <pathelement path="`${archunit.jar}:`${archunit-junit4.jar}:`${slf4j-api.jar}:`${slf4j-simple.jar}"/>
-                <pathelement path="`${junit.jar}"/>
-                <!-- Add other classpath elements as needed -->
-            </classpath>
-            <formatter type="plain"/>
-            <test name="`${test.case}" if="test.case"/>
-            <batchtest todir="`${build.dir}" unless="test.case">
-                <fileset dir="`${src.test.dir}">
-                    <include name="**/*Test.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-    </target>
-"@
-        
-        # Find a good place to add the target
-        if ($buildXml -match '</project>') {
-            $buildXml = $buildXml -replace '</project>', "$testJunitTarget`n</project>"
-            $buildXml | Set-Content "build.xml" -Force
-            Log-Message "Added test-junit target to build.xml"
-        }
-    }
-}
-
-function Print-BuildXml {
-    if (Test-Path "build.xml") {
-        Write-Host "Contents of build.xml:"
-        Get-Content "build.xml" | ForEach-Object { Write-Host $_ }
-    } else {
-        Write-Host "build.xml not found in the current directory."
-    }
-}
-
-function Add-CombinatoricsLib-If-Missing {
-    $buildXml = Get-Content "build.xml" -Raw
-    
-    if ($buildXml -notmatch "combinatoricslib\.jar") {
-        # Add the property definition
-        $propertyLine = '  <property name="combinatoricslib.jar" location="${lib.dir}/combinatoricslib-0.2.jar"/>'
-        $buildXml = $buildXml -replace '(<property name="jruby\.jar".*?/>)', "`$1`n$propertyLine"
-        
-        # Add it to the compile classpaths
-        $buildXml = $buildXml -replace '(classpath="\$\{antlr\.jar\}:\$\{junit\.jar\}:\$\{jruby\.jar\})"', '$1:${combinatoricslib.jar}"'
-        $buildXml = $buildXml -replace '(classpath="\$\{antlr\.jar\}:\$\{junit\.jar\}:\$\{gsbase\.jar\})"', '$1:${combinatoricslib.jar}"'
-        
-        $buildXml | Set-Content "build.xml" -Force
-        Log-Message "Added combinatoricslib dependency to build.xml"
-    }
 }
 
 #########################################
@@ -475,35 +218,14 @@ function Execute-ArchUnit-Test {
     }
 }
 
-function Cleanup {
-    git reset -q --hard
-    git clean -qfd
-    Log-Message "#####################################################################################"
-}
-
 #########################################
 # Setup starts here #
 #########################################
 
 # Initialize csv file with header
 Initialize-Results-File -FilePath $RESULTS_FILE -Header "date,time,commit,all_modules,analysis,api,config,gen,graph,main,parser,uml,util"
-
-# Create & move to temp dir
-New-Item -ItemType Directory -Force -Path $TEMP_DIR | Out-Null
-Set-Location $TEMP_DIR
-Log-Message "Created & moved to temporary directory: $TEMP_DIR"
-
-# Clone USE repo into temp dir
-Log-Message "Attempting to clone repository from $ORIGINAL_USE_DIR"
-$gitOutput = & {
-    $ErrorActionPreference = 'SilentlyContinue'
-    git clone $ORIGINAL_USE_DIR . 2>&1
-}
-$gitOutput | ForEach-Object { Log-Message "Git output: $_" }
-if ($LASTEXITCODE -ne 0) {
-    Log-Message "Failed to clone repository. Exit code: $LASTEXITCODE"
-    exit 1
-}
+# Create and move to use copy
+Setup-Repo -TempDir $TEMP_DIR -OriginalUseDir $ORIGINAL_USE_DIR
 
 # Determine which commits to process
 if ($StartCommitHash -ne "") {
@@ -517,7 +239,7 @@ if ($StartCommitHash -ne "") {
 }
 
 # Download dependencies once
-Setup-Dependencies
+Setup-Dependencies-In-Shared-Dir -ResultsDir $RESULTS_DIR
 
 #########################################
 # Store ArchUnit Test #
@@ -567,21 +289,20 @@ try {
         }
 
         # Process commit if it's the first or has relevant changes
-        if ($previousCommit -eq $null -or (Has-RelevantChanges -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)) {
+        if ($previousCommit -eq $null -or (Has-Relevant-Changes -CommitHash $COMMIT -PreviousCommitHash $previousCommit -RelevantPaths $RELEVANT_PATHS)) {
             git checkout -q $COMMIT
             $is_ant = Test-Path (Join-Path $TEMP_DIR "build.xml")
             
             if ($is_ant) {
                 Add-CombinatoricsLib-If-Missing
-                Inject-ArchUnit-Test
+                Inject-ArchUnit-Test -TempDir $TEMP_DIR -ArchTestName "AntCyclicDependenciesCoreTest.java" -ArchTestContent $test_file_content
                 Inject-ArchUnit-Properties
                 Remove-Id-Tags
-                Update-Java-Version-And-Encoding
-                Add-ArchUnit-Dependencies
-                Update-Buildxml-For-ArchUnit-Dependencies
-                Add-Test-Target-If-Missing
+                Update-Java-Version
+                Add-Dependencies-To-Lib -TempDir $TEMP_DIR
+                Update-Dependencies-In-Buildxml
+                Add-Missing-Test-Target-To-Buildxml
                 Check-Buildxml-Classpath
-                
                 Check-And-Fix-Bag-File
                 Check-And-Fix-DiagramView-File
                 # dont know if necessary
@@ -621,7 +342,7 @@ try {
             }
         }
         $CURRENT_COMMIT++
-        Cleanup
+        Cleanup-Commit
     }
 }
 catch {
@@ -629,14 +350,7 @@ catch {
     Log-Message "Stack Trace: $($_.ScriptStackTrace)"
 }
 finally {
-    Set-Location $RESULTS_DIR
-    if (Test-Path $TEMP_DIR) {
-        Remove-Item -Recurse -Force $TEMP_DIR
-        Log-Message "Cleaned up temporary directory $TEMP_DIR"
-    }
+    Final-Cleanup -ResultsDir $RESULTS_DIR -TempDir $TEMP_DIR
     $dependencies_dir = Join-Path $RESULTS_DIR "dependencies"
-    if (Test-Path $dependencies_dir) {
-        Remove-Item -Recurse -Force $dependencies_dir
-        Log-Message "Cleaned up dependencies directory"
-    }
+    Final-Cleanup -ResultsDir $RESULTS_DIR -TempDir $dependencies_dir
 }

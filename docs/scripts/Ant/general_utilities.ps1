@@ -19,6 +19,23 @@ function Initialize-Results-File {
     }
 }
 
+function Record-Simple-Result {
+    param(
+        [string]$CommitHash,
+        [int]$TestResult = -1,
+        [string]$ResultsFile
+    )
+    
+    # Get commit date and time
+    $commitDate = git show -s --format=%cd --date=format:"%Y-%m-%d" $CommitHash
+    $commitTime = git show -s --format=%cd --date=format:"%H:%M:%S" $CommitHash
+    
+    # Format the result
+    $resultLine = "$commitDate,$commitTime,$CommitHash,$TestResult"
+    $resultLine | Out-File -FilePath $ResultsFile -Append
+}
+
+
 function Remove-BOM {
     param(
         [string]$FilePath
@@ -141,6 +158,6 @@ function Final-Cleanup {
     Set-Location $ResultsDir
     if (Test-Path $TempDir) {
         Remove-Item -Recurse -Force $TempDir
-        Log-Message "Cleaned up temporary directory $TempDir"
+        Log-Message "Cleaned up directory $TempDir"
     }
 }
