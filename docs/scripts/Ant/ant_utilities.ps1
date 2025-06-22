@@ -137,31 +137,6 @@ function Add-Dependencies-To-Lib {
     Log-Message "Copied ArchUnit & SLF4J dependencies to lib directory"
 }
 
-# Creates new architecture test dir, new ArchTest file and copies pre-stored test content into that file
-# Alternatively same for properties file
-function Inject-File {
-    param(
-        [string]$TempDir,
-        [string]$RelativePath,
-        [string]$FileName,
-        [string]$FileContent
-    )
-    
-    $target_dir = Join-Path $TempDir $RelativePath
-    if (-not (Test-Path $target_dir)) {
-        New-Item -ItemType Directory -Force -Path $target_dir | Out-Null
-        Log-Message "Created directory: $target_dir"
-    }
-
-    $target_file = Join-Path $target_dir $FileName
-    $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $false
-    [System.IO.File]::WriteAllText($target_file, $FileContent, $utf8NoBomEncoding)
-    
-    if (Test-Path $target_file) {
-        Log-Message "Successfully added $FileName to commit"
-    }
-}
-
 #########################################
 # Debugging Functions #
 #########################################
@@ -228,7 +203,8 @@ function Update-Java-Version {
     if ($content -match 'value="8"') {
         Log-Message "Successfully updated Java version to 8"
     } else {
-        Log-Message "Warning: Java version update may not have worked"
+        Log-Message "Java version update may not have worked. Exiting..."
+        exit 1
     }
 }
 

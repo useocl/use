@@ -7,7 +7,7 @@ param(
     [string]$ResultsDir = ""
 )
 
-. ".\general_utilities.ps1"
+. "..\general_utilities.ps1"
 . ".\maven_utilities.ps1"
 
 #########################################

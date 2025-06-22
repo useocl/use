@@ -1,4 +1,4 @@
-. ".\general_utilities.ps1"
+. "..\general_utilities.ps1"
 
 function Ensure-Dependencies-For-Maven {
     param(
@@ -68,6 +68,7 @@ function Ensure-Dependencies-For-Maven {
     }
 }
 
+# TODO: Replace with Inject-File in general_utilities
 function Prepare-Directory-For-Maven-Build-And-Test {
     param(
         [string]$TempDir,
