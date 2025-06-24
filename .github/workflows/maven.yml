@@ -1,5 +1,6 @@
 name: Java CI with Maven
-on: push
+on: 
+  push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,3 +29,9 @@ jobs:
       with: 
         name: build-log
         path: build_output.log
+    - uses: actions/upload-artifact@v4
+      with:
+        name: failure-reports
+        path: |
+          docs/archunit-results/cycles-current-failure-report.txt
+          docs/archunit-results/layers-current-failure-report.txt

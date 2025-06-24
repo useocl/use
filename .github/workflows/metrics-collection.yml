@@ -20,8 +20,17 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      - name: Download failure reports
+        uses: actions/download-artifact@v4
+        with:
+          name: failure-reports
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
       - name: Get metadata
         id: meta
+        env:
+          TZ: Europe/Berlin
         run: |
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
@@ -102,6 +111,11 @@ jobs:
         run: |
           echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.layer_violation_count }} layer violations! Please check your architecture compliance."
 
+      - name: Check core cycle count
+        if: steps.metrics.outputs.all_modules_no_tests > 55
+        run: |
+          echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.all_modules_no_tests }} cycles in core! Please check your architecture compliance."
+
       - name: Switch to metrics branch  
         run: |
           git fetch origin architecture-metrics:architecture-metrics 2>/dev/null || git checkout -B architecture-metrics
@@ -110,6 +124,14 @@ jobs:
       - name: Update CSV files
         run: |
           mkdir -p docs/archunit-results
+
+          if [ -f "cycles-current-failure-report.txt" ]; then
+            cp cycles-current-failure-report.txt docs/archunit-results/cycles-current-failure-report.txt
+          fi
+          
+          if [ -f "layers-current-failure-report.txt" ]; then
+            cp layers-current-failure-report.txt docs/archunit-results/
+          fi
           
           # Build times CSV
           if [ ! -f "docs/archunit-results/build-times.csv" ]; then
