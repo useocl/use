@@ -134,10 +134,12 @@ jobs:
           mkdir -p docs/archunit-results
 
           if [ -f "cycles-current-failure-report.txt" ]; then
+            echo "condition for cycles true"
             cp cycles-current-failure-report.txt docs/archunit-results/
           fi
           
           if [ -f "layers-current-failure-report.txt" ]; then
+            echo "condition for layers true"
             cp layers-current-failure-report.txt docs/archunit-results/
           fi
           
