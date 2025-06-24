@@ -135,7 +135,7 @@ jobs:
 
           if [ -f "cycles-current-failure-report.txt" ]; then
             echo "condition for cycles true"
-            cp cycles-current-failure-report.txt docs/archunit-results/
+            cp cycles-current-failure-report.txt docs/archunit-results/cycles-current-failure-report.txt
           fi
           
           if [ -f "layers-current-failure-report.txt" ]; then
