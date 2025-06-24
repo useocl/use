@@ -20,6 +20,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      - name: Download failure reports
+        uses: actions/download-artifact@v4
+        with:
+          name: failure-reports
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
       - name: Get metadata
         id: meta
         env:
@@ -117,6 +124,14 @@ jobs:
       - name: Update CSV files
         run: |
           mkdir -p docs/archunit-results
+
+          if [ -f "cycles-current-failure-report.txt" ]; then
+            cp cycles-current-failure-report.txt docs/archunit-results/
+          fi
+          
+          if [ -f "layers-current-failure-report.txt" ]; then
+            cp layers-current-failure-report.txt docs/archunit-results/
+          fi
           
           # Build times CSV
           if [ ! -f "docs/archunit-results/build-times.csv" ]; then
