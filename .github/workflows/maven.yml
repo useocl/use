@@ -1,7 +1,6 @@
 name: Java CI with Maven
 on: 
-  push:
-  workflow_dispatch:
+  push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,12 +19,6 @@ jobs:
         end_time=$(date +%s)
         build_time=$((end_time - start_time))
         echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
-
-    - name: Debug - Check for failure reports after Maven
-      run: |
-        echo "=== Looking for failure reports after Maven build ==="
-        find . -name "*failure-report*" -type f
-        ls -la docs/archunit-results/ 2>/dev/null || echo "docs/archunit-results/ doesn't exist"
     - name: Upload build result
       run: mkdir staging && cp use-assembly/target/*.zip staging
     - uses: actions/upload-artifact@v4
