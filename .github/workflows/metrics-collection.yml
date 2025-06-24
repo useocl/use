@@ -102,6 +102,11 @@ jobs:
         run: |
           echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.layer_violation_count }} layer violations! Please check your architecture compliance."
 
+      - name: Check core cycle count
+        if: steps.metrics.outputs.all_modules_no_tests > 55
+        run: |
+          echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.all_modules_no_tests }} cycles in core! Please check your architecture compliance."
+
       - name: Switch to metrics branch  
         run: |
           git fetch origin architecture-metrics:architecture-metrics 2>/dev/null || git checkout -B architecture-metrics
