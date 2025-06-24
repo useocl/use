@@ -22,6 +22,8 @@ jobs:
 
       - name: Get metadata
         id: meta
+        env:
+          TZ: Europe/Berlin
         run: |
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
