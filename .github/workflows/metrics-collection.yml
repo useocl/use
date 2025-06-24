@@ -120,6 +120,14 @@ jobs:
         run: |
           git fetch origin architecture-metrics:architecture-metrics 2>/dev/null || git checkout -B architecture-metrics
           git checkout architecture-metrics
+
+      - name: Debug - Check downloaded files
+        run: |
+          echo "=== All failure reports in working directory ==="
+          find . -name "*failure-report*" -type f
+          echo "=== Directory structure ==="
+          ls -la
+          ls -la docs/archunit-results/ 2>/dev/null || echo "No docs/archunit-results/"
     
       - name: Update CSV files
         run: |
