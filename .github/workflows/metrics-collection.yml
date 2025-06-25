@@ -1,0 +1,161 @@
+name: Metrics Collection
+on:
+  workflow_run:
+    workflows: ["Java CI with Maven"]
+    types:
+      - completed
+    branches: [ master ]
+
+jobs:
+  collect-metrics:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build log
+        uses: actions/download-artifact@v4
+        with:
+          name: build-log
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Download failure reports
+        uses: actions/download-artifact@v4
+        with:
+          name: failure-reports
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Get metadata
+        id: meta
+        env:
+          TZ: Europe/Berlin
+        run: |
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "time=$(date +'%H:%M:%S')" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Parse metrics from build log
+        id: metrics
+        run: |
+          # Store build time
+          build_time=$(grep "BUILD_TIME_SECONDS=" build_output.log | cut -d'=' -f2)
+          echo "build_time=$build_time" >> $GITHUB_OUTPUT
+          
+          layer_violation_count=$(grep -A 1 "Running org.tzi.use.architecture.MavenLayeredArchitectureTest" build_output.log | tail -n 1 | tr -d ' ')
+          echo "layer_violation_count=$layer_violation_count" >> $GITHUB_OUTPUT
+          
+          all_modules_no_tests=$(grep "core module without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "all_modules_no_tests=$all_modules_no_tests" >> $GITHUB_OUTPUT
+          
+          all_modules_with_tests=$(grep "core module with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "all_modules_with_tests=$all_modules_with_tests" >> $GITHUB_OUTPUT
+          
+          analysis_no_tests=$(grep "org.tzi.use.analysis without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "analysis_no_tests=$analysis_no_tests" >> $GITHUB_OUTPUT
+          
+          analysis_with_tests=$(grep "org.tzi.use.analysis with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "analysis_with_tests=$analysis_with_tests" >> $GITHUB_OUTPUT
+          
+          api_no_tests=$(grep "org.tzi.use.api without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "api_no_tests=$api_no_tests" >> $GITHUB_OUTPUT
+          
+          api_with_tests=$(grep "org.tzi.use.api with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "api_with_tests=$api_with_tests" >> $GITHUB_OUTPUT
+          
+          config_no_tests=$(grep "org.tzi.use.config without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "config_no_tests=$config_no_tests" >> $GITHUB_OUTPUT
+          
+          config_with_tests=$(grep "org.tzi.use.config with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "config_with_tests=$config_with_tests" >> $GITHUB_OUTPUT
+          
+          gen_no_tests=$(grep "org.tzi.use.gen without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "gen_no_tests=$gen_no_tests" >> $GITHUB_OUTPUT
+          
+          gen_with_tests=$(grep "org.tzi.use.gen with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "gen_with_tests=$gen_with_tests" >> $GITHUB_OUTPUT
+          
+          graph_no_tests=$(grep "org.tzi.use.graph without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "graph_no_tests=$graph_no_tests" >> $GITHUB_OUTPUT
+          
+          graph_with_tests=$(grep "org.tzi.use.graph with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "graph_with_tests=$graph_with_tests" >> $GITHUB_OUTPUT
+          
+          main_no_tests=$(grep "org.tzi.use.main without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "main_no_tests=$main_no_tests" >> $GITHUB_OUTPUT
+          
+          main_with_tests=$(grep "org.tzi.use.main with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "main_with_tests=$main_with_tests" >> $GITHUB_OUTPUT
+          
+          parser_no_tests=$(grep "org.tzi.use.parser without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "parser_no_tests=$parser_no_tests" >> $GITHUB_OUTPUT
+          
+          parser_with_tests=$(grep "org.tzi.use.parser with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "parser_with_tests=$parser_with_tests" >> $GITHUB_OUTPUT
+          
+          uml_no_tests=$(grep "org.tzi.use.uml without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "uml_no_tests=$uml_no_tests" >> $GITHUB_OUTPUT
+          
+          uml_with_tests=$(grep "org.tzi.use.uml with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "uml_with_tests=$uml_with_tests" >> $GITHUB_OUTPUT
+          
+          util_no_tests=$(grep "org.tzi.use.util without tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "util_no_tests=$util_no_tests" >> $GITHUB_OUTPUT
+          
+          util_with_tests=$(grep "org.tzi.use.util with tests" build_output.log | grep -o '[0-9]\+' || echo "-1")
+          echo "util_with_tests=$util_with_tests" >> $GITHUB_OUTPUT
+
+      - name: Check for layer violations
+        if: steps.metrics.outputs.layer_violation_count != '0'
+        run: |
+          echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.layer_violation_count }} layer violations! Please check your architecture compliance."
+
+      - name: Check core cycle count
+        if: steps.metrics.outputs.all_modules_no_tests > 55
+        run: |
+          echo "::warning title=Architecture Violations::Found ${{ steps.metrics.outputs.all_modules_no_tests }} cycles in core! Please check your architecture compliance."
+
+      - name: Switch to metrics branch  
+        run: |
+          git fetch origin architecture-metrics:architecture-metrics 2>/dev/null || git checkout -B architecture-metrics
+          git checkout architecture-metrics
+    
+      - name: Update CSV files
+        run: |
+          mkdir -p docs/archunit-results
+
+          if [ -f "cycles-current-failure-report.txt" ]; then
+            cp cycles-current-failure-report.txt docs/archunit-results/cycles-current-failure-report.txt
+          fi
+          
+          if [ -f "layers-current-failure-report.txt" ]; then
+            cp layers-current-failure-report.txt docs/archunit-results/
+          fi
+          
+          # Build times CSV
+          if [ ! -f "docs/archunit-results/build-times.csv" ]; then
+            echo "date,time,commit,buildtime" > "docs/archunit-results/build-times.csv"
+          fi
+          echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},${{ steps.metrics.outputs.build_time }}" >> "docs/archunit-results/build-times.csv"
+
+          # Layer violations CSV
+          if [ ! -f "docs/archunit-results/layer-violations.csv" ]; then
+            echo "date,time,commit,violations" > "docs/archunit-results/layer-violations.csv"
+          fi
+          echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},${{ steps.metrics.outputs.layer_violation_count }}" >> "docs/archunit-results/layer-violations.csv"
+
+          # Cycles CSV
+          if [ ! -f "docs/archunit-results/cycles-tests.csv" ]; then
+            echo "date,time,commit,all_modules_no_tests,all_modules_with_tests,analysis_no_tests,analysis_with_tests,api_no_tests,api_with_tests,config_no_tests,config_with_tests,gen_no_tests,gen_with_tests,graph_no_tests,graph_with_tests,main_no_tests,main_with_tests,parser_no_tests,parser_with_tests,uml_no_tests,uml_with_tests,util_no_tests,util_with_tests" > "docs/archunit-results/cycles-tests.csv"
+          fi
+          echo "${{ steps.meta.outputs.date }},${{ steps.meta.outputs.time }},${{ steps.meta.outputs.sha }},${{ steps.metrics.outputs.all_modules_no_tests }},${{ steps.metrics.outputs.all_modules_with_tests }},${{ steps.metrics.outputs.analysis_no_tests }},${{ steps.metrics.outputs.analysis_with_tests }},${{ steps.metrics.outputs.api_no_tests }},${{ steps.metrics.outputs.api_with_tests }},${{ steps.metrics.outputs.config_no_tests }},${{ steps.metrics.outputs.config_with_tests }},${{ steps.metrics.outputs.gen_no_tests }},${{ steps.metrics.outputs.gen_with_tests }},${{ steps.metrics.outputs.graph_no_tests }},${{ steps.metrics.outputs.graph_with_tests }},${{ steps.metrics.outputs.main_no_tests }},${{ steps.metrics.outputs.main_with_tests }},${{ steps.metrics.outputs.parser_no_tests }},${{ steps.metrics.outputs.parser_with_tests }},${{ steps.metrics.outputs.uml_no_tests }},${{ steps.metrics.outputs.uml_with_tests }},${{ steps.metrics.outputs.util_no_tests }},${{ steps.metrics.outputs.util_with_tests }}" >> "docs/archunit-results/cycles-tests.csv"
+
+      - name: Commit and push metrics
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          git add docs/archunit-results/
+          git commit -m "Update metrics data [skip ci]" || echo "No changes to commit"
+          git push origin architecture-metrics
