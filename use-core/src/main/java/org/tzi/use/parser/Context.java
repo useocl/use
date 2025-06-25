@@ -19,18 +19,21 @@
 
 package org.tzi.use.parser;
 
+import org.antlr.runtime.Token;
+import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
+
 import java.io.PrintWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.antlr.runtime.Token;
-import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.VarBindings;
-import org.tzi.use.uml.sys.MSystemState;
 
 
 /**
@@ -46,7 +49,8 @@ public class Context {
     private ExprContext fExprContext; 
     private int fErrorCount;
     private String fFilename;
-    
+    private URI fFileUri;
+
     private PrintWriter fErr;
     private PrintWriter fOut;
     
@@ -69,13 +73,32 @@ public class Context {
                    VarBindings globalBindings,
                    ModelFactory factory) {
         fFilename = filename;
+        fFileUri = null;
         fErr = err;
         fOut = err;
         fVarTable = new Symtable(globalBindings);
         fTypeTable = new Symtable();
         fExprContext = new ExprContext();
         fModelFactory = factory;
-        fLoopVarNames = new ArrayList<String>();
+        fLoopVarNames = new ArrayList<>();
+     }
+
+     public Context(String filename, URI filePath, PrintWriter err,
+                    VarBindings globalBindings,
+                    ModelFactory factory) {
+         fFilename = filename;
+         fFileUri = filePath;
+         fErr = err;
+         fOut = err;
+         fVarTable = new Symtable(globalBindings);
+         fTypeTable = new Symtable();
+         fExprContext = new ExprContext();
+         fModelFactory = factory;
+         fLoopVarNames = new ArrayList<>();
+     }
+
+     public PrintWriter getErr() {
+        return fErr;
      }
 
     public void setOut(PrintWriter out) {
@@ -92,6 +115,10 @@ public class Context {
 
     public String filename() {
         return fFilename;
+    }
+
+    public URI getfFileUri() {
+        return fFileUri;
     }
 
     public ModelFactory modelFactory() {
@@ -193,7 +220,6 @@ public class Context {
 	public boolean isAssertExpression() {
 		return fIsAssertExpression;
 	}
-
 
 	public void setIsAssertExpression(boolean fIsAssertExpression) {
 		this.fIsAssertExpression = fIsAssertExpression;

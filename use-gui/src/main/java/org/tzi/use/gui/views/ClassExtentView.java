@@ -114,7 +114,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         fSystem.getEventBus().register(this);
 
         // get a class
-        Collection<MClass> classes = fSystem.model().classes();
+        Collection<MClass> classes = fSystem.model().getClassesIncludingImports();
         if (!classes.isEmpty()) {
             fClass = classes.iterator().next();
         }

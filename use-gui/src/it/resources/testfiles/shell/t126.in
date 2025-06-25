@@ -1,0 +1,8 @@
+# test creation of association with imported class
+
+!create a : A
+!create b : B
+!insert (a, b) into C
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.

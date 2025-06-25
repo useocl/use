@@ -1,0 +1,6 @@
+model t128_import2
+
+dataType C
+    operations
+        C(x:Integer, y: Integer)
+end

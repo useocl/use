@@ -1,0 +1,9 @@
+model t127_import
+
+class B
+end
+
+constraints
+
+context B
+inv: true

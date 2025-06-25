@@ -1,0 +1,9 @@
+# When using a model qualified element import, the element can not be accessed using its short name anymore.
+
+!create a : A
+!set a.b := B(1,1)
+*<input>:1:0: generation of expression `B(1,1)' failed, with following error:
+*<input>:1:11: Undefined operation `B'.
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.

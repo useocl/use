@@ -44,6 +44,10 @@ public class ASTAssociationClass extends ASTClass {
         fAssociationEnds = new ArrayList<ASTAssociationEnd>();
     }
 
+    public List<ASTAssociationEnd> getfAssociationEnds() {
+        return fAssociationEnds;
+    }
+
     public void addEnd( ASTAssociationEnd ae ) {
         fAssociationEnds.add( ae );
     }

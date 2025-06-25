@@ -22,25 +22,7 @@
  */
 package org.tzi.use.parser;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
@@ -53,6 +35,14 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.SuffixFileFilter;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *  Test USECompiler class. The TestDriver reads all files with extension ".use"
@@ -76,7 +66,7 @@ import org.tzi.use.util.SuffixFileFilter;
 public class USECompilerTest extends TestCase {
     // Set this to true to see more details about what is tested.
     private static final boolean VERBOSE = false;
-    private static final int EXPECTED = 40;
+    private static final int EXPECTED = 49;
 
     private static File TEST_PATH;
     private static File EXAMPLES_PATH;
@@ -280,30 +270,20 @@ public class USECompilerTest extends TestCase {
                         + ").");
     }
 
-    private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) throws FileNotFoundException {
-        // check whether error output equals expected output
-        String[] expect = errStr.toString().split("\n|(\r\n)");
-        //                        for (int i = 0; i < expect.length; i++) {
-        //                            System.out.println("[" + expect[i] + "]");
-        //                        }
-        int j = 0;
-        boolean ok = true;
-        try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
-            while (ok) {
-                String line = failReader.readLine();
-                if (line == null) {
-                    ok = j == expect.length;
-                    break;
-                }
-                ok = line.equals(expect[j]);
-                j++;
-            }
-        } catch (IOException ex) {
-            ok = false;
-        } catch (IndexOutOfBoundsException ex) {
-            ok = false;
+    private boolean isErrorMessageAsExpected(File failFile, StringOutputStream errStr) {
+        List<String> actualErrors = Arrays.stream(errStr.toString().split("\n|(\r\n)"))
+                .toList();
+
+        try (Stream<String> lines = Files.lines(failFile.toPath())) {
+            List<String> expectedErrors = lines.toList();
+            return actualErrors.equals(expectedErrors);
+        } catch (IOException e) {
+            return false;
         }
-        return ok;
+    }
+
+    private String normalizePaths(String line) {
+        return line.replace(TEST_PATH.toString(), "<MODEL_PATH>");
     }
 
     private List<File> getFilesMatchingSuffix(String suffix, int expected) {
@@ -328,9 +308,10 @@ public class USECompilerTest extends TestCase {
         MModel result = null;
 
         try (FileInputStream specStream = new FileInputStream(specFile)){
+            // Models with imports currently need absolute paths as the file name.
+            String inName = specFile.getName();
             result = USECompiler.compileSpecification(specStream,
-                    specFile.getName(), newErr, new ModelFactory());
-            specStream.close();
+                    inName, specFile.toPath().toUri(), newErr, new ModelFactory());
         } catch (IOException e) {
             // This can be ignored
             e.printStackTrace();

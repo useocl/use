@@ -1,0 +1,6 @@
+import B from "imports/t130_import1.use"
+
+model t130
+
+class A
+end

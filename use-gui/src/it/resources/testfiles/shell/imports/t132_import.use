@@ -1,0 +1,6 @@
+model t132_import
+
+dataType B
+    operations
+        B(x: Integer, y: Integer)
+end

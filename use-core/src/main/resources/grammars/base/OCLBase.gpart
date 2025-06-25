@@ -364,8 +364,9 @@ iterateExpression[ASTExpression range] returns [ASTExpression n]:
 operationExpression[ASTExpression source, boolean followsArrow] 
     returns [ASTOperationExpression n]
 :
-    name=IDENT 
-    { $n = new ASTOperationExpression($name, $source, $followsArrow); }
+    ((modelQualifier=IDENT HASH name=IDENT
+    { $n = new ASTOperationExpression($modelQualifier, $name, $source, $followsArrow); })
+    | name=IDENT { $n = new ASTOperationExpression($name, $source, $followsArrow); })
 
 	// This is a little dirty, because either it is a navigation
 	// along a m-ary association or a navigation over a qualified association 
@@ -480,6 +481,8 @@ literal returns [ASTExpression n]
     | s=STRING { $n = new ASTStringLiteral($s); }
     | HASH enumLit=IDENT { $n = new ASTEnumLiteral($enumLit);}
     | enumName=IDENT '::' enumLit=IDENT { $n = new ASTEnumLiteral($enumName, $enumLit); }
+    | modelQualifier=IDENT HASH enumName=IDENT '::' enumLit=IDENT
+        { $n = new ASTEnumLiteral($modelQualifier, $enumName, $enumLit); }
     | nColIt=collectionLiteral { $n = $nColIt.n; }
     | nEColIt=emptyCollectionLiteral { $n = $nEColIt.n; }
     | nUndLit=undefinedLiteral {$n = $nUndLit.n; }
@@ -594,6 +597,7 @@ tupleItem returns [ASTTupleItem n]
       simpleType 
     | collectionType
     | tupleType
+    | modelQualifiedType
 */
 type returns [ASTType n]
 @init { Token tok = null; }
@@ -603,6 +607,7 @@ type returns [ASTType n]
       nTSimple=simpleType { $n = $nTSimple.n; if ($n != null) $n.setStartToken(tok); }
     | nTCollection=collectionType { $n = $nTCollection.n; if ($n != null) $n.setStartToken(tok); }
     | nTTuple=tupleType { $n = $nTTuple.n; if ($n != null) $n.setStartToken(tok); }
+    | nTModelQualifiedType=modelQualifiedType { $n = $nTModelQualifiedType.n; if ($n != null) $n.setStartToken(tok); }
     )
     ;
 
@@ -660,4 +665,13 @@ tuplePart returns [ASTTuplePart n]
 :
     name=IDENT COLON t=type
     { $n = new ASTTuplePart($name, $t.n); }
+    ;
+
+/* ------------------------------------
+    modelQualifiedType ::= modelQualifier "#" type
+*/
+modelQualifiedType returns [ASTModelQualifiedType n]
+:
+    modelQualifier=IDENT HASH name=IDENT
+    { $n = new ASTModelQualifiedType($modelQualifier, $name); }
     ;
