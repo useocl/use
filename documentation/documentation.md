@@ -7,6 +7,7 @@ It was startet in 2022 and is a growing documentation. Any pull request for USE 
 also change this technical documentation, to foster the growing.
 
 ## Build Process
+For the build process Maven is used.
 
 ### Release Process
 
