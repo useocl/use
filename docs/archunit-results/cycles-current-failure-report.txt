@@ -77,7 +77,7 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
   3. Dependencies of Slice api
     - Method <org.tzi.use.api.UseSystemApi.evaluate(java.lang.String)> calls method <org.tzi.use.config.Options.checkWarningsOclAnyInCollections()> in (UseSystemApi.java:629)
     - Method <org.tzi.use.api.UseSystemApi.evaluate(java.lang.String)> calls method <org.tzi.use.config.Options.checkWarningsUnrelatedTypes()> in (UseSystemApi.java:630)
@@ -209,7 +209,7 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
   3. Dependencies of Slice api
     - Constructor <org.tzi.use.api.impl.UseSystemApiUndoable.<init>(org.tzi.use.main.Session)> has parameter of type <org.tzi.use.main.Session> in (UseSystemApiUndoable.java:0)
     - Method <org.tzi.use.api.UseSystemApi.create(org.tzi.use.main.Session)> has parameter of type <org.tzi.use.main.Session> in (UseSystemApi.java:0)
@@ -335,7 +335,7 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
   3. Dependencies of Slice api
     - Method <org.tzi.use.api.UseModelApi.createQueryOperation(java.lang.String, java.lang.String, [[Ljava.lang.String;, java.lang.String, java.lang.String, boolean)> calls constructor <org.tzi.use.parser.Symtable.<init>()> in (UseModelApi.java:443)
     - Method <org.tzi.use.api.UseModelApi.createQueryOperation(java.lang.String, java.lang.String, [[Ljava.lang.String;, java.lang.String, java.lang.String, boolean)> calls method <org.tzi.use.parser.Symtable.add(java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> in (UseModelApi.java:445)
@@ -446,7 +446,7 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
   3. Dependencies of Slice api
     - Method <org.tzi.use.api.impl.UseSystemApiNative.createObjectEx(org.tzi.use.uml.mm.MClass, java.lang.String)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (UseSystemApiNative.java:69)
     - Method <org.tzi.use.api.impl.UseSystemApiUndoable.createObjectEx(org.tzi.use.uml.mm.MClass, java.lang.String)> calls method <org.tzi.use.util.soil.StateDifference.getNewObjects()> in (UseSystemApiUndoable.java:101)
@@ -717,9 +717,9 @@ Cycle detected: Slice analysis ->
     - Interface <org.tzi.use.uml.sys.MWholePartLink> extends interface <org.tzi.use.graph.DirectedEdge> in (MWholePartLink.java:0)
     - Method <org.tzi.use.uml.mm.MModel.generalizationGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
     - Method <org.tzi.use.uml.sys.MSystemState.getWholePartLinkGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MSystemState.java:0)
-    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:80)
-    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:118)
-    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:143)
+    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:84)
+    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:123)
+    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:160)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:233)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:245)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:256)
@@ -728,9 +728,9 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.uml.mm.MClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:304)
     - Method <org.tzi.use.uml.mm.MAssociationImpl.addSubsets(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.addEdge(org.tzi.use.graph.DirectedEdge)> in (MAssociationImpl.java:307)
     - Method <org.tzi.use.uml.mm.MClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:316)
-    - Method <org.tzi.use.uml.mm.MModel.addAssociation(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:323)
     - Method <org.tzi.use.uml.mm.MClassImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:327)
-    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:332)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:331)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Object)> in (MAssociationClassImpl.java:337)
     (35 further dependencies have been omitted...)
   3. Dependencies of Slice graph
     - Constructor <org.tzi.use.graph.NodeDoesNotExistException.<init>(java.lang.Object)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (NodeDoesNotExistException.java:40)
@@ -918,7 +918,7 @@ Cycle detected: Slice analysis ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (463 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   3. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String, java.lang.Throwable)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -1080,7 +1080,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice config -> 
                 Slice util -> 
@@ -1131,6 +1131,8 @@ Cycle detected: Slice api ->
   4. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -1139,6 +1141,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -1146,10 +1149,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   5. Dependencies of Slice uml
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls constructor <org.tzi.use.api.UseModelApi.<init>(java.lang.String)> in (TestModelUtil.java:55)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:56)
@@ -1171,7 +1171,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice config -> 
                 Slice util -> 
@@ -1251,7 +1251,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice main -> 
                 Slice config -> 
@@ -1363,7 +1363,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice main -> 
                 Slice config -> 
@@ -1412,6 +1412,8 @@ Cycle detected: Slice api ->
   5. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -1420,6 +1422,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -1427,10 +1430,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   6. Dependencies of Slice uml
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls constructor <org.tzi.use.api.UseModelApi.<init>(java.lang.String)> in (TestModelUtil.java:55)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:56)
@@ -1452,7 +1452,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice main -> 
                 Slice config -> 
@@ -1530,7 +1530,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice main -> 
                 Slice uml -> 
@@ -1582,7 +1582,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice parser -> 
                 Slice config -> 
@@ -1617,13 +1617,13 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.parser.Symtable.add(java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (Symtable.java:105)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:287)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:292)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:386)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:393)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:401)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:408)
     - Method <org.tzi.use.parser.soil.SoilParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (SoilParser.java:1295)
-    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:5923)
-    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6634)
-    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8115)
-    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9446)
+    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:6177)
+    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6888)
+    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8549)
+    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9880)
   3. Dependencies of Slice config
     - Field <org.tzi.use.config.Options.props> has type <org.tzi.use.util.TypedProperties> in (Options.java:0)
     - Method <org.tzi.use.config.Options.processArgs([Ljava.lang.String;)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (Options.java:356)
@@ -1689,7 +1689,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice parser -> 
                 Slice gen -> 
@@ -1809,7 +1809,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice parser -> 
                 Slice gen -> 
@@ -1902,7 +1902,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice parser -> 
                 Slice gen -> 
@@ -2018,7 +2018,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice parser -> 
                 Slice uml -> 
@@ -2048,6 +2048,8 @@ Cycle detected: Slice api ->
   2. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -2056,6 +2058,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -2063,10 +2066,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls constructor <org.tzi.use.api.UseModelApi.<init>(java.lang.String)> in (TestModelUtil.java:55)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:56)
@@ -2088,7 +2088,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice parser -> 
                 Slice util -> 
@@ -2181,7 +2181,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice uml -> 
                 Slice api
@@ -2228,7 +2228,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice util -> 
                 Slice parser -> 
@@ -2330,7 +2330,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice util -> 
                 Slice parser -> 
@@ -2369,6 +2369,8 @@ Cycle detected: Slice api ->
   3. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -2377,6 +2379,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -2384,10 +2387,7 @@ Cycle detected: Slice api ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls constructor <org.tzi.use.api.UseModelApi.<init>(java.lang.String)> in (TestModelUtil.java:55)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createEmptyModel()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:56)
@@ -2409,7 +2409,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice api -> 
                 Slice util -> 
                 Slice uml -> 
@@ -2477,7 +2477,7 @@ Cycle detected: Slice api ->
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:117)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.createClass(java.lang.String, boolean)> in (TestModelUtil.java:118)
     - Method <org.tzi.use.uml.mm.TestModelUtil.createModelWithClasses()> calls method <org.tzi.use.api.UseModelApi.getModel()> in (TestModelUtil.java:119)
-    (58 further dependencies have been omitted...)
+    (80 further dependencies have been omitted...)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice parser -> 
@@ -2520,13 +2520,13 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.parser.Symtable.add(java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (Symtable.java:105)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:287)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:292)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:386)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:393)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:401)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:408)
     - Method <org.tzi.use.parser.soil.SoilParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (SoilParser.java:1295)
-    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:5923)
-    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6634)
-    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8115)
-    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9446)
+    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:6177)
+    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6888)
+    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8549)
+    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9880)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice parser -> 
@@ -2732,6 +2732,8 @@ Cycle detected: Slice config ->
   3. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -2740,6 +2742,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -2747,10 +2750,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Method <org.tzi.use.uml.ocl.expr.ExpStdOp.checkOclAnyCollectionsWarning(org.tzi.use.uml.ocl.expr.operations.OpGeneric, [Lorg.tzi.use.uml.ocl.type.Type;, org.tzi.use.uml.ocl.type.Type, org.tzi.use.config.Options$WarningType)> has parameter of type <org.tzi.use.config.Options$WarningType> in (ExpStdOp.java:0)
     - Method <org.tzi.use.uml.ocl.expr.ExpStdOp.checkTypeSystemWarnings(org.tzi.use.uml.ocl.expr.operations.OpGeneric, [Lorg.tzi.use.uml.ocl.expr.Expression;, [Lorg.tzi.use.uml.ocl.type.Type;, org.tzi.use.uml.ocl.type.Type)> calls method <org.tzi.use.config.Options$WarningType.equals(java.lang.Object)> in (ExpStdOp.java:135)
@@ -2813,6 +2813,8 @@ Cycle detected: Slice config ->
   3. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -2821,6 +2823,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -2828,10 +2831,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -3027,13 +3027,13 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.parser.Symtable.add(java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (Symtable.java:105)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:287)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:292)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:386)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:393)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:401)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:408)
     - Method <org.tzi.use.parser.soil.SoilParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (SoilParser.java:1295)
-    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:5923)
-    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6634)
-    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8115)
-    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9446)
+    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:6177)
+    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6888)
+    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8549)
+    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9880)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice uml -> 
@@ -3111,13 +3111,13 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.parser.Symtable.add(java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (Symtable.java:105)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:287)
     - Method <org.tzi.use.parser.soil.ast.ASTStatement.generateStatement(org.tzi.use.parser.Context, org.tzi.use.uml.mm.MOperation)> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ASTStatement.java:292)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:386)
-    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:393)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:401)
+    - Method <org.tzi.use.parser.ocl.ASTOperationExpression.gen1(org.tzi.use.parser.Context, org.tzi.use.uml.ocl.expr.Expression)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTOperationExpression.java:408)
     - Method <org.tzi.use.parser.soil.SoilParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (SoilParser.java:1295)
-    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:5923)
-    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6634)
-    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8115)
-    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9446)
+    - Method <org.tzi.use.parser.shell.ShellCommandParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (ShellCommandParser.java:6177)
+    - Method <org.tzi.use.parser.testsuite.TestSuiteParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (TestSuiteParser.java:6888)
+    - Method <org.tzi.use.parser.use.USEParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (USEParser.java:8549)
+    - Method <org.tzi.use.parser.generator.GeneratorParser.blockStat()> gets field <org.tzi.use.config.Options.explicitVariableDeclarations> in (GeneratorParser.java:9880)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice uml -> 
@@ -3253,6 +3253,8 @@ Cycle detected: Slice gen ->
   2. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -3261,6 +3263,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -3268,10 +3271,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -3396,9 +3396,9 @@ Cycle detected: Slice gen ->
     - Interface <org.tzi.use.uml.sys.MWholePartLink> extends interface <org.tzi.use.graph.DirectedEdge> in (MWholePartLink.java:0)
     - Method <org.tzi.use.uml.mm.MModel.generalizationGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
     - Method <org.tzi.use.uml.sys.MSystemState.getWholePartLinkGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MSystemState.java:0)
-    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:80)
-    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:118)
-    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:143)
+    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:84)
+    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:123)
+    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:160)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:233)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:245)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:256)
@@ -3407,9 +3407,9 @@ Cycle detected: Slice gen ->
     - Method <org.tzi.use.uml.mm.MClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:304)
     - Method <org.tzi.use.uml.mm.MAssociationImpl.addSubsets(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.addEdge(org.tzi.use.graph.DirectedEdge)> in (MAssociationImpl.java:307)
     - Method <org.tzi.use.uml.mm.MClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:316)
-    - Method <org.tzi.use.uml.mm.MModel.addAssociation(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:323)
     - Method <org.tzi.use.uml.mm.MClassImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:327)
-    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:332)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:331)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Object)> in (MAssociationClassImpl.java:337)
     (35 further dependencies have been omitted...)
   3. Dependencies of Slice graph
     - Constructor <org.tzi.use.graph.NodeDoesNotExistException.<init>(java.lang.Object)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (NodeDoesNotExistException.java:40)
@@ -3563,7 +3563,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (463 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   3. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String, java.lang.Throwable)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -3694,6 +3694,8 @@ Cycle detected: Slice gen ->
   3. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -3702,6 +3704,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -3709,10 +3712,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -3882,6 +3882,8 @@ Cycle detected: Slice graph ->
   3. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -3890,6 +3892,7 @@ Cycle detected: Slice graph ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -3897,10 +3900,7 @@ Cycle detected: Slice graph ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Class <org.tzi.use.uml.mm.MGeneralization> implements interface <org.tzi.use.graph.DirectedEdge> in (MGeneralization.java:0)
     - Field <org.tzi.use.uml.mm.MModel.fGenGraph> has type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
@@ -3908,9 +3908,9 @@ Cycle detected: Slice graph ->
     - Interface <org.tzi.use.uml.sys.MWholePartLink> extends interface <org.tzi.use.graph.DirectedEdge> in (MWholePartLink.java:0)
     - Method <org.tzi.use.uml.mm.MModel.generalizationGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
     - Method <org.tzi.use.uml.sys.MSystemState.getWholePartLinkGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MSystemState.java:0)
-    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:80)
-    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:118)
-    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:143)
+    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:84)
+    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:123)
+    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:160)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:233)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:245)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:256)
@@ -3919,9 +3919,9 @@ Cycle detected: Slice graph ->
     - Method <org.tzi.use.uml.mm.MClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:304)
     - Method <org.tzi.use.uml.mm.MAssociationImpl.addSubsets(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.addEdge(org.tzi.use.graph.DirectedEdge)> in (MAssociationImpl.java:307)
     - Method <org.tzi.use.uml.mm.MClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:316)
-    - Method <org.tzi.use.uml.mm.MModel.addAssociation(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:323)
     - Method <org.tzi.use.uml.mm.MClassImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:327)
-    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:332)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:331)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Object)> in (MAssociationClassImpl.java:337)
     (35 further dependencies have been omitted...)
 Cycle detected: Slice graph -> 
                 Slice util -> 
@@ -3958,9 +3958,9 @@ Cycle detected: Slice graph ->
     - Interface <org.tzi.use.uml.sys.MWholePartLink> extends interface <org.tzi.use.graph.DirectedEdge> in (MWholePartLink.java:0)
     - Method <org.tzi.use.uml.mm.MModel.generalizationGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
     - Method <org.tzi.use.uml.sys.MSystemState.getWholePartLinkGraph()> has return type <org.tzi.use.graph.DirectedGraph> in (MSystemState.java:0)
-    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:80)
-    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:118)
-    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:143)
+    - Constructor <org.tzi.use.uml.mm.MModel.<init>(java.lang.String)> calls constructor <org.tzi.use.graph.DirectedGraphBase.<init>()> in (MModel.java:84)
+    - Method <org.tzi.use.uml.mm.MModel.addClass(org.tzi.use.uml.mm.MClass)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:123)
+    - Method <org.tzi.use.uml.mm.MModel.addDataType(org.tzi.use.uml.mm.MDataType)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:160)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:233)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:245)
     - Method <org.tzi.use.uml.mm.MDataTypeImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MDataTypeImpl.java:256)
@@ -3969,9 +3969,9 @@ Cycle detected: Slice graph ->
     - Method <org.tzi.use.uml.mm.MClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:304)
     - Method <org.tzi.use.uml.mm.MAssociationImpl.addSubsets(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.addEdge(org.tzi.use.graph.DirectedEdge)> in (MAssociationImpl.java:307)
     - Method <org.tzi.use.uml.mm.MClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:316)
-    - Method <org.tzi.use.uml.mm.MModel.addAssociation(org.tzi.use.uml.mm.MAssociation)> calls method <org.tzi.use.graph.DirectedGraph.add(java.lang.Object)> in (MModel.java:323)
     - Method <org.tzi.use.uml.mm.MClassImpl.allChildren()> calls method <org.tzi.use.graph.DirectedGraph.sourceNodeClosureSet(java.lang.Class, java.lang.Object)> in (MClassImpl.java:327)
-    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:332)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.parents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeSet(java.lang.Object)> in (MAssociationClassImpl.java:331)
+    - Method <org.tzi.use.uml.mm.MAssociationClassImpl.allParents()> calls method <org.tzi.use.graph.DirectedGraph.targetNodeClosureSet(java.lang.Object)> in (MAssociationClassImpl.java:337)
     (35 further dependencies have been omitted...)
 Cycle detected: Slice parser -> 
                 Slice uml -> 
@@ -3979,6 +3979,8 @@ Cycle detected: Slice parser ->
   1. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -3987,6 +3989,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -3994,10 +3997,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   2. Dependencies of Slice uml
     - Constructor <org.tzi.use.uml.mm.statemachines.MProtocolStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MProtocolStateMachine.java:0)
     - Constructor <org.tzi.use.uml.mm.statemachines.MStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MStateMachine.java:0)
@@ -4027,6 +4027,8 @@ Cycle detected: Slice parser ->
   1. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
+    - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.net.URI, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
     - Constructor <org.tzi.use.parser.ExprContext$Entry.<init>(org.tzi.use.parser.ExprContext, java.lang.String, org.tzi.use.uml.ocl.type.Type)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
     - Constructor <org.tzi.use.parser.Symtable$Entry.<init>(org.tzi.use.parser.Symtable, java.lang.String, org.tzi.use.uml.ocl.type.Type, org.tzi.use.parser.SrcPos)> has parameter of type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Constructor <org.tzi.use.parser.Symtable.<init>(org.tzi.use.uml.ocl.value.VarBindings)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
@@ -4035,6 +4037,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.parser.Context.fModelFactory> has type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Field <org.tzi.use.parser.Context.fSystemState> has type <org.tzi.use.uml.sys.MSystemState> in (Context.java:0)
     - Field <org.tzi.use.parser.ExprContext$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (ExprContext.java:0)
+    - Field <org.tzi.use.parser.ImportContext.importedModels> has generic type <java.util.Set<org.tzi.use.uml.mm.MModel>> with type argument depending on <org.tzi.use.uml.mm.MModel> in (ImportContext.java:0)
     - Field <org.tzi.use.parser.Symtable$Entry.fType> has type <org.tzi.use.uml.ocl.type.Type> in (Symtable.java:0)
     - Field <org.tzi.use.parser.Symtable.fGlobalBindings> has type <org.tzi.use.uml.ocl.value.VarBindings> in (Symtable.java:0)
     - Field <org.tzi.use.parser.ocl.ASTOperationExpression.fArgExprs> depends on component type <org.tzi.use.uml.ocl.expr.Expression> in (ASTOperationExpression.java:0)
@@ -4042,10 +4045,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    - Field <org.tzi.use.parser.use.ASTAssociationEnd.mAend> has type <org.tzi.use.uml.mm.MAssociationEnd> in (ASTAssociationEnd.java:0)
-    - Field <org.tzi.use.parser.use.ASTAttribute.attribute> has type <org.tzi.use.uml.mm.MAttribute> in (ASTAttribute.java:0)
-    - Field <org.tzi.use.parser.use.ASTClass.fClass> has type <org.tzi.use.uml.mm.MClass> in (ASTClass.java:0)
-    (1021 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   2. Dependencies of Slice uml
     - Class <org.tzi.use.uml.ocl.expr.ExpTupleLiteral$Part> implements interface <org.tzi.use.util.BufferedToString> in (ExpTupleLiteral.java:0)
     - Class <org.tzi.use.uml.ocl.expr.Expression> implements interface <org.tzi.use.util.BufferedToString> in (Expression.java:0)
@@ -4067,7 +4067,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (463 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   3. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String, java.lang.Throwable)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -4207,7 +4207,7 @@ Cycle detected: Slice uml ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (463 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   2. Dependencies of Slice util
     - Class <org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator> has generic interface <java.util.Comparator<org.tzi.use.uml.mm.MPrePostCondition>> with type argument depending on <org.tzi.use.uml.mm.MPrePostCondition> in (AlphabeticalConditionByNameComparator.java:0)
     - Class <org.tzi.use.util.uml.sorting.AlphabeticalConditionComparator> has generic interface <java.util.Comparator<org.tzi.use.uml.mm.MPrePostCondition>> with type argument depending on <org.tzi.use.uml.mm.MPrePostCondition> in (AlphabeticalConditionComparator.java:0)
