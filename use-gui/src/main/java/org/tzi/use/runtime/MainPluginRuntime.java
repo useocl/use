@@ -109,8 +109,8 @@ public class MainPluginRuntime {
 			actionExtensionPoint.registerActions(currentPluginDescriptor);
 			Log.debug("Main: Registering commands");
 			shellExtensionPoint.registerCmds(currentPluginDescriptor);
-
-			diagramExtensionPoint.registerPlugin(currentPluginDescriptor);
+			Log.debug("Main: Registering diagram manipulators");
+			diagramExtensionPoint.registerDiagramManipulators(currentPluginDescriptor);
 		}
 		return pluginRuntime;
 	}

@@ -50,7 +50,7 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
     }
 
     @Override
-    public void registerPlugin(final IPluginDescriptor pluginDescriptor) {
+    public void registerDiagramManipulators(final IPluginDescriptor pluginDescriptor) {
         if (pluginDescriptor.getPluginClass() instanceof DiagramPlugin diagramPlugin) {
             registeredPlugins.add(diagramPlugin);
         }

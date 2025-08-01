@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IPluginDiagramExtensionPoint extends IExtensionPoint {
 
-    void registerPlugin(IPluginDescriptor pluginDescriptor);
+    void registerDiagramManipulators(IPluginDescriptor pluginDescriptor);
 
     <T extends DiagramView> void registerView(T diagramView);
 
