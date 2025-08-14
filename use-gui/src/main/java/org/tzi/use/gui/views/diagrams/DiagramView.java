@@ -173,6 +173,12 @@ public abstract class DiagramView extends JPanel
             }
         };
 
+        if (pluginRuntime != null) {
+            final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
+            diagramExtensionPoint.registerView(this);
+            diagramExtensionPoint.runPluginsOnInitialisation();
+        }
+
         // Add a dummy tool tip text to enable the tool tip functionality
         this.setToolTipText("");
     }
@@ -1308,6 +1314,11 @@ public abstract class DiagramView extends JPanel
     protected void onClosing() {
         if (fOpt.isSaveDefaultLayout()) {
             this.saveDefaultLayout();
+        }
+        if (pluginRuntime != null) {
+            final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
+            diagramExtensionPoint.removeView(this);
+            diagramExtensionPoint.runPluginsOnClosure();
         }
     }
 

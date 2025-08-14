@@ -82,12 +82,6 @@ public class ClassDiagramView extends JPanel
         if (loadDefaultLayout) {
         	fClassDiagram.loadDefaultLayout();
         }
-
-        if (pluginRuntime != null) {
-            final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
-            diagramExtensionPoint.registerView(fClassDiagram);
-            diagramExtensionPoint.runPluginsOnInitialisation();
-        }
 	}
 
     public MSystem system() {
@@ -174,13 +168,7 @@ public class ClassDiagramView extends JPanel
     }
 
     @Override
-	public void detachModel () {
-        //TODO: move this logic to super.onClosing() to work for all Diagram Views
-        if (pluginRuntime != null) {
-            final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
-            diagramExtensionPoint.removeView(fClassDiagram);
-            diagramExtensionPoint.runPluginsOnClosure();
-        }
+    public void detachModel() {
     }
 
 	@Override
