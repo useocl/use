@@ -33,16 +33,19 @@ public abstract class PluginDiagramManipulator {
     protected PluginDiagramManipulator(Class<? extends DiagramView> clazz) {
         this.targetClass = clazz;
         diagramViews = new HashSet<>();
-        diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
+        updateRegisteredDiagramViews();
     }
 
+    /**
+     * Registers all open targeted diagrams.
+     */
     protected final void updateRegisteredDiagramViews() {
         diagramViews.clear();
         diagramViews.addAll(ALL_REGISTERED_DIAGRAM_VIEWS.stream().filter(targetClass::isInstance).toList());
     }
 
     /**
-     * Gets called when the graphical panel diagram initializes.
+     * Gets called when the graphical panel diagram initialises.
      */
     public void onInitialisation() {
         // override to use

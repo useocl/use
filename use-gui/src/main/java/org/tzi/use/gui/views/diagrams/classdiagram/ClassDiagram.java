@@ -1534,7 +1534,6 @@ public class ClassDiagram extends DiagramView
     }
 
     private void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
-        // TODO: how to handle default values aka null values (e.g. in attribute color)
 		classNode.setTextColor(styleInfoClassNode.getNamesColor());
         classNode.setColor(styleInfoClassNode.getNodesColor());
         classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
@@ -1553,7 +1552,7 @@ public class ClassDiagram extends DiagramView
 		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
 			styleInfoEdge.merge(new StyleInfoEdge(edge));
 
-			edge.setEdgeColor(styleInfoEdge.getEgdeColor());
+			edge.setEdgeColor(styleInfoEdge.getEdgeColor());
 			// Association Name
 			Optional.ofNullable(edge.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE))
 					.flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())

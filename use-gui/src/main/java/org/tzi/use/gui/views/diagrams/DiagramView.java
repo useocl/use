@@ -203,7 +203,6 @@ public abstract class DiagramView extends JPanel
      */
     @Override
     public void paintComponent(Graphics g) {
-        //1
         drawDiagram(g);
     }
 

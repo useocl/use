@@ -10,14 +10,13 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import java.awt.*;
 
 /**
- * Base properties of Style for all {@link Selectable} objects such as {@link ClassNode}, {@link EdgeBase} and more.
+ * Base for properties for all {@link Selectable} objects such as {@link ClassNode}, {@link EdgeBase} and more.
  */
 @Getter
 @AllArgsConstructor
 public abstract class StyleInfoBase {
 
     protected Color namesColor;
-    //protected Color namesFont;
 
     /**
      * Merges the information of two of the same concrete types of {@link StyleInfoBase} into the former.

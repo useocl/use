@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 @Getter
 public class StyleInfoEdge extends StyleInfoBase {
 
-    private Color egdeColor;
+    private Color edgeColor;
     private final Map<MAssociationEnd, Color> roleNameColors = new HashMap<>();
 
     @Builder(setterPrefix = "with")
-    private StyleInfoEdge(final Color namesColor, final Color egdeColor, final Map<MAssociationEnd, Color> roleNameColors) {
+    private StyleInfoEdge(final Color namesColor, final Color edgeColor, final Map<MAssociationEnd, Color> roleNameColors) {
         super(namesColor);
-        this.egdeColor = egdeColor;
+        this.edgeColor = edgeColor;
         Optional.ofNullable(roleNameColors).ifPresent(this.roleNameColors::putAll);
     }
 
@@ -33,7 +33,7 @@ public class StyleInfoEdge extends StyleInfoBase {
                 .flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())
                 .map(EdgeProperty::getColor)
                 .orElse(null));
-        egdeColor = edgeBase.getEdgeColor();
+        edgeColor = edgeBase.getEdgeColor();
         roleNameColors.putAll(edgeBase.getProperties()
                 .stream()
                 .filter(Rolename.class::isInstance)
@@ -46,7 +46,7 @@ public class StyleInfoEdge extends StyleInfoBase {
     public void merge(@NonNull final StyleInfoBase other) {
         if (other instanceof StyleInfoEdge styleInfoEdge) {
             this.namesColor = Optional.ofNullable(this.namesColor).orElse(styleInfoEdge.getNamesColor());
-            this.egdeColor = Optional.ofNullable(this.egdeColor).orElse(styleInfoEdge.getEgdeColor());
+            this.edgeColor = Optional.ofNullable(this.edgeColor).orElse(styleInfoEdge.getEdgeColor());
             styleInfoEdge.roleNameColors.forEach(roleNameColors::putIfAbsent);
         }
     }
