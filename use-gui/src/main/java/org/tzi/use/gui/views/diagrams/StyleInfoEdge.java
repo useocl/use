@@ -19,14 +19,13 @@ import java.util.stream.Collectors;
 public class StyleInfoEdge extends StyleInfoBase {
 
     private Color egdeColor;
-    //TODO: revert changes of nullable maps
-    private Map<MAssociationEnd, Color> roleNameColors;
+    private final Map<MAssociationEnd, Color> roleNameColors = new HashMap<>();
 
     @Builder(setterPrefix = "with")
     private StyleInfoEdge(final Color namesColor, final Color egdeColor, final Map<MAssociationEnd, Color> roleNameColors) {
         super(namesColor);
         this.egdeColor = egdeColor;
-        this.roleNameColors = Optional.ofNullable(roleNameColors).orElseGet(HashMap::new);
+        Optional.ofNullable(roleNameColors).ifPresent(this.roleNameColors::putAll);
     }
 
     public StyleInfoEdge(@NonNull final EdgeBase edgeBase) {
@@ -34,13 +33,13 @@ public class StyleInfoEdge extends StyleInfoBase {
                 .flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())
                 .map(EdgeProperty::getColor)
                 .orElse(null));
-        this.egdeColor = edgeBase.getEdgeColor();
-        this.roleNameColors = edgeBase.getProperties()
+        egdeColor = edgeBase.getEdgeColor();
+        roleNameColors.putAll(edgeBase.getProperties()
                 .stream()
                 .filter(Rolename.class::isInstance)
                 .map(Rolename.class::cast)
                 .filter(rolename -> rolename.getColor() != null)
-                .collect(Collectors.toMap(Rolename::getEnd, Rolename::getColor));
+                .collect(Collectors.toMap(Rolename::getEnd, Rolename::getColor)));
     }
 
     @Override

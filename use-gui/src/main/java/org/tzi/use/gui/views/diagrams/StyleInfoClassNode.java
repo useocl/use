@@ -19,9 +19,8 @@ public final class StyleInfoClassNode extends StyleInfoBase {
 
     private Color nodesColor;
     private Color backgroundColor;
-    //TODO: revert changes of nullable maps
-    private Map<MAttribute, Color> attributeColors;
-    private Map<MOperation, Color> operationColors;
+    private final Map<MAttribute, Color> attributeColors = new HashMap<>();
+    private final Map<MOperation, Color> operationColors = new HashMap<>();
 
     @Builder(setterPrefix = "with")
     private StyleInfoClassNode(final Color namesColor,
@@ -32,25 +31,24 @@ public final class StyleInfoClassNode extends StyleInfoBase {
         super(namesColor);
         this.nodesColor = nodesColor;
         this.backgroundColor = backgroundColor;
-        this.attributeColors = Optional.ofNullable(attributeColor).orElseGet(HashMap::new);
-        this.operationColors = Optional.ofNullable(operationColor).orElseGet(HashMap::new);
+        Optional.ofNullable(attributeColor).ifPresent(this.attributeColors::putAll);
+        Optional.ofNullable(operationColor).ifPresent(this.operationColors::putAll);
     }
-
 
     public StyleInfoClassNode(@NonNull final ClassNode classNode) {
         super(classNode.getColor());
-        this.nodesColor = classNode.getColor();
-        this.backgroundColor = classNode.getBackColor();
-        this.attributeColors = classNode.cls()
+        nodesColor = classNode.getColor();
+        backgroundColor = classNode.getBackColor();
+        attributeColors.putAll(classNode.cls()
                 .attributes()
                 .stream()
                 .filter(attribute -> classNode.getAttributeColor(attribute) != null)
-                .collect(Collectors.toMap(Function.identity(), classNode::getAttributeColor));
-        this.operationColors = classNode.cls()
+                .collect(Collectors.toMap(Function.identity(), classNode::getAttributeColor)));
+        operationColors.putAll(classNode.cls()
                 .operations()
                 .stream()
                 .filter(operation -> classNode.getOperationColor(operation) != null)
-                .collect(Collectors.toMap(Function.identity(), classNode::getOperationColor));
+                .collect(Collectors.toMap(Function.identity(), classNode::getOperationColor)));
     }
 
     @Override
@@ -63,8 +61,6 @@ public final class StyleInfoClassNode extends StyleInfoBase {
             styleInfoClassNode.operationColors.forEach(operationColors::putIfAbsent);
         }
     }
-
-
 }
 
 
