@@ -392,6 +392,7 @@ public abstract class DiagramView extends JPanel
 
         final IPluginDiagramExtensionPoint iPluginDiagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
         final List<StyleInfoProvider> styleInfoProviders = iPluginDiagramExtensionPoint.getStyleInfoProvider(getClass());
+        Log.debug(String.format("Found %d providers for %s", styleInfoProviders.size(), this.getClass().getSimpleName()));
 
         if (!styleInfoProviders.isEmpty()) {
             final Object diagramElementIdentifier = mappingFunction.apply(element);

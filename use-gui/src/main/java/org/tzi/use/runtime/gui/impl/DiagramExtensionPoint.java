@@ -4,6 +4,7 @@ import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.gui.DiagramPlugin;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.util.Log;
 
 import java.util.*;
 
@@ -53,6 +54,7 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
     public void registerDiagramManipulators(final IPluginDescriptor pluginDescriptor) {
         if (pluginDescriptor.getPluginClass() instanceof DiagramPlugin diagramPlugin) {
             registeredPlugins.add(diagramPlugin);
+            Log.debug(String.format("Registered plugin '%s' to %s", diagramPlugin.getName(), this.getClass().getSimpleName()));
         }
     }
 
