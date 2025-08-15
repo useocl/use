@@ -176,7 +176,7 @@ public abstract class DiagramView extends JPanel
         if (pluginRuntime != null) {
             final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
             diagramExtensionPoint.registerView(this);
-            diagramExtensionPoint.runPluginsOnInitialisation();
+            diagramExtensionPoint.runPluginsOnStart();
         }
 
         // Add a dummy tool tip text to enable the tool tip functionality
@@ -412,43 +412,43 @@ public abstract class DiagramView extends JPanel
     /**
      * Maps the given {@link PlaceableNode} to an identifier.
      * This ID can be targeted for changes, and the element is protected from write access.
-     * This method has to be overridden by an inheritor of {@link DiagramView} to make use of the {@link DiagramExtensionPoint}
+     * This method has to be overridden by an inheritor of {@link DiagramView} to support style modification.
      * @param node the {@link PlaceableNode} to map an ID to
      * @return the ID to a {@link PlaceableNode}
      */
     protected Object getNodeIdentifier(final PlaceableNode node) {
-        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+        throw new UnsupportedOperationException(String.format("The diagram '%s' does not support style modification yet!", getClass().getName()));
     }
 
     /**
      * Maps the given {@link EdgeBase} to an identifier.
      * This ID can be targeted for changes, and the element is protected from write access.
-     * This method has to be overridden by an inheritor of {@link DiagramView} to make use of the {@link DiagramExtensionPoint}
+     * This method has to be overridden by an inheritor of {@link DiagramView} to support style modification.
      * @param edge the {@link EdgeBase} to map an ID to
      * @return the ID to a {@link EdgeBase}
      */
     protected Object getEdgeIdentifier(final EdgeBase edge) {
-        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+        throw new UnsupportedOperationException(String.format("The diagram '%s' does not support style modification yet!", getClass().getName()));
     }
 
     /**
      * Recolors the node with equivalent containers values.
+     * This method has to be overridden by an inheritor of {@link DiagramView} to support style modification.
      * @param node the given node to recolor
      * @param styleInfoForDiagramElement the container with values the node should be colored into
      */
     protected void recolorPlaceableNode(final PlaceableNode node, final StyleInfoBase styleInfoForDiagramElement) {
-        // this method has to be overridden by a concrete DiagramView to use StyleInfos
-        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+        throw new UnsupportedOperationException(String.format("The diagram '%s' does not support style modification yet!", getClass().getName()));
     }
 
     /**
      * Recolors the edge with equivalent containers values.
+     * This method has to be overridden by an inheritor of {@link DiagramView} to support style modification.
      * @param edge the given edge to recolor
      * @param styleInfoForDiagramElement the container with values the edge should be colored into
      */
     protected void recolorEdgeBase(final EdgeBase edge, final StyleInfoBase styleInfoForDiagramElement) {
-        // this method has to be overridden by a concrete DiagramView to use StyleInfos
-        throw new UnsupportedOperationException(String.format("This method has not been implemented by %s!", getClass().getName()));
+        throw new UnsupportedOperationException(String.format("The diagram '%s' does not support style modification yet!", getClass().getName()));
     }
 
     /**
@@ -1319,7 +1319,7 @@ public abstract class DiagramView extends JPanel
         if (pluginRuntime != null) {
             final IPluginDiagramExtensionPoint diagramExtensionPoint = (IPluginDiagramExtensionPoint) pluginRuntime.getExtensionPoint("diagram");
             diagramExtensionPoint.removeView(this);
-            diagramExtensionPoint.runPluginsOnClosure();
+            diagramExtensionPoint.runPluginsOnClose();
         }
     }
 

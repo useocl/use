@@ -1485,11 +1485,10 @@ public class ClassDiagram extends DiagramView
 
 	@Override
 	protected MClassifier getNodeIdentifier(final PlaceableNode node) {
-		return Optional.of(node)
-				.filter(ClassifierNode.class::isInstance)
-				.map(ClassifierNode.class::cast)
-				.map(ClassifierNode::getClassifier)
-				.orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + node.getClass()));
+		if (node instanceof ClassifierNode classifierNode){
+			return classifierNode.getClassifier();
+		}
+		throw new IllegalArgumentException(String.format("Expected classifier node but got %s", node.getClass().getSimpleName()));
 	}
 
 	@Override
@@ -1504,7 +1503,7 @@ public class ClassDiagram extends DiagramView
                     .map(EdgeProperty::getAssociation)
                     .filter(Objects::nonNull)
                     .findAny()
-                    .orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + edgeBase.getClass()));
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("Expected model association edge but got %s", edgeBase.getClass().getSimpleName())));
 		}
 		throw new UnsupportedOperationException(String.format("The type of edge %s is not supported!", edgeBase.getClass().getName()));
 	}
