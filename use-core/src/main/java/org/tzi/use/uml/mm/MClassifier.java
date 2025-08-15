@@ -55,8 +55,12 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
 	 * @return
 	 */
 	boolean isAbstract();
-	    
-	/**
+
+    boolean isQualifiedAccess();
+
+    void setQualifiedAccess(boolean qualifiedAccess);
+
+    /**
      * Returns the set of all direct parent classes (without this
      * class).
      *

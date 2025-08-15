@@ -6,7 +6,35 @@
 // grammar start
 
 /* ------------------------------------
-  model ::= 
+  importStatement ::= "import" importClause "from" artifact
+  importClause ::= elementIdent
+                  | "*"
+                  | "{" elementIdent ("," elementIdent)* "}"
+  elementIdent ::= [id "#"] id
+  artifact ::= STRING
+*/
+importStatement returns [ASTImportStatement n]
+@init {
+    List<String> elementIdentifiers = new ArrayList<String>();
+    boolean isWildcard = false;
+}
+:
+    'import'
+    (
+        id=elementIdent { elementIdentifiers.add($id.n); }
+        | STAR { isWildcard = true; }
+        | LBRACE i=elementIdent { elementIdentifiers.add($i.n); }
+        (COMMA i=elementIdent { elementIdentifiers.add($i.n); })*
+        RBRACE
+    )
+    'from' artifact=(STRING | NON_OCL_STRING) {
+        String artifactText = $artifact.getText().replaceAll("^['\"]|['\"]$", "");
+        $n = new ASTImportStatement(elementIdentifiers, artifactText, isWildcard); }
+    ;
+
+/* ------------------------------------
+  model ::=
+    { importStatement }
     "model" id
     {   
         classDefinition 
@@ -17,9 +45,20 @@
     } 
 */
 model returns [ASTModel n]
+@init {
+    List<ASTImportStatement> imports = new ArrayList<ASTImportStatement>();
+}
 :
+    (i = importStatement { imports.add($i.n); })*
 	as = annotationSet
-    'model' modelName=IDENT { $n = new ASTModel($modelName); $n.setAnnotations($as.annotations); }
+    'model' modelName=IDENT
+    {
+     $n = new ASTModel($modelName);
+     $n.setAnnotations($as.annotations);
+     for (ASTImportStatement imp : imports) {
+        $n.addImportStatement(imp);
+     }
+    }
     (   generalClassifierDefinition[$n]
       | a=associationDefinition { $n.addAssociation($a.n); }
       | ( 'constraints'
@@ -500,10 +539,17 @@ signalDefinition[boolean isAbstract] returns [ASTSignal n]:
     ( 'constraints'
       (
         inv=invariantClause { $n.addInvariantClause($inv.n); }
-      )*
+      )
     )?
     'end'
-    ;  
+    ;
+
+elementIdent returns [String n]:
+    modelQualifier=IDENT HASH name=IDENT {
+        $n = $modelQualifier.getText() + "#" + $name.getText();
+    }
+    | name=IDENT { $n = $name.getText(); }
+    ;
 
 keyUnion:
   {input.LT(1).getText().equals("union")}? IDENT ;

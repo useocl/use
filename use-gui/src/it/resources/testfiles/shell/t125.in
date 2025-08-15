@@ -1,0 +1,6 @@
+# test object creation with imported attribute types
+
+!create a : A
+!set a.b := B(1,2)
+!set a.c := C::H
+exit

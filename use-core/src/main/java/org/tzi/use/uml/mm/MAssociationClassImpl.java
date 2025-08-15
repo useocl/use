@@ -19,14 +19,6 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -34,6 +26,8 @@ import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.sys.MOperationCall;
+
+import java.util.*;
 
 
 /**
@@ -143,6 +137,11 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
     @Override
     public String nameAsRolename() {
         return fClassImpl.nameAsRolename();
+    }
+
+    @Override
+    public String qualifiedName() {
+        return fAssociationImpl.model() != null ? fAssociationImpl.name() + "#" + name() : null;
     }
 
     /**

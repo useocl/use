@@ -115,25 +115,25 @@ public class ClassDiagramView extends JPanel
     private void initState() {
 
         // read Classes
-        Collection<MClass> allClasses = fSystem.model().classes();
+        Collection<MClass> allClasses = fSystem.model().getClassesIncludingImports();
         for (MClass cls : allClasses) {
             fClassDiagram.addClass( cls );
         }
 
         // read data types
-        Collection<MDataType> allDataTypes = fSystem.model().dataTypes();
+        Collection<MDataType> allDataTypes = fSystem.model().getDataTypesIncludingImports();
         for (MDataType dtp : allDataTypes) {
             fClassDiagram.addDataType(dtp);
         }
 
         // read Enumerations
-        Collection<EnumType> allEnums = fSystem.model().enumTypes();
+        Collection<EnumType> allEnums = fSystem.model().getEnumTypesIncludingImports();
         for (EnumType enumeration : allEnums) {
             fClassDiagram.addEnum( enumeration );
         }
 
         // read signals
-        for (MSignal s : fSystem.model().getSignals()) {
+        for (MSignal s : fSystem.model().getSignalsIncludingImports()) {
             fClassDiagram.addSignal( s );
         }
 
@@ -146,7 +146,7 @@ public class ClassDiagramView extends JPanel
         }
 
         // read Associations
-        Collection<MAssociation> allAssociations = fSystem.model().associations();
+        Collection<MAssociation> allAssociations = fSystem.model().getAssociationsIncludingImports();
         for (MAssociation assoc : allAssociations) {
             fClassDiagram.addAssociation( assoc );
         }

@@ -103,7 +103,7 @@ legacyCreate returns [ASTStatement n]
   'create'
   objNames = identListMin1
   COLON
-  objType = simpleType
+  objType = objectType
   
   { 
     ASTSequenceStatement seq = new ASTSequenceStatement($start);
@@ -118,7 +118,16 @@ legacyCreate returns [ASTStatement n]
     
     $n = seq.simplify();
   }
-;    
+;
+
+objectType returns [ASTSimpleType n]
+:
+    (modelQualifier=IDENT HASH)? name=IDENT
+    {
+        if ($modelQualifier != null) { $n = new ASTModelQualifiedType($modelQualifier, $name); }
+        else { $n = new ASTSimpleType($name); }
+    }
+;
 
 
 ////////////////////////////////////////////////////////////////////////////////

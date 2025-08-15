@@ -19,13 +19,12 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.*;
-
+import com.google.common.collect.Iterators;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-
-import com.google.common.collect.Iterators;
 import org.tzi.use.uml.sys.MOperationCall;
+
+import java.util.*;
 
 /**
  * 
@@ -60,6 +59,8 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	 * Maps all operations (including inherited)
 	 */
 	protected Map<String, MOperation> fVTableOperations;
+
+	private boolean isQualifiedAccess = false;
 
 	/**
 	 * @param name
@@ -383,6 +384,25 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	@Override
 	public String shortName() {
 		return name();
+	}
+
+	@Override
+	public String qualifiedName() {
+			return model != null ? model.name() + "#" + name() : null;
+	}
+
+	/**
+	 * Indicates if classifier is imported using the model qualified syntax (modelName#classifierName).
+	 * Can be used to determine if qualifiedName should be displayed instead of regular name.
+	 */
+	@Override
+	public boolean isQualifiedAccess() {
+		return isQualifiedAccess;
+	}
+
+	@Override
+	public void setQualifiedAccess(boolean qualifiedAccess) {
+		isQualifiedAccess = qualifiedAccess;
 	}
 
 	/**

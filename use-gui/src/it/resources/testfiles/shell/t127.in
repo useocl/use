@@ -1,0 +1,9 @@
+# check if invariants are also checked for imported elements
+
+!create a : A
+!create b : B
+*checking structure...
+*checking invariants...
+*checking invariant (1) `A::inv1': OK.
+*checking invariant (2) `B::inv1': OK.
+*checked 2 invariants, 0 failures.

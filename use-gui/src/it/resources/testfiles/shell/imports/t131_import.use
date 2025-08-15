@@ -1,0 +1,8 @@
+model t131_import
+
+dataType B
+    operations
+        B(x: Integer, y: Integer)
+end
+
+enum C { H, I , J }

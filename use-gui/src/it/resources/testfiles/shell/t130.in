@@ -1,0 +1,9 @@
+# Instantiate object of imported class and set attribute with transitively imported data type.
+
+!create b : B
+!set b.b := t130_import2#C(1,1)
+? b.b
+*-> C{x=1, y=1} : C
+*checking structure...
+*checking invariants...
+*checked 0 invariants, 0 failures.

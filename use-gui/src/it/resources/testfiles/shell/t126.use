@@ -1,0 +1,12 @@
+import B from "imports/t126_import.use"
+
+model t126
+
+class A
+end
+
+association C
+    between
+        A[*] role x
+        B[*] role y
+end

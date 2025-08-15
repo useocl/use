@@ -1,0 +1,6 @@
+model t29_import
+
+dataType B
+end
+
+enum C { H, I, J }

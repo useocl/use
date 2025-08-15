@@ -1,0 +1,6 @@
+import * from "../t32_imports.use"
+
+model t32_import
+
+dataType B
+end

@@ -19,11 +19,11 @@
 
 package org.tzi.use.uml.mm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class <code>TestModelUtil</code> offers methods for creating
@@ -57,7 +57,7 @@ public class TestModelUtil {
     }
 
     /**
-     * This method creates a model with an enumeration.
+     * This method creates a model with two enumerations (colors, colors2).
      */
     public MModel createModelWithEnum() {
         try {
@@ -326,7 +326,10 @@ public class TestModelUtil {
             throw new Error( e ) ;
         }
     }
-        
+
+    /**
+     * Creates a model with one class (Person) and an invariant (Person::testInv).
+     */
     public MModel createModelWithInvariant() {
         try{
         	UseModelApi api = new UseModelApi( "Person" );
@@ -337,6 +340,80 @@ public class TestModelUtil {
             return api.getModel();
         } catch ( UseApiException e ) {
             throw new Error( e );
+        }
+    }
+
+    /**
+     * Creates a model containing two classes (Person and Company)
+     * and one data type (Date).
+     */
+    public MModel createModelWithClassesAndDataType() {
+        try {
+            UseModelApi api = new UseModelApi("PersonCompany");
+            api.createClass("Person", false);
+            api.createClass("Company", false);
+            api.createDataType("Date", false);
+
+            return api.getModel();
+        } catch (UseApiException e) {
+            throw new Error(e);
+        }
+    }
+
+    /**
+     * Creates a model with two data types (Date and Time).
+     */
+    public MModel createModelWithDataType() {
+        try {
+            UseModelApi api = new UseModelApi("Dates");
+            api.createDataType("Date", false);
+            api.createDataType("Time", false);
+
+            return api.getModel();
+        } catch (UseApiException e) {
+            throw new Error(e);
+        }
+    }
+
+    /**
+     * Creates a model containing two classes (Person and Company) with one attribute, operation
+     * and pre-/postcondition (ageIsPositive for setAge in Person and numEmployeesIsPositive
+     * for setNumEmployees) each.
+     */
+    public MModel createModelWithClassAndPrePostCondition() {
+        try {
+            UseModelApi api = new UseModelApi("PersonCompany");
+            api.createClass("Person", false);
+            api.createAttribute("Person", "age", "Integer");
+            api.createOperation("Person", "setAge",
+                    new String[][] {new String[] {"age", "Integer"}}, null );
+            api.createPrePostCondition("Person", "setAge",
+                    "ageIsPositive", "self.age >= 0", false);
+
+            api.createClass("Company", false);
+            api.createAttribute("Company", "numEmployees", "Integer");
+            api.createOperation("Company", "setNumEmployees",
+                    new String[][] {new String[] {"numEmployees", "Integer"}}, null );
+            api.createPrePostCondition("Company", "setNumEmployees",
+                    "numEmployeesIsPositive", "self.numEmployees >= 0", false);
+
+            return api.getModel();
+        } catch (UseApiException e) {
+            throw new Error(e);
+        }
+    }
+
+    /**
+     * Creates a model with one signal (Alarm).
+     */
+    public MModel createModelWithSignal() {
+        try {
+            UseModelApi api = new UseModelApi("Signals");
+            api.createSignal("Alarm", false);
+
+            return api.getModel();
+        } catch (UseApiException e) {
+            throw new Error(e);
         }
     }
 

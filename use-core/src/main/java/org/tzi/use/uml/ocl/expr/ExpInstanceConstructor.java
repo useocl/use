@@ -21,9 +21,9 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.value.DataTypeValueValue;
+import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.*;
-import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.util.StringUtil;
 
@@ -114,7 +114,8 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
 
     @Override
     public StringBuilder toString(StringBuilder sb) {
-        sb.append(fClassifier.name()).append("(");
+        String classifierName = fClassifier.isQualifiedAccess() ? fClassifier.qualifiedName() : fClassifier.name();
+        sb.append(classifierName).append("(");
         StringUtil.fmtSeqBuffered(sb, fArgs, 1, ", ");
         return sb.append(")");
     }

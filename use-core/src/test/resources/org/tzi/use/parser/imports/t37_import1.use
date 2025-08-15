@@ -1,0 +1,6 @@
+model t37_import
+
+dataType B
+    operations
+        B(b: Integer)
+end

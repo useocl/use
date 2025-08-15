@@ -1,0 +1,8 @@
+import * from "imports/t32_import1.use"
+
+model t32 -- Cycle in imports
+
+class A
+    attributes
+        x:B
+end
