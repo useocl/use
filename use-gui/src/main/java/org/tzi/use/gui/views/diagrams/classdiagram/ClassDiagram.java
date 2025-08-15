@@ -60,7 +60,7 @@ import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.*;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramOptions.ShowCoverage;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
@@ -97,7 +97,7 @@ import com.ximpleware.XPathParseException;
 
 /**
  * A panel drawing a UML class diagrams.
- * 
+ *
  * @author Fabian Gutsche
  * @author Lars Hamann
  * @author Stefan Schoon
@@ -121,7 +121,7 @@ public class ClassDiagram extends DiagramView
 	}
 
 	protected ClassDiagram(ClassDiagramView parent, PrintWriter log, ClassDiagramOptions opt) {
-		super(opt, log);
+		super(opt, log, parent.pluginRuntime);
 
 		fParent = parent;
 
@@ -297,7 +297,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Adds a class to the diagram.
-	 * 
+	 *
 	 * @param cls
 	 *            Class to be added.
 	 */
@@ -358,7 +358,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows an already hidden class again
-	 * 
+	 *
 	 * @param cls
 	 */
 	public void showClass(MClass cls) {
@@ -397,7 +397,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows or hides a class.
-	 * 
+	 *
 	 * @param cls
 	 *            The <code>MClass</code> to show or hide
 	 * @param show
@@ -463,7 +463,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows an already hidden data type again
-	 * 
+	 *
 	 * @param dtp
 	 */
 	public void showDataType(MDataType dtp) {
@@ -482,7 +482,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Shows or hides a data type.
-	 * 
+	 *
 	 * @param dtp
 	 *            The <code>MDataType</code> to show or hide
 	 * @param show
@@ -512,7 +512,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Adds an enumeration to the diagram.
-	 * 
+	 *
 	 * @param enumeration
 	 *            Enumeration to be added.
 	 */
@@ -581,7 +581,7 @@ public class ClassDiagram extends DiagramView
 	 * wird sie in die Darstellung aufgenommen. Werden fuer die Darstellung
 	 * Klassen benoetigt, werden diese ebenfalls sichtbar gemacht, damit keine
 	 * ungueltige Darstellung entsteht.
-	 * 
+	 *
 	 * @param assoc
 	 */
 	public void showAssociation(MAssociation assoc) {
@@ -663,7 +663,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * This part is a separate method for easier inheritance.
-	 * 
+	 *
 	 * @author Andreas Kaestner
 	 */
 	protected BinaryAssociationOrLinkEdge createBinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
@@ -809,7 +809,7 @@ public class ClassDiagram extends DiagramView
 
 		Map<? extends MClassifier, ? extends ClassifierNode> lookup = visibleData.lookupClassifierToNodeMap(parent);
 
-		GeneralizationEdge e = GeneralizationEdge.create(lookup.get(child), lookup.get(parent), this);
+		GeneralizationEdge e = GeneralizationEdge.create(gen, lookup.get(child), lookup.get(parent), this);
 
 		fGraph.addEdge(e);
 		visibleData.fGenToGeneralizationEdge.put(gen, e);
@@ -1356,7 +1356,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Finds all elements (class or enum node) which are not selected.
-	 * 
+	 *
 	 * @param selectedElements
 	 *            Nodes which are selected at this point in the diagram.
 	 * @return A Set of the none selected objects in the diagram.
@@ -1396,7 +1396,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Hides the given elements in this diagram.
-	 * 
+	 *
 	 * @param nodesToHide
 	 *            A set of {@link MClassifier} ({@link MClass}
 	 *            {@link MDataType} or {@link EnumType}) to hide
@@ -1419,7 +1419,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Show the given elements in this diagram.
-	 * 
+	 *
 	 * @param nodesToShow
 	 *            A set of {@link MClassifier} ({@link MClass}
 	 *            {@link MDataType} or {@link EnumType}) to hide
@@ -1480,6 +1480,80 @@ public class ClassDiagram extends DiagramView
 
 		for (GeneralizationEdge e : data.fGenToGeneralizationEdge.values()) {
 			e.storePlacementInfo(helper, parent, !visible);
+		}
+	}
+
+	@Override
+	protected MClassifier getNodeIdentifier(final PlaceableNode node) {
+		if (node instanceof ClassifierNode classifierNode){
+			return classifierNode.getClassifier();
+		}
+		throw new IllegalArgumentException(String.format("Expected classifier node but got %s", node.getClass().getSimpleName()));
+	}
+
+	@Override
+	protected Object getEdgeIdentifier(final EdgeBase edgeBase) {
+		if (edgeBase instanceof GeneralizationEdge generalizationEdge) {
+			// returns MGeneralization, the relation between an abstract and an implementing model element
+			return generalizationEdge.getMGeneralization();
+		} else if (edgeBase instanceof AssociationOrLinkPartEdge associationOrLinkPartEdge) {
+			// returns MAssociation, the relation between two model elements
+            return associationOrLinkPartEdge.getProperties()
+                    .stream()
+                    .map(EdgeProperty::getAssociation)
+                    .filter(Objects::nonNull)
+                    .findAny()
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("Expected model association edge but got %s", edgeBase.getClass().getSimpleName())));
+		}
+		throw new UnsupportedOperationException(String.format("The type of edge %s is not supported!", edgeBase.getClass().getName()));
+	}
+
+	@Override
+    protected void recolorPlaceableNode(final PlaceableNode placeableNode, StyleInfoBase styleInfoForDiagramElement) {
+        if (placeableNode instanceof ClassNode classNode) {
+            if (styleInfoForDiagramElement instanceof StyleInfoClassNode styleInfoClassNode) {
+                styleInfoClassNode.merge(new StyleInfoClassNode(classNode));
+                adaptClassNodeToStyleInfo(classNode, styleInfoClassNode);
+            }
+
+        } else if (placeableNode instanceof EnumNode enumNode) {
+            if (styleInfoForDiagramElement instanceof StyleInfoEnumNode styleInfoEnumNode) {
+                styleInfoEnumNode.merge(new StyleInfoEnumNode(enumNode));
+                adaptEnumNodeToStyleInfo(enumNode, styleInfoEnumNode);
+            }
+        }
+    }
+
+    private void adaptClassNodeToStyleInfo(final ClassNode classNode, final StyleInfoClassNode styleInfoClassNode) {
+		classNode.setTextColor(styleInfoClassNode.getNamesColor());
+        classNode.setColor(styleInfoClassNode.getNodesColor());
+        classNode.setBackColor(styleInfoClassNode.getBackgroundColor());
+        styleInfoClassNode.getAttributeColors().forEach(classNode::setAttributeColor);
+        styleInfoClassNode.getOperationColors().forEach(classNode::setOperationColor);
+    }
+
+	private void adaptEnumNodeToStyleInfo(final EnumNode enumNode, final StyleInfoEnumNode styleInfoEnumNode) {
+		enumNode.setTextColor(styleInfoEnumNode.getNamesColor());
+		enumNode.setColor(styleInfoEnumNode.getNodesColor());
+		enumNode.setFrameColor(styleInfoEnumNode.getFrameColor());
+	}
+
+	@Override
+	protected void recolorEdgeBase(final EdgeBase edge, final StyleInfoBase styleInfoForDiagramElement) {
+		if (styleInfoForDiagramElement instanceof StyleInfoEdge styleInfoEdge) {
+			styleInfoEdge.merge(new StyleInfoEdge(edge));
+
+			edge.setEdgeColor(styleInfoEdge.getEdgeColor());
+			// Association Name
+			Optional.ofNullable(edge.getPropertiesGrouped().asMap().get(EdgeBase.PropertyOwner.EDGE))
+					.flatMap(coll -> coll.stream().filter(AssociationName.class::isInstance).findFirst())
+					.ifPresent(associationName -> associationName.setColor(styleInfoEdge.getNamesColor()));
+			// Role Name
+			edge.getProperties()
+				.stream()
+				.filter(Rolename.class::isInstance)
+				.map(Rolename.class::cast)
+				.forEach(roleName -> Optional.ofNullable(styleInfoEdge.getRoleNameColors().get(roleName.getEnd())).ifPresent(roleName::setColor));
 		}
 	}
 
@@ -1873,7 +1947,7 @@ public class ClassDiagram extends DiagramView
 	/**
 	 * Returns <code>true</code>, if the given classifier <code>cs</code> is
 	 * currently visible in the diagram.
-	 * 
+	 *
 	 * @param cs
 	 * @return
 	 */
@@ -1907,7 +1981,7 @@ public class ClassDiagram extends DiagramView
 
 	/**
 	 * Check if one association is hidden
-	 * 
+	 *
 	 * @param association
 	 * @return true, if association in hiddenData, else return false
 	 */
