@@ -30,13 +30,13 @@ public class DiagramExtensionPoint implements IPluginDiagramExtensionPoint {
     }
 
     @Override
-    public void runPluginsOnInitialisation() {
-        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulators).flatMap(Collection::stream).forEach(PluginDiagramManipulator::onInitialisation);
+    public void runPluginsOnStart() {
+        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulators).flatMap(Collection::stream).forEach(PluginDiagramManipulator::onStart);
     }
 
     @Override
-    public void runPluginsOnClosure() {
-        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulators).flatMap(Collection::stream).forEach(PluginDiagramManipulator::onClosure);
+    public void runPluginsOnClose() {
+        registeredPlugins.stream().map(DiagramPlugin::getPluginDiagramManipulators).flatMap(Collection::stream).forEach(PluginDiagramManipulator::onClose);
     }
 
     @Override

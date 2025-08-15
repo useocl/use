@@ -15,9 +15,9 @@ public interface IPluginDiagramExtensionPoint extends IExtensionPoint {
 
     <T extends DiagramView> void removeView(T diagramView);
 
-    void runPluginsOnInitialisation();
+    void runPluginsOnStart();
 
-    void runPluginsOnClosure();
+    void runPluginsOnClose();
 
     List<StyleInfoProvider> getStyleInfoProvider(final Class<? extends DiagramView> targetClass);
 }

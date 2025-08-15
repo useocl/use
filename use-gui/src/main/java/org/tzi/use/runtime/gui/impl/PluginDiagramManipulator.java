@@ -1,7 +1,6 @@
 package org.tzi.use.runtime.gui.impl;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.util.Log;
@@ -55,14 +54,14 @@ public abstract class PluginDiagramManipulator {
     /**
      * Gets called when the graphical panel diagram initialises.
      */
-    public void onInitialisation() {
+    public void onStart() {
         // override to use
     }
 
     /**
      * Gets called when the graphical panel diagram closes.
      */
-    public void onClosure() {
+    public void onClose() {
         // override to use
     }
 
