@@ -37,7 +37,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -810,7 +809,7 @@ public class ClassDiagram extends DiagramView
 
 		Map<? extends MClassifier, ? extends ClassifierNode> lookup = visibleData.lookupClassifierToNodeMap(parent);
 
-		GeneralizationEdge e = GeneralizationEdge.create(lookup.get(child), lookup.get(parent), this);
+		GeneralizationEdge e = GeneralizationEdge.create(gen, lookup.get(child), lookup.get(parent), this);
 
 		fGraph.addEdge(e);
 		visibleData.fGenToGeneralizationEdge.put(gen, e);
@@ -1497,14 +1496,7 @@ public class ClassDiagram extends DiagramView
 	protected Object getEdgeIdentifier(final EdgeBase edgeBase) {
 		if (edgeBase instanceof GeneralizationEdge generalizationEdge) {
 			// returns MGeneralization, the relation between an abstract and an implementing model element
-			return Stream.of(visibleData, hiddenData)
-					.map(classDiagramData -> classDiagramData.fGenToGeneralizationEdge.entrySet())
-					.flatMap(Collection::stream)
-					.filter(entry -> entry.getValue().equals(generalizationEdge))
-					.map(Map.Entry::getKey)
-					.filter(Objects::nonNull)
-					.findAny()
-					.orElseThrow(() -> new IllegalStateException("No equivalent meta model element has been found for UI element: " + edgeBase.getClass()));
+			return generalizationEdge.getMGeneralization();
 		} else if (edgeBase instanceof AssociationOrLinkPartEdge associationOrLinkPartEdge) {
 			// returns MAssociation, the relation between two model elements
             return associationOrLinkPartEdge.getProperties()
