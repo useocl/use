@@ -882,7 +882,7 @@ public abstract class DiagramView extends JPanel
 
     //Manage Diffrent Type Of Layouts
     protected synchronized void HierarchicalLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
-        if (fLayouter == null) {
+        if (fAllLayoutTypes == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
@@ -899,7 +899,7 @@ public abstract class DiagramView extends JPanel
     }
 
     protected synchronized void HierarchicalUpsideDownLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
-        if (fLayouter == null) {
+        if (fAllLayoutTypes == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
@@ -915,7 +915,7 @@ public abstract class DiagramView extends JPanel
     }
 
     protected synchronized void HorizontalLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
-        if (fLayouter == null) {
+        if (fAllLayoutTypes == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
@@ -931,7 +931,7 @@ public abstract class DiagramView extends JPanel
     }
 
     protected synchronized void HorizontalRightToLeftLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
-        if (fLayouter == null) {
+        if (fAllLayoutTypes == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
@@ -947,7 +947,7 @@ public abstract class DiagramView extends JPanel
     }
 
     protected synchronized void LandscapeSwimlaneLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
-        if (fLayouter == null) {
+        if (fAllLayoutTypes == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
@@ -963,7 +963,7 @@ public abstract class DiagramView extends JPanel
     }
 
     protected synchronized void PortraitSwimlaneLayout(int HorizontalSpacing, int VerticalSpacing, boolean IsPutAssociationsOnRelationsEnabled) {
-        if (fLayouter == null) {
+        if (fAllLayoutTypes == null) {
             int w = getWidth();
             int h = getHeight();
             if (w == 0 || h == 0)
