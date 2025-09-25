@@ -18,7 +18,7 @@ public class RestApiControllerTest {
 //
 //    @Test
 //    public void testCreateMClass() {
-//        // Create a sample UseClass JSON payload
+//        // Create a sample ClassDTO JSON payload
 //        String requestBody = "{\n" +
 //                "    \"name_mclass\": \"Class1\",\n" +
 //                "    \"attributes\": [\n" +
@@ -52,7 +52,7 @@ public class RestApiControllerTest {
 //
 //    @Test
 //    public void testCreateDuplicateMClass() {
-//        // Create first UseClass with name "SameClass"
+//        // Create first ClassDTO with name "SameClass"
 //        String requestBody = "{\n" +
 //                "    \"name_mclass\": \"SameClass\"\n" +
 //                "}";
@@ -78,7 +78,7 @@ public class RestApiControllerTest {
 //
 //    @Test
 //    public void testCreateMClassWithoutName() {
-//        // Create UseClass with no name but with attributes and operations
+//        // Create ClassDTO with no name but with attributes and operations
 //        String requestBody = "{\n" +
 //                "    \"attributes\": [\n" +
 //                "        {\n" +
@@ -105,7 +105,7 @@ public class RestApiControllerTest {
 //
 //    @Test
 //    public void testCreateMClassWithEmptyPayload() {
-//        // Create UseClass with empty payload
+//        // Create ClassDTO with empty payload
 //        String requestBody = "{}";
 //
 //        given()
@@ -119,7 +119,7 @@ public class RestApiControllerTest {
 //
 //    @Test
 //    public void testCreateMClassWithInvalidJson() {
-//        // Create UseClass with invalid JSON structure
+//        // Create ClassDTO with invalid JSON structure
 //        String requestBody = "{\n" +
 //                "    \"name_mclass\": \"Class1\",\n" +
 //                "    \"attributes\": [\n" +

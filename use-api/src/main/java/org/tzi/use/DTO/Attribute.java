@@ -1,4 +1,4 @@
-package org.tzi.use.model;
+package org.tzi.use.DTO;
 
 import jakarta.persistence.*;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 //    @ManyToOne
 //    @JoinColumn(name = "name_mclass", nullable = false)
-//    private UseClass mclass;
+//    private ClassDTO mclass;
 
 
     // Getters and Setters
@@ -33,11 +33,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
         this.type = type;
     }
 
-//    public UseClass getMclass() {
+//    public ClassDTO getMclass() {
 //        return mclass;
 //    }
 //
-//    public void setMclass(UseClass mclass) {
+//    public void setMclass(ClassDTO mclass) {
 //        this.mclass = mclass;
 //    }
 
@@ -47,7 +47,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
         this.type = type;
     }
 
-    public Attribute(String name, String string, UseClass mclass) {
+    public Attribute(String name, String string, ClassDTO mclass) {
         this.name_attr = name;
         this.type = string;
 //        this.mclass = mclass;

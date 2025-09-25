@@ -1,20 +1,20 @@
-package org.tzi.use.model;
+package org.tzi.use.DTO;
 
 import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class PrePostCondition {
+public class PrePostConditionDTO {
     @Id
     private String operationName;
     private String name;
     private String condition;
     private boolean isPre;
 
-    public PrePostCondition() {
+    public PrePostConditionDTO() {
     }
 
-    public PrePostCondition(String operationName, String name, String condition, boolean isPre) {
+    public PrePostConditionDTO(String operationName, String name, String condition, boolean isPre) {
         this.operationName = operationName;
         this.name = name;
         this.condition = condition;

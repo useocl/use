@@ -1,4 +1,4 @@
-package org.tzi.use.model;
+package org.tzi.use.DTO;
 
 import jakarta.persistence.Id;
 

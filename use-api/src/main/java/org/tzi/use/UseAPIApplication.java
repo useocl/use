@@ -1,13 +1,8 @@
 package org.tzi.use;
 
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.tzi.use.model.Attribute;
-import org.tzi.use.model.UseClass;
-import org.tzi.use.model.Operation;
-import org.tzi.use.repository.ClassRepo;
+
 //localhost 8080 not in use anymore
 @SpringBootApplication
 public class UseAPIApplication {
@@ -21,7 +16,7 @@ public class UseAPIApplication {
 //            Attribute name = new Attribute("name","String");
 //            Operation operation = new Operation("operation()");
 //
-//            UseClass mclass2 = classRepo.save(new UseClass("TestClass2",name, operation));
+//            ClassDTO mclass2 = classRepo.save(new ClassDTO("TestClass2",name, operation));
 //
 //
 //        };

@@ -1,4 +1,4 @@
-package org.tzi.use.model;
+package org.tzi.use.DTO;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.Id;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document
-public class UseClass {
+public class ClassDTO {
 
     @Id
     private String name_mclass;
@@ -23,7 +23,7 @@ public class UseClass {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mClass_id")
-    private List<PrePostCondition> prePostConditions = new ArrayList<>();
+    private List<PrePostConditionDTO> prePostConditionDTOS = new ArrayList<>();
 
     @OneToMany(cascade  = CascadeType.ALL, orphanRemoval  = true)
      @JoinColumn(name = "mClass_id")
@@ -42,8 +42,8 @@ public class UseClass {
         return operations;
     }
 
-    public List<PrePostCondition> getPrePostConditions() {
-        return prePostConditions;
+    public List<PrePostConditionDTO> getPrePostConditions() {
+        return prePostConditionDTOS;
     }
 
     public List<Invariant> getInvariants() {
@@ -66,12 +66,12 @@ public class UseClass {
         operations.remove(operation);
     }
 
-    public void addPrePostCondition(PrePostCondition condition) {
-        prePostConditions.add(condition);
+    public void addPrePostCondition(PrePostConditionDTO condition) {
+        prePostConditionDTOS.add(condition);
     }
 
-    public void removePrePostCondition(PrePostCondition condition) {
-        prePostConditions.remove(condition);
+    public void removePrePostCondition(PrePostConditionDTO condition) {
+        prePostConditionDTOS.remove(condition);
     }
 
     public void addInvariant(Invariant invariant) {
@@ -85,19 +85,19 @@ public class UseClass {
 
 
     //Constructors
-    public UseClass(String name_mclass, List<Attribute> attributes, List<Operation> operations) {
+    public ClassDTO(String name_mclass, List<Attribute> attributes, List<Operation> operations) {
         this.name_mclass = name_mclass;
         this.attributes = attributes;
         this.operations = operations;
     }
-    public UseClass(String name_mclass, Attribute attributes, Operation operations) {
+    public ClassDTO(String name_mclass, Attribute attributes, Operation operations) {
         this.name_mclass = name_mclass;
         this.attributes.add(attributes);
         this.operations.add(operations);
     }
-    public UseClass(String name_mclass) {
+    public ClassDTO(String name_mclass) {
         this.name_mclass = name_mclass;
     }
-    public UseClass() {}
+    public ClassDTO() {}
 
 }
