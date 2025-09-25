@@ -21,11 +21,18 @@ public class ModelService {
     // In-memory storage for model API instances
     private final Map<String, UseModelApi> modelInstances = new HashMap<>();
 
+    /**
+     * Creates a new model with the given name
+     *
+     * @param modelDTO The DTO containing the model name and other properties
+     * @return The created model with assigned ID
+     * @throws UseApiException If there's an error creating the model
+     */
     public ModelDTO createModel(ModelDTO modelDTO) throws UseApiException {
         // Generate a unique ID for the model
         String modelId = UUID.randomUUID().toString();
 
-        // Create a new model using the ModelFacade
+        // Create a new model using the UseModelFacade
         UseModelApi modelApi = UseModelFacade.createModel(modelDTO.getName());
 
         // Store the model instance for future use
@@ -38,7 +45,13 @@ public class ModelService {
         return modelRepo.save(modelDTO);
     }
 
-
+    /**
+     * Retrieves a model by its ID
+     *
+     * @param id The ID of the model to retrieve
+     * @return The model DTO
+     * @throws UseApiException If the model is not found
+     */
     public ModelDTO getModelById(String id) throws UseApiException {
         Optional<ModelDTO> modelDTO = modelRepo.findById(id);
         if (modelDTO.isEmpty()) {

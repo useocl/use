@@ -68,12 +68,53 @@ public class ModelController {
     }
 
     /**
-     * Placeholder method to retrieve a model by ID
+     * Retrieve a model by its ID
+     * @param id The ID of the model to retrieve
+     * @return The model with HATEOAS links
      */
     @GetMapping("/model/{id}")
     public ResponseEntity<EntityModel<ModelDTO>> getModelById(@PathVariable String id) {
-        // Implementation to be added
-        return null;
+        try {
+            ModelDTO model = modelService.getModelById(id);
+
+            // Create an EntityModel (HATEOAS) with the response
+            EntityModel<ModelDTO> entityModel = EntityModel.of(model);
+
+            // Add HATEOAS links
+            // Link to self
+            entityModel.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(ModelController.class)
+                    .getModelById(id))
+                    .withSelfRel());
+
+            // Link to get all classes in this model
+            entityModel.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(ModelController.class)
+                    .getModelClasses(id))
+                    .withRel("classes"));
+
+            // Link to get all associations in this model
+            entityModel.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(ModelController.class)
+                    .getModelAssociations(id))
+                    .withRel("associations"));
+
+            // Link to get all invariants in this model
+            entityModel.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(ModelController.class)
+                    .getModelInvariants(id))
+                    .withRel("invariants"));
+
+            // Link to get all pre/post conditions in this model
+            entityModel.add(WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(ModelController.class)
+                    .getModelPrePostConditions(id))
+                    .withRel("prepostconditions"));
+
+            return new ResponseEntity<>(entityModel, HttpStatus.OK);
+        } catch (UseApiException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
