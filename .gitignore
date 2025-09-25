@@ -117,3 +117,4 @@ fabric.properties
 /use-assembly/target
 
 **/.DS_Store
+/.idea
