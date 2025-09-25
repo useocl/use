@@ -4,7 +4,7 @@ import jakarta.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Operation {
+public class OperationDTO {
     @Id
     private String name;
 
@@ -42,18 +42,18 @@ public class Operation {
 //    }
 
     //Constructors
-    public Operation(String name, String body) {
+    public OperationDTO(String name, String body) {
         this.name = name;
         this.body = body;
     }
-    public Operation(String name, ClassDTO mclass) {
+    public OperationDTO(String name, ClassDTO mclass) {
         this.name = name;
 //        this.mclass = mclass;
     }
-    public Operation(String name) {
+    public OperationDTO(String name) {
         this.name = name;
     }
-    public Operation() {}
+    public OperationDTO() {}
 
 
 }

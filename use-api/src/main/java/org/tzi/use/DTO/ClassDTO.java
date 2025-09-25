@@ -15,11 +15,11 @@ public class ClassDTO {
     // Unidirectional OneToMany relationship
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mClass_id")
-    private List<Attribute> attributes = new ArrayList<>();
+    private List<AttributeDTO> attributeDTOS = new ArrayList<>();
     // Unidirectional OneToMany relationship
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mClass_id")
-    private List<Operation> operations = new ArrayList<>();
+    private List<OperationDTO> operationDTOS = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "mClass_id")
@@ -27,43 +27,43 @@ public class ClassDTO {
 
     @OneToMany(cascade  = CascadeType.ALL, orphanRemoval  = true)
      @JoinColumn(name = "mClass_id")
-    private List<Invariant> invariants = new ArrayList<>();
+    private List<InvariantDTO> invariantDTOS = new ArrayList<>();
 
     public String getName_mclass() {
         return name_mclass;
     }
 
 
-    public List<Attribute> getAttributes() {
-        return attributes;
+    public List<AttributeDTO> getAttributes() {
+        return attributeDTOS;
     }
 
-    public List<Operation> getOperations() {
-        return operations;
+    public List<OperationDTO> getOperations() {
+        return operationDTOS;
     }
 
     public List<PrePostConditionDTO> getPrePostConditions() {
         return prePostConditionDTOS;
     }
 
-    public List<Invariant> getInvariants() {
-        return invariants;
+    public List<InvariantDTO> getInvariants() {
+        return invariantDTOS;
     }
 
-    public void addAttribute(Attribute attribute) {
-        attributes.add(attribute);
+    public void addAttribute(AttributeDTO attributeDTO) {
+        attributeDTOS.add(attributeDTO);
     }
 
-    public void removeAttribute(Attribute attribute) {
-        attributes.remove(attribute);
+    public void removeAttribute(AttributeDTO attributeDTO) {
+        attributeDTOS.remove(attributeDTO);
     }
 
-    public void addOperation(Operation operation) {
-        operations.add(operation);
+    public void addOperation(OperationDTO operationDTO) {
+        operationDTOS.add(operationDTO);
     }
 
-    public void removeOperation(Operation operation) {
-        operations.remove(operation);
+    public void removeOperation(OperationDTO operationDTO) {
+        operationDTOS.remove(operationDTO);
     }
 
     public void addPrePostCondition(PrePostConditionDTO condition) {
@@ -74,26 +74,26 @@ public class ClassDTO {
         prePostConditionDTOS.remove(condition);
     }
 
-    public void addInvariant(Invariant invariant) {
-        invariants.add(invariant);
+    public void addInvariant(InvariantDTO invariantDTO) {
+        invariantDTOS.add(invariantDTO);
     }
 
-    public void removeInvariant(Invariant invariant) {
-        invariants.remove(invariant);
+    public void removeInvariant(InvariantDTO invariantDTO) {
+        invariantDTOS.remove(invariantDTO);
     }
 
 
 
     //Constructors
-    public ClassDTO(String name_mclass, List<Attribute> attributes, List<Operation> operations) {
+    public ClassDTO(String name_mclass, List<AttributeDTO> attributeDTOS, List<OperationDTO> operationDTOS) {
         this.name_mclass = name_mclass;
-        this.attributes = attributes;
-        this.operations = operations;
+        this.attributeDTOS = attributeDTOS;
+        this.operationDTOS = operationDTOS;
     }
-    public ClassDTO(String name_mclass, Attribute attributes, Operation operations) {
+    public ClassDTO(String name_mclass, AttributeDTO attributes, OperationDTO operations) {
         this.name_mclass = name_mclass;
-        this.attributes.add(attributes);
-        this.operations.add(operations);
+        this.attributeDTOS.add(attributes);
+        this.operationDTOS.add(operations);
     }
     public ClassDTO(String name_mclass) {
         this.name_mclass = name_mclass;

@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Document
-    public class Attribute {
+    public class AttributeDTO {
         @Id
         private String name_attr;
         private String type;
@@ -42,16 +42,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 //    }
 
     //Constructors
-    public Attribute(String name_attr, String type){
+    public AttributeDTO(String name_attr, String type){
         this.name_attr = name_attr;
         this.type = type;
     }
 
-    public Attribute(String name, String string, ClassDTO mclass) {
+    public AttributeDTO(String name, String string, ClassDTO mclass) {
         this.name_attr = name;
         this.type = string;
 //        this.mclass = mclass;
     }
 
-    public Attribute(){}
+    public AttributeDTO(){}
 }

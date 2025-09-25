@@ -12,21 +12,21 @@ public class MClassFacade {
         UseModelApi useModelApi = new UseModelApi();
         MClass mClass;
         mClass = useModelApi.createClass(aClass.getName_mclass(), false);
-        for (Attribute attribute : aClass.getAttributes()) {
-            useModelApi.createAttribute(mClass.name(), attribute.getName_attr(), attribute.getType());
+        for (AttributeDTO attributeDTO : aClass.getAttributes()) {
+            useModelApi.createAttribute(mClass.name(), attributeDTO.getName_attr(), attributeDTO.getType());
 
         }
         //parameter liste wird noch nicht unterstützt. -> daher new String [][]
-        for (Operation operation : aClass.getOperations()) {
-            useModelApi.createOperation(mClass.name(), operation.getName(), new String[0][0], operation.getBody());
+        for (OperationDTO operationDTO : aClass.getOperations()) {
+            useModelApi.createOperation(mClass.name(), operationDTO.getName(), new String[0][0], operationDTO.getBody());
         }
 
         for(PrePostConditionDTO prePostConditionDTO : aClass.getPrePostConditions()) {
             useModelApi.createPrePostCondition(mClass.name(), prePostConditionDTO.getOperationName(), prePostConditionDTO.getName(), prePostConditionDTO.getCondition(), prePostConditionDTO.isPre());
         }
 
-        for (Invariant invariant: aClass.getInvariants()) {
-            useModelApi.createInvariant(mClass.name(), invariant.getInvName(), invariant.getInvBody(),invariant.isExistential());
+        for (InvariantDTO invariantDTO : aClass.getInvariants()) {
+            useModelApi.createInvariant(mClass.name(), invariantDTO.getInvName(), invariantDTO.getInvBody(), invariantDTO.isExistential());
         }
 
         return aClass;

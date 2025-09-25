@@ -2,18 +2,18 @@ package org.tzi.use.DTO;
 
 import jakarta.persistence.Id;
 
-public class Invariant {
+public class InvariantDTO {
 
     @Id
     private String invName;
     private String invBody;
     private boolean isExistential;
 
-    public Invariant() {
+    public InvariantDTO() {
 
     }
 
-    public Invariant(String invName, String invBody, boolean isExistential) {
+    public InvariantDTO(String invName, String invBody, boolean isExistential) {
         this.invName = invName;
         this.invBody = invBody;
         this.isExistential = isExistential;
