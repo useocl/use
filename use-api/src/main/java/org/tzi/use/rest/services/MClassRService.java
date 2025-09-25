@@ -2,7 +2,7 @@ package org.tzi.use.rest.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tzi.use.MClassFacade;
+import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.repository.ClassRepo;
@@ -17,7 +17,7 @@ public class MClassRService {
     private ClassRepo classRepository;
 
     public ClassDTO saveMClass(ClassDTO aClassDTO) throws MInvalidModelException, UseApiException {
-        MClassFacade.createMClass(aClassDTO);
+        UseModelFacade.createMClass(aClassDTO);
         if(classRepository.findById(aClassDTO.getName_mclass()).isPresent()) {
             // TODO Exception already exists
             throw new UseApiException("Class name already exists");

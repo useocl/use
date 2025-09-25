@@ -6,10 +6,14 @@ import org.tzi.use.DTO.*;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 
-public class MClassFacade {
+public class UseModelFacade {
+    private static final UseModelApi useModelApi = new UseModelApi();
+
+    public static UseModelApi createModel(String modelName) {
+        return new UseModelApi(modelName);
+    }
 
     public static ClassDTO createMClass(ClassDTO aClass) throws UseApiException, MInvalidModelException {
-        UseModelApi useModelApi = new UseModelApi();
         MClass mClass;
         mClass = useModelApi.createClass(aClass.getName_mclass(), false);
         for (AttributeDTO attributeDTO : aClass.getAttributes()) {
