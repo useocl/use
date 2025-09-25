@@ -15,15 +15,15 @@ public class UseAPIApplication {
         SpringApplication.run(UseAPIApplication.class, args);
     }
 
-    @Bean
-    ApplicationRunner init(ClassRepo classRepo) {
-        return args -> {
-            Attribute name = new Attribute("name","String");
-            Operation operation = new Operation("operation()");
-
-            UseClass mclass2 = classRepo.save(new UseClass("TestClass2",name, operation));
-
-
-        };
-    }
+//    @Bean
+//    ApplicationRunner init(ClassRepo classRepo) {
+//        return args -> {
+//            Attribute name = new Attribute("name","String");
+//            Operation operation = new Operation("operation()");
+//
+//            UseClass mclass2 = classRepo.save(new UseClass("TestClass2",name, operation));
+//
+//
+//        };
+//    }
 }
