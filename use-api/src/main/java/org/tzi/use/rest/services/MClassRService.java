@@ -16,12 +16,13 @@ public class MClassRService {
     @Autowired
     private ClassRepo classRepository;
 
+    @Deprecated
     public ClassDTO saveMClass(ClassDTO aClassDTO) throws MInvalidModelException, UseApiException {
         UseModelFacade.createMClass(aClassDTO);
-        if(classRepository.findById(aClassDTO.getName_mclass()).isPresent()) {
-            // TODO Exception already exists
-            throw new UseApiException("Class name already exists");
-        }
+//        if(classRepository.findById(aClassDTO.getName_mclass()).isPresent()) {
+//            // TODO Exception already exists
+//            throw new UseApiException("Class name already exists");
+//        }
         return classRepository.save(aClassDTO);
     }
 
