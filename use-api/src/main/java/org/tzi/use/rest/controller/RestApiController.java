@@ -11,6 +11,7 @@ import org.tzi.use.uml.mm.MInvalidModelException;
 
 import java.util.List;
 
+@Deprecated
 @RestController
 //@RequestMapping("/api") guidelines
 public class RestApiController {

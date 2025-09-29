@@ -13,6 +13,7 @@ public class UseModelFacade {
         return new UseModelApi(modelName);
     }
 
+    @Deprecated
     public static ClassDTO createMClass(ClassDTO aClass) throws UseApiException, MInvalidModelException {
         MClass mClass;
         mClass = useModelApi.createClass(aClass.getName_mclass(), false);
