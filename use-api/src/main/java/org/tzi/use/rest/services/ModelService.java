@@ -9,6 +9,7 @@ import org.tzi.use.api.UseModelApi;
 import org.tzi.use.repository.ModelRepo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,5 +60,14 @@ public class ModelService {
         }
 
         return modelDTO.get();
+    }
+
+    /**
+     * Retrieves all available models
+     *
+     * @return List of all model DTOs
+     */
+    public List<ModelDTO> getAllModels() {
+        return modelRepo.findAll();
     }
 }

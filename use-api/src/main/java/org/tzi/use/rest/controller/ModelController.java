@@ -5,11 +5,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.rest.services.ModelService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -115,6 +119,72 @@ public class ModelController {
         } catch (UseApiException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    /**
+     * Retrieve all models
+     * @return List of all models with HATEOAS links
+     */
+    @GetMapping("/models")
+    public ResponseEntity<CollectionModel<EntityModel<ModelDTO>>> getAllModels() {
+        List<ModelDTO> models = modelService.getAllModels();
+
+        // Convert each model to an EntityModel with links
+        List<EntityModel<ModelDTO>> modelEntities = models.stream()
+            .map(model -> {
+                EntityModel<ModelDTO> entityModel = EntityModel.of(model);
+
+                // Add self link
+                entityModel.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                        .getModelById(model.getId()))
+                        .withSelfRel());
+
+                // Add classes link
+                entityModel.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                        .getModelClasses(model.getId()))
+                        .withRel("classes"));
+
+                // Add associations link
+                entityModel.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                        .getModelAssociations(model.getId()))
+                        .withRel("associations"));
+
+                // Add invariants link
+                entityModel.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                        .getModelInvariants(model.getId()))
+                        .withRel("invariants"));
+
+                // Add pre/post conditions link
+                entityModel.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                        .getModelPrePostConditions(model.getId()))
+                        .withRel("prepostconditions"));
+
+                return entityModel;
+            })
+            .collect(Collectors.toList());
+
+        // Create a CollectionModel (container of EntityModels)
+        CollectionModel<EntityModel<ModelDTO>> collectionModel =
+            CollectionModel.of(modelEntities);
+
+        // Add link to this collection
+        collectionModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getAllModels())
+                .withSelfRel());
+
+        // Add link to create a new model
+        collectionModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .createModel(null))
+                .withRel("create-model"));
+
+        return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
     /**
