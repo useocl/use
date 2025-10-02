@@ -57,6 +57,11 @@
             <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+        <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
@@ -145,27 +150,6 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.github.joelittlejohn.embedmongo</groupId>-->
-<!--                <artifactId>embedmongo-maven-plugin</artifactId>-->
-<!--                <version>0.4.1</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>start-mongo-container</id>-->
-<!--                        <phase>pre-integration-test</phase> &lt;!&ndash; Starts MongoDB before integration tests &ndash;&gt;-->
-<!--                        <goals>-->
-<!--                            <goal>-->
-<!--                                start-->
-<!--                            </goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <imageName>mongo:3.6</imageName> &lt;!&ndash; MongoDB Docker image &ndash;&gt;-->
-<!--                            <containerName>mongo-container</containerName>-->
-<!--                            <ports>-->
-<!--                                <port>27017:27017</port> &lt;!&ndash; Expose MongoDB port &ndash;&gt;-->
-<!--                            </ports>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
 <!--                </executions>-->
 <!--            </plugin>-->
 <!--                        <plugin>-->
