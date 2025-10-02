@@ -6,44 +6,35 @@ import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
+import org.tzi.use.entities.ModelNTT;
+import org.tzi.use.mapper.ModelMapper;
 import org.tzi.use.repository.ModelRepo;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class ModelService {
     @Autowired
     private ModelRepo modelRepo;
+    @Autowired
+    private ModelMapper modelMapper;
 
-    // In-memory storage for model API instances
-    private final Map<String, UseModelApi> modelInstances = new HashMap<>();
 
     /**
      * Creates a new model with the given name
      *
-     * @param modelDTO The DTO containing the model name and other properties
+     * @param modelDTOreq The DTO containing the model name and other properties
      * @return The created model with assigned ID
      * @throws UseApiException If there's an error creating the model
      */
-    public ModelDTO createModel(ModelDTO modelDTO) throws UseApiException {
-        // Generate a unique ID for the model
-        String modelId = UUID.randomUUID().toString();
-
-        // Create a new model using the UseModelFacade
-        UseModelApi modelApi = UseModelFacade.createModel(modelDTO.getName());
-
-        // Store the model instance for future use
-        modelInstances.put(modelId, modelApi);
-
-        // Update the DTO with the ID
-        modelDTO.setId(modelId);
+    public ModelDTO createModel(ModelDTO modelDTOreq) throws UseApiException {
+        ModelNTT tmp_modelntt = modelMapper.toEntity(modelDTOreq);
+        UseModelApi modelApi = UseModelFacade.createModel(tmp_modelntt.getName());
 
         // Save to repository
-        return modelRepo.save(modelDTO);
+        modelRepo.save(tmp_modelntt);
+        return modelMapper.toDTO(tmp_modelntt);
     }
 
     /**
@@ -53,13 +44,10 @@ public class ModelService {
      * @return The model DTO
      * @throws UseApiException If the model is not found
      */
-    public ModelDTO getModelById(String id) throws UseApiException {
-        Optional<ModelDTO> modelDTO = modelRepo.findById(id);
-        if (modelDTO.isEmpty()) {
-            throw new UseApiException("Model not found with ID: " + id);
-        }
-
-        return modelDTO.get();
+    public ModelDTO getModelByName(String name) throws UseApiException {
+        Optional<ModelNTT> tmp_modelntt = modelRepo.findById(name);
+        ModelDTO tmp_modeldto = modelMapper.toDTO(tmp_modelntt.get());
+        return tmp_modeldto;
     }
 
     /**
@@ -68,6 +56,9 @@ public class ModelService {
      * @return List of all model DTOs
      */
     public List<ModelDTO> getAllModels() {
-        return modelRepo.findAll();
+        return modelRepo.findAll()
+                .stream()
+                .map(modelMapper::toDTO)
+                .toList();
     }
 }

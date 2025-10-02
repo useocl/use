@@ -30,7 +30,9 @@ public class ModelController {
     @PostMapping("/model")
     public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO) {
         try {
+            System.out.println("bin ich hier drinne?");
             ModelDTO createdModel = modelService.createModel(modelDTO);
+            System.out.println("und hier?");
 
             // Create an EntityModel (HATEOAS) with the response
             EntityModel<ModelDTO> entityModel = EntityModel.of(createdModel);
@@ -39,31 +41,31 @@ public class ModelController {
             // Link to self
             entityModel.add(WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .getModelById(createdModel.getId()))
+                    .getModelById(createdModel.getName()))
                     .withSelfRel());
 
             // Link to get all classes in this model
             entityModel.add(WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .getModelClasses(createdModel.getId()))
+                    .getModelClasses(createdModel.getName()))
                     .withRel("classes"));
 
             // Link to get all associations in this model
             entityModel.add(WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .getModelAssociations(createdModel.getId()))
+                    .getModelAssociations(createdModel.getName()))
                     .withRel("associations"));
 
             // Link to get all invariants in this model
             entityModel.add(WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .getModelInvariants(createdModel.getId()))
+                    .getModelInvariants(createdModel.getName()))
                     .withRel("invariants"));
 
-            entityModel.add(WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .getModelPrePostConditions(createdModel.getId()))
-                    .withRel("prepostconditions"));
+//            entityModel.add(WebMvcLinkBuilder.linkTo(
+//                WebMvcLinkBuilder.methodOn(ModelController.class)
+//                    .getModelPrePostConditions(createdModel.getId()))
+//                    .withRel("prepostconditions"));
 
             return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
         } catch (UseApiException e) {
@@ -79,7 +81,7 @@ public class ModelController {
     @GetMapping("/model/{id}")
     public ResponseEntity<EntityModel<ModelDTO>> getModelById(@PathVariable String id) {
         try {
-            ModelDTO model = modelService.getModelById(id);
+            ModelDTO model = modelService.getModelByName(id);
 
             // Create an EntityModel (HATEOAS) with the response
             EntityModel<ModelDTO> entityModel = EntityModel.of(model);
@@ -109,11 +111,11 @@ public class ModelController {
                     .getModelInvariants(id))
                     .withRel("invariants"));
 
-            // Link to get all pre/post conditions in this model
-            entityModel.add(WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .getModelPrePostConditions(id))
-                    .withRel("prepostconditions"));
+//            // Link to get all pre/post conditions in this model
+//            entityModel.add(WebMvcLinkBuilder.linkTo(
+//                WebMvcLinkBuilder.methodOn(ModelController.class)
+//                    .getModelPrePostConditions(id))
+//                    .withRel("prepostconditions"));
 
             return new ResponseEntity<>(entityModel, HttpStatus.OK);
         } catch (UseApiException e) {
@@ -137,32 +139,32 @@ public class ModelController {
                 // Add self link
                 entityModel.add(WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(ModelController.class)
-                        .getModelById(model.getId()))
+                        .getModelById(model.getName()))
                         .withSelfRel());
 
                 // Add classes link
                 entityModel.add(WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(ModelController.class)
-                        .getModelClasses(model.getId()))
+                        .getModelClasses(model.getName()))
                         .withRel("classes"));
 
                 // Add associations link
                 entityModel.add(WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(ModelController.class)
-                        .getModelAssociations(model.getId()))
+                        .getModelAssociations(model.getName()))
                         .withRel("associations"));
 
                 // Add invariants link
                 entityModel.add(WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(ModelController.class)
-                        .getModelInvariants(model.getId()))
+                        .getModelInvariants(model.getName()))
                         .withRel("invariants"));
 
-                // Add pre/post conditions link
-                entityModel.add(WebMvcLinkBuilder.linkTo(
-                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                        .getModelPrePostConditions(model.getId()))
-                        .withRel("prepostconditions"));
+//                // Add pre/post conditions link
+//                entityModel.add(WebMvcLinkBuilder.linkTo(
+//                    WebMvcLinkBuilder.methodOn(ModelController.class)
+//                        .getModelPrePostConditions(model.getId()))
+//                        .withRel("prepostconditions"));
 
                 return entityModel;
             })
@@ -214,14 +216,14 @@ public class ModelController {
         return null;
     }
 
-    /**
-     * Placeholder method to retrieve all pre/post conditions in a model
-     */
-    @GetMapping("/model/{id}/prepostconditions")
-    public ResponseEntity<?> getModelPrePostConditions(@PathVariable String id) {
-        // Implementation to be added
-        return null;
-    }
+//    /**
+//     * Placeholder method to retrieve all pre/post conditions in a model
+//     */
+//    @GetMapping("/model/{id}/prepostconditions")
+//    public ResponseEntity<?> getModelPrePostConditions(@PathVariable String id) {
+//        // Implementation to be added
+//        return null;
+//    }
 
     /*
     Endpoints that are needed (prefix /api):
