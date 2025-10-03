@@ -28,7 +28,7 @@ public class ModelService {
      * @return The created model with assigned ID
      * @throws UseApiException If there's an error creating the model
      */
-    public ModelDTO createModel(ModelDTO modelDTOreq) throws UseApiException {
+    public ModelDTO createModel(ModelDTO modelDTOreq){
         ModelNTT tmp_modelntt = modelMapper.toEntity(modelDTOreq);
         UseModelApi modelApi = UseModelFacade.createModel(tmp_modelntt.getName());
 
@@ -40,11 +40,10 @@ public class ModelService {
     /**
      * Retrieves a model by its ID
      *
-     * @param id The ID of the model to retrieve
      * @return The model DTO
      * @throws UseApiException If the model is not found
      */
-    public ModelDTO getModelByName(String name) throws UseApiException {
+    public ModelDTO getModelByName(String name) {
         Optional<ModelNTT> tmp_modelntt = modelRepo.findById(name);
         ModelDTO tmp_modeldto = modelMapper.toDTO(tmp_modelntt.get());
         return tmp_modeldto;

@@ -28,7 +28,7 @@ public class ModelController {
      * @return The created model with HATEOAS links
      */
     @PostMapping("/model")
-    public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO) throws UseApiException {
+    public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO){
         ModelDTO createdModel = modelService.createModel(modelDTO);
 
         // Create an EntityModel (HATEOAS) with the response
@@ -68,7 +68,7 @@ public class ModelController {
      * @return The model with HATEOAS links
      */
     @GetMapping("/model/{id}")
-    public ResponseEntity<EntityModel<ModelDTO>> getModelById(@PathVariable String id) throws UseApiException {
+    public ResponseEntity<EntityModel<ModelDTO>> getModelById(@PathVariable String id) {
         ModelDTO model = modelService.getModelByName(id);
 
         // Create an EntityModel (HATEOAS) with the response
@@ -115,7 +115,6 @@ public class ModelController {
             .map(model -> {
                 EntityModel<ModelDTO> entityModel = EntityModel.of(model);
 
-                try {
                     // Add self link
                     entityModel.add(WebMvcLinkBuilder.linkTo(
                         WebMvcLinkBuilder.methodOn(ModelController.class)
@@ -139,9 +138,7 @@ public class ModelController {
                         WebMvcLinkBuilder.methodOn(ModelController.class)
                             .getModelInvariants(model.getName()))
                             .withRel("invariants"));
-                } catch (UseApiException e) {
-                    // This won't actually be thrown during link building
-                }
+
 
                 return entityModel;
             })
@@ -158,14 +155,11 @@ public class ModelController {
                 .withSelfRel());
 
         // Add link to create a new model
-        try {
             collectionModel.add(WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ModelController.class)
                     .createModel(null))
                     .withRel("create-model"));
-        } catch (UseApiException e) {
-            // This won't actually be thrown during link building
-        }
+
 
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
