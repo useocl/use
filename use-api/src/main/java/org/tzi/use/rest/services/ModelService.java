@@ -1,6 +1,7 @@
 package org.tzi.use.rest.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.UseModelFacade;
@@ -29,10 +30,12 @@ public class ModelService {
      * @throws UseApiException If there's an error creating the model
      */
     public ModelDTO createModel(ModelDTO modelDTOreq){
+        if(modelRepo.findById(modelDTOreq.getName()).isPresent()) {
+            throw new DuplicateKeyException("Model name already exists");
+        }
         ModelNTT tmp_modelntt = modelMapper.toEntity(modelDTOreq);
         UseModelApi modelApi = UseModelFacade.createModel(tmp_modelntt.getName());
 
-        // Save to repository
         modelRepo.save(tmp_modelntt);
         return modelMapper.toDTO(tmp_modelntt);
     }
@@ -45,8 +48,7 @@ public class ModelService {
      */
     public ModelDTO getModelByName(String name) {
         Optional<ModelNTT> tmp_modelntt = modelRepo.findById(name);
-        ModelDTO tmp_modeldto = modelMapper.toDTO(tmp_modelntt.get());
-        return tmp_modeldto;
+        return modelMapper.toDTO(tmp_modelntt.get());
     }
 
     /**
