@@ -10,6 +10,7 @@ public class UseModelFacade {
     private static final UseModelApi useModelApi = new UseModelApi();
 
     public static UseModelApi createModel(String modelName) {
+        useModelApi.createModel(modelName);
         return new UseModelApi(modelName);
     }
 
