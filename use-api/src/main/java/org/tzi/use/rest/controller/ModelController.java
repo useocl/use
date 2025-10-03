@@ -62,10 +62,6 @@ public class ModelController {
                     .getModelInvariants(createdModel.getName()))
                     .withRel("invariants"));
 
-//            entityModel.add(WebMvcLinkBuilder.linkTo(
-//                WebMvcLinkBuilder.methodOn(ModelController.class)
-//                    .getModelPrePostConditions(createdModel.getId()))
-//                    .withRel("prepostconditions"));
 
             return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
         } catch (UseApiException e) {
@@ -111,11 +107,6 @@ public class ModelController {
                     .getModelInvariants(id))
                     .withRel("invariants"));
 
-//            // Link to get all pre/post conditions in this model
-//            entityModel.add(WebMvcLinkBuilder.linkTo(
-//                WebMvcLinkBuilder.methodOn(ModelController.class)
-//                    .getModelPrePostConditions(id))
-//                    .withRel("prepostconditions"));
 
             return new ResponseEntity<>(entityModel, HttpStatus.OK);
         } catch (UseApiException e) {
@@ -160,11 +151,6 @@ public class ModelController {
                         .getModelInvariants(model.getName()))
                         .withRel("invariants"));
 
-//                // Add pre/post conditions link
-//                entityModel.add(WebMvcLinkBuilder.linkTo(
-//                    WebMvcLinkBuilder.methodOn(ModelController.class)
-//                        .getModelPrePostConditions(model.getId()))
-//                        .withRel("prepostconditions"));
 
                 return entityModel;
             })
@@ -215,16 +201,7 @@ public class ModelController {
         // Implementation to be added
         return null;
     }
-
-//    /**
-//     * Placeholder method to retrieve all pre/post conditions in a model
-//     */
-//    @GetMapping("/model/{id}/prepostconditions")
-//    public ResponseEntity<?> getModelPrePostConditions(@PathVariable String id) {
-//        // Implementation to be added
-//        return null;
-//    }
-
+    
     /*
     Endpoints that are needed (prefix /api):
     POST /model - Create a new model
