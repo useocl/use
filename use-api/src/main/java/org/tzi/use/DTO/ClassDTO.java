@@ -13,5 +13,5 @@ public class ClassDTO {
     private String name;
     private List<AttributeDTO> attributes = new ArrayList<>();
     private List<OperationDTO> operations = new ArrayList<>();
-    private List<AssociationDTO> associations = new ArrayList<>();
+//    private List<AssociationDTO> associations = new ArrayList<>();
 }

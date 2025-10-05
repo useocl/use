@@ -20,7 +20,7 @@ public class ModelNTT {
     @Id
     private String name;
     private List<ClassDTO> classes = new ArrayList<>();
-    private List<String> associations = new ArrayList<>();
+//    private List<String> associations = new ArrayList<>();
     private List<String> invariants = new ArrayList<>();
 
     public ModelNTT(String name) {
