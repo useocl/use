@@ -1,12 +1,14 @@
 package org.tzi.use.rest.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.tzi.use.DTO.AssociationDTO;
+import org.tzi.use.DTO.ClassDTO;
+import org.tzi.use.DTO.InvariantDTO;
 import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
-import org.tzi.use.api.UseModelApi;
 import org.tzi.use.entities.ModelNTT;
 import org.tzi.use.mapper.ModelMapper;
 import org.tzi.use.repository.ModelRepo;
@@ -15,11 +17,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ModelService {
-    @Autowired
-    private ModelRepo modelRepo;
-    @Autowired
-    private ModelMapper modelMapper;
+
+    private final ModelRepo modelRepo;
+    private final ModelMapper modelMapper;
 
 
     /**
@@ -29,12 +31,13 @@ public class ModelService {
      * @return The created model with assigned ID
      * @throws UseApiException If there's an error creating the model
      */
-    public ModelDTO createModel(ModelDTO modelDTOreq){
-        if(modelRepo.findById(modelDTOreq.getName()).isPresent()) {
+    public ModelDTO createModel(ModelDTO modelDTOreq) {
+        if (modelRepo.findById(modelDTOreq.getName()).isPresent()) {
             throw new DuplicateKeyException("Model name already exists");
         }
         ModelNTT tmp_modelntt = modelMapper.toEntity(modelDTOreq);
-        UseModelApi modelApi = UseModelFacade.createModel(tmp_modelntt.getName());
+
+        UseModelFacade.createModel(tmp_modelntt.getName());
 
         modelRepo.save(tmp_modelntt);
         return modelMapper.toDTO(tmp_modelntt);
@@ -57,9 +60,21 @@ public class ModelService {
      * @return List of all model DTOs
      */
     public List<ModelDTO> getAllModels() {
-        return modelRepo.findAll()
-                .stream()
-                .map(modelMapper::toDTO)
-                .toList();
+        return modelRepo.findAll().stream().map(modelMapper::toDTO).toList();
+    }
+
+    public List<ClassDTO> getModelClasses() {
+        // implement later
+        return null;
+    }
+
+    public List<AssociationDTO> getModelAssociations() {
+        // implement later
+        return null;
+    }
+
+    public List<InvariantDTO> getModelInvariants () {
+        // implement later
+        return null;
     }
 }
