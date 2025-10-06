@@ -168,12 +168,43 @@ public class ModelController {
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
-    @PostMapping("/model/{name}/class")
-    public ResponseEntity<?> get(@RequestBody ClassDTO classDTO) throws UseApiException {
-        ClassDTO createdClass = modelService.createClass(classDTO);
+    @PostMapping("/model/{modelName}/class")
+    public ResponseEntity<EntityModel<ClassDTO>> createClass(@PathVariable String modelName, @RequestBody ClassDTO classDTO) throws UseApiException {
+        ClassDTO createdClass = modelService.createClass(modelName, classDTO);
 
+        // Wrap the created class in an EntityModel for HATEOAS
+        EntityModel<ClassDTO> entityModel = EntityModel.of(createdClass);
 
-        return null;
+        // Link to the parent model
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelByName(modelName))
+                .withRel("model"));
+
+        // Link to the classes listing for this model (also used as self since there's no single-class GET)
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelClasses(modelName))
+                .withSelfRel());
+
+        // Link to create another class in this model
+        entityModel.add(WebMvcLinkBuilder.linkTo(ModelController.class)
+                .slash("model").slash(modelName).slash("class")
+                .withRel("create-class"));
+
+        // Link to associations for this model
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelAssociations(modelName))
+                .withRel("associations"));
+
+        // Link to invariants for this model
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelInvariants(modelName))
+                .withRel("invariants"));
+
+        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
     /**

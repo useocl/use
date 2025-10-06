@@ -48,15 +48,20 @@ public class ModelService {
         return modelMapper.toDTO(tmp_modelntt);
     }
 
-    public ClassDTO createClass(ClassDTO classDTOreq) throws UseApiException {
+    public ClassDTO createClass(String modelName, ClassDTO classDTOreq) throws UseApiException {
         if(classRepo.findById(classDTOreq.getName()).isPresent()) {
             throw new DuplicateKeyException("Class name already exists");
         }
 
         ClassNTT tmp_classntt = classMapperImpl.toEntity(classDTOreq);
 
+        Optional<ModelNTT> modelOfClass = modelRepo.findById(modelName);
+        //check for modelOfClass presence is nessary? -> I think no because cannot create model via api if it doesn't exist
+
+        modelOfClass.get().addClass(tmp_classntt);
         UseModelFacade.createClass(tmp_classntt.getName());
 
+        modelRepo.save(modelOfClass.get());
         classRepo.save(tmp_classntt);
         return classMapperImpl.toDTO(tmp_classntt);
 
@@ -69,6 +74,7 @@ public class ModelService {
      * @throws UseApiException If the model is not found
      */
     public ModelDTO getModelByName(String name) {
+        //isnt it a better practice to map it to a ntt first and then do the findBy?
         Optional<ModelNTT> tmp_modelntt = modelRepo.findById(name);
         return modelMapper.toDTO(tmp_modelntt.get());
     }
