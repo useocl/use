@@ -8,7 +8,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
+import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.DTO.ModelDTO;
+import org.tzi.use.api.UseApiException;
 import org.tzi.use.rest.services.ModelService;
 
 import java.util.List;
@@ -167,8 +169,10 @@ public class ModelController {
     }
 
     @PostMapping("/model/{name}/class")
-    public ResponseEntity<?> get(@PathVariable String name) {
-        // Implementation to be added
+    public ResponseEntity<?> get(@RequestBody ClassDTO classDTO) throws UseApiException {
+        ClassDTO createdClass = modelService.createClass(classDTO);
+
+
         return null;
     }
 

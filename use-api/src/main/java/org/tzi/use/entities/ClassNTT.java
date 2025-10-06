@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.tzi.use.DTO.AssociationDTO;
 import org.tzi.use.DTO.AttributeDTO;
 import org.tzi.use.DTO.OperationDTO;
 
@@ -20,5 +21,5 @@ public class ClassNTT {
     private String name;
     private List<AttributeDTO> attributes = new ArrayList<>();
     private List<OperationDTO> operations = new ArrayList<>();
-//    private List<AssociationDTO> associations = new ArrayList<>();
+    private List<AssociationDTO> associations = new ArrayList<>();
 }

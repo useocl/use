@@ -1,7 +1,7 @@
 package org.tzi.use.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.tzi.use.DTO.ClassDTO;
+import org.tzi.use.entities.ClassNTT;
 
-public interface ClassRepo extends MongoRepository<ClassDTO, String> {
+public interface ClassRepo extends MongoRepository<ClassNTT, String> {
 }

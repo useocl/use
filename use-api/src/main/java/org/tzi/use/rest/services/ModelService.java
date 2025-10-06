@@ -9,8 +9,11 @@ import org.tzi.use.DTO.InvariantDTO;
 import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
+import org.tzi.use.entities.ClassNTT;
 import org.tzi.use.entities.ModelNTT;
+import org.tzi.use.mapper.ClassMapperImpl;
 import org.tzi.use.mapper.ModelMapper;
+import org.tzi.use.repository.ClassRepo;
 import org.tzi.use.repository.ModelRepo;
 
 import java.util.List;
@@ -21,7 +24,9 @@ import java.util.Optional;
 public class ModelService {
 
     private final ModelRepo modelRepo;
+    private final ClassRepo classRepo;
     private final ModelMapper modelMapper;
+    private final ClassMapperImpl classMapperImpl;
 
 
     /**
@@ -41,6 +46,20 @@ public class ModelService {
 
         modelRepo.save(tmp_modelntt);
         return modelMapper.toDTO(tmp_modelntt);
+    }
+
+    public ClassDTO createClass(ClassDTO classDTOreq) throws UseApiException {
+        if(classRepo.findById(classDTOreq.getName()).isPresent()) {
+            throw new DuplicateKeyException("Class name already exists");
+        }
+
+        ClassNTT tmp_classntt = classMapperImpl.toEntity(classDTOreq);
+
+        UseModelFacade.createClass(tmp_classntt.getName());
+
+        classRepo.save(tmp_classntt);
+        return classMapperImpl.toDTO(tmp_classntt);
+
     }
 
     /**
