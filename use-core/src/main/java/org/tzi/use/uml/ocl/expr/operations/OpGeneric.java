@@ -1,13 +1,15 @@
 package org.tzi.use.uml.ocl.expr.operations;
 
-import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.OperationType;
 import org.tzi.use.util.StringUtil;
 
 import com.google.common.collect.Multimap;
+
+import java.util.stream.IntStream;
 
 /**
  * OpGeneric is the base class of a large group of individual operations. Each
@@ -35,8 +37,64 @@ public abstract class OpGeneric {
 
     public static final int SPECIAL = 3;
 
+    /**
+     * Parameter information containing type checks, types and names.
+     */
+    private ParamInfo paramInfo;
+
+    /**
+     * Checks if the given array of parameters matches the expected method parameters.
+     * <p>
+     * Uses the List of functions located in {@link this#paramInfo}
+     *
+     * @param params An array of Type objects representing the method parameters to be checked.
+     * @return true if the parameters match the expected method parameters, false otherwise.
+     */
+    public boolean match(Type[] params) {
+        if (paramInfo.paramMethodList.size() != params.length) {
+            return false;
+        }
+
+        return IntStream.range(0, params.length)
+                .allMatch(i -> paramInfo.paramMethodList.get(i).method(params[i]));
+    }
+
+    public abstract Type matches(Type[] params);
+
     public abstract String name();
 
+
+    /**
+     * Retrieves information about the operation type and returns an OperationType object.
+     *
+     * @return An OperationType object containing information about the operation.
+     */
+    public final OperationType getOperationType() {
+        // Extracting class name information
+        String[] fullClassName = getClass().toString().split("\\.");
+        String[] className = fullClassName[fullClassName.length - 1].split("_");
+
+        // Creating OperationType object
+        OperationType operationType = new OperationType();
+
+        // Setting operationName and collectionType based on class name
+        if (className.length > 2) { // collections
+            operationType.operationName = className[2];
+            operationType.collectionType = className[1];
+        } else { // everything else
+            operationType.operationName = className[1];
+        }
+
+        // Setting param information if ParamManager is not null
+        if (paramInfo != null) {
+            operationType.param = paramInfo.paramNamesAndTypes.toString();
+        } else {
+            operationType.param = "";
+        }
+
+        return operationType;
+    }
+    
     public boolean isBooleanOperation() {
     	return false;
     }
@@ -44,8 +102,6 @@ public abstract class OpGeneric {
     public abstract int kind();
 
     public abstract boolean isInfixOrPrefix();
-
-    public abstract Type matches(Type params[]);
 
     public String checkWarningUnrelatedTypes(Expression args[]) { return null; }
     
@@ -115,4 +171,8 @@ public abstract class OpGeneric {
 	public static void registerOperation(String name, OpGeneric op, Multimap<String, OpGeneric> opmap) {
 		opmap.put(name, op);
 	}
+
+    public void setParamInfo(ParamInfo paramInfo) {
+        this.paramInfo = paramInfo;
+    }
 }

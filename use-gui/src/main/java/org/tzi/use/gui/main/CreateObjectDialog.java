@@ -176,7 +176,6 @@ class CreateObjectDialog extends JDialog {
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         fParent.createObject(cls, name);
     }
 }
