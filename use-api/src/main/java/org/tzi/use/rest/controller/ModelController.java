@@ -9,6 +9,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import org.tzi.use.DTO.ClassDTO;
+import org.tzi.use.DTO.InvariantDTO;
 import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.rest.services.ModelService;
@@ -290,12 +291,55 @@ public class ModelController {
     }
 
     /**
-     * Placeholder method to retrieve all invariants in a model
+     * Retrieve all invariants in a model.
+     * @param modelName The name of the model.
+     * @return A collection of invariants with HATEOAS links.
      */
-    @GetMapping("/model/{name}/invariants")
-    public ResponseEntity<?> getModelInvariants(@PathVariable String modelName) {
-        // Implementation to be added
-        return null;
+    @GetMapping("/model/{modelName}/invariants")
+    public ResponseEntity<CollectionModel<EntityModel<InvariantDTO>>> getModelInvariants(@PathVariable String modelName) {
+        List<InvariantDTO> invariants = modelService.getModelInvariants(modelName);
+
+        List<EntityModel<InvariantDTO>> invariantEntities = invariants.stream()
+                .map(invariant -> {
+                    EntityModel<InvariantDTO> entityModel = EntityModel.of(invariant);
+
+                    // Link to the parent model
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelByName(modelName))
+                            .withRel("model"));
+
+                    // Self-link to this collection
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelInvariants(modelName))
+                            .withSelfRel());
+
+                    // Link to classes
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelClasses(modelName))
+                            .withRel("classes"));
+
+                    // Link to associations
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelAssociations(modelName))
+                            .withRel("associations"));
+
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
+
+        CollectionModel<EntityModel<InvariantDTO>> collectionModel = CollectionModel.of(invariantEntities);
+
+        // Self-link for the collection
+        collectionModel.add(WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder.methodOn(ModelController.class)
+                                .getModelInvariants(modelName))
+                .withSelfRel());
+
+        return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
     /*
