@@ -210,11 +210,75 @@ public class ModelController {
     /**
      * Placeholder method to retrieve all classes in a model
      */
-    @GetMapping("/model/{name}/classes")
-    public ResponseEntity<?> getModelClasses(@PathVariable String name) {
-        // Implementation to be added
-        return null;
+    @GetMapping("/model/{modelName}/classes")
+    public ResponseEntity<?> getModelClasses(@PathVariable String modelName) {
+        List<ClassDTO> modelClasses = modelService.getModelClasses(modelName);
+
+        // Convert each class to an EntityModel with links
+        List<EntityModel<ClassDTO>> classEntities = modelClasses.stream()
+                .map(classDTO -> {
+                    EntityModel<ClassDTO> entityModel = EntityModel.of(classDTO);
+
+                    // Link to the parent model
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelByName(modelName))
+                            .withRel("model"));
+
+                    // Link to this classes collection (self)
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelClasses(modelName))
+                            .withSelfRel());
+
+                    // Link to create another class
+                    try {
+                        entityModel.add(WebMvcLinkBuilder.linkTo(
+                                        WebMvcLinkBuilder.methodOn(ModelController.class)
+                                                .createClass(modelName, null))
+                                .withRel("create-class"));
+                    } catch (UseApiException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    // Link to associations
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelAssociations(modelName))
+                            .withRel("associations"));
+
+                    // Link to invariants
+                    entityModel.add(WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder.methodOn(ModelController.class)
+                                            .getModelInvariants(modelName))
+                            .withRel("invariants"));
+
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
+
+        // Create a CollectionModel
+        CollectionModel<EntityModel<ClassDTO>> collectionModel = CollectionModel.of(classEntities);
+
+        // Add self-link to the collection
+        collectionModel.add(WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder.methodOn(ModelController.class)
+                                .getModelClasses(modelName))
+                .withSelfRel());
+
+        // Add link to create a new class
+        try {
+            collectionModel.add(WebMvcLinkBuilder.linkTo(
+                            WebMvcLinkBuilder.methodOn(ModelController.class)
+                                    .createClass(modelName, null))
+                    .withRel("create-class"));
+        } catch (UseApiException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
+
 
     @Deprecated
     /**

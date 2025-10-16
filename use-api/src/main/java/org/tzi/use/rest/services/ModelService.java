@@ -88,9 +88,11 @@ public class ModelService {
         return modelRepo.findAll().stream().map(modelMapper::toDTO).toList();
     }
 
-    public List<ClassDTO> getModelClasses() {
-        // implement later
-        return null;
+    public List<ClassDTO> getModelClasses(String modelName){
+        Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
+            return modelOpt.get().getClasses().stream()
+                    .map(classMapperImpl::toDTO)
+                    .toList();
     }
 
     public List<AssociationDTO> getModelAssociations() {
