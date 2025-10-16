@@ -280,9 +280,7 @@ public class ModelController {
     }
 
 
-    @Deprecated
     /**
-     * Deprecated for now
      * Placeholder method to retrieve all associations in a model
      */
     @GetMapping("/model/{name}/associations")
