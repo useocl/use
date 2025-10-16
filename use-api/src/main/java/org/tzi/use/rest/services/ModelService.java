@@ -10,6 +10,7 @@ import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.entities.ClassNTT;
+import org.tzi.use.entities.InvariantNTT;
 import org.tzi.use.entities.ModelNTT;
 import org.tzi.use.mapper.ClassMapperImpl;
 import org.tzi.use.mapper.InvariantMapperImpl;
@@ -60,8 +61,9 @@ public class ModelService {
         Optional<ModelNTT> modelOfClass = modelRepo.findById(modelName);
         //check for modelOfClass presence is nessary? -> I think no because cannot create model via api if it doesn't exist
 
-        modelOfClass.get().addClass(tmp_classntt);
+        // if the class has attributed and operations this would not be enough
         UseModelFacade.createClass(tmp_classntt.getName());
+        modelOfClass.get().addClass(tmp_classntt);
 
         modelRepo.save(modelOfClass.get());
         classRepo.save(tmp_classntt);
@@ -107,5 +109,17 @@ public class ModelService {
         return modelOpt.get().getInvariants().stream()
                 .map(invariantMapperImpl::toDTO)
                 .toList();
+    }
+
+    public InvariantDTO createInvariant(String modelName, InvariantDTO invariantDTOreq, String className) throws UseApiException {
+        InvariantNTT tmp_invariantntt = invariantMapperImpl.toEntity(invariantDTOreq);
+
+        Optional<ModelNTT> modelOfInvariant = modelRepo.findById(modelName);
+
+        UseModelFacade.createInvariant(invariantDTOreq, className);
+        modelOfInvariant.get().getInvariants().add(tmp_invariantntt);
+        //TODO
+        modelRepo.save(modelOfInvariant.get());
+        return invariantMapperImpl.toDTO(tmp_invariantntt);
     }
 }

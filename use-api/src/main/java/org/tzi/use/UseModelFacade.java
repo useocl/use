@@ -18,4 +18,8 @@ public class UseModelFacade {
     public static void createClass(String className) throws UseApiException {
             useModelApi.createClass(className, false);
     }
+
+    public static void createInvariant(InvariantDTO invariantDTOreq, String className) throws UseApiException {
+        useModelApi.createInvariant(invariantDTOreq.getInvName(),className, invariantDTOreq.getInvBody(), invariantDTOreq.isExistential());
+    }
 }

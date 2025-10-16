@@ -342,6 +342,45 @@ public class ModelController {
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
+    @PostMapping("/model/{modelName}/{className}/invariant")
+    public ResponseEntity<EntityModel<InvariantDTO>> createInvariant(@PathVariable String modelName,@PathVariable String className, @RequestBody InvariantDTO invariantDTO) throws UseApiException {
+        InvariantDTO createdInvariant = modelService.createInvariant(modelName, invariantDTO, className);
+
+        // Wrap the created invariant in an EntityModel for HATEOAS
+        EntityModel<InvariantDTO> entityModel = EntityModel.of(createdInvariant);
+
+        // Link to the parent model
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelByName(modelName))
+                .withRel("model"));
+
+        // Link to the invariants listing for this model (also used as self since there's no single-invariant GET)
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelInvariants(modelName))
+                .withSelfRel());
+
+        // Link to create another invariant in this model
+        entityModel.add(WebMvcLinkBuilder.linkTo(ModelController.class)
+                .slash("model").slash(modelName).slash("invariant")
+                .withRel("create-invariant"));
+
+        // Link to classes for this model
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelClasses(modelName))
+                .withRel("classes"));
+
+        // Link to associations for this model
+        entityModel.add(WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(ModelController.class)
+                .getModelAssociations(modelName))
+                .withRel("associations"));
+
+        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
+    }
+
     /*
     Endpoints that are needed (prefix /api):
     POST /model - Create a new model :check:
