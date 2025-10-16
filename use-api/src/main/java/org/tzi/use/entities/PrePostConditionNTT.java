@@ -1,19 +1,18 @@
-package org.tzi.use.DTO;
+package org.tzi.use.entities;
 
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document("prepostcondition")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class PrePostConditionDTO {
-
+@NoArgsConstructor
+public class PrePostConditionNTT {
     private String operationName;
     private String name;
     private String condition;
     private boolean isPre;
-
 }

@@ -20,7 +20,7 @@ public class ModelNTT {
     private String name;
     private List<ClassNTT> classes = new ArrayList<>();
 //    private List<String> associations = new ArrayList<>();
-    private List<String> invariants = new ArrayList<>();
+    private List<InvariantNTT> invariants = new ArrayList<>();
 
     public ModelNTT(String name) {
         this.name = name;
@@ -35,16 +35,6 @@ public class ModelNTT {
             this.classes = new ArrayList<>();
         }
         this.classes.add(classDTO);
-    }
-
-    public void addInvariant(String invariant) {
-        if (invariant == null || invariant.trim().isEmpty()) {
-            return;
-        }
-        if (this.invariants == null) {
-            this.invariants = new ArrayList<>();
-        }
-        this.invariants.add(invariant);
     }
 
 }
