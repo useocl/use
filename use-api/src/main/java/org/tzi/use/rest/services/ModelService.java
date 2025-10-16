@@ -12,6 +12,7 @@ import org.tzi.use.api.UseApiException;
 import org.tzi.use.entities.ClassNTT;
 import org.tzi.use.entities.ModelNTT;
 import org.tzi.use.mapper.ClassMapperImpl;
+import org.tzi.use.mapper.InvariantMapperImpl;
 import org.tzi.use.mapper.ModelMapper;
 import org.tzi.use.repository.ClassRepo;
 import org.tzi.use.repository.ModelRepo;
@@ -27,6 +28,7 @@ public class ModelService {
     private final ClassRepo classRepo;
     private final ModelMapper modelMapper;
     private final ClassMapperImpl classMapperImpl;
+    private final InvariantMapperImpl invariantMapperImpl;
 
 
     /**
@@ -100,8 +102,10 @@ public class ModelService {
         return null;
     }
 
-    public List<InvariantDTO> getModelInvariants () {
-        // implement later
-        return null;
+    public List<InvariantDTO> getModelInvariants (String modelName) {
+        Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
+        return modelOpt.get().getInvariants().stream()
+                .map(invariantMapperImpl::toDTO)
+                .toList();
     }
 }

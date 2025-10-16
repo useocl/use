@@ -295,7 +295,7 @@ public class ModelController {
      * Placeholder method to retrieve all invariants in a model
      */
     @GetMapping("/model/{name}/invariants")
-    public ResponseEntity<?> getModelInvariants(@PathVariable String name) {
+    public ResponseEntity<?> getModelInvariants(@PathVariable String modelName) {
         // Implementation to be added
         return null;
     }
