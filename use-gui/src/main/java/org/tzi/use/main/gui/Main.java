@@ -23,7 +23,6 @@ public class Main {
 
         if (useJavaFX) {
             MainJavaFX.launchApp(cleanedArgs.toArray(new String[0]));
-            MainJavaFX.launchApp(args);
         } else {
             new MainSwing().launch(cleanedArgs.toArray(new String[0]));
         }
