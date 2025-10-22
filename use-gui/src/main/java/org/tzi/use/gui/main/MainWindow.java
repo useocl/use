@@ -115,10 +115,10 @@ public class MainWindow extends JFrame {
     private final JMenuItem fMenuItemEditUndo;
     private final JMenuItem fMenuItemEditRedo;
 
-	private final JToolBar fToolBar;
-	private final JMenuBar fMenuBar;
-	private final JMenu statemachineMenu;
-	
+    private final JToolBar fToolBar;
+    private final JMenuBar fMenuBar;
+    private final JMenu statemachineMenu;
+
     private final JButton fBtnEditUndo;
     private final JButton fBtnEditRedo;
 
@@ -127,11 +127,13 @@ public class MainWindow extends JFrame {
     private final List<ClassDiagramView> classDiagrams = new ArrayList<ClassDiagramView>();
     private final List<NewObjectDiagramView> objectDiagrams = new ArrayList<NewObjectDiagramView>();
     private final List<CommunicationDiagramView> communicationDiagrams = new ArrayList<CommunicationDiagramView>();
-    
+
     private static final String DEFAULT_UNDO_TEXT = "Undo last statement";
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
     private static final String STATE_EVAL_OCL = "Evaluate OCL expression";
+
+    private static Boolean javaFxCall = false;
 
     private PageFormat fPageFormat;
 
@@ -145,95 +147,95 @@ public class MainWindow extends JFrame {
         addToToolBar(toolBar, tb, toolTip);
         return tb;
     }
-    
+
     private AbstractButton addToToolBar(JToolBar toolBar, AbstractButton button, String toolTip) {
-    	toolBar.add(button);
-    	button.setMaximumSize(new Dimension(30, 30));
-    	button.setToolTipText(toolTip);
-    	button.setText("");
-    	return button;
+        toolBar.add(button);
+        button.setMaximumSize(new Dimension(30, 30));
+        button.setToolTipText(toolTip);
+        button.setText("");
+        return button;
     }
 
-	private static IRuntime fPluginRuntime;
- 
-	private Map<Map<String, String>, PluginActionProxy> pluginActions = 
-		new HashMap<Map<String, String>, PluginActionProxy>();
+    private static IRuntime fPluginRuntime;
 
-	MainWindow(Session session, IRuntime pluginRuntime) {
+    private Map<Map<String, String>, PluginActionProxy> pluginActions =
+            new HashMap<Map<String, String>, PluginActionProxy>();
+
+    MainWindow(Session session, IRuntime pluginRuntime) {
         super("USE");
-		if (pluginRuntime != null) {
-			fPluginRuntime = pluginRuntime;
-		}
+        if (pluginRuntime != null) {
+            fPluginRuntime = pluginRuntime;
+        }
         fInstance = this;
         fSession = session;
 
         // create toolbar
-		fToolBar = new JToolBar();
-		fToolBar.setFloatable(false);
-		
-		fToolBar.addSeparator();
-		
-		addToToolBar(fToolBar, fActionFileOpenSpec,  "Open specification");
-		addToToolBar(fToolBar, fActionFileReload,  "Reload current specification");
-		
-		fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
-		
-		addToToolBar(fToolBar, fActionFilePrint,     "Print diagram");
-		addToToolBar(fToolBar, fActionFilePrintView, "Print view");
-		addToToolBar(fToolBar, fActionFileExportView, "Export content of view as PDF");
-		
-		fToolBar.addSeparator();
+        fToolBar = new JToolBar();
+        fToolBar.setFloatable(false);
 
-		fBtnEditUndo = addToToolBar(fToolBar, fActionEditUndo, DEFAULT_UNDO_TEXT);
-		fBtnEditRedo = addToToolBar(fToolBar, fActionEditRedo, DEFAULT_REDO_TEXT);
-		
-		fToolBar.addSeparator();
-		
-		addToToolBar(fToolBar, fActionStateEvalOCL, STATE_EVAL_OCL);
-		
-		fToolBar.addSeparator();
+        fToolBar.addSeparator();
 
-		addToToolBar(fToolBar, fActionViewCreateClassDiagram,
+        addToToolBar(fToolBar, fActionFileOpenSpec,  "Open specification");
+        addToToolBar(fToolBar, fActionFileReload,  "Reload current specification");
+
+        fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
+
+        addToToolBar(fToolBar, fActionFilePrint,     "Print diagram");
+        addToToolBar(fToolBar, fActionFilePrintView, "Print view");
+        addToToolBar(fToolBar, fActionFileExportView, "Export content of view as PDF");
+
+        fToolBar.addSeparator();
+
+        fBtnEditUndo = addToToolBar(fToolBar, fActionEditUndo, DEFAULT_UNDO_TEXT);
+        fBtnEditRedo = addToToolBar(fToolBar, fActionEditRedo, DEFAULT_REDO_TEXT);
+
+        fToolBar.addSeparator();
+
+        addToToolBar(fToolBar, fActionStateEvalOCL, STATE_EVAL_OCL);
+
+        fToolBar.addSeparator();
+
+        addToToolBar(fToolBar, fActionViewCreateClassDiagram,
                 "Create class diagram view");
-		addToToolBar(fToolBar, fStateMachineDropdown,
-				"Create statemachine diagram view");
-		addToToolBar(fToolBar, fActionViewCreateObjectDiagram,
+        addToToolBar(fToolBar, fStateMachineDropdown,
+                "Create statemachine diagram view");
+        addToToolBar(fToolBar, fActionViewCreateObjectDiagram,
                 "Create object diagram view");
-		addToToolBar(fToolBar, fActionViewCreateClassInvariant,
+        addToToolBar(fToolBar, fActionViewCreateClassInvariant,
                 "Create class invariant view");
-		addToToolBar(fToolBar, fActionViewCreateObjectCount,
+        addToToolBar(fToolBar, fActionViewCreateObjectCount,
                 "Create object count view");
-		addToToolBar(fToolBar, fActionViewCreateLinkCount,
+        addToToolBar(fToolBar, fActionViewCreateLinkCount,
                 "Create link count view");
-		addToToolBar(fToolBar, fActionViewCreateStateEvolution,
+        addToToolBar(fToolBar, fActionViewCreateStateEvolution,
                 "Create state evolution view");
         addToToolBar(
-				fToolBar,
+                fToolBar,
                 fActionViewCreateObjectProperties,
                 "Create object properties view <br>"
                         + "(double click on object to show properties for a specific object)");
-		addToToolBar(fToolBar, fActionViewCreateClassExtent,
+        addToToolBar(fToolBar, fActionViewCreateClassExtent,
                 "Create class extent view");
-		addToToolBar(fToolBar, fActionViewCreateSequenceDiagram,
+        addToToolBar(fToolBar, fActionViewCreateSequenceDiagram,
                 "Create sequence diagram view");
-		addToToolBar(fToolBar, fActionViewCreateCommunicationDiagram,
-	                "Create communication diagram view");
-		addToToolBar(fToolBar, fActionViewCreateCallStack,
+        addToToolBar(fToolBar, fActionViewCreateCommunicationDiagram,
+                "Create communication diagram view");
+        addToToolBar(fToolBar, fActionViewCreateCallStack,
                 "Create call stack view");
-		addToToolBar(fToolBar, fActionViewCreateCommandList,
+        addToToolBar(fToolBar, fActionViewCreateCommandList,
                 "Create command list view");
         // addToToolBar(toolBar, fActionViewCreateStateTree, "Create state tree
         // view");
 
         // create the menubar
-		fMenuBar = new JMenuBar();
-		getRootPane().setJMenuBar(fMenuBar);
+        fMenuBar = new JMenuBar();
+        getRootPane().setJMenuBar(fMenuBar);
 
         // `File' submenu
         JMenuItem mi;
         JMenu menu = new JMenu("File");
         menu.setMnemonic('F');
-		fMenuBar.add(menu);
+        fMenuBar.add(menu);
 
         mi = menu.add(fActionFileOpenSpec);
         mi.setAccelerator(KeyStroke
@@ -241,8 +243,8 @@ public class MainWindow extends JFrame {
         mi.setMnemonic('O');
 
         {
-			recentFilesMenu = new JMenu("Open recent specification");
-			recentFilesMenu.setIcon(getIcon("document-open.png"));
+            recentFilesMenu = new JMenu("Open recent specification");
+            recentFilesMenu.setIcon(getIcon("document-open.png"));
 
             clearRecentFiles = new JMenuItem("Clear recent specifications");
             clearRecentFiles.setEnabled(!Options.getRecentFiles("use").isEmpty());
@@ -252,17 +254,17 @@ public class MainWindow extends JFrame {
                 }
             });
 
-        	menu.add(recentFilesMenu);
-        	
-        	setRecentFiles();
-        	
-        	Options.getRecentFiles().addObserver(new RecentItemsObserver() {
-        		@Override
-				public void onRecentItemChange(RecentItems src) {
-					setRecentFiles();
-					fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
-				}
-			});
+            menu.add(recentFilesMenu);
+
+            setRecentFiles();
+
+            Options.getRecentFiles().addObserver(new RecentItemsObserver() {
+                @Override
+                public void onRecentItemChange(RecentItems src) {
+                    setRecentFiles();
+                    fActionFileReload.setEnabled(!Options.getRecentFiles().isEmpty());
+                }
+            });
         }
 
         mi = menu.add(fActionFileReload);
@@ -280,7 +282,7 @@ public class MainWindow extends JFrame {
         mi = menu.add(fActionFilePrint);
         mi = menu.add(fActionFilePrintView);
         mi = menu.add(fActionFileExportViewAll);
-        
+
         menu.addSeparator();
         mi = menu.add(fActionFileExit);
         mi.setMnemonic('x');
@@ -290,22 +292,22 @@ public class MainWindow extends JFrame {
         // `Edit' submenu
         menu = new JMenu("Edit");
         menu.setMnemonic('E');
-		fMenuBar.add(menu);
+        fMenuBar.add(menu);
 
         fMenuItemEditUndo = menu.add(fActionEditUndo);
         fMenuItemEditUndo.setMnemonic('U');
         fMenuItemEditUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-        		InputEvent.CTRL_DOWN_MASK));
-        
+                InputEvent.CTRL_DOWN_MASK));
+
         fMenuItemEditRedo = menu.add(fActionEditRedo);
         fMenuItemEditRedo.setMnemonic('R');
         fMenuItemEditRedo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-        		InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
-        
+                InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+
         // `State' submenu
         menu = new JMenu("State");
         menu.setMnemonic('S');
-		fMenuBar.add(menu);
+        fMenuBar.add(menu);
 
         mi = menu.add(fActionStateCreateObject);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
@@ -331,29 +333,29 @@ public class MainWindow extends JFrame {
         fCbMenuItemCheckValidTransitions.setMnemonic('t');
         fCbMenuItemCheckValidTransitions.setSelected(Options.getCheckTransitions());
         fCbMenuItemCheckValidTransitions.addChangeListener(new javax.swing.event.ChangeListener() {
-			@Override
-			public void stateChanged(javax.swing.event.ChangeEvent e) {
-				Options.setCheckTransitions(((JCheckBoxMenuItem)e.getSource()).isSelected());
-			}
-		});
+            @Override
+            public void stateChanged(javax.swing.event.ChangeEvent e) {
+                Options.setCheckTransitions(((JCheckBoxMenuItem)e.getSource()).isSelected());
+            }
+        });
         menu.add(fCbMenuItemCheckValidTransitions);
-        
-        
+
+
         JCheckBoxMenuItem fCbMenuItemCheckStateInvariants = new JCheckBoxMenuItem(
                 "Check state invariants after every change");
         fCbMenuItemCheckStateInvariants.setMnemonic('i');
         fCbMenuItemCheckStateInvariants.setSelected(Options.getCheckStateInvariants());
         fCbMenuItemCheckStateInvariants.addChangeListener(new javax.swing.event.ChangeListener() {
-			@Override
-			public void stateChanged(javax.swing.event.ChangeEvent e) {
-				Options.setCheckStateInvariants(((JCheckBoxMenuItem)e.getSource()).isSelected());
-			}
-		});
+            @Override
+            public void stateChanged(javax.swing.event.ChangeEvent e) {
+                Options.setCheckStateInvariants(((JCheckBoxMenuItem)e.getSource()).isSelected());
+            }
+        });
         menu.add(fCbMenuItemCheckStateInvariants);
-        
+
         menu.add(fActionDetermineStates);
         menu.add(fActionCheckStateInvariants);
-        
+
         menu.add(new JSeparator());
         mi = menu.add(fActionStateReset);
         mi.setMnemonic('R');
@@ -361,19 +363,19 @@ public class MainWindow extends JFrame {
         // `View' submenu
         menu = new JMenu("View");
         menu.setMnemonic('V');
-		fMenuBar.add(menu);
+        fMenuBar.add(menu);
 
         JMenu submenu = new JMenu("Create View");
         submenu.setMnemonic('C');
         menu.add(submenu);
         mi = submenu.add(fActionViewCreateClassDiagram);
         mi.setMnemonic('V');
-        
+
         statemachineMenu = new JMenu("State machine diagram");
         statemachineMenu.setIcon(getIcon("Diagram.gif"));
         createStateMachineMenuEntries(statemachineMenu);
         submenu.add(statemachineMenu);
-        
+
         mi = submenu.add(fActionViewCreateObjectDiagram);
         mi.setMnemonic('d');
         mi = submenu.add(fActionViewCreateClassInvariant);
@@ -397,7 +399,7 @@ public class MainWindow extends JFrame {
         mi = submenu.add(fActionViewCreateCommandList);
         mi.setMnemonic('i');
         mi = submenu.add(fActionViewAssociationInfo);
-        
+
         menu.addSeparator();
         mi = menu.add(fActionViewTile);
         mi.setMnemonic('T');
@@ -405,7 +407,7 @@ public class MainWindow extends JFrame {
         mi.setMnemonic('a');
 
         // create the browser panel
-		fModelBrowser = new ModelBrowser(this, fPluginRuntime);
+        fModelBrowser = new ModelBrowser(this, fPluginRuntime);
 
         // create the desktop
         fDesk = new JDesktopPane();
@@ -422,7 +424,7 @@ public class MainWindow extends JFrame {
         // put the three panels into split panes
         JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 fModelBrowser, fDesk);
-        sp.setDividerLocation((int) (0.25 * Options.DEFAULT_WIDTH));//FIXME 200); 
+        sp.setDividerLocation((int) (0.25 * Options.DEFAULT_WIDTH));//FIXME 200);
         fTopSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, fLogPanel);
         fTopSplitPane.setDividerLocation((int) (0.72 * Options.DEFAULT_HEIGHT));//FIXME 400);
         fTopSplitPane.setOneTouchExpandable(true);
@@ -432,140 +434,140 @@ public class MainWindow extends JFrame {
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
         contentPane.setPreferredSize(new Dimension(Options.DEFAULT_WIDTH, Options.DEFAULT_HEIGHT));// FIXME 800, 550));
-		contentPane.add(fToolBar, BorderLayout.NORTH);
+        contentPane.add(fToolBar, BorderLayout.NORTH);
         contentPane.add(fTopSplitPane, BorderLayout.CENTER);
         contentPane.add(fStatusBar, BorderLayout.SOUTH);
         setContentPane(contentPane);
 
         addWindowListener(new WindowAdapter() {
             @Override
-			public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent e) {
                 close();
             }
         });
 
         setBounds(10, 20, 900, 700);
 
-		// GUI Plugin integration
-		if (Options.doPLUGIN) {
-			MainWindow.instance().fToolBar.addSeparator();
-			// `Plugins' submenu
-			menu = new JMenu("Plugins");
-			menu.setMnemonic('P');
-			this.fMenuBar.add(menu);
+        // GUI Plugin integration
+        if (Options.doPLUGIN) {
+            MainWindow.instance().fToolBar.addSeparator();
+            // `Plugins' submenu
+            menu = new JMenu("Plugins");
+            menu.setMnemonic('P');
+            this.fMenuBar.add(menu);
 
-			IPluginActionExtensionPoint actionExtensionPoint = (IPluginActionExtensionPoint) fPluginRuntime
-					.getExtensionPoint("action");
+            IPluginActionExtensionPoint actionExtensionPoint = (IPluginActionExtensionPoint) fPluginRuntime
+                    .getExtensionPoint("action");
 
-			this.pluginActions = actionExtensionPoint.createPluginActions(session, this);
+            this.pluginActions = actionExtensionPoint.createPluginActions(session, this);
 
-			Set<Map.Entry<Map<String, String>, PluginActionProxy>> pluginActionSet = this.pluginActions.entrySet();
+            Set<Map.Entry<Map<String, String>, PluginActionProxy>> pluginActionSet = this.pluginActions.entrySet();
 
-			for (Map.Entry<Map<String, String>, PluginActionProxy> currentActionMapEntry : pluginActionSet) {
-				Map<String, String> currentActionDescMap = currentActionMapEntry.getKey();
-				AbstractAction currentAction = currentActionMapEntry.getValue();
-				addToToolBar(this.fToolBar, currentAction, currentActionDescMap.get("tooltip"));
+            for (Map.Entry<Map<String, String>, PluginActionProxy> currentActionMapEntry : pluginActionSet) {
+                Map<String, String> currentActionDescMap = currentActionMapEntry.getKey();
+                AbstractAction currentAction = currentActionMapEntry.getValue();
+                addToToolBar(this.fToolBar, currentAction, currentActionDescMap.get("tooltip"));
 
-				// Creating submenu and menu entries
-				if (currentActionDescMap.get("menu").toString() == null) {
-					// No submenu needed
-					Log.debug("Adding ["
-							+ currentActionDescMap.get("menuitem").toString()
-							+ "] to plugins menu");
-					menu.add(currentAction);
-				} else {
-					// Check if submenu already exists
-					Component[] menuItems = menu.getMenuComponents();
-					boolean createNewMenu = true;
-					Log
-							.debug("Menu item length was [" + menuItems.length
-									+ "]");
-					for (int iterateMenuItems = 0; iterateMenuItems < menuItems.length;) {
-						Log.debug("Menu item is of type ["
-								+ menuItems[iterateMenuItems].getClass() + "]");
-						if (menuItems[iterateMenuItems] instanceof JMenu) {
-							JMenu currentMenu = (JMenu) menuItems[iterateMenuItems];
-							Log.debug("Compairing menu ["
-									+ currentMenu.getText()
-									+ "] and ["
-									+ currentActionDescMap.get("menu")
-											.toString() + "]");
-							if (currentMenu.getText()
-									.equals(
-											currentActionDescMap.get("menu")
-													.toString())) {
-								Log.debug("Adding ["
-										+ currentActionDescMap.get("menuitem")
-												.toString() + "] to submenu ["
-										+ currentMenu.getText() + "]");
-								currentMenu.add(currentAction);
-								createNewMenu = false;
-								break;
-							}
-						}
-						iterateMenuItems++;
-					}
-					if (createNewMenu) {
-						Log.debug("Creating new Menu ["
-								+ currentActionDescMap.get("menuitem")
-										.toString() + "]");
-						JMenu pluginSubmenu = new JMenu(currentActionDescMap
-								.get("menu").toString());
-						Log.debug("Adding ["
-								+ currentActionDescMap.get("menu").toString()
-								+ "] to new submenu ["
-								+ pluginSubmenu.getText() + "]");
-						pluginSubmenu.add(currentAction);
-						menu.add(pluginSubmenu);
-					}
-				}
-			}
-		}
+                // Creating submenu and menu entries
+                if (currentActionDescMap.get("menu").toString() == null) {
+                    // No submenu needed
+                    Log.debug("Adding ["
+                            + currentActionDescMap.get("menuitem").toString()
+                            + "] to plugins menu");
+                    menu.add(currentAction);
+                } else {
+                    // Check if submenu already exists
+                    Component[] menuItems = menu.getMenuComponents();
+                    boolean createNewMenu = true;
+                    Log
+                            .debug("Menu item length was [" + menuItems.length
+                                    + "]");
+                    for (int iterateMenuItems = 0; iterateMenuItems < menuItems.length;) {
+                        Log.debug("Menu item is of type ["
+                                + menuItems[iterateMenuItems].getClass() + "]");
+                        if (menuItems[iterateMenuItems] instanceof JMenu) {
+                            JMenu currentMenu = (JMenu) menuItems[iterateMenuItems];
+                            Log.debug("Compairing menu ["
+                                    + currentMenu.getText()
+                                    + "] and ["
+                                    + currentActionDescMap.get("menu")
+                                    .toString() + "]");
+                            if (currentMenu.getText()
+                                    .equals(
+                                            currentActionDescMap.get("menu")
+                                                    .toString())) {
+                                Log.debug("Adding ["
+                                        + currentActionDescMap.get("menuitem")
+                                        .toString() + "] to submenu ["
+                                        + currentMenu.getText() + "]");
+                                currentMenu.add(currentAction);
+                                createNewMenu = false;
+                                break;
+                            }
+                        }
+                        iterateMenuItems++;
+                    }
+                    if (createNewMenu) {
+                        Log.debug("Creating new Menu ["
+                                + currentActionDescMap.get("menuitem")
+                                .toString() + "]");
+                        JMenu pluginSubmenu = new JMenu(currentActionDescMap
+                                .get("menu").toString());
+                        Log.debug("Adding ["
+                                + currentActionDescMap.get("menu").toString()
+                                + "] to new submenu ["
+                                + pluginSubmenu.getText() + "]");
+                        pluginSubmenu.add(currentAction);
+                        menu.add(pluginSubmenu);
+                    }
+                }
+            }
+        }
 
-		// -- GUI Plugin integration (end)
+        // -- GUI Plugin integration (end)
 
-		// `Help' submenu
-		menu = new JMenu("Help");
-		menu.setMnemonic('H');
-		fMenuBar.add(menu);
-		
-		// not yet implemented in swing: menuBar.setHelpMenu(menu);
-		mi = menu.add(fActionHelpAbout);
-		mi.setMnemonic('A');
+        // `Help' submenu
+        menu = new JMenu("Help");
+        menu.setMnemonic('H');
+        fMenuBar.add(menu);
+
+        // not yet implemented in swing: menuBar.setHelpMenu(menu);
+        mi = menu.add(fActionHelpAbout);
+        mi.setMnemonic('A');
 
         // initialize application state to current system
         sessionChanged();
-        
-     // the session may be changed from the shell
+
+        // the session may be changed from the shell
         fSession.addChangeListener(new ChangeListener() {
             @Override
-			public void stateChanged(ChangeEvent e) {
+            public void stateChanged(ChangeEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
-					public void run() {
-                    	sessionChanged();
+                    public void run() {
+                        sessionChanged();
                     }
                 });
             }
-        }); 
-        
+        });
+
         /**
          * for soil statements
          */
         fSession.addEvaluatedStatementListener(
-        		new Session.EvaluatedStatementListener(){
-        			@Override
-        			public void evaluatedStatement(EvaluatedStatement event) {
-        				SwingUtilities.invokeLater(new Runnable(){
-        					@Override
-        					public void run() {
-        						setUndoRedoButtons();
-        					}
-        				});
-        			}});
+                new Session.EvaluatedStatementListener(){
+                    @Override
+                    public void evaluatedStatement(EvaluatedStatement event) {
+                        SwingUtilities.invokeLater(new Runnable(){
+                            @Override
+                            public void run() {
+                                setUndoRedoButtons();
+                            }
+                        });
+                    }});
     }
-	
-	public void createSequenceDiagram(VisibleDataManager visibleDataManger) {
+
+    public void createSequenceDiagram(VisibleDataManager visibleDataManger) {
         SequenceDiagramView sv = SequenceDiagramView.createSequenceDiagramView(
                 fSession.system(),
                 MainWindow.this,
@@ -610,12 +612,12 @@ public class MainWindow extends JFrame {
         communicationDiagrams.add(cdv);
     }
 
-	private void setRecentFiles() {
-		recentFilesMenu.removeAll();
-		
-		for (Path recent : Options.getRecentFiles("use")) {
-			recentFilesMenu.add(new ActionFileOpenSpecRecent(recent));
-		}
+    private void setRecentFiles() {
+        recentFilesMenu.removeAll();
+
+        for (Path recent : Options.getRecentFiles("use")) {
+            recentFilesMenu.add(new ActionFileOpenSpecRecent(recent));
+        }
 
         recentFilesMenu.addSeparator();
         recentFilesMenu.add(clearRecentFiles);
@@ -623,13 +625,13 @@ public class MainWindow extends JFrame {
     }
 
     /**
-	 * @return the fPluginRuntime
-	 */
-	public static IRuntime getPluginRuntime() {
-		return fPluginRuntime;
-	}
+     * @return the fPluginRuntime
+     */
+    public static IRuntime getPluginRuntime() {
+        return fPluginRuntime;
+    }
 
-	/**
+    /**
      * Returns the selected view of all internal views. If none is selected null
      * is returned.
      */
@@ -648,33 +650,33 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * A list of all displayed class diagrams 
+     * A list of all displayed class diagrams
      * @return
      */
     public List<ClassDiagramView> getClassDiagrams() {
-    	return this.classDiagrams;
+        return this.classDiagrams;
     }
-    
+
     /**
-     * A list of all displayed object diagrams 
+     * A list of all displayed object diagrams
      * @return
      */
     public List<NewObjectDiagramView> getObjectDiagrams() {
-    	return this.objectDiagrams;
+        return this.objectDiagrams;
     }
-    
+
     /**
-     * A list of all displayed communication diagrams 
+     * A list of all displayed communication diagrams
      * @return
      */
     public List<CommunicationDiagramView> getCommunicationDiagrams() {
-    	return this.communicationDiagrams;
+        return this.communicationDiagrams;
     }
-    
+
     private void close() {
         setVisible(false);
         dispose();
-		Shell.getInstance().exit();
+        Shell.getInstance().exit();
     }
 
     /**
@@ -702,7 +704,7 @@ public class MainWindow extends JFrame {
                 fPageFormat.setOrientation(PageFormat.LANDSCAPE);
             else if (Options.PRINT_PAGEFORMAT_ORIENTATION.equals("seascape"))
                 fPageFormat.setOrientation(PageFormat.REVERSE_LANDSCAPE);
-            
+
         }
         return fPageFormat;
     }
@@ -721,85 +723,85 @@ public class MainWindow extends JFrame {
 
     private void checkStructure() {
         boolean ok = fSession.system().state().checkStructure(fLogWriter);
-        
+
         fLogWriter.println("checking structure, "
                 + ((ok) ? "ok." : "found errors."));
         fLogWriter.flush();
     }
 
     private void createStateMachineMenuEntries(Container menu){
-    	int elems = 0;
-    	if(fSession.hasSystem()){
-    		for (final MClass cls : fSession.system().model().classes()) {
-    			for (final MStateMachine sm : cls.getOwnedProtocolStateMachines()) {
-    				JMenuItem item = new JMenuItem(cls.name() + "::" + sm.name());
-    				item.addActionListener(new ActionListener() {
-    					@Override
-    					public void actionPerformed(ActionEvent e) {
-    						showStateMachineView(sm);
-    					}
-    				});
-    				menu.add(item);
-    				++elems;
-    			}
-    		}
-    	}
-    	
-    	if (elems == 0) {
-    		JMenuItem item = new JMenuItem("<html><i>No statemachines available.</i></html>");
-    		item.setEnabled(false);
-    		menu.add(item);
-    	}
-    }
-    
-    @Subscribe
-	public void onSystemChanged(SystemStateChangedEvent e) {
-    	if (Options.getCheckStateInvariants()) {
-        	fLogWriter.println("Checking state invariants.");
-        	fSession.system().state().checkStateInvariants(fLogWriter);
+        int elems = 0;
+        if(fSession.hasSystem()){
+            for (final MClass cls : fSession.system().model().classes()) {
+                for (final MStateMachine sm : cls.getOwnedProtocolStateMachines()) {
+                    JMenuItem item = new JMenuItem(cls.name() + "::" + sm.name());
+                    item.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            showStateMachineView(sm);
+                        }
+                    });
+                    menu.add(item);
+                    ++elems;
+                }
+            }
+        }
+
+        if (elems == 0) {
+            JMenuItem item = new JMenuItem("<html><i>No statemachines available.</i></html>");
+            item.setEnabled(false);
+            menu.add(item);
         }
     }
-    
+
     @Subscribe
-	public void onStructureChanged(SystemStructureChangedEvent e) {
-		if (fCbMenuItemCheckStructure.isSelected()) {
-			checkStructure();
-		}
-	}
-    
+    public void onSystemChanged(SystemStateChangedEvent e) {
+        if (Options.getCheckStateInvariants()) {
+            fLogWriter.println("Checking state invariants.");
+            fSession.system().state().checkStateInvariants(fLogWriter);
+        }
+    }
+
     @Subscribe
-	public void onStatementExecuted(StatementExecutedEvent e) {
-    	setUndoRedoButtons();
+    public void onStructureChanged(SystemStructureChangedEvent e) {
+        if (fCbMenuItemCheckStructure.isSelected()) {
+            checkStructure();
+        }
+    }
+
+    @Subscribe
+    public void onStatementExecuted(StatementExecutedEvent e) {
+        setUndoRedoButtons();
 
         fActionFileSaveScript.setEnabled(
-        		fSession.system().numEvaluatedStatements() > 0);
+                fSession.system().numEvaluatedStatements() > 0);
     }
 
     private int fViewFrameX = 0;
 
     private int fViewFrameY = 0;
-    
-    /**
-     * Adds a new view (internal frame) to the desktop.
-     */
-	public void addNewViewFrame(ViewFrame f) {
-		addNewViewFrame(f, true);
-	}
 
     /**
      * Adds a new view (internal frame) to the desktop.
-     * @param legacySize 
-     * This was always true in USE 5.1.0 and earlier. Now it can be set to false, 
+     */
+    public void addNewViewFrame(ViewFrame f) {
+        addNewViewFrame(f, true);
+    }
+
+    /**
+     * Adds a new view (internal frame) to the desktop.
+     * @param legacySize
+     * This was always true in USE 5.1.0 and earlier. Now it can be set to false,
      * which calculates the size of the frame based on the subcomponents
      */
-	private void addNewViewFrame(ViewFrame f, boolean legacySize) {
-		if(legacySize) {
-        	f.setBounds(fViewFrameX, fViewFrameY, 300, 200);
-		} else {
-			f.setLocation(fViewFrameX, fViewFrameY);
-			f.pack();
-		}
-		
+    private void addNewViewFrame(ViewFrame f, boolean legacySize) {
+        if(legacySize) {
+            f.setBounds(fViewFrameX, fViewFrameY, 300, 200);
+        } else {
+            f.setLocation(fViewFrameX, fViewFrameY);
+            f.pack();
+        }
+
         fDesk.add(f, JDesktopPane.DEFAULT_LAYER);
         fDesk.moveToFront(f);
         // position for next frame
@@ -816,7 +818,7 @@ public class MainWindow extends JFrame {
         final boolean isViewPrintable = (f.getView() instanceof SequenceDiagramView);
         f.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
-			public void internalFrameActivated(InternalFrameEvent ev) {
+            public void internalFrameActivated(InternalFrameEvent ev) {
                 fActionFilePrint.setEnabled(isPrintable);
                 fActionFileExportView.setEnabled(isPrintable);
                 fActionFileExportViewAll.setEnabled(isPrintable);
@@ -824,7 +826,7 @@ public class MainWindow extends JFrame {
             }
 
             @Override
-			public void internalFrameDeactivated(InternalFrameEvent ev) {
+            public void internalFrameDeactivated(InternalFrameEvent ev) {
                 fActionFilePrint.setEnabled(false);
                 fActionFileExportView.setEnabled(false);
                 fActionFileExportViewAll.setEnabled(false);
@@ -861,13 +863,13 @@ public class MainWindow extends JFrame {
         fActionViewCreateCallStack.setEnabled(on);
         fActionViewCreateCommandList.setEnabled(on);
         fActionViewAssociationInfo.setEnabled(on);
-        
-		if (Options.doPLUGIN) {
-			for (PluginActionProxy currentAction : pluginActions.values()) {
-				currentAction.calculateEnabled();
-			}
-		}
-		setUndoRedoButtons();
+
+        if (Options.doPLUGIN) {
+            for (PluginActionProxy currentAction : pluginActions.values()) {
+                currentAction.calculateEnabled();
+            }
+        }
+        setUndoRedoButtons();
         closeAllViews();
         statemachineMenu.removeAll();
         createStateMachineMenuEntries(statemachineMenu);
@@ -899,30 +901,30 @@ public class MainWindow extends JFrame {
         fViewFrameX = 0;
         fViewFrameY = 0;
     }
-    
+
     private void setUndoRedoButtons() {
-    	if(!fSession.hasSystem()){
-    		disableUndo();
-    		disableRedo();
-    		return;
-    	}
-    	
-    	String nextToUndo = fSession.system().getUndoDescription();
-		
-		if (nextToUndo != null) {
-			enableUndo(nextToUndo);
-		} else {
-			disableUndo();
-		}
-		
-		String nextToRedo =
-			fSession.system().getRedoDescription();
-		
-		if (nextToRedo != null) {
-			enableRedo(nextToRedo);
-		} else {
-			disableRedo();
-		}
+        if(!fSession.hasSystem()){
+            disableUndo();
+            disableRedo();
+            return;
+        }
+
+        String nextToUndo = fSession.system().getUndoDescription();
+
+        if (nextToUndo != null) {
+            enableUndo(nextToUndo);
+        } else {
+            disableUndo();
+        }
+
+        String nextToRedo =
+                fSession.system().getRedoDescription();
+
+        if (nextToRedo != null) {
+            enableRedo(nextToRedo);
+        } else {
+            disableRedo();
+        }
     }
 
     /**
@@ -945,18 +947,18 @@ public class MainWindow extends JFrame {
         fMenuItemEditUndo.setText("Undo");
         fBtnEditUndo.setToolTipText(DEFAULT_UNDO_TEXT);
     }
-    
+
     /**
      * Enables the redo command.
      */
     void enableRedo(String name) {
-    	 fActionEditRedo.setEnabled(true);
-         // change text of menu item, leave toolbar button untouched
-         String s = "Redo: " + name;
-         fMenuItemEditRedo.setText(s);
-         fBtnEditRedo.setToolTipText(s);
+        fActionEditRedo.setEnabled(true);
+        // change text of menu item, leave toolbar button untouched
+        String s = "Redo: " + name;
+        fMenuItemEditRedo.setText(s);
+        fBtnEditRedo.setToolTipText(s);
     }
-    
+
     /**
      * Disables the undo command.
      */
@@ -978,52 +980,52 @@ public class MainWindow extends JFrame {
     }
 
     public void createObject(String clsName) {
-    	MClass objectClass = fSession.system().model().getClass(clsName);
-    	
-    	if (objectClass == null) {
+        MClass objectClass = fSession.system().model().getClass(clsName);
+
+        if (objectClass == null) {
             JOptionPane.showMessageDialog(
-            		this, 
-            		"No class named `" + clsName + "' defined in model.", 
-            		"Error", 
-            		JOptionPane.ERROR_MESSAGE);
-            
+                    this,
+                    "No class named `" + clsName + "' defined in model.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
             return;
-        } 
-    	
-    	createObject(objectClass, null);
+        }
+
+        createObject(objectClass, null);
     }
-    
+
     /**
      * Creates a new object. Keeps track of undo information and handles errors
      * on the GUI level.
      */
     public void createObject(MClass objectClass, String objectName) {
-    	 
+
         try {
-        	MNewObjectStatement statement = 
-        		new MNewObjectStatement(objectClass, objectName);
-        	
-        	USEWriter.getInstance().protocol(
-					"[GUI] " + statement.getShellCommand().substring(1));
-        	
-        	fSession.system().execute(statement);
-        			
+            MNewObjectStatement statement =
+                    new MNewObjectStatement(objectClass, objectName);
+
+            USEWriter.getInstance().protocol(
+                    "[GUI] " + statement.getShellCommand().substring(1));
+
+            fSession.system().execute(statement);
+
         } catch (MSystemException e) {
-        	JOptionPane.showMessageDialog(
-					this, 
-					e.getMessage(), 
-					"Error", 
-					JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
+
+
     // Actions
 
     private final ActionFileOpenSpec fActionFileOpenSpec = new ActionFileOpenSpec();
 
     private final ActionFileRefreshSpec fActionFileReload = new ActionFileRefreshSpec();
-    
+
     private final ActionFileSaveScript fActionFileSaveScript = new ActionFileSaveScript();
 
     private final ActionFileSaveProtocol fActionFileSaveProtocol = new ActionFileSaveProtocol();
@@ -1035,9 +1037,9 @@ public class MainWindow extends JFrame {
     private final ActionFilePrintView fActionFilePrintView = new ActionFilePrintView();
 
     private final ActionFileExportView fActionFileExportView = new ActionFileExportView(false);
-    
+
     private final ActionFileExportView fActionFileExportViewAll = new ActionFileExportView(true);
-    
+
     private final ActionFileExit fActionFileExit = new ActionFileExit();
 
     private final ActionEditUndo fActionEditUndo = new ActionEditUndo();
@@ -1050,9 +1052,9 @@ public class MainWindow extends JFrame {
     private final ActionStateCheckStructure fActionStateCheckStructure = new ActionStateCheckStructure();
 
     private final ActionDetermineStates fActionDetermineStates = new ActionDetermineStates();
-    
+
     private final ActionCheckStateInvariants fActionCheckStateInvariants = new ActionCheckStateInvariants();
-    
+
     private final ActionStateReset fActionStateReset = new ActionStateReset();
 
     private final ActionViewCreateObjectCount fActionViewCreateObjectCount = new ActionViewCreateObjectCount();
@@ -1062,7 +1064,7 @@ public class MainWindow extends JFrame {
     private final ActionViewCreateClassDiagram fActionViewCreateClassDiagram = new ActionViewCreateClassDiagram();
 
     private final StateMachineDropdown fStateMachineDropdown = new StateMachineDropdown();
-    
+
     private final ActionViewCreateObjectDiagram fActionViewCreateObjectDiagram = new ActionViewCreateObjectDiagram();
 
     private final ActionViewCreateClassInvariant fActionViewCreateClassInvariant = new ActionViewCreateClassInvariant();
@@ -1076,13 +1078,13 @@ public class MainWindow extends JFrame {
     private final ActionViewCreateSequenceDiagram fActionViewCreateSequenceDiagram = new ActionViewCreateSequenceDiagram();
 
     private final ActionViewCreateCommunicationDiagram fActionViewCreateCommunicationDiagram = new ActionViewCreateCommunicationDiagram();
-    
+
     private final ActionViewCreateCallStack fActionViewCreateCallStack = new ActionViewCreateCallStack();
 
     private final ActionViewCreateCommandList fActionViewCreateCommandList = new ActionViewCreateCommandList();
 
     private final ActionViewAssociationInfo fActionViewAssociationInfo = new ActionViewAssociationInfo();
-    
+
     private final ActionViewTile fActionViewTile = new ActionViewTile();
 
     private final ActionViewCloseAll fActionViewCloseAll = new ActionViewCloseAll();
@@ -1103,14 +1105,14 @@ public class MainWindow extends JFrame {
         protected ActionFileOpenSpec(String title) {
             super(title);
         }
-        
+
         protected ActionFileOpenSpec(String title, Icon icon) {
             super(title, icon);
         }
-        
+
         @Override
-		public void actionPerformed(ActionEvent e) {
-        	if (!validateOpenPossible()) return;
+        public void actionPerformed(ActionEvent e) {
+            if (!validateOpenPossible()) return;
 
             Path lastPath = !wasUsed ? Options.getRecentFile("use") : null;
             if (lastPath != null) {
@@ -1143,25 +1145,25 @@ public class MainWindow extends JFrame {
         }
 
         protected boolean validateOpenPossible() {
-        	if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
-				JOptionPane
-						.showMessageDialog(
-								MainWindow.this,
-								"The system is currently executing a statement.\nPlease end the execution before opening a new model.",
-								"USE is executing",
-								JOptionPane.ERROR_MESSAGE);
-				return false;
-        	} else {
-        		return true;
-        	}
+            if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+                JOptionPane
+                        .showMessageDialog(
+                                MainWindow.this,
+                                "The system is currently executing a statement.\nPlease end the execution before opening a new model.",
+                                "USE is executing",
+                                JOptionPane.ERROR_MESSAGE);
+                return false;
+            } else {
+                return true;
+            }
         }
-                    
+
         protected boolean compile(final Path f) {
-        	fLogPanel.clear();
+            fLogPanel.clear();
             showLogPanel();
-            
-        	fLogWriter.println("compiling specification " + f.toString() + "...");
-        	
+
+            fLogWriter.println("compiling specification " + f.toString() + "...");
+
             MModel model = null;
             try (InputStream iStream = Files.newInputStream(f)) {
                 model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(), f.toUri(),
@@ -1170,63 +1172,63 @@ public class MainWindow extends JFrame {
             } catch (IOException ex) {
                 fLogWriter.println("File `" + f.toAbsolutePath().toString() + "' not found.");
             }
-            
+
             final MSystem system;
             if (model != null) {
-            	fLogWriter.println(model.getStats());
-            	// create system
-            	system = new MSystem(model);
+                fLogWriter.println(model.getStats());
+                // create system
+                system = new MSystem(model);
             } else {
-            	system = null;
+                system = null;
             }
-            
+
             // set new system (might be null if compilation failed)
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
-				public void run() {
+                public void run() {
                     fSession.setSystem(system);
                 }
             });
-            
+
             if (system != null) {
-            	Options.getRecentFiles().push(f.toString());
-            	Options.setLastDirectory(f.getParent());
-            	return true;
+                Options.getRecentFiles().push(f.toString());
+                Options.setLastDirectory(f.getParent());
+                return true;
             } else {
-            	return false;
+                return false;
             }
         }
     }
 
     private class ActionFileOpenSpecRecent extends ActionFileOpenSpec {
-    	
-    	private final Path fileName;
-    	
-    	public ActionFileOpenSpecRecent(Path filename) {
-    		super(filename.toString());
-    		this.fileName = filename;
-    	}
-    	
-    	@Override
-		public void actionPerformed(ActionEvent e) {
-    		if (!validateOpenPossible()) return;
+
+        private final Path fileName;
+
+        public ActionFileOpenSpecRecent(Path filename) {
+            super(filename.toString());
+            this.fileName = filename;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!validateOpenPossible()) return;
             compile(fileName);
         }
     }
-    
+
     private class ActionFileRefreshSpec extends ActionFileOpenSpec {
-    	public ActionFileRefreshSpec() {
-    		super("Reload specification", getIcon("refresh.png"));
-    	}
-    	
-    	@Override
-		public void actionPerformed(ActionEvent e) {
-    		if (!validateOpenPossible()) return;
-    		
-    		Path file = Options.getRecentFile("use");
-            
-    		if (file != null) {
-            	compile(file);
+        public ActionFileRefreshSpec() {
+            super("Reload specification", getIcon("refresh.png"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!validateOpenPossible()) return;
+
+            Path file = Options.getRecentFile("use");
+
+            if (file != null) {
+                compile(file);
             }
         }
     }
@@ -1238,13 +1240,13 @@ public class MainWindow extends JFrame {
         private JFileChooser fChooser;
 
         ActionFileSaveScript() {
-			super("Save script (.soil)...", getIcon("save.png"));
-			
-			setEnabled(false);
+            super("Save script (.soil)...", getIcon("save.png"));
+
+            setEnabled(false);
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             String path;
             // reuse chooser if possible
             if (fChooser == null) {
@@ -1259,8 +1261,8 @@ public class MainWindow extends JFrame {
 
             path = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
-			if (!filename.endsWith(".soil"))
-				filename += ".soil";
+            if (!filename.endsWith(".soil"))
+                filename += ".soil";
             File f = new File(path, filename);
             Log.verbose("File " + f);
 
@@ -1294,7 +1296,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             String path;
             // reuse chooser if possible
             if (fChooser == null) {
@@ -1310,12 +1312,12 @@ public class MainWindow extends JFrame {
 
             path = fChooser.getCurrentDirectory().toString();
             String filename = fChooser.getSelectedFile().getName();
-            
-			if (!(filename.lastIndexOf(".") > filename.lastIndexOf("\\")))
-				filename += ".txt";
-			
+
+            if (!(filename.lastIndexOf(".") > filename.lastIndexOf("\\")))
+                filename += ".txt";
+
             File f = new File(path, filename);
-            
+
             if (f.exists()) {
                 int n = JOptionPane.showConfirmDialog(MainWindow.this,
                         "Overwrite existing file " + f + "?", "Please confirm",
@@ -1344,7 +1346,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             PrinterJob job = PrinterJob.getPrinterJob();
             // initialize page format if necessary
             pageFormat();
@@ -1363,7 +1365,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             ViewFrame vf = (ViewFrame) fDesk.getSelectedFrame();
 
             if (vf != null && vf.isPrintable())
@@ -1381,7 +1383,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             ViewFrame vf = (ViewFrame) fDesk.getSelectedFrame();
 
             if (vf != null && vf.isPrintable()) {
@@ -1395,36 +1397,36 @@ public class MainWindow extends JFrame {
      * Print visible view of diagram.
      */
     private class ActionFileExportView extends AbstractAction {
-    	
-    	private JFileChooser chooser;
-    	
-    	private final boolean exportAll;
-    	
-    	/**
-    	 * @param exportAll whether to export the view border or not
-    	 */
-    	ActionFileExportView(boolean exportAll) {
+
+        private JFileChooser chooser;
+
+        private final boolean exportAll;
+
+        /**
+         * @param exportAll whether to export the view border or not
+         */
+        ActionFileExportView(boolean exportAll) {
             super("Export view as PDF...", getIcon("export_pdf.png"));
             this.setEnabled(false);
             this.exportAll = exportAll;
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             ViewFrame vf = (ViewFrame) fDesk.getSelectedFrame();
             File f;
 
             if (vf != null && vf.isPrintable()) {
-            	// Ask for filename
-            	int option = JOptionPane.YES_OPTION;
+                // Ask for filename
+                int option = JOptionPane.YES_OPTION;
 
-            	if (chooser == null) {
-            		chooser = new JFileChooser(Options.getLastDirectory().toFile());
-            		ExtFileFilter filter = new ExtFileFilter("pdf", "PDF");
-            		chooser.setFileFilter(filter);
-            		chooser.setDialogTitle("Export to PDF");
-            	}
-            	
+                if (chooser == null) {
+                    chooser = new JFileChooser(Options.getLastDirectory().toFile());
+                    ExtFileFilter filter = new ExtFileFilter("pdf", "PDF");
+                    chooser.setFileFilter(filter);
+                    chooser.setDialogTitle("Export to PDF");
+                }
+
                 do {
                     int returnVal = chooser.showSaveDialog( MainWindow.this );
                     if (returnVal != JFileChooser.APPROVE_OPTION)
@@ -1454,42 +1456,42 @@ public class MainWindow extends JFrame {
                 } while (option != JOptionPane.YES_OPTION);
 
                 PrintableView pv = (PrintableView)vf.getView();
-                
+
                 Rectangle size;
                 if (exportAll) {
-                	size = new Rectangle(vf.getWidth(), vf.getHeight());
+                    size = new Rectangle(vf.getWidth(), vf.getHeight());
                 } else {
-                	size = new Rectangle(pv.getContentWidth(), pv.getContentHeight());
+                    size = new Rectangle(pv.getContentWidth(), pv.getContentHeight());
                 }
-                
+
                 // step 1
                 Document document = new Document(size);
                 // step 2
                 PdfWriter writer;
-				try {
-					writer = PdfWriter.getInstance(document, new FileOutputStream(f));
-				} catch (FileNotFoundException e1) {
-					JOptionPane.showMessageDialog(MainWindow.this, e1.getMessage(), "Error accessing file!", JOptionPane.ERROR_MESSAGE);
-					return;
-				} catch (DocumentException e1) {
-					e1.printStackTrace();
-					return;
-				}
-				
+                try {
+                    writer = PdfWriter.getInstance(document, new FileOutputStream(f));
+                } catch (FileNotFoundException e1) {
+                    JOptionPane.showMessageDialog(MainWindow.this, e1.getMessage(), "Error accessing file!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                } catch (DocumentException e1) {
+                    e1.printStackTrace();
+                    return;
+                }
+
                 // step 3
                 document.open();
                 // step 4
                 PdfContentByte canvas = writer.getDirectContent();
                 Graphics2D g2 = new PdfGraphics2D(canvas, size.getWidth(), size.getHeight());
                 vf.export(g2, exportAll);
-                                
+
                 g2.dispose();
                 // step 5
                 document.close();
-                
-				JOptionPane.showMessageDialog(MainWindow.this,
-						"Export finished.", "USE " + Options.getUSEVersion(),
-						JOptionPane.INFORMATION_MESSAGE);
+
+                JOptionPane.showMessageDialog(MainWindow.this,
+                        "Export finished.", "USE " + Options.getUSEVersion(),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -1504,7 +1506,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             close();
         }
     }
@@ -1519,78 +1521,78 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
-        	if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
-				JOptionPane
-						.showMessageDialog(
-								MainWindow.this,
-								"The system is currently executing a statement.\nPlease end the execution before undoing.",
-								"USE is executing",
-								JOptionPane.ERROR_MESSAGE);
-				return;
-        	}
-        	
+        public void actionPerformed(ActionEvent e) {
+            if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+                JOptionPane
+                        .showMessageDialog(
+                                MainWindow.this,
+                                "The system is currently executing a statement.\nPlease end the execution before undoing.",
+                                "USE is executing",
+                                JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             try {
-            	fSession.system().undoLastStatement();
-            	setUndoRedoButtons();
+                fSession.system().undoLastStatement();
+                setUndoRedoButtons();
             } catch (MSystemException ex) {
                 JOptionPane.showMessageDialog(
-                		MainWindow.this, 
-                		ex.getMessage(),
-                        "Error", 
+                        MainWindow.this,
+                        ex.getMessage(),
+                        "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
         }
     }
-    
-    
-    class ActionEditRedo extends AbstractAction {
-    	
-    	ActionEditRedo() {
-    		super("Redo", getIcon("redo.png"));
-            this.setEnabled(false);
-    	}
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-        	if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
-				JOptionPane
-						.showMessageDialog(
-								MainWindow.this,
-								"The system is currently executing a statement.\nPlease end the execution before redoing.",
-								"USE is executing",
-								JOptionPane.ERROR_MESSAGE);
-				return;
-        	}
-        				
-			MSystem system = fSession.system();
-			
-			MStatement nextToRedo = system.nextToRedo();
-			if ((nextToRedo instanceof MEnterOperationStatement) ||
-					(nextToRedo instanceof MExitOperationStatement)) {
-				
-				JOptionPane.showMessageDialog(
-            			MainWindow.this, 
-            			"openter/opexit can only be redone in the shell",
-                        "Error", 
+
+    class ActionEditRedo extends AbstractAction {
+
+        ActionEditRedo() {
+            super("Redo", getIcon("redo.png"));
+            this.setEnabled(false);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (fSession.hasSystem() && fSession.system().isExecutingStatement()) {
+                JOptionPane
+                        .showMessageDialog(
+                                MainWindow.this,
+                                "The system is currently executing a statement.\nPlease end the execution before redoing.",
+                                "USE is executing",
+                                JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            MSystem system = fSession.system();
+
+            MStatement nextToRedo = system.nextToRedo();
+            if ((nextToRedo instanceof MEnterOperationStatement) ||
+                    (nextToRedo instanceof MExitOperationStatement)) {
+
+                JOptionPane.showMessageDialog(
+                        MainWindow.this,
+                        "openter/opexit can only be redone in the shell",
+                        "Error",
                         JOptionPane.ERROR_MESSAGE);
-				
-				return;
-			}
-			
-			try {    	
-            	system.redoStatement();
-            	
-            	setUndoRedoButtons();
-            	
+
+                return;
+            }
+
+            try {
+                system.redoStatement();
+
+                setUndoRedoButtons();
+
             } catch (MSystemException ex) {
-            	JOptionPane.showMessageDialog(
-            			MainWindow.this, 
-            			ex.getMessage(),
-                        "Error", 
+                JOptionPane.showMessageDialog(
+                        MainWindow.this,
+                        ex.getMessage(),
+                        "Error",
                         JOptionPane.ERROR_MESSAGE);
-			}
-		}
+            }
+        }
     }
 
     /**
@@ -1602,7 +1604,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             CreateObjectDialog dlg = new CreateObjectDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
@@ -1617,7 +1619,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             EvalOCLDialog dlg = new EvalOCLDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
@@ -1632,33 +1634,33 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             checkStructure();
         }
     }
 
     private class ActionCheckStateInvariants extends AbstractAction {
-    	ActionCheckStateInvariants() {
-			super("Check state invariants");
-		}
-    	
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			fSession.system().state().checkStateInvariants(fLogWriter);
-		}
-	}
-    
+        ActionCheckStateInvariants() {
+            super("Check state invariants");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            fSession.system().state().checkStateInvariants(fLogWriter);
+        }
+    }
+
     private class ActionDetermineStates extends AbstractAction {
-    	ActionDetermineStates() {
-			super("Determine states");
-		}
-    	
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			fSession.system().determineStates(fLogWriter);
-		}
-	}
-    
+        ActionDetermineStates() {
+            super("Determine states");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            fSession.system().determineStates(fLogWriter);
+        }
+    }
+
     /**
      * Resets the system to its initial empty state.
      */
@@ -1668,7 +1670,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             int n = JOptionPane
                     .showConfirmDialog(
                             MainWindow.this,
@@ -1688,7 +1690,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             ObjectCountView ov = new ObjectCountView(fSession.system());
             ViewFrame f = new ViewFrame("Object count", ov,
                     "blue-chart-icon.png");
@@ -1710,7 +1712,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             LinkCountView lv = new LinkCountView(fSession.system());
             ViewFrame f = new ViewFrame("Link count", lv, "red-chart-icon.png");
             JComponent c = (JComponent) f.getContentPane();
@@ -1731,31 +1733,31 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
-        	// Don't load layout if shift key is pressed
-        	boolean loadLayout = (e.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
-        		
+        public void actionPerformed(ActionEvent e) {
+            // Don't load layout if shift key is pressed
+            boolean loadLayout = (e.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
+
             ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout, fPluginRuntime);
             ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {
                 @Override
-				public void internalFrameActivated(InternalFrameEvent ev) {
+                public void internalFrameActivated(InternalFrameEvent ev) {
                     fStatusBar.showTmpMessage("Use left mouse button to move "
                             + "classes, right button for popup menu.");
                 }
 
                 @Override
-				public void internalFrameDeactivated(InternalFrameEvent ev) {
+                public void internalFrameDeactivated(InternalFrameEvent ev) {
                     fStatusBar.clearMessage();
                 }
 
-				@Override
-				public void internalFrameClosed(InternalFrameEvent e) {
-					classDiagrams.remove(((ViewFrame)e.getSource()).getView());
-				}
+                @Override
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    classDiagrams.remove(((ViewFrame)e.getSource()).getView());
+                }
             });
-            
+
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(cdv, BorderLayout.CENTER);
@@ -1769,72 +1771,72 @@ public class MainWindow extends JFrame {
      */
     private class StateMachineDropdown extends JToggleButton {
 
-		private final JPopupMenu menu = new JPopupMenu();
+        private final JPopupMenu menu = new JPopupMenu();
 
-		public StateMachineDropdown() {
-			setIcon(MainWindow.this.getIcon("Diagram.gif"));
-			menu.addPopupMenuListener(new PopupListener());
-			addItemListener(new DropdownItemListener());
-			
-			// reserve space for arrow (there must be a nicer solution, also: magic numbers)
-			Insets in = getMargin();
-			Insets in2 = new Insets(in.top +1, 2, in.bottom, 12);
-			setMargin(in2);
-		}
+        public StateMachineDropdown() {
+            setIcon(MainWindow.this.getIcon("Diagram.gif"));
+            menu.addPopupMenuListener(new PopupListener());
+            addItemListener(new DropdownItemListener());
 
-		@Override
-		public Dimension getMaximumSize() {
-			// hacky?
-			return super.getPreferredSize();
-		}
-		
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
+            // reserve space for arrow (there must be a nicer solution, also: magic numbers)
+            Insets in = getMargin();
+            Insets in2 = new Insets(in.top +1, 2, in.bottom, 12);
+            setMargin(in2);
+        }
 
-			Color oldColor = g.getColor();
-			if(isEnabled()){
-				g.setColor(Color.BLACK);
-			}
-			else {
-				g.setColor(Color.GRAY);
-			}
-			
-			Polygon triangle = new Polygon(new int[]{ 0, 9, 5 }, new int[]{ 0, 0, 4 }, 3);
-			triangle.translate(23, 13);
-			g.fillPolygon(triangle);
-			
-			g.setColor(oldColor);
-		}
-		
-		private class DropdownItemListener implements ItemListener {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					menu.removeAll();
-					createStateMachineMenuEntries(menu);
-					menu.show(StateMachineDropdown.this, 0, getHeight());
-				}
-			}
-		}
+        @Override
+        public Dimension getMaximumSize() {
+            // hacky?
+            return super.getPreferredSize();
+        }
 
-		private class PopupListener implements PopupMenuListener {
-			@Override
-			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-			}
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
 
-			@Override
-			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-				StateMachineDropdown.this.setSelected(false);
-			}
+            Color oldColor = g.getColor();
+            if(isEnabled()){
+                g.setColor(Color.BLACK);
+            }
+            else {
+                g.setColor(Color.GRAY);
+            }
 
-			@Override
-			public void popupMenuCanceled(PopupMenuEvent e) {
-			}
-		}
+            Polygon triangle = new Polygon(new int[]{ 0, 9, 5 }, new int[]{ 0, 0, 4 }, 3);
+            triangle.translate(23, 13);
+            g.fillPolygon(triangle);
 
-	}
-    
+            g.setColor(oldColor);
+        }
+
+        private class DropdownItemListener implements ItemListener {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    menu.removeAll();
+                    createStateMachineMenuEntries(menu);
+                    menu.show(StateMachineDropdown.this, 0, getHeight());
+                }
+            }
+        }
+
+        private class PopupListener implements PopupMenuListener {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                StateMachineDropdown.this.setSelected(false);
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+            }
+        }
+
+    }
+
     /**
      * Creates a new object diagram view.
      */
@@ -1844,44 +1846,44 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             NewObjectDiagramView odv = new NewObjectDiagramView(MainWindow.this, fSession.system());
             ViewFrame f = new ViewFrame("Object diagram", odv, "ObjectDiagram.gif");
-            
+
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {
                 @Override
-				public void internalFrameActivated(InternalFrameEvent ev) {
+                public void internalFrameActivated(InternalFrameEvent ev) {
                     fStatusBar.showTmpMessage("Use left mouse button to move "
                             + "objects, right button for popup menu.");
                 }
 
                 @Override
-				public void internalFrameDeactivated(InternalFrameEvent ev) {
+                public void internalFrameDeactivated(InternalFrameEvent ev) {
                     fStatusBar.clearMessage();
                 }
-                
+
                 @Override
-				public void internalFrameClosed(InternalFrameEvent e) {
-					objectDiagrams.remove(((ViewFrame)e.getSource()).getView());
-				}
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    objectDiagrams.remove(((ViewFrame)e.getSource()).getView());
+                }
             });
-            
+
             int OBJECTS_LARGE_SYSTEM = 100;
-            
+
             // Many objects. Ask user if all objects should be hidden
             if (fSession.system().state().allObjects().size() > OBJECTS_LARGE_SYSTEM) {
-            	
-            	int option = JOptionPane.showConfirmDialog(new JPanel(),
+
+                int option = JOptionPane.showConfirmDialog(new JPanel(),
                         "The current system state contains more then " + OBJECTS_LARGE_SYSTEM + " instances." +
-            	"This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?",
+                                "This can slow down the object diagram.\r\nDo you want to start with an empty object diagram?",
                         "Large system state", JOptionPane.YES_NO_OPTION);
-                
-            	if (option == JOptionPane.YES_OPTION) {
+
+                if (option == JOptionPane.YES_OPTION) {
                     odv.getDiagram().hideAll();
                 }
             }
-            
+
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(odv, BorderLayout.CENTER);
@@ -1889,46 +1891,46 @@ public class MainWindow extends JFrame {
             objectDiagrams.add(odv);
         }
     }
-    
+
     /**
      * Creates a new communication diagram view.
      */
     private class ActionViewCreateCommunicationDiagram extends AbstractAction {
-	ActionViewCreateCommunicationDiagram() {
-	    super("Communication diagram", getIcon("CommunicationDiagram.gif"));
-	}
+        ActionViewCreateCommunicationDiagram() {
+            super("Communication diagram", getIcon("CommunicationDiagram.gif"));
+        }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
 
-		CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(
-				MainWindow.this, fSession.system(), VisibleDataManager.createVisibleDataManager(fSession.system()));//new CommunicationDiagramView(MainWindow.this, fSession.system());
-	    ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
-	    // give some help information
-	    f.addInternalFrameListener(new InternalFrameAdapter() {
-			@Override
-			public void internalFrameActivated(InternalFrameEvent ev) {
-				fStatusBar.showTmpMessage("Use left mouse button to move "
-								+ "actor, object and link boxes, right button for popup menu.");
-			}
+            CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(
+                    MainWindow.this, fSession.system(), VisibleDataManager.createVisibleDataManager(fSession.system()));//new CommunicationDiagramView(MainWindow.this, fSession.system());
+            ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
+            // give some help information
+            f.addInternalFrameListener(new InternalFrameAdapter() {
+                @Override
+                public void internalFrameActivated(InternalFrameEvent ev) {
+                    fStatusBar.showTmpMessage("Use left mouse button to move "
+                            + "actor, object and link boxes, right button for popup menu.");
+                }
 
-			@Override
-			public void internalFrameDeactivated(InternalFrameEvent ev) {
-				fStatusBar.clearMessage();
-			}
+                @Override
+                public void internalFrameDeactivated(InternalFrameEvent ev) {
+                    fStatusBar.clearMessage();
+                }
 
-			@Override
-			public void internalFrameClosed(InternalFrameEvent e) {
-				communicationDiagrams.remove(((ViewFrame) e.getSource()).getView());
-			}
-	    });
+                @Override
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    communicationDiagrams.remove(((ViewFrame) e.getSource()).getView());
+                }
+            });
 
-	    JComponent c = (JComponent) f.getContentPane();
-	    c.setLayout(new BorderLayout());
-	    c.add(cdv, BorderLayout.CENTER);
-	    addNewViewFrame(f);
-	    communicationDiagrams.add(cdv);
-	}
+            JComponent c = (JComponent) f.getContentPane();
+            c.setLayout(new BorderLayout());
+            c.add(cdv, BorderLayout.CENTER);
+            addNewViewFrame(f);
+            communicationDiagrams.add(cdv);
+        }
     }
 
     /**
@@ -1940,25 +1942,25 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             ClassInvariantView civ = new ClassInvariantView(MainWindow.this,
                     fSession.system());
             ViewFrame f = new ViewFrame("Class invariants", civ,
                     "InvariantView.gif");
             civ.setViewFrame(f);
-            
-			f.addInternalFrameListener(new InternalFrameAdapter() {
-				@Override
-				public void internalFrameActivated(InternalFrameEvent ev) {
-					fStatusBar.showTmpMessage("Use right mouse button for popup menu.");
-				}
 
-				@Override
-				public void internalFrameDeactivated(InternalFrameEvent ev) {
-					fStatusBar.clearMessage();
-				}
-			});
-            
+            f.addInternalFrameListener(new InternalFrameAdapter() {
+                @Override
+                public void internalFrameActivated(InternalFrameEvent ev) {
+                    fStatusBar.showTmpMessage("Use right mouse button for popup menu.");
+                }
+
+                @Override
+                public void internalFrameDeactivated(InternalFrameEvent ev) {
+                    fStatusBar.clearMessage();
+                }
+            });
+
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(civ, BorderLayout.CENTER);
@@ -1975,7 +1977,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             StateEvolutionView sev = new StateEvolutionView(fSession.system());
             ViewFrame f = new ViewFrame("State evolution", sev,
                     "line-chart.png");
@@ -1995,7 +1997,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             showObjectPropertiesView();
         }
     }
@@ -2009,22 +2011,22 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             ClassExtentView cev = new ClassExtentView(MainWindow.this, fSession.system());
             ViewFrame f = new ViewFrame("Class extent", cev, "ClassExtentView.gif");
-            
-            f.addInternalFrameListener(new InternalFrameAdapter() {
-            	@Override
-				public void internalFrameActivated(InternalFrameEvent ev) {
-					fStatusBar.showTmpMessage("Use right mouse button for popup menu.");
-				}
 
-				@Override
-				public void internalFrameDeactivated(InternalFrameEvent ev) {
-					fStatusBar.clearMessage();
-				}
-			});
-            
+            f.addInternalFrameListener(new InternalFrameAdapter() {
+                @Override
+                public void internalFrameActivated(InternalFrameEvent ev) {
+                    fStatusBar.showTmpMessage("Use right mouse button for popup menu.");
+                }
+
+                @Override
+                public void internalFrameDeactivated(InternalFrameEvent ev) {
+                    fStatusBar.clearMessage();
+                }
+            });
+
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
             c.add(cev, BorderLayout.CENTER);
@@ -2035,22 +2037,22 @@ public class MainWindow extends JFrame {
     /**
      * Creates a new sequence diagram view.
      */
-	private class ActionViewCreateSequenceDiagram extends AbstractAction {
-		ActionViewCreateSequenceDiagram() {
-			super("Sequence diagram", getIcon("SequenceDiagram.gif"));
-		}
+    private class ActionViewCreateSequenceDiagram extends AbstractAction {
+        ActionViewCreateSequenceDiagram() {
+            super("Sequence diagram", getIcon("SequenceDiagram.gif"));
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			SequenceDiagramView sv = SequenceDiagramView.createSequenceDiagramView(fSession.system(), MainWindow.this, null);
-			ViewFrame f = new ViewFrame("Sequence diagram", sv,
-					"SequenceDiagram.gif");
-			JComponent c = (JComponent) f.getContentPane();
-			c.setLayout(new BorderLayout());
-			c.add(new SDScrollPane(sv), BorderLayout.CENTER);
-			addNewViewFrame(f);
-		}
-	}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SequenceDiagramView sv = SequenceDiagramView.createSequenceDiagramView(fSession.system(), MainWindow.this, null);
+            ViewFrame f = new ViewFrame("Sequence diagram", sv,
+                    "SequenceDiagram.gif");
+            JComponent c = (JComponent) f.getContentPane();
+            c.setLayout(new BorderLayout());
+            c.add(new SDScrollPane(sv), BorderLayout.CENTER);
+            addNewViewFrame(f);
+        }
+    }
 
     /**
      * Creates a new call stack view.
@@ -2061,7 +2063,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             CallStackView csv = new CallStackView(fSession.system());
             ViewFrame f = new ViewFrame("Call stack", csv, "CallStack.gif");
             JComponent c = (JComponent) f.getContentPane();
@@ -2082,7 +2084,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             CommandView cv = new CommandView(fSession.system());
             ViewFrame f = new ViewFrame("Command list", cv, "CmdList.gif");
             JComponent c = (JComponent) f.getContentPane();
@@ -2098,13 +2100,13 @@ public class MainWindow extends JFrame {
      * Creates a new association info view.
      */
     private class ActionViewAssociationInfo extends AbstractAction {
-    	ActionViewAssociationInfo() {
+        ActionViewAssociationInfo() {
             super("Association ends information", getIcon("Association.gif"));
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
-        	AssociationEndsInfo v = new AssociationEndsInfo(MainWindow.this, fSession.system());
+        public void actionPerformed(ActionEvent e) {
+            AssociationEndsInfo v = new AssociationEndsInfo(MainWindow.this, fSession.system());
             ViewFrame f = new ViewFrame("Association ends info", v, "Association.gif");
             JComponent c = (JComponent) f.getContentPane();
             c.setLayout(new BorderLayout());
@@ -2115,7 +2117,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    
+
     /**
      * Close all internal frames.
      */
@@ -2125,7 +2127,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent ev) {
+        public void actionPerformed(ActionEvent ev) {
             closeAllViews();
         }
     }
@@ -2139,7 +2141,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent ev) {
+        public void actionPerformed(ActionEvent ev) {
             // How many frames do we have?
             JInternalFrame[] allframes = fDesk.getAllFrames();
             int count = allframes.length;
@@ -2196,7 +2198,7 @@ public class MainWindow extends JFrame {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             AboutDialog dlg = new AboutDialog(MainWindow.this);
             dlg.setVisible(true);
         }
@@ -2219,17 +2221,20 @@ public class MainWindow extends JFrame {
      */
     public static MainWindow create(Session session) {
 
-		return create(session, null);
-	}
+        return create(session, null);
+    }
 
-	public static MainWindow create(Session session, IRuntime pluginRuntime) {
-		final MainWindow win = new MainWindow(session, pluginRuntime);
+    public static MainWindow create(Session session, IRuntime pluginRuntime) {
+        final MainWindow win = new MainWindow(session, pluginRuntime);
 
         win.setIcon();
         win.pack();
         win.setLocationRelativeTo(null);
-        win.setVisible(true);
-
+        if (javaFxCall){
+            win.setVisible(false);
+        } else {
+            win.setVisible(true);
+        }
         return win;
     }
 
@@ -2278,41 +2283,49 @@ public class MainWindow extends JFrame {
     }
 
     public void showStateMachineView(MProtocolStateMachine sm, MObject instance) {
-    	StateMachineDiagramView dv = showStateMachineView(sm);
-    	dv.setMonitoredInstance(instance);
+        StateMachineDiagramView dv = showStateMachineView(sm);
+        dv.setMonitoredInstance(instance);
     }
-    
-	/**
-	 * @param sm
-	 */
-	public StateMachineDiagramView showStateMachineView(MStateMachine sm) {
-		StateMachineDiagramView dv = new StateMachineDiagramView(MainWindow.this, fSession.system(), sm);
-        
-		ViewFrame f = new ViewFrame("State machine " + StringUtil.inQuotes(sm.name()), dv, "ClassDiagram.gif");
-        
-		// give some help information
+
+    /**
+     * @param sm
+     */
+    public StateMachineDiagramView showStateMachineView(MStateMachine sm) {
+        StateMachineDiagramView dv = new StateMachineDiagramView(MainWindow.this, fSession.system(), sm);
+
+        ViewFrame f = new ViewFrame("State machine " + StringUtil.inQuotes(sm.name()), dv, "ClassDiagram.gif");
+
+        // give some help information
         f.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
-			public void internalFrameActivated(InternalFrameEvent ev) {
+            public void internalFrameActivated(InternalFrameEvent ev) {
                 fStatusBar.showTmpMessage("Use left mouse button to move "
                         + "objects, right button for popup menu.");
             }
 
             @Override
-			public void internalFrameDeactivated(InternalFrameEvent ev) {
+            public void internalFrameDeactivated(InternalFrameEvent ev) {
                 fStatusBar.clearMessage();
             }
         });
-        
+
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
         c.add(dv, BorderLayout.CENTER);
         addNewViewFrame(f);
-        
+
         return dv;
-	}
-	
-	private Icon getIcon(String name) {
-		return new ImageIcon(getClass().getResource(Options.getIconPath(name)));
-	}
+    }
+
+    public static Boolean getJavaFxCall() {
+        return javaFxCall;
+    }
+
+    public static void setJavaFxCall(Boolean javaFxCall) {
+        MainWindow.javaFxCall = javaFxCall;
+    }
+
+    private Icon getIcon(String name) {
+        return new ImageIcon(getClass().getResource(Options.getIconPath(name)));
+    }
 }

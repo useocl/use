@@ -20,8 +20,6 @@
 package org.tzi.use.gui.main;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
@@ -52,7 +50,7 @@ import java.util.*;
  */
 @SuppressWarnings("serial")
 public class ModelBrowser extends JPanel 
-    implements DragSourceListener, DragGestureListener, SortChangeListener {
+    implements DragSourceListener, DragGestureListener, ModelBrowserSorting.SortChangeListener {
     private MModel fModel;
     private JTree fTree;
     private JEditorPane fHtmlPane;
@@ -439,7 +437,7 @@ public class ModelBrowser extends JPanel
     /**
      * If an event occures the tree will be reloaded.
      */
-    public void stateChanged( SortChangeEvent e ) {
+    public void stateChanged( ModelBrowserSorting.SortChangeEvent e ) {
         ArrayList<Integer> pathWereExpanded = new ArrayList<Integer>();
         int selectedRow = -1;
         

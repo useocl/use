@@ -19,9 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.shared;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -63,7 +61,8 @@ public class MessageSelectionView  extends JDialog implements ActionListener {
      */
     private JComboBox<String> tillComboBox, fromComboBox;
 
-    public MessageSelectionView(MessageSelectionDelegate delegate, boolean withDepth) {
+    public MessageSelectionView(Window owner, MessageSelectionDelegate delegate, boolean withDepth) {
+        super(owner);
         setTitle("Choose the area of Messages");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.delegate = delegate;
@@ -139,7 +138,7 @@ public class MessageSelectionView  extends JDialog implements ActionListener {
 
     public void showWindow() {
         this.setSize(350, 200);
-        this.setLocation(300, 200);
+        setLocationRelativeTo(getOwner()); // so that its positioned relative to the owner window
         this.setVisible(true);
     }
 

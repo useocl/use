@@ -15,8 +15,11 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import javafx.application.Platform;
+import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -77,8 +80,18 @@ public class ClassSelection {
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
-			MainWindow.instance().addNewViewFrame(f);
-			f.setSize(580, 230);
+
+			if (MainWindow.getJavaFxCall()){
+				Platform.runLater(() -> {
+					SwingNode swingNode = new SwingNode();
+					swingNode.setContent(c);
+					swingNode.setCache(false);
+					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_VIEW);
+				});
+			} else {
+				MainWindow.instance().addNewViewFrame(f);
+				f.setSize(580, 230);
+			}
 		}
 	}
 
@@ -102,8 +115,20 @@ public class ClassSelection {
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
-			MainWindow.instance().addNewViewFrame(f);
-			f.setSize(450, 200);
+
+			if (MainWindow.getJavaFxCall()){
+				Platform.runLater(() -> {
+					SwingNode swingNode = new SwingNode();
+					// Add the Swing component to the SwingNode
+					swingNode.setContent(c);
+					swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
+					// creating the new Window with the swingNode
+					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_PATH_VIEW);
+				});
+			} else {
+				MainWindow.instance().addNewViewFrame(f);
+				f.setSize(450, 200);
+			}
 		}
 	}
 

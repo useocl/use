@@ -19,8 +19,11 @@
 
 package org.tzi.use.gui.views.selection.objectselection;
 
+import javafx.application.Platform;
+import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.uml.sys.MSystem;
 
 import javax.swing.*;
@@ -52,7 +55,18 @@ public class ActionSelectionOCLView extends AbstractAction {
 
         c.setLayout(new BorderLayout());
         c.add(opv, BorderLayout.CENTER);
-        MainWindow.instance().addNewViewFrame(f);
-        f.setSize(370, 250);
+
+        if (MainWindow.getJavaFxCall()){
+            Platform.runLater(() -> {
+                SwingNode swingNode = new SwingNode();
+                swingNode.setContent(opv);
+                swingNode.setCache(false);
+
+                org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by OCL expression",swingNode, DiagramType.SELECTED_OCL_VIEW);
+            });
+        } else {
+            MainWindow.instance().addNewViewFrame(f);
+            f.setSize(370, 250);
+        }
     }
 }

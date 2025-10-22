@@ -22,8 +22,11 @@
 package org.tzi.use.gui.views.diagrams;
 
 import com.ximpleware.ParseException;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.graphlayout.AllLayoutTypes;
 import org.tzi.use.gui.graphlayout.SpringLayout;
@@ -1161,20 +1164,34 @@ public abstract class DiagramView extends JPanel
             // layout can not be saved
             return null;
         }
-        // use specific Xerces class to write DOM-data to a file:
 
-        OutputFormat format = new OutputFormat();
-        format.setLineWidth(65);
-        format.setIndenting(true);
-        format.setIndent(2);
-        StringWriter stringOut = new StringWriter();
-        XMLSerializer serializer = new XMLSerializer(stringOut, format);
         try {
-            serializer.serialize(doc);
-        } catch (IOException e1) {
+            // Set up a Transformer for the XML transformation
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+
+            // Set up formatting similar to OutputFormat
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // Enable indentation
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // Set indent amount to 2
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); // Set encoding
+
+            // Create a StringWriter to hold the XML
+            StringWriter stringOut = new StringWriter();
+
+            // Serialize the XML Document
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(stringOut);
+
+            // Perform the transformation
+            transformer.transform(source, result);
+
+            return stringOut.toString();
+        } catch (Exception e) {
+            // Handle any exceptions during the transformation
+            e.printStackTrace();
             return "";
         }
-        return stringOut.toString();
+
     }
 
     public void saveLayout(Path layoutFile) {
@@ -1593,7 +1610,7 @@ public abstract class DiagramView extends JPanel
     }
 
     class LayoutsOptionDialog extends JDialog {
-        public LayoutsOptionDialog(JFrame parent, final LayoutType layoutType) {
+        public LayoutsOptionDialog(Window parent, final LayoutType layoutType) {
             super(parent, "Layouts Settings");
             JPanel contentPane = new JPanel(new GridBagLayout());
 
@@ -1697,10 +1714,12 @@ public abstract class DiagramView extends JPanel
         // Different Layouts
         JMenu layouts = new JMenu("Layouts");
         final JMenuItem hierarchicalLayout = new JMenuItem("Hierarchical layout");
+        final Window owner =  MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+
         hierarchicalLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Hierarchical);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.Hierarchical);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1709,7 +1728,7 @@ public abstract class DiagramView extends JPanel
         hierarchicalUpsideDownLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.HierarchicalUpsideDown);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.HierarchicalUpsideDown);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1718,7 +1737,7 @@ public abstract class DiagramView extends JPanel
         horizontalLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.Horizontal);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.Horizontal);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1727,7 +1746,7 @@ public abstract class DiagramView extends JPanel
         horizontalRightToLeftLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.HorizontalRightToLeft);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.HorizontalRightToLeft);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1736,7 +1755,7 @@ public abstract class DiagramView extends JPanel
         landscapeSwimlaneLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.LandscapeSwimlane);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.LandscapeSwimlane);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }
@@ -1746,7 +1765,7 @@ public abstract class DiagramView extends JPanel
         portraitSwimlaneLayout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(MainWindow.instance(), LayoutType.PortraitSwimlane);
+                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.PortraitSwimlane);
                 layoutsOptionDialog.setModal(true);
                 layoutsOptionDialog.setVisible(true);
             }

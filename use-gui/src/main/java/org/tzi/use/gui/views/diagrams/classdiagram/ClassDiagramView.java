@@ -95,6 +95,10 @@ public class ClassDiagramView extends JPanel
         return fMainWindow.getModelBrowser();
     }
 
+    public ClassDiagram getClassDiagram() {
+        return fClassDiagram;
+    }
+
     /**
      * Determines if this is the selected view.
      * @return <code>true</code> if it is the selected view, otherwise
