@@ -89,7 +89,7 @@ import java.util.List;
 
 /**
  * The main application window of USE.
- *
+ * 
  *
  * @author Mark Richters
  * @author Lars Hamann
@@ -1737,7 +1737,7 @@ public class MainWindow extends JFrame {
             // Don't load layout if shift key is pressed
             boolean loadLayout = (e.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
 
-            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout);
+            ClassDiagramView cdv = new ClassDiagramView(MainWindow.this, fSession.system(), loadLayout, fPluginRuntime);
             ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
             // give some help information
             f.addInternalFrameListener(new InternalFrameAdapter() {

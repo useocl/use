@@ -247,7 +247,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
         } else if (adjacentObjectNodeGreyed()) {
         	g.setColor( fOpt.getGREYED_LINE_COLOR() );
         } else {
-            g.setColor( fOpt.getEDGE_COLOR() );
+            g.setColor(getEdgeColor());
         }
         
         drawEdge( g );

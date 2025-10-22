@@ -26,6 +26,8 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
+import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -44,17 +46,20 @@ import java.util.Iterator;
  * @author Fabian Gutsche
  * */
 @SuppressWarnings("serial")
-public class ClassDiagramView extends JPanel 
-                                 implements View, 
+public class ClassDiagramView extends JPanel
+                                 implements View,
                                             PrintableView {
 
     protected final MainWindow fMainWindow;
-    
+
     private final MSystem fSystem;
-    
+
     protected ClassDiagram fClassDiagram;
 
-    public ClassDiagramView( MainWindow mainWindow, MSystem system, boolean loadLayout ) { 
+    protected IRuntime pluginRuntime;
+
+    public ClassDiagramView(MainWindow mainWindow, MSystem system, boolean loadLayout, IRuntime pluginRuntime) {
+        this.pluginRuntime = pluginRuntime;
     	this.setFocusable(true);
         fMainWindow = mainWindow;
         fSystem = system;
@@ -67,22 +72,22 @@ public class ClassDiagramView extends JPanel
 			fClassDiagram = new ClassDiagram( this, fMainWindow.logWriter());
 		else
 			fClassDiagram = new ClassDiagram( this, fMainWindow.logWriter(), new ClassDiagramOptions(opt));
-		
+
 		fClassDiagram.setStatusBar(fMainWindow.statusBar());
 		this.removeAll();
         add( new JScrollPane(fClassDiagram) );
-		
+
         initState();
-        
+
         if (loadDefaultLayout) {
         	fClassDiagram.loadDefaultLayout();
         }
 	}
-    
+
     public MSystem system() {
         return fSystem;
     }
-    
+
     /**
      * Returns the model browser.
      */
@@ -102,17 +107,17 @@ public class ClassDiagramView extends JPanel
     public boolean isSelectedView() {
         if ( fMainWindow.getSelectedView() != null ) {
             return fMainWindow.getSelectedView().equals( this );
-        } 
+        }
         return false;
     }
-    
+
     /**
      * Read  all instances of MModel and maps
      * the specified element to a graphic
      * instance.
      */
     private void initState() {
-    	
+
         // read Classes
         Collection<MClass> allClasses = fSystem.model().getClassesIncludingImports();
         for (MClass cls : allClasses) {
@@ -135,7 +140,7 @@ public class ClassDiagramView extends JPanel
         for (MSignal s : fSystem.model().getSignalsIncludingImports()) {
             fClassDiagram.addSignal( s );
         }
-        
+
         // read generalizations
         DirectedGraph<MClassifier, MGeneralization> genGraph = fSystem.model().generalizationGraph();
         Iterator<MGeneralization> edgeIter = genGraph.edgeIterator();
@@ -143,16 +148,16 @@ public class ClassDiagramView extends JPanel
             MGeneralization gen = edgeIter.next();
             fClassDiagram.addGeneralization( gen );
         }
- 
+
         // read Associations
         Collection<MAssociation> allAssociations = fSystem.model().getAssociationsIncludingImports();
         for (MAssociation assoc : allAssociations) {
             fClassDiagram.addAssociation( assoc );
         }
-        
+
         fClassDiagram.initialize();
     }
-    
+
     @Override
 	public void printView( PageFormat pf ) {
         fClassDiagram.printDiagram( pf, "Class diagram" );
@@ -167,13 +172,14 @@ public class ClassDiagramView extends JPanel
     }
 
     @Override
-	public void detachModel () {}
+    public void detachModel() {
+    }
 
 	@Override
 	public float getContentHeight() {
 		return fClassDiagram.getPreferredSize().height;
 	}
-	
+
 	@Override
 	public float getContentWidth() {
 		return fClassDiagram.getPreferredSize().width;

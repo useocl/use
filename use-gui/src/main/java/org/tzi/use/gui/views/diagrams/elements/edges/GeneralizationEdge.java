@@ -22,23 +22,29 @@ package org.tzi.use.gui.views.diagrams.elements.edges;
 import java.awt.Graphics2D;
 import java.util.Iterator;
 
+import lombok.Getter;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.uml.mm.MGeneralization;
 
 /**
  * An Edge representing the generalization between to nodes.
- * 
+ *
  * @author Fabian Gutsche
  * @author Lars Hamann
  */
+@Getter
 public final class GeneralizationEdge extends EdgeBase {
 
-    protected GeneralizationEdge( PlaceableNode child, PlaceableNode parent, 
-                               DiagramView diagram ) {
+    private final MGeneralization mGeneralization;
+
+    protected GeneralizationEdge(MGeneralization mGeneralization, PlaceableNode child, PlaceableNode parent,
+                                 DiagramView diagram ) {
         super( child, parent, "Inheritance", diagram.getOptions(), true);
+        this.mGeneralization = mGeneralization;
     }
 
     @Override
@@ -56,7 +62,7 @@ public final class GeneralizationEdge extends EdgeBase {
     	if ( isSelected() ) {
             g.setColor( fOpt.getEDGE_SELECTED_COLOR() );
         } else {
-            g.setColor( fOpt.getEDGE_COLOR() );
+            g.setColor(getEdgeColor());
         }
 
         // draw all line segments
@@ -101,8 +107,7 @@ public final class GeneralizationEdge extends EdgeBase {
     @Override
     protected String getStoreType() { return "Generalization"; }
     
-    public static GeneralizationEdge create( PlaceableNode child, PlaceableNode parent, DiagramView diagram ) {
-    	GeneralizationEdge edge = new GeneralizationEdge(child, parent, diagram);
-    	return edge;
+    public static GeneralizationEdge create(MGeneralization mGeneralization, PlaceableNode child, PlaceableNode parent, DiagramView diagram ) {
+        return new GeneralizationEdge(mGeneralization, child, parent, diagram);
     }
 }

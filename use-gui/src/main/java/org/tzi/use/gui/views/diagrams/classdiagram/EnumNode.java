@@ -21,16 +21,16 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.ocl.type.EnumType;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A node representing an enumeration.
@@ -41,7 +41,11 @@ import org.tzi.use.uml.ocl.type.EnumType;
 public class EnumNode extends ClassifierNode implements SortChangeListener {
 
     private final String[] fLiterals;
-        
+
+    @Getter
+    @Setter
+    private Color color;
+
     private static final String ENUMERATION = "\u00ABenumeration\u00BB";
     
     EnumNode( EnumType enumeration, DiagramOptions opt ) {
@@ -113,7 +117,10 @@ public class EnumNode extends ClassifierNode implements SortChangeListener {
         if ( isSelected() ) {
         	shapeG.setColor( fOpt.getNODE_SELECTED_COLOR() );
         } else {
-        	shapeG.setColor( fOpt.getNODE_COLOR() );
+            if (getColor() != null)
+                shapeG.setColor(getColor());
+            else
+                shapeG.setColor(fOpt.getNODE_COLOR());
         }
         
         shapeG.fill( roundedBounds );

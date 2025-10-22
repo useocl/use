@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
@@ -93,6 +94,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
      * Name of this edge.
      */
     protected String fEdgeName;
+
+	protected Color fEdgeColor;
     
     /**
      * Because of the qualifier nodes, calculation has do be done twice
@@ -160,7 +163,8 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
                      DiagramOptions opt, boolean completeEdgeMoveMovesUserWayPoints ) {
         super( source, target );
         fOpt = opt;
-        fEdgeName = edgeName;
+		fEdgeName = edgeName;
+		this.fEdgeColor = fOpt.getEDGE_COLOR();
         fSource = source;
         fTarget = target;
         this.completeEdgeMoveMovesUserWayPoints = completeEdgeMoveMovesUserWayPoints;
@@ -476,6 +480,14 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
      * @param g
      */
     protected abstract void onDraw(Graphics2D g);
+
+	public void setEdgeColor(final Color color){
+		fEdgeColor = color;
+	};
+
+	public Color getEdgeColor(){
+		return fEdgeColor;
+	};
 
     /**
      * Returns the list of all way points defined for

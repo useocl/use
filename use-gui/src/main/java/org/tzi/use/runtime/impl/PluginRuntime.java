@@ -1,16 +1,10 @@
 package org.tzi.use.runtime.impl;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
 import org.tzi.use.main.runtime.IExtensionPoint;
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.IPluginRuntime;
 import org.tzi.use.runtime.gui.impl.ActionExtensionPoint;
+import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
 import org.tzi.use.runtime.gui.impl.MModelExtensionPoint;
 import org.tzi.use.runtime.model.PluginServiceModel;
 import org.tzi.use.runtime.service.IPluginService;
@@ -21,6 +15,13 @@ import org.tzi.use.runtime.util.PluginRegistry;
 import org.tzi.use.runtime.util.ServiceRegistry;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author Roman Asendorf
@@ -43,14 +44,13 @@ public class PluginRuntime implements IPluginRuntime {
 	private Map<String, IPluginServiceDescriptor> registeredServices = new HashMap<String, IPluginServiceDescriptor>();
 
 	public IExtensionPoint getExtensionPoint(String extensionPoint) {
-		if (extensionPoint.equals("action")) {
-			return ActionExtensionPoint.getInstance();
-		} else if (extensionPoint.equals("shell")) {
-			return ShellExtensionPoint.getInstance();
-		} else if (extensionPoint.equals("model")) {
-			return MModelExtensionPoint.getInstance();
-		} else
-			return null;
+        return switch (extensionPoint) {
+            case "action" -> ActionExtensionPoint.getInstance();
+            case "shell" -> ShellExtensionPoint.getInstance();
+            case "model" -> MModelExtensionPoint.getInstance();
+			case "diagram" -> DiagramExtensionPoint.getInstance();
+            default -> null;
+        };
 	}
 
 	/**
