@@ -88,8 +88,9 @@ public class JavaFXAppLauncher extends Application {
             Path file = Path.of(Options.specFilename);
             try (FileInputStream specStream = new FileInputStream(file.toFile())) {
                 Log.verbose("compiling specification...");
-                model = USECompiler.compileSpecification(specStream, file.getFileName().toString(),
-                        new PrintWriter(System.err), new ModelFactory());
+                model = USECompiler.compileSpecification(specStream,
+                        file.getFileName().toString(), file.toAbsolutePath().toUri(), new PrintWriter(System.err),
+                        new ModelFactory());
             } catch (FileNotFoundException e) {
                 Log.error("File `" + Options.specFilename + "' not found.");
                 if (!Options.integrationTestMode) System.exit(1);
