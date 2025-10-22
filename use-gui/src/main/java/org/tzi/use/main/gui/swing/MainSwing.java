@@ -66,8 +66,9 @@ public class MainSwing {
             Path file = Path.of(Options.specFilename);
             try (FileInputStream specStream = new FileInputStream(Options.specFilename)) {
                 Log.verbose("compiling specification...");
-                model = USECompiler.compileSpecification(specStream, file.getFileName().toString(),
-                        new PrintWriter(System.err), new ModelFactory());
+                model = USECompiler.compileSpecification(specStream,
+                        file.getFileName().toString(), file.toAbsolutePath().toUri(), new PrintWriter(System.err),
+                        new ModelFactory());
             } catch (FileNotFoundException e) {
                 Log.error("File `" + Options.specFilename + "' not found.");
                 if (Options.integrationTestMode) return;
