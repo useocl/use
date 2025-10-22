@@ -1,0 +1,11 @@
+import B from "imports/t127_import.use"
+
+model t127
+
+class A
+end
+
+constraints
+
+context A
+inv: true

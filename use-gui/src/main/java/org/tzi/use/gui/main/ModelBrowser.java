@@ -19,43 +19,6 @@
 
 package org.tzi.use.gui.main;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.datatransfer.StringSelection;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.ToolTipManager;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
@@ -64,6 +27,18 @@ import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.uml.mm.*;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.dnd.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 /** 
  * A ModelBrowser provides a tree view of classes, associations, and constraints
@@ -267,7 +242,7 @@ public class ModelBrowser extends JPanel
                     setIcon(getClosedIcon()); // we don't have a model
                 else 
                     setIcon(getOpenIcon());
-            } else if (level == 1 ) {
+            } else if (node.getAllowsChildren()) {
                 if (tree.isExpanded(new TreePath(node.getPath())) )
                     setIcon(getOpenIcon());
                 else
@@ -295,7 +270,11 @@ public class ModelBrowser extends JPanel
         // Create the nodes.
         if (fModel != null ) {
             fTop = new DefaultMutableTreeNode(model.name());
-            createNodes(fTop);
+            createNodes(fTop, fModel);
+
+            if (!fModel.getImportedModels().isEmpty()) {
+                addImportedModels(fTop);
+            }
         } else {
             fTop = new DefaultMutableTreeNode("No model available");
         }
@@ -319,6 +298,16 @@ public class ModelBrowser extends JPanel
             fHtmlPane.setText("");
     }
 
+    private void addImportedModels(DefaultMutableTreeNode fTop) {
+        DefaultMutableTreeNode importsNode = new DefaultMutableTreeNode("Imported models");
+        for (MImportedModel importedModel : fModel.getImportedModels()) {
+            DefaultMutableTreeNode importedRoot = new DefaultMutableTreeNode(importedModel.name());
+            createImportedModelNodes(importedRoot, importedModel);
+            importsNode.add(importedRoot);
+        }
+        fTop.add(importsNode);
+    }
+
     /** 
      * Displays info about the selected model element in the HTML pane.
      */
@@ -340,49 +329,86 @@ public class ModelBrowser extends JPanel
         fHtmlPane.setText(spec);
     }
 
-    public void createNodes( final DefaultMutableTreeNode top ) {
+    public void createNodes(final DefaultMutableTreeNode top, MModel model) {
         final Collection<MClassifier> sortedDataTypes =
-                fMbs.sortClasses( new ArrayList<MClassifier>(fModel.dataTypes()) );
+                fMbs.sortClasses( new ArrayList<>(model.dataTypes()) );
         addChildNodes( top, "Data types", sortedDataTypes );
 
         final Collection<MClassifier> sortedClasses =
-            fMbs.sortClasses( new ArrayList<MClassifier>(fModel.classes()) );
+            fMbs.sortClasses( new ArrayList<>(model.classes()) );
         addChildNodes( top, "Classes", sortedClasses );
 
         final ArrayList<MAssociation> sortedAssociations = 
-            fMbs.sortAssociations(new ArrayList<MAssociation>(fModel.associations()));
+            fMbs.sortAssociations(new ArrayList<>(model.associations()));
 	    
         addChildNodes( top, "Associations", sortedAssociations );
 
         final Collection<MClassInvariant> sortedInvariants = 
-            fMbs.sortInvariants( fModel.classInvariants() );
+            fMbs.sortInvariants( model.classInvariants() );
         
         addChildNodes( top, "Invariants", sortedInvariants );
 
         final Collection<MPrePostCondition> sortedConditions = 
-            fMbs.sortPrePostConditions(fModel.prePostConditions());
+            fMbs.sortPrePostConditions(model.prePostConditions());
         addChildNodes( top, "Pre-/Postconditions", sortedConditions );
-        
-		Set<Map.Entry<String, Collection<?>>> modelCollectionEntrySet = this.modelCollections.entrySet();
-				
-		for (Map.Entry<String, Collection<?>> modelCollectionMapEntry : modelCollectionEntrySet) {
-		    String modelCollectionName = modelCollectionMapEntry.getKey()
-			    .toString();
-		    Collection<?> modelCollection = fMbs
-			    .sortPluginCollection(modelCollectionMapEntry.getValue());
-		    addChildNodes(top, modelCollectionName, modelCollection);
-		}
+
+        if (model == fModel) {
+            Set<Map.Entry<String, Collection<?>>> modelCollectionEntrySet = this.modelCollections.entrySet();
+
+            for (Map.Entry<String, Collection<?>> modelCollectionMapEntry : modelCollectionEntrySet) {
+                String modelCollectionName = modelCollectionMapEntry.getKey()
+                        .toString();
+                Collection<?> modelCollection = fMbs
+                        .sortPluginCollection(modelCollectionMapEntry.getValue());
+                addChildNodes(top, modelCollectionName, modelCollection);
+            }
+        }
 		
-		final Collection<MOperation> queryOperations = new ArrayList<MOperation>();
-		for (MClass mClass : fModel.classes()) {
-			for (MOperation mOperation : mClass.operations()) {
-				if(mOperation.hasExpression()){
-					queryOperations.add(mOperation);
-				}
-			}
-		}
+        final Collection<MOperation> queryOperations = new ArrayList<MOperation>();
+        for (MClass mClass : model.classes()) {
+          for (MOperation mOperation : mClass.operations()) {
+            if(mOperation.hasExpression()){
+              queryOperations.add(mOperation);
+            }
+          }
+		    }
 		
-		addChildNodes(top, "Query Operations", queryOperations);
+		    addChildNodes(top, "Query Operations", queryOperations);
+    }
+
+    public void createImportedModelNodes(final DefaultMutableTreeNode top, MImportedModel model) {
+        final Collection<MClassifier> sortedDataTypes =
+                fMbs.sortClasses(new ArrayList<>(model.getDataTypes()));
+        addChildNodes(top, "Data types", sortedDataTypes);
+
+        final Collection<MClassifier> sortedClasses =
+                fMbs.sortClasses(new ArrayList<>(model.getClasses()));
+        addChildNodes(top, "Classes", sortedClasses);
+
+        final ArrayList<MAssociation> sortedAssociations =
+                fMbs.sortAssociations(new ArrayList<>(model.getAssociations()));
+
+        addChildNodes(top, "Associations", sortedAssociations);
+
+        final Collection<MClassInvariant> sortedInvariants =
+                fMbs.sortInvariants(model.getClassInvariants());
+
+        addChildNodes(top, "Invariants", sortedInvariants);
+
+        final Collection<MPrePostCondition> sortedConditions =
+                fMbs.sortPrePostConditions(model.getPrePostConditions());
+        addChildNodes(top, "Pre-/Postconditions", sortedConditions);
+
+        final Collection<MOperation> queryOperations = new ArrayList<MOperation>();
+        for (MClass mClass : model.getClasses()) {
+            for (MOperation mOperation : mClass.operations()) {
+                if (mOperation.hasExpression()) {
+                    queryOperations.add(mOperation);
+                }
+            }
+        }
+
+        addChildNodes(top, "Query Operations", queryOperations);
     }
 
     /**
@@ -395,7 +421,7 @@ public class ModelBrowser extends JPanel
         Iterator<?> it = items.iterator();
 	    
         while (it.hasNext() ) {
-            DefaultMutableTreeNode child = new DefaultMutableTreeNode(it.next());
+            DefaultMutableTreeNode child = new DefaultMutableTreeNode(it.next(), false);
             category.add(child);
         }
     }
@@ -403,7 +429,7 @@ public class ModelBrowser extends JPanel
     public void addPluginCollection(String modelCollectionName, Collection<?> modelCollection) {
     	this.modelCollections.put(modelCollectionName, modelCollection);
     	fTop.removeAllChildren();
-    	createNodes(fTop);
+    	createNodes(fTop, fModel);
     	fTreeModel.reload();
     	fHtmlPane.setText("");
     }
@@ -427,7 +453,13 @@ public class ModelBrowser extends JPanel
         }
 
         fTop.removeAllChildren();
-        createNodes( fTop );
+        if (fModel != null) {
+            createNodes(fTop, fModel);
+
+            if (!fModel.getImportedModels().isEmpty()) {
+                addImportedModels(fTop);
+            }
+        }
         fTreeModel.reload();
         fHtmlPane.setText( "" );
 

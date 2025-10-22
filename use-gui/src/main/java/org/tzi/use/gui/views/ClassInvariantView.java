@@ -428,11 +428,11 @@ public class ClassInvariantView extends JPanel implements View {
 	}
 
 	private void init() {
-		int n = fModel.classInvariants().size();
+		int n = fModel.getClassInvariantsIncludingImports().size();
 
 		// initialize array of class invariants
 		fClassInvariants = new MClassInvariant[n];
-		System.arraycopy(fModel.classInvariants().toArray(), 0,
+		System.arraycopy(fModel.getClassInvariantsIncludingImports().toArray(), 0,
 				fClassInvariants, 0, n);
 		Arrays.sort(fClassInvariants);
 

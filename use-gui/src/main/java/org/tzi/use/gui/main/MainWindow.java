@@ -84,8 +84,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 /**
  * The main application window of USE.
@@ -1166,7 +1166,7 @@ public class MainWindow extends JFrame {
 
             MModel model = null;
             try (InputStream iStream = Files.newInputStream(f)) {
-                model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(),
+                model = USECompiler.compileSpecification(iStream, f.toAbsolutePath().toString(), f.toUri(),
                         fLogWriter, new ModelFactory());
                 fLogWriter.println("done.");
             } catch (IOException ex) {

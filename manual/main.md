@@ -305,6 +305,101 @@ also allowed. OCL constraints may be defined inside a constraint block.
                      <classdefinition> |
                      constraints {<constraintdefinition>}}
 
+### Importing elements from external models
+
+In a USE specification import statements may be defined as a way to include elements 
+(e.g. data types, classes) specified in other models. An import statements comprises
+the elements to include and the source model file to import them from.
+
+Elements may be qualified (modelName#elementName) to avoid name conflicts when different imported
+models use the same name for an element (this is currently implemented for classes, data types and enums).
+
+#### Syntax
+
+    <importstatement> ::= import ( <elementname> | '{' <elementname> { , <elementname> } '}' | * ) from <artifactpath> 
+    <artifactpath> ::= <stringliteral>
+
+#### Examples:
+
+Import statements with one, or multiple elements to include.
+
+    import Date from "Dates.use"
+    import { Apple, Banana } from "Fruits.use"
+
+An import statement using the wildcard operator to include every element of a model.
+
+    import * from "Shapes.use"
+
+An import statement with model qualified elements:
+
+    import { Dates#Date } from "Dates.use"
+    import { Date } from "OtherDates.use"
+
+The following example shows a model `User` importing the data type `Date` from 
+an external model found under the path `imports/Dates.use` and using it in the class `User`.
+
+    import Date from "imports/Dates.use"
+
+    model User
+    
+    class User
+    attributes
+        name: String
+        birthday: Date
+    end
+
+#### Rules and Restrictions
+
+- Imports need to be declared at the top of the USE-file (before the model declaration).
+- Each element that is listed in the import statement must be defined in the referenced model file 
+(does not apply if the wildcard operator is used).
+- Imported element identifiers must be unique to the model that includes them.
+- Circular Imports `(model A -> model B -> model A)` are not permitted by the compiler.
+- The file path of referenced models may be specified as an absolute path or relative to the file path
+of the model importing them.
+- The uniqueness of identifiers is only enforced between a model and its direct imports, therefore access to
+transitively imported elements (elements imported by imported models) only works via qualified identifiers
+(modelName#elementName).
+- Similarly, if elements are qualified in an import statement, they can only be accessed using the model
+qualified name.
+
+#### Examples:
+The following example shows a model `User` importing the class `Meeting` from the model `Meetings`.
+The model `Meetings` imports the data type `Time` from the model `Time` and uses it in the `Meeting` class.
+
+    import { Meeting } from "Meetings.use"
+    import { Date } from "Dates.use"
+    
+    model User
+    
+    class User
+    attributes
+        name: String
+        birthday: Dates#Date
+        num: Integer
+    end
+
+    --------------------------------------
+    import { Time } from "Time.use"
+
+    model Meetings
+    
+    class Meeting
+    attributes
+        title: String
+        participants: Integer
+        startTime: Time
+        endTime: Time
+    end
+
+In order to assign values to attributes startTime and endTime of an instantiated Meeting, the constructor call
+must be qualified using the model name and a `#` as a separator.
+
+![Object properties dialog 
+with transitive attributes{label="fig:ObjectPropertiesTransitive"}](Screenshots/GUI/ObjectPropertiesTransitive.png)
+   
+    use> !set meeting.startTime := Time#Time(12,12,12)
+
 ### Specification Elements
 
 The following sections describe all available elements, which can be

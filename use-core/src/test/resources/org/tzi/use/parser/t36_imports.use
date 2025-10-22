@@ -1,0 +1,8 @@
+import { t34_import#C } from "imports/t36_import1.use"
+
+model A
+
+class B
+    attributes
+        b:t34_import#C
+end

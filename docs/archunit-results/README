@@ -1,0 +1,2 @@
+This file needs to stay here, because the directory is needed during test runs.
+If the file is removed, the directory would be "deleted" from the git repository.

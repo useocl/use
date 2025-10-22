@@ -1,0 +1,13 @@
+import B from "imports/t33_import1.use"
+
+model t33 -- Imported element redefined
+
+class A
+    attributes
+        x:B
+end
+
+dataType B
+    operations
+      B(b0 : String)
+end

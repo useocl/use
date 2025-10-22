@@ -1,0 +1,6 @@
+import t129_import#B from "imports/t129_import.use"
+
+model t129
+
+class A
+end

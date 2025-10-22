@@ -1,0 +1,6 @@
+import C from "imports/t34_import1.use"
+
+model t34 -- no element C in imported model
+
+class A
+end

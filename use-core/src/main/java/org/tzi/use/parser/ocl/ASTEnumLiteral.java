@@ -19,8 +19,6 @@
 
 package org.tzi.use.parser.ocl;
 
-import java.util.Set;
-
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
@@ -28,12 +26,15 @@ import org.tzi.use.uml.ocl.expr.ExpConstEnum;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.EnumType;
 
+import java.util.Set;
+
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
  * @author  Mark Richters
  */
 public class ASTEnumLiteral extends ASTExpression {
+    private Token fModelQualifier = null;
     private Token fValue;
     private Token fEnumType = null;
     
@@ -44,6 +45,12 @@ public class ASTEnumLiteral extends ASTExpression {
     public ASTEnumLiteral(Token enumType, Token enumLiteral) {
         fEnumType = enumType;
     	fValue = enumLiteral;
+    }
+
+    public ASTEnumLiteral(Token modelQualifier, Token enumType, Token enumLiteral) {
+        fModelQualifier = modelQualifier;
+        fEnumType = enumType;
+        fValue = enumLiteral;
     }
     
     public Expression gen(Context ctx) throws SemanticException {
@@ -56,7 +63,8 @@ public class ASTEnumLiteral extends ASTExpression {
             throw new SemanticException(fValue,
                                         "Undefined enumeration literal `" + literal + "'.");
         } else {
-        	String enumType = fEnumType.getText();
+        	String enumType = fModelQualifier != null ?
+                  fModelQualifier.getText() + '#' + fEnumType.getText() : fEnumType.getText();
         	t = ctx.model().enumType(enumType);
         	
         	if (t == null) {

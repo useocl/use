@@ -1,0 +1,8 @@
+import C from "t128_import2.use"
+
+model t128_import1
+
+class B
+    attributes
+        b : C
+end

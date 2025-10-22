@@ -19,15 +19,6 @@
 
 package org.tzi.use.uml.mm;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.expr.ExpressionPrintVisitor;
 import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
@@ -37,6 +28,9 @@ import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
 import org.tzi.use.util.uml.sorting.UseModelElementFileOrderComparator;
+
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * Visitor for dumping a string representation of model elements on an
@@ -279,10 +273,16 @@ public class MMPrintVisitor implements MMVisitor {
     @Override
 	public void visitAttribute(MAttribute e) {
         visitAnnotations(e);
+        String typeName = "";
+        if (e.type() instanceof MClassifier classifier && classifier.isQualifiedAccess()) {
+            typeName = classifier.qualifiedName();
+        } else {
+            typeName = e.type().toString();
+        }
         
         indent();
         print(id(e.name()) + ws() + other(":") + ws() +
-                other(e.type().toString()));
+                other(typeName));
         
         if(e.getInitExpression().isPresent()){
         	print(ws() + keyword("init") + ws() + other(":") + ws());

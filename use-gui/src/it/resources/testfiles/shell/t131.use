@@ -1,0 +1,9 @@
+import { t131_import#B, t131_import#C } from "imports/t131_import.use"
+
+model t131
+
+class A
+    attributes
+        b : t131_import#B
+        c : t131_import#C
+end
