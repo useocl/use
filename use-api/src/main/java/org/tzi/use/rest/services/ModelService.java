@@ -115,8 +115,9 @@ public class ModelService {
         InvariantNTT tmp_invariantntt = invariantMapperImpl.toEntity(invariantDTOreq);
 
         Optional<ModelNTT> modelOfInvariant = modelRepo.findById(modelName);
+        // find the class inside the model by className
 
-        UseModelFacade.createInvariant(invariantDTOreq, className);
+        UseModelFacade.createInvariant(invariantDTOreq, className, modelName);
         modelOfInvariant.get().getInvariants().add(tmp_invariantntt);
         //TODO
         modelRepo.save(modelOfInvariant.get());

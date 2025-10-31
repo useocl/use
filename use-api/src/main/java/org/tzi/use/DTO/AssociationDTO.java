@@ -18,8 +18,8 @@ import java.util.Set;
 public class AssociationDTO {
     private String name;
 
-    @Valid
-    private List<AssociationEndDTO> associationEnds;
+//    @Valid
+//    private List<AssociationEndDTO> associationEnds;
 
     private List<String> roleNames;
     private Set<String> associatedClassNames;
