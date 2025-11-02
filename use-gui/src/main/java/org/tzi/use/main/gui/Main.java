@@ -9,9 +9,9 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // set System.out to the OldUSEWriter to protocol the output.
+        // set System.out to the USEWriter to protocol the output.
         System.setOut(USEWriter.getInstance().getOut());
-        // set System.err to the OldUSEWriter to protocol the output.
+        // set System.err to the USEWriter to protocol the output.
         System.setErr(USEWriter.getInstance().getErr());
 
         boolean useJavaFX = false;
