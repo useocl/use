@@ -2,15 +2,21 @@ package org.tzi.use.main.gui;
 
 import org.tzi.use.main.gui.fx.MainJavaFX;
 import org.tzi.use.main.gui.swing.MainSwing;
+import org.tzi.use.util.USEWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        // set System.out to the USEWriter to protocol the output.
+        System.setOut(USEWriter.getInstance().getOut());
+        // set System.err to the USEWriter to protocol the output.
+        System.setErr(USEWriter.getInstance().getErr());
+
         boolean useJavaFX = false;
         // cleanedArgs is needed to avoid giving -jfx into the MainJavaFX,
-        // because Application.launch() tries to parse all arguments as JavaFX-compatible
+        // because Application.launch() tries to parse all arguments as JavaFX compatible
         // and throws an error if it encounters an unknown one (like -jfx).
         List<String> cleanedArgs = new ArrayList<>();
         for (String arg : args) {

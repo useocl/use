@@ -5,13 +5,22 @@
     <parent>
         <artifactId>use</artifactId>
         <groupId>org.tzi.use</groupId>
-        <version>7.1.1</version>
+        <version>7.5.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>use-gui</artifactId>
     <dependencies>
-        <!-- new -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>use-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.5.0-jre</version>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
@@ -98,20 +107,13 @@
         <dependency>
             <groupId>com.github.almasb</groupId>
             <artifactId>fxgl</artifactId>
-            <version>17</version>
+            <version>21.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.openjfx</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- ^^new^^ -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>use-core</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -130,9 +132,15 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.ximpleware</groupId>
+            <artifactId>vtd-xml</artifactId>
+            <version>2.13.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -169,12 +177,27 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.8.2</junit.version>
+        <lombok.version>1.18.42</lombok.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
