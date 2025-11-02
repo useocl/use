@@ -1,15 +1,14 @@
 module use.gui {
-    requires org.eclipse.jdt.annotation;
     requires use.core;
     requires vtd.xml;
-    requires com.google.common;
     requires itextpdf;
     requires javafx.fxml;
     requires javafx.web;
     requires org.kordamp.desktoppanefx.core;
     requires javafx.swing;
     requires annotations;
-    requires jline;
+    requires lombok;
+    requires com.google.common;
     opens org.tzi.use.gui.main to javafx.fxml;
     exports org.tzi.use.main.gui;
     exports org.tzi.use.gui.views;
@@ -32,6 +31,4 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.behavior.shared to com.google.common;
     exports org.tzi.use.gui.views.selection to com.google.common;
     exports org.tzi.use.gui.views.diagrams.statemachine to com.google.common;
-
-
 }

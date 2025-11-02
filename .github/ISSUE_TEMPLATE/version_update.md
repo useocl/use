@@ -7,7 +7,7 @@ assignees: ''
 
 ## Description
 
-After the release of USE version ${{env.OLD_USE_VERSION}} it is tiome to change
+After the release of USE version ${{env.OLD_USE_VERSION}} it is time to change
 the version to a new one. For this, please change the following files:
 
 * ./pom.xml

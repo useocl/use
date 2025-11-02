@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.Getter;
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
@@ -155,7 +154,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
      * @param source The source node of the edge.
      * @param target The target node of the edge.
      * @param edgeName The name of the edge.
-     * @param diagram The diagram this edge belongs to.
+     * @param opt The diagram options this edge uses to.
      * @param completeEdgeMoveMovesUserWayPoints If true, user defined way points are moved by the edge if
      * source and target are selected. 
      */

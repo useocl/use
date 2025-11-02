@@ -42,10 +42,10 @@ import java.util.prefs.Preferences;
 public class Options {
 
     // the release version
-    public static final String RELEASE_VERSION = "7.1.1";
+    public static final String RELEASE_VERSION = "7.5.0";
 
     // the copyright
-    public static final String COPYRIGHT = "Copyright (C) 1999-2024 University of Bremen & " +
+    public static final String COPYRIGHT = "Copyright (C) 1999-2025 University of Bremen & " +
 			"University of Applied Sciences Hamburg";
 
     // the trained support apes

@@ -1418,7 +1418,7 @@ public class MainWindow {
         // Calling the Swing MainWindow to get the ClassDiagram out of it
         org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
 
-        ClassDiagramView cdv = new ClassDiagramView(mainwindow, fSession.system(), loadLayout);
+        ClassDiagramView cdv = new ClassDiagramView(mainwindow, fSession.system(), loadLayout, fPluginRuntime);
         ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
 
         JComponent c = (JComponent) f.getContentPane();
