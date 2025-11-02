@@ -34,12 +34,13 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * <p>Each test consists of the following files:
  * <ol>
- *     <li>a model file (suffix {@code .use}) - this file provides the (possible empty) model used
+ *     <li>A model file (suffix {@code .use}) - this file provides the (possible empty) model used
  *     for the tests</li>
- *     <li>an input file (suffix: {@code .in}) - this file can contain any commands USE supports.
+ *     <li>An input file (suffix: {@code .in}) - this file can contain any commands USE supports.
  *     The expected output must be specified by starting a line with a star {@code *}</li>
- *     <li>any other used file from the command line, e.g., ASSL- or command-files.</li>
- * </ol></p>
+ *     <li>Any other used file from the command line, e.g., ASSL- or command-files.</li>
+ * </ol>
+ * </p>
  *
  * <p>All {@code .use</code> and </code><code>.in} files must share the same name, e.g., t555.use and t555.in for test
  * case 555. These files must be placed in the folder {@code it/resources/testfiles/shell}.</p>
@@ -107,10 +108,11 @@ public class ShellIT {
      *
      * <p>The process is as follows:
      * <ol>
-     *     <li>a command file and the expected output are created by examining the input file (via {@code createCommandFile}.</li>
+     *     <li>A command file and the expected output are created by examining the input file (via {@code createCommandFile}).</li>
      *     <li>USE is executed using the {@code useFile</code> and the created command file (<code>runUSE}).</li>
      *     <li>The output of USE is compared to the expected output created in 1. ({@code validateOutput}).</li>
-     * </ol></p>
+     * </ol>
+     * </p>
      *
      * @param testFile {@code Path} to the test input file to execute.
      * @param useFile {@code Path} to the USE file containing the model to load for the test.
@@ -145,8 +147,8 @@ public class ShellIT {
                 .inlineDiffByWord(true)
                 .ignoreWhiteSpaces(true)
                 .lineNormalizer( (s) -> s ) // No normalization required
-                .oldTag((f, start) -> start ? "-\033[9m" : "\033[m-")      //introduce markdown style for strikethrough
-                .newTag((f, start) -> start ? "+\033[97;42m" : "\033[m+")     //introduce markdown style for bold
+                .oldTag((f, start) -> start ? "-\033[9m" : "\033[m-")      //introduce style for strikethrough
+                .newTag((f, start) -> start ? "+\033[97;42m" : "\033[m+")  //introduce style for bold
                 .build();
 
         //compute the differences for two test texts.
@@ -156,7 +158,7 @@ public class ShellIT {
         if (rows.stream().anyMatch(filter)) {
             StringBuilder diffMsg = new StringBuilder("USE output does not match expected output!").append(System.lineSeparator());
 
-            diffMsg.append("Testfile: ").append(testFile).append(System.lineSeparator());
+            diffMsg.append("Test file: ").append(testFile).append(System.lineSeparator());
 
             diffMsg.append(System.lineSeparator()).append("Note: the position is not the position in the input file!");
             diffMsg.append(System.lineSeparator()).append(System.lineSeparator());
@@ -177,9 +179,9 @@ public class ShellIT {
      * to the file located by the {@code Path} {@code file}.</p>
      *
      * <p>If the file is not accessible, i.e., an IOException is thrown,
-     * the exceptions is caught and the test case fails.</p>
+     * the exception is caught and the test case fails.</p>
      * @param data The {@code List} of string (lines) to write.
-     * @param file The path to the file to write (file is overwritten).
+     * @param file The path to the file to write (the file is overwritten).
      */
     private void writeToFile(List<String> data, Path file) {
         try (FileWriter writer = new FileWriter(file.toFile())) {
@@ -189,7 +191,7 @@ public class ShellIT {
                 writer.write(System.lineSeparator());
             }
         } catch (IOException e) {
-            fail("Testoutput could not be written!", e);
+            fail("Test output could not be written!", e);
         }
     }
 
@@ -213,7 +215,7 @@ public class ShellIT {
 
             linesStream.forEach(inputLine -> {
 
-                // Ignore empty lines in expected, since they are also suppressed in actual output
+                // Ignore empty lines in expected, since they are also suppressed in the actual output
                 if (inputLine.isBlank())
                     return;
 
@@ -230,7 +232,7 @@ public class ShellIT {
                         cmdWriter.write(inputLine);
                         cmdWriter.write(System.lineSeparator());
 
-                        // Multi line commands (backslash and dot) are ignored
+                        // Multi-line commands (backslash and dot) are ignored
                         if (!inputLine.matches("^[\\\\.]$")) {
                             expectedOutput.add(inputLine);
                         }
@@ -258,12 +260,12 @@ public class ShellIT {
     private Stream<String> runUSE(Path useFile, Path cmdFile) {
 
         // We need to specify a concrete locale to always get the same formatted result
-        Locale.setDefault(new Locale("en", "US"));
+        Locale.setDefault(Locale.forLanguageTag("en-US"));
 
         Options.resetOptions();
         USEWriter.getInstance().clearLog();
 
-        String homeDir = null;
+        String homeDir;
         try {
             homeDir = useFile.getParent().resolve("../../../../../use-core/target/classes").toFile().getCanonicalPath();
         } catch (IOException e) {
@@ -291,7 +293,7 @@ public class ShellIT {
 
         Main.main(args);
 
-        try (ByteArrayOutputStream protocol = new ByteArrayOutputStream();) {
+        try (ByteArrayOutputStream protocol = new ByteArrayOutputStream()) {
             USEWriter.getInstance().writeProtocolFile(protocol);
             String output = protocol.toString();
             return  output.lines().filter(l -> !l.isBlank());
@@ -299,6 +301,6 @@ public class ShellIT {
             fail(e);
         }
 
-        return Stream.<String>empty();
+        return Stream.empty();
     }
 }
