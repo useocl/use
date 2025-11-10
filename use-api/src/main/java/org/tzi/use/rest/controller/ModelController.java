@@ -44,28 +44,16 @@ public class ModelController {
 
         // Add HATEOAS links
         // Link to self
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelByName(createdModel.getName()))
-                .withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(createdModel.getName())).withSelfRel());
 
         // Link to get all classes in this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelClasses(createdModel.getName()))
-                .withRel("classes"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(createdModel.getName())).withRel("classes"));
 
         // Link to get all associations in this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelAssociations(createdModel.getName()))
-                .withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(createdModel.getName())).withRel("associations"));
 
         // Link to get all invariants in this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelInvariants(createdModel.getName()))
-                .withRel("invariants"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(createdModel.getName())).withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -85,28 +73,16 @@ public class ModelController {
 
         // Add HATEOAS links
         // Link to self
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelByName(name))
-                .withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(name)).withSelfRel());
 
         // Link to get all classes in this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelClasses(name))
-                .withRel("classes"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(name)).withRel("classes"));
 
         // Link to get all associations in this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelAssociations(name))
-                .withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(name)).withRel("associations"));
 
         // Link to get all invariants in this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelInvariants(name))
-                .withRel("invariants"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(name)).withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
@@ -115,14 +91,8 @@ public class ModelController {
     public ResponseEntity<EntityModel<AssociationDTO>> getModelAssociationByName(@PathVariable String modelName, @PathVariable String associationName) {
         AssociationDTO association = modelService.getAssociationByName(modelName, associationName);
         EntityModel<AssociationDTO> entityModel = EntityModel.of(association);
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelAssociationByName(modelName, associationName))
-                .withSelfRel());
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelByName(modelName))
-                .withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName, associationName)).withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
@@ -130,14 +100,8 @@ public class ModelController {
     public ResponseEntity<EntityModel<InvariantDTO>> getModelInvariantByName(@PathVariable String modelName, @PathVariable String invariantName) {
         InvariantDTO invariant = modelService.getInvariantByName(modelName, invariantName);
         EntityModel<InvariantDTO> entityModel = EntityModel.of(invariant);
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelInvariantByName(modelName, invariantName))
-                .withSelfRel());
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelByName(modelName))
-                .withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariantByName(modelName, invariantName)).withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
@@ -151,54 +115,33 @@ public class ModelController {
         List<ModelDTO> models = modelService.getAllModels();
 
         // Convert each model to an EntityModel with links
-        List<EntityModel<ModelDTO>> modelEntities = models.stream()
-                .map(model -> {
-                    EntityModel<ModelDTO> entityModel = EntityModel.of(model);
+        List<EntityModel<ModelDTO>> modelEntities = models.stream().map(model -> {
+            EntityModel<ModelDTO> entityModel = EntityModel.of(model);
 
-                    // Add self link
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelByName(model.getName()))
-                            .withSelfRel());
+            // Add self link
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(model.getName())).withSelfRel());
 
-                    // Add classes link
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelClasses(model.getName()))
-                            .withRel("classes"));
+            // Add classes link
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(model.getName())).withRel("classes"));
 
-                    // Add associations link
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelAssociations(model.getName()))
-                            .withRel("associations"));
+            // Add associations link
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(model.getName())).withRel("associations"));
 
-                    // Add invariants link
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelInvariants(model.getName()))
-                            .withRel("invariants"));
+            // Add invariants link
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(model.getName())).withRel("invariants"));
 
 
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+            return entityModel;
+        }).collect(Collectors.toList());
 
         // Create a CollectionModel (container of EntityModels)
-        CollectionModel<EntityModel<ModelDTO>> collectionModel =
-                CollectionModel.of(modelEntities);
+        CollectionModel<EntityModel<ModelDTO>> collectionModel = CollectionModel.of(modelEntities);
 
         // Add link to this collection
-        collectionModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getAllModels())
-                .withSelfRel());
+        collectionModel.add(linkTo(methodOn(ModelController.class).getAllModels()).withSelfRel());
 
         // Add link to create a new model
-        collectionModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .createModel(null))
-                .withRel("create-model"));
+        collectionModel.add(linkTo(methodOn(ModelController.class).createModel(null)).withRel("create-model"));
 
 
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
@@ -212,33 +155,19 @@ public class ModelController {
         EntityModel<ClassDTO> entityModel = EntityModel.of(createdClass);
 
         // Link to the parent model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelByName(modelName))
-                .withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
 
         // Link to the classes listing for this model (also used as self since there's no single-class GET)
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelClasses(modelName))
-                .withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withSelfRel());
 
         // Link to create another class in this model
-        entityModel.add(linkTo(ModelController.class)
-                .slash("model").slash(modelName).slash("class")
-                .withRel("create-class"));
+        entityModel.add(linkTo(ModelController.class).slash("model").slash(modelName).slash("class").withRel("create-class"));
 
         // Link to associations for this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelAssociations(modelName))
-                .withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withRel("associations"));
 
         // Link to invariants for this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelInvariants(modelName))
-                .withRel("invariants"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(modelName)).withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -251,63 +180,40 @@ public class ModelController {
         List<ClassDTO> modelClasses = modelService.getModelClasses(modelName);
 
         // Convert each class to an EntityModel with links
-        List<EntityModel<ClassDTO>> classEntities = modelClasses.stream()
-                .map(classDTO -> {
-                    EntityModel<ClassDTO> entityModel = EntityModel.of(classDTO);
+        List<EntityModel<ClassDTO>> classEntities = modelClasses.stream().map(classDTO -> {
+            EntityModel<ClassDTO> entityModel = EntityModel.of(classDTO);
 
-                    // Link to the parent model
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelByName(modelName))
-                            .withRel("model"));
+            // Link to the parent model
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
 
-                    // Link to this classes collection (self)
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelClasses(modelName))
-                            .withSelfRel());
+            // Link to this classes collection (self)
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withSelfRel());
 
-                    // Link to create another class
-                    try {
-                        entityModel.add(linkTo(
-                                methodOn(ModelController.class)
-                                        .createClass(modelName, null))
-                                .withRel("create-class"));
-                    } catch (UseApiException e) {
-                        throw new RuntimeException(e);
-                    }
+            // Link to create another class
+            try {
+                entityModel.add(linkTo(methodOn(ModelController.class).createClass(modelName, null)).withRel("create-class"));
+            } catch (UseApiException e) {
+                throw new RuntimeException(e);
+            }
 
-                    // Link to associations
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelAssociations(modelName))
-                            .withRel("associations"));
+            // Link to associations
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withRel("associations"));
 
-                    // Link to invariants
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelInvariants(modelName))
-                            .withRel("invariants"));
+            // Link to invariants
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(modelName)).withRel("invariants"));
 
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+            return entityModel;
+        }).collect(Collectors.toList());
 
         // Create a CollectionModel
         CollectionModel<EntityModel<ClassDTO>> collectionModel = CollectionModel.of(classEntities);
 
         // Add self-link to the collection
-        collectionModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelClasses(modelName))
-                .withSelfRel());
+        collectionModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withSelfRel());
 
         // Add link to create a new class
         try {
-            collectionModel.add(linkTo(
-                    methodOn(ModelController.class)
-                            .createClass(modelName, null))
-                    .withRel("create-class"));
+            collectionModel.add(linkTo(methodOn(ModelController.class).createClass(modelName, null)).withRel("create-class"));
         } catch (UseApiException e) {
             throw new RuntimeException(e);
         }
@@ -323,14 +229,12 @@ public class ModelController {
     public ResponseEntity<CollectionModel<EntityModel<AssociationDTO>>> getModelAssociations(@PathVariable String modelName) {
         List<AssociationDTO> associations = modelService.getModelAssociations(modelName);
 
-        List<EntityModel<AssociationDTO>> associationEntities = associations.stream()
-                .map(association -> {
-                    EntityModel<AssociationDTO> entityModel = EntityModel.of(association);
-                    entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName, association.getAssociationName())).withSelfRel());
-                    entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+        List<EntityModel<AssociationDTO>> associationEntities = associations.stream().map(association -> {
+            EntityModel<AssociationDTO> entityModel = EntityModel.of(association);
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName, association.getAssociationName())).withSelfRel());
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+            return entityModel;
+        }).collect(Collectors.toList());
 
         CollectionModel<EntityModel<AssociationDTO>> collectionModel = CollectionModel.of(associationEntities);
 
@@ -361,45 +265,28 @@ public class ModelController {
     public ResponseEntity<CollectionModel<EntityModel<InvariantDTO>>> getModelInvariants(@PathVariable String modelName) {
         List<InvariantDTO> invariants = modelService.getModelInvariants(modelName);
 
-        List<EntityModel<InvariantDTO>> invariantEntities = invariants.stream()
-                .map(invariant -> {
-                    EntityModel<InvariantDTO> entityModel = EntityModel.of(invariant);
+        List<EntityModel<InvariantDTO>> invariantEntities = invariants.stream().map(invariant -> {
+            EntityModel<InvariantDTO> entityModel = EntityModel.of(invariant);
 
-                    // Link to the parent model
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelByName(modelName))
-                            .withRel("model"));
+            // Link to the parent model
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
 
-                    // Self-link to this collection
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelInvariants(modelName))
-                            .withSelfRel());
+            // Self-link to this collection
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(modelName)).withSelfRel());
 
-                    // Link to classes
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelClasses(modelName))
-                            .withRel("classes"));
+            // Link to classes
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withRel("classes"));
 
-                    // Link to associations
-                    entityModel.add(linkTo(
-                            methodOn(ModelController.class)
-                                    .getModelAssociations(modelName))
-                            .withRel("associations"));
+            // Link to associations
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withRel("associations"));
 
-                    return entityModel;
-                })
-                .collect(Collectors.toList());
+            return entityModel;
+        }).collect(Collectors.toList());
 
         CollectionModel<EntityModel<InvariantDTO>> collectionModel = CollectionModel.of(invariantEntities);
 
         // Self-link for the collection
-        collectionModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelInvariants(modelName))
-                .withSelfRel());
+        collectionModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(modelName)).withSelfRel());
 
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
@@ -412,33 +299,19 @@ public class ModelController {
         EntityModel<InvariantDTO> entityModel = EntityModel.of(createdInvariant);
 
         // Link to the parent model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelByName(modelName))
-                .withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
 
         // Link to the invariants listing for this model (also used as self since there's no single-invariant GET)
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelInvariants(modelName))
-                .withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(modelName)).withSelfRel());
 
         // Link to create another invariant in this model
-        entityModel.add(linkTo(ModelController.class)
-                .slash("model").slash(modelName).slash("invariant")
-                .withRel("create-invariant"));
+        entityModel.add(linkTo(ModelController.class).slash("model").slash(modelName).slash("invariant").withRel("create-invariant"));
 
         // Link to classes for this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelClasses(modelName))
-                .withRel("classes"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withRel("classes"));
 
         // Link to associations for this model
-        entityModel.add(linkTo(
-                methodOn(ModelController.class)
-                        .getModelAssociations(modelName))
-                .withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withRel("associations"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
