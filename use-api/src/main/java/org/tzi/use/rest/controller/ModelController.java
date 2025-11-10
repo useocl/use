@@ -8,6 +8,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
+import org.tzi.use.DTO.AssociationDTO;
 import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.DTO.InvariantDTO;
 import org.tzi.use.DTO.ModelDTO;
@@ -285,8 +286,15 @@ public class ModelController {
      * Placeholder method to retrieve all associations in a model
      */
     @GetMapping("/model/{name}/associations")
-    public ResponseEntity<?> getModelAssociations(@PathVariable String name) {
-        // Implementation to be added
+    public ResponseEntity<?> getModelAssociations(@PathVariable String modelName) {
+        List<AssociationDTO> associations = modelService.getModelAssociations(modelName);
+        return null;
+    }
+
+    @PutMapping("/model/{modelName}/association")
+    public ResponseEntity<?> createAssociation(@PathVariable String modelName, @RequestBody AssociationDTO association) {
+        modelService.createAssociation(modelName, association);
+
         return null;
     }
 

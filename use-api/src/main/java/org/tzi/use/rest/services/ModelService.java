@@ -12,6 +12,7 @@ import org.tzi.use.api.UseApiException;
 import org.tzi.use.entities.ClassNTT;
 import org.tzi.use.entities.InvariantNTT;
 import org.tzi.use.entities.ModelNTT;
+import org.tzi.use.mapper.AssociationMapperImpl;
 import org.tzi.use.mapper.ClassMapperImpl;
 import org.tzi.use.mapper.InvariantMapperImpl;
 import org.tzi.use.mapper.ModelMapper;
@@ -30,6 +31,7 @@ public class ModelService {
     private final ModelMapper modelMapper;
     private final ClassMapperImpl classMapperImpl;
     private final InvariantMapperImpl invariantMapperImpl;
+    private final AssociationMapperImpl associationMapperImpl;
 
 
     /**
@@ -99,9 +101,9 @@ public class ModelService {
                     .toList();
     }
 
-    public List<AssociationDTO> getModelAssociations() {
-        // implement later
-        return null;
+    public List<AssociationDTO> getModelAssociations(String modelName) {
+        Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
+        return modelOpt.get().getAssociations().stream().map(associationMapperImpl::toDTO).toList();
     }
 
     public List<InvariantDTO> getModelInvariants (String modelName) {
@@ -122,5 +124,9 @@ public class ModelService {
         //TODO
         modelRepo.save(modelOfInvariant.get());
         return invariantMapperImpl.toDTO(tmp_invariantntt);
+    }
+
+    public void createAssociation(String modelName, AssociationDTO association) {
+
     }
 }
