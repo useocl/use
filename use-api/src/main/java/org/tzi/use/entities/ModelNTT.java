@@ -19,7 +19,7 @@ public class ModelNTT {
     @Id
     private String name;
     private List<ClassNTT> classes = new ArrayList<>();
-//    private List<String> associations = new ArrayList<>();
+    private List<AssociationNTT> associations = new ArrayList<>();
     private List<InvariantNTT> invariants = new ArrayList<>();
 
     public ModelNTT(String name) {
