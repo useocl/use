@@ -95,6 +95,14 @@ public class ModelService {
         return modelRepo.findAll().stream().map(modelMapper::toDTO).toList();
     }
 
+    public AssociationDTO getAssociationByName(String modelName, String associationName) {
+        return null;
+    }
+
+    public InvariantDTO getInvariantByName(String modelName, String invariantName) {
+        return null;
+    }
+
     public List<ClassDTO> getModelClasses(String modelName){
         Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
             return modelOpt.get().getClasses().stream()

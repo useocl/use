@@ -1,13 +1,11 @@
 package org.tzi.use.rest.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-
 import org.tzi.use.DTO.AssociationDTO;
 import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.DTO.InvariantDTO;
@@ -17,6 +15,9 @@ import org.tzi.use.rest.services.ModelService;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api")
@@ -30,11 +31,12 @@ public class ModelController {
 
     /**
      * Create a new model
+     *
      * @param modelDTO The model data to create
      * @return The created model with HATEOAS links
      */
     @PostMapping("/model")
-    public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO){
+    public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO) {
         ModelDTO createdModel = modelService.createModel(modelDTO);
 
         // Create an EntityModel (HATEOAS) with the response
@@ -42,27 +44,27 @@ public class ModelController {
 
         // Add HATEOAS links
         // Link to self
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelByName(createdModel.getName()))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelByName(createdModel.getName()))
                 .withSelfRel());
 
         // Link to get all classes in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelClasses(createdModel.getName()))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelClasses(createdModel.getName()))
                 .withRel("classes"));
 
         // Link to get all associations in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelAssociations(createdModel.getName()))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelAssociations(createdModel.getName()))
                 .withRel("associations"));
 
         // Link to get all invariants in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelInvariants(createdModel.getName()))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelInvariants(createdModel.getName()))
                 .withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
@@ -70,6 +72,7 @@ public class ModelController {
 
     /**
      * Retrieve a model by its ID
+     *
      * @param name The ID of the model to retrieve
      * @return The model with HATEOAS links
      */
@@ -82,34 +85,65 @@ public class ModelController {
 
         // Add HATEOAS links
         // Link to self
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelByName(name))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelByName(name))
                 .withSelfRel());
 
         // Link to get all classes in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelClasses(name))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelClasses(name))
                 .withRel("classes"));
 
         // Link to get all associations in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelAssociations(name))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelAssociations(name))
                 .withRel("associations"));
 
         // Link to get all invariants in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelInvariants(name))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelInvariants(name))
                 .withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
+    @GetMapping("/model/{modelName}/association/{associationName}")
+    public ResponseEntity<EntityModel<AssociationDTO>> getModelAssociationByName(@PathVariable String modelName, @PathVariable String associationName) {
+        AssociationDTO association = modelService.getAssociationByName(modelName, associationName);
+        EntityModel<AssociationDTO> entityModel = EntityModel.of(association);
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelAssociationByName(modelName, associationName))
+                .withSelfRel());
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelByName(modelName))
+                .withRel("model"));
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+    }
+
+    @GetMapping("/model/{modelName}/invariant/{invariantName}")
+    public ResponseEntity<EntityModel<InvariantDTO>> getModelInvariantByName(@PathVariable String modelName, @PathVariable String invariantName) {
+        InvariantDTO invariant = modelService.getInvariantByName(modelName, invariantName);
+        EntityModel<InvariantDTO> entityModel = EntityModel.of(invariant);
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelInvariantByName(modelName, invariantName))
+                .withSelfRel());
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelByName(modelName))
+                .withRel("model"));
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+    }
+
     /**
      * Retrieve all models
+     *
      * @return List of all models with HATEOAS links
      */
     @GetMapping("/models")
@@ -118,53 +152,53 @@ public class ModelController {
 
         // Convert each model to an EntityModel with links
         List<EntityModel<ModelDTO>> modelEntities = models.stream()
-            .map(model -> {
-                EntityModel<ModelDTO> entityModel = EntityModel.of(model);
+                .map(model -> {
+                    EntityModel<ModelDTO> entityModel = EntityModel.of(model);
 
                     // Add self link
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                            .getModelByName(model.getName()))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelByName(model.getName()))
                             .withSelfRel());
 
                     // Add classes link
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                            .getModelClasses(model.getName()))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelClasses(model.getName()))
                             .withRel("classes"));
 
                     // Add associations link
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                            .getModelAssociations(model.getName()))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelAssociations(model.getName()))
                             .withRel("associations"));
 
                     // Add invariants link
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                            .getModelInvariants(model.getName()))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelInvariants(model.getName()))
                             .withRel("invariants"));
 
 
-                return entityModel;
-            })
-            .collect(Collectors.toList());
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
 
         // Create a CollectionModel (container of EntityModels)
         CollectionModel<EntityModel<ModelDTO>> collectionModel =
-            CollectionModel.of(modelEntities);
+                CollectionModel.of(modelEntities);
 
         // Add link to this collection
-        collectionModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getAllModels())
+        collectionModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getAllModels())
                 .withSelfRel());
 
         // Add link to create a new model
-            collectionModel.add(WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ModelController.class)
-                    .createModel(null))
-                    .withRel("create-model"));
+        collectionModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .createModel(null))
+                .withRel("create-model"));
 
 
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
@@ -178,32 +212,32 @@ public class ModelController {
         EntityModel<ClassDTO> entityModel = EntityModel.of(createdClass);
 
         // Link to the parent model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelByName(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelByName(modelName))
                 .withRel("model"));
 
         // Link to the classes listing for this model (also used as self since there's no single-class GET)
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelClasses(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelClasses(modelName))
                 .withSelfRel());
 
         // Link to create another class in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(ModelController.class)
+        entityModel.add(linkTo(ModelController.class)
                 .slash("model").slash(modelName).slash("class")
                 .withRel("create-class"));
 
         // Link to associations for this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelAssociations(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelAssociations(modelName))
                 .withRel("associations"));
 
         // Link to invariants for this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelInvariants(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelInvariants(modelName))
                 .withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
@@ -222,37 +256,37 @@ public class ModelController {
                     EntityModel<ClassDTO> entityModel = EntityModel.of(classDTO);
 
                     // Link to the parent model
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelByName(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelByName(modelName))
                             .withRel("model"));
 
                     // Link to this classes collection (self)
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelClasses(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelClasses(modelName))
                             .withSelfRel());
 
                     // Link to create another class
                     try {
-                        entityModel.add(WebMvcLinkBuilder.linkTo(
-                                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                                                .createClass(modelName, null))
+                        entityModel.add(linkTo(
+                                methodOn(ModelController.class)
+                                        .createClass(modelName, null))
                                 .withRel("create-class"));
                     } catch (UseApiException e) {
                         throw new RuntimeException(e);
                     }
 
                     // Link to associations
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelAssociations(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelAssociations(modelName))
                             .withRel("associations"));
 
                     // Link to invariants
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelInvariants(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelInvariants(modelName))
                             .withRel("invariants"));
 
                     return entityModel;
@@ -263,16 +297,16 @@ public class ModelController {
         CollectionModel<EntityModel<ClassDTO>> collectionModel = CollectionModel.of(classEntities);
 
         // Add self-link to the collection
-        collectionModel.add(WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                                .getModelClasses(modelName))
+        collectionModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelClasses(modelName))
                 .withSelfRel());
 
         // Add link to create a new class
         try {
-            collectionModel.add(WebMvcLinkBuilder.linkTo(
-                            WebMvcLinkBuilder.methodOn(ModelController.class)
-                                    .createClass(modelName, null))
+            collectionModel.add(linkTo(
+                    methodOn(ModelController.class)
+                            .createClass(modelName, null))
                     .withRel("create-class"));
         } catch (UseApiException e) {
             throw new RuntimeException(e);
@@ -286,20 +320,40 @@ public class ModelController {
      * Placeholder method to retrieve all associations in a model
      */
     @GetMapping("/model/{modelName}/associations")
-    public ResponseEntity<?> getModelAssociations(@PathVariable String modelName) {
+    public ResponseEntity<CollectionModel<EntityModel<AssociationDTO>>> getModelAssociations(@PathVariable String modelName) {
         List<AssociationDTO> associations = modelService.getModelAssociations(modelName);
-        return null;
+
+        List<EntityModel<AssociationDTO>> associationEntities = associations.stream()
+                .map(association -> {
+                    EntityModel<AssociationDTO> entityModel = EntityModel.of(association);
+                    entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName, association.getAssociationName())).withSelfRel());
+                    entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+                    return entityModel;
+                })
+                .collect(Collectors.toList());
+
+        CollectionModel<EntityModel<AssociationDTO>> collectionModel = CollectionModel.of(associationEntities);
+
+        collectionModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withSelfRel());
+
+        return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
     @PostMapping("/model/{modelName}/association")
-    public ResponseEntity<?> createAssociation(@PathVariable String modelName, @RequestBody AssociationDTO association) throws UseApiException {
-        modelService.createAssociation(modelName, association);
+    public ResponseEntity<EntityModel<AssociationDTO>> createAssociation(@PathVariable String modelName, @RequestBody AssociationDTO association) throws UseApiException {
+        AssociationDTO createdAssociation = modelService.createAssociation(modelName, association);
 
-        return null;
+        EntityModel<AssociationDTO> entityModel = EntityModel.of(createdAssociation);
+
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName, createdAssociation.getAssociationName())).withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+
+        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
     /**
      * Retrieve all invariants in a model.
+     *
      * @param modelName The name of the model.
      * @return A collection of invariants with HATEOAS links.
      */
@@ -312,27 +366,27 @@ public class ModelController {
                     EntityModel<InvariantDTO> entityModel = EntityModel.of(invariant);
 
                     // Link to the parent model
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelByName(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelByName(modelName))
                             .withRel("model"));
 
                     // Self-link to this collection
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelInvariants(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelInvariants(modelName))
                             .withSelfRel());
 
                     // Link to classes
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelClasses(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelClasses(modelName))
                             .withRel("classes"));
 
                     // Link to associations
-                    entityModel.add(WebMvcLinkBuilder.linkTo(
-                                    WebMvcLinkBuilder.methodOn(ModelController.class)
-                                            .getModelAssociations(modelName))
+                    entityModel.add(linkTo(
+                            methodOn(ModelController.class)
+                                    .getModelAssociations(modelName))
                             .withRel("associations"));
 
                     return entityModel;
@@ -342,48 +396,48 @@ public class ModelController {
         CollectionModel<EntityModel<InvariantDTO>> collectionModel = CollectionModel.of(invariantEntities);
 
         // Self-link for the collection
-        collectionModel.add(WebMvcLinkBuilder.linkTo(
-                        WebMvcLinkBuilder.methodOn(ModelController.class)
-                                .getModelInvariants(modelName))
+        collectionModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelInvariants(modelName))
                 .withSelfRel());
 
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
     @PostMapping("/model/{modelName}/{className}/invariant")
-    public ResponseEntity<EntityModel<InvariantDTO>> createInvariant(@PathVariable String modelName,@PathVariable String className, @RequestBody InvariantDTO invariantDTO) throws UseApiException {
+    public ResponseEntity<EntityModel<InvariantDTO>> createInvariant(@PathVariable String modelName, @PathVariable String className, @RequestBody InvariantDTO invariantDTO) throws UseApiException {
         InvariantDTO createdInvariant = modelService.createInvariant(modelName, invariantDTO, className);
 
         // Wrap the created invariant in an EntityModel for HATEOAS
         EntityModel<InvariantDTO> entityModel = EntityModel.of(createdInvariant);
 
         // Link to the parent model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelByName(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelByName(modelName))
                 .withRel("model"));
 
         // Link to the invariants listing for this model (also used as self since there's no single-invariant GET)
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelInvariants(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelInvariants(modelName))
                 .withSelfRel());
 
         // Link to create another invariant in this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(ModelController.class)
+        entityModel.add(linkTo(ModelController.class)
                 .slash("model").slash(modelName).slash("invariant")
                 .withRel("create-invariant"));
 
         // Link to classes for this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelClasses(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelClasses(modelName))
                 .withRel("classes"));
 
         // Link to associations for this model
-        entityModel.add(WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(ModelController.class)
-                .getModelAssociations(modelName))
+        entityModel.add(linkTo(
+                methodOn(ModelController.class)
+                        .getModelAssociations(modelName))
                 .withRel("associations"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
