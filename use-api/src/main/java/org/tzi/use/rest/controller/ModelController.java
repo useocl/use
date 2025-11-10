@@ -285,14 +285,14 @@ public class ModelController {
     /**
      * Placeholder method to retrieve all associations in a model
      */
-    @GetMapping("/model/{name}/associations")
+    @GetMapping("/model/{modelName}/associations")
     public ResponseEntity<?> getModelAssociations(@PathVariable String modelName) {
         List<AssociationDTO> associations = modelService.getModelAssociations(modelName);
         return null;
     }
 
-    @PutMapping("/model/{modelName}/association")
-    public ResponseEntity<?> createAssociation(@PathVariable String modelName, @RequestBody AssociationDTO association) {
+    @PostMapping("/model/{modelName}/association")
+    public ResponseEntity<?> createAssociation(@PathVariable String modelName, @RequestBody AssociationDTO association) throws UseApiException {
         modelService.createAssociation(modelName, association);
 
         return null;

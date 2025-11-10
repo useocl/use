@@ -24,4 +24,12 @@ public class UseModelFacade {
         createClass(className);
         useModelApi.createInvariant(invariantDTOreq.getInvName(),className, invariantDTOreq.getInvBody(), invariantDTOreq.isExistential());
     }
+
+    public static void createAssociation(AssociationDTO association, String modelName) throws UseApiException {
+        createModel(modelName);
+        createClass(association.getEnd1ClassName());
+        createClass(association.getEnd2ClassName());
+        useModelApi.createAssociation(association.getAssociationName(), association.getEnd1ClassName(), association.getEnd1RoleName(), association.getEnd1Multiplicity(), association.getEnd1Aggregation().ordinal(),
+                association.getEnd2ClassName(), association.getEnd2RoleName(), association.getEnd2Multiplicity(), association.getEnd2Aggregation().ordinal());
+    }
 }

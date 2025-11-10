@@ -9,6 +9,7 @@ import org.tzi.use.DTO.InvariantDTO;
 import org.tzi.use.DTO.ModelDTO;
 import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
+import org.tzi.use.entities.AssociationNTT;
 import org.tzi.use.entities.ClassNTT;
 import org.tzi.use.entities.InvariantNTT;
 import org.tzi.use.entities.ModelNTT;
@@ -119,6 +120,7 @@ public class ModelService {
         Optional<ModelNTT> modelOfInvariant = modelRepo.findById(modelName);
         // find the class inside the model by className
 
+        // wenn die facade ein error bekommt wird die zeile darunter ausgeführt?
         UseModelFacade.createInvariant(invariantDTOreq, className, modelName);
         modelOfInvariant.get().getInvariants().add(tmp_invariantntt);
         //TODO
@@ -126,7 +128,12 @@ public class ModelService {
         return invariantMapperImpl.toDTO(tmp_invariantntt);
     }
 
-    public void createAssociation(String modelName, AssociationDTO association) {
-
+    public AssociationDTO createAssociation(String modelName, AssociationDTO association) throws UseApiException {
+        AssociationNTT tmp_associationntt = associationMapperImpl.toEntity(association);
+        Optional<ModelNTT> modelOfAssociation = modelRepo.findById(modelName);
+        UseModelFacade.createAssociation(association, modelName);
+        modelOfAssociation.get().getAssociations().add(tmp_associationntt);
+        modelRepo.save(modelOfAssociation.get());
+        return associationMapperImpl.toDTO(tmp_associationntt);
     }
 }
