@@ -37,7 +37,7 @@ public class ClassController {
         entityModel.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withSelfRel());
         entityModel.add(linkTo(methodOn(ClassController.class).getAttributes(modelName, className)).withRel("attributes"));
         entityModel.add(linkTo(methodOn(ClassController.class).getOperations(modelName, className)).withRel("operations"));
-        entityModel.add(linkTo(methodOn(ClassController.class).getPrePostConditions(modelName, className)).withRel("preposts"));
+//        entityModel.add(linkTo(methodOn(ClassController.class).getPrePostConditions(modelName, className)).withRel("preposts"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -86,27 +86,27 @@ public class ClassController {
         return ResponseEntity.ok(entityModel);
     }
 
-    @GetMapping("/class/{className}/preposts")
-    public ResponseEntity<CollectionModel<EntityModel<PrePostConditionDTO>>> getPrePostConditions(@PathVariable String modelName, @PathVariable String className) {
-        List<PrePostConditionDTO> conditions = classService.getPrePostConditions(className);
-        List<EntityModel<PrePostConditionDTO>> conditionModels = conditions.stream()
-                .map(cond -> EntityModel.of(cond,
-                        linkTo(methodOn(ClassController.class).getPrePostConditionByName(modelName, className, cond.getName())).withSelfRel()))
-                .collect(Collectors.toList());
+//    @GetMapping("/class/{className}/preposts")
+//    public ResponseEntity<CollectionModel<EntityModel<PrePostConditionDTO>>> getPrePostConditions(@PathVariable String modelName, @PathVariable String className) {
+//        List<PrePostConditionDTO> conditions = classService.getPrePostConditions(className);
+//        List<EntityModel<PrePostConditionDTO>> conditionModels = conditions.stream()
+//                .map(cond -> EntityModel.of(cond,
+//                        linkTo(methodOn(ClassController.class).getPrePostConditionByName(modelName, className, cond.getName())).withSelfRel()))
+//                .collect(Collectors.toList());
+//
+//        CollectionModel<EntityModel<PrePostConditionDTO>> collectionModel = CollectionModel.of(conditionModels);
+//        collectionModel.add(linkTo(methodOn(ClassController.class).getPrePostConditions(modelName, className)).withSelfRel());
+//        return ResponseEntity.ok(collectionModel);
+//    }
 
-        CollectionModel<EntityModel<PrePostConditionDTO>> collectionModel = CollectionModel.of(conditionModels);
-        collectionModel.add(linkTo(methodOn(ClassController.class).getPrePostConditions(modelName, className)).withSelfRel());
-        return ResponseEntity.ok(collectionModel);
-    }
-
-    @GetMapping("/class/{className}/prepost/{conditionName}")
-    public ResponseEntity<EntityModel<PrePostConditionDTO>> getPrePostConditionByName(@PathVariable String modelName, @PathVariable String className, @PathVariable String conditionName) {
-        // Assuming ClassService has a method to get a single pre/post condition by name
-        PrePostConditionDTO condition = classService.getPrePostConditionByName(className, conditionName);
-        EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(condition);
-        entityModel.add(linkTo(methodOn(ClassController.class).getPrePostConditionByName(modelName, className, conditionName)).withSelfRel());
-        return ResponseEntity.ok(entityModel);
-    }
+//    @GetMapping("/class/{className}/prepost/{conditionName}")
+//    public ResponseEntity<EntityModel<PrePostConditionDTO>> getPrePostConditionByName(@PathVariable String modelName, @PathVariable String className, @PathVariable String conditionName) {
+//        // Assuming ClassService has a method to get a single pre/post condition by name
+//        PrePostConditionDTO condition = classService.getPrePostConditionByName(className, conditionName);
+//        EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(condition);
+//        entityModel.add(linkTo(methodOn(ClassController.class).getPrePostConditionByName(modelName, className, conditionName)).withSelfRel());
+//        return ResponseEntity.ok(entityModel);
+//    }
 
 
     @PostMapping("/class/{className}/attribute")
@@ -125,11 +125,11 @@ public class ClassController {
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
-    @PostMapping("/class/{className}/prepost")
-    public ResponseEntity<EntityModel<PrePostConditionDTO>> addPrePostCondition(@PathVariable String modelName, @PathVariable String className, @RequestBody PrePostConditionDTO prePostConditionDTO) {
-        PrePostConditionDTO newCondition = classService.addPrePostCondition(className, prePostConditionDTO);
-        EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(newCondition);
-        entityModel.add(linkTo(methodOn(ClassController.class).getPrePostConditionByName(modelName, className, newCondition.getName())).withSelfRel());
-        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
-    }
+//    @PostMapping("/class/{className}/prepost")
+//    public ResponseEntity<EntityModel<PrePostConditionDTO>> addPrePostCondition(@PathVariable String modelName, @PathVariable String className, @RequestBody PrePostConditionDTO prePostConditionDTO) {
+//        PrePostConditionDTO newCondition = classService.addPrePostCondition(className, prePostConditionDTO);
+//        EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(newCondition);
+//        entityModel.add(linkTo(methodOn(ClassController.class).getPrePostConditionByName(modelName, className, newCondition.getName())).withSelfRel());
+//        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
+//    }
 }
