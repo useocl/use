@@ -128,7 +128,7 @@ public class ModelService {
         Optional<ModelNTT> modelOfInvariant = modelRepo.findById(modelName);
         // find the class inside the model by className
 
-        // wenn die facade ein error bekommt wird die zeile darunter ausgeführt?
+        //TODO wenn die facade ein error bekommt wird die zeile darunter ausgeführt?
         UseModelFacade.createInvariant(invariantDTOreq, className, modelName);
         modelOfInvariant.get().getInvariants().add(tmp_invariantntt);
         //TODO
