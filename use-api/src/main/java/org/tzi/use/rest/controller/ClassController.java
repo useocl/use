@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tzi.use.DTO.AttributeDTO;
 import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.DTO.OperationDTO;
-import org.tzi.use.DTO.PrePostConditionDTO;
 import org.tzi.use.rest.services.ClassService;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,7 +109,7 @@ public class ClassController {
 
     @PostMapping("/class/{className}/attribute")
     public ResponseEntity<EntityModel<AttributeDTO>> addAttribute(@PathVariable String modelName, @PathVariable String className, @RequestBody AttributeDTO attributeDTO) {
-        AttributeDTO newAttribute = classService.addAttribute(className, attributeDTO);
+        AttributeDTO newAttribute = classService.createAttribute(className, attributeDTO);
         EntityModel<AttributeDTO> entityModel = EntityModel.of(newAttribute);
         entityModel.add(linkTo(methodOn(ClassController.class).getAttributeByName(modelName, className, newAttribute.getName())).withSelfRel());
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
@@ -119,7 +117,7 @@ public class ClassController {
 
     @PostMapping("/class/{className}/operation")
     public ResponseEntity<EntityModel<OperationDTO>> addOperation(@PathVariable String modelName, @PathVariable String className, @RequestBody OperationDTO operationDTO) {
-        OperationDTO newOperation = classService.addOperation(className, operationDTO);
+        OperationDTO newOperation = classService.createOperation(className, operationDTO);
         EntityModel<OperationDTO> entityModel = EntityModel.of(newOperation);
         entityModel.add(linkTo(methodOn(ClassController.class).getOperationByName(modelName, className, newOperation.getOperationName())).withSelfRel());
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
