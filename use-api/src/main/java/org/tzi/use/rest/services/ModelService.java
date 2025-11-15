@@ -64,8 +64,10 @@ public class ModelService {
         Optional<ModelNTT> modelOfClass = modelRepo.findById(modelName);
         //check for modelOfClass presence is nessary? -> I think no because cannot create model via api if it doesn't exist
 
-        // if the class has attributed and operations this would not be enough
-        UseModelFacade.createClass(tmp_classntt.getName());
+//        // if the class has attributed and operations this would not be enough
+//        UseModelFacade.createClass(tmp_classntt.getName());
+        // Create the class in the USE model (now with proper model context)
+        UseModelFacade.createClass(modelName, tmp_classntt.getName());
         modelOfClass.get().addClass(tmp_classntt);
 
         modelRepo.save(modelOfClass.get());

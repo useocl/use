@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tzi.use.DTO.AttributeDTO;
 import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.DTO.OperationDTO;
+import org.tzi.use.api.UseApiException;
 import org.tzi.use.rest.services.ClassService;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
@@ -108,7 +109,7 @@ public class ClassController {
 
 
     @PostMapping("/class/{className}/attribute")
-    public ResponseEntity<EntityModel<AttributeDTO>> addAttribute(@PathVariable String modelName, @PathVariable String className, @RequestBody AttributeDTO attributeDTO) {
+    public ResponseEntity<EntityModel<AttributeDTO>> addAttribute(@PathVariable String modelName, @PathVariable String className, @RequestBody AttributeDTO attributeDTO) throws UseApiException {
         AttributeDTO newAttribute = classService.createAttribute(className, attributeDTO);
         EntityModel<AttributeDTO> entityModel = EntityModel.of(newAttribute);
         entityModel.add(linkTo(methodOn(ClassController.class).getAttributeByName(modelName, className, newAttribute.getName())).withSelfRel());
@@ -116,7 +117,7 @@ public class ClassController {
     }
 
     @PostMapping("/class/{className}/operation")
-    public ResponseEntity<EntityModel<OperationDTO>> addOperation(@PathVariable String modelName, @PathVariable String className, @RequestBody OperationDTO operationDTO) {
+    public ResponseEntity<EntityModel<OperationDTO>> addOperation(@PathVariable String modelName, @PathVariable String className, @RequestBody OperationDTO operationDTO) throws UseApiException {
         OperationDTO newOperation = classService.createOperation(className, operationDTO);
         EntityModel<OperationDTO> entityModel = EntityModel.of(newOperation);
         entityModel.add(linkTo(methodOn(ClassController.class).getOperationByName(modelName, className, newOperation.getOperationName())).withSelfRel());

@@ -6,6 +6,7 @@ import org.tzi.use.DTO.AttributeDTO;
 import org.tzi.use.DTO.ClassDTO;
 import org.tzi.use.DTO.OperationDTO;
 import org.tzi.use.UseModelFacade;
+import org.tzi.use.api.UseApiException;
 import org.tzi.use.entities.AttributeNTT;
 import org.tzi.use.entities.ClassNTT;
 import org.tzi.use.entities.OperationNTT;
@@ -48,7 +49,7 @@ public class ClassService {
 //        return classNTTOpt.get().getPrePostCond().stream().map(prePostConditionMapper::toDTO).toList();
 //    }
 
-    public AttributeDTO createAttribute(String className, AttributeDTO attributeDTO) {
+    public AttributeDTO createAttribute(String className, AttributeDTO attributeDTO) throws UseApiException {
         AttributeNTT attributeNTT = attributeMapper.toEntity(attributeDTO);
         ClassNTT classNTT = classRepo.findById(className)
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
@@ -66,7 +67,7 @@ public class ClassService {
                 .orElseThrow(() -> new IllegalArgumentException("Model not found for class: " + className));
     }
 
-    public OperationDTO createOperation(String className, OperationDTO operationDTO) {
+    public OperationDTO createOperation(String className, OperationDTO operationDTO) throws UseApiException {
         OperationNTT operationNTT = operationMapper.toEntity(operationDTO);
         ClassNTT classNTT = classRepo.findById(className)
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
