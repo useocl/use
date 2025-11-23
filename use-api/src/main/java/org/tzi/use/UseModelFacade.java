@@ -53,7 +53,30 @@ public class UseModelFacade {
     public static void createInvariant(InvariantDTO invariantDTOreq, String className, String modelName) throws UseApiException {
         UseModelApi api = getOrCreateModelApi(modelName);
         createClass(modelName, className);
+
+//        createOperation(modelName, className, new OperationNTT("calculateAge", new String[][]{}, "Boolean"));
+        // Create a query operation WITH a body
+        api.createAttribute(className, "birthYear", "Integer");
+        api.createAttribute(className, "calculateAge", "Integer");
+//        api.createQueryOperation(
+//                className,
+//                "calculateAge",
+//                new String[][]{},      // no parameters
+//                "Integer",             // return type (should be Integer, not Boolean)
+//                "(2024 - self.birthYear)",  // the actual implementation
+//                false                  // not a constructor
+//        );
+//        // The invariant body from the request is "self.calculateAge >= 18"
+//        String originalInvBody = invariantDTOreq.getInvBody();
+//
+//        // The definition of the 'calculateAge' operation
+//        String calculateAgeBody = "(2024 - self.birthYear)";
+//
+//        // Replace the call to 'calculateAge' in the invariant with its actual OCL expression
+//        String expandedInvBody = originalInvBody.replace("self.calculateAge", calculateAgeBody);
+
         api.createInvariant(invariantDTOreq.getInvName(), className, invariantDTOreq.getInvBody(), invariantDTOreq.isExistential());
+
     }
 
     public static void createAssociation(AssociationDTO association, String modelName) throws UseApiException {
