@@ -17,7 +17,7 @@ public class ModelDTO {
     private List<ClassDTO> classes = new ArrayList<>();
     private List<AssociationDTO> associations = new ArrayList<>();
     private List<InvariantDTO> invariants = new ArrayList<>();
-    private Map<String, PrePostConditionNTT> prePostConditions = new TreeMap<>();
+    private Map<String, PrePostConditionDTO> prePostConditions = new TreeMap<>();
 
     public ModelDTO(String name) {
         this.name = name;
