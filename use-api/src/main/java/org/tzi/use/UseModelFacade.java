@@ -5,6 +5,7 @@ import org.tzi.use.api.UseModelApi;
 import org.tzi.use.DTO.*;
 import org.tzi.use.entities.AttributeNTT;
 import org.tzi.use.entities.OperationNTT;
+import org.tzi.use.entities.PrePostConditionNTT;
 import org.tzi.use.uml.mm.MClass;
 
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class UseModelFacade {
 //        createOperation(modelName, className, new OperationNTT("calculateAge", new String[][]{}, "Boolean"));
         // Create a query operation WITH a body
         api.createAttribute(className, "birthYear", "Integer");
-        api.createAttribute(className, "calculateAge", "Integer");
+//        api.createAttribute(className, "calculateAge", "Integer");
 //        api.createQueryOperation(
 //                className,
 //                "calculateAge",
@@ -125,5 +126,11 @@ public class UseModelFacade {
      */
     public static UseModelApi getModelApi(String modelName) {
         return modelApiCache.get(modelName);
+    }
+
+    public static void createPrePostCondition(PrePostConditionNTT ppc, String className, String modelName) throws UseApiException {
+        UseModelApi api = getOrCreateModelApi(modelName);
+        createClass(modelName, className);
+        api.createPrePostCondition(className,ppc.getOperationName(),ppc.getName(), ppc.getCondition(), ppc.isPre());
     }
 }

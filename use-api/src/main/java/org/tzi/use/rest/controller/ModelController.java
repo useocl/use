@@ -6,10 +6,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tzi.use.DTO.AssociationDTO;
-import org.tzi.use.DTO.ClassDTO;
-import org.tzi.use.DTO.InvariantDTO;
-import org.tzi.use.DTO.ModelDTO;
+import org.tzi.use.DTO.*;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.rest.services.ModelService;
 
@@ -315,6 +312,71 @@ public class ModelController {
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
+
+    @PostMapping("/model/{modelName}/{className}/prepostcondition")
+    public ResponseEntity<EntityModel<PrePostConditionDTO>> createprepostcondition(@PathVariable String modelName, @PathVariable String className, @RequestBody PrePostConditionDTO prePostConditionDTO) throws UseApiException {
+        PrePostConditionDTO createdPrePostCondition = modelService.createPrePostCondition(modelName, prePostConditionDTO, className);
+
+        // Wrap the created pre/post condition in an EntityModel for HATEOAS
+        EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(createdPrePostCondition);
+
+        // Link to the parent model
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+
+        // Link to the classes listing for this model (also used as self since there's no single-prepostcondition GET)
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withSelfRel());
+
+        // Link to create another pre/post condition in this model
+        entityModel.add(linkTo(ModelController.class).slash("model").slash(modelName).slash("prepostcondition").withRel("create-prepostcondition"));
+
+        // Link to invariants for this model
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariants(modelName)).withRel("invariants"));
+
+        // Link to associations for this model
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withRel("associations"));
+
+        return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/model/{modelName}/prepostconditions")
+    public ResponseEntity<CollectionModel<EntityModel<PrePostConditionDTO>>> getModelPrePostCond(@PathVariable String modelName) {
+        List<PrePostConditionDTO> prePostConditions = modelService.getModelPrePostConditions(modelName);
+
+        List<EntityModel<PrePostConditionDTO>> prePostConditionEntities = prePostConditions.stream().map(prePostCondition -> {
+            EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(prePostCondition);
+
+            // Link to the parent model
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+
+            // Self-link to this collection
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelPrePostCond(modelName)).withSelfRel());
+
+            // Link to classes
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelClasses(modelName)).withRel("classes"));
+
+            // Link to associations
+            entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociations(modelName)).withRel("associations"));
+
+            return entityModel;
+        }).collect(Collectors.toList());
+
+        CollectionModel<EntityModel<PrePostConditionDTO>> collectionModel = CollectionModel.of(prePostConditionEntities);
+
+        // Self-link for the collection
+        collectionModel.add(linkTo(methodOn(ModelController.class).getModelPrePostCond(modelName)).withSelfRel());
+
+        return new ResponseEntity<>(collectionModel, HttpStatus.OK);
+    }
+
+    @GetMapping("/model/{modelName}/prepostcondition/{prePostConditionName}")
+    public ResponseEntity<EntityModel<PrePostConditionDTO>> getModelPrePostCondByName(@PathVariable String modelName, @PathVariable String prePostConditionName) {
+        PrePostConditionDTO prePostCondition = modelService.getPrePostConditionByName(modelName, prePostConditionName);
+        EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(prePostCondition);
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelPrePostCondByName(modelName, prePostConditionName)).withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+        return new ResponseEntity<>(entityModel, HttpStatus.OK);
+    }
+
 
     /*
     Endpoints that are needed (prefix /api):

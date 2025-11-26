@@ -3,20 +3,11 @@ package org.tzi.use.rest.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.tzi.use.DTO.AssociationDTO;
-import org.tzi.use.DTO.ClassDTO;
-import org.tzi.use.DTO.InvariantDTO;
-import org.tzi.use.DTO.ModelDTO;
+import org.tzi.use.DTO.*;
 import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
-import org.tzi.use.entities.AssociationNTT;
-import org.tzi.use.entities.ClassNTT;
-import org.tzi.use.entities.InvariantNTT;
-import org.tzi.use.entities.ModelNTT;
-import org.tzi.use.mapper.AssociationMapperImpl;
-import org.tzi.use.mapper.ClassMapperImpl;
-import org.tzi.use.mapper.InvariantMapperImpl;
-import org.tzi.use.mapper.ModelMapper;
+import org.tzi.use.entities.*;
+import org.tzi.use.mapper.*;
 import org.tzi.use.repository.ClassRepo;
 import org.tzi.use.repository.ModelRepo;
 
@@ -33,6 +24,7 @@ public class ModelService {
     private final ClassMapperImpl classMapperImpl;
     private final InvariantMapperImpl invariantMapperImpl;
     private final AssociationMapperImpl associationMapperImpl;
+    private final PrePostConditionMapper prePostConditionMapper;
 
 
     /**
@@ -145,5 +137,30 @@ public class ModelService {
         modelOfAssociation.get().getAssociations().add(tmp_associationntt);
         modelRepo.save(modelOfAssociation.get());
         return associationMapperImpl.toDTO(tmp_associationntt);
+    }
+
+    public PrePostConditionDTO createPrePostCondition(String modelName, PrePostConditionDTO prePostConditionDTO, String className) throws UseApiException {
+        PrePostConditionNTT tmp_prepostconditionntt = prePostConditionMapper.toEntity(prePostConditionDTO);
+        Optional<ModelNTT> modelOfPrePostCondition = modelRepo.findById(modelName);
+        UseModelFacade.createPrePostCondition(tmp_prepostconditionntt, className, modelName);
+        String name = className + "::" + prePostConditionDTO.getOperationName()
+                + prePostConditionDTO.getName();
+
+        modelOfPrePostCondition.get().getPrePostConditions().put(name, tmp_prepostconditionntt);
+        modelRepo.save(modelOfPrePostCondition.get());
+        return prePostConditionMapper.toDTO(tmp_prepostconditionntt);
+    }
+
+    public List<PrePostConditionDTO> getModelPrePostConditions(String modelName) {
+        Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
+        return modelOpt.get().getPrePostConditions().values().stream()
+                .map(prePostConditionMapper::toDTO)
+                .toList();
+    }
+
+    public PrePostConditionDTO getPrePostConditionByName(String modelName, String prePostConditionName) {
+        Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
+        PrePostConditionNTT prePostCondition = modelOpt.get().getPrePostConditions().get(prePostConditionName);
+        return prePostConditionMapper.toDTO(prePostCondition);
     }
 }

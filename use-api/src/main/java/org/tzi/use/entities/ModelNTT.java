@@ -9,6 +9,8 @@ import org.tzi.use.DTO.ClassDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Document("model")
 @Data
@@ -19,8 +21,11 @@ public class ModelNTT {
     @Id
     private String name;
     private List<ClassNTT> classes = new ArrayList<>();
+    // String treemap
     private List<AssociationNTT> associations = new ArrayList<>();
+    // String treemap
     private List<InvariantNTT> invariants = new ArrayList<>();
+    private Map<String,PrePostConditionNTT> prePostConditions = new TreeMap<>();
 
     public ModelNTT(String name) {
         this.name = name;
