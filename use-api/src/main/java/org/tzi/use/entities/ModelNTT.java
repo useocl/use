@@ -32,14 +32,14 @@ public class ModelNTT {
     }
 
 
-    public void addClass(ClassNTT classDTO) {
-        if (classDTO == null) {
+    public void addClass(ClassNTT classNTT) {
+        if (classNTT == null) {
             return;
         }
         if (this.classes == null) {
             this.classes = new ArrayList<>();
         }
-        this.classes.add(classDTO);
+        this.classes.add(classNTT);
     }
 
 }

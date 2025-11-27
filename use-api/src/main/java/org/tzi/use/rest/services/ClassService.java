@@ -20,11 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClassService {
     private final ClassRepo classRepo;
-    private final ModelRepo modelRepo; // added to resolve model by class name
+    private final ModelRepo modelRepo;
     private final ClassMapper classMapper;
     private final AttributeMapper attributeMapper;
     private final OperationMapper operationMapper;
     private final PrePostConditionMapper prePostConditionMapper;
+    private final UseModelFacade useModelFacade;
 
     public ClassDTO getClassByName(String className) {
         ClassNTT classNTT = classRepo.findById(className)
@@ -55,7 +56,7 @@ public class ClassService {
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
         // Resolve model name that contains this class
         String modelName = getModelNameForClass(className);
-        UseModelFacade.createAttribute(modelName, className, attributeNTT);
+        useModelFacade.createAttribute(modelName, className, attributeNTT);
         classNTT.getAttributes().add(attributeNTT);
         classRepo.save(classNTT);
         return attributeMapper.toDTO(attributeNTT);
@@ -73,7 +74,7 @@ public class ClassService {
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
 
         String modelName = getModelNameForClass(className);
-         UseModelFacade.createOperation(modelName, className, operationNTT);
+         useModelFacade.createOperation(modelName, className, operationNTT);
 
         classNTT.getOperations().add(operationNTT);
         classRepo.save(classNTT);

@@ -1,63 +1,113 @@
 package org.tzi.use;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.DTO.*;
-import org.tzi.use.entities.AttributeNTT;
-import org.tzi.use.entities.OperationNTT;
-import org.tzi.use.entities.PrePostConditionNTT;
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.entities.*;
+import org.tzi.use.repository.ModelRepo;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class UseModelFacade {
-    // Cache UseModelApi instances per model name to maintain state
-    private static final Map<String, UseModelApi> modelApiCache = new HashMap<>();
+
+    @Autowired
+    private ModelRepo modelRepo;
+    private final Map<String, ModelNTT> modelNTTCache = new HashMap<>();
 
     /**
-     * Gets or creates a UseModelApi instance for the given model name.
-     * This ensures we maintain the same model instance across multiple operations.
+     * Gets or creates a model API instance.
+     * First attempts to load from repository, then creates if not found.
+     * Caches the result for performance.
      */
-    private static UseModelApi getOrCreateModelApi(String modelName) {
-        return modelApiCache.computeIfAbsent(modelName, name -> {
-            UseModelApi api = new UseModelApi();
-            api.createModel(name);
-            return api;
+    private ModelNTT getOrCreateModel(String modelName) {
+        return modelNTTCache.computeIfAbsent(modelName, name -> {
+            ModelNTT modelNTT = new ModelNTT(modelName);
+
+            // Try to load existing model from repository
+            modelRepo.findById(name).ifPresent(model -> {
+                loadModelIntoCache(modelNTT, model);
+            });
+
+            return modelNTT;
         });
     }
 
-    public static void createModel(String modelName) {
-        // Use getOrCreateModelApi to ensure idempotent behavior
-        getOrCreateModelApi(modelName);
-    }
-
     /**
-     * Creates a class in the specified model if it doesn't already exist.
-     * This is idempotent - calling it multiple times with the same parameters is safe.
+     * Loads a persisted model from the repository into the UseModelApi instance.
+     * This reconstructs the model structure (classes, attributes, operations, etc.)
+     * from the stored ModelNTT entity.
      *
-     * @param modelName The name of the model containing the class
-     * @param className The name of the class to create
-     * @throws UseApiException If there's an error creating the class
+     * @param modelNTT The UseModelApi instance to load the model into
+     * @param model The persisted ModelNTT entity from the repository
      */
-    public static void createClass(String modelName, String className) throws UseApiException {
-        UseModelApi api = getOrCreateModelApi(modelName);
+    private void loadModelIntoCache(ModelNTT modelNTT, ModelNTT model) {
+            // Load all classes
+            if (model.getClasses() != null) {
+                for (ClassNTT classNTT : model.getClasses()) {
+                    modelNTT.addClass(classNTT);
 
-        // Check if class already exists
-        MClass existingClass = api.getClass(className);
-        if (existingClass == null) {
-            api.createClass(className, false);
-        }
-        // If class already exists, do nothing (idempotent)
+                    // Load attributes for this class
+                    if (classNTT.getAttributes() != null) {
+                        for (AttributeNTT attribute : classNTT.getAttributes()) {
+                            classNTT.getAttributes().add(attribute);
+                        }
+                    }
+
+                    // Load operations for this class
+                    if (classNTT.getOperations() != null) {
+                        for (OperationNTT operation : classNTT.getOperations()) {
+                            classNTT.getOperations().add(operation);
+                        }
+                    }
+                }
+            }
+
+            // Load associations
+            if (model.getAssociations() != null) {
+                for (AssociationNTT association : model.getAssociations()) {
+                    modelNTT.getAssociations().add(association);
+                }
+            }
+            if (model.getInvariants() != null) {
+                for (InvariantNTT invariant : model.getInvariants()) {
+                    modelNTT.getInvariants().add(invariant);
+                }
+            }
+
+//             Load pre/post conditions
+            if (model.getPrePostConditions() != null) {
+                for (Map.Entry<String, PrePostConditionNTT> entry : model.getPrePostConditions().entrySet()) {
+                    modelNTT.getPrePostConditions().put(entry.getKey(), entry.getValue());
+                }
+            }
+
     }
 
-    public static void createInvariant(InvariantDTO invariantDTOreq, String className, String modelName) throws UseApiException {
-        UseModelApi api = getOrCreateModelApi(modelName);
+
+    public void createModel(String modelName) {
+//        ModelNTT modelNTT = getOrCreateModel(modelName);
+        new UseModelApi().createModel(modelName);
+    }
+
+
+    public void createClass(String modelName, String className) throws UseApiException {
+        ModelNTT modelNTT = getOrCreateModel(modelName);
+
+        UseModelApi useModelApi = loadUseModelApiFromModelNTT(modelNTT);
+        useModelApi.createClass(className,false);
+    }
+
+    public void createInvariant(InvariantDTO invariantDTOreq, String className, String modelName) throws UseApiException {
+//        UseModelApi api = getOrCreateModel(modelName);
         createClass(modelName, className);
 
 //        createOperation(modelName, className, new OperationNTT("calculateAge", new String[][]{}, "Boolean"));
         // Create a query operation WITH a body
-        api.createAttribute(className, "birthYear", "Integer");
+//        api.createAttribute(className, "birthYear", "Integer");
 //        api.createAttribute(className, "calculateAge", "Integer");
 //        api.createQueryOperation(
 //                className,
@@ -76,61 +126,89 @@ public class UseModelFacade {
 //        // Replace the call to 'calculateAge' in the invariant with its actual OCL expression
 //        String expandedInvBody = originalInvBody.replace("self.calculateAge", calculateAgeBody);
 
-        api.createInvariant(invariantDTOreq.getInvName(), className, invariantDTOreq.getInvBody(), invariantDTOreq.isExistential());
+//        api.createInvariant(invariantDTOreq.getInvName(), className, invariantDTOreq.getInvBody(), invariantDTOreq.isExistential());
 
+        // Save updated model to repository
     }
 
-    public static void createAssociation(AssociationDTO association, String modelName) throws UseApiException {
-        UseModelApi api = getOrCreateModelApi(modelName);
+    public void createAssociation(AssociationDTO association, String modelName) throws UseApiException {
+//        UseModelApi api = getOrCreateModel(modelName);
+        ModelNTT modelNTT = getOrCreateModel(modelName);
+
         createClass(modelName, association.getEnd1ClassName());
         createClass(modelName, association.getEnd2ClassName());
-        api.createAssociation(association.getAssociationName(), association.getEnd1ClassName(), association.getEnd1RoleName(), association.getEnd1Multiplicity(), association.getEnd1Aggregation().ordinal(),
-                association.getEnd2ClassName(), association.getEnd2RoleName(), association.getEnd2Multiplicity(), association.getEnd2Aggregation().ordinal());
+//        api.createAssociation(association.getAssociationName(), association.getEnd1ClassName(), association.getEnd1RoleName(), association.getEnd1Multiplicity(), association.getEnd1Aggregation().ordinal(),
+//                association.getEnd2ClassName(), association.getEnd2RoleName(), association.getEnd2Multiplicity(), association.getEnd2Aggregation().ordinal());
+
+        // Save updated model to repository
     }
 
-    public static void createAttribute(String modelName, String className, AttributeNTT attributeNTT) throws UseApiException {
-        UseModelApi api = getOrCreateModelApi(modelName);
+    public void createAttribute(String modelName, String className, AttributeNTT attributeNTT) throws UseApiException {
+        ModelNTT modelNTT = getOrCreateModel(modelName);
+        UseModelApi useModelApi = loadUseModelApiFromModelNTT(modelNTT);
+        useModelApi.createAttribute(className, attributeNTT.getName(), attributeNTT.getType());
+        modelRepo.save(modelNTT);
+        // Save updated model to repository
+    }
+
+    private UseModelApi loadUseModelApiFromModelNTT(ModelNTT modelNTT) throws UseApiException {
+        UseModelApi useModelApi = new UseModelApi();
+        useModelApi.createModel(modelNTT.getName());
+
+        // Load classes
+        if (modelNTT.getClasses() != null) {
+            for (ClassNTT classNTT : modelNTT.getClasses()) {
+                useModelApi.createClass(classNTT.getName(), false);
+
+                // Load attributes
+                if (classNTT.getAttributes() != null) {
+                    for (AttributeNTT attribute : classNTT.getAttributes()) {
+                        useModelApi.createAttribute(classNTT.getName(), attribute.getName(), attribute.getType());
+                    }
+                }
+
+                // Load operations
+                if (classNTT.getOperations() != null) {
+                    for (OperationNTT operation : classNTT.getOperations()) {
+                        useModelApi.createOperation(classNTT.getName(), operation.getOperationName(), operation.getParameter(), operation.getReturnType());
+                    }
+                }
+            }
+        }
+
+        // Load associations
+        if (modelNTT.getAssociations() != null) {
+            for (AssociationNTT association : modelNTT.getAssociations()) {
+                useModelApi.createAssociation(
+                        association.getAssociationName(),
+                        association.getEnd1ClassName(),
+                        association.getEnd1RoleName(),
+                        association.getEnd1Multiplicity(),
+                        association.getEnd1Aggregation().ordinal(),
+                        association.getEnd2ClassName(),
+                        association.getEnd2RoleName(),
+                        association.getEnd2Multiplicity(),
+                        association.getEnd2Aggregation().ordinal()
+                );
+            }
+        }
+
+        return useModelApi;
+    }
+
+    public void createOperation(String modelName, String className, OperationNTT operationNTT) throws UseApiException {
+//        UseModelApi api = getOrCreateModel(modelName);
         createClass(modelName, className);
-        api.createAttribute(className, attributeNTT.getName(), attributeNTT.getType());
+//        api.createOperation(className, operationNTT.getOperationName(), operationNTT.getParameter(), operationNTT.getReturnType());
+
+        // Save updated model to repository
     }
 
-
-    public static void createOperation(String modelName, String className, OperationNTT operationNTT) throws UseApiException {
-        UseModelApi api = getOrCreateModelApi(modelName);
+    public void createPrePostCondition(PrePostConditionNTT ppc, String className, String modelName) throws UseApiException {
+//        UseModelApi api = getOrCreateModel(modelName);
         createClass(modelName, className);
-        api.createOperation(className, operationNTT.getOperationName(), operationNTT.getParameter(), operationNTT.getReturnType());
+//        api.createPrePostCondition(className, ppc.getOperationName(), ppc.getName(), ppc.getCondition(), ppc.isPre());
+
     }
 
-    /**
-     * Clears the cached model for the given model name.
-     * This is useful when you want to start fresh with a model.
-     * @param modelName The name of the model to clear
-     */
-    public static void clearModel(String modelName) {
-        modelApiCache.remove(modelName);
-    }
-
-    /**
-     * Clears all cached models.
-     * This is useful for testing or when you want to reset the entire state.
-     */
-    public static void clearAllModels() {
-        modelApiCache.clear();
-    }
-
-    /**
-     * Gets the UseModelApi instance for a specific model name.
-     * Returns null if the model hasn't been created yet.
-     * @param modelName The name of the model
-     * @return The UseModelApi instance or null if not found
-     */
-    public static UseModelApi getModelApi(String modelName) {
-        return modelApiCache.get(modelName);
-    }
-
-    public static void createPrePostCondition(PrePostConditionNTT ppc, String className, String modelName) throws UseApiException {
-        UseModelApi api = getOrCreateModelApi(modelName);
-        createClass(modelName, className);
-        api.createPrePostCondition(className,ppc.getOperationName(),ppc.getName(), ppc.getCondition(), ppc.isPre());
-    }
 }
