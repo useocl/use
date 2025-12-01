@@ -9,9 +9,9 @@ import org.tzi.use.UseModelFacade;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.entities.AttributeNTT;
 import org.tzi.use.entities.ClassNTT;
+import org.tzi.use.entities.ModelNTT;
 import org.tzi.use.entities.OperationNTT;
 import org.tzi.use.mapper.*;
-import org.tzi.use.repository.ClassRepo;
 import org.tzi.use.repository.ModelRepo;
 
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ClassService {
-    private final ClassRepo classRepo;
     private final ModelRepo modelRepo;
     private final ClassMapper classMapper;
     private final AttributeMapper attributeMapper;
@@ -28,19 +27,31 @@ public class ClassService {
     private final UseModelFacade useModelFacade;
 
     public ClassDTO getClassByName(String className) {
-        ClassNTT classNTT = classRepo.findById(className)
+        ModelNTT model = modelRepo.findByClassesName(className)
+                .orElseThrow(() -> new IllegalArgumentException("Model not found for class: " + className));
+        ClassNTT classNTT = model.getClasses().stream()
+                .filter(c -> c.getName().equals(className))
+                .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
         return classMapper.toDTO(classNTT);
     }
 
     public List<AttributeDTO> getAttributes(String className) {
-        ClassNTT classNTT = classRepo.findById(className)
+        ModelNTT model = modelRepo.findByClassesName(className)
+                .orElseThrow(() -> new IllegalArgumentException("Model not found for class: " + className));
+        ClassNTT classNTT = model.getClasses().stream()
+                .filter(c -> c.getName().equals(className))
+                .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
         return classNTT.getAttributes().stream().map(attributeMapper::toDTO).toList();
     }
 
     public List<OperationDTO> getOperations(String className) {
-        ClassNTT classNTT = classRepo.findById(className)
+        ModelNTT model = modelRepo.findByClassesName(className)
+                .orElseThrow(() -> new IllegalArgumentException("Model not found for class: " + className));
+        ClassNTT classNTT = model.getClasses().stream()
+                .filter(c -> c.getName().equals(className))
+                .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
         return classNTT.getOperations().stream().map(operationMapper::toDTO).toList();
     }
@@ -52,32 +63,41 @@ public class ClassService {
 
     public AttributeDTO createAttribute(String className, AttributeDTO attributeDTO) throws UseApiException {
         AttributeNTT attributeNTT = attributeMapper.toEntity(attributeDTO);
-        ClassNTT classNTT = classRepo.findById(className)
-                .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
-        // Resolve model name that contains this class
-        String modelName = getModelNameForClass(className);
-        useModelFacade.createAttribute(modelName, className, attributeNTT);
-        classNTT.getAttributes().add(attributeNTT);
-        classRepo.save(classNTT);
-        return attributeMapper.toDTO(attributeNTT);
-    }
 
-    private String getModelNameForClass(String className) {
-        return modelRepo.findByClassesName(className)
-                .map(m -> m.getName())
+        // Find model containing this class
+        ModelNTT model = modelRepo.findByClassesName(className)
                 .orElseThrow(() -> new IllegalArgumentException("Model not found for class: " + className));
+        ClassNTT classNTT = model.getClasses().stream()
+                .filter(c -> c.getName().equals(className))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
+
+        // Create attribute in USE model
+        useModelFacade.createAttribute(model.getName(), className, attributeNTT);
+
+        // Add to entity and save through model
+        classNTT.getAttributes().add(attributeNTT);
+        modelRepo.save(model);
+        return attributeMapper.toDTO(attributeNTT);
     }
 
     public OperationDTO createOperation(String className, OperationDTO operationDTO) throws UseApiException {
         OperationNTT operationNTT = operationMapper.toEntity(operationDTO);
-        ClassNTT classNTT = classRepo.findById(className)
+
+        // Find model containing this class
+        ModelNTT model = modelRepo.findByClassesName(className)
+                .orElseThrow(() -> new IllegalArgumentException("Model not found for class: " + className));
+        ClassNTT classNTT = model.getClasses().stream()
+                .filter(c -> c.getName().equals(className))
+                .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
 
-        String modelName = getModelNameForClass(className);
-         useModelFacade.createOperation(modelName, className, operationNTT);
+        // Create operation in USE model
+        useModelFacade.createOperation(model.getName(), className, operationNTT);
 
+        // Add to entity and save through model
         classNTT.getOperations().add(operationNTT);
-        classRepo.save(classNTT);
+        modelRepo.save(model);
         return operationMapper.toDTO(operationNTT);
     }
 
