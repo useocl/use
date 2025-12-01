@@ -21,10 +21,8 @@ public class ModelNTT {
     @Id
     private String name;
     private List<ClassNTT> classes = new ArrayList<>();
-    // String treemap
-    private List<AssociationNTT> associations = new ArrayList<>();
-    // String treemap
-    private List<InvariantNTT> invariants = new ArrayList<>();
+    private Map<String,AssociationNTT> associations = new TreeMap<>();
+    private Map<String, InvariantNTT> invariants = new TreeMap<>();
     private Map<String,PrePostConditionNTT> prePostConditions = new TreeMap<>();
 
     public ModelNTT(String name) {

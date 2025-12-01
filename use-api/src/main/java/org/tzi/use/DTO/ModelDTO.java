@@ -1,6 +1,7 @@
 package org.tzi.use.DTO;
 
 import lombok.*;
+import org.tzi.use.entities.AssociationNTT;
 import org.tzi.use.entities.InvariantNTT;
 import org.tzi.use.entities.PrePostConditionNTT;
 
@@ -15,9 +16,9 @@ import java.util.TreeMap;
 public class ModelDTO {
     private String name;
     private List<ClassDTO> classes = new ArrayList<>();
-    private List<AssociationDTO> associations = new ArrayList<>();
-    private List<InvariantDTO> invariants = new ArrayList<>();
-    private Map<String, PrePostConditionDTO> prePostConditions = new TreeMap<>();
+    private Map<String, AssociationNTT> associations = new TreeMap<>();
+    private Map<String, InvariantNTT> invariants = new TreeMap<>();
+    private Map<String,PrePostConditionNTT> prePostConditions = new TreeMap<>();
 
     public ModelDTO(String name) {
         this.name = name;
