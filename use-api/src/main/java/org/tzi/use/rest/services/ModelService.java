@@ -59,7 +59,7 @@ public class ModelService {
         }
 
         // Create the class in the USE model
-        useModelFacade.createClass(modelName, tmp_classntt.getName());
+        useModelFacade.createClass(modelOfClass, tmp_classntt.getName());
         modelOfClass.addClass(tmp_classntt);
 
         modelRepo.save(modelOfClass);
@@ -105,12 +105,12 @@ public class ModelService {
 
     public List<AssociationDTO> getModelAssociations(String modelName) {
         Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
-        return modelOpt.get().getAssociations().stream().map(associationMapperImpl::toDTO).toList();
+return modelOpt.get().getAssociations().values().stream().map(associationMapperImpl::toDTO).toList();
     }
 
     public List<InvariantDTO> getModelInvariants (String modelName) {
         Optional<ModelNTT> modelOpt = modelRepo.findById(modelName);
-        return modelOpt.get().getInvariants().stream()
+        return modelOpt.get().getInvariants().values().stream()
                 .map(invariantMapperImpl::toDTO)
                 .toList();
     }
@@ -122,8 +122,8 @@ public class ModelService {
         // find the class inside the model by className
 
         //TODO wenn die facade ein error bekommt wird die zeile darunter ausgeführt?
-        useModelFacade.createInvariant(invariantDTOreq, className, modelName);
-        modelOfInvariant.get().getInvariants().add(tmp_invariantntt);
+        useModelFacade.createInvariant(invariantDTOreq, className, modelOfInvariant.get());
+        modelOfInvariant.get().getInvariants().put(className, tmp_invariantntt);
         //TODO
         modelRepo.save(modelOfInvariant.get());
         return invariantMapperImpl.toDTO(tmp_invariantntt);
@@ -132,8 +132,9 @@ public class ModelService {
     public AssociationDTO createAssociation(String modelName, AssociationDTO association) throws UseApiException {
         AssociationNTT tmp_associationntt = associationMapperImpl.toEntity(association);
         Optional<ModelNTT> modelOfAssociation = modelRepo.findById(modelName);
-        useModelFacade.createAssociation(association, modelName);
-        modelOfAssociation.get().getAssociations().add(tmp_associationntt);
+        useModelFacade.createAssociation(association, modelOfAssociation.get());
+        modelOfAssociation.get().getAssociations().put(tmp_associationntt.getEnd2ClassName(),tmp_associationntt);
+        modelOfAssociation.get().getAssociations().put(tmp_associationntt.getEnd1ClassName(), tmp_associationntt);
         modelRepo.save(modelOfAssociation.get());
         return associationMapperImpl.toDTO(tmp_associationntt);
     }
@@ -141,7 +142,7 @@ public class ModelService {
     public PrePostConditionDTO createPrePostCondition(String modelName, PrePostConditionDTO prePostConditionDTO, String className) throws UseApiException {
         PrePostConditionNTT tmp_prepostconditionntt = prePostConditionMapper.toEntity(prePostConditionDTO);
         Optional<ModelNTT> modelOfPrePostCondition = modelRepo.findById(modelName);
-        useModelFacade.createPrePostCondition(tmp_prepostconditionntt, className, modelName);
+        useModelFacade.createPrePostCondition(tmp_prepostconditionntt, className, modelOfPrePostCondition.get());
         String name = className + "::" + prePostConditionDTO.getOperationName()
                 + prePostConditionDTO.getName();
 

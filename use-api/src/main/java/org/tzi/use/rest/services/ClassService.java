@@ -73,7 +73,7 @@ public class ClassService {
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
 
         // Create attribute in USE model
-        useModelFacade.createAttribute(model.getName(), className, attributeNTT);
+        useModelFacade.createAttribute(model, className, attributeNTT);
 
         // Add to entity and save through model
         classNTT.getAttributes().add(attributeNTT);
@@ -93,7 +93,7 @@ public class ClassService {
                 .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
 
         // Create operation in USE model
-        useModelFacade.createOperation(model.getName(), className, operationNTT);
+        useModelFacade.createOperation(model, className, operationNTT);
 
         // Add to entity and save through model
         classNTT.getOperations().add(operationNTT);
