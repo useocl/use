@@ -2,9 +2,10 @@ package org.tzi.use;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tzi.use.DTO.AssociationDTO;
+import org.tzi.use.DTO.InvariantDTO;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
-import org.tzi.use.DTO.*;
 import org.tzi.use.entities.*;
 import org.tzi.use.repository.ModelRepo;
 
@@ -14,9 +15,16 @@ import java.util.Map;
 @Component
 public class UseModelFacade {
 
+    private final Map<String, ModelNTT> modelNTTCache = new HashMap<>();
     @Autowired
     private ModelRepo modelRepo;
-    private final Map<String, ModelNTT> modelNTTCache = new HashMap<>();
+
+    private UseModelApi createUMAfromModelNTT(ModelNTT modelNTT) {
+        UseModelApi result = new UseModelApi(modelNTT.getName());
+
+        return result;
+    }
+
 
     /**
      * Gets or creates a model API instance.
@@ -42,48 +50,48 @@ public class UseModelFacade {
      * from the stored ModelNTT entity.
      *
      * @param modelNTT The UseModelApi instance to load the model into
-     * @param model The persisted ModelNTT entity from the repository
+     * @param model    The persisted ModelNTT entity from the repository
      */
     private void loadModelIntoCache(ModelNTT modelNTT, ModelNTT model) {
-            // Load all classes
-            if (model.getClasses() != null) {
-                for (ClassNTT classNTT : model.getClasses()) {
-                    modelNTT.addClass(classNTT);
+        // Load all classes
+        if (model.getClasses() != null) {
+            for (ClassNTT classNTT : model.getClasses()) {
+                modelNTT.addClass(classNTT);
 
-                    // Load attributes for this class
-                    if (classNTT.getAttributes() != null) {
-                        for (AttributeNTT attribute : classNTT.getAttributes()) {
-                            classNTT.getAttributes().add(attribute);
-                        }
-                    }
-
-                    // Load operations for this class
-                    if (classNTT.getOperations() != null) {
-                        for (OperationNTT operation : classNTT.getOperations()) {
-                            classNTT.getOperations().add(operation);
-                        }
+                // Load attributes for this class
+                if (classNTT.getAttributes() != null) {
+                    for (AttributeNTT attribute : classNTT.getAttributes()) {
+                        classNTT.getAttributes().add(attribute);
                     }
                 }
-            }
 
-            // Load associations
-            if (model.getAssociations() != null) {
-                for (AssociationNTT association : model.getAssociations()) {
-                    modelNTT.getAssociations().add(association);
+                // Load operations for this class
+                if (classNTT.getOperations() != null) {
+                    for (OperationNTT operation : classNTT.getOperations()) {
+                        classNTT.getOperations().add(operation);
+                    }
                 }
             }
-            if (model.getInvariants() != null) {
-                for (InvariantNTT invariant : model.getInvariants()) {
-                    modelNTT.getInvariants().add(invariant);
-                }
+        }
+
+        // Load associations
+        if (model.getAssociations() != null) {
+            for (AssociationNTT association : model.getAssociations()) {
+                modelNTT.getAssociations().add(association);
             }
+        }
+        if (model.getInvariants() != null) {
+            for (InvariantNTT invariant : model.getInvariants()) {
+                modelNTT.getInvariants().add(invariant);
+            }
+        }
 
 //             Load pre/post conditions
-            if (model.getPrePostConditions() != null) {
-                for (Map.Entry<String, PrePostConditionNTT> entry : model.getPrePostConditions().entrySet()) {
-                    modelNTT.getPrePostConditions().put(entry.getKey(), entry.getValue());
-                }
+        if (model.getPrePostConditions() != null) {
+            for (Map.Entry<String, PrePostConditionNTT> entry : model.getPrePostConditions().entrySet()) {
+                modelNTT.getPrePostConditions().put(entry.getKey(), entry.getValue());
             }
+        }
 
     }
 
@@ -98,7 +106,7 @@ public class UseModelFacade {
         ModelNTT modelNTT = getOrCreateModel(modelName);
 
         UseModelApi useModelApi = loadUseModelApiFromModelNTT(modelNTT);
-        useModelApi.createClass(className,false);
+        useModelApi.createClass(className, false);
     }
 
     public void createInvariant(InvariantDTO invariantDTOreq, String className, String modelName) throws UseApiException {
@@ -179,17 +187,7 @@ public class UseModelFacade {
         // Load associations
         if (modelNTT.getAssociations() != null) {
             for (AssociationNTT association : modelNTT.getAssociations()) {
-                useModelApi.createAssociation(
-                        association.getAssociationName(),
-                        association.getEnd1ClassName(),
-                        association.getEnd1RoleName(),
-                        association.getEnd1Multiplicity(),
-                        association.getEnd1Aggregation().ordinal(),
-                        association.getEnd2ClassName(),
-                        association.getEnd2RoleName(),
-                        association.getEnd2Multiplicity(),
-                        association.getEnd2Aggregation().ordinal()
-                );
+                useModelApi.createAssociation(association.getAssociationName(), association.getEnd1ClassName(), association.getEnd1RoleName(), association.getEnd1Multiplicity(), association.getEnd1Aggregation().ordinal(), association.getEnd2ClassName(), association.getEnd2RoleName(), association.getEnd2Multiplicity(), association.getEnd2Aggregation().ordinal());
             }
         }
 
