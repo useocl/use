@@ -143,7 +143,7 @@ public class ModelService {
     }
 
     /*  Helper Methods  */
-    private ModelNTT findModelByNameOrThrow(String modelName) {
+    ModelNTT findModelByNameOrThrow(String modelName) {
         return modelRepo.findById(modelName).orElseThrow(() -> new IllegalArgumentException("Model not found: " + modelName));
     }
 
