@@ -122,7 +122,7 @@ return modelOpt.get().getAssociations().values().stream().map(associationMapperI
         // find the class inside the model by className
 
         //TODO wenn die facade ein error bekommt wird die zeile darunter ausgeführt?
-        useModelFacade.createInvariant(invariantDTOreq, className, modelOfInvariant.get());
+        useModelFacade.createInvariant(modelOfInvariant.get(),tmp_invariantntt, className);
         modelOfInvariant.get().getInvariants().put(className, tmp_invariantntt);
         //TODO
         modelRepo.save(modelOfInvariant.get());
@@ -132,7 +132,7 @@ return modelOpt.get().getAssociations().values().stream().map(associationMapperI
     public AssociationDTO createAssociation(String modelName, AssociationDTO association) throws UseApiException {
         AssociationNTT tmp_associationntt = associationMapperImpl.toEntity(association);
         Optional<ModelNTT> modelOfAssociation = modelRepo.findById(modelName);
-        useModelFacade.createAssociation(association, modelOfAssociation.get());
+        useModelFacade.createAssociation( modelOfAssociation.get(),tmp_associationntt);
         modelOfAssociation.get().getAssociations().put(tmp_associationntt.getEnd2ClassName(),tmp_associationntt);
         modelOfAssociation.get().getAssociations().put(tmp_associationntt.getEnd1ClassName(), tmp_associationntt);
         modelRepo.save(modelOfAssociation.get());
@@ -142,7 +142,7 @@ return modelOpt.get().getAssociations().values().stream().map(associationMapperI
     public PrePostConditionDTO createPrePostCondition(String modelName, PrePostConditionDTO prePostConditionDTO, String className) throws UseApiException {
         PrePostConditionNTT tmp_prepostconditionntt = prePostConditionMapper.toEntity(prePostConditionDTO);
         Optional<ModelNTT> modelOfPrePostCondition = modelRepo.findById(modelName);
-        useModelFacade.createPrePostCondition(tmp_prepostconditionntt, className, modelOfPrePostCondition.get());
+        useModelFacade.createPrePostCondition(modelOfPrePostCondition.get(),tmp_prepostconditionntt, className);
         String name = className + "::" + prePostConditionDTO.getOperationName()
                 + prePostConditionDTO.getName();
 

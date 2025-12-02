@@ -1,5 +1,6 @@
 package org.tzi.use;
 
+import org.springframework.stereotype.Component;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.entities.*;
@@ -7,6 +8,7 @@ import org.tzi.use.entities.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class UseModelFacade {
 
     private final Map<String, UseModelApi> umaCache = new HashMap<>();
