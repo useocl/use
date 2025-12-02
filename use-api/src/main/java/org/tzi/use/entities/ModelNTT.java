@@ -28,16 +28,4 @@ public class ModelNTT {
     public ModelNTT(String name) {
         this.name = name;
     }
-
-
-    public void addClass(ClassNTT classNTT) {
-        if (classNTT == null) {
-            return;
-        }
-        if (this.classes == null) {
-            this.classes = new ArrayList<>();
-        }
-        this.classes.add(classNTT);
-    }
-
 }

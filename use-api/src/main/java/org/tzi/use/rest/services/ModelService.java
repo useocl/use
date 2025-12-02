@@ -60,7 +60,7 @@ public class ModelService {
 
         // Create the class in the USE model
         useModelFacade.createClass(modelOfClass, tmp_classntt.getName());
-        modelOfClass.addClass(tmp_classntt);
+        modelOfClass.getClasses().add(tmp_classntt);
 
         modelRepo.save(modelOfClass);
         return classMapperImpl.toDTO(tmp_classntt);
