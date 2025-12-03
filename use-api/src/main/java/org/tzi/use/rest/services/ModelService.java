@@ -88,7 +88,6 @@ public class ModelService {
 
         useModelFacade.createAssociation(modelNTT, associationNTT);
         modelNTT.getAssociations().put(associationNTT.getEnd1ClassName(), associationNTT);
-//        modelNTT.getAssociations().put(associationNTT.getEnd2ClassName(), associationNTT);
         modelRepo.save(modelNTT);
         return associationMapper.toDTO(associationNTT);
     }
