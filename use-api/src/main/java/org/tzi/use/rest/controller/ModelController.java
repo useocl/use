@@ -78,7 +78,7 @@ public class ModelController {
     }
 
     @GetMapping("/models")
-    public ResponseEntity<CollectionModel<EntityModel<ModelDTO>>> getAllModels() throws UseApiException {
+    public ResponseEntity<CollectionModel<EntityModel<ModelDTO>>> getModels() throws UseApiException {
         List<ModelDTO> models = modelService.getAllModels();
 
         List<EntityModel<ModelDTO>> modelEntities = new ArrayList<>();
@@ -88,12 +88,13 @@ public class ModelController {
             entityModel.add(linkTo(methodOn(ModelController.class).getClasses(modelDTO.getName())).withRel("classes"));
             entityModel.add(linkTo(methodOn(ModelController.class).getAssociations(modelDTO.getName())).withRel("associations"));
             entityModel.add(linkTo(methodOn(ModelController.class).getInvariants(modelDTO.getName())).withRel("invariants"));
+            entityModel.add(linkTo(methodOn(ModelController.class).getPrePostConditions(modelDTO.getName())).withRel("prePostConditions"));
 
             modelEntities.add(entityModel);
         }
 
         CollectionModel<EntityModel<ModelDTO>> collectionModel = CollectionModel.of(modelEntities);
-        collectionModel.add(linkTo(methodOn(ModelController.class).getAllModels()).withSelfRel());
+        collectionModel.add(linkTo(methodOn(ModelController.class).getModels()).withSelfRel());
         collectionModel.add(linkTo(methodOn(ModelController.class).createModel(null)).withRel("create model"));
 
 
@@ -109,8 +110,9 @@ public class ModelController {
         for (ClassDTO classOfModelName : modelClasses) {
             EntityModel<ClassDTO> entityModel = EntityModel.of(classOfModelName);
 
-            entityModel.add(linkTo(methodOn(ModelController.class).getClasses(modelName)).withSelfRel());
             entityModel.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, null)).withRel("class by name"));
+            entityModel.add(linkTo(methodOn(ClassController.class).addAttribute(modelName,null,null)).withRel("add attribute"));
+            entityModel.add(linkTo(methodOn(ClassController.class).addOperation(modelName,null,null)).withRel("add operation"));
 
             classEntities.add(entityModel);
         }
@@ -192,7 +194,7 @@ public class ModelController {
 
         collectionModel.add(linkTo(methodOn(ModelController.class).getPrePostConditions(modelName)).withSelfRel());
         collectionModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
-        collectionModel.add(linkTo(methodOn(ModelController.class).createprepostcondition(modelName,null,null)).withRel("create prepostcondition"));
+        collectionModel.add(linkTo(methodOn(ModelController.class).createPrePostCondition(modelName,null,null)).withRel("create prepostcondition"));
 
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
@@ -224,21 +226,14 @@ public class ModelController {
     public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO) throws UseApiException {
         ModelDTO createdModel = modelService.createModel(modelDTO);
 
-        // Create an EntityModel (HATEOAS) with the response
         EntityModel<ModelDTO> entityModel = EntityModel.of(createdModel);
 
-        // Add HATEOAS links
-        // Link to self
-        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(createdModel.getName())).withSelfRel());
-
-        // Link to get all classes in this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getClasses(createdModel.getName())).withRel("classes"));
-
-        // Link to get all associations in this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getAssociations(createdModel.getName())).withRel("associations"));
-
-        // Link to get all invariants in this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getInvariants(createdModel.getName())).withRel("invariants"));
+        entityModel.add(linkTo(methodOn(ModelController.class).createModel(createdModel)).withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).getModels()).withRel("models"));
+        entityModel.add(linkTo(methodOn(ModelController.class).createClass(modelDTO.getName(),null)).withRel("create class"));
+        entityModel.add(linkTo(methodOn(ModelController.class).createAssociation(modelDTO.getName(), null)).withRel("create association"));
+        entityModel.add(linkTo(methodOn(ModelController.class).createInvariant(modelDTO.getName(),null,null)).withRel("create invariant"));
+        entityModel.add(linkTo(methodOn(ModelController.class).createPrePostCondition(modelDTO.getName(), null,null)).withRel("create prepostcondition"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -247,23 +242,14 @@ public class ModelController {
     public ResponseEntity<EntityModel<ClassDTO>> createClass(@PathVariable String modelName, @RequestBody ClassDTO classDTO) throws UseApiException {
         ClassDTO createdClass = modelService.createClass(modelName, classDTO);
 
-        // Wrap the created class in an EntityModel for HATEOAS
         EntityModel<ClassDTO> entityModel = EntityModel.of(createdClass);
 
-        // Link to the parent model
+        entityModel.add(linkTo(methodOn(ModelController.class).createClass(modelName,classDTO)).withSelfRel());
         entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+        entityModel.add(linkTo(methodOn(ClassController.class).addAttribute(modelName,classDTO.getName(),null)).withRel("add attribute"));
+        entityModel.add(linkTo(methodOn(ClassController.class).addOperation(modelName,classDTO.getName(),null)).withRel("add operation"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getClasses(modelName)).withRel("classes"));
 
-        // Link to the classes listing for this model (also used as self since there's no single-class GET)
-        entityModel.add(linkTo(methodOn(ModelController.class).getClasses(modelName)).withSelfRel());
-
-        // Link to create another class in this model
-        entityModel.add(linkTo(ModelController.class).slash("model").slash(modelName).slash("class").withRel("create-class"));
-
-        // Link to associations for this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getAssociations(modelName)).withRel("associations"));
-
-        // Link to invariants for this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getInvariants(modelName)).withRel("invariants"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -274,8 +260,10 @@ public class ModelController {
 
         EntityModel<AssociationDTO> entityModel = EntityModel.of(createdAssociation);
 
-        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName, createdAssociation.getAssociationName())).withSelfRel());
+        entityModel.add(linkTo(methodOn(ModelController.class).createAssociation(modelName, createdAssociation)).withSelfRel());
         entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getAssociations(modelName)).withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelAssociationByName(modelName,association.getAssociationName())).withRel("association by name"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
@@ -284,48 +272,26 @@ public class ModelController {
     public ResponseEntity<EntityModel<InvariantDTO>> createInvariant(@PathVariable String modelName, @PathVariable String className, @RequestBody InvariantDTO invariantDTO) throws UseApiException {
         InvariantDTO createdInvariant = modelService.createInvariant(modelName, invariantDTO, className);
 
-        // Wrap the created invariant in an EntityModel for HATEOAS
         EntityModel<InvariantDTO> entityModel = EntityModel.of(createdInvariant);
 
-        // Link to the parent model
-        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
-
-        // Link to the invariants listing for this model (also used as self since there's no single-invariant GET)
         entityModel.add(linkTo(methodOn(ModelController.class).getInvariants(modelName)).withSelfRel());
-
-        // Link to create another invariant in this model
-        entityModel.add(linkTo(ModelController.class).slash("model").slash(modelName).slash("invariant").withRel("create-invariant"));
-
-        // Link to classes for this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getClasses(modelName)).withRel("classes"));
-
-        // Link to associations for this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getAssociations(modelName)).withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getInvariants(modelName)).withRel("invariants"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelInvariantByName(modelName, invariantDTO.getInvName())).withRel("invariant by name"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
     @PostMapping("/model/{modelName}/{className}/prepostcondition")
-    public ResponseEntity<EntityModel<PrePostConditionDTO>> createprepostcondition(@PathVariable String modelName, @PathVariable String className, @RequestBody PrePostConditionDTO prePostConditionDTO) throws UseApiException {
+    public ResponseEntity<EntityModel<PrePostConditionDTO>> createPrePostCondition(@PathVariable String modelName, @PathVariable String className, @RequestBody PrePostConditionDTO prePostConditionDTO) throws UseApiException {
         PrePostConditionDTO createdPrePostCondition = modelService.createPrePostCondition(modelName, prePostConditionDTO, className);
 
-        // Wrap the created pre/post condition in an EntityModel for HATEOAS
         EntityModel<PrePostConditionDTO> entityModel = EntityModel.of(createdPrePostCondition);
 
-        // Link to the parent model
-        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
-
-        // Link to the classes listing for this model (also used as self since there's no single-prepostcondition GET)
         entityModel.add(linkTo(methodOn(ModelController.class).getClasses(modelName)).withSelfRel());
-
-        // Link to create another pre/post condition in this model
-        entityModel.add(linkTo(ModelController.class).slash("model").slash(modelName).slash("prepostcondition").withRel("create-prepostcondition"));
-
-        // Link to invariants for this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getInvariants(modelName)).withRel("invariants"));
-
-        // Link to associations for this model
-        entityModel.add(linkTo(methodOn(ModelController.class).getAssociations(modelName)).withRel("associations"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelByName(modelName)).withRel("model"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getPrePostConditions(modelName)).withRel("prePostConditions"));
+        entityModel.add(linkTo(methodOn(ModelController.class).getModelPrePostCondByName(modelName, prePostConditionDTO.getName())).withRel("prepostcondition by name"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
