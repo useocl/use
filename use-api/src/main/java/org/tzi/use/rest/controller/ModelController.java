@@ -30,12 +30,6 @@ public class ModelController {
     // GET Mappings
     // ========================================
 
-    /**
-     * Retrieve a model by its ID
-     *
-     * @param modelName The ID of the model to retrieve
-     * @return The model with HATEOAS links
-     */
     @GetMapping("/model/{modelName}")
     public ResponseEntity<EntityModel<ModelDTO>> getModelByName(@PathVariable String modelName) throws UseApiException {
         ModelDTO modelDTO = modelService.getModelByName(modelName);
@@ -126,9 +120,6 @@ public class ModelController {
     }
 
 
-    /**
-     * Placeholder method to retrieve all associations in a model
-     */
     @GetMapping("/model/{modelName}/associations")
     public ResponseEntity<CollectionModel<EntityModel<AssociationDTO>>> getAssociations(@PathVariable String modelName) throws UseApiException {
         List<AssociationDTO> associations = modelService.getModelAssociations(modelName);
@@ -216,12 +207,7 @@ public class ModelController {
     // POST Mappings
     // ========================================
 
-    /**
-     * Create a new model
-     *
-     * @param modelDTO The model data to create
-     * @return The created model with HATEOAS links
-     */
+
     @PostMapping("/model")
     public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO) throws UseApiException {
         ModelDTO createdModel = modelService.createModel(modelDTO);

@@ -16,7 +16,6 @@ import java.util.TreeMap;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-//@RequiredArgsConstructor
 public class ModelNTT {
     @Id
     private String name;
