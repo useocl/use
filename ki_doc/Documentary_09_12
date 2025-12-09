@@ -1,0 +1,27 @@
+Kurze Zusammenfassung des Vorgehens und der nächsten Schritte
+Ziel: Dependency Inversion für den ersten Cycle-Slice mm -> ocl -> mm (siehe report).
+Änderung: Neue neutrale API-Interfaces in package org.tzi.use.uml.api (statt direkt in org.tzi.use.uml). Dadurch verwendet Slice mm künftig nur Interfaces, Slice ocl implementiert/adapterisiert diese.
+Bereits erledigt:
+Neue Interfaces erstellt in use-core:
+use-core/src/main/java/org/tzi/use/uml/api/IType.java
+use-core/src/main/java/org/tzi/use/uml/api/IExpression.java
+use-core/src/main/java/org/tzi/use/uml/api/IElement.java
+use-core/src/main/java/org/tzi/use/uml/api/ISlice.java
+use-core/src/main/java/org/tzi/use/uml/api/IModelAccessor.java
+use-core/src/main/java/org/tzi/use/uml/api/IVarDecl.java
+use-core/src/main/java/org/tzi/use/uml/api/IVarDeclList.java
+Adapter im OCL-Bereich implementiert:
+use-core/src/main/java/org/tzi/use/uml/ocl/adapter/OclTypeAdapter.java
+use-core/src/main/java/org/tzi/use/uml/ocl/adapter/OclExpressionAdapter.java
+use-core/src/main/java/org/tzi/use/uml/ocl/adapter/OclVarDeclAdapter.java
+use-core/src/main/java/org/tzi/use/uml/ocl/adapter/OclVarDeclListAdapter.java (angepasst, nutzt Iterator)
+Maven-Compile für use-core ausgeführt — Ergebnis: BUILD SUCCESS
+
+
+
+Was ich als Nächstes schlage (konkrete nächste Schritte für den ersten Slice mm)
+Identifiziere die konkreten Stellen in org.tzi.use.uml.mm (MAssociationEnd, MAttribute, MClassInvariant, MOperation, MPrePostCondition, ...) die derzeit Typen aus org.tzi.use.uml.ocl als Parameter/Feldtypen verwenden (siehe Report). Ziel: schrittweise Abstraktion von OCL-Typen in den Signaturen auf unsere api-Interfaces, ohne interne Logik zu ändern — dazu je nach Risiko Adapter einsetzen.
+Beginne mit den niedrigsten-riskanten Änderungen: ersetze in Signaturen nur dort die Typen, wo dies sauber möglich ist (z. B. Konstruktor-Parameter org.tzi.use.uml.ocl.type.Type -> org.tzi.use.uml.api.IType), und füge in den entsprechenden Implementierungen an den Aufrufstellen Konvertierungen via OclTypeAdapter hinzu.
+Für Felder und Rückgabetypen, die intern benötigt werden, verwende Adapter-Klassen (z. B. OclTypeAdapter) statt direkte Umstellung der intern genutzten Felder.
+Nach jeder Datei-Änderung: mvn -DskipTests=true compile laufen lassen und Fehler schrittweise beheben.
+Tests: Sobald die kritischen Signaturen angepasst sind, erstelle kleine Unit-Tests, die MM-Klassen mit OCL-Adapter-Objekten verwenden und verifizieren, dass keine Class-Cast/NoSuchMethod Fehler auftreten.
