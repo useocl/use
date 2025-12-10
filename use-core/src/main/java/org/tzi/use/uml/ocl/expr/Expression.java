@@ -20,6 +20,7 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.parser.SrcPos;
+import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
@@ -29,7 +30,7 @@ import org.tzi.use.util.BufferedToString;
  * Abstract base class of all expressions.
  * @author Mark Richters
  */
-public abstract class Expression implements BufferedToString {
+public abstract class Expression implements BufferedToString, IExpression {
 	private SrcPos fSourcePosition;
 	
 	/** result type of the expression */
@@ -116,12 +117,12 @@ public abstract class Expression implements BufferedToString {
      * @return
      */
     public boolean requiresPreState() {
-    	if (preStateRequired == null) {
-    		boolean result = fIsPre || childExpressionRequiresPreState();
-    		preStateRequired = Boolean.valueOf(result);
-    	}
-    	
-    	return preStateRequired.booleanValue();
+        if (preStateRequired == null) {
+            boolean result = fIsPre || childExpressionRequiresPreState();
+            preStateRequired = Boolean.valueOf(result);
+        }
+
+        return preStateRequired.booleanValue();
     }
 
     /**
@@ -176,4 +177,24 @@ public abstract class Expression implements BufferedToString {
     }
     
     public abstract void processWithVisitor(ExpressionVisitor visitor);
+
+    // IExpression implementation
+    @Override
+    public boolean isBooleanType() {
+        return type().isTypeOfBoolean();
+    }
+
+    @Override
+    public void assertBooleanType() {
+        try {
+            assertBoolean();
+        } catch (ExpInvalidException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String asString() {
+        return toString();
+    }
 }

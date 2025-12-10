@@ -21,6 +21,8 @@ package org.tzi.use.uml.mm;
 
 import java.util.List;
 
+import org.tzi.use.uml.api.IExpression;
+import org.tzi.use.uml.api.IInvariantExpressionFactory;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
@@ -35,7 +37,9 @@ public class GeneratorModelFactory extends ModelFactory {
 	public MClassInvariant createClassInvariant(String name, List<String> vars,
 			MClassifier cf, Expression inv, boolean isExistential)
 			throws ExpInvalidException {
-		return new MClassInvariant(name, vars, cf, inv, isExistential, true, false);
+		IExpression apiInv = inv;
+		IInvariantExpressionFactory factory = new org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory();
+		return new MClassInvariant(name, vars, cf, apiInv, isExistential, true, false, factory);
 	}
 	
 }

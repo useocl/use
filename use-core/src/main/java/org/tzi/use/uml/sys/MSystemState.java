@@ -1595,7 +1595,7 @@ public final class MSystemState {
 			// Ignore if deactivated and not all should be checked.
 			if (!allInvariants && !inv.isActive()) continue;
 			
-			Expression expr = inv.expandedExpression();
+			Expression expr = (Expression) inv.expandedExpression();
 			
 			if (inv.isNegated()) {
 				try {
@@ -1658,7 +1658,7 @@ public final class MSystemState {
 						if (showDetails) {
 							out.println("Instances of " + inv.cls().name()
 									+ " violating the invariant:");
-							Expression expr = inv
+							Expression expr = (Expression) inv
 									.getExpressionForViolatingInstances();
 							Value v1 = evaluator.eval(expr, this,
 									new VarBindings());

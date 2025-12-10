@@ -53,7 +53,7 @@ public class ASTGBarrierInvariant extends ASTGBarrier {
 		if (inv == null)
 			throw new SemanticException(className, "Invariant " + StringUtil.inQuotes(invName) +" does not exist.");
 				
-		return inv.expandedExpression();
+		return (Expression) inv.expandedExpression();
 	}
 	
 	

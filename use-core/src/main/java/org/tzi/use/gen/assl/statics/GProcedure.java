@@ -30,6 +30,7 @@ import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
@@ -120,7 +121,7 @@ public class GProcedure {
 		
 		for (MClassInvariant inv : model.classInvariants()) {
 			if (inv.isActive()) {
-				invCoverage.put(inv, invCalc.calcualteCoverage(inv.flaggedExpression()));
+				invCoverage.put(inv, invCalc.calcualteCoverage((Expression) inv.flaggedExpression()));
 			}
 		}
 		

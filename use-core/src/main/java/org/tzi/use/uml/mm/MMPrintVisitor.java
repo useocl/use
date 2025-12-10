@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.expr.ExpressionPrintVisitor;
 import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
@@ -413,7 +414,10 @@ public class MMPrintVisitor implements MMVisitor {
         incIndent();
         indent();
         ExpressionVisitor visitor = createExpressionVisitor();
-        e.bodyExpression().processWithVisitor(visitor);
+        IExpression body = e.bodyExpression();
+        // Lokaler Cast nur hier, um den bestehenden OCL-Visitor zu nutzen
+        org.tzi.use.uml.ocl.expr.Expression bodyExpr = (org.tzi.use.uml.ocl.expr.Expression) body;
+        bodyExpr.processWithVisitor(visitor);
         println();
         fOut.flush();
         decIndent();

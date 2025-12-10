@@ -20,6 +20,7 @@
 package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
  * Instruction class for a calculated barrier
@@ -35,7 +36,7 @@ public class GInstrCalculatedBarrier extends GInstrBarrier {
 	 * @param flaggedInvariant The flagged invariant this barrier checks.
 	 */
 	public GInstrCalculatedBarrier(MClassInvariant flaggedInvariant) {
-		super(flaggedInvariant.flaggedExpression());
+		super((Expression) flaggedInvariant.flaggedExpression());
 		invName = flaggedInvariant.toString();
 	}
 

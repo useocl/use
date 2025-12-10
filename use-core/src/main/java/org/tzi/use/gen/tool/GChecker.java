@@ -36,6 +36,7 @@ import org.tzi.use.gen.tool.statistics.GStatistic;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -114,17 +115,17 @@ public class GChecker implements IGChecker {
             	
             	try {
             		start = System.nanoTime();
-	            		                    
-	                value = fEvaluator.eval( stat.getInvariant().expandedExpression(), state );
-	                    
+
+	                value = fEvaluator.eval((Expression) stat.getInvariant().expandedExpression(), state );
+
 	                valid = value.isDefined() && ((BooleanValue) value).isFalse() == stat.getInvariant().isNegated();
-	                	            	
+
 	                stat.registerResult(valid, System.nanoTime() - start);
-	                
+
 	                if (!valid) {
 	                	if (collector.doBasicPrinting())
 	                		collector.basicPrintWriter().println(stat.getInvariant().toString() + " invalid.");
-	                	 
+
 	                    result = false;
 	                    break;
 	                }

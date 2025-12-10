@@ -21,6 +21,8 @@ package org.tzi.use.uml.mm;
 
 import java.util.List;
 
+import org.tzi.use.uml.api.IExpression;
+import org.tzi.use.uml.api.IInvariantExpressionFactory;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignalImpl;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -57,7 +59,9 @@ public class ModelFactory {
             									MClassifier cf, Expression inv, boolean isExistential) 
     	throws ExpInvalidException
 	{
-    	return new MClassInvariant(name, vars, cf, inv, isExistential);
+    	IExpression apiInv = inv; // Expression implements IExpression
+        IInvariantExpressionFactory factory = new org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory();
+        return new MClassInvariant(name, vars, cf, apiInv, isExistential, factory);
 	}
 
     public MPrePostCondition createPrePostCondition(String name, 

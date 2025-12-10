@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IExpression;
+import org.tzi.use.uml.api.IInvariantExpressionFactory;
 import org.tzi.use.uml.ocl.expr.*;
 
 import java.util.List;
@@ -31,7 +33,9 @@ import java.util.List;
  * @author      Mark Richters 
  */
 public final class MClassInvariant extends MModelElementImpl implements UseFileLocatable {
-	
+
+    private final IInvariantExpressionFactory exprFactory;
+
     /**
      * context type
      */
@@ -40,13 +44,13 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * boolean expression
      */
-    private Expression fBody;
-    
+    private IExpression fBody;
+
     /**
      * The body expression expanded by <code>forAll</code> or <code>exists</code>
      */
-    private Expression fExpanded;
-    
+    private IExpression fExpanded;
+
     /**
      * position of class in the model
      */
@@ -81,18 +85,18 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * Constructs a new invariant. The <code>name</code> and <code>vars</code> is optional, i.e., can be <code>null</code>.
      */
-    MClassInvariant(String name, List<String> vars, MClassifier cf, Expression inv, boolean isExistential)
-        throws ExpInvalidException
+    MClassInvariant(String name, List<String> vars, MClassifier cf, IExpression inv, boolean isExistential,
+                    IInvariantExpressionFactory exprFactory) throws ExpInvalidException
     {
         super(name);
         
-        if (!inv.type().isTypeOfBoolean()) {
+        if (!inv.isBooleanType()) {
         	throw new ExpInvalidException("An invariant must be a boolean expression.");
         }
-        	
+        this.exprFactory = exprFactory;
         fClassifier = cf;
         fBody = inv;
-        fBody.assertBoolean();
+        fBody.assertBooleanType();
         fVars = new VarDeclList(true);
         loaded = false;
         active = true;
@@ -120,10 +124,10 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /**
      * Creates a dynamic invariant.
      */
-    MClassInvariant(String name, List<String> vars, MClassifier cf, Expression inv, boolean isExistential, boolean active, boolean negated)
-    		throws ExpInvalidException {
-    	this(name, vars, cf, inv, isExistential);
-    	
+    MClassInvariant(String name, List<String> vars, MClassifier cf, IExpression inv, boolean isExistential,
+                    boolean active, boolean negated, IInvariantExpressionFactory exprFactory) throws ExpInvalidException {
+    	this(name, vars, cf, inv, isExistential, exprFactory);
+
 		loaded = true;
 		this.active = active;
 		this.negated = negated;
@@ -145,18 +149,13 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     /** 
      * Returns the expression of the invariant.
      */
-    public Expression bodyExpression() {
+    public IExpression bodyExpression() {
         return fBody;
     }
 
-    private void calculateExpandedExpression() throws ExpInvalidException {
-	    Expression allInstances = new ExpAllInstances(fClassifier);
-	    
-	    if (fIsExistential) {
-	    	fExpanded = new ExpExists(fVars, allInstances, fBody);
-	    } else {
-	    	fExpanded = new ExpForAll(fVars, allInstances, fBody);
-	    }
+    private void calculateExpandedExpression() {
+        // Die Factory baut aus dem Body die global auswertbare Invariante
+        fExpanded = exprFactory.buildExpandedInvariant(fBody, fIsExistential);
 	}
 
 	/** 
@@ -165,7 +164,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * globally. If {@link #isExistential()} is <code>false</code>, it is enclosed by a <code>forAll</code> expression iterating over
      * all instances of a class. Otherwise, it is enclosed by an <code>exists</code> expression. 
      */
-    public Expression expandedExpression() {
+    public IExpression expandedExpression() {
         return fExpanded;
     }
 
@@ -174,18 +173,21 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
 	 * an invariant is negated, a negated expression is returned. This operation
 	 * does not handle the flag {@code active}.
 	 */
-    public Expression flaggedExpression() {
-    	Expression invExpr = expandedExpression();
-    	
-		if(negated){
-			try {
-				return ExpStdOp.create("not", new Expression[]{ invExpr });
-			} catch (ExpInvalidException e) {}
-		}
-		
-		return invExpr;
-	}
-    
+    public IExpression flaggedExpression() {
+        Expression invExpr = (Expression) expandedExpression();
+
+        if (negated) {
+            try {
+                return ExpStdOp.create("not", new Expression[]{ invExpr });
+            } catch (ExpInvalidException e) {
+                // should not happen as type has been checked before
+                throw new RuntimeException("Failed to negate invariant expression", e);
+            }
+        }
+
+        return invExpr;
+    }
+
     /** 
      * Returns an expression for selecting all instances that violate
      * the invariant.  The expression is generated as
@@ -193,31 +195,9 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * For two and more variables, an additional <code>C.allInstances()->forAll(v2| &lt;inv&gt;)</code>
      * is introduced, because reject only allows one iteration variable.
      */
-    public Expression getExpressionForViolatingInstances() {
-                
-        try {
-            Expression allInstances = new ExpAllInstances(fClassifier);
-            Expression current = negated ? ExpStdOp.create("not", new Expression[]{ fBody }) : fBody ;
-            // For invariants with more than one iteration variable
-            // a simple Reject does not work, because it allows only one
-            // iteration variable. Therefore, we introduce the
-            // additional variables by using allInstances()->forAll(v|...)
-            // inside of the reject expression.
-            // For example 
-            // context a1,a2,a3:A inv:
-            //   true
-            // will be expanded to
-            // A.allInstances()->reject(a1|
-            //   A.allInstances()->forAll(a2|
-            //     A.allInstances()->forAll(a3| true)))
-            for (int i = fVars.size() - 1; i > 0; --i) {
-            	 current = new ExpForAll(fVars.varDecl(i), allInstances, current);
-            }
-            return new ExpReject(fVars.varDecl(0), allInstances, current);
-
-        } catch (ExpInvalidException ex) {
-            throw new RuntimeException("getExpressionForViolatingInstances failed", ex);
-        }
+    public IExpression getExpressionForViolatingInstances() {
+        // Auf der bereits expandierten Invarianten-Expression aufbauen
+        return exprFactory.buildViolatingInstancesExpr(fExpanded, negated);
     }
 
     /** 
@@ -227,31 +207,9 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * For two and more variables, an additional <code>C.allInstances()->forAll(v2| &lt;inv&gt;)</code>
      * is introduced, because select only allows one iteration variable.
      */
-    public Expression getExpressionForSatisfyingInstances() {
-        try {
-            Expression allInstances = new ExpAllInstances(fClassifier);
-            Expression current = negated ? ExpStdOp.create("not", new Expression[]{ fBody }) : fBody ;
-            
-            // For invariants with more than one iteration variable
-            // a simple select does not work, because it allows only one
-            // iteration variable. Therefore, we introduce the
-            // additional variables by using allInstances()->forAll(v|...)
-            // inside of the select expression.
-            // For example 
-            // context a1,a2,a3:A inv:
-            //   true
-            // will be expanded to
-            // A.allInstances()->select(a1|
-            //   A.allInstances()->forAll(a2|
-            //     A.allInstances()->forAll(a3| true)))
-            for (int i = fVars.size() - 1; i > 0; --i) {
-            	 current = new ExpForAll(fVars.varDecl(i), allInstances, current);
-            }
-            return new ExpSelect(fVars.varDecl(0), allInstances, current);
-            
-        } catch (ExpInvalidException ex) {
-            throw new RuntimeException("getExpressionForSatisfyingInstances failed", ex);
-        }
+    public IExpression getExpressionForSatisfyingInstances() {
+        // Auf der bereits expandierten Invarianten-Expression aufbauen
+        return exprFactory.buildSatisfyingInstancesExpr(fExpanded, negated);
     }
 
     public boolean isExistential()
@@ -392,3 +350,4 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
         v.visitClassInvariant(this);
     }
 }
+

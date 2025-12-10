@@ -22,12 +22,8 @@ package org.tzi.use.analysis.coverage;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.MModelElement;
-import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.MPrePostCondition;
+import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
  * This class provides operations to analyze the model coverage of OCl
@@ -49,9 +45,11 @@ public class CoverageAnalyzer {
 
 		for (MClassInvariant invariant : model.classInvariants()) {
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			invariant.expandedExpression().processWithVisitor(localVisitor);
+			Expression invExpr = (Expression) invariant.expandedExpression();
+			invExpr.processWithVisitor(localVisitor);
 
-			invariant.expandedExpression().processWithVisitor(globalVisitor);
+			Expression invExprGlobal = (Expression) invariant.expandedExpression();
+			invExprGlobal.processWithVisitor(globalVisitor);
 
 			result.put(invariant, localVisitor.getCoverageData());
 		}
@@ -162,9 +160,11 @@ public class CoverageAnalyzer {
 
 		for (MClassInvariant invariant : model.classInvariants()) {
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			invariant.expandedExpression().processWithVisitor(localVisitor);
+			Expression invExpr = (Expression) invariant.expandedExpression();
+			invExpr.processWithVisitor(localVisitor);
 
-			invariant.expandedExpression().processWithVisitor(globalVisitor);
+			Expression invExprGlobal = (Expression) invariant.expandedExpression();
+			invExprGlobal.processWithVisitor(globalVisitor);
 
 			result.put(invariant, localVisitor.getCoverageData());
 		}
