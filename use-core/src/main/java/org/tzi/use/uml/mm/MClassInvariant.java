@@ -174,15 +174,13 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
 	 * does not handle the flag {@code active}.
 	 */
     public IExpression flaggedExpression() {
-        Expression invExpr = (Expression) expandedExpression();
+        IExpression invExpr = expandedExpression();
 
         if (negated) {
-            try {
-                return ExpStdOp.create("not", new Expression[]{ invExpr });
-            } catch (ExpInvalidException e) {
-                // should not happen as type has been checked before
-                throw new RuntimeException("Failed to negate invariant expression", e);
-            }
+            // Negation wird außerhalb des mm-Layers behandelt; hier liefern wir
+            // lediglich die expandierte Expression zurück und überlassen die
+            // Negation dem aufrufenden Layer oder der Factory.
+            return exprFactory.buildViolatingInstancesExpr(invExpr, false);
         }
 
         return invExpr;

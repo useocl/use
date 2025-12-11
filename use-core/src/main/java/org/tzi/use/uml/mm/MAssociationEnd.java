@@ -25,12 +25,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.collections.CollectionUtil;
+import org.tzi.use.uml.api.IExpression;
 
 /** 
  * An AssociationEnd stores information about the role a class plays
@@ -81,7 +81,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     /**
      *  For calculating derived values
      */
-    private Expression deriveExpression = null;
+    private IExpression deriveExpression = null;
     /**
      * List of defined qualifiers for this end.
      */
@@ -115,9 +115,9 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
         fIsOrdered = isOrdered;
         
         if (qualifiers == null)
-        	this.qualifier = Collections.emptyList();
+         this.qualifier = Collections.emptyList();
         else
-        	this.qualifier = qualifiers;
+         this.qualifier = qualifiers;
     }
     
     /** 
@@ -265,8 +265,8 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
      * Used internally to create a the correct collection 
      * type (OrderedSet, Set) if multiplicity is greater then 1. 
      * @param t The Type at the association end (maybe different from {@link MAssociationEnd#cls()})</code>
-     * 			because of redefinition. 
-     * @return The Type t or a collection with t as element type 
+     * 		because of redefinition.
+     * @return The Type t or a collection with t as element type
      */
     private Type getType(Type t, boolean sourceHasQualifiers, boolean qualifiedAccess) {
     	if (sourceHasQualifiers) {
@@ -279,24 +279,24 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     			}
     		} else {
     			if ( isOrdered() )
-	                t = TypeFactory.mkSequence( t );
-	            else
-	                t = TypeFactory.mkBag( t );
+    	                t = TypeFactory.mkSequence( t );
+    	            else
+    	                t = TypeFactory.mkBag( t );
     		}
     	} else {
-	    	if ( multiplicity().isCollection() ) {
-	    		if (this.hasQualifiers() && !this.isOrdered()) {
-	    			t = TypeFactory.mkBag( t );
-	    		} else if (this.hasQualifiers() && this.isOrdered()) {
-	    			t = TypeFactory.mkSequence( t );
-	    		} else if ( !this.hasQualifiers() && this.isOrdered() ) {
-	                t = TypeFactory.mkOrderedSet( t );
-	    		} else {
-	                t = TypeFactory.mkSet( t );
-	    		}
-	        } else if ( association().associationEnds().size() > 2 ) {
-	            t = TypeFactory.mkSet(t);
-	        }
+    		if ( multiplicity().isCollection() ) {
+    			if (this.hasQualifiers() && !this.isOrdered()) {
+    				t = TypeFactory.mkBag( t );
+    			} else if (this.hasQualifiers() && this.isOrdered()) {
+    				t = TypeFactory.mkSequence( t );
+    			} else if ( !this.hasQualifiers() && this.isOrdered() ) {
+    	                t = TypeFactory.mkOrderedSet( t );
+    			} else {
+    	                t = TypeFactory.mkSet( t );
+    			}
+    	    } else if ( association().associationEnds().size() > 2 ) {
+    	            t = TypeFactory.mkSet(t);
+    	    }
     	}
     	
     	return t;
@@ -311,45 +311,45 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     	return this.getType(cls(), false, false);
     }
     
-	private Type getRedefinedType(MClass sourceObjectType) {
-		Type resultType = null;
-		
-		// If another association end redefines this end with 
-		// source from the type of sourceObjectExp or a subtype of sourceObjectExp
-		boolean foundDirectEnd = false;
+    private Type getRedefinedType(MClass sourceObjectType) {
+    	Type resultType = null;
 
-		// No redefinition possible, because source type is the opposite of this end
-		if (this.getAllOtherAssociationEnds().get(0).cls().equals(sourceObjectType) )
-			return this.cls();
-			
-		for (MAssociationEnd redefiningEnd : this.getRedefiningEnds()) {
-			// TODO: n-ary
-			MAssociationEnd redefiningEndSrc = redefiningEnd.getAllOtherAssociationEnds().get(0);
-			Type redefiningEndSrcType = redefiningEndSrc.cls();
-			
-			if (redefiningEndSrcType.equals(sourceObjectType)) {
-				resultType = redefiningEnd.cls();
-				foundDirectEnd = true;
-				break;
-			}
-		}
+    	// If another association end redefines this end with
+    	// source from the type of sourceObjectExp or a subtype of sourceObjectExp
+    	boolean foundDirectEnd = false;
 
-		// No redefinitions with equal type found.
-		// We need to check inheritance
-		if (!foundDirectEnd) {
-			for (MClass parent : sourceObjectType.parents()) {
-				resultType = getRedefinedType(parent);
-				
-				if (resultType != null) {
-					break;
-				}
-			}
-		}
-		
-		return resultType;
-	}
+    	// No redefinition possible, because source type is the opposite of this end
+    	if (this.getAllOtherAssociationEnds().get(0).cls().equals(sourceObjectType) )
+    		return this.cls();
 
-	@Override
+    	for (MAssociationEnd redefiningEnd : this.getRedefiningEnds()) {
+    		// TODO: n-ary
+    		MAssociationEnd redefiningEndSrc = redefiningEnd.getAllOtherAssociationEnds().get(0);
+    		Type redefiningEndSrcType = redefiningEndSrc.cls();
+
+    		if (redefiningEndSrcType.equals(sourceObjectType)) {
+    			resultType = redefiningEnd.cls();
+    			foundDirectEnd = true;
+    			break;
+    		}
+    	}
+
+    	// No redefinitions with equal type found.
+    	// We need to check inheritance
+    	if (!foundDirectEnd) {
+    		for (MClass parent : sourceObjectType.parents()) {
+    			resultType = getRedefinedType(parent);
+
+    			if (resultType != null) {
+    				break;
+    			}
+    		}
+    	}
+
+    	return resultType;
+    }
+
+    @Override
     public String nameAsRolename() {
         return name();
     }
@@ -369,60 +369,60 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
         return allOtherEnds;
     }
 
-	public void addSubsettedEnd(MAssociationEnd subsetsEnd) {
-		this.subsettedEnds = CollectionUtil.initAsHashSet(this.subsettedEnds);
-		this.subsettedEnds.add(subsetsEnd);
-	}
+    public void addSubsettedEnd(MAssociationEnd subsetsEnd) {
+    	this.subsettedEnds = CollectionUtil.initAsHashSet(this.subsettedEnds);
+    	this.subsettedEnds.add(subsetsEnd);
+    }
 
-	public Set<MAssociationEnd> getSubsettedEnds() {
-		return this.subsettedEnds;
-	}
-	
-	@Override
-	public boolean isUnion() {
-		return isUnion;
-	}
-	
-	@Override
-	public void setUnion(boolean newValue) {
-		isUnion = newValue;
-	}
+    public Set<MAssociationEnd> getSubsettedEnds() {
+    	return this.subsettedEnds;
+    }
 
-	public void addSubsettingEnd(MAssociationEnd nSubsettingEnd) {
-		this.subsettingEnds = CollectionUtil.initAsHashSet(this.subsettingEnds);
-		this.subsettingEnds.add(nSubsettingEnd);
-	}
-	
-	public Set<MAssociationEnd> getSubsettingEnds() {
-		return this.subsettingEnds;
-	}
+    @Override
+    public boolean isUnion() {
+    	return isUnion;
+    }
 
-	public Set<MAssociationEnd> getSubsettingEndsClosure() {
-		Set<MAssociationEnd> closure = new HashSet<MAssociationEnd>();
-		for (MAssociationEnd end : this.subsettingEnds) {
-			closure.add(end);
-			closure.addAll(end.getSubsettingEndsClosure());
-		}
-		return closure;
-	}
-	
-	public void addRedefinedEnd(MAssociationEnd redefinedEnd) {
-		this.redefinedEnds = CollectionUtil.initAsHashSet(this.redefinedEnds);
-		this.redefinedEnds.add(redefinedEnd);
-	}
+    @Override
+    public void setUnion(boolean newValue) {
+    	isUnion = newValue;
+    }
 
-	public Set<MAssociationEnd> getRedefinedEnds() {
-		return this.redefinedEnds;
-	}
-	
-	public void addRedefiningEnd(MAssociationEnd redefiningEnd) {
-		this.redefiningEnds = CollectionUtil.initAsHashSet(this.redefiningEnds);
-		this.redefiningEnds.add(redefiningEnd);	
-	}
-	
-	public Set<MAssociationEnd> getRedefiningEnds() {
-		return this.redefiningEnds;
-	}
+    public void addSubsettingEnd(MAssociationEnd nSubsettingEnd) {
+    	this.subsettingEnds = CollectionUtil.initAsHashSet(this.subsettingEnds);
+    	this.subsettingEnds.add(nSubsettingEnd);
+    }
+
+    public Set<MAssociationEnd> getSubsettingEnds() {
+    	return this.subsettingEnds;
+    }
+
+    public Set<MAssociationEnd> getSubsettingEndsClosure() {
+    	Set<MAssociationEnd> closure = new HashSet<MAssociationEnd>();
+    	for (MAssociationEnd end : this.subsettingEnds) {
+    		closure.add(end);
+    		closure.addAll(end.getSubsettingEndsClosure());
+    	}
+    	return closure;
+    }
+
+    public void addRedefinedEnd(MAssociationEnd redefinedEnd) {
+    	this.redefinedEnds = CollectionUtil.initAsHashSet(this.redefinedEnds);
+    	this.redefinedEnds.add(redefinedEnd);
+    }
+
+    public Set<MAssociationEnd> getRedefinedEnds() {
+    	return this.redefinedEnds;
+    }
+
+    public void addRedefiningEnd(MAssociationEnd redefiningEnd) {
+    	this.redefiningEnds = CollectionUtil.initAsHashSet(this.redefiningEnds);
+    	this.redefiningEnds.add(redefiningEnd);
+    }
+
+    public Set<MAssociationEnd> getRedefiningEnds() {
+    	return this.redefiningEnds;
+    }
 
 	/**
 	 * Returns the transitive closure of all
@@ -444,13 +444,13 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 	 * Type has to be checked before!
 	 * @param exp
 	 */
-	public void setDeriveExpression(VarDeclList parameter, Expression exp) {
+	public void setDeriveExpression(VarDeclList parameter, IExpression exp) {
 		this.deriveExpression = exp;
 		this.deriveParameter = parameter;
 	}
 	
 	@Override
-	public Expression getDeriveExpression() {
+	public IExpression getDeriveExpression() {
 		return this.deriveExpression;
 	}
 	

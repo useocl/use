@@ -27,10 +27,7 @@ import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -402,7 +399,7 @@ public final class MSystem {
 				b = ctx.varBindings();
 			}
 
-			Value evalResult = oclEvaluator.eval(preCondition.expression(), fCurrentState, b);
+			Value evalResult = oclEvaluator.eval((Expression) preCondition.expression(), fCurrentState, b);
 
 			boolean conditionPassed = (evalResult.isDefined()
 					&& evalResult.type().isTypeOfBoolean() && ((BooleanValue) evalResult)
@@ -444,7 +441,7 @@ public final class MSystem {
 			Evaluator oclEvaluator = new Evaluator();
 
 			try {
-				Value evalResult = oclEvaluator.eval(postCondition.expression(), operationCall.getPreState(), fCurrentState, operationCall.getVarBindings());
+				Value evalResult = oclEvaluator.eval((Expression) postCondition.expression(), operationCall.getPreState(), fCurrentState, operationCall.getVarBindings());
 
 				conditionPassed = (evalResult.isDefined()
 						&& evalResult.type().isTypeOfBoolean() && ((BooleanValue) evalResult)

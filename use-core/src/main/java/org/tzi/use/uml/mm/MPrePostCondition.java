@@ -19,8 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.Expression;
 
 
 /**
@@ -31,22 +31,25 @@ import org.tzi.use.uml.ocl.expr.Expression;
  */
 public final class MPrePostCondition extends MModelElementImpl implements UseFileLocatable {
     private MOperation fOp; //  operation to be constrained
-    private Expression fExpr;   //  boolean expression
+    private IExpression fExpr;   //  boolean expression
     private boolean fIsPre;
     private int fPositionInModel;
     
     /**
      * Constructs a new pre- or postcondition.
      */
-    MPrePostCondition(String name, MOperation op, boolean isPre, 
-                      Expression constraint) 
+    MPrePostCondition(String name, MOperation op, boolean isPre,
+                      IExpression constraint)
         throws ExpInvalidException
     {
         super(name);
         fOp = op;
         fIsPre = isPre;
         fExpr = constraint;
-        fExpr.assertBoolean();
+        if (!fExpr.isBooleanType()) {
+            throw new ExpInvalidException("Pre-/postcondition must be a boolean expression.");
+        }
+        fExpr.assertBooleanType();
     }
 
 
@@ -76,7 +79,7 @@ public final class MPrePostCondition extends MModelElementImpl implements UseFil
     /** 
      * Returns the expression used as pre- or postcondition.
      */
-    public Expression expression() {
+    public IExpression expression() {
         return fExpr;
     }
 

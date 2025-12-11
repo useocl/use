@@ -26,7 +26,6 @@ import org.tzi.use.uml.api.IInvariantExpressionFactory;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignalImpl;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
@@ -56,10 +55,10 @@ public class ModelFactory {
     }
 
     public MClassInvariant createClassInvariant(String name, List<String> vars, 
-            									MClassifier cf, Expression inv, boolean isExistential) 
+                                                MClassifier cf, IExpression inv, boolean isExistential)
     	throws ExpInvalidException
 	{
-    	IExpression apiInv = inv; // Expression implements IExpression
+    	IExpression apiInv = inv; // already an IExpression
         IInvariantExpressionFactory factory = new org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory();
         return new MClassInvariant(name, vars, cf, apiInv, isExistential, factory);
 	}
@@ -67,10 +66,11 @@ public class ModelFactory {
     public MPrePostCondition createPrePostCondition(String name, 
                                                     MOperation op, 
                                                     boolean isPre, 
-                                                    Expression constraint) 
+                                                    IExpression constraint)
         throws ExpInvalidException
     {
-        return new MPrePostCondition(name, op, isPre, constraint);
+        IExpression apiConstraint = constraint; // already an IExpression
+        return new MPrePostCondition(name, op, isPre, apiConstraint);
     }
 
     public MAttribute createAttribute(String name, Type t) {

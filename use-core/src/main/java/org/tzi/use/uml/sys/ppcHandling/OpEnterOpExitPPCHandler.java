@@ -35,6 +35,7 @@ import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.MInstanceState;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
@@ -126,7 +127,7 @@ public class OpEnterOpExitPPCHandler implements PPCHandler {
 			if (!entry.getValue()) {
 				Evaluator oclEvaluator = new Evaluator();
 				oclEvaluator.eval(
-						postCondition.expression(),
+                        (Expression) postCondition.expression(),
 						operationCall.getPreState(),
 						system.state(), 
 						system.getVariableEnvironment().constructVarBindings(), 

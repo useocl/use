@@ -55,7 +55,7 @@ public class MAssertPost extends MAssert {
         }
 
         for (MPrePostCondition ppc : postconds) {
-            Expression expr = ppc.expression();
+            Expression expr = (Expression) ppc.expression();
             Evaluator evaluator = new Evaluator();
             // evaluate in scope local to operation
             Value v = evaluator.eval(expr, opcall.getPreState(), ctx.postState(), vb, null);

@@ -108,8 +108,8 @@ public class ExpressionPPCHandler implements PPCHandler {
 			
 			printDetailedPPC(
 					system, 
-					operationCall, 
-					preCondition.expression());
+					operationCall,
+                    (Expression) preCondition.expression());
 			
 			fOutput.println();
 		}
@@ -158,8 +158,8 @@ public class ExpressionPPCHandler implements PPCHandler {
 			
 			printDetailedPPC(
 					system, 
-					operationCall, 
-					postCondition.expression());
+					operationCall,
+                    (Expression) postCondition.expression());
 			
 			fOutput.println();
 		}

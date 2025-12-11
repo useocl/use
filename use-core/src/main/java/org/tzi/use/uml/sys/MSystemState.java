@@ -1489,7 +1489,7 @@ public final class MSystemState {
 		
         Value res = null;
         try {
-        	res = dst.getDeriveExpression().eval(ctx);
+        	res = ((Expression) dst.getDeriveExpression()).eval(ctx);
         } catch (MultiplicityViolationException e) {
         	return Collections.emptyList();
         }
@@ -1526,7 +1526,7 @@ public final class MSystemState {
     	
         ctx.pushVarBinding("self", source);
 		try {
-			return attribute.getDeriveExpression().eval(ctx);
+			return ((Expression) attribute.getDeriveExpression()).eval(ctx);
 		} catch (StackOverflowError e) {
 			Log.error("Derive expression of attribute " + StringUtil.inQuotes(attribute.qualifiedName()) + " let to a stack overflow!\nMaybe an infinite recursion is defined.");
 		} catch (RuntimeException e) {
@@ -2093,3 +2093,4 @@ public final class MSystemState {
 		out.println(String.format("The evaluation of the state invariants of %,d state machines took %,dms.", checkedStateMachines, duration));
 	}
 }
+

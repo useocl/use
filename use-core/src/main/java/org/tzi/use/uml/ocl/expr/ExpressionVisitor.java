@@ -19,12 +19,10 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-/**
- * Visitor interface for expressions
- * @author Lars Hamann
- *
- */
-public interface ExpressionVisitor {
+import org.tzi.use.uml.api.IExpressionVisitor;
+
+// Ocl-spezifisches Visitorinterface; wird nur im ocl-Layer direkt verwendet.
+public interface ExpressionVisitor extends IExpressionVisitor {
 	void visitAllInstances (ExpAllInstances exp);
 	void visitAny (ExpAny exp);
 	void visitAsType (ExpAsType exp);

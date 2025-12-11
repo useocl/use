@@ -28,4 +28,9 @@ public interface IExpression {
      * String-Repräsentation der Expression.
      */
     String asString();
+
+    /**
+     * Führt einen API-basierten Ausdrucksvisitor auf dieser Expression aus.
+     */
+    void processWithVisitor(IExpressionVisitor visitor);
 }

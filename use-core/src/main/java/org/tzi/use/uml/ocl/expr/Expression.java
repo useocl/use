@@ -21,6 +21,7 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.api.IExpression;
+import org.tzi.use.uml.api.IExpressionVisitor; // API-Visitor
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
@@ -179,6 +180,15 @@ public abstract class Expression implements BufferedToString, IExpression {
     public abstract void processWithVisitor(ExpressionVisitor visitor);
 
     // IExpression implementation
+    @Override
+    public void processWithVisitor(IExpressionVisitor visitor) {
+        // API-Visitor ist zugleich ein OCL-spezifischer ExpressionVisitor,
+        // da org.tzi.use.uml.ocl.expr.ExpressionVisitor das API-Interface erweitert.
+        if (visitor instanceof ExpressionVisitor oclVisitor) {
+            processWithVisitor(oclVisitor);
+        }
+    }
+
     @Override
     public boolean isBooleanType() {
         return type().isTypeOfBoolean();

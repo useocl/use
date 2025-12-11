@@ -19,10 +19,10 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
 
 import com.google.common.base.Optional;
+import org.tzi.use.uml.api.IExpression;
 
 /**
  * An Attribute is a model element that is part of a classifier.
@@ -34,10 +34,10 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     private MClassifier fOwner;
     private final Type fType;
 
-    private Expression deriveExpression = null;
-    
-    private Expression initExpression = null;
-    
+    private IExpression deriveExpression = null;
+
+    private IExpression initExpression = null;
+
     private int fPositionInModel;
 
     /**
@@ -60,7 +60,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     }
 
     public String qualifiedName(){
-    	return fOwner.name() + "::" + name();
+     return fOwner.name() + "::" + name();
     }
     
     /**
@@ -76,45 +76,45 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
      * @return
      */
     public boolean isDerived() {
-    	return deriveExpression != null;
+     return deriveExpression != null;
     }
     
     public boolean hasInitExpression() {
-    	return initExpression != null;
+     return initExpression != null;
     }
     
     /**
      * Sets the derive expression for this attribute.
-	 * @param exp The derive expression, can be <code>null</code>.
-	 */
-	public void setDeriveExpression(Expression exp) {
-		this.deriveExpression = exp;
-	}
-	
-	/**
+ 	 * @param exp The derive expression, can be <code>null</code>.
+ 	 */
+    public void setDeriveExpression(IExpression exp) {
+     this.deriveExpression = exp;
+    }
+
+    /**
      * Sets the init expression for this attribute.
-	 * @param exp The init expression, can be <code>null</code>.
-	 */
-	public void setInitExpression(Expression exp) {
-		this.initExpression = exp;
-	}
-	
-	/**
-	 * The defined derive expression, if any.
-	 * @return The derive expression or <code>null</code> if none is specified.
-	 */
-	public Expression getDeriveExpression() {
-		return this.deriveExpression;
-	}
-	
-	/**
-	 * The defined init expression, if any.
-	 * @return The init expression or <code>null</code> if none is specified.
-	 */
-	public Optional<Expression> getInitExpression() {
-		return Optional.fromNullable(this.initExpression);
-	}
-	
+ 	 * @param exp The init expression, can be <code>null</code>.
+ 	 */
+    public void setInitExpression(IExpression exp) {
+     this.initExpression = exp;
+    }
+
+    /**
+     * The defined derive expression, if any.
+     * @return The derive expression or <code>null</code> if none is specified.
+     */
+    public IExpression getDeriveExpression() {
+     return this.deriveExpression;
+    }
+
+    /**
+     * The defined init expression, if any.
+     * @return The init expression or <code>null</code> if none is specified.
+     */
+    public Optional<IExpression> getInitExpression() {
+     return Optional.fromNullable(this.initExpression);
+    }
+
     /**
      * Returns the position in the defined USE-Model.
      */
@@ -142,7 +142,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
         if (obj == this )
             return true;
         if (obj instanceof MAttribute ) {
-        	MAttribute other = (MAttribute)obj;
+         MAttribute other = (MAttribute)obj;
             return fOwner.equals(other.fOwner) && name().equals(other.name());
         }
         
@@ -153,7 +153,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
      * Process this element with visitor.
      */
     @Override
-	public void processWithVisitor(MMVisitor v) {
+    public void processWithVisitor(MMVisitor v) {
         v.visitAttribute(this);
     }
 }

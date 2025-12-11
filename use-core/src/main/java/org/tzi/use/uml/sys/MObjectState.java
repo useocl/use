@@ -33,6 +33,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
@@ -122,8 +123,9 @@ public final class MObjectState implements MInstanceState {
 			@Override
 			public boolean apply(MAttribute input) {
 				return input.getInitExpression().isPresent();
-			}});
-    	    	
+			}
+			});
+
     	if (initAttr.isEmpty()) {
     		return;
     	}
@@ -141,7 +143,9 @@ public final class MObjectState implements MInstanceState {
 		});
     	
     	for (MAttribute attr : sortedAttributes) {
-			Value v = state.evaluateInitExpression(this.fObject, attr.getInitExpression().get());
+			// Cast to concrete OCL Expression in sys layer (allowed)
+			Expression initExpr = (Expression) attr.getInitExpression().get();
+			Value v = state.evaluateInitExpression(this.fObject, initExpr);
 			setAttributeValue(attr, v);
     	}
     }

@@ -61,7 +61,7 @@ public class MAssertPre extends MAssert {
         VarBindings b = e.constructVarBindings();
         
         for (MPrePostCondition ppc : preconds) {
-            Expression expr = ppc.expression();
+            Expression expr = (Expression) ppc.expression();
             Evaluator evaluator = new Evaluator();
             // evaluate in scope local to operation
             Value v = evaluator.eval(expr, ctx.postState(), b);

@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 
@@ -63,7 +63,7 @@ public interface MNavigableElement {
     public MAssociation association();
 
     /**
-	 * Returns the role name for elements which are reachable
+	 * <p>Returns the role name for elements which are reachable
 	 * by navigation. For association ends, this is the name,
 	 * whereas for classes this is the name starting with a lower case
 	 * letter.
@@ -87,8 +87,8 @@ public interface MNavigableElement {
 	 * of this association end if any.
 	 * @return Expression to calculate the derived value if present otherwise <code>null</code>
 	 */
-    Expression getDeriveExpression();
-        
+    IExpression getDeriveExpression();
+
     Set<MAssociationEnd> getSubsettingEnds();
     
     Set<MAssociationEnd> getRedefiningEnds();

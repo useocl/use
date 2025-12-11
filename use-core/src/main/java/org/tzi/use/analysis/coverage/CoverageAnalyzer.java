@@ -72,9 +72,11 @@ public class CoverageAnalyzer {
 		for (MPrePostCondition preCondition : model.preConditions()) {
 
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			preCondition.expression().processWithVisitor(localVisitor);
+			Expression expr = (Expression) preCondition.expression();
+			expr.processWithVisitor(localVisitor);
 
-			preCondition.expression().processWithVisitor(globalVisitor);
+			Expression exprGlobal = (Expression) preCondition.expression();
+			exprGlobal.processWithVisitor(globalVisitor);
 
 			result.put(preCondition, localVisitor.getCoverageData());
 		}
@@ -97,9 +99,11 @@ public class CoverageAnalyzer {
 		for (MPrePostCondition postCondition : model.postConditions()) {
 
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			postCondition.expression().processWithVisitor(localVisitor);
+			Expression expr = (Expression) postCondition.expression();
+			expr.processWithVisitor(localVisitor);
 
-			postCondition.expression().processWithVisitor(globalVisitor);
+			Expression exprGlobal = (Expression) postCondition.expression();
+			exprGlobal.processWithVisitor(globalVisitor);
 
 			result.put(postCondition, localVisitor.getCoverageData());
 		}
@@ -122,9 +126,11 @@ public class CoverageAnalyzer {
 		for (MPrePostCondition ppc : model.prePostConditions()) {
 
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			ppc.expression().processWithVisitor(localVisitor);
+			Expression expr = (Expression) ppc.expression();
+			expr.processWithVisitor(localVisitor);
 
-			ppc.expression().processWithVisitor(globalVisitor);
+			Expression exprGlobal = (Expression) ppc.expression();
+			exprGlobal.processWithVisitor(globalVisitor);
 
 			result.put(ppc, localVisitor.getCoverageData());
 		}
@@ -172,9 +178,11 @@ public class CoverageAnalyzer {
 		for (MPrePostCondition ppc : model.prePostConditions()) {
 
 			localVisitor = new CoverageCalculationVisitor(expandOperations);
-			ppc.expression().processWithVisitor(localVisitor);
+			Expression expr = (Expression) ppc.expression();
+			expr.processWithVisitor(localVisitor);
 
-			ppc.expression().processWithVisitor(globalVisitor);
+			Expression exprGlobal = (Expression) ppc.expression();
+			exprGlobal.processWithVisitor(globalVisitor);
 
 			result.put(ppc, localVisitor.getCoverageData());
 		}
@@ -186,9 +194,9 @@ public class CoverageAnalyzer {
 				}
 				
 				localVisitor = new CoverageCalculationVisitor(expandOperations);
-				
-				mOperation.expression().processWithVisitor(localVisitor);
-				
+				Expression expr = (Expression) mOperation.expression();
+				expr.processWithVisitor(localVisitor);
+
 				result.put(mOperation, localVisitor.getCoverageData());
 			}
 		}

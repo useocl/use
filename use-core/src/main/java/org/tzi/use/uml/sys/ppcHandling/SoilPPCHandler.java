@@ -106,8 +106,8 @@ public class SoilPPCHandler implements PPCHandler {
 			
 			printDetailedPPC(
 					system, 
-					operationCall.getPreState(), 
-					preCondition.expression());
+					operationCall.getPreState(),
+                    (Expression) preCondition.expression());
 			
 			fOutput.println();
 		}
@@ -158,8 +158,8 @@ public class SoilPPCHandler implements PPCHandler {
 			
 			printDetailedPPC(
 					system, 
-					operationCall.getPreState(), 
-					postCondition.expression());
+					operationCall.getPreState(),
+                    (Expression) postCondition.expression());
 			
 			fOutput.println();
 		}
