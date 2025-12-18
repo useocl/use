@@ -119,4 +119,3 @@ fabric.properties
 **/.DS_Store
 /.idea
 /use-api/target
-use-api/.env
