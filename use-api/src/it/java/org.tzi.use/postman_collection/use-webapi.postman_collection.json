@@ -1,484 +1,1036 @@
 {
-	"info": {
-		"_postman_id": "10464710-2286-4379-89c4-f0c29739d9fb",
-		"name": "use-webapi",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "38619616"
-	},
-	"item": [
-		{
-			"name": "empty class",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n        \"name_mclass\": \"MyClass\"\r\n    }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "normal class",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n        \"name_mclass\": \"MyClass3443\",\r\n        \"attributes\": [\r\n            {\r\n                \"name_attr\": \"MyAttr232\",\r\n                \"type\": \"String\"\r\n            },\r\n             {\r\n                \"name_attr\": \"MyAttr44242\",\r\n                \"type\": \"String\"\r\n            }\r\n        ],\r\n        \"operations\": [\r\n            {\r\n                \"head\": \"operation()1223\",\r\n                \"body\": null\r\n            }\r\n        ]\r\n    }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "no class name",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Body is correct\", function () {\r",
-							"    pm.response.to.have.body(\"A class must be named\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name_mclass\": \"\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "basic GET",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is an array\", function () {\r",
-							"    pm.expect(pm.response.json()).to.be.an('array');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response contains valid UseClass objects\", function () {\r",
-							"    const responseJson = pm.response.json();\r",
-							"    pm.expect(responseJson).to.be.an('array');\r",
-							"    \r",
-							"    if (responseJson.length > 0) {\r",
-							"        responseJson.forEach((useClass) => {\r",
-							"            pm.expect(useClass).to.have.property('name_mclass');\r",
-							"            pm.expect(useClass.attributes).to.be.an('array');\r",
-							"            pm.expect(useClass.operations).to.be.an('array');\r",
-							"        });\r",
-							"    }\r",
-							"});\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "localhost:8080/classes"
-			},
-			"response": []
-		},
-		{
-			"name": "basic POST success",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response contains the created UseClass object\", function () {\r",
-							"    const responseJson = pm.response.json();\r",
-							"    pm.expect(responseJson).to.be.an('object');\r",
-							"    pm.expect(responseJson).to.have.property('name_mclass');\r",
-							"    pm.expect(responseJson).to.have.property('attributes').that.is.an('array');\r",
-							"    pm.expect(responseJson).to.have.property('operations').that.is.an('array');\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name_mclass\": \"ExampleClass\",\r\n    \"attributes\": [\r\n        {\r\n            \"name_attr\": \"Attribute1\",\r\n            \"type\": \"String\"\r\n        }\r\n    ],\r\n    \"operations\": [\r\n        {\r\n            \"head\": \"Operation1\",\r\n            \"body\": null\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "basic POST fail",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is returned for invalid model\", function () {\r",
-							"    const responseText = pm.response.text();  // Fixed variable name\r",
-							"    pm.expect(responseText).to.be.a('string');\r",
-							"    pm.expect(responseText).to.include(\"A class must be named\"); // Updated error message\r",
-							"});\r",
-							"// Add a test to check the length of the response data\r",
-							"pm.test(\"Response data length is greater than 0\", function () {\r",
-							"    const responseData = pm.response.text();  \r",
-							"    pm.expect(responseData.length).to.be.greaterThan(0, \"Response data should not be empty\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response time is within an acceptable range\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"attributes\": [\r\n        {\r\n            \"name_attr\": \"Attribute1\",\r\n            \"type\": \"String\"\r\n        }\r\n    ],\r\n    \"operations\": [\r\n        {\r\n            \"head\": \"Operation1\",\r\n            \"body\": null\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "duplicate class",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Body is correct\", function () {\r",
-							"    pm.response.to.have.body(\"Class name already exists\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClass2\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "duplicate attribute",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Body is correct\", function () {\r",
-							"    pm.response.to.have.body(\"Attribute creation failed!\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassDoubleAttr\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "duplicate operation",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Body is correct\", function () {\r",
-							"    pm.response.to.have.body(\"Operation creation failed!\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassDupOperation\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      },\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "no attribute name",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Body is correct\", function () {\r",
-							"    pm.response.to.have.body(\"Modelelement without name\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassNoAttrName\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "no operation name",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Body is correct\", function () {\r",
-							"    pm.response.to.have.body(\"Operation name is required!\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n  {\r\n    \"name_mclass\": \"TestClassNoOperationName\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		},
-		{
-			"name": "POST performance",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"// Generate a unique name using an iteration counter and timestamp\r",
-							"let iter = pm.info.iteration || 0;\r",
-							"let uniqueName = `Class-${iter}-${Date.now()}`;\r",
-							"\r",
-							"pm.environment.set(\"uniqueName\", uniqueName);\r",
-							"\r",
-							"console.log(\"Generated unique name: \" + uniqueName);"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Response time is below 20ms\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(20);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response time is below 100ms\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(100);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n  {\r\n    \"name_mclass\": \"{{uniqueName}}\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }\r\n  {\r\n    \"name_mclass\": \"TestClass2\",\r\n    \"attributes\": [\r\n      {\r\n        \"name_attr\": \"name224\",\r\n        \"type\": \"String\"\r\n      },\r\n      {\r\n        \"name_attr\": \"name23\",\r\n        \"type\": \"String\"\r\n      }\r\n    ],\r\n    \"operations\": [\r\n      {\r\n        \"head\": \"123\",\r\n        \"body\": null\r\n      }\r\n    ]\r\n  }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:8080/class"
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "c1a2b3c4-d5e6-f7g8-h9i0-j1k2l3m4n5o6",
+    "name": "use-webapi-system-tests",
+    "description": "Comprehensive test collection for USE Web API with thorough test cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Model Operations",
+      "item": [
+        {
+          "name": "Create Model - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains model name', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.name).to.equal('ComprehensiveTestModel');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"ComprehensiveTestModel\"}"
+            },
+            "url": "localhost:8080/api/model"
+          }
+        },
+        {
+          "name": "Create Model - Duplicate Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409 Conflict for duplicate', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test('Error message indicates duplicate', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('already exists');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"ComprehensiveTestModel\"}"
+            },
+            "url": "localhost:8080/api/model"
+          }
+        },
+        {
+          "name": "Create Model - Empty Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"\"}"
+            },
+            "url": "localhost:8080/api/model"
+          }
+        },
+        {
+          "name": "Create Model - Null Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 or 500', function () {",
+                  "    pm.expect([400, 500]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": null}"
+            },
+            "url": "localhost:8080/api/model"
+          }
+        },
+        {
+          "name": "Get Model by Name - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response contains model data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.name).to.equal('ComprehensiveTestModel');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/ComprehensiveTestModel"
+          }
+        },
+        {
+          "name": "Get Model by Name - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request for not found', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error message indicates not found', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/NonExistentModel123"
+          }
+        },
+        {
+          "name": "Get All Models",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response time is acceptable', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Class Operations",
+      "item": [
+        {
+          "name": "Create Class - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains class name', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.name).to.equal('Person');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Person\", \"attributes\": [{\"name\": \"firstName\", \"type\": \"String\"}, {\"name\": \"age\", \"type\": \"Integer\"}], \"operations\": []}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/class"
+          }
+        },
+        {
+          "name": "Create Class - Duplicate Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409 Conflict', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Person\", \"attributes\": [], \"operations\": []}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/class"
+          }
+        },
+        {
+          "name": "Create Class - Empty Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"\", \"attributes\": [], \"operations\": []}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/class"
+          }
+        },
+        {
+          "name": "Create Class - Non-existent Model",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error indicates model not found', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"TestClass\", \"attributes\": [], \"operations\": []}"
+            },
+            "url": "localhost:8080/api/model/FakeModel999/class"
+          }
+        },
+        {
+          "name": "Get Classes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/classes"
+          }
+        },
+        {
+          "name": "Get Class by Name - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response contains class data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.name).to.equal('Person');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person"
+          }
+        },
+        {
+          "name": "Get Class by Name - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/NonExistentClass"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attribute Operations",
+      "item": [
+        {
+          "name": "Add Attribute - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains attribute', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.name).to.equal('email');",
+                  "    pm.expect(json.type).to.equal('String');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"email\", \"type\": \"String\"}"
+            },
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/attribute"
+          }
+        },
+        {
+          "name": "Add Attribute - Empty Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"\", \"type\": \"String\"}"
+            },
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/attribute"
+          }
+        },
+        {
+          "name": "Add Attribute - Invalid Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"badAttr\", \"type\": \"InvalidType\"}"
+            },
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/attribute"
+          }
+        },
+        {
+          "name": "Get Attributes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/attributes"
+          }
+        },
+        {
+          "name": "Get Attribute by Name - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response contains attribute name', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.name).to.equal('firstName');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/attribute/firstName"
+          }
+        },
+        {
+          "name": "Get Attribute by Name - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/attribute/nonExistentAttr"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operation (Method) Tests",
+      "item": [
+        {
+          "name": "Add Operation - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains operation', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.operationName).to.equal('getInfo');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"operationName\": \"getInfo\", \"parameter\": [], \"returnType\": \"String\"}"
+            },
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/operation"
+          }
+        },
+        {
+          "name": "Add Operation - Empty Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"operationName\": \"\", \"parameter\": [], \"returnType\": \"String\"}"
+            },
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/operation"
+          }
+        },
+        {
+          "name": "Get Operations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/operations"
+          }
+        },
+        {
+          "name": "Get Operation by Name - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models/ComprehensiveTestModel/class/Person/operation/nonExistentOp"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Association Operations",
+      "item": [
+        {
+          "name": "Create Second Class for Association",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Company\", \"attributes\": [{\"name\": \"companyName\", \"type\": \"String\"}], \"operations\": []}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/class"
+          }
+        },
+        {
+          "name": "Create Association - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains association name', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.associationName).to.equal('WorksFor');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"associationName\": \"WorksFor\", \"end1ClassName\": \"Person\", \"end1RoleName\": \"employee\", \"end1Multiplicity\": \"*\", \"end1Aggregation\": \"NONE\", \"end2ClassName\": \"Company\", \"end2RoleName\": \"employer\", \"end2Multiplicity\": \"0..1\", \"end2Aggregation\": \"NONE\"}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/association"
+          }
+        },
+        {
+          "name": "Create Association - Non-existent Class",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"associationName\": \"BadAssoc\", \"end1ClassName\": \"NonExistent\", \"end1RoleName\": \"role1\", \"end1Multiplicity\": \"*\", \"end1Aggregation\": \"NONE\", \"end2ClassName\": \"Person\", \"end2RoleName\": \"role2\", \"end2Multiplicity\": \"1\", \"end2Aggregation\": \"NONE\"}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/association"
+          }
+        },
+        {
+          "name": "Get Associations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/associations"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invariant Operations",
+      "item": [
+        {
+          "name": "Create Invariant - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response contains invariant data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.invName).to.equal('PositiveAge');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"invName\": \"PositiveAge\", \"invBody\": \"self.age > 0\", \"isExistential\": false}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/Person/invariant"
+          }
+        },
+        {
+          "name": "Create Invariant - Empty Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"invName\": \"\", \"invBody\": \"self.age > 0\", \"isExistential\": false}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/Person/invariant"
+          }
+        },
+        {
+          "name": "Create Invariant - Empty Body",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"invName\": \"EmptyBodyInv\", \"invBody\": \"\", \"isExistential\": false}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/Person/invariant"
+          }
+        },
+        {
+          "name": "Create Invariant - Non-existent Class",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"invName\": \"SomeInv\", \"invBody\": \"true\", \"isExistential\": false}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/FakeClass999/invariant"
+          }
+        },
+        {
+          "name": "Get Invariants",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/invariants"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PrePostCondition Operations",
+      "item": [
+        {
+          "name": "Create PreCondition - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"operationName\": \"getInfo\", \"name\": \"validPerson\", \"condition\": \"self.age > 0\", \"isPre\": true}"
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/Person/prepostcondition"
+          }
+        },
+        {
+          "name": "Get PrePostConditions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/prepostconditions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Handling",
+      "item": [
+        {
+          "name": "Invalid JSON Body",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{invalid json}"
+            },
+            "url": "localhost:8080/api/model"
+          }
+        },
+        {
+          "name": "Missing Content-Type Header",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 or 415', function () {",
+                  "    pm.expect([400, 415]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"TestModel\"}"
+            },
+            "url": "localhost:8080/api/model"
+          }
+        },
+        {
+          "name": "Empty Request Body",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": "localhost:8080/api/model/ComprehensiveTestModel/class"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Performance Tests",
+      "item": [
+        {
+          "name": "GET Models Performance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response time below 500ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                  "});",
+                  "pm.test('Response time below 1000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/models"
+          }
+        },
+        {
+          "name": "GET Model by Name Performance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response time below 300ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(300);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "localhost:8080/api/model/ComprehensiveTestModel"
+          }
+        }
+      ]
+    }
+  ]
 }
