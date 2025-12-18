@@ -91,10 +91,7 @@ jobs:
       run: mkdir target && cp use-api-7.1.1.jar target
 
     - name: Run docker compose
-      run: docker compose up -d
-
-    - name: Wait for docker to be ready
-      run: sleep 20
+      run: docker compose up -d --wait
 
     - name: Run Postman tests
       run: |
