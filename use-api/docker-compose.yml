@@ -22,10 +22,10 @@ services:
       - mongodb
     environment:
       - SPRING_DATA_MONGODB_HOST=${MONGODB_HOST:-mongodb_cicd}
-      - MONGODB_USERNAME=${MONGODB_USERNAME:-rootuser}
-      - MONGODB_PASSWORD=${MONGODB_PASSWORD:-rootpass}
-      - MONGODB_DATABASE=${MONGODB_DATABASE:-use-database}
-      - MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_PORT=${MONGODB_PORT:27017}
+      - SPRING_DATA_MONGODB_USERNAME=${MONGODB_USERNAME:-rootuser}
+      - SPRING_DATA_MONGODB_PASSWORD=${MONGODB_PASSWORD:-rootpass}
+      - SPRING_DATA_MONGODB_DATABASE=${MONGODB_DATABASE:-use-database}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 5s
