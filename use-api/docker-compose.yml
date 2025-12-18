@@ -23,7 +23,7 @@ services:
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb_cicd
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health"" ] # Or /actuator/health if using Spring Actuator
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ] # Or /actuator/health if using Spring Actuator
       interval: 5s
       timeout: 5s
       retries: 10
