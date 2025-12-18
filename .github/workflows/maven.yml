@@ -43,61 +43,79 @@ jobs:
       with:
         name: constructed_use-api
         path: testphase
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+          cache: maven
 
-    - name: Upload postman tests
-      run: mkdir postmantests && cp use-api/src/it/java/org.tzi.use/postman_collection/use-webapi.postman_collection.json postmantests
-    - uses: actions/upload-artifact@v4
-      with:
-        name: postman_tests
-        path: postmantests
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots verify
 
-    - name: Upload docker image
-      run: mkdir docker && cp use-api/docker-compose.yml docker && cp use-api/Dockerfile docker
-    - uses: actions/upload-artifact@v4
-      with:
-        name: docker_image
-        path: docker
+      - name: Upload build result use-assembly
+        run: mkdir staging && cp use-assembly/target/*.zip staging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Package
+          path: staging
 
+      - name: Upload build result use-api
+        run: mkdir testphase && cp use-api/target/use-api-7.1.1.jar testphase
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build_use-api
+          path: testphase
 
+      - name: Upload postman tests
+        run: mkdir postmantests && cp use-api/src/it/java/org.tzi.use/postman_collection/use-webapi.postman_collection.json postmantests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: postman_tests
+          path: postmantests
+
+      - name: Build and Save Docker Image
+        run: docker build -t use-api:latest ./use-api && docker save -o use-api.tar use-api:latest
+
+      - name: Upload Docker Image Tar
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker_image_tar
+          path: use-api.tar
+
+      - name: Upload docker config
+        run: mkdir docker-config && cp use-api/docker-compose.yml docker-config && cp use-api/Dockerfile docker-config
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker_config
+          path: docker-config
 
   test:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '21'
-        distribution: 'adopt'
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
 
+      - name: Load Docker Image
+        run: docker load -i docker_image_tar/use-api.tar
 
-    - name: Download Artifact use-api jar
-      uses: actions/download-artifact@v4
-      with:
-        name: constructed_use-api
-        
-    - name: Download Artifact postman tests
-      uses: actions/download-artifact@v4
-      with:
-        name: postman_tests
-        
-    - name: Download Aritfact Dockerimage
-      uses: actions/download-artifact@v4
-      with:
-        name: docker_image
+      - name: Prepare Test Files
+        run: |
+          mkdir -p target
+          cp build_use-api/use-api-7.1.1.jar target/
+          cp docker_config/docker-compose.yml .
+          cp postman_tests/use-webapi.postman_collection.json .
 
-    - name: move the jar
-      run: mkdir target && cp use-api-7.1.1.jar target
+      - name: Run docker compose
+        run: docker compose up -d --wait
 
-    - name: Run docker compose
-      run: docker compose up -d --wait
+      - name: Run Postman tests
+        run: |
+          npm install -g newman
+          newman run use-webapi.postman_collection.json
 
-    - name: Run Postman tests
-      run: |
-        npm install -g newman
-        newman run use-webapi.postman_collection.json
-
-    - name: Stop services
-      if: always()
-      run: docker-compose down
+      - name: Stop services
+        if: always()
+        run: docker compose down
