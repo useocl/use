@@ -103,8 +103,12 @@ jobs:
       run: mkdir target && cp use-api-7.1.1.jar target
 
     - name: Run docker compose
-      #run: docker compose up -d --wait
       run: docker compose up -d --wait
+      env:
+        MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+        MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+        MONGODB_HOST: mongodb_cicd
 
 
     - name: Wait for docker to be ready
