@@ -1,5 +1,6 @@
 package org.tzi.use.rest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -21,15 +22,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequiredArgsConstructor
 public class ModelController {
 
-    // No need for @Autowired with @RequiredArgsConstructor
-    // because Lombok generates a constructor for final fields
-    // and Spring will use that constructor for dependency injection
     private final ModelService modelService;
 
     // ========================================
     // GET Mappings
     // ========================================
 
+    @Operation(summary = "Get a model by name", description = "Returns the requested model and related metadata")
     @GetMapping("/model/{modelName}")
     public ResponseEntity<EntityModel<ModelDTO>> getModelByName(@PathVariable String modelName) throws UseApiException {
         ModelDTO modelDTO = modelService.getModelByName(modelName);
@@ -45,6 +44,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get an association by model and name", description = "Returns a single association of the given model")
     @GetMapping("/model/{modelName}/association/{associationName}")
     public ResponseEntity<EntityModel<AssociationDTO>> getModelAssociationByName(@PathVariable String modelName, @PathVariable String associationName) throws UseApiException {
         AssociationDTO association = modelService.getAssociationByName(modelName, associationName);
@@ -58,6 +58,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get an invariant by model and name", description = "Returns a specific invariant of the model")
     @GetMapping("/model/{modelName}/invariant/{invariantName}")
     public ResponseEntity<EntityModel<InvariantDTO>> getModelInvariantByName(@PathVariable String modelName, @PathVariable String invariantName) throws UseApiException {
         InvariantDTO invariant = modelService.getInvariantByName(modelName, invariantName);
@@ -71,6 +72,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }
 
+    @Operation(summary = "List all models", description = "Returns all available models with their metadata")
     @GetMapping("/models")
     public ResponseEntity<CollectionModel<EntityModel<ModelDTO>>> getModels() throws UseApiException {
         List<ModelDTO> models = modelService.getAllModels();
@@ -96,6 +98,7 @@ public class ModelController {
     }
 
 
+    @Operation(summary = "List all classes of a model", description = "Lists every class of the model")
     @GetMapping("/model/{modelName}/classes")
     public ResponseEntity<?> getClasses(@PathVariable String modelName) throws UseApiException {
         List<ClassDTO> modelClasses = modelService.getModelClasses(modelName);
@@ -120,6 +123,7 @@ public class ModelController {
     }
 
 
+    @Operation(summary = "List all associations of a model", description = "Lists associations defined in the model")
     @GetMapping("/model/{modelName}/associations")
     public ResponseEntity<CollectionModel<EntityModel<AssociationDTO>>> getAssociations(@PathVariable String modelName) throws UseApiException {
         List<AssociationDTO> associations = modelService.getModelAssociations(modelName);
@@ -143,6 +147,7 @@ public class ModelController {
     }
 
 
+    @Operation(summary = "List all invariants of a model", description = "Lists invariants defined in the model")
     @GetMapping("/model/{modelName}/invariants")
     public ResponseEntity<CollectionModel<EntityModel<InvariantDTO>>> getInvariants(@PathVariable String modelName) throws UseApiException {
         List<InvariantDTO> invariants = modelService.getModelInvariants(modelName);
@@ -167,6 +172,7 @@ public class ModelController {
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
+    @Operation(summary = "List all pre/post conditions of a model", description = "Lists pre/post conditions defined in the model")
     @GetMapping("/model/{modelName}/prepostconditions")
     public ResponseEntity<CollectionModel<EntityModel<PrePostConditionDTO>>> getPrePostConditions(@PathVariable String modelName) throws UseApiException {
         List<PrePostConditionDTO> prePostConditions = modelService.getModelPrePostConditions(modelName);
@@ -190,6 +196,7 @@ public class ModelController {
         return new ResponseEntity<>(collectionModel, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get a pre/post condition by model and name", description = "Returns the named pre/post condition of the model")
     @GetMapping("/model/{modelName}/prepostcondition/{prePostConditionName}")
     public ResponseEntity<EntityModel<PrePostConditionDTO>> getModelPrePostCondByName(@PathVariable String modelName, @PathVariable String prePostConditionName) throws UseApiException {
         PrePostConditionDTO prePostCondition = modelService.getPrePostConditionByName(modelName, prePostConditionName);
@@ -208,6 +215,7 @@ public class ModelController {
     // ========================================
 
 
+    @Operation(summary = "Create a model", description = "Creates a new model")
     @PostMapping("/model")
     public ResponseEntity<EntityModel<ModelDTO>> createModel(@RequestBody ModelDTO modelDTO) throws UseApiException {
         ModelDTO createdModel = modelService.createModel(modelDTO);
@@ -224,6 +232,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Create a class in a model", description = "Adds a class to the given model")
     @PostMapping("/model/{modelName}/class")
     public ResponseEntity<EntityModel<ClassDTO>> createClass(@PathVariable String modelName, @RequestBody ClassDTO classDTO) throws UseApiException {
         ClassDTO createdClass = modelService.createClass(modelName, classDTO);
@@ -240,6 +249,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Create an association in a model", description = "Creates an association in the model")
     @PostMapping("/model/{modelName}/association")
     public ResponseEntity<EntityModel<AssociationDTO>> createAssociation(@PathVariable String modelName, @RequestBody AssociationDTO association) throws UseApiException {
         AssociationDTO createdAssociation = modelService.createAssociation(modelName, association);
@@ -254,6 +264,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Create an invariant in a class", description = "Adds an invariant scoped to a class within the model")
     @PostMapping("/model/{modelName}/{className}/invariant")
     public ResponseEntity<EntityModel<InvariantDTO>> createInvariant(@PathVariable String modelName, @PathVariable String className, @RequestBody InvariantDTO invariantDTO) throws UseApiException {
         InvariantDTO createdInvariant = modelService.createInvariant(modelName, invariantDTO, className);
@@ -268,6 +279,7 @@ public class ModelController {
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Create a pre/post condition in a class", description = "Adds a pre/post condition to a class")
     @PostMapping("/model/{modelName}/{className}/prepostcondition")
     public ResponseEntity<EntityModel<PrePostConditionDTO>> createPrePostCondition(@PathVariable String modelName, @PathVariable String className, @RequestBody PrePostConditionDTO prePostConditionDTO) throws UseApiException {
         PrePostConditionDTO createdPrePostCondition = modelService.createPrePostCondition(modelName, prePostConditionDTO, className);

@@ -1,5 +1,6 @@
 package org.tzi.use.rest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ClassController {
     private final ClassService classService;
 
+    @Operation(summary = "Get a class by name", description = "Returns one class of the model")
     @GetMapping("/class/{className}")
     public ResponseEntity<EntityModel<ClassDTO>> getClassByName(@PathVariable String modelName, @PathVariable String className) throws UseApiException {
         ClassDTO classDTO = classService.getClassByName(modelName, className);
@@ -43,6 +45,7 @@ public class ClassController {
         return ResponseEntity.ok(entityModels);
     }
 
+    @Operation(summary = "List attributes of a class", description = "Lists every attribute of the class")
     @GetMapping("/class/{className}/attributes")
     public ResponseEntity<CollectionModel<EntityModel<AttributeDTO>>> getAttributes(@PathVariable String modelName, @PathVariable String className) throws UseApiException {
         List<AttributeDTO> attributes = classService.getAttributes(modelName, className);
@@ -62,6 +65,7 @@ public class ClassController {
         return ResponseEntity.ok(entityModels);
     }
 
+    @Operation(summary = "Get an attribute by name", description = "Returns a single attribute of the class")
     @GetMapping("/class/{className}/attribute/{attributeName}")
     public ResponseEntity<EntityModel<AttributeDTO>> getAttributeByName(@PathVariable String modelName, @PathVariable String className, @PathVariable String attributeName) throws UseApiException {
         AttributeDTO attribute = classService.getAttributeByName(modelName, className, attributeName);
@@ -76,6 +80,7 @@ public class ClassController {
     }
 
 
+    @Operation(summary = "List operations of a class", description = "Lists operations defined on the class")
     @GetMapping("/class/{className}/operations")
     public ResponseEntity<CollectionModel<EntityModel<OperationDTO>>> getOperations(@PathVariable String modelName, @PathVariable String className) throws UseApiException {
         List<OperationDTO> operations = classService.getOperations(modelName, className);
@@ -96,6 +101,7 @@ public class ClassController {
         return ResponseEntity.ok(entityModels);
     }
 
+    @Operation(summary = "Get an operation by name", description = "Returns a specific operation of the class")
     @GetMapping("/class/{className}/operation/{operationName}")
     public ResponseEntity<EntityModel<OperationDTO>> getOperationByName(@PathVariable String modelName, @PathVariable String className, @PathVariable String operationName) throws UseApiException {
         OperationDTO operation = classService.getOperationByName(modelName, className, operationName);
@@ -112,6 +118,7 @@ public class ClassController {
 
 
 
+    @Operation(summary = "Add an attribute to a class", description = "Creates an attribute for the class")
     @PostMapping("/class/{className}/attribute")
     public ResponseEntity<EntityModel<AttributeDTO>> addAttribute(@PathVariable String modelName, @PathVariable String className, @RequestBody AttributeDTO attributeDTO) throws UseApiException {
         AttributeDTO newAttribute = classService.createAttribute(modelName, className, attributeDTO);
@@ -124,6 +131,7 @@ public class ClassController {
         return new ResponseEntity<>(entityModels, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Add an operation to a class", description = "Creates an operation on the class")
     @PostMapping("/class/{className}/operation")
     public ResponseEntity<EntityModel<OperationDTO>> addOperation(@PathVariable String modelName, @PathVariable String className, @RequestBody OperationDTO operationDTO) throws UseApiException {
         OperationDTO newOperation = classService.createOperation(modelName, className, operationDTO);
