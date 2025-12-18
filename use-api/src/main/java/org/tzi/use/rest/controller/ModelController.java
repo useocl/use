@@ -293,4 +293,43 @@ public class ModelController {
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED);
     }
+
+    // ========================================
+    // DELETE Mappings
+    // ========================================
+
+    @Operation(summary = "Delete a model", description = "Deletes the model and all its classes, associations, invariants and prepostconditions")
+    @DeleteMapping("/model/{modelName}")
+    public ResponseEntity<Void> deleteModel(@PathVariable String modelName) {
+        modelService.deleteModel(modelName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Delete a class from a model", description = "Deletes the class and its attributes, operations and associations referencing it")
+    @DeleteMapping("/model/{modelName}/class/{className}")
+    public ResponseEntity<Void> deleteClass(@PathVariable String modelName, @PathVariable String className) {
+        modelService.deleteClass(modelName, className);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Delete an association from a model", description = "Deletes the association from the model")
+    @DeleteMapping("/model/{modelName}/association/{associationName}")
+    public ResponseEntity<Void> deleteAssociation(@PathVariable String modelName, @PathVariable String associationName) {
+        modelService.deleteAssociation(modelName, associationName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Delete an invariant from a model", description = "Deletes the invariant from the model")
+    @DeleteMapping("/model/{modelName}/invariant/{invariantName}")
+    public ResponseEntity<Void> deleteInvariant(@PathVariable String modelName, @PathVariable String invariantName) {
+        modelService.deleteInvariant(modelName, invariantName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Delete a pre/post condition from a model", description = "Deletes the pre/post condition from the model")
+    @DeleteMapping("/model/{modelName}/prepostcondition/{prePostConditionName}")
+    public ResponseEntity<Void> deletePrePostCondition(@PathVariable String modelName, @PathVariable String prePostConditionName) {
+        modelService.deletePrePostCondition(modelName, prePostConditionName);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -140,9 +140,70 @@ public class ModelService {
         return prePostConditionMapper.toDTO(prePostConditionNTT);
     }
 
+    /*  Delete  */
+
+    // Recursively deletes model with all its classes, associations, invariants and prepostconditions
+    public void deleteModel(String modelName) {
+        ModelNTT modelNTT = findModelByNameOrThrow(modelName);
+        modelNTT.getClasses().clear();
+        modelNTT.getAssociations().clear();
+        modelNTT.getInvariants().clear();
+        modelNTT.getPrePostConditions().clear();
+        useModelFacade.deleteModel(modelName);
+        modelRepo.delete(modelNTT);
+    }
+
+    // Recursively deletes class with its attributes, operations and associations referencing the class
+    public void deleteClass(String modelName, String className) {
+        ModelNTT modelNTT = findModelByNameOrThrow(modelName);
+        ClassNTT classNTT = findClassByNameOrThrow(modelNTT, className);
+
+        classNTT.getAttributes().clear();
+        classNTT.getOperations().clear();
+
+        modelNTT.getAssociations().entrySet().removeIf(entry -> {
+            AssociationNTT assoc = entry.getValue();
+            return assoc.getEnd1ClassName().equals(className) || assoc.getEnd2ClassName().equals(className);
+        });
+
+        modelNTT.getClasses().remove(classNTT);
+        modelRepo.save(modelNTT);
+    }
+
+    public void deleteAssociation(String modelName, String associationName) {
+        ModelNTT modelNTT = findModelByNameOrThrow(modelName);
+        if (modelNTT.getAssociations().remove(associationName) == null) {
+            throw new IllegalArgumentException("Association not found: " + associationName);
+        }
+        modelRepo.save(modelNTT);
+    }
+
+    public void deleteInvariant(String modelName, String invariantName) {
+        ModelNTT modelNTT = findModelByNameOrThrow(modelName);
+        if (modelNTT.getInvariants().remove(invariantName) == null) {
+            throw new IllegalArgumentException("Invariant not found: " + invariantName);
+        }
+        modelRepo.save(modelNTT);
+    }
+
+    public void deletePrePostCondition(String modelName, String prePostConditionName) {
+        ModelNTT modelNTT = findModelByNameOrThrow(modelName);
+        if (modelNTT.getPrePostConditions().remove(prePostConditionName) == null) {
+            throw new IllegalArgumentException("PrePostCondition not found: " + prePostConditionName);
+        }
+        modelRepo.save(modelNTT);
+    }
+
     /*  Helper Methods  */
     ModelNTT findModelByNameOrThrow(String modelName) {
         return modelRepo.findById(modelName).orElseThrow(() -> new IllegalArgumentException("Model not found: " + modelName));
+    }
+
+    private ClassNTT findClassByNameOrThrow(ModelNTT modelNTT, String className) {
+        return modelNTT.getClasses().stream()
+                .filter(c -> c.getName().equals(className))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Class not found: " + className));
     }
 
 }

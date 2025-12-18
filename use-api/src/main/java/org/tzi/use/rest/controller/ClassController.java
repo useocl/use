@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -142,5 +143,19 @@ public class ClassController {
         entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
 
         return new ResponseEntity<>(entityModels, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Delete an attribute from a class", description = "Deletes the attribute from the class")
+    @DeleteMapping("/class/{className}/attribute/{attributeName}")
+    public ResponseEntity<Void> deleteAttribute(@PathVariable String modelName, @PathVariable String className, @PathVariable String attributeName) {
+        classService.deleteAttribute(modelName, className, attributeName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Delete an operation from a class", description = "Deletes the operation from the class")
+    @DeleteMapping("/class/{className}/operation/{operationName}")
+    public ResponseEntity<Void> deleteOperation(@PathVariable String modelName, @PathVariable String className, @PathVariable String operationName) {
+        classService.deleteOperation(modelName, className, operationName);
+        return ResponseEntity.noContent().build();
     }
 }

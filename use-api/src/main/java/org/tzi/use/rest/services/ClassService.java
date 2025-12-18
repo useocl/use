@@ -84,6 +84,29 @@ public class ClassService {
                 .orElseThrow(() -> new IllegalArgumentException("Attribute not found: " + attributeName));
     }
 
+    /*  Delete  */
+    public void deleteAttribute(String modelName, String className, String attributeName) {
+        ModelNTT modelNTT = modelService.findModelByNameOrThrow(modelName);
+        ClassNTT classNTT = findClassByNameOrThrow(modelNTT, className);
+
+        boolean removed = classNTT.getAttributes().removeIf(attr -> attr.getName().equals(attributeName));
+        if (!removed) {
+            throw new IllegalArgumentException("Attribute not found: " + attributeName);
+        }
+        modelRepo.save(modelNTT);
+    }
+
+    public void deleteOperation(String modelName, String className, String operationName) {
+        ModelNTT modelNTT = modelService.findModelByNameOrThrow(modelName);
+        ClassNTT classNTT = findClassByNameOrThrow(modelNTT, className);
+
+        boolean removed = classNTT.getOperations().removeIf(op -> op.getOperationName().equals(operationName));
+        if (!removed) {
+            throw new IllegalArgumentException("Operation not found: " + operationName);
+        }
+        modelRepo.save(modelNTT);
+    }
+
     /*  Helper Methods  */
     private ClassNTT findClassByNameOrThrow(ModelNTT modelNTT, String className) {
         return modelNTT.getClasses().stream()

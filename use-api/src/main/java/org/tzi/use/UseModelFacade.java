@@ -65,6 +65,12 @@ public class UseModelFacade {
     }
 
 
+    /*  Delete  */
+
+    public void deleteModel(String modelName) {
+        umaCache.remove(modelName);
+    }
+
     /*  Helper Methods  */
 
     private static String extractClassName(String concatenatedClassName) {
