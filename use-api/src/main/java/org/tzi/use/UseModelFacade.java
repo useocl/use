@@ -27,7 +27,6 @@ public class UseModelFacade {
                 for (OperationNTT operation : classNTT.getOperations()) {
                     uma.createOperation(classNTT.getName(), operation.getOperationName(), operation.getParameter(), operation.getReturnType());
                 }
-//        umaCache.put(modelNTT.getName(), uma);
     }
 
     public void createInvariant(ModelNTT modelNTT, InvariantNTT invariant, String className) throws UseApiException {

@@ -14,9 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Global exception handler for the REST API.
- * This follows Spring Boot best practices for centralized exception handling.
- * Extends ResponseEntityExceptionHandler to leverage Spring's built-in exception handling.
+ * Global exception handler for the REST API. Catches specific exceptions and returns appropriate HTTP responses.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {

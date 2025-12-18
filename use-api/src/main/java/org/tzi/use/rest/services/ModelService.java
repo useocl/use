@@ -47,7 +47,6 @@ public class ModelService {
 
         ModelNTT modelNTT = findModelByNameOrThrow(modelName);
 
-        //TODO doesnt uma already throw an error if class exists?
         boolean classExists = modelNTT.getClasses().stream().anyMatch(c -> c.getName().equals(classDTO.getName()));
         if (classExists) {
             throw new DuplicateKeyException("Class name already exists in model: " + modelName);
