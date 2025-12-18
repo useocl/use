@@ -17,9 +17,17 @@ public class UseModelFacade {
         new UseModelApi().createModel(modelName);
     }
 
-    public void createClass(ModelNTT modelNTT, String className) throws UseApiException {
+    public void createClass(ModelNTT modelNTT, ClassNTT classNTT) throws UseApiException {
         UseModelApi uma = getUMAfromModelNTT(modelNTT);
-        uma.createClass(className, false);
+        uma.createClass(classNTT.getName(), false);
+
+                for (AttributeNTT attribute : classNTT.getAttributes()) {
+                    uma.createAttribute(classNTT.getName(), attribute.getName(), attribute.getType());
+                }
+                for (OperationNTT operation : classNTT.getOperations()) {
+                    uma.createOperation(classNTT.getName(), operation.getOperationName(), operation.getParameter(), operation.getReturnType());
+                }
+//        umaCache.put(modelNTT.getName(), uma);
     }
 
     public void createInvariant(ModelNTT modelNTT, InvariantNTT invariant, String className) throws UseApiException {

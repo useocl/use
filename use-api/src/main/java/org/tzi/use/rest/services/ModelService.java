@@ -53,7 +53,7 @@ public class ModelService {
             throw new DuplicateKeyException("Class name already exists in model: " + modelName);
         }
 
-        useModelFacade.createClass(modelNTT, classNTT.getName());
+        useModelFacade.createClass(modelNTT, classNTT);
         modelNTT.getClasses().add(classNTT);
         modelRepo.save(modelNTT);
 
