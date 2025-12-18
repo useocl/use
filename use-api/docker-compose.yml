@@ -9,9 +9,9 @@ services:
     volumes:
       - mongodb_data:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=rootuser
-      - MONGO_INITDB_ROOT_PASSWORD=rootpass
-      - MONGO_INITDB_DATABASE=use-database
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME:-rootuser}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD:-rootpass}
+      - MONGO_INITDB_DATABASE=${MONGODB_DATABASE:-use-database}
 
   use-api:
     build: .
@@ -21,13 +21,17 @@ services:
     depends_on:
       - mongodb
     environment:
-      - SPRING_DATA_MONGODB_HOST=mongodb_cicd
+      - SPRING_DATA_MONGODB_HOST=${MONGODB_HOST:-mongodb_cicd}
+      - MONGODB_USERNAME=${MONGODB_USERNAME:-rootuser}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD:-rootpass}
+      - MONGODB_DATABASE=${MONGODB_DATABASE:-use-database}
+      - MONGODB_PORT=27017
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ] # Or /actuator/health if using Spring Actuator
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 5s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 30s
 
 volumes:
   mongodb_data:
