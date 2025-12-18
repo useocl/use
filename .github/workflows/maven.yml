@@ -116,6 +116,14 @@ jobs:
           npm install -g newman
           newman run use-webapi.postman_collection.json
 
-      - name: Stop services
-        if: always()
-        run: docker compose down
+    - name: Wait for docker to be ready
+      run: sleep 20
+
+    - name: Run Postman tests
+      run: |
+        npm install -g newman
+        newman run use-webapi.postman_collection.json
+
+    - name: Stop services
+      if: always()
+      run: docker compose down
