@@ -1,5 +1,6 @@
 name: Java CI with Maven
-on: push
+on:
+  push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +19,6 @@ jobs:
           end_time=$(date +%s)
           build_time=$((end_time - start_time))
           echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
-          
       - name: Upload build result
         run: mkdir staging && cp use-assembly/target/*.zip staging
       - uses: actions/upload-artifact@v4
@@ -35,7 +35,7 @@ jobs:
           path: |
             docs/archunit-results/cycles-current-failure-report.txt
             docs/archunit-results/layers-current-failure-report.txt
-
+            
       - name: Upload build result use-api
         run: mkdir testphase && cp use-api/target/use-api-7.1.1.jar testphase
       - uses: actions/upload-artifact@v4
