@@ -29,7 +29,8 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
@@ -947,8 +948,8 @@ public final class MSystemState {
 					
 					for (int valueIndex = 0; valueIndex < qualifierValues.size(); valueIndex++) {
 						Value qualifierValue = qualifierValues.get(valueIndex);
-						VarDecl qualifier = end.getQualifiers().get(valueIndex);
-						
+						org.tzi.use.uml.ocl.expr.VarDecl qualifier = (org.tzi.use.uml.ocl.expr.VarDecl) end.getQualifiers().get(valueIndex);
+
 						if (!qualifierValue.type().conformsTo(qualifier.type())) {
 							throw new MSystemException(
 									"The type of the provided value ("
@@ -1540,7 +1541,7 @@ public final class MSystemState {
 		if (source instanceof MObject) {
 			objVal = new ObjectValue(source.cls(), (MObject) source);
 		} else if (source instanceof MDataTypeValue) {
-			objVal = new DataTypeValueValue(source.cls(), source, ((MDataTypeValue) source).value().getValues());
+			objVal = new DataTypeValueValue((Type) source.cls(), source, ((MDataTypeValue) source).value().getValues());
 		}
 		
     	return evaluateDeriveExpression(objVal, attribute);

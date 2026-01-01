@@ -65,18 +65,19 @@ public class QualifierWayPoint extends AttachedWayPoint {
 		displayedEntries = new ArrayList<String>(qualifiedEnd.getQualifiers().size());
 		
 		if (link == null) {
-			for (VarDecl qualifier : qualifiedEnd.getQualifiers()) {
-	        	displayedEntries.add(qualifier.toString());
-	        }
+			for (org.tzi.use.uml.api.IVarDecl qualifier : qualifiedEnd.getQualifiers()) {
+            	// qualifier is API IVarDecl, cast to concrete VarDecl for toString()
+            	displayedEntries.add(qualifier.toString());
+            }
 		} else {
 			MLinkEnd linkEnd = link.linkEnd(qualifiedEnd);
 			int index = 0;
 			
-			for (VarDecl qualifier : qualifiedEnd.getQualifiers()) {
-				Value v = linkEnd.getQualifierValues().get(index);
-	        	displayedEntries.add(qualifier.name() + " = " + v.toString());
-	        	++index;
-	        }
+            for (org.tzi.use.uml.api.IVarDecl qualifier : qualifiedEnd.getQualifiers()) {
+                Value v = linkEnd.getQualifierValues().get(index);
+            	displayedEntries.add(qualifier.name() + " = " + v.toString());
+            	++index;
+            }
 		}
 	}
 	
