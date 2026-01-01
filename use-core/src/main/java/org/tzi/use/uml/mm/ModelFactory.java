@@ -23,12 +23,11 @@ import java.util.List;
 
 import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.api.IInvariantExpressionFactory;
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignalImpl;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IVarDeclList;
+import org.tzi.use.uml.api.IType;
 
 /** 
  * A ModelFactory creates instances of the Metamodel.
@@ -56,29 +55,28 @@ public class ModelFactory {
 
     public MClassInvariant createClassInvariant(String name, List<String> vars, 
                                                 MClassifier cf, IExpression inv, boolean isExistential)
-    	throws ExpInvalidException
-	{
-    	IExpression apiInv = inv; // already an IExpression
-        IInvariantExpressionFactory factory = new org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory();
-        return new MClassInvariant(name, vars, cf, apiInv, isExistential, factory);
-	}
+        throws InvariantExpressionException
+    {
+        IInvariantExpressionFactory factory = org.tzi.use.uml.api.InvariantExpressionFactoryProvider.get();
+        return new MClassInvariant(name, vars, cf, inv, isExistential, factory);
+    }
 
     public MPrePostCondition createPrePostCondition(String name, 
                                                     MOperation op, 
                                                     boolean isPre, 
                                                     IExpression constraint)
-        throws ExpInvalidException
+        throws InvariantExpressionException
     {
         IExpression apiConstraint = constraint; // already an IExpression
         return new MPrePostCondition(name, op, isPre, apiConstraint);
     }
 
-    public MAttribute createAttribute(String name, Type t) {
+    public MAttribute createAttribute(String name, IType t) {
         return new MAttribute(name, t);
     }
 
-    public MOperation createOperation(String name, VarDeclList varDeclList, 
-                                      Type resultType, boolean isConstructor) {
+    public MOperation createOperation(String name, IVarDeclList varDeclList,
+                                      IType resultType, boolean isConstructor) {
         return new MOperation(name, varDeclList, resultType, isConstructor);
     }
 
@@ -105,7 +103,7 @@ public class ModelFactory {
                                                 MMultiplicity mult, 
                                                 int kind,
                                                 boolean isOrdered,
-                                                List<VarDecl> qualifiers) {
+                                                java.util.List<? extends org.tzi.use.uml.api.IVarDecl> qualifiers) {
         return new MAssociationEnd(cls, rolename, mult, kind, isOrdered, qualifiers);
     }
 

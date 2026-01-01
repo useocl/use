@@ -48,7 +48,7 @@ public class GInstrCreate_C implements GValueInstruction {
     }
 
     public Type type() {
-        return fClass;
+        return (Type) fClass;
     }
     
     public String toString() {

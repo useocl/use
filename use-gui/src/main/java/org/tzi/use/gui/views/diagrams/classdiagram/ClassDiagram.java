@@ -1730,7 +1730,7 @@ public class ClassDiagram extends DiagramView
 			@Override
 			public void handleItem(PersistHelper helper, int version) {
 				String name = helper.getElementStringValue("name");
-				EnumType enumType = fParent.system().model().enumType(name);
+				EnumType enumType = (EnumType) fParent.system().model().enumType(name);
 				// Could be deleted
 				if (enumType != null) {
 					EnumNode node = visibleData.fEnumToNodeMap.get(enumType);

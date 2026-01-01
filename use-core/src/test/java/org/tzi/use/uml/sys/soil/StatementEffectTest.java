@@ -32,7 +32,7 @@ import org.tzi.use.TestSystem;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MInvalidModelException;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -61,8 +61,12 @@ public class StatementEffectTest extends TestCase {
 
 	@Before
 	@Override
-	public void setUp() throws MInvalidModelException, MSystemException, ExpInvalidException {
-		fTestSystem = new TestSystem();
+	public void setUp() throws MInvalidModelException, MSystemException {
+		try {
+			fTestSystem = new TestSystem();
+		} catch (InvariantExpressionException e) {
+			throw new MSystemException("Failed to initialize TestSystem", e);
+		}
 		systemApi = UseSystemApi.create(fTestSystem.getSystem(), false);
 		fState = fTestSystem.getState();
 		fOldState = new MSystemState("oldState", fState);
@@ -1532,7 +1536,12 @@ public class StatementEffectTest extends TestCase {
 	}
 
     public void evaluateStatement(String statement) throws MSystemException {
-    	systemApi.getSystem().execute(generateStatement(statement));
+    	MStatement s = generateStatement(statement);
+    	if (s == null) {
+    		throw new MSystemException("Failed to compile statement: " + statement);
+    	}
+
+    	systemApi.getSystem().execute(s);
     }
 
 	private MStatement generateStatement(String input) {
@@ -1543,7 +1552,7 @@ public class StatementEffectTest extends TestCase {
 				systemApi.getSystem().getVariableEnvironment(), 
 				input, 
 				"<input>", 
-				NullPrintWriter.getInstance(), 
-				false);
+				new java.io.PrintWriter(System.err),
+				true);
 	}
 }

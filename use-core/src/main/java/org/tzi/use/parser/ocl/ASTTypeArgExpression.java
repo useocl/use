@@ -36,7 +36,7 @@ import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser, 
@@ -71,6 +71,10 @@ public class ASTTypeArgExpression extends ASTExpression {
         Expression res = null;
         Expression expr;
         Type t = fTargetType.gen(ctx);
+
+        if (t == null) {
+            throw new SemanticException(fTargetType.getStartToken(), "Target type could not be resolved.");
+        }
 
         // check for empty source: do we have a context expression that
         // is implicitly assumed to be the source expression?

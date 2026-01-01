@@ -20,6 +20,7 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.DataTypeValueValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -48,7 +49,7 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
                             "object type, found `" + args[0].type() + "'.");
 
         // check for matching arguments
-        VarDeclList params = fOp.paramList();
+        VarDeclList params = (VarDeclList) fOp.paramList();
         if (params.size() != (args.length - 1) )
             throw new ExpInvalidException(
                     "Number of arguments does not match declaration of instance constructor `" +
@@ -86,7 +87,7 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
             varBindings.put(e.getVarName(), e.getValue());
         }
         MInstance self = new MDataTypeValue(fClassifier, fClassifier.name(), varBindings);
-        Value result = new DataTypeValueValue(fClassifier, self, argValues);
+        Value result = new DataTypeValueValue((Type) fClassifier, self, argValues);
 
         MOperationCall operationCall = new MOperationCall(this, self, fOp, arguments);
         operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());

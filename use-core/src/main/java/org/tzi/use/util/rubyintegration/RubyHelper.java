@@ -3,6 +3,7 @@ package org.tzi.use.util.rubyintegration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
 import org.tzi.use.uml.ocl.expr.ExpConstInteger;
 import org.tzi.use.uml.ocl.expr.ExpConstReal;
@@ -12,7 +13,6 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.IntegerValue;

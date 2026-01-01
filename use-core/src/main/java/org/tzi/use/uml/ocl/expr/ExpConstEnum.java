@@ -20,6 +20,7 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.EnumValue;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -29,13 +30,13 @@ import org.tzi.use.uml.ocl.value.Value;
  * @author  Mark Richters
  */
 public final class ExpConstEnum extends Expression {
-    private String fValue;
-    private EnumValue enumValue;
-        
+    private final String fValue;
+    private final EnumValue enumValue;
+
     public ExpConstEnum(EnumType t, String literal) {
-        super(t);
+        super((Type) t);
         fValue = literal;
-        enumValue = new EnumValue((EnumType) type(), fValue);
+        enumValue = new EnumValue(t, fValue);
     }
 
     public String value() {
@@ -68,4 +69,3 @@ public final class ExpConstEnum extends Expression {
 		return false;
 	}
 }
-

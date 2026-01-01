@@ -25,17 +25,16 @@ import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
 
-
 /**
  * Test the destruction of objects.
  *
- * @author  Fabian Gutsche
- * @see     MCmdDestroyObjects
+ * @author Fabian Gutsche
+ *
  */
 
 public class MCmdDestroyObjectsTest extends TestCase {
@@ -62,7 +61,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
         
         systemApi = UseSystemApi.create(modelApi.getModel(), false);
     }
-    
+
     /**
      * Test destruction of a single object.
      */

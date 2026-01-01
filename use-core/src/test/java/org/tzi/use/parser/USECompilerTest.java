@@ -107,6 +107,16 @@ public class USECompilerTest extends TestCase {
     }
 
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        // Register OCL-backed factories for tests
+        org.tzi.use.uml.api.ExpressionFactoryProvider.set(new org.tzi.use.uml.ocl.OclExpressionFactoryAdapter());
+        org.tzi.use.uml.api.InvariantExpressionFactoryProvider.set(new org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory());
+        // Register VarDecl factory used by model code
+        org.tzi.use.uml.api.VarDeclFactoryProvider.set(new org.tzi.use.uml.ocl.expr.OclVarDeclFactory());
+    }
+
     public void testSpecification() {
         Options.explicitVariableDeclarations = false;
 
@@ -148,6 +158,59 @@ public class USECompilerTest extends TestCase {
             }
         }
     }
+
+    /**
+     * Focused test to reproduce and debug known import failures.
+     * Compiles only the two failing test cases and compares their outputs
+     * to the corresponding .fail files.
+     */
+    public void testImportFailures() {
+        String[] tests = {"t31_imports.use", "t37_imports.use"};
+
+        StringOutputStream errStr = new StringOutputStream();
+        PrintWriter newErr = new PrintWriter(errStr);
+
+        for (String specFileName : tests) {
+            File specFile = new File(TEST_PATH, specFileName);
+            assertTrue("Spec file must exist: " + specFile, specFile.exists());
+            try {
+                MModel model = compileSpecification(specFile, newErr);
+                File failFile = getFailFileFromUseFile(specFileName);
+
+                if (failFile.exists()) {
+                    if (model != null) {
+                        failCompileSpecSucceededButErrorsExpected(specFileName, failFile);
+                    } else {
+                        if (!isErrorMessageAsExpected(failFile, errStr)) {
+                            // Print expected & actual for debugging and fail
+                            System.err.println("Expected: #############");
+                            try {
+                                try (BufferedReader failReader = new BufferedReader(new FileReader(failFile))){
+                                    String line;
+                                    while ((line = failReader.readLine()) != null) {
+                                        System.err.println(line);
+                                    }
+                                }
+                            } catch (IOException ex) {
+                                System.err.println(ex.getMessage());
+                            }
+                             System.err.println("Got: ##################");
+                             System.err.print(errStr.toString());
+                             System.err.println("#######################");
+                             failCompileSpecFailedFailFileDiffers(specFileName, errStr, failFile);
+                         }
+                     }
+                 } else {
+                     if (model == null) {
+                         failCompileSpecFailedWithoutFailFile(specFileName, errStr, failFile);
+                     }
+                 }
+                 errStr.reset();
+             } catch (FileNotFoundException e) {
+                 System.err.println(e.getMessage());
+             }
+         }
+     }
 
     public void testExpression() throws IOException {
         MModel model = new ModelFactory().createModel("Test");

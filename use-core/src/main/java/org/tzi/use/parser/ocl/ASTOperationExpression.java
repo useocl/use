@@ -30,7 +30,8 @@ import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.TupleType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
@@ -217,7 +218,8 @@ public class ASTOperationExpression extends ASTExpression {
                 } else if (cf != null ) {
                     // constructor call?
                     // (8) check for constructor call
-                    res = gen1(ctx, new ExpVariable("self", cf));
+                    // Use TypeAdapters to adapt the model classifier to an OCL Type
+                    res = gen1(ctx, new ExpVariable("self", TypeAdapters.asOclType(cf)));
                 } else {
                     throw new SemanticException(fOp, "Undefined " + 
                                                 ( fHasParentheses ? "operation" : "variable" ) + 
@@ -311,62 +313,71 @@ public class ASTOperationExpression extends ASTExpression {
 
         case SRC_SIMPLE_TYPE + ARROW + NO_PARENTHESES:
         case SRC_SIMPLE_TYPE + ARROW + PARENTHESES:
-        	// If source is null literal, convert to Bag{} (OCL 2.3.1 p. 146)
-        	if (fArgExprs[0].type().isTypeOfVoidType()) {
-        		try {
-					fArgExprs[0] = new ExpBagLiteral(new Expression[0]);
-				} catch (ExpInvalidException ignored) { }
-        	} else {
-	            ctx.reportWarning(fOp, "application of `" + opname + 
-	                              "' to a single value should be done with `.' " +
-	                              "instead of `->'.");
-        	}
-        
+            // If source is null literal, convert to Bag{} (OCL 2.3.1 p. 146)
+            if (fArgExprs[0].type().isTypeOfVoidType()) {
+                try {
+                    fArgExprs[0] = new ExpBagLiteral(new Expression[0]);
+                } catch (ExpInvalidException ignored) { }
+            } else {
+                ctx.reportWarning(fOp, "application of `" + opname +
+                                  "' to a single value should be done with `.' " +
+                                  "instead of `->'.");
+            }
+
             // (1) predefined OCL operation
             res = genStdOperation(ctx, fOp, opname, fArgExprs);
             break;
 
         case SRC_OBJECT_TYPE + DOT + NO_PARENTHESES:
-            MClassifier srcClass = (MClassifier)srcType;
-        	MAttribute attr = srcClass.attribute(opname, true);
-        	
-            if (attr != null ) {
-                // (2) attribute operation on object type (no arguments)
-                res = new ExpAttrOp(attr, srcExpr);
-            } else {
-                // (4) navigation operation on object type
-                // must be a role name
-                MNavigableElement dst = srcClass.navigableEnd(opname);
-                
-                if (dst != null ){
-                    res = genNavigation(fOp, srcClass, srcExpr, dst);
-                } else {
-                    // (1) predefined OCL operation
-                    res = genStdOperation(ctx, fOp, opname, fArgExprs);
-                }
+            MClassifier srcClass = TypeAdapters.asMClassifier(srcType);
+            if (srcClass == null) {
+                throw new SemanticException(fOp, "Expected an object/classifier type as source expression, found type " + StringUtil.inQuotes(srcType) + ".");
             }
-            break;
+         	MAttribute attr = srcClass.attribute(opname, true);
+
+             if (attr != null ) {
+                 // (2) attribute operation on object type (no arguments)
+                 res = new ExpAttrOp(attr, srcExpr);
+             } else {
+                 // (4) navigation operation on object type
+                 // must be a role name
+                 MNavigableElement dst = srcClass.navigableEnd(opname);
+
+                 if (dst != null ){
+                     res = genNavigation(fOp, srcClass, srcExpr, dst);
+                 } else {
+                     // (1) predefined OCL operation
+                     res = genStdOperation(ctx, fOp, opname, fArgExprs);
+                 }
+             }
+             break;
 
         case SRC_OBJECT_TYPE + DOT + NO_PARENTHESES + EXPLICIT_ROLENAME:
-            MClassifier srcClass3 = (MClassifier)srcType;
-            // (4) navigation operation on object type
-            // must be a role name
-            MNavigableElement dst = srcClass3.navigableEnd( opname );
-            
-            if (dst == null) {
-            	throw new SemanticException(fOp, StringUtil.inQuotes(opname) + " is not a valid rolename that is reachable from class " + StringUtil.inQuotes(srcClass3.name()));
-            } else {
-            	res = genNavigation( ctx, fOp, srcClass3, srcExpr, dst, fExplicitRolenameOrQualifiers, fQualifiers );
+            MClassifier srcClass3 = TypeAdapters.asMClassifier(srcType);
+            if (srcClass3 == null) {
+                throw new SemanticException(fOp, "Expected an object/classifier type as source expression, found type " + StringUtil.inQuotes(srcType) + ".");
             }
-            
-            break;
+              // (4) navigation operation on object type
+              // must be a role name
+              MNavigableElement dst = srcClass3.navigableEnd( opname );
+
+              if (dst == null) {
+              	throw new SemanticException(fOp, StringUtil.inQuotes(opname) + " is not a valid rolename that is reachable from class " + StringUtil.inQuotes(srcClass3.name()));
+              } else {
+              	res = genNavigation( ctx, fOp, srcClass3, srcExpr, dst, fExplicitRolenameOrQualifiers, fQualifiers );
+              }
+
+              break;
 
         case SRC_OBJECT_TYPE + DOT + PARENTHESES:
             // (3) "isQuery" operation on object type (possibly with
             // arguments) or (1)
-            MClassifier srcClass2 = (MClassifier)srcType;
-            res = genObjOperation(ctx, srcClass2, srcExpr);
-            break;
+            MClassifier srcClass2 = TypeAdapters.asMClassifier(srcType);
+            if (srcClass2 == null) {
+                throw new SemanticException(fOp, "Expected an object/classifier type as source expression, found type " + StringUtil.inQuotes(srcType) + ".");
+            }
+             res = genObjOperation(ctx, srcClass2, srcExpr);
+             break;
 
         case SRC_OBJECT_TYPE + ARROW + NO_PARENTHESES:
         case SRC_OBJECT_TYPE + ARROW + PARENTHESES:
@@ -449,31 +460,31 @@ public class ASTOperationExpression extends ASTExpression {
         Type elemType = cType.elemType();
         
         if (elemType.isKindOfClassifier(VoidHandling.EXCLUDE_VOID)) {
-            MClassifier srcClass = (MClassifier)elemType;
-            MAttribute attr = srcClass.attribute(opname, true);
-            
-            if (attr != null ) {
-                // (2) attribute operation on object type (no arguments)
+            MClassifier srcClass = TypeAdapters.asMClassifier(elemType);
+             MAttribute attr = srcClass.attribute(opname, true);
 
-                // transform c.a into c->collect($e | $e.a)
-                ExpVariable eVar = new ExpVariable("$e", elemType);
-                ExpAttrOp eAttr = new ExpAttrOp(attr, eVar);
-                eAttr.setIsPre(this.isPre());
-                res = genImplicitCollect(srcExpr, eAttr, elemType);
-            } else {
-                MNavigableElement dst = srcClass.navigableEnd(opname);
-                if (dst != null ) {
-                    // (4) navigation operation on object type must be
-                    // a role name
+             if (attr != null ) {
+                 // (2) attribute operation on object type (no arguments)
 
-                    // transform c.r into c->collect($e | $e.r)
-                    ExpVariable eVar = new ExpVariable("$e", elemType);
-                    Expression eNav = genNavigation(ctx, fOp, srcClass, eVar, dst, explicitRolenameOrQualifiers, qualiferValues);
-                    eNav.setIsPre(this.isPre());
-                    res = genImplicitCollect(srcExpr, eNav, elemType);
-                }
-            }
-        } else if (elemType.isKindOfTupleType(VoidHandling.EXCLUDE_VOID)) {
+                 // transform c.a into c->collect($e | $e.a)
+                 ExpVariable eVar = new ExpVariable("$e", elemType);
+                 ExpAttrOp eAttr = new ExpAttrOp(attr, eVar);
+                 eAttr.setIsPre(this.isPre());
+                 res = genImplicitCollect(srcExpr, eAttr, elemType);
+             } else {
+                 MNavigableElement dst = srcClass.navigableEnd(opname);
+                 if (dst != null ) {
+                     // (4) navigation operation on object type must be
+                     // a role name
+
+                     // transform c.r into c->collect($e | $e.r)
+                     ExpVariable eVar = new ExpVariable("$e", elemType);
+                     Expression eNav = genNavigation(ctx, fOp, srcClass, eVar, dst, explicitRolenameOrQualifiers, qualiferValues);
+                     eNav.setIsPre(this.isPre());
+                     res = genImplicitCollect(srcExpr, eNav, elemType);
+                 }
+             }
+         } else if (elemType.isKindOfTupleType(VoidHandling.EXCLUDE_VOID)) {
         	TupleType t = (TupleType)elemType;
         	TupleType.Part p = t.getPart(opname);
         	
@@ -506,35 +517,39 @@ public class ASTOperationExpression extends ASTExpression {
         CollectionType cType = (CollectionType ) srcExpr.type();
         Type elemType = cType.elemType();
         if (elemType.isTypeOfClass() ) {
-            MClass srcClass = (MClass)elemType;
-            MOperation op = srcClass.operation(opname, true);
-            if (op != null ) {
-                
-            	// operation must have a body
-            	if (!op.hasBody()) {
-            		throw new SemanticException(
-            				fOp, 
-            				"Operation " +
-            				srcClass.name() +
-            				"::" + 
-            				opname +
-            				" has no body.");
-            	}
-            	
-            	// if the body is a soil statement, evaluating soil statements 
-            	// must be allowed
-            	if (op.hasStatement()) {
-            		
-            		throw new SemanticException(
-            				fOp, 
-            				"Operation " +
-            				srcClass.name() +
-            				"::" + 
-            				opname +
-            				" is not a query operation.");
-            	}
-            	
-            		
+            org.tzi.use.uml.mm.MClassifier mclf = TypeAdapters.asMClassifier(elemType);
+            if (mclf == null || !(mclf instanceof MClass)) {
+                throw new SemanticException(fOp, "Expected class type for collect shorthand, found " + elemType + ".");
+            }
+            MClass srcClass = (MClass) mclf;
+             MOperation op = srcClass.operation(opname, true);
+             if (op != null ) {
+
+             	// operation must have a body
+             	if (!op.hasBody()) {
+             		throw new SemanticException(
+             				fOp,
+             				"Operation " +
+             				srcClass.name() +
+             				"::" +
+             				opname +
+             				" has no body.");
+             	}
+
+             	// if the body is a soil statement, evaluating soil statements
+             	// must be allowed
+             	if (op.hasStatement()) {
+
+             		throw new SemanticException(
+             				fOp,
+             				"Operation " +
+             				srcClass.name() +
+             				"::" +
+             				opname +
+             				" is not a query operation.");
+             	}
+
+
                 // transform c.op(...) into c->collect($e | $e.op(...))
                 ExpVariable eVar = new ExpVariable("$e", elemType);
                 fArgExprs[0] = eVar;

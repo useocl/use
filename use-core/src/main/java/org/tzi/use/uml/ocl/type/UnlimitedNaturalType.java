@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,7 +58,7 @@ public class UnlimitedNaturalType extends BasicType {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     @Override
-	public boolean conformsTo(Type t) {
+	public boolean conformsTo(IType t) {
         return !t.isTypeOfVoidType() && (t.isKindOfNumber(VoidHandling.EXCLUDE_VOID) || t.isTypeOfOclAny());
     }
 

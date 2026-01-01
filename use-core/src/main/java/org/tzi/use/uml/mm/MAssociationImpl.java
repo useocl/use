@@ -74,10 +74,21 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
         fAssociationEnds = new ArrayList<MAssociationEnd>(2);
     }
 
+    // Delegating wrappers for IType compatibility (ensure interface methods are implemented)
     @Override
-	public boolean isTypeOfClassifier() {
-		return false;
-	}
+    public boolean isKindOfNumber(org.tzi.use.uml.api.IType.VoidHandling h) {
+        return super.isKindOfNumber(h);
+    }
+
+    @Override
+    public boolean isTypeOfClassifier() {
+        return false;
+    }
+
+    @Override
+    public org.tzi.use.uml.api.IType getLeastCommonSupertype(org.tzi.use.uml.api.IType other) {
+        return super.getLeastCommonSupertype(other);
+    }
 
 
 	@Override
@@ -97,7 +108,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      *
      * @return Set(MClass) 
      */
-	public Set<MAssociation> parents() {
+    public Set<MAssociation> parents() {
         return CollectionUtil.downCastUnsafe(super.parents());
     }
 

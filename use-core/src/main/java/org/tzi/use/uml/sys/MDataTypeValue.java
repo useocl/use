@@ -20,6 +20,8 @@
 package org.tzi.use.uml.sys;
 
 import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.DataTypeValueValue;
 import org.tzi.use.uml.ocl.value.Value;
 
@@ -65,7 +67,7 @@ public final class MDataTypeValue implements MInstance {
 
     @Override
     public DataTypeValueValue value() {
-        return new DataTypeValueValue(this.cls(), this, values);
+        return new DataTypeValueValue(TypeAdapters.asOclType(this.cls()), this, values);
     }
 
     @Override

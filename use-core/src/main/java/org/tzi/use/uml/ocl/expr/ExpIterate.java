@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -49,11 +50,23 @@ public class ExpIterate extends ExpQuery {
                                           accuInitializer.name() + "'.");
     
         // iterExp must be type conform to accuExp
-        if (! queryExp.type().conformsTo(accuInitializer.type()) )
-            throw new ExpInvalidException(
-                                          "Iteration expression type `" + queryExp.type() +
-                                          "' does not match accumulator type `" + 
-                                          accuInitializer.type() + "'.");
+        Type qType = queryExp.type();
+        Type aType = accuInitializer.type();
+        Type lcsIter = qType.getLeastCommonSupertype(aType);
+        if (lcsIter == null || ! lcsIter.equals(aType)) {
+            // fallback: accept when textual qualified names are equal
+            if (! qType.qualifiedName().equals(aType.qualifiedName())) {
+                // diagnostic info for debugging
+                String diag = " [diag: qTypeClass=" + qType.getClass().getName() +
+                        ", aTypeClass=" + aType.getClass().getName() +
+                        ", qType.equals(aType)=" + qType.equals(aType) +
+                        ", lcs=" + (lcsIter == null ? "<null>" : lcsIter.qualifiedName()) +
+                        "]";
+                throw new ExpInvalidException(
+                        "Iteration expression type `" + qType.qualifiedName() +
+                                "' does not match accumulator type `" + aType.qualifiedName() + "'." + diag);
+            }
+         }
     }
 
     /**
@@ -165,4 +178,3 @@ public class ExpIterate extends ExpQuery {
 		visitor.visitIterate(this);
 	}
 }
-

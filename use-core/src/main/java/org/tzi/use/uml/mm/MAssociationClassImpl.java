@@ -20,10 +20,11 @@
 package org.tzi.use.uml.mm;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.tzi.use.uml.api.IVarDecl;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IType;
+import org.tzi.use.uml.api.ITypeFactory;
+import org.tzi.use.uml.api.TypeFactoryProvider;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.api.IExpression;
 
@@ -75,11 +76,15 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
     }
 
     @Override
-    public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
+    public IType getType( IType sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
         MAssociation assoc = src.association();
-        if (assoc.associationEnds().size() > 2) 
-            return TypeFactory.mkSet(this);
-        
+        ITypeFactory tf = TypeFactoryProvider.get();
+
+        // Ternary or higher arity -> always a collection of link objects
+        if (assoc.associationEnds().size() > 2) {
+            return tf.mkSet(this);
+        }
+
         MAssociationEnd otherEnd;
         if (src == assoc.associationEnds().get(0))
             otherEnd = assoc.associationEnds().get(1);
@@ -87,27 +92,32 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
             otherEnd = assoc.associationEnds().get(0);
 
         if (src.hasQualifiers()) {
-        	if (qualifiedAccess) {
-        		if (otherEnd.multiplicity().isCollection()) {
-    				if ( otherEnd.isOrdered() )
-    	                return TypeFactory.mkOrderedSet( this );
-    	            else
-    	                return TypeFactory.mkSet( this );
-    			}
-        	} else {
-        		if ( otherEnd.isOrdered() )
-	                return TypeFactory.mkSequence( this );
-	            else
-	                return TypeFactory.mkBag( this );
-        	}
+            if (qualifiedAccess) {
+                if (otherEnd.multiplicity().isCollection()) {
+                    if ( otherEnd.isOrdered() ) {
+                        return tf.mkOrderedSet(this);
+                    } else {
+                        return tf.mkSet(this);
+                    }
+                }
+            } else {
+                if ( otherEnd.isOrdered() ) {
+                    return tf.mkSequence(this);
+                } else {
+                    return tf.mkBag(this);
+                }
+            }
         } else {
-	        if (otherEnd.multiplicity().isCollection()) {
-	            if (otherEnd.isOrdered())
-	                return TypeFactory.mkOrderedSet(this);
-	            else
-	                return TypeFactory.mkSet(this);
-	        }
+            if (otherEnd.multiplicity().isCollection()) {
+                if (otherEnd.isOrdered()) {
+                    return tf.mkOrderedSet(this);
+                } else {
+                    return tf.mkSet(this);
+                }
+            }
         }
+
+        // default: single link-object instance -> use classifier itself as IType
         return this;
     }
 
@@ -662,7 +672,7 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
 	}
 
 	@Override
-	public List<VarDecl> getQualifiers() {
+	public List<IVarDecl> getQualifiers() {
 		return Collections.emptyList();
 	}
 

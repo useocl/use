@@ -55,7 +55,7 @@ public class GInstrCreateN_C_Integer implements GValueInstruction {
     }
 
     public Type type() {
-        return new SequenceType(fClass);
+        return new SequenceType((Type) fClass);
     }
     
     public String toString() {

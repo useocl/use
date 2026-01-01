@@ -45,7 +45,7 @@ public final class ExpObjOp extends ExpInstanceOp {
                                           "object type, found `" + args[0].type() + "'.");
 
         // check for matching arguments
-        VarDeclList params = fOp.paramList();
+        VarDeclList params = (VarDeclList) fOp.paramList();
         if (params.size() != (args.length - 1) )
             throw new ExpInvalidException(
                                           "Number of arguments does not match declaration of operation `" +
@@ -117,14 +117,14 @@ public final class ExpObjOp extends ExpInstanceOp {
     	try {
     		system.enterQueryOperation(ctx, operationCall, false);
     		operationCall.setExecutionFailed(true);
-    	
-			if (operation.hasExpression()) {
-				result = operation.expression().eval(ctx);
-				operationCall.setResultValue(result);
-			}
 
-			operationCall.setExecutionFailed(false);
-		} catch (MSystemException e) {
+    		if (operation.hasExpression()) {
+    			result = ((Expression) operation.expression()).eval(ctx);
+    			operationCall.setResultValue(result);
+    		}
+
+    		operationCall.setExecutionFailed(false);
+    	} catch (MSystemException e) {
     		throw new RuntimeException(e);
     	} finally {
     		try {

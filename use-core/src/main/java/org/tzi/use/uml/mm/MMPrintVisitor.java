@@ -19,12 +19,11 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.uml.api.IExpression;
+import org.tzi.use.uml.api.IExpressionPrinter;
+import org.tzi.use.uml.api.IVarDecl;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.expr.ExpressionPrintVisitor;
-import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
@@ -32,6 +31,7 @@ import org.tzi.use.util.uml.sorting.UseModelElementFileOrderComparator;
 
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.Comparator;
 
 /**
  * Visitor for dumping a string representation of model elements on an
@@ -42,13 +42,38 @@ import java.util.*;
  * @author      Mark Richters 
  */
 public class MMPrintVisitor implements MMVisitor {
-    protected PrintWriter fOut;
-    private int fIndent;    // number of columns to indent output
-    private int fIndentStep = 2;
+     protected PrintWriter fOut;
+     private int fIndent;    // number of columns to indent output
+     private int fIndentStep = 2;
+     private final IExpressionPrinter exprPrinter;
 
     public MMPrintVisitor(PrintWriter out) {
         fOut = out;
         fIndent = 0;
+        // default printer uses the API-level asString(); can be injected if
+        // the sys/ocl layer wants to provide a richer printer.
+        this.exprPrinter = new IExpressionPrinter() {
+            @Override
+            public String toConcreteSyntax(IExpression expr) {
+                if (expr == null) return "";
+                return expr.asString();
+            }
+        };
+    }
+
+    /**
+     * Constructor allowing injection of a custom IExpressionPrinter (recommended for sys/ocl to provide an adapter).
+     */
+    public MMPrintVisitor(PrintWriter out, IExpressionPrinter printer) {
+        fOut = out;
+        fIndent = 0;
+        this.exprPrinter = (printer != null) ? printer : new IExpressionPrinter() {
+            @Override
+            public String toConcreteSyntax(IExpression expr) {
+                if (expr == null) return "";
+                return expr.asString();
+            }
+        };
     }
 
     /**
@@ -217,7 +242,7 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append('(');
         	
         	boolean first = true;
-        	for (VarDecl q : e.getQualifiers()) {
+        	for (IVarDecl q : e.getQualifiers()) {
         		if (!first){
         			result.append(',');
 					result.append(ws());
@@ -263,8 +288,7 @@ public class MMPrintVisitor implements MMVisitor {
         	result.append(other("="));
         	result.append(ws());
         	print(result.toString());
-        	ExpressionVisitor visitor = createExpressionVisitor();
-        	e.getDeriveExpression().processWithVisitor(visitor);
+        	print(exprPrinter.toConcreteSyntax(e.getDeriveExpression()));
         	result = new StringBuilder();
         }
         
@@ -287,13 +311,11 @@ public class MMPrintVisitor implements MMVisitor {
         
         if(e.getInitExpression().isPresent()){
         	print(ws() + keyword("init") + ws() + other(":") + ws());
-        	ExpressionVisitor v = createExpressionVisitor();
-        	e.getInitExpression().get().processWithVisitor(v);
+        	print(exprPrinter.toConcreteSyntax(e.getInitExpression().get()));
         }
         else if(e.isDerived()){
         	print(ws() + keyword("derived") + ws() + other(":") + ws());
-        	ExpressionVisitor v = createExpressionVisitor();
-        	e.getDeriveExpression().processWithVisitor(v);
+        	print(exprPrinter.toConcreteSyntax(e.getDeriveExpression()));
         }
         println();
     }
@@ -413,19 +435,12 @@ public class MMPrintVisitor implements MMVisitor {
         
         incIndent();
         indent();
-        ExpressionVisitor visitor = createExpressionVisitor();
         IExpression body = e.bodyExpression();
-        // Lokaler Cast nur hier, um den bestehenden OCL-Visitor zu nutzen
-        org.tzi.use.uml.ocl.expr.Expression bodyExpr = (org.tzi.use.uml.ocl.expr.Expression) body;
-        bodyExpr.processWithVisitor(visitor);
-        println();
-        fOut.flush();
-        decIndent();
+        print(exprPrinter.toConcreteSyntax(body));
+         println();
+         fOut.flush();
+         decIndent();
     }
-
-	protected ExpressionVisitor createExpressionVisitor() {
-		return new ExpressionPrintVisitor(fOut);
-	}
 
 	@Override
 	public void visitGeneralization(MGeneralization e) {
@@ -439,11 +454,11 @@ public class MMPrintVisitor implements MMVisitor {
         println();
     
         // print user-defined data types
-        EnumType[] enumTypes = e.enumTypes().toArray(new EnumType[0]);
-        Arrays.sort(enumTypes, new UseFileOrderComparator());
-        
-        for (EnumType t : enumTypes) {
-        	visitEnum(t);
+        IEnumType[] enumTypes = e.enumTypes().toArray(new IEnumType[0]);
+        Arrays.sort(enumTypes, Comparator.comparingInt(IEnumType::getPositionInModel));
+
+        for (IEnumType t : enumTypes) {
+            visitEnum(t);
         }
         println();
 
@@ -498,10 +513,9 @@ public class MMPrintVisitor implements MMVisitor {
         	println(ws() + other("=") + ws());
             incIndent();
             indent(); 
-            ExpressionVisitor visitor = createExpressionVisitor();
-            e.expression().processWithVisitor(visitor);
-            decIndent();
-            println();
+            print(exprPrinter.toConcreteSyntax(e.expression()));
+             decIndent();
+             println();
         } else if (e.hasStatement()) {
         	println();
         	incIndent();
@@ -533,8 +547,7 @@ public class MMPrintVisitor implements MMVisitor {
         print(keyword(e.isPre() ? "pre" : "post") + 
               ws() + id(e.name()) + other(":") + ws());
         
-        ExpressionVisitor visitor = createExpressionVisitor();
-        e.expression().processWithVisitor(visitor);
+        print(exprPrinter.toConcreteSyntax(e.expression()));
         println("");
         decIndent();
     }
@@ -595,18 +608,41 @@ public class MMPrintVisitor implements MMVisitor {
 		println(keyword("end"));
 	}
 
-	@Override
-	public void visitEnum(EnumType enumType) {
-		visitAnnotations(enumType);
-		indent();
-		println(keyword("enum") + ws() + other(enumType.name()) + ws() + other("{"));
-		
-		incIndent();
-		indent();
-		println(other(StringUtil.fmtSeq(enumType.literals(), ", ")));
-		
-		decIndent();
-		indent();
-		println(ws() + other("};"));
-	}
-}
+
+    @Override
+    public void visitEnum(IEnumType enumType) {
+        // Use API annotations (IElementAnnotation) to avoid dependency on mm.Annotatable
+        Map<String, org.tzi.use.uml.api.IElementAnnotation> anns = enumType.annotations();
+        if (anns != null && !anns.isEmpty()) {
+            for (Map.Entry<String, org.tzi.use.uml.api.IElementAnnotation> an : anns.entrySet()) {
+                indent();
+                StringBuilder sb = new StringBuilder();
+                sb.append("@").append(an.getKey()).append("(");
+                boolean first = true;
+                Map<String, String> vals = an.getValue().getValues();
+                if (vals != null) {
+                    for (Map.Entry<String, String> kv : vals.entrySet()) {
+                        if (!first) sb.append(", ");
+                        sb.append(kv.getKey()).append("=\"").append(kv.getValue()).append("\"");
+                        first = false;
+                    }
+                }
+                sb.append(")");
+                println(sb.toString());
+            }
+        }
+
+        indent();
+        println(keyword("enum") + ws() + other(enumType.name()) + ws() + other("{"));
+
+        incIndent();
+        indent();
+        // use API method for literals
+        println(other(StringUtil.fmtSeq(enumType.getLiterals(), ", ")));
+
+        decIndent();
+        indent();
+        println(ws() + other("};"));
+     }
+
+ }

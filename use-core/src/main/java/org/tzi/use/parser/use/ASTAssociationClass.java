@@ -65,7 +65,8 @@ public class ASTAssociationClass extends ASTClass {
         fAssocClass.setModel( ctx.model() );
         
         // makes sure we have a unique class name
-        ctx.typeTable().add( fName, fAssocClass );
+        // parser layer expects low-level OCL Type in type table -> adapt here
+        ctx.typeTable().add( fName, org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fAssocClass) );
         fClass = fAssocClass;
         
         return fAssocClass;
@@ -162,16 +163,18 @@ public class ASTAssociationClass extends ASTClass {
     public void genOperationBodiesAndDerivedAttributes(Context ctx) {
     	ctx.setCurrentClassifier( fAssocClass );
 
-        // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push( "self", fAssocClass );
-        Symtable vars = ctx.varTable();
-        vars.enterScope();
-        try {
-            vars.add( "self", fAssocClass, null );
-        } catch ( SemanticException ex ) {
-            // fatal error?
-            throw new Error(ex);
-        }
+         // enter pseudo-variable "self" into scope of expressions
+        // exprContext expects low-level OCL Type -> adapt here
+        ctx.exprContext().push( "self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fAssocClass) );
+         Symtable vars = ctx.varTable();
+         vars.enterScope();
+         try {
+            // Symtable expects low-level OCL Type -> adapt here
+            vars.add( "self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fAssocClass), null );
+         } catch ( SemanticException ex ) {
+             // fatal error?
+             throw new Error(ex);
+         }
 
 
         // generate operation bodies
@@ -199,18 +202,18 @@ public class ASTAssociationClass extends ASTClass {
     }
     
     public void genConstraints( Context ctx ) {
-        ctx.setCurrentClassifier( fAssocClass );
+         ctx.setCurrentClassifier( fAssocClass );
 
-        // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push( "self", fAssocClass );
-        Symtable vars = ctx.varTable();
-        vars.enterScope();
-        try {
-            vars.add( "self", fAssocClass, null );
-        } catch ( SemanticException ex ) {
-            // fatal error?
-            throw new Error(ex);
-        }
+         // enter pseudo-variable "self" into scope of expressions
+        ctx.exprContext().push( "self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fAssocClass) );
+         Symtable vars = ctx.varTable();
+         vars.enterScope();
+         try {
+            vars.add( "self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fAssocClass), null );
+         } catch ( SemanticException ex ) {
+             // fatal error?
+             throw new Error(ex);
+         }
 
         // add class invariants
         for (ASTInvariantClause astInv : fInvariantClauses) {
@@ -230,6 +233,7 @@ public class ASTAssociationClass extends ASTClass {
 		if (fAssociationEnds.isEmpty()) {
 			MAssociationClass parent = fAssocClass.parents().iterator().next();
 			for (MAssociationEnd end : parent.associationEnds()) {
+				// create association end using model factory (expects MClass and IVarDecl qualifiers)
 				fAssocClass.addAssociationEnd(ctx.modelFactory().createAssociationEnd(
 						end.cls(), end.nameAsRolename(), end.multiplicity(), end.aggregationKind()
 						, end.isOrdered(), end.getQualifiers()));

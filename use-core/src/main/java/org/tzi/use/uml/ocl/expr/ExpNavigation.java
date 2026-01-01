@@ -22,11 +22,12 @@ package org.tzi.use.uml.ocl.expr;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -73,7 +74,9 @@ public final class ExpNavigation extends Expression {
         			" has no defined qualifiers, but qualifer values were provided.");
         }
         
-        setResultType( dst.getType( objExp.type(), src, qualifierExpressions.length > 0 ) );
+        // dst.getType now returns an API-level IType; adapt it to the OCL Type used by expressions
+        Type oclResultType = TypeAdapters.asOclType(dst.getType(objExp.type(), src, qualifierExpressions.length > 0));
+        setResultType(oclResultType);
 
         this.fSrc = src;
         this.fDst = dst;
@@ -114,7 +117,9 @@ public final class ExpNavigation extends Expression {
                         "', found: " + 
                         objList.size());
                 if (objList.size() == 1 ) {
-                    res = new ObjectValue((MClass)type(), objList.get(0));
+                    // convert classifier of the runtime object to the appropriate OCL classifier type
+                    // Use the actual runtime classifier (mm.MClassifier) for ObjectValue
+                    res = new ObjectValue(objList.get(0).cls(), objList.get(0));
                 }
             } else if (resultType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
             	CollectionType ct = (CollectionType)resultType;

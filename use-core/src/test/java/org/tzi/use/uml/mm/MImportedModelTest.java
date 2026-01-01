@@ -21,6 +21,7 @@ package org.tzi.use.uml.mm;
 import org.junit.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
 
@@ -438,7 +439,7 @@ public class MImportedModelTest {
         MImportedModel importedModel = new MImportedModel(model, true, null);
         try {
             rootModel.addImportedModel(importedModel);
-            Collection<EnumType> enums = rootModel.getEnumTypesIncludingImports();
+            Set<IEnumType> enums = rootModel.getEnumTypesIncludingImports();
             assertEquals(3, enums.size());
             assertTrue(enums.contains(rootModel.enumType("RootEnum")));
             assertTrue(enums.contains(rootModel.enumType("colors")));
@@ -455,7 +456,7 @@ public class MImportedModelTest {
         MImportedModel importedModel = new MImportedModel(model, false, Set.of("colors"));
         try {
             rootModel.addImportedModel(importedModel);
-            Collection<EnumType> enums = rootModel.getEnumTypesIncludingImports();
+            Set<IEnumType> enums = rootModel.getEnumTypesIncludingImports();
             assertEquals(2, enums.size());
             assertTrue(enums.contains(rootModel.enumType("RootEnum")));
             assertTrue(enums.contains(rootModel.enumType("colors")));
@@ -472,7 +473,7 @@ public class MImportedModelTest {
         MImportedModel importedModel = new MImportedModel(model, false, Set.of("Color#colors"));
         try {
             rootModel.addImportedModel(importedModel);
-            Collection<EnumType> enums = rootModel.getEnumTypesIncludingImports();
+            Set<IEnumType> enums = rootModel.getEnumTypesIncludingImports();
             assertEquals(2, enums.size());
             assertTrue(enums.contains(rootModel.enumType("RootEnum")));
             assertTrue(enums.contains(rootModel.enumType("Color#colors")));

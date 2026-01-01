@@ -42,126 +42,132 @@ import java.util.List;
  *
  */
 public class ASTNewLinkObjectStatement extends ASTStatement {
-	
-	private ASTSimpleType fAssociationClassName;
-	
-	private List<ASTRValue> fParticipants;
-	
-	/** Expression to retrieve the new object name from can be <code>null</code> */
-	private ASTExpression fLinkObjectName;
-	
-	/**
-	 * The List of the provided qualifiers
-	 */
-	private List<List<ASTRValue>> qualifierValues;
-	
-	
-	/**
-	 * Constructs a new ASTNewLinkObjectStatement node using the provided information.
-	 * @param associationClassName
-	 * @param participants
-	 * @param qualifierValues
-	 * @param linkObjectName
-	 */
-	public ASTNewLinkObjectStatement(
-			Token start,
-			ASTSimpleType associationClassName, 
-			List<ASTRValue> participants,
-			List<List<ASTRValue>> qualifierValues,
-			ASTExpression linkObjectName) {
-		super(start);
-		fAssociationClassName = associationClassName;
-		fParticipants = participants;
-		fLinkObjectName = linkObjectName;
-		this.qualifierValues = qualifierValues;
-	}
-	
-	
-	/**
-	 * Constructs a new ASTNewLinkObjectStatement node using the
-	 * provided information.
-	 * <p>The object name is set by the system.</p> 
-	 * @param associationClassName
-	 * @param participants
-	 * @param qualifierValues
-	 */
-	public ASTNewLinkObjectStatement(
-			Token start,
-			ASTSimpleType associationClassName, 
-			List<ASTRValue> participants,
-			List<List<ASTRValue>> qualifierValues) {
-		
-		this(start, associationClassName, participants, qualifierValues, null);
-	}
-	
-	@Override
-	protected MStatement generateStatement() throws CompilationFailedException {
 
-		MAssociationClass associationClass =
-	            fContext.model().getAssociationClass(fAssociationClassName.toString());
-			
-		if (associationClass == null) {
-			throw new CompilationFailedException(this, "Association class "
-					+ StringUtil.inQuotes(fAssociationClassName.toString()) + " does not exist.");
-		}
-			
-		List<MRValue> participants = 
-			generateAssociationParticipants(
-					associationClass, 
-					fParticipants);
-		
-		List<List<MRValue>> qualifierRValues;
-		if (this.qualifierValues == null || this.qualifierValues.isEmpty()) {
-			qualifierRValues = Collections.emptyList();
-		} else {
-			qualifierRValues = new ArrayList<List<MRValue>>();
-			
-			for (List<ASTRValue> endQualifierValues : this.qualifierValues ) {
-				List<MRValue> endQualifierRValues;
-				
-				if (endQualifierValues == null || endQualifierValues.isEmpty()) {
-					endQualifierRValues = Collections.emptyList();
-				} else {
-					endQualifierRValues = new ArrayList<MRValue>();
-					
-					for (ASTRValue value : endQualifierValues) {
-						endQualifierRValues.add(value.generate(this));
-					}
-				}
-				qualifierRValues.add(endQualifierRValues);
-			}
-		}
-		
-		return new MNewLinkObjectStatement(
-				associationClass, 
-				participants,
-				qualifierRValues,
-				(fLinkObjectName == null ? 
-						null : generateStringExpression(fLinkObjectName)));
-	}
+    private ASTSimpleType fAssociationClassName;
+
+    private List<ASTRValue> fParticipants;
+
+    /** Expression to retrieve the new object name from can be <code>null</code> */
+    private ASTExpression fLinkObjectName;
+
+    /**
+     * The List of the provided qualifiers
+     */
+    private List<List<ASTRValue>> qualifierValues;
 
 
-	@Override
-	protected void printTree(StringBuilder prelude, PrintWriter target) {
-		target.println(prelude + "[LINK OBJECT CREATION]");
-	}
-	
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(fAssociationClassName);
-		if (fLinkObjectName != null) {
-			sb.append(" ");
-			sb.append(fLinkObjectName);
-		}
-		sb.append(" between (");
-		
-		StringUtil.fmtSeqWithSubSeq(sb, fParticipants, ",", qualifierValues, ",", "{", "}");
-		
-		sb.append(")");
-		
-		return sb.toString();
-	}
+    /**
+     * Constructs a new ASTNewLinkObjectStatement node using the provided information.
+     * @param associationClassName
+     * @param participants
+     * @param qualifierValues
+     * @param linkObjectName
+     */
+    public ASTNewLinkObjectStatement(
+            Token start,
+            ASTSimpleType associationClassName,
+            List<ASTRValue> participants,
+            List<List<ASTRValue>> qualifierValues,
+            ASTExpression linkObjectName) {
+        super(start);
+        fAssociationClassName = associationClassName;
+        fParticipants = participants;
+        fLinkObjectName = linkObjectName;
+        this.qualifierValues = qualifierValues;
+    }
+
+
+    /**
+     * Constructs a new ASTNewLinkObjectStatement node using the
+     * provided information.
+     * <p>The object name is set by the system.</p>
+     * @param associationClassName
+     * @param participants
+     * @param qualifierValues
+     */
+    public ASTNewLinkObjectStatement(
+            Token start,
+            ASTSimpleType associationClassName,
+            List<ASTRValue> participants,
+            List<List<ASTRValue>> qualifierValues) {
+
+        this(start, associationClassName, participants, qualifierValues, null);
+    }
+
+    @Override
+    protected MStatement generateStatement() throws CompilationFailedException {
+
+        // Use the token text of the ASTSimpleType for lookup instead of
+        // relying on its toString() (which defaults to Object.toString()).
+        String associationClassNameText = fAssociationClassName.getName().getText();
+
+        MAssociationClass associationClass =
+                fContext.model().getAssociationClass(associationClassNameText);
+
+        if (associationClass == null) {
+            throw new CompilationFailedException(this, "Association class "
+                    + StringUtil.inQuotes(associationClassNameText) + " does not exist.");
+        }
+
+        List<MRValue> participants =
+            generateAssociationParticipants(
+                    associationClass,
+                    fParticipants);
+
+        List<List<MRValue>> qualifierRValues;
+        if (this.qualifierValues == null || this.qualifierValues.isEmpty()) {
+            qualifierRValues = Collections.emptyList();
+        } else {
+            qualifierRValues = new ArrayList<List<MRValue>>();
+
+            for (List<ASTRValue> endQualifierValues : this.qualifierValues ) {
+                List<MRValue> endQualifierRValues;
+
+                if (endQualifierValues == null || endQualifierValues.isEmpty()) {
+                    endQualifierRValues = Collections.emptyList();
+                } else {
+                    endQualifierRValues = new ArrayList<MRValue>();
+
+                    for (ASTRValue value : endQualifierValues) {
+                        endQualifierRValues.add(value.generate(this));
+                    }
+                }
+                qualifierRValues.add(endQualifierRValues);
+            }
+        }
+
+        return new MNewLinkObjectStatement(
+                associationClass,
+                participants,
+                qualifierRValues,
+                (fLinkObjectName == null ?
+                        null : generateStringExpression(fLinkObjectName)));
+    }
+
+
+    @Override
+    protected void printTree(StringBuilder prelude, PrintWriter target) {
+        target.println(prelude + "[LINK OBJECT CREATION]");
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        // Use the actual text of the simple type token for a readable
+        // string representation (avoid Object.toString result).
+        sb.append(fAssociationClassName.getName().getText());
+        if (fLinkObjectName != null) {
+            sb.append(" ");
+            sb.append(fLinkObjectName);
+        }
+        sb.append(" between (");
+
+        StringUtil.fmtSeqWithSubSeq(sb, fParticipants, ",", qualifierValues, ",", "{", "}");
+
+        sb.append(")");
+
+        return sb.toString();
+    }
 }

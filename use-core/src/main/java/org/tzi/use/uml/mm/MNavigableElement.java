@@ -20,8 +20,8 @@
 package org.tzi.use.uml.mm;
 
 import org.tzi.use.uml.api.IExpression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IVarDecl;
+import org.tzi.use.uml.api.IType;
 
 import java.util.List;
 import java.util.Set;
@@ -58,7 +58,7 @@ public interface MNavigableElement {
      * @param qualifiedAccess Boolean value whether qualifier values are used or not. 
      * @return The result <code>Type</code> of a navigation with the specified parameters.
      */
-    public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess );
+    public IType getType( IType sourceObjectType, MNavigableElement src, boolean qualifiedAccess );
 
     public MAssociation association();
 
@@ -97,8 +97,8 @@ public interface MNavigableElement {
 	 * The immutable list of qualifier for this navigable end.
 	 * @return The <code>List</code> of all defined qualifiers or an empty list.
 	 */
-    public List<VarDecl> getQualifiers();
-    
+    public List<IVarDecl> getQualifiers();
+
     /**
 	 * True if there are any qualifiers defined for this association end.
 	 * @return A <code>Boolean</code> value indicating if this end has defined qualifiers.

@@ -32,6 +32,7 @@ import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MDataType;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.ClassifierType;
 import org.tzi.use.uml.sys.soil.MNewObjectStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -43,78 +44,92 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  * @author Lars Hamann
  */
 public class ASTNewObjectStatement extends ASTStatement {
-	/** AST node for the object class */
-	private ASTSimpleType fObjectType;
-	/** Expression to calculate the new object name from. Can be <code>null</code>. */
-	private ASTExpression fObjectName;
-	
-	/**
-	 * Constructs a new ASTNewObjectStatement node using the provided information.
-	 * @param objectType AST node which leads to an object type.
-	 * @param objectName AST node for an expression used to calculate the new object name. Can be <code>null</code>.
-	 */
-	public ASTNewObjectStatement(
-			Token start,
-			ASTSimpleType objectType, 
-			ASTExpression objectName) {
-		super(start);
-		fObjectType = objectType;
-		fObjectName = objectName;
-	}
-	
-	/**
-	 * Constructs a new ASTNewObjectStatement node using the provided information.
-	 * <p>The new object name/id is set by the system.</p>
-	 * @param objectType AST node which leads to an object type.
-	 */
-	public ASTNewObjectStatement(
-			Token start,
-			ASTSimpleType objectType) {
-		super(start);
-		fObjectType = objectType;
-		fObjectName = null;
-	}
+    /** AST node for the object class */
+    private ASTSimpleType fObjectType;
+    /** Expression to calculate the new object name from. Can be <code>null</code>. */
+    private ASTExpression fObjectName;
 
-	@Override
-	protected MStatement generateStatement() throws CompilationFailedException {
-	
-		Type t = generateType(fObjectType);
-		
-		if (!(t.isTypeOfClass() || t.isTypeOfDataType())) {
-			throw new CompilationFailedException(this, "Expected object type, found "
-					+ StringUtil.inQuotes(t) + ".");
-		}
-		
-		MClassifier objectClassifier = (MClassifier) t;
+    /**
+     * Constructs a new ASTNewObjectStatement node using the provided information.
+     * @param objectType AST node which leads to an object type.
+     * @param objectName AST node for an expression used to calculate the new object name. Can be <code>null</code>.
+     */
+    public ASTNewObjectStatement(
+            Token start,
+            ASTSimpleType objectType,
+            ASTExpression objectName) {
+        super(start);
+        fObjectType = objectType;
+        fObjectName = objectName;
+    }
 
-		if (objectClassifier instanceof MDataType) {
-			throw new CompilationFailedException(this,
-					"Cannot create object from data type " + StringUtil.inQuotes(objectClassifier.name()) +
-					" Objects can be created from classes only.");
-		} else if (objectClassifier instanceof MAssociationClass) {
-			throw new CompilationFailedException(this,
-					"Cannot instantiate association class "
-							+ inQuotes(objectClassifier.name())
-							+ " without participants.");
-		}
-		
-		Expression objectName = 
-			(fObjectName == null ? 
-					null : generateStringExpression(fObjectName));
-		
-		return new MNewObjectStatement((MClass) objectClassifier, objectName);
-	}
+    /**
+     * Constructs a new ASTNewObjectStatement node using the provided information.
+     * <p>The new object name/id is set by the system.</p>
+     * @param objectType AST node which leads to an object type.
+     */
+    public ASTNewObjectStatement(
+            Token start,
+            ASTSimpleType objectType) {
+        super(start);
+        fObjectType = objectType;
+        fObjectName = null;
+    }
 
-	@Override
-	protected void printTree(StringBuilder prelude, PrintWriter target) {
-		target.println(prelude + "[OBJECT CREATION]");
-	}
-	
-	@Override
-	public String toString() {
-		return 
-		"new " + 
-		fObjectType + 
-		(fObjectName == null ? "" : " " + fObjectName.getStringRep());
-	}
+    @Override
+    protected MStatement generateStatement() throws CompilationFailedException {
+
+        Type t = generateType(fObjectType);
+
+        if (!(t.isTypeOfClass() || t.isTypeOfDataType())) {
+            throw new CompilationFailedException(this, "Expected object type, found "
+                    + StringUtil.inQuotes(t) + ".");
+        }
+
+        /*
+         * Newer refactorings represent model classifiers as OCL Types
+         * (see ClassifierType). Handle both cases:
+         * - if t is a ClassifierType, extract the underlying MClassifier
+         * - if t itself implements MClassifier (older code paths), cast it
+         */
+        MClassifier objectClassifier;
+        if (t instanceof ClassifierType) {
+            objectClassifier = ((ClassifierType) t).classifier();
+        } else if (t instanceof MClassifier) {
+            objectClassifier = (MClassifier) t;
+        } else {
+            // Defensive: should not happen because of the checks above
+            throw new CompilationFailedException(this, "Expected classifier type, found " + StringUtil.inQuotes(t) + ".");
+        }
+
+        if (objectClassifier instanceof MDataType) {
+            throw new CompilationFailedException(this,
+                    "Cannot create object from data type " + StringUtil.inQuotes(objectClassifier.name()) +
+                    " Objects can be created from classes only.");
+        } else if (objectClassifier instanceof MAssociationClass) {
+            throw new CompilationFailedException(this,
+                    "Cannot instantiate association class "
+                            + inQuotes(objectClassifier.name())
+                            + " without participants.");
+        }
+
+        Expression objectName =
+            (fObjectName == null ?
+                    null : generateStringExpression(fObjectName));
+
+        return new MNewObjectStatement((MClass) objectClassifier, objectName);
+    }
+
+    @Override
+    protected void printTree(StringBuilder prelude, PrintWriter target) {
+        target.println(prelude + "[OBJECT CREATION]");
+    }
+
+    @Override
+    public String toString() {
+        return
+        "new " +
+        fObjectType +
+        (fObjectName == null ? "" : " " + fObjectName.getStringRep());
+    }
 }

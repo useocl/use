@@ -7,7 +7,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.ocl.expr.Expression;
 
 public class ASTExistentialInvariantClause extends ASTInvariantClause {
@@ -19,7 +19,7 @@ public class ASTExistentialInvariantClause extends ASTInvariantClause {
 	@Override
 	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClassifier cf,
 			List<String> varNames, Expression expr, String invName)
-			throws ExpInvalidException {
+			throws InvariantExpressionException {
         return ctx.modelFactory().createClassInvariant(invName, varNames, cf, expr, true);
 	}
 }

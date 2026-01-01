@@ -23,7 +23,9 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IEnumType;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -46,29 +48,30 @@ public class ASTSimpleType extends ASTType {
         String name = this.name.getText();
         Type res = TypeFactory.mkSimpleType(name);
 
-        if (res == null) { 
+        if (res == null) {
             // check for enumeration type
-            //TODO: Add enums to MModel.getClassifier()
-        	res = ctx.model().enumType(name);
-            
+            IEnumType enumType = ctx.model().enumType(name);
+            if (enumType != null) {
+                res = TypeFactory.mkEnum(enumType.name(), enumType.getLiterals());
+            }
+
             if (res == null ) {
                 // check for object type
-                res = ctx.model().getClassifier(name);
-
-                if (res == null) {
+                org.tzi.use.uml.mm.MClassifier cls = ctx.model().getClassifier(name);
+                if (cls != null) {
+                    res = TypeAdapters.asOclType(cls);
+                } else {
+                    // only consult the type table if no classifier with this name exists
                     res = ctx.typeTable().lookup(name);
                 }
-                
-                if (res == null )
+
+                if (res == null ) {
                     throw new SemanticException(this.name,
                                                 "Expected type name, found `" + name + "'.");
+                }
             }
         }
-        
-        return res;
-    }
 
-    public String toString() {
-        return name.getText();
+         return res;
     }
 }

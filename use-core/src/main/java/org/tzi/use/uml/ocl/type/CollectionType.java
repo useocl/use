@@ -19,12 +19,12 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -59,40 +59,46 @@ public class CollectionType extends TypeImpl {
     }
     
     @Override
-	public boolean conformsTo(Type other) {
-    	if (!other.isTypeOfCollection())
+	public boolean conformsTo(IType other) {
+        if (other == null) {
             return false;
+        }
 
-        CollectionType t2 = (CollectionType) other;
-        if (fElemType.conformsTo(t2.elemType()))
-            return true;
-        
-        return false;
-	}
+        // If other is a low-level OCL Type, perform precise check
+        if (other instanceof Type) {
+            Type o = (Type) other;
+            if (!o.isTypeOfCollection())
+                return false;
 
-    /** 
+            CollectionType t2 = (CollectionType) o;
+            return fElemType.conformsTo(t2.elemType());
+        }
+
+        // other is only API-level IType: conservatively accept if it is a collection
+        return other.isTypeOfCollection();
+    }
+
+    /**
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Collection(T) the result is the set of
      * all types Collection(T') where T' &lt;= T.
      */
     @Override
     public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>();
-        Set<? extends Type> elemSuper = fElemType.allSupertypes();
-        Iterator<? extends Type> typeIter = elemSuper.iterator();
-        
-        while (typeIter.hasNext() ) {
-            Type t = typeIter.next();
-            res.add(TypeFactory.mkCollection(t));
+        Set<Type> res = new HashSet<>();
+        for (org.tzi.use.uml.api.IType it : fElemType.allSupertypes()) {
+            if (it instanceof Type) {
+                Type t = (Type) it;
+                res.add(TypeFactory.mkCollection(t));
+            }
         }
-        
         return res;
     }
 
     @Override
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
+    	if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
     		return null;
     	
     	if (type.isTypeOfVoidType())

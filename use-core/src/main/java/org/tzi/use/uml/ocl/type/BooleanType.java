@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,7 +49,7 @@ public final class BooleanType extends BasicType {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     @Override
-    public boolean conformsTo(Type other) {
+    public boolean conformsTo(IType other) {
         return this.equals(other) || other.isTypeOfOclAny();
     }
 

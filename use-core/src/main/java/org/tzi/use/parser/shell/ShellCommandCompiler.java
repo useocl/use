@@ -121,13 +121,13 @@ public class ShellCommandCompiler {
         if (ast == null) {
         	return null;
         }
-        
+
 		MStatement statement = constructStatement(ast, inputName, errorOutput,
 				state, model, variableEnvironment, verbose);
-		
+
 		return statement;
 	 }
-	
+
 	/**
 	 * Constructs an AST for a shell command represented as 
 	 * a soil statement from <code>input</code>.
@@ -250,21 +250,21 @@ public class ShellCommandCompiler {
 		} catch (CompilationFailedException e) {
 
 			errorOutput.println(e.getMessage(true));
-			
+
 			if (verbose) {
 				errorOutput.println("-----------\n");
 				errorOutput.println("STACK TRACE\n");
 				e.printStackTrace(errorOutput);
 			}
-			
+
 			errorOutput.flush();
-			
+
 			if (verbose) {
 				Log.println("\nCOMPILATION FAILED");
 				Log.println("------------------\n");
 			}
-			
-			
+
+
 			return null;
 		}
 		

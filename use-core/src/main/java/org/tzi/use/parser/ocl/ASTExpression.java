@@ -183,7 +183,7 @@ public abstract class ASTExpression extends AST {
         MNavigableElement src;
         
         if (srcClass.equals(dst.association())) {
-        	return new ExpNavigationClassifierSource(dst.cls(), srcExpr, dst);
+        	return new ExpNavigationClassifierSource( dst.cls(), srcExpr, dst);
         }
         
         if (navigationNeedsExplicitRolename(srcClass, dst)) {

@@ -20,8 +20,8 @@
 package org.tzi.use.uml.mm;
 
 import com.google.common.collect.Iterators;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IType;
+import org.tzi.use.uml.api.TypeFactoryProvider;
 import org.tzi.use.uml.sys.MOperationCall;
 
 import java.util.*;
@@ -118,72 +118,81 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
     }
     
 	@Override
-	public boolean conformsTo(Type other) {
+	public boolean conformsTo(IType other) {
 		if (other.equals(this)) return true;
 		
-		if (other.isKindOfClassifier(VoidHandling.EXCLUDE_VOID)) {
-            MClassifier clf = (MClassifier)other;
-            return this.allSupertypes().contains(clf);
-        }
-		
-        return other.isTypeOfOclAny();
+		if (other.isKindOfClassifier(IType.VoidHandling.EXCLUDE_VOID)) {
+			if (other instanceof MClassifier) {
+				MClassifier clf = (MClassifier) other;
+				return this.allSupertypes().contains(clf);
+			}
+			return false;
+		}
+
+		// other is not a classifier -> true only if it is OclAny
+		return other.isTypeOfOclAny();
 	}
 
 	@Override
-	public Set<Type> allSupertypes() {
-		Set<Type> res = new HashSet<Type>(this.allParents());
-		res.add(TypeFactory.mkOclAny());
+	public Set<? extends IType> allSupertypes() {
+		Set<IType> res = new HashSet<IType>();
+		// add all parent classifiers (they are MClassifier and thus IType)
+		for (MClassifier p : allParents()) {
+			res.add(p);
+		}
+		// add the universal OclAny type via the API factory
+		res.add(TypeFactoryProvider.get().mkOclAny());
 		res.add(this);
 		return res;
 	}
 
 	@Override
-	public Type getLeastCommonSupertype(Type other) {
+	public IType getLeastCommonSupertype(IType other) {
 		if (other.isTypeOfVoidType()) return this;
-		
-		Type cType = TypeFactory.mkOclAny();
-		
-		// Object type and build in type have OclAny
-    	if (!other.isKindOfClassifier(VoidHandling.EXCLUDE_VOID)) {
-    		// Collections are no subtypes of OclAny
-    		if (other.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
-    			return null;
-    		} else {
-    			return TypeFactory.mkOclAny();
-    		}
-    	}
-    	
-    	MClassifier oTypeThis = this;
-    	MClassifier oTypeOther = (MClassifier)other;
-    	        	
-    	Set<MClassifier> superClassesThis = new HashSet<MClassifier>();
-    	superClassesThis.add(oTypeThis);
-    	
-    	Set<? extends MClassifier> allP = oTypeOther.allParents();
-    	Set<MClassifier> allSuperClassesOther = new HashSet<MClassifier>(allP);
-    	allSuperClassesOther.add(oTypeOther);
-    	
-    	Set<MClassifier> commonClasses;
-    	
-    	while (!superClassesThis.isEmpty()) {
-    		commonClasses = new HashSet<MClassifier>(superClassesThis);
-    		commonClasses.retainAll(allSuperClassesOther);
-    		
-    		if (commonClasses.isEmpty()) {
-    			Set<MClassifier> nextIteration = new HashSet<MClassifier>();
-    			for (MClassifier cls : superClassesThis) {
-                    nextIteration.addAll(cls.parents());
-    			}
-    			
-    			superClassesThis = nextIteration;
-    		} else {
-    			// NOTE: We use the first class common to both!
-    			cType = commonClasses.iterator().next();
-    			break;
-    		}
-    	}
-    	
-    	return cType;
+
+		// If other is not a classifier, handle collections vs OclAny
+		if (!other.isKindOfClassifier(IType.VoidHandling.EXCLUDE_VOID)) {
+			if (other.isKindOfCollection(IType.VoidHandling.EXCLUDE_VOID)) {
+				return null;
+			} else {
+				return TypeFactoryProvider.get().mkOclAny();
+			}
+		}
+
+		if (!(other instanceof MClassifier)) {
+			// treat as most general classifier
+			return TypeFactoryProvider.get().mkOclAny();
+		}
+
+		MClassifier oTypeOther = (MClassifier) other;
+
+		Set<MClassifier> superClassesThis = new HashSet<MClassifier>();
+		superClassesThis.add(this);
+
+		Set<? extends MClassifier> allP = oTypeOther.allParents();
+		Set<MClassifier> allSuperClassesOther = new HashSet<MClassifier>(allP);
+		allSuperClassesOther.add(oTypeOther);
+
+		Set<MClassifier> commonClasses;
+
+		while (!superClassesThis.isEmpty()) {
+			commonClasses = new HashSet<MClassifier>(superClassesThis);
+			commonClasses.retainAll(allSuperClassesOther);
+
+			if (commonClasses.isEmpty()) {
+				Set<MClassifier> nextIteration = new HashSet<MClassifier>();
+				for (MClassifier cls : superClassesThis) {
+					nextIteration.addAll(cls.parents());
+				}
+
+				superClassesThis = nextIteration;
+			} else {
+				// NOTE: We use the first class common to both!
+				return commonClasses.iterator().next();
+			}
+		}
+
+		return TypeFactoryProvider.get().mkOclAny();
 	}
 
 	@Override
@@ -192,7 +201,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfNumber(VoidHandling h) {
+	public boolean isKindOfNumber(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -202,7 +211,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfInteger(VoidHandling h) {
+	public boolean isKindOfInteger(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -212,12 +221,12 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfUnlimitedNatural(VoidHandling h) {
+	public boolean isKindOfUnlimitedNatural(IType.VoidHandling h) {
 		return false;
 	}
 
 	@Override
-	public boolean isKindOfReal(VoidHandling h) {
+	public boolean isKindOfReal(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -227,7 +236,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfString(VoidHandling h) {
+	public boolean isKindOfString(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -237,7 +246,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfBoolean(VoidHandling h) {
+	public boolean isKindOfBoolean(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -247,7 +256,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfEnum(VoidHandling h) {
+	public boolean isKindOfEnum(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -257,7 +266,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfCollection(VoidHandling h) {
+	public boolean isKindOfCollection(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -267,7 +276,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfSet(VoidHandling h) {
+	public boolean isKindOfSet(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -277,7 +286,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfSequence(VoidHandling h) {
+	public boolean isKindOfSequence(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -287,7 +296,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfOrderedSet(VoidHandling h) {
+	public boolean isKindOfOrderedSet(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -297,7 +306,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfBag(VoidHandling h) {
+	public boolean isKindOfBag(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -307,7 +316,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfClassifier(VoidHandling h) {
+	public boolean isKindOfClassifier(IType.VoidHandling h) {
 		return true;
 	}
 
@@ -317,12 +326,12 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfClass(VoidHandling h) {
+	public boolean isKindOfClass(IType.VoidHandling h) {
 		return false;
 	}
 
 	@Override
-	public boolean isKindOfDataType(VoidHandling h) {
+	public boolean isKindOfDataType(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -337,7 +346,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 	
 	@Override
-	public boolean isKindOfAssociation(VoidHandling h) {
+	public boolean isKindOfAssociation(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -347,7 +356,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfOclAny(VoidHandling h) {
+	public boolean isKindOfOclAny(IType.VoidHandling h) {
 		return true;
 	}
 
@@ -357,7 +366,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean isKindOfTupleType(VoidHandling h) {
+	public boolean isKindOfTupleType(IType.VoidHandling h) {
 		return false;
 	}
 
@@ -408,7 +417,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	/**
      * Returns the set of all direct parent classifiers (without this classifier).
      *
-     * @return Set(MClassifier) 
+     * @return Set(MClassifier)
      */
 	@Override
     public Set<? extends MClassifier> parents() {
@@ -420,7 +429,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
      * classifier). This is the transitive closure of the generalization
      * relation.
      *
-     * @return Set(MClass) 
+     * @return Set(MClass)
      */
 	@Override
 	public Set<? extends MClassifier> allParents() {
@@ -431,7 +440,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
      * Returns the set of all child classifiers (without this classifier). This
      * is the transitive closure of the generalization relation.
      *
-     * @return Set(MClass) 
+     * @return Set(MClass)
      */
 	@Override
 	public Set<? extends MClassifier> allChildren() {
@@ -442,7 +451,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
      * Returns the set of all direct child classifiers (without this
      * classifier).
      *
-     * @return Set(MClass) 
+     * @return Set(MClass)
      */
 	public Set<? extends MClassifier> children() {
     	return model.generalizationGraph().sourceNodeSet(this);
@@ -469,8 +478,8 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	/**
-     * Checks if <code>otherClassifier</code> is equal to this classifier 
-     * or if it is a parent of this classifier. 
+     * Checks if <code>otherClassifier</code> is equal to this classifier
+     * or if it is a parent of this classifier.
      */
     @Override
     public boolean isSubClassifierOf(MClassifier otherClass) {
@@ -586,3 +595,4 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 		return false;
 	}
 }
+

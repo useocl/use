@@ -284,17 +284,24 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     	
     	
     	try {
-	    	if (this.deriveParameter == null || this.deriveParameter.isEmpty()) { 
-	    		// Short notation using self
-	    		if (this.mAend.association().associationEnds().size() == 2) {
-	    			MClass ot = mAend.getAllOtherAssociationEnds().get(0).cls();
-	    			parameter.add(new VarDecl("self", ot));
-	    			ctx.exprContext().push("self", ot);
-	    			exprContextChanged = true;
-	    		} else {
-	    			throw new SemanticException(fName, "Derived n-ary associations must define parameter for the derive expression.");
-	    		}
-	    	} else {
+			if (this.deriveParameter == null || this.deriveParameter.isEmpty()) {
+				// Short notation using self
+				if (this.mAend.association().associationEnds().size() == 2) {
+					MClass ot = mAend.getAllOtherAssociationEnds().get(0).cls();
+					// wrap the mm classifier into an OCL Type if required
+					Type otType;
+					if (ot instanceof Type) {
+						otType = (Type) ot;
+					} else {
+						otType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(ot);
+					}
+					parameter.add(new VarDecl("self", otType));
+					ctx.exprContext().push("self", otType);
+					exprContextChanged = true;
+				} else {
+					throw new SemanticException(fName, "Derived n-ary associations must define parameter for the derive expression.");
+				}
+			} else {
 	    		if (this.deriveParameter.getVarNames().size() != mAend.association().associationEnds().size() - 1) {
 	    			throw new SemanticException(fName, "Invalid number of parameter for derive expression!");
 	    		}
@@ -303,7 +310,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
 	    		for (int index = 0; index < mAend.association().associationEnds().size(); ++index) {
 		    		if (mAend.association().associationEnds().get(index) != mAend ) {		    			
 		    			// Use association end type. Can be more generic in declaration
-		    			Type varType = mAend.association().associationEnds().get(index).cls();
+		    			Type varType = (Type) mAend.association().associationEnds().get(index).cls();
 		    			
 		    			ASTType astType = deriveParameter.getVarTypes().get(parIndex);
 		    			if (astType != null) {

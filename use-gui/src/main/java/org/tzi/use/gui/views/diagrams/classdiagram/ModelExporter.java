@@ -137,16 +137,25 @@ public class ModelExporter {
 				VarDeclList targetArgs = new VarDeclList(false);
 									
 				// Build arguments
-				for (VarDecl arg : sourceOperation.paramList()) {
-					VarDecl v = cloneVarDecl(targetModel, arg);
-					if (v == null) {
-						hasErrors = true;
-						break;
-					}
+				for (org.tzi.use.uml.api.IVarDecl argIface : sourceOperation.paramList()) {
+                    VarDecl arg = null;
+                    if (argIface instanceof VarDecl) {
+                        arg = (VarDecl) argIface;
+                    } else {
+                        // cannot handle non-concrete var decls
+                        hasErrors = true;
+                        break;
+                    }
 
-					targetArgs.add(v);
-				}
-				
+                    VarDecl v = cloneVarDecl(targetModel, arg);
+                    if (v == null) {
+                        hasErrors = true;
+                        break;
+                    }
+
+                    targetArgs.add(v);
+                }
+
 				// If arg type is not present, continue to next operation
 				if (hasErrors)
 					continue;
@@ -175,16 +184,24 @@ public class ModelExporter {
 				List<VarDecl> targetQualifiers = new ArrayList<VarDecl>();
 				boolean hasErrors = false;
 				
-				for (VarDecl sourceQualifier : sourceEnd.getQualifiers()) {
-					VarDecl targetQualifier = cloneVarDecl(targetModel, sourceQualifier);
+				for (org.tzi.use.uml.api.IVarDecl qIface : sourceEnd.getQualifiers()) {
+                    VarDecl sourceQualifier = null;
+                    if (qIface instanceof VarDecl) {
+                        sourceQualifier = (VarDecl) qIface;
+                    } else {
+                        hasErrors = true;
+                        break;
+                    }
+
+                    VarDecl targetQualifier = cloneVarDecl(targetModel, sourceQualifier);
 					if (targetQualifier == null) {
 						hasErrors = true;
 						break;
 					}
-					
+
 					targetQualifiers.add(targetQualifier);
 				}
-				
+
 				if (hasErrors)
 					continue;
 				

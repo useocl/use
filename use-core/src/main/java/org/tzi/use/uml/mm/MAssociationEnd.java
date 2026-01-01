@@ -25,10 +25,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IVarDecl;
+import org.tzi.use.uml.api.IVarDeclList;
+import org.tzi.use.uml.api.IType;
+import org.tzi.use.uml.api.ITypeFactory;
+import org.tzi.use.uml.api.TypeFactoryProvider;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.uml.api.IExpression;
 
@@ -77,7 +78,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     /**
      *  Parameter For calculating derived values
      */
-    private VarDeclList deriveParameter = null;
+    private IVarDeclList deriveParameter = null;
     /**
      *  For calculating derived values
      */
@@ -85,7 +86,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     /**
      * List of defined qualifiers for this end.
      */
-    private List<VarDecl> qualifier;
+    private List<IVarDecl> qualifier;
     /**
      *  For performance reasons
      */
@@ -107,17 +108,19 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
                            MMultiplicity mult, 
                            int kind,
                            boolean isOrdered,
-                           List<VarDecl> qualifiers) {
+                           java.util.List<? extends org.tzi.use.uml.api.IVarDecl> qualifiers) {
         super(rolename);
         fClass = cls;
         fMultiplicity = mult;
         setAggregationKind(kind);
         fIsOrdered = isOrdered;
         
-        if (qualifiers == null)
-         this.qualifier = Collections.emptyList();
-        else
-         this.qualifier = qualifiers;
+        if (qualifiers == null) {
+            this.qualifier = java.util.Collections.emptyList();
+        } else {
+            // copy into a modifiable List<IVarDecl> to avoid exposing the concrete list type
+            this.qualifier = new java.util.ArrayList<>(qualifiers);
+        }
     }
     
     /** 
@@ -245,57 +248,59 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     //////////////////////////////////////////////////
 
     @Override
-    public Type getType( Type sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
-    	Type t;
-    	
-    	if (this.getRedefiningEnds().size() > 0) {
-    		t = getRedefinedType((MClass)sourceObjectType);
-    	} else {
-    		t = cls();
-    	}
-    	
-        if ( src.equals( src.association() ) ) {
-            return t;
-        }
-        
-        return getType(t, src.hasQualifiers(), qualifiedAccess);
-    }
+    public IType getType( IType sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
 
-    /**
-     * Used internally to create a the correct collection 
-     * type (OrderedSet, Set) if multiplicity is greater then 1. 
-     * @param t The Type at the association end (maybe different from {@link MAssociationEnd#cls()})</code>
-     * 		because of redefinition.
-     * @return The Type t or a collection with t as element type
-     */
-    private Type getType(Type t, boolean sourceHasQualifiers, boolean qualifiedAccess) {
+    	IType t;
+
+     	if (this.getRedefiningEnds().size() > 0) {
+    		t = getRedefinedType((MClass)sourceObjectType);
+     	} else {
+    		t = cls();
+     	}
+
+         if ( src.equals( src.association() ) ) {
+             return t;
+         }
+
+        return getType(t, src.hasQualifiers(), qualifiedAccess);
+     }
+
+     /**
+      * Used internally to create a the correct collection
+      * type (OrderedSet, Set) if multiplicity is greater then 1.
+      * @param t The Type at the association end (maybe different from {@link MAssociationEnd#cls()})</code>
+      * 		because of redefinition.
+      * @return The Type t or a collection with t as element type
+      */
+    private IType getType(IType t, boolean sourceHasQualifiers, boolean qualifiedAccess) {
+    	ITypeFactory tf = TypeFactoryProvider.get();
     	if (sourceHasQualifiers) {
     		if (qualifiedAccess) {
     			if (multiplicity().isCollection()) {
     				if ( isOrdered() )
-    	                t = TypeFactory.mkOrderedSet( t );
+    	                t = tf.mkOrderedSet( t );
     	            else
-    	                t = TypeFactory.mkSet( t );
+    	                t = tf.mkSet( t );
     			}
     		} else {
     			if ( isOrdered() )
-    	                t = TypeFactory.mkSequence( t );
+    	                t = tf.mkSequence( t );
     	            else
-    	                t = TypeFactory.mkBag( t );
+    	                t = tf.mkBag( t );
     		}
     	} else {
     		if ( multiplicity().isCollection() ) {
     			if (this.hasQualifiers() && !this.isOrdered()) {
-    				t = TypeFactory.mkBag( t );
+    				t = tf.mkBag( t );
     			} else if (this.hasQualifiers() && this.isOrdered()) {
-    				t = TypeFactory.mkSequence( t );
+    				t = tf.mkSequence( t );
     			} else if ( !this.hasQualifiers() && this.isOrdered() ) {
-    	                t = TypeFactory.mkOrderedSet( t );
+    	                t = tf.mkOrderedSet( t );
     			} else {
-    	                t = TypeFactory.mkSet( t );
+    	                t = tf.mkSet( t );
     			}
     	    } else if ( association().associationEnds().size() > 2 ) {
-    	            t = TypeFactory.mkSet(t);
+    	            t = tf.mkSet(t);
     	    }
     	}
     	
@@ -307,12 +312,12 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
      * redefinition into account.
      * @return The type at this association end.
      */
-    public Type getType() {
+    public IType getType() {
     	return this.getType(cls(), false, false);
     }
     
-    private Type getRedefinedType(MClass sourceObjectType) {
-    	Type resultType = null;
+    private IType getRedefinedType(MClass sourceObjectType) {
+    	IType resultType = null;
 
     	// If another association end redefines this end with
     	// source from the type of sourceObjectExp or a subtype of sourceObjectExp
@@ -325,7 +330,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     	for (MAssociationEnd redefiningEnd : this.getRedefiningEnds()) {
     		// TODO: n-ary
     		MAssociationEnd redefiningEndSrc = redefiningEnd.getAllOtherAssociationEnds().get(0);
-    		Type redefiningEndSrcType = redefiningEndSrc.cls();
+    		IType redefiningEndSrcType = redefiningEndSrc.cls();
 
     		if (redefiningEndSrcType.equals(sourceObjectType)) {
     			resultType = redefiningEnd.cls();
@@ -385,7 +390,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 
     @Override
     public void setUnion(boolean newValue) {
-    	isUnion = newValue;
+     isUnion = newValue;
     }
 
     public void addSubsettingEnd(MAssociationEnd nSubsettingEnd) {
@@ -421,7 +426,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     }
 
     public Set<MAssociationEnd> getRedefiningEnds() {
-    	return this.redefiningEnds;
+     return this.redefiningEnds;
     }
 
 	/**
@@ -444,11 +449,11 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 	 * Type has to be checked before!
 	 * @param exp
 	 */
-	public void setDeriveExpression(VarDeclList parameter, IExpression exp) {
-		this.deriveExpression = exp;
-		this.deriveParameter = parameter;
-	}
-	
+	public void setDeriveExpression(IVarDeclList parameter, IExpression exp) {
+        this.deriveExpression = exp;
+        this.deriveParameter = parameter;
+    }
+
 	@Override
 	public IExpression getDeriveExpression() {
 		return this.deriveExpression;
@@ -457,7 +462,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 	/**
 	 * @return
 	 */
-	public VarDeclList getDeriveParamter() {
+	public IVarDeclList getDeriveParamter() {
 		return deriveParameter;
 	}
 	
@@ -474,7 +479,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 	}
 	
 	@Override
-	public List<VarDecl> getQualifiers() {
+	public List<org.tzi.use.uml.api.IVarDecl> getQualifiers() {
 		return qualifier;
 	}
 

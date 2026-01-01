@@ -25,7 +25,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 
 /**
  * Matcher for a try on an attribute

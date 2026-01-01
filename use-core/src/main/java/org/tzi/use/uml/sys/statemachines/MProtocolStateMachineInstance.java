@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.statemachines.*;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Evaluator;
+import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -140,7 +141,7 @@ public class MProtocolStateMachineInstance {
 						Evaluator oclEvaluator = new Evaluator();
 						
 						Value evalResult = 
-							oclEvaluator.eval(t.getGuard(), 
+							oclEvaluator.eval((Expression) t.getGuard(),
 											  ctx.postState(), ctx.varBindings());
 
 						if (evalResult.isBoolean() && ((BooleanValue)evalResult).isTrue()) {
@@ -256,7 +257,7 @@ public class MProtocolStateMachineInstance {
 			Evaluator oclEvaluator = new Evaluator();
 			
 			Value evalResult = 
-				oclEvaluator.eval(pt.getPostCondition(), ctx.preState(), ctx.postState(), ctx.varBindings());
+				oclEvaluator.eval((Expression) pt.getPostCondition(), ctx.preState(), ctx.postState(), ctx.varBindings());
 				
 			result.setPostConditionResult(evalResult);
 		}
@@ -266,7 +267,7 @@ public class MProtocolStateMachineInstance {
 			VarBindings b = new VarBindings();
 			b.push("self", new ObjectValue(stateMachine.getContext(), contextObject));
 			Value evalResult = 
-				oclEvaluator.eval(targetState.getStateInvariant(), ctx.postState(), ctx.varBindings());
+				oclEvaluator.eval((Expression) targetState.getStateInvariant(), ctx.postState(), ctx.varBindings());
 
 			result.setStateInvariantResult(evalResult);
 		}
@@ -318,7 +319,7 @@ public class MProtocolStateMachineInstance {
 			
 			if (s == null || s.getStateInvariant() == null) continue;
 			
-			Value result = evaluator.eval(s.getStateInvariant(), systemState, bindings);
+			Value result = evaluator.eval((Expression) s.getStateInvariant(), systemState, bindings);
 			
 			if (!result.isBoolean() || ((BooleanValue)result).isFalse()) {
 				valid = false;
@@ -354,7 +355,7 @@ public class MProtocolStateMachineInstance {
 					MState s = (MState)v;
 					if (s.getStateInvariant() == null) continue;
 					
-					Value result = evaluator.eval(s.getStateInvariant(), systemState, bindings);
+					Value result = evaluator.eval((Expression) s.getStateInvariant(), systemState, bindings);
 					
 					if (result.isBoolean() && ((BooleanValue)result).isTrue())
 						possibleStates.add(s);

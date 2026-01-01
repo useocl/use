@@ -55,14 +55,27 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     	Set<Type> types = new HashSet<Type>();
     	types.add(TypeFactory.mkVoidType());
     	for (Value v : collection()) {
-    		types.add(v.getRuntimeType());
-    	}
-    	Type runtimeElemType = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types);
-    	if (runtimeElemType == null) {
-    		throw new RuntimeException("Could not determine unique common supertype for " + types);
-    	}
-        return getRuntimeType(runtimeElemType);
-	}            
+			types.add(v.getRuntimeType());
+		}
+		Type runtimeElemType = new UniqueLeastCommonSupertypeDeterminator().calculateFor(types);
+		if (runtimeElemType == null) {
+			throw new RuntimeException("Could not determine unique common supertype for " + types);
+		}
+        Type computed = getRuntimeType(runtimeElemType);
+        // If declared type is a more specific collection type than the computed runtime type,
+        // prefer the declared one. This avoids degrading e.g. Sequence -> Collection
+        try {
+            Type declared = type();
+            if (declared instanceof CollectionType && computed instanceof CollectionType) {
+                if (declared.conformsTo(computed) && !computed.conformsTo(declared)) {
+                    return declared;
+                }
+            }
+        } catch (Throwable t) {
+            // ignore; fallback to computed
+        }
+        return computed;
+	}
 
     /**
      * This method returns the type of a collection with the given 

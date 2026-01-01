@@ -1,5 +1,7 @@
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
+
 import java.util.Set;
 
 public class VoidType extends TypeImpl {
@@ -20,7 +22,7 @@ public class VoidType extends TypeImpl {
 	}
 
 	@Override
-	public boolean conformsTo(Type t) {
+	public boolean conformsTo(IType t) {
 		return true;
 	}
 

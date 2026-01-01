@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.sys.MOperationCall;
 
 import java.util.List;
@@ -33,8 +33,8 @@ import java.util.Set;
  * @author Lars Hamann
  *
  */
-public interface MClassifier extends Type, MModelElement, MNamedElement, UseFileLocatable {
-	
+public interface MClassifier extends IType, MModelElement, MNamedElement, UseFileLocatable {
+
 	/**
      * Returns the model owning this classifier.
      */

@@ -27,7 +27,7 @@ import org.tzi.use.uml.ocl.expr.operations.BooleanOperation;
 import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;

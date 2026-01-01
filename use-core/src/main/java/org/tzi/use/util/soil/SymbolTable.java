@@ -220,7 +220,8 @@ public class SymbolTable {
 		if (entry == null && fVisibleState != null) {
 			MObject obj = fVisibleState.objectByName(name);
 			if (obj != null)
-				return new Entry(obj.cls());
+				// wrap mm classifier into an OCL Type adapter
+				return new Entry(org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(obj.cls()));
 		}
 		
 		return entry;

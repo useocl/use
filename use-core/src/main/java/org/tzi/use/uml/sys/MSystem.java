@@ -47,6 +47,8 @@ import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.UniqueNameGenerator;
 import org.tzi.use.util.soil.VariableEnvironment;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.ocl.OclTypeFactoryAdapter;
+import org.tzi.use.uml.api.TypeFactoryProvider;
 
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -157,6 +159,16 @@ public final class MSystem {
 		fCallStack = new ArrayDeque<>();
 		fRedoStack = new ArrayDeque<>();
 		fCurrentlyEvaluatedStatements = new ArrayDeque<>();
+
+		// Ensure that an ITypeFactory implementation is provided for the OCL/type layer
+		// so that TypeFactoryProvider.get() does not throw when types are created.
+		// If not yet set, set the default adapter that delegates to the ocl.TypeFactory.
+		try {
+			// Only set if not already set to avoid overwriting external configurations
+			TypeFactoryProvider.get();
+		} catch (IllegalStateException e) {
+			TypeFactoryProvider.set(new OclTypeFactoryAdapter());
+		}
 	}
 
 	/**
@@ -843,7 +855,7 @@ public final class MSystem {
 
 		for (int i = 0; i < operationCall.getOperation().paramList().size(); ++i) {
 
-			VarDecl parameter = operationCall.getOperation().paramList().varDecl(i);
+			VarDecl parameter = (VarDecl) operationCall.getOperation().paramList().varDecl(i);
 			Value argument = operationCall.getArguments()[i];
 
 			Type expectedType = parameter.type();
@@ -1028,9 +1040,9 @@ public final class MSystem {
 	}
 
 	/**
-	 * Inserts a link between objects to the current state and keeps track of
+ich	 * Inserts a link between objects to the current state and keeps track of
 	 * the changes.
-	 * 
+	 *
 	 * @param association
 	 * @param participants
 	 * @param qualifierValues
@@ -1284,6 +1296,31 @@ public final class MSystem {
 	private StatementEvaluationResult execute(MStatement statement, SoilEvaluationContext context, boolean undoOnFailure, boolean storeResult,
 			boolean notifyUpdateStateListeners) throws MSystemException {
 
+		// Früher Null-Check: klare Fehlermeldung statt NullPointerException
+		if (statement == null) {
+			StringBuilder msg = new StringBuilder("Cannot execute null statement");
+			msg.append(". executionContext=").append(executionContext);
+			MOperationCall currOp = getCurrentOperation();
+			msg.append(", currentOperation=");
+			if (currOp != null) {
+				msg.append(currOp.toString());
+			} else {
+				msg.append("null");
+			}
+
+			msg.append(", currentlyEvaluatedStatement=");
+			StatementEvaluationResult peekResult = fCurrentlyEvaluatedStatements.peek();
+			if (peekResult != null && peekResult.getEvaluatedStatement() != null) {
+				msg.append(peekResult.getEvaluatedStatement().toString());
+			} else {
+				msg.append("null");
+			}
+
+			msg.append(", currentlyEvaluatedStackSize=").append(fCurrentlyEvaluatedStatements.size());
+
+			throw new MSystemException(msg.toString());
+		}
+
 		StatementEvaluationResult result = new StatementEvaluationResult(statement);
 
 		fCurrentlyEvaluatedStatements.push(result);
@@ -1470,7 +1507,12 @@ public final class MSystem {
 	 * @return The executed statement.
 	 */
 	private MStatement getCurrentStatement() {
-		return fCurrentlyEvaluatedStatements.peek().getEvaluatedStatement();
+        StatementEvaluationResult peek = fCurrentlyEvaluatedStatements.peek();
+        if (peek == null) {
+            return null;
+        }
+
+        return peek.getEvaluatedStatement();
 	}
 
 	/**

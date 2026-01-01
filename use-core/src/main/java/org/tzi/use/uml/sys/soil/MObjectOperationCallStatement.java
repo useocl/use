@@ -22,6 +22,7 @@ package org.tzi.use.uml.sys.soil;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
@@ -90,7 +91,14 @@ public class MObjectOperationCallStatement extends MOperationCallStatement {
      * @return
      */
     public Type getReturnType() {
-        return fOperation.resultType();
+        // If the operation has no result type, return null to indicate "no value".
+        // This is important because callers (e.g. ASTVariableAssignmentStatement)
+        // check for a null return type to decide whether an operation produces a value.
+        if (!fOperation.hasResultType()) {
+            return null;
+        }
+        // Use adapter to convert model/API types to OCL Type safely
+        return TypeAdapters.asOclType(fOperation.resultType());
     }
 
     @Override

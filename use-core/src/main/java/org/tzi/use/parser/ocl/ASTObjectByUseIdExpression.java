@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpObjectByUseId;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

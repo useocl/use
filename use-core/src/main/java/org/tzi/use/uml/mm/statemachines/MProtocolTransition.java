@@ -20,7 +20,7 @@ package org.tzi.use.uml.mm.statemachines;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.commonbehavior.communications.MCallEvent;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.api.IExpression;
 
 /**
  * A protocol transition (transition as specialized in the ProtocolStateMachines package) 
@@ -54,30 +54,30 @@ public class MProtocolTransition extends MTransition {
 	 * obtained once the transition is triggered. 
 	 * This post-condition is part of the post-condition of the operation connected to the transition.
 	 */
-	protected Expression postCondition;
-	
+	protected IExpression postCondition;
+
 	/**
 	 * Specifies the precondition of the transition. It specifies the condition that should be verified before triggering the
 	 * transition. This guard condition added to the source state will be evaluated as part 
 	 * of the precondition of the operation referred by the transition if any.
 	 * Same as {@link #getGuard()}.
 	 */
-	public Expression getPreCondition() {
+	public IExpression getPreCondition() {
 		return this.getGuard();
 	}
 	
-	public void setPreCondition(Expression condition) {
+	public void setPreCondition(IExpression condition) {
 		this.setGuard(condition);
 	}
 	
-	public Expression getPostCondition() {
+	public IExpression getPostCondition() {
 		return this.postCondition;
 	}
 	
 	/**
 	 * @param condition
 	 */
-	public void setPostCondition(Expression condition) {
+	public void setPostCondition(IExpression condition) {
 		this.postCondition = condition;
 	}
 	
@@ -103,7 +103,7 @@ public class MProtocolTransition extends MTransition {
 		
 		if (this.postCondition != null) {
 			s.append(" [");
-			this.postCondition.toString(s);
+			s.append(this.postCondition.asString());
 			s.append(']');
 		}
 		

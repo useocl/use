@@ -22,7 +22,9 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
@@ -43,7 +45,7 @@ public final class ExpObjectByUseId extends Expression {
     public ExpObjectByUseId(MClass sourceType, Expression idExpr)
         throws ExpInvalidException
     {
-        super(sourceType);
+        super(TypeAdapters.asOclType(sourceType));
 
         if (! sourceType.isTypeOfClass() )
             throw new ExpInvalidException("Expected an object type, found `" + sourceType + "'.");
@@ -107,7 +109,7 @@ public final class ExpObjectByUseId extends Expression {
 		sb.append(")");
 		return sb.append(atPre());
     }
-	
+
 	@Override
 	public void processWithVisitor(ExpressionVisitor visitor) {
 		visitor.visitObjectByUseId(this);

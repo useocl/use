@@ -13,6 +13,7 @@ module use.core {
     exports org.tzi.use.config;
     exports org.tzi.use.main.runtime;
     exports org.tzi.use.parser.use;
+    exports org.tzi.use.parser;
     exports org.tzi.use.uml.mm;
     exports org.tzi.use.uml.ocl.extension;
     exports org.tzi.use.uml.sys;
@@ -42,4 +43,8 @@ module use.core {
     exports org.tzi.use.api;
     exports org.tzi.use.main;
     exports org.tzi.use.parser.generator;
+    exports org.tzi.use.uml.api;
+    exports org.tzi.use.parser.soil;
+
+
 }

@@ -30,6 +30,7 @@ import org.tzi.use.parser.use.statemachines.ASTStateMachine;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -61,7 +62,9 @@ public class ASTClass extends ASTClassifier {
         fClass.setPositionInModel( fName.getLine() );
         this.genAnnotations(fClass);
         // makes sure we have a unique class name
-        ctx.typeTable().add(fName, fClass);
+        // parser layer expects low-level OCL Type in type table -> cast here
+        // wrap the mm classifier into a low-level OCL Type adapter
+        ctx.typeTable().add(fName, org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fClass));
         return fClass;
     }
 
@@ -159,12 +162,13 @@ public class ASTClass extends ASTClassifier {
     	ctx.setCurrentClassifier(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push("self", fClass);
+        // exprContext / Symtable expect low-level OCL Type -> cast here
+        ctx.exprContext().push("self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fClass));
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add("self", fClass, null);
-        } catch (SemanticException ex) { 
+            vars.add("self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fClass), null);
+        } catch (SemanticException ex) {
             // fatal error?
             throw new Error(ex);
         }
@@ -218,7 +222,7 @@ public class ASTClass extends ASTClassifier {
 		ctx.setCurrentClassifier(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push("self", fClass);
+        ctx.exprContext().push("self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fClass));
         Symtable vars = ctx.varTable();
         vars.enterScope();
         
@@ -242,12 +246,12 @@ public class ASTClass extends ASTClassifier {
         ctx.setCurrentClassifier(fClass);
 
         // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push("self", fClass);
+        ctx.exprContext().push("self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fClass));
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add("self", fClass, null);
-        } catch (SemanticException ex) { 
+            vars.add("self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(fClass), null);
+        } catch (SemanticException ex) {
             // fatal error?
             throw new Error(ex);
         }

@@ -25,8 +25,9 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -53,11 +54,17 @@ public class ASTPrePostClause extends ASTAnnotatable {
 
         try {
             // create pseudo-variable "self"
-            vars.add("self", cf, null);
-            ctx.exprContext().push("self", cf);
+            Type selfType;
+            if (cf instanceof Type) {
+                selfType = (Type) cf;
+            } else {
+                selfType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(cf);
+            }
+            vars.add("self", selfType, null);
+            ctx.exprContext().push("self", selfType);
             // add special variable `result' in postconditions with result value
             if (! isPre && op.hasResultType() )
-                vars.add("result", op.resultType(), null);
+                vars.add("result", (Type) op.resultType(), null);
 
             ctx.setInsidePostCondition(! isPre);
             Expression expr = fExpr.gen(ctx);
@@ -84,7 +91,7 @@ public class ASTPrePostClause extends ASTAnnotatable {
             ctx.model().addPrePostCondition(ppc);
         } catch (MInvalidModelException ex) {
             ctx.reportError(fExpr.getStartToken(), ex);
-        } catch (ExpInvalidException ex) {
+        } catch (InvariantExpressionException ex) {
             ctx.reportError(fExpr.getStartToken(), ex);
         } catch (SemanticException ex) {
             ctx.reportError(ex);

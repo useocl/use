@@ -1,0 +1,13 @@
+
+• MClassInvariant -> org.tzi.use.uml.ocl.expr.Expression (import via org.tzi.use.uml.ocl.expr.*)
+• ModelFactory -> org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory, org.tzi.use.uml.ocl.expr.VarDecl, org.tzi.use.uml.ocl.expr.VarDeclList, org.tzi.use.uml.ocl.expr.ExpInvalidException
+• GeneratorModelFactory -> org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory, org.tzi.use.uml.ocl.expr.ExpInvalidException
+• MOperation -> org.tzi.use.uml.ocl.expr.ExpUndefined, org.tzi.use.uml.ocl.expr.VarDecl, org.tzi.use.uml.ocl.expr.VarDeclList
+• MNavigableElement -> org.tzi.use.uml.ocl.expr.VarDecl
+• MAssociationEnd -> org.tzi.use.uml.ocl.expr.VarDecl, org.tzi.use.uml.ocl.expr.VarDeclList
+• MAssociationClassImpl -> org.tzi.use.uml.ocl.expr.VarDecl
+• MPrePostCondition -> org.tzi.use.uml.ocl.expr.ExpInvalidException
+• commonbehavior.communications.MCallEvent -> org.tzi.use.uml.ocl.expr.VarDecl
+
+Hinweis: Diese Liste basiert auf statischer Textsuche nach Importen, vollqualifizierten Verwendungen und direkten Casts auf Typen aus dem Package org.tzi.use.uml.ocl.expr innerhalb des Packages org.tzi.use.uml.mm. Dateien, die nur das API-Interface `org.tzi.use.uml.api.IExpression` verwenden, sind hier nicht aufgelistet.
+

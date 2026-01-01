@@ -88,16 +88,14 @@ public class StateNode extends VertexNode implements ToolTipProvider {
 	private Font invFont;
 		
 	/**
-	 * @param v
+	 * @param state The state to display in this node
 	 */
 	public StateNode(MState state) {
 		super(state);
 		
 		if (state.getStateInvariant() != null) {
-			StringBuilder text = new StringBuilder("[");
-			state.getStateInvariant().toString(text);
-			text.append("]");
-			stateInvariant = text.toString();
+			// IExpression provides asString(); use that to build display text
+            stateInvariant = "[" + state.getStateInvariant().asString() + "]";
 		} else {
 			stateInvariant = "";
 		}

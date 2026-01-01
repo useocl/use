@@ -28,6 +28,7 @@ import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
@@ -131,9 +132,9 @@ public class ClassDiagramView extends JPanel
         }
 
         // read Enumerations
-        Collection<EnumType> allEnums = fSystem.model().getEnumTypesIncludingImports();
-        for (EnumType enumeration : allEnums) {
-            fClassDiagram.addEnum( enumeration );
+        Collection<IEnumType> allEnums = fSystem.model().getEnumTypesIncludingImports();
+        for (IEnumType enumeration : allEnums) {
+            fClassDiagram.addEnum((EnumType) enumeration);
         }
 
         // read signals

@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -89,7 +90,7 @@ public final class BagType extends CollectionType {
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();
         res.addAll(super.allSupertypes());
-        Set<? extends Type> elemSuper = elemType().allSupertypes();
+        Set<? extends Type> elemSuper = (Set<? extends Type>) elemType().allSupertypes();
         Iterator<? extends Type> typeIter = elemSuper.iterator();
         
         while (typeIter.hasNext() ) {
@@ -100,24 +101,20 @@ public final class BagType extends CollectionType {
         return res;
     }
 
-    public Type getLeastCommonSupertype(Type type)
-    {
-    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
-    		return null;
-    	
-    	if (type.isTypeOfVoidType())
-    		return this;
-    	
-    	CollectionType cType = (CollectionType)type;
-    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
-    	
-    	if (commonElementType == null)
-    		return null;
-    	
-    	if (type.isTypeOfBag())
-    		return TypeFactory.mkBag(commonElementType);
-    	else
-    		return TypeFactory.mkCollection(commonElementType);
+    public Type getLeastCommonSupertype(Type type) {
+        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
+            return null;
+
+        if (type.isTypeOfVoidType())
+            return this;
+
+        CollectionType cType = (CollectionType) type;
+        Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
+
+        if (commonElementType == null)
+            return null;
+        else
+            return TypeFactory.mkBag(commonElementType);
     }
     
     @Override

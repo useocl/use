@@ -203,7 +203,8 @@ public class Context {
     
     public void reportError(Token t, String msg) {
         fErrorCount++;
-        fErr.println(fFilename + ":" + t.getLine() + ":" + 
+        System.err.println("[REPORT] token=" + t.getInputStream().getSourceName() + ":" + t.getLine() + ":" + t.getCharPositionInLine() + ": " + msg);
+        fErr.println(fFilename + ":" + t.getLine() + ":" +
                      t.getCharPositionInLine() + ": " + msg);
     }
     
@@ -213,6 +214,7 @@ public class Context {
     
     public void reportError(SemanticException ex) {
         fErrorCount++;
+        System.err.println("[REPORT] semanticException: " + ex.getShortMessage());
         fErr.println(ex.getMessage());
         fErr.flush();
     }

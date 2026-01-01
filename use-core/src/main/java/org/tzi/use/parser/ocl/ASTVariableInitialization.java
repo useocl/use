@@ -46,6 +46,9 @@ public class ASTVariableInitialization extends AST {
 
     public VarInitializer gen(Context ctx) throws SemanticException {
         Type type = fType.gen(ctx);
+        if (type == null) {
+            throw new SemanticException(fName, "Variable type could not be resolved.");
+        }
         try {
             return new VarInitializer(fName.getText(), type,
                                       fExpr.gen(ctx));

@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,7 +73,7 @@ public final class OclAnyType extends TypeImpl {
     }
 
 	@Override
-	public boolean conformsTo(Type other) {
+	public boolean conformsTo(IType other) {
 		return other.isTypeOfOclAny();
 	}
 }

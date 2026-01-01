@@ -26,6 +26,7 @@ import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.expr.ExpAllInstances;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class ASTAllInstancesExpression extends ASTExpression {
         }
         
         try {
-            res = new ExpAllInstances(cls);
+            res = new ExpAllInstances(org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(cls));
             if (isPre()) res.setIsPre();
         } catch (ExpInvalidException ex) {
             throw new SemanticException(fToken, ex);

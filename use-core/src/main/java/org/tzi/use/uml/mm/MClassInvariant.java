@@ -21,7 +21,10 @@ package org.tzi.use.uml.mm;
 
 import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.api.IInvariantExpressionFactory;
-import org.tzi.use.uml.ocl.expr.*;
+import org.tzi.use.uml.api.InvariantExpressionException;
+import org.tzi.use.uml.api.IVarDeclList;
+import org.tzi.use.uml.api.IVarDecl;
+import org.tzi.use.uml.api.VarDeclFactoryProvider;
 
 import java.util.List;
 
@@ -63,10 +66,10 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
     private boolean fHasVars;
     
     /**
-	 * optional List of variable names
-	 */
-    private VarDeclList fVars;
-    
+ 	 * optional List of variable names
+ 	 */
+    private IVarDeclList fVars;
+
     /**
      * Flags from generator.
      */
@@ -86,38 +89,38 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * Constructs a new invariant. The <code>name</code> and <code>vars</code> is optional, i.e., can be <code>null</code>.
      */
     MClassInvariant(String name, List<String> vars, MClassifier cf, IExpression inv, boolean isExistential,
-                    IInvariantExpressionFactory exprFactory) throws ExpInvalidException
+                    IInvariantExpressionFactory exprFactory) throws InvariantExpressionException
     {
         super(name);
         
         if (!inv.isBooleanType()) {
-        	throw new ExpInvalidException("An invariant must be a boolean expression.");
+        	throw new InvariantExpressionException("An invariant must be a boolean expression.");
         }
         this.exprFactory = exprFactory;
         fClassifier = cf;
         fBody = inv;
         fBody.assertBooleanType();
-        fVars = new VarDeclList(true);
+        fVars = org.tzi.use.uml.api.VarDeclFactoryProvider.get().mkVarDeclList(true);
         loaded = false;
         active = true;
         negated = false;
         fIsExistential = isExistential;
 
         // parse variables
-        if (vars == null || vars.size() == 0)
+        if (vars == null || vars.isEmpty())
         {
         	fHasVars = false;
-        	VarDecl decl = new VarDecl("self", fClassifier);
+        	IVarDecl decl = VarDeclFactoryProvider.get().mkVarDecl("self", fClassifier);
         	fVars.add(decl);
         }
-        else
-        {
-        	fHasVars = true;
-        	for (String var : vars) {
-        		fVars.add(new VarDecl(var, fClassifier));
-        	}
-        }
-        
+         else
+         {
+         	fHasVars = true;
+         	for (String var : vars) {
+        		fVars.add(VarDeclFactoryProvider.get().mkVarDecl(var, fClassifier));
+         	}
+         }
+
         calculateExpandedExpression();
     }
 
@@ -125,7 +128,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
      * Creates a dynamic invariant.
      */
     MClassInvariant(String name, List<String> vars, MClassifier cf, IExpression inv, boolean isExistential,
-                    boolean active, boolean negated, IInvariantExpressionFactory exprFactory) throws ExpInvalidException {
+                    boolean active, boolean negated, IInvariantExpressionFactory exprFactory) throws InvariantExpressionException {
     	this(name, vars, cf, inv, isExistential, exprFactory);
 
 		loaded = true;
@@ -247,7 +250,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
 	 * 
 	 * @see #hasVar()
 	 */
-    public VarDeclList vars(){
+    public IVarDeclList vars(){
     	return fHasVars ? fVars : null;
     }
 
@@ -348,4 +351,3 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
         v.visitClassInvariant(this);
     }
 }
-

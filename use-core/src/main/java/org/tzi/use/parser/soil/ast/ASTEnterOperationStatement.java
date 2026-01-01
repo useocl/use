@@ -27,6 +27,9 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.ClassifierType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -38,69 +41,82 @@ import org.tzi.use.util.soil.exceptions.CompilationFailedException;
  * @author Daniel Gent
  * @author Lars Hamann
  */
-public class ASTEnterOperationStatement extends ASTStatement {
-	
-	private ASTExpression fObject;
-	
-	private String fOperationName;
-	
-	private List<ASTExpression> fArguments;
-	
-	
-	/**
-	 * Constructs a new ASTEnterOperationStatement node.
-	 * @param object An expression which leads to the receiver.
-	 * @param operationName The name of the operation to call.
-	 * @param arguments The operation call arguments
-	 */
-	public ASTEnterOperationStatement(
-			Token start,
-			ASTExpression object, 
-			String operationName, 
-			List<ASTExpression> arguments) {
-		super(start);
-		fObject = object;
-		fOperationName = operationName;
-		fArguments = arguments;
-	}
-	
-	@Override
-	protected MStatement generateStatement() throws CompilationFailedException {
-		
-		Expression object = generateObjectExpression(fObject);
-		
-		MOperation operation = getOperationSafe((MClass)object.type(), fOperationName);
-		
-		if (operation.hasExpression() || operation.hasStatement()) {
-			throw new CompilationFailedException(this, "Operation " +
-					StringUtil.inQuotes(operation) +
-					" is defined by a " +
-					(operation.hasExpression() ? "OCL expression" : "soil statement") +
-					" and cannot be entered with openter.");
-		}
-		
-		// construct arguments
-		Expression[] arguments = generateOperationArguments(operation, fArguments);
-		
-		return new MEnterOperationStatement(object, operation, arguments);
-	}
+ public class ASTEnterOperationStatement extends ASTStatement {
 
-	
-	@Override
-	protected void printTree(StringBuilder prelude, PrintWriter target) {
-		target.println(prelude + "ENTER OPERATION");
-	}
-	
+ 	private ASTExpression fObject;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("openter ");
-		sb.append(fOperationName);
-		sb.append("(");
-		StringUtil.fmtSeq(sb, fArguments, ", ");
-		sb.append(")");
-		
-		return sb.toString();
-	}
-}
+ 	private String fOperationName;
+
+ 	private List<ASTExpression> fArguments;
+
+
+ 	/**
+ 	 * Constructs a new ASTEnterOperationStatement node.
+ 	 * @param object An expression which leads to the receiver.
+ 	 * @param operationName The name of the operation to call.
+ 	 * @param arguments The operation call arguments
+ 	 */
+ 	public ASTEnterOperationStatement(
+ 			Token start,
+ 			ASTExpression object,
+ 			String operationName,
+ 			List<ASTExpression> arguments) {
+ 		super(start);
+ 		fObject = object;
+ 		fOperationName = operationName;
+ 		fArguments = arguments;
+ 	}
+
+ 	@Override
+ 	protected MStatement generateStatement() throws CompilationFailedException {
+
+ 		Expression object = generateObjectExpression(fObject);
+
+ 		// robustly obtain the MM-classifier from the expression type
+ 		Object oType = object.type();
+ 		MClassifier classifier = null;
+ 		if (oType instanceof ClassifierType) {
+ 			classifier = ((ClassifierType) oType).classifier();
+ 		} else if (oType instanceof MClassifier) {
+ 			classifier = (MClassifier) oType;
+ 		} else {
+ 			throw new CompilationFailedException(this, "Expected object with classifier type, found " + StringUtil.inQuotes(object.type()) + ".");
+ 		}
+ 		if (!(classifier instanceof MClass)) {
+ 			throw new CompilationFailedException(this, "Expected object of class type, found " + StringUtil.inQuotes(object.type()) + ".");
+ 		}
+ 		MOperation operation = getOperationSafe((MClass) classifier, fOperationName);
+
+ 		if (operation.hasExpression() || operation.hasStatement()) {
+ 			throw new CompilationFailedException(this, "Operation " +
+ 					StringUtil.inQuotes(operation) +
+ 					" is defined by a " +
+ 					(operation.hasExpression() ? "OCL expression" : "soil statement") +
+ 					" and cannot be entered with openter.");
+ 		}
+
+ 		// construct arguments
+ 		Expression[] arguments = generateOperationArguments(operation, fArguments);
+
+ 		return new MEnterOperationStatement(object, operation, arguments);
+ 	}
+
+
+ 	@Override
+ 	protected void printTree(StringBuilder prelude, PrintWriter target) {
+ 		target.println(prelude + "ENTER OPERATION");
+ 	}
+
+
+ 	@Override
+ 	public String toString() {
+ 		StringBuilder sb = new StringBuilder();
+ 		sb.append("openter ");
+ 		sb.append(fOperationName);
+ 		sb.append("(");
+ 		StringUtil.fmtSeq(sb, fArguments, ", ");
+ 		sb.append(")");
+
+ 		return sb.toString();
+ 	}
+ }

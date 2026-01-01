@@ -24,7 +24,7 @@ import java.util.Set;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.LinkValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
@@ -34,6 +34,7 @@ import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 
 /**
  * Type.allInstances
@@ -42,35 +43,43 @@ import org.tzi.use.uml.sys.MSystemState;
  * @author Lars Hamann
  */
 public final class ExpAllInstances extends Expression {
-    private MClassifier fSourceType;
-    
+    private final MClassifier fSourceType;
+
     public ExpAllInstances(Type sourceType)
-        throws ExpInvalidException
-    {
+            throws ExpInvalidException {
         // result type is a set of sourceType
         super(TypeFactory.mkSet(sourceType));
 
-        if (! sourceType.isKindOfClassifier(VoidHandling.EXCLUDE_VOID) )
+        if (!sourceType.isKindOfClassifier(IType.VoidHandling.EXCLUDE_VOID))
             throw new ExpInvalidException("Expected an object type, found `" + sourceType + "'.");
-        
-        fSourceType = (MClassifier)sourceType;
+
+        // Adapt the provided type to an mm MClassifier where possible. This
+        // avoids ClassCastExceptions when a refactoring made some code paths
+        // return mm classifiers directly instead of OCL Types.
+        MClassifier mc = TypeAdapters.asMClassifier(sourceType);
+        if (mc == null) {
+            throw new ExpInvalidException("Expected an object type that corresponds to a UML classifier, found `" + sourceType + "'.");
+        }
+
+        // store adapted classifier for later use
+        this.fSourceType = mc;
     }
 
     /**
-     * The type allInstances() is applied to. 
+     * The type allInstances() is applied to.
      * @return
      */
     public MClassifier getSourceType() {
-    	return this.fSourceType;
+        return this.fSourceType;
     }
-    
-	@Override
-	protected boolean childExpressionRequiresPreState() {
-		return false;
-	}
-	
+
+    @Override
+    protected boolean childExpressionRequiresPreState() {
+        return false;
+    }
+
     /**
-     * Evaluates expression and returns result value. 
+     * Evaluates expression and returns result value.
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
@@ -79,52 +88,55 @@ public final class ExpAllInstances extends Expression {
         // the result set will contain all instances of the specified
         // class plus all instances of subclasses
 
-        // get set of objects 
+        // get set of objects
         SetValue res;
-        
+
         if(fSourceType.isTypeOfClass()) {
-	        Set<MObject> objSet = systemState.objectsOfClassAndSubClasses(fSourceType);
-	        Value[] objValues = new Value[objSet.size()];
-	
-	        int i = 0;
-	        for (MObject obj : objSet) {
-	            objValues[i++] = new ObjectValue(obj.cls(), obj);
-	        }
-	
-	        // create result set with object references
-	        res = new SetValue(fSourceType, objValues);
+            Set<MObject> objSet = systemState.objectsOfClassAndSubClasses(fSourceType);
+            Value[] objValues = new Value[objSet.size()];
+
+            int i = 0;
+            for (MObject obj : objSet) {
+                objValues[i++] = new ObjectValue(obj.cls(), obj);
+            }
+
+            // create result set with object references
+            Type elemType = TypeAdapters.asOclType(fSourceType);
+            res = new SetValue(elemType, objValues);
         } else if (fSourceType.isTypeOfAssociation()) {
-        	MLinkSet links = systemState.linksOfAssociation((MAssociation)fSourceType);
-        	Value[] linkValues = new Value[links.size()];
-        	
-        	int i = 0;
-        	for (MLink link : links.links()) {
-        		linkValues[i++] = new LinkValue(link.association(), link);
-        	}
-        	
-        	res = new SetValue(fSourceType, linkValues);
+            MLinkSet links = systemState.linksOfAssociation((MAssociation)fSourceType);
+            Value[] linkValues = new Value[links.size()];
+
+            int i = 0;
+            for (MLink link : links.links()) {
+                Type assocType = TypeAdapters.asOclType(link.association());
+                linkValues[i++] = new LinkValue(assocType, link);
+            }
+
+            Type elemType = TypeAdapters.asOclType(fSourceType);
+            res = new SetValue(elemType, linkValues);
         } else {
-        	throw new IllegalArgumentException("allInstances() is only supported on classes and associations.");
+            throw new IllegalArgumentException("allInstances() is only supported on classes and associations.");
         }
-        
+
         ctx.exit(this, res);
         return res;
     }
 
     @Override
     public String name() {
-    	return "allInstances";
+        return "allInstances";
     }
-    
-	@Override
+
+    @Override
     public StringBuilder toString(StringBuilder sb) {
-		fSourceType.toString(sb);
-		sb.append(".").append(name());
-		return sb.append(atPre());
+        fSourceType.toString(sb);
+        sb.append(".").append(name());
+        return sb.append(atPre());
     }
-	
-	@Override
-	public void processWithVisitor(ExpressionVisitor visitor) {
-		visitor.visitAllInstances(this);
-	}
+
+    @Override
+    public void processWithVisitor(ExpressionVisitor visitor) {
+        visitor.visitAllInstances(this);
+    }
 }

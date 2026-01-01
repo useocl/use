@@ -20,7 +20,7 @@
 package org.tzi.use.uml.mm;
 
 import org.tzi.use.uml.api.IExpression;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.api.InvariantExpressionException;
 
 
 /**
@@ -40,14 +40,14 @@ public final class MPrePostCondition extends MModelElementImpl implements UseFil
      */
     MPrePostCondition(String name, MOperation op, boolean isPre,
                       IExpression constraint)
-        throws ExpInvalidException
+        throws InvariantExpressionException
     {
         super(name);
         fOp = op;
         fIsPre = isPre;
         fExpr = constraint;
         if (!fExpr.isBooleanType()) {
-            throw new ExpInvalidException("Pre-/postcondition must be a boolean expression.");
+            throw new InvariantExpressionException("Pre-/postcondition must be a boolean expression.");
         }
         fExpr.assertBooleanType();
     }

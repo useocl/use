@@ -3,7 +3,7 @@ package org.tzi.use.uml.ocl.expr.operations;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 

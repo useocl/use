@@ -20,6 +20,8 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MAttribute;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.InstanceValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -37,7 +39,7 @@ public final class ExpAttrOp extends Expression {
     private Expression fObjExp;
     
     public ExpAttrOp(MAttribute a, Expression objExp) {
-        super(a.type());
+        super(TypeAdapters.asOclType(a.type()));
         fAttr = a;
         fObjExp = objExp;
         if (! (objExp.type().isTypeOfClass() || objExp.type().isTypeOfDataType()) )

@@ -109,8 +109,8 @@ public class Symtable {
         names.put( name, new Entry( name, type, pos ) );
     }
         
-    public void add(Token token, Type type) 
-        throws SemanticException 
+    public void add(Token token, Type type)
+        throws SemanticException
     {
         this.add(token.getText(), type, new SrcPos(token));
     }

@@ -21,7 +21,7 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.*;
 
@@ -35,6 +35,27 @@ import java.util.*;
  */
 
 public abstract class ExpQuery extends Expression {
+
+    // Structural equality helper: treat two collection types as equal when their
+    // element types are structurally equal (recursively). Otherwise fall back
+    // to qualified name equality.
+    private static boolean structuralEqual(Type a, Type b) {
+        if (a == null || b == null) return a == b;
+        try {
+            if (a instanceof org.tzi.use.uml.ocl.type.CollectionType && b instanceof org.tzi.use.uml.ocl.type.CollectionType) {
+                org.tzi.use.uml.ocl.type.CollectionType ca = (org.tzi.use.uml.ocl.type.CollectionType) a;
+                org.tzi.use.uml.ocl.type.CollectionType cb = (org.tzi.use.uml.ocl.type.CollectionType) b;
+                return structuralEqual(ca.elemType(), cb.elemType());
+            }
+        } catch (Throwable t) {
+            // ignore and fallback to name equality
+        }
+        try {
+            return a.qualifiedName().equals(b.qualifiedName());
+        } catch (Throwable t) {
+            return a.toString().equals(b.toString());
+        }
+    }
 
 	/**
      * List of element variables that will be bound to each range element (may
@@ -78,11 +99,37 @@ public abstract class ExpQuery extends Expression {
 
         for (int i = 0; i < fElemVarDecls.size(); i++) {
             VarDecl vd = fElemVarDecls.varDecl(i);
-            if (!rangeElemType.conformsTo(vd.type()))
-                throw new ExpInvalidException("Type `" + vd.type()
-                        + "' of range variable `" + vd.name()
-                        + "' does not match type `" + rangeElemType
-                        + "' of collection elements.");
+            boolean ok = false;
+            try {
+                ok = rangeElemType.conformsTo(vd.type());
+            } catch (Throwable t) {
+                // ignore
+            }
+            if (!ok) {
+                // fallback to structural equality (handles different Type impls)
+                if (structuralEqual(rangeElemType, vd.type()))
+                    ok = true;
+            }
+            if (!ok) {
+                // Diagnostic output to help identify why types fail to match
+                try {
+                    StringBuilder dbg = new StringBuilder();
+                    dbg.append("ExpQuery: rangeElemType.class=").append(rangeElemType.getClass().getName())
+                       .append(", qualifiedName=").append(rangeElemType.qualifiedName()).append("\n");
+                    dbg.append("ExpQuery: vd.type.class=").append(vd.type().getClass().getName())
+                       .append(", qualifiedName=").append(vd.type().qualifiedName()).append("\n");
+                    boolean c1=false, c2=false, s=false;
+                    try { c1 = rangeElemType.conformsTo(vd.type()); } catch (Throwable t) {}
+                    try { c2 = vd.type().conformsTo(rangeElemType); } catch (Throwable t) {}
+                    try { s = structuralEqual(rangeElemType, vd.type()); } catch (Throwable t) {}
+                    dbg.append("ExpQuery: conforms(range->vd) = ").append(c1).append(", conforms(vd->range) = ").append(c2).append(", structuralEqual = ").append(s).append("\n");
+                    System.err.println(dbg.toString());
+                } catch (Throwable t) { }
+                 throw new ExpInvalidException("Type `" + vd.type()
+                         + "' of range variable `" + vd.name()
+                         + "' does not match type `" + rangeElemType
+                         + "' of collection elements.");
+             }
         }
     }
 

@@ -66,9 +66,37 @@ public class ASTElemVarsDeclaration extends AST {
 
     public VarDeclList gen(Context ctx, Expression range) throws SemanticException 
     {
-        // variable type may be omitted in query expressions
-        Type sourceElementType;
-        
+        // helper: structural equality for types (recursive for collections)
+        class TypeUtil {
+            boolean structuralEqual(Type a, Type b) {
+                if (a == null || b == null) return a == b;
+                try {
+                    if (a.getClass().equals(b.getClass())) {
+                        // if both are collection types, compare element types structurally
+                        if (a instanceof org.tzi.use.uml.ocl.type.CollectionType && b instanceof org.tzi.use.uml.ocl.type.CollectionType) {
+                            org.tzi.use.uml.ocl.type.CollectionType ca = (org.tzi.use.uml.ocl.type.CollectionType) a;
+                            org.tzi.use.uml.ocl.type.CollectionType cb = (org.tzi.use.uml.ocl.type.CollectionType) b;
+                            return structuralEqual(ca.elemType(), cb.elemType());
+                        }
+                        // same runtime class and not collection -> rely on qualifiedName
+                        return a.qualifiedName().equals(b.qualifiedName());
+                    } else {
+                        // different classes: try structural check for collection vs collection supertype
+                        if (a instanceof org.tzi.use.uml.ocl.type.CollectionType && b instanceof org.tzi.use.uml.ocl.type.CollectionType) {
+                            org.tzi.use.uml.ocl.type.CollectionType ca = (org.tzi.use.uml.ocl.type.CollectionType) a;
+                            org.tzi.use.uml.ocl.type.CollectionType cb = (org.tzi.use.uml.ocl.type.CollectionType) b;
+                            return structuralEqual(ca.elemType(), cb.elemType());
+                        }
+                        return a.qualifiedName().equals(b.qualifiedName());
+                    }
+                } catch (Throwable t) {
+                    return a.qualifiedName().equals(b.qualifiedName());
+                }
+            }
+        }
+         // variable type may be omitted in query expressions
+         Type sourceElementType;
+
         if (range.type().isTypeOfVoidType()) {
         	sourceElementType = TypeFactory.mkVoidType();
         } else {
@@ -88,17 +116,53 @@ public class ASTElemVarsDeclaration extends AST {
 		    }
 		    
 		    if (type != null) {
-		    	thisType = type.gen(ctx);
-		    	if (!sourceElementType.conformsTo(thisType))
-					throw new SemanticException(id, "Invalid type "
-							+ StringUtil.inQuotes(thisType)
-							+ " for source element type "
-							+ StringUtil.inQuotes(sourceElementType)
-							+ " specified.");
-		    } else {
-		    	thisType = sourceElementType;
-		    }
-		    
+                thisType = type.gen(ctx);
+
+                boolean ok = false;
+                try {
+                    ok = sourceElementType.conformsTo(thisType)
+                         || thisType.conformsTo(sourceElementType)
+                         || sourceElementType.equals(thisType)
+                         || sourceElementType.qualifiedName().equals(thisType.qualifiedName());
+                } catch (Throwable t) {
+                    // ignore and rely on name equality check below
+                }
+
+                // structural equality fallback
+                if (!ok) {
+                    TypeUtil tu = new TypeUtil();
+                    if (tu.structuralEqual(sourceElementType, thisType)) {
+                        ok = true;
+                    }
+                }
+
+                if (!ok) {
+                    // Diagnostic: print detailed info to help debugging
+                    try {
+                        StringBuilder dbg = new StringBuilder();
+                        dbg.append("ASTElemVarsDeclaration: sourceElementType.class=").append(sourceElementType.getClass().getName())
+                           .append(", qualifiedName=").append(sourceElementType.qualifiedName()).append("\n");
+                        dbg.append("ASTElemVarsDeclaration: thisType.class=").append(thisType.getClass().getName())
+                           .append(", qualifiedName=").append(thisType.qualifiedName()).append("\n");
+                        dbg.append("ASTElemVarsDeclaration: conforms(sourceElementType -> thisType) = ")
+                           .append(sourceElementType.conformsTo(thisType)).append("\n");
+                        dbg.append("ASTElemVarsDeclaration: conforms(thisType -> sourceElementType) = ")
+                           .append(thisType.conformsTo(sourceElementType)).append("\n");
+                        System.err.println(dbg.toString());
+                    } catch (Throwable t) {
+                        // ignore
+                    }
+
+                    throw new SemanticException(id, "Invalid type "
+                                    + StringUtil.inQuotes(thisType)
+                                    + " for source element type "
+                                    + StringUtil.inQuotes(sourceElementType)
+                                    + " specified.");
+                }
+            } else {
+            	thisType = sourceElementType;
+            }
+
             VarDecl decl = new VarDecl(id, thisType);
             varDeclList.add(decl);
         }

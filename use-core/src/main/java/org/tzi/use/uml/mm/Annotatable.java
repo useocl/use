@@ -19,6 +19,9 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IElementAnnotation;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,11 +30,11 @@ import java.util.Map;
  *
  */
 public interface Annotatable {
-    
+
     /**
      * True if the model element was defined with annotations, e. g.,
      * <code>@Monitor(host="localhost")</code>.
-     * @return
+     * @return true if annotated
      */
     boolean isAnnotated();
     
@@ -48,23 +51,37 @@ public interface Annotatable {
      * with the given <code>name</code>.
      * If no annotation with the name was defined <code>null</code> is
      * returned. 
-     * @param name
-     * @return
+     * @param name Name of the annotation
+     * @return MElementAnnotation or null
      */
     MElementAnnotation getAnnotation(String name);
     
     /**
      * Returns the value of the annotation attribute of the annotation given by <code>name</code>
      * if it exists otherwise the empty string ""
-     * @param annotationName
-     * @param attributeName
-     * @return
+     * @param annotationName Name of the annotation
+     * @param attributeName Name of the attribute
+     * @return Attribute value or empty string
      */
     String getAnnotationValue(String annotationName, String attributeName);
     
     /**
      * Adds an annotation
-     * @param an
+     * @param an Annotation to add
      */
     void addAnnotation(MElementAnnotation an);
+
+    /**
+     * Adapter to the API-level annotations representation (IElementAnnotation)
+     */
+    default Map<String, IElementAnnotation> asApiAnnotations() {
+        Map<String, IElementAnnotation> map = new HashMap<>();
+        Map<String, MElementAnnotation> all = getAllAnnotations();
+        if (all != null) {
+            for (Map.Entry<String, MElementAnnotation> e : all.entrySet()) {
+                map.put(e.getKey(), e.getValue());
+            }
+        }
+        return map;
+    }
 }

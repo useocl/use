@@ -44,7 +44,8 @@ public abstract class InstanceValue extends Value {
      * Returns the <em>actual</em> type of the object.
      */
     public Type getRuntimeType() {
-        return fInstance.cls();
+        // Adapt instance classifier to a low-level OCL Type via central adapter
+        return org.tzi.use.uml.ocl.type.TypeAdapters.asOclType(fInstance.cls());
     }
 
     @Override

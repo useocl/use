@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author      Mark Richters 
  */
-public class VarDeclList implements Iterable<VarDecl> {
+public class VarDeclList implements org.tzi.use.uml.api.IVarDeclList {
     private List<VarDecl> fVarDecls;
 
     /**
@@ -167,17 +167,35 @@ public class VarDeclList implements Iterable<VarDecl> {
 	}
 	
 	@Override
-	public Iterator<VarDecl> iterator() {
-		return fVarDecls.iterator();
-	}
-	
+	public java.util.Iterator<org.tzi.use.uml.api.IVarDecl> iterator() {
+        final java.util.Iterator<VarDecl> it = fVarDecls.iterator();
+        return new java.util.Iterator<org.tzi.use.uml.api.IVarDecl>() {
+            @Override
+            public boolean hasNext() { return it.hasNext(); }
+
+            @Override
+            public org.tzi.use.uml.api.IVarDecl next() { return it.next(); }
+
+            @Override
+            public void remove() { it.remove(); }
+        };
+    }
+
 
 	/**
 	 * @param v
 	 */
 	public void processWithVisitor(
 			ExpressionVisitor v) {
-		v.visitVarDeclList(this);		
+		v.visitVarDeclList(this);
 	}
-}
 
+    @Override
+    public void add(org.tzi.use.uml.api.IVarDecl decl) {
+        if (decl instanceof VarDecl) {
+            add((VarDecl) decl);
+        } else {
+            throw new IllegalArgumentException("Only VarDecl instances are supported");
+        }
+    }
+}

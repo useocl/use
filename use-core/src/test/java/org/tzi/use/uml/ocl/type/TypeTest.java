@@ -29,11 +29,12 @@ import junit.framework.TestCase;
 
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MDataType;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
@@ -546,14 +547,14 @@ public class TypeTest extends TestCase {
     }
     
     public void testIsTypeOfClass() {
-    	Type type = testClass;
-    	
+    	IType type = testClass;
+
     	assertFalse(type.isTypeOfAssociation());
     	assertFalse(type.isTypeOfBag());
     	assertFalse(type.isTypeOfBoolean());
     	assertFalse(type.isTypeOfCollection());
     	assertFalse(type.isTypeOfEnum());
-    	assertFalse(type.isTypeOfClassifier()); 	
+    	assertFalse(type.isTypeOfClassifier());
     	assertFalse(type.isTypeOfInteger());
     	assertTrue (type.isTypeOfClass());
     	assertFalse(type.isTypeOfDataType());
@@ -569,7 +570,7 @@ public class TypeTest extends TestCase {
     }
     
     public void testIsTypeOfDataType() {
-    	Type type = testDataType;
+    	IType type = testDataType;
 
     	assertFalse(type.isTypeOfAssociation());
     	assertFalse(type.isTypeOfBag());
@@ -592,8 +593,8 @@ public class TypeTest extends TestCase {
     }
 
     public void testIsKindOfClass() {
-    	Type type = testClass;
-    	
+    	IType type = testClass;
+
     	assertFalse(type.isKindOfAssociation(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfBag(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfBoolean(VoidHandling.EXCLUDE_VOID));
@@ -612,7 +613,7 @@ public class TypeTest extends TestCase {
     	assertFalse(type.isKindOfString(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfTupleType(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfUnlimitedNatural(VoidHandling.EXCLUDE_VOID));
-    	
+
     	assertFalse(type.isKindOfAssociation(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfBag(VoidHandling.INCLUDE_VOID));
     	assertFalse(type.isKindOfBoolean(VoidHandling.INCLUDE_VOID));
@@ -634,7 +635,7 @@ public class TypeTest extends TestCase {
     }
     
     public void testIsKindOfDataType() {
-    	Type type = testDataType;
+    	IType type =  testDataType;
 
     	assertFalse(type.isKindOfAssociation(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfBag(VoidHandling.EXCLUDE_VOID));
@@ -741,7 +742,7 @@ public class TypeTest extends TestCase {
     }
     
     public void testIsTypeOfAssociation() {
-    	Type type = testAssociation;
+    	IType type = testAssociation;
     	
     	assertTrue (type.isTypeOfAssociation());
     	assertFalse(type.isTypeOfBag());
@@ -764,7 +765,7 @@ public class TypeTest extends TestCase {
     }
     
     public void testIsKindOfAsociation() {
-    	Type type = testAssociation;
+    	IType type = testAssociation;
     	
     	assertTrue (type.isKindOfAssociation(VoidHandling.EXCLUDE_VOID));
     	assertFalse(type.isKindOfBag(VoidHandling.EXCLUDE_VOID));

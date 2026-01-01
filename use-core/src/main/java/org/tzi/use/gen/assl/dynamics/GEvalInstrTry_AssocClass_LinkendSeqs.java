@@ -41,6 +41,7 @@ import org.tzi.use.gen.assl.statics.GInstrTry_AssocClass_LinkendSeqs;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
@@ -324,7 +325,7 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
 			newObjects[index] = new ObjectValue(association, o);
 			index++;
 		}
-		SetValue result = new SetValue(association, newObjects);
+		SetValue result = new SetValue((Type) association, newObjects);
 		return result;
 	}
     

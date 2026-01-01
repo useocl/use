@@ -58,14 +58,14 @@ public class ASTEnumLiteral extends ASTExpression {
         EnumType t;
         
         if (fEnumType == null) {
-        	t = ctx.model().enumTypeForLiteral(literal);
+        	t = (EnumType) ctx.model().enumTypeForLiteral(literal);
         if (t == null )
             throw new SemanticException(fValue,
                                         "Undefined enumeration literal `" + literal + "'.");
         } else {
         	String enumType = fModelQualifier != null ?
                   fModelQualifier.getText() + '#' + fEnumType.getText() : fEnumType.getText();
-        	t = ctx.model().enumType(enumType);
+        	t = (EnumType) ctx.model().enumType(enumType);
         	
         	if (t == null) {
         		throw new SemanticException(fEnumType,

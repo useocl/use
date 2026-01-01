@@ -57,7 +57,7 @@ public class ASTAssertPre extends ASTAssert {
             throw new SemanticException(operationName, "No operation `" + opname +
                                         "' found in class `" + cls.name() + "'.");
 
-        VarDeclList params = op.paramList();
+        VarDeclList params = (VarDeclList) op.paramList();
         if (params.size() != arguments.size() )
             throw new SemanticException(operationName, 
                                         "Number of arguments does not match declaration of operation `" + 

@@ -31,6 +31,7 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
@@ -72,7 +73,7 @@ public class ASTConstraintDefinition extends AST {
                 throw new SemanticException(fType.getStartToken(), 
                                             "Expected an object type, found `" +
                                             t + "'");
-            MClassifier cf = (MClassifier) t;
+            MClassifier cf = TypeAdapters.asMClassifier(t);
             ctx.setCurrentClassifier(cf);
 
             MClassInvariant inv;

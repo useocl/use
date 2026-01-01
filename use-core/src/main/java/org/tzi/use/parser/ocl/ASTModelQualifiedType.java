@@ -4,6 +4,9 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
+import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IEnumType;
 
 /**
  * Represents an type with a model qualifier in an OCL expression. This class resolves qualified type names
@@ -20,21 +23,33 @@ public class ASTModelQualifiedType extends ASTSimpleType {
 
     public Type gen(Context ctx) throws SemanticException {
         String name = modelQualifier.getText() + "#" + getName().getText();
+        System.err.println("[TRES] ASTModelQualifiedType.gen called: token='" + getName().getText() + "', name='" + name + "', ctx.model=" + (ctx.model()==null?"<null>":ctx.model().name()));
 
-        Type res = ctx.model().enumType(name);
-        if (res != null) {
-            return res;
-        }
+        IEnumType enumType = ctx.model().enumType(name);
+        System.err.println("[TRES] lookup enumType('" + name + "') -> " + (enumType != null));
+         if (enumType != null) {
+             return TypeFactory.mkEnum(enumType.name(), enumType.getLiterals());
+         }
 
-        res = ctx.model().getClassifier(name);
-        if (res != null) {
-            return res;
-        }
+         org.tzi.use.uml.mm.MClassifier mmClf = ctx.model().getClassifier(name);
+        System.err.println("[TRES] lookup classifier('" + name + "') -> " + (mmClf != null));
+        if (mmClf != null) {
+            try {
+                String clfName = mmClf.name();
+                String qn = mmClf.qualifiedName();
+                String mdl = mmClf.model() == null ? "<null>" : mmClf.model().name();
+                System.err.println("[TRES] found classifier details: name='" + clfName + "', qualifiedName='" + qn + "', model='" + mdl + "'");
+            } catch (Exception e) {
+                System.err.println("[TRES] error inspecting mmClf: " + e.getMessage());
+            }
+             return TypeAdapters.asOclType(mmClf);
+         }
 
-        res = ctx.typeTable().lookup(name);
-        if (res != null) {
-            return res;
-        }
-        throw new SemanticException(getName(), "Could not find model qualified type '" + getName().getText() + "'.");
-    }
+        Type res = ctx.typeTable().lookup(name);
+        System.err.println("[TRES] lookup typeTable('" + name + "') -> " + (res != null));
+         if (res != null) {
+             return res;
+         }
+         throw new SemanticException(getName(), "Could not find model qualified type '" + getName().getText() + "'.");
+     }
 }

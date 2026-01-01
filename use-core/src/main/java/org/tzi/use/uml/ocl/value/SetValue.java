@@ -21,8 +21,8 @@ package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.util.StringUtil;
 
 import java.util.Collection;
@@ -39,14 +39,14 @@ import java.util.Set;
  * @author Mark Richters
  */
 public class SetValue extends CollectionValue {
-    private Set<Value> fElements; // (Value)
+    private final Set<Value> fElements; // (Value)
 
     /**
      * Constructs a new empty set.
      */
     public SetValue(Type elemType) {
         super(TypeFactory.mkSet(elemType), elemType);
-        fElements = new HashSet<Value>();
+        fElements = new HashSet<>();
     }
 
     /**
@@ -58,8 +58,9 @@ public class SetValue extends CollectionValue {
      */
     public SetValue(Type elemType, Value[] values) {
         this(elemType);
-        for (int i = 0; i < values.length; i++)
-            add(values[i]);
+        for (Value v : values) {
+            add(v);
+        }
     }
 
     /**
@@ -179,9 +180,7 @@ public class SetValue extends CollectionValue {
             v2 = this;
         }
 
-        Iterator<Value> it = v1.fElements.iterator();
-        while (it.hasNext()) {
-            Value elem = it.next();
+        for (Value elem : v1.fElements) {
             if (v2.includes(elem))
                 res.add(elem);
         }
@@ -202,9 +201,7 @@ public class SetValue extends CollectionValue {
         SetValue res = new SetValue(elementType);
 
         // add elements of this set to result
-        Iterator<Value> it = fElements.iterator();
-        while (it.hasNext()) {
-            Value elem = it.next();
+        for (Value elem : fElements) {
             if (!v.includes(elem))
                 res.add(elem);
         }
@@ -263,9 +260,7 @@ public class SetValue extends CollectionValue {
     }
 
     public boolean includesAll(CollectionValue v) {
-        Iterator<Value> it = v.iterator();
-        while (it.hasNext()) {
-            Value elem = it.next();
+        for (Value elem : v) {
             if (!fElements.contains(elem))
                 return false;
         }
@@ -273,9 +268,7 @@ public class SetValue extends CollectionValue {
     }
 
     public boolean excludesAll(CollectionValue v) {
-        Iterator<Value> it = v.iterator();
-        while (it.hasNext()) {
-            Value elem = it.next();
+        for (Value elem : v) {
             if (fElements.contains(elem))
                 return false;
         }
@@ -294,17 +287,12 @@ public class SetValue extends CollectionValue {
             return this;
 
         SetValue res = new SetValue(getResultElementType(resultType));
-        Iterator<Value> it = fElements.iterator();
-        
-        while (it.hasNext()) {
-        	Value v = it.next();
-        	if (v.isUndefined())
-        		continue;
-        	
-            CollectionValue elem = (CollectionValue)v;
-            Iterator<Value> it2 = elem.iterator();
-            while (it2.hasNext()) {
-                Value elem2 = it2.next();
+        for (Value v : fElements) {
+            if (v.isUndefined())
+                continue;
+
+            CollectionValue elem = (CollectionValue) v;
+            for (Value elem2 : elem) {
                 res.add(elem2);
             }
         }
@@ -326,9 +314,8 @@ public class SetValue extends CollectionValue {
         return fElements.hashCode();
     }
 
-    protected Integer getClassCompareNr()
-    {
-    	return Integer.valueOf(1);
+    protected Integer getClassCompareNr() {
+        return 1;
     }
     
     /**

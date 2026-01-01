@@ -25,7 +25,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.type.MessageType;
+import org.tzi.use.uml.api.IMessageType;
 
 /**
  * Interface for the meta class <code>Signal</code>.
@@ -33,7 +33,7 @@ import org.tzi.use.uml.ocl.type.MessageType;
  *
  */
 public interface MSignal extends MClassifier {
-	
+
 	/**
 	 * UML 2.4.1 p. 466
 	 * The attributes owned by the signal. (Subsets Classifier::attribute, Namespace::ownedMember).
@@ -54,13 +54,13 @@ public interface MSignal extends MClassifier {
 	 * @throws MInvalidModelException If the attribute is not valid, e.g., name collision.
 	 */
 	public void addAttribute(MAttribute attr) throws MInvalidModelException;
-	
+
 	/**
 	 * Returns all attributes including inherited ones.
 	 * @return
 	 */
 	public Set<MAttribute> getAllAttributes();
-	
+
 	/**
 	 * Sets a reference to the model the signal is contained in.
 	 * @param model
@@ -71,15 +71,15 @@ public interface MSignal extends MClassifier {
 	 * @param line
 	 */
 	public void setPositionInModel(int line);
-	
+
 	@Override
 	public Iterable<MSignal> generalizationHierachie(boolean includeThis);
 
 	@Override
 	public Set<MSignal> parents();
-	
+
 	/**
-	 * @return
+	 * @return the message type (API) of the signal
 	 */
-	public MessageType getType();
+	public IMessageType getType();
 }

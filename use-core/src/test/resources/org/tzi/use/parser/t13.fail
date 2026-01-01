@@ -1,2 +1,3 @@
 t13.use:12:2: Source of `exists' expression must be a collection, found source expression of type `Foo'.
 t13.use:15:2: Source of `iterate' expression must be a collection, found source expression of type `Foo'.
+t13.use:18:12: Target type `Bar' is not a subtype of the source expression's type `Foo'.

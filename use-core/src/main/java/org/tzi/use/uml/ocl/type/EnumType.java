@@ -19,69 +19,71 @@
 
 package org.tzi.use.uml.ocl.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import org.tzi.use.uml.api.IElementAnnotation;
+import org.tzi.use.uml.api.IType;
+import org.tzi.use.uml.api.IModel;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MClassifierImpl;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MElementAnnotation;
 
 /**
  * An enumeration type.
  *
  * @author  Mark Richters
  */
-public final class EnumType extends MClassifierImpl {
+public final class EnumType extends MClassifierImpl implements Type, org.tzi.use.uml.api.IEnumType {
     /**
      * list of enumeration literals
      */
-    private List<String> fLiterals;
-    
+    private final List<String> fLiterals;
+
     /**
      * for fast access
      */
-    private Set<String> fLiteralSet;
-    
+    private final Set<String> fLiteralSet;
+
+    /**
+     * optional annotations attached to this enum (key -> MElementAnnotation)
+     */
+    private final Map<String, MElementAnnotation> fAnnotations = new LinkedHashMap<>();
+
     /**
      * Constructs an enumeration type with name and list of literals
      * (String objects). The list of literals is checked for
      * duplicates.
      */
-    protected EnumType(MModel model, String name, List<String> literals) {
-    	super(name, false);
+    EnumType(MModel model, String name, List<String> literals) {
+        super(name, false);
         setModel(model);
-        fLiterals = new ArrayList<String>(literals);
-        fLiteralSet = new HashSet<String>(fLiterals.size());
-        
-        Iterator<String> it = fLiterals.iterator();
-        while (it.hasNext() ) {
-            String lit = it.next();
-            if (! fLiteralSet.add(lit) )
-                throw new IllegalArgumentException("duplicate literal `" +  lit + "'");
+        fLiterals = new ArrayList<>(literals);
+        fLiteralSet = new HashSet<>(fLiterals.size());
+
+        for (String lit : fLiterals) {
+            if (!fLiteralSet.add(lit))
+                throw new IllegalArgumentException("duplicate literal `" + lit + "'");
         }
     }
     
     @Override
     public boolean isTypeOfEnum() {
-    	return true;
+        return true;
     }
     
     @Override
     public boolean isKindOfEnum(VoidHandling h) {
-    	return true;
+        return true;
     }
     
     @Override
-	public boolean isTypeOfClassifier() {
-		return false;
-	}
+    public boolean isTypeOfClassifier() {
+        return false;
+    }
 
-	/** 
+    /**
      * Returns an iterator over the literals.
      */
     public Iterator<String> literals() {
@@ -90,10 +92,11 @@ public final class EnumType extends MClassifierImpl {
 
     /**
      * Returns an unmodifiable list of literals for the enumeration
-     * @return
+     *
+     * @return an unmodifiable list containing the enumeration's literals
      */
     public List<String> getLiterals() {
-    	return Collections.unmodifiableList(fLiterals);
+        return Collections.unmodifiableList(fLiterals);
     }
     
     /** 
@@ -107,8 +110,8 @@ public final class EnumType extends MClassifierImpl {
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     @Override
-    public boolean conformsTo(Type t) {
-        return equals(t) || t.isTypeOfOclAny();
+    public boolean conformsTo(IType type) {
+        return equals(type) || type.isTypeOfOclAny();
     }
 
     /** 
@@ -116,57 +119,110 @@ public final class EnumType extends MClassifierImpl {
      */
     @Override
     public Set<Type> allSupertypes() {
-        Set<Type> res = new HashSet<Type>(2);
+        Set<Type> res = new HashSet<>(2);
         res.add(TypeFactory.mkOclAny());
+        // EnumType implements Type (ocl-level), so 'this' is a valid Type
         res.add(this);
         return res;
     }
 
-    
-	@Override
-	public Set<? extends MClassifier> parents() {
-		return Collections.emptySet();
-	}
+    // --- Minimal ocl.Type implementations so EnumType can be used where a Type is required ---
+    @Override
+    public String shortName() {
+        return name();
+    }
 
-	@Override
-	public Set<? extends MClassifier> allParents() {
-		return Collections.emptySet();
-	}
+    @Override
+    public String qualifiedName() {
+        return model() != null ? model().name() + "#" + name() : name();
+    }
 
-	@Override
-	public Set<? extends MClassifier> allChildren() {
-		return Collections.emptySet();
-	}
+    @Override
+    public Type getLeastCommonSupertype(Type other) {
+        // delegate to IType implementation inherited from MClassifierImpl
+        IType res = getLeastCommonSupertype((IType) other);
+        if (res instanceof Type) {
+            return (Type) res;
+        }
+        return TypeFactory.mkOclAny();
+    }
 
-	@Override
-	public Set<? extends MClassifier> children() {
-		return Collections.emptySet();
-	}
+    public Set<? extends MClassifier> parents() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	public Iterable<? extends MClassifier> generalizationHierachie(boolean includeThis) {
-		// We don't support generalization of enumerations, yet
-		return new Iterable<MClassifier>() {
-			@Override
-			public Iterator<MClassifier> iterator() {
-				return Collections.emptyIterator();
-			}
-		};
-	}
-	
-	@Override
-	public Iterable<? extends MClassifier> specializationHierachie(boolean includeThis) {
-		// We don't support generalization of enumerations, yet
-		return new Iterable<MClassifier>() {
-			@Override
-			public Iterator<MClassifier> iterator() {
-				return Collections.emptyIterator();
-			}
-		};
-	}
+    @Override
+    public Set<? extends MClassifier> allParents() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	public void processWithVisitor(MMVisitor v) {
-		v.visitEnum(this);
-	}
+    @Override
+    public Set<? extends MClassifier> allChildren() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<? extends MClassifier> children() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Iterable<? extends MClassifier> generalizationHierachie(boolean includeThis) {
+        // We don't support generalization of enumerations, yet
+        return () -> Collections.emptyIterator();
+    }
+
+    @Override
+    public Iterable<? extends MClassifier> specializationHierachie(boolean includeThis) {
+        // We don't support generalization of enumerations, yet
+        return () -> Collections.emptyIterator();
+    }
+
+    @Override
+    public void processWithVisitor(MMVisitor v) {
+        v.visitEnum(this);
+    }
+
+    @Override
+    public void setModel(IModel model) {
+        if (model instanceof MModel) {
+            super.setModel((MModel) model);
+        } else {
+            // if model is some other IModel impl, we cannot set internal MModel reference
+            // keep silent to avoid leaking mm into api
+        }
+    }
+
+    /**
+     * Add an annotation coming from API-level (IElementAnnotation). We store mm.MElementAnnotation internally.
+     */
+    @Override
+    public void addAnnotation(IElementAnnotation an) {
+        if (an == null) {
+            return;
+        }
+        if (an instanceof MElementAnnotation mea) {
+            fAnnotations.put(mea.getName(), mea);
+        } else {
+            // convert API annotation into mm representation
+            MElementAnnotation mea = new MElementAnnotation(an.getName(), an.getValues() == null ? Collections.emptyMap() : an.getValues());
+            fAnnotations.put(mea.getName(), mea);
+        }
+    }
+
+    /**
+     * Expose annotations through the API-level map (String -> IElementAnnotation)
+     */
+    @Override
+    public Map<String, org.tzi.use.uml.api.IElementAnnotation> annotations() {
+        if (fAnnotations.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<String, org.tzi.use.uml.api.IElementAnnotation> res = new LinkedHashMap<>();
+        for (Map.Entry<String, MElementAnnotation> e : fAnnotations.entrySet()) {
+            res.put(e.getKey(), e.getValue());
+        }
+        return Collections.unmodifiableMap(res);
+    }
+
 }

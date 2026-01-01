@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IType;
 
 import com.google.common.base.Optional;
 import org.tzi.use.uml.api.IExpression;
@@ -32,7 +32,7 @@ import org.tzi.use.uml.api.IExpression;
  */
 public final class MAttribute extends MModelElementImpl implements UseFileLocatable {
     private MClassifier fOwner;
-    private final Type fType;
+    private final IType fType;
 
     private IExpression deriveExpression = null;
 
@@ -43,7 +43,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     /**
      * Creates an attribute with given name and type.
      */
-    MAttribute(String name, Type type) {
+    MAttribute(String name, IType type) {
         super(name);
         fType = type;
     }
@@ -66,7 +66,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     /**
      * Returns the type of this attribute.
      */
-    public Type type() {
+    public IType type() {
         return fType;
     }
 

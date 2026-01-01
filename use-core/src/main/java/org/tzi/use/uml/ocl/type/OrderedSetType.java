@@ -21,6 +21,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.OrderedSetValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -71,31 +72,27 @@ public final class OrderedSetType extends CollectionType {
     }
     
     @Override
-    public Type getLeastCommonSupertype(Type type)
-    {
-    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
-    		return null;
-    	
-    	if (type.isTypeOfVoidType())
-    		return this;
-    	
-    	CollectionType cType = (CollectionType)type;
-    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
-    	
-    	if (commonElementType == null)
-    		return null;
-    	
-    	if (type.isTypeOfOrderedSet())
-    		return TypeFactory.mkOrderedSet(commonElementType);
-    	else
-    		return TypeFactory.mkCollection(commonElementType);
+    public Type getLeastCommonSupertype(Type type) {
+        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
+            return null;
+
+        if (type.isTypeOfVoidType())
+            return this;
+
+        CollectionType cType = (CollectionType) type;
+        Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
+
+        if (commonElementType == null)
+            return null;
+        else
+            return TypeFactory.mkOrderedSet(commonElementType);
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     @Override
-    public boolean conformsTo(Type t) {
+    public boolean conformsTo(IType t) {
         if (!t.isTypeOfCollection() && !t.isTypeOfOrderedSet())
             return false;
 
@@ -114,7 +111,7 @@ public final class OrderedSetType extends CollectionType {
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();
         res.addAll(super.allSupertypes());
-        Set<? extends Type> elemSuper = elemType().allSupertypes();
+        Set<? extends Type> elemSuper = (Set<? extends Type>) elemType().allSupertypes();
         Iterator<? extends Type> typeIter = elemSuper.iterator();
         
         while (typeIter.hasNext() ) {

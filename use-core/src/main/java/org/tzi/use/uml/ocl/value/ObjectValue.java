@@ -21,6 +21,8 @@ package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 
 /**
  * A value referring to an object.
@@ -32,7 +34,7 @@ public final class ObjectValue extends InstanceValue {
     private final MObject fInstance;
 
     public ObjectValue(MClassifier t, MObject obj) {
-        super(t, obj);
+        super(TypeFactory.mkClassifierType(t), obj);
         fInstance = obj;
     }
 

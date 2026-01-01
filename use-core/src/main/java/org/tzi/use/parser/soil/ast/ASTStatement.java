@@ -26,9 +26,9 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -286,22 +286,52 @@ public abstract class ASTStatement extends AST {
     	SymbolTable symbolTable = new SymbolTable();
     	symbolTable.storeState(Options.explicitVariableDeclarations);
     	// ... parameters and ...
-    	for (VarDecl p : operation.paramList()) {
-    		symbolTable.setType(p.name(), p.type());
+    	for (org.tzi.use.uml.api.IVarDecl p : operation.paramList()) {
+    		// operation.paramList() is IVarDeclList; in parser/sys we need concrete ocl.Type
+    		org.tzi.use.uml.ocl.expr.VarDecl concrete = (org.tzi.use.uml.ocl.expr.VarDecl) p;
+    		symbolTable.setType(p.name(), concrete.type());
     	}
     	if (operation.resultType() != null && Options.explicitVariableDeclarations) {
-        	symbolTable.setType("result", operation.resultType());
+        	// operation.resultType() is an API IType; parser/sys needs concrete ocl.Type -> adapt or cast here
+            org.tzi.use.uml.api.IType apiRes = operation.resultType();
+            org.tzi.use.uml.ocl.type.Type oclRes;
+            if (apiRes instanceof org.tzi.use.uml.ocl.type.Type) {
+                oclRes = (org.tzi.use.uml.ocl.type.Type) apiRes;
+            } else if (apiRes instanceof org.tzi.use.uml.mm.MClassifier) {
+                oclRes = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType((org.tzi.use.uml.mm.MClassifier) apiRes);
+            } else {
+                // conservative fallback to OclAny
+                oclRes = org.tzi.use.uml.ocl.type.TypeFactory.mkOclAny();
+            }
+            symbolTable.setType("result", oclRes);
         }
     	// ... self
-    	symbolTable.setType("self", operation.cls());
-    	
+    	// operation.cls() returns an mm classifier (IType); parser/sys needs concrete ocl.Type -> adapt here
+    	org.tzi.use.uml.ocl.type.Type oclSelfType;
+    	if (operation.cls() instanceof org.tzi.use.uml.ocl.type.Type) {
+            oclSelfType = (org.tzi.use.uml.ocl.type.Type) operation.cls();
+        } else {
+            oclSelfType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(operation.cls());
+        }
+    	symbolTable.setType("self", oclSelfType);
+
     	if (operation.hasResultType()) {
-    		mustBindResultAs(operation.resultType());
+    		// mustBindResultAs expects an ocl.Type; adapt here similarly to above
+            org.tzi.use.uml.api.IType apiRes = operation.resultType();
+            org.tzi.use.uml.ocl.type.Type oclRes2;
+            if (apiRes instanceof org.tzi.use.uml.ocl.type.Type) {
+                oclRes2 = (org.tzi.use.uml.ocl.type.Type) apiRes;
+            } else if (apiRes instanceof org.tzi.use.uml.mm.MClassifier) {
+                oclRes2 = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType((org.tzi.use.uml.mm.MClassifier) apiRes);
+            } else {
+                oclRes2 = org.tzi.use.uml.ocl.type.TypeFactory.mkOclAny();
+            }
+            mustBindResultAs(oclRes2);
     	}
-    	
-    	MStatement result = generateStatement(context, symbolTable);
-    	
-    	return result;
+
+     	MStatement result = generateStatement(context, symbolTable);
+
+     	return result;
 	}
 	
 	
@@ -506,8 +536,20 @@ public abstract class ASTStatement extends AST {
 		
 		validateObjectType(objectExpr);
 		
-		MClass objectClass = (MClass)objectExpr.type();
-		MAttribute attribute = 
+		// Use TypeAdapters to extract an mm MClassifier safely from the OCL Type
+		org.tzi.use.uml.mm.MClassifier mClassifier = org.tzi.use.uml.ocl.type.TypeAdapters.asMClassifier(objectExpr.type());
+		if (mClassifier == null) {
+			throw new CompilationFailedException(this,
+					"Expected an object type that corresponds to a UML class, found type "
+					+ StringUtil.inQuotes(objectExpr.type()) + ".");
+		}
+		if (!(mClassifier instanceof MClass)) {
+			throw new CompilationFailedException(this,
+					"Expected a class type, but found " + StringUtil.inQuotes(mClassifier.getClass().getSimpleName()) + " for type "
+					+ StringUtil.inQuotes(mClassifier) + ".");
+		}
+		MClass objectClass = (MClass) mClassifier;
+		MAttribute attribute =
 			objectClass.attribute(attributeName, true);
 		
 		if (attribute == null) {
@@ -624,7 +666,8 @@ public abstract class ASTStatement extends AST {
 			
 			MRValue participant = participants.get(i).generate(this);
 			
-			Type expectedType = associationEnd.cls();
+			// associationEnd.cls() returns an mm classifier (IType); parser/sys expects concrete ocl.Type -> cast
+			Type expectedType = TypeAdapters.asOclType(associationEnd.cls());
 			Type foundType = participant.getType();
 			
 			if (!foundType.conformsTo(expectedType)) {
@@ -682,7 +725,7 @@ public abstract class ASTStatement extends AST {
 			MOperation operation,
 			List<ASTExpression> arguments) throws CompilationFailedException {
 		
-		VarDeclList parameters = operation.paramList();
+		VarDeclList parameters = (VarDeclList) operation.paramList();
 		
 		int numParameters = parameters.size();
 		int numArguments = arguments.size();
@@ -700,11 +743,11 @@ public abstract class ASTStatement extends AST {
 		Expression[] result = new Expression[numParameters];
 		
 		for (int i = 0; i < numParameters; ++i) {
-			
-			VarDecl parameter = parameters.varDecl(i);
+			org.tzi.use.uml.api.IVarDecl parameter = parameters.varDecl(i);
+			org.tzi.use.uml.ocl.expr.VarDecl concrete = (org.tzi.use.uml.ocl.expr.VarDecl) parameter;
 			Expression argument = generateExpression(arguments.get(i));
 			
-			Type expectedType = parameter.type();
+			Type expectedType = concrete.type();
 			Type foundType = argument.type();
 			
 			if (!foundType.conformsTo(expectedType)) {
@@ -723,3 +766,6 @@ public abstract class ASTStatement extends AST {
 		return result;
 	}
 }
+
+
+

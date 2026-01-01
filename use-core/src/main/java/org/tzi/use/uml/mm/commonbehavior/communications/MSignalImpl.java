@@ -25,12 +25,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.tzi.use.uml.api.IMessageReferent;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClassifierImpl;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.MessageType;
+import org.tzi.use.uml.api.IMessageType;
+import org.tzi.use.uml.api.TypeFactoryProvider;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
@@ -39,7 +41,7 @@ import org.tzi.use.util.collections.CollectionUtil;
  * UML-SS 2.4.1 p. 465 
  * @author Lars Hamann
  */
-public class MSignalImpl extends MClassifierImpl implements MSignal {
+public class MSignalImpl extends MClassifierImpl implements MSignal, IMessageReferent {
 
 	/**
 	 * UML 2.4.1 p. 466
@@ -47,7 +49,7 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 	 * This association end is ordered.
 	 */
 	private Map<String,MAttribute> ownedAttribute = new HashMap<>();
-	
+
 	/**
 	 * Constructs a new signal with the given <code>name</code>.
 	 * @param name
@@ -56,8 +58,8 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 		super(name, isAbstract);
 	}
 
-	public void addAttribute(MAttribute attr) throws MInvalidModelException {		
-		for (MSignal signal : this.generalizationHierachie(true)) {
+	public void addAttribute(MAttribute attr) throws MInvalidModelException {
+		for (MSignal signal : (Iterable<MSignal>) super.generalizationHierachie(true)) {
 			if (signal.getAttribute(attr.name()) != null) {
 				throw new MInvalidModelException("An attribute with name "
 						+ StringUtil.inQuotes(attr.name())
@@ -65,10 +67,10 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 						+ StringUtil.inQuotes(signal.name()) + ".");
 			}
 		}
-		
+
 		this.ownedAttribute.put(attr.name(), attr);
 	}
-	
+
 	@Override
 	public Set<MAttribute> getAttributes() {
 		return new HashSet<>(this.ownedAttribute.values());
@@ -117,22 +119,29 @@ public class MSignalImpl extends MClassifierImpl implements MSignal {
 	}
 
 	@Override
-	public MessageType getType() {
-		return new MessageType(this);
+	public IMessageType getType() {
+		// Delegate creation of message type to API factory to avoid importing ocl types
+		return TypeFactoryProvider.get().mkMessageType(this);
 	}
 
 	@Override
 	public Set<MAttribute> getAllAttributes() {
-		Set<MAttribute> attrs = new HashSet<MAttribute>(getAttributes());
-		for (MSignal parent : generalizationHierachie(false)) {
+		Set<MAttribute> attrs = new HashSet<>(getAttributes());
+		for (MSignal parent : (Iterable<MSignal>) super.generalizationHierachie(false)) {
 			attrs.addAll(parent.getAttributes());
 		}
-		
+
 		return attrs;
 	}
 
 	@Override
 	public Map<String, MNavigableElement> navigableEnds() {
 		return Collections.emptyMap();
+	}
+
+	// IMessageReferent implementations
+	@Override
+	public String name() {
+		return super.name();
 	}
 }

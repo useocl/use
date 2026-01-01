@@ -60,7 +60,7 @@ public class GInstrCreate_AC implements GValueInstruction {
     
     @Override
     public Type type() {
-        return associationClass;
+        return (Type) associationClass;
     }
     
     public String toString() {

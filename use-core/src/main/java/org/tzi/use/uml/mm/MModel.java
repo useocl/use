@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * @author Mark Richters
  * @author Lars Hamann
  */
-public class MModel extends MModelElementImpl {
+public class MModel extends MModelElementImpl implements org.tzi.use.uml.api.IModel {
 
 	/**
 	 * This map keeps track of the numbering of "unnamed" named model elements,
@@ -55,7 +55,7 @@ public class MModel extends MModelElementImpl {
 		int fInt = 1;
 	}
 
-	private final Map<String, EnumType> fEnumTypes;
+    private final Map<String, IEnumType> fEnumTypes;
 
 	private final Map<String, MDataType> fDataTypes;
 
@@ -99,8 +99,13 @@ public class MModel extends MModelElementImpl {
 	 * May be empty if model is not constructed from a file.
 	 */
 	public String filename() {
-		return fFilename;
-	}
+         return fFilename;
+     }
+
+   @Override
+    public String name() {
+       return super.name();
+    }
 
 	/**
 	 * Adds a class. The class must have a unique name within the model.
@@ -541,64 +546,62 @@ public class MModel extends MModelElementImpl {
 	 * @exception MInvalidModelException
 	 *                model already contains an element with same name.
 	 */
-	public void addEnumType(EnumType e) throws MInvalidModelException {
-		if (fEnumTypes.containsKey(e.name()))
-			throw new MInvalidModelException("Model already contains a type `"
-					+ e.name() + "'.");
-		fEnumTypes.put(e.name(), e);
-		e.setModel(this);
-	}
+	public void addEnumType(IEnumType e) throws MInvalidModelException {
+        if (fEnumTypes.containsKey(e.name()))
+            throw new MInvalidModelException("Model already contains a type `" + e.name() + "'.");
+        fEnumTypes.put(e.name(), e);
+        e.setModel(this);
+    }
 
-	/**
-	 * Returns an enumeration type by name.
-	 * 
-	 * @return null if enumeration type does not exist.
-	 */
-	public EnumType enumType(String name) {
-		EnumType enumType = fEnumTypes.get(name);
-		if (enumType != null) {
-			return enumType;
-		}
+     /**
+      * Returns an enumeration type by name.
+      *
+      * @return null if enumeration type does not exist.
+      */
+    public IEnumType enumType(String name) {
+         IEnumType enumType = fEnumTypes.get(name);
+         if (enumType != null) {
+             return enumType;
+         }
 
-		// Check direct imports
-		for (MImportedModel importedModel: importedModels.values()) {
-			enumType = importedModel.getEnumType(name);
-			if (enumType != null) {
-				return enumType;
-			}
-		}
-		return null;
-	}
+         // Check direct imports
+         for (MImportedModel importedModel: importedModels.values()) {
+             IEnumType et = importedModel.getEnumType(name);
+             if (et != null) {
+                 return et;
+             }
+         }
+         return null;
+     }
 
-	/**
-	 * Returns an enumeration type for a given literal.
-	 * 
-	 * @return null if enumeration type does not exist.
-	 */
-	public EnumType enumTypeForLiteral(String literal) {
-
-        for (EnumType t : fEnumTypes.values()) {
+     /**
+      * Returns an enumeration type for a given literal.
+      *
+      * @return null if enumeration type does not exist.
+      */
+    public IEnumType enumTypeForLiteral(String literal) {
+        for (IEnumType t : fEnumTypes.values()) {
             if (t.contains(literal))
                 return t;
         }
 
-		return null;
-	}
+        return null;
+     }
 
-	/**
-	 * Returns a set of all enumeration types.
-	 */
-	public Set<EnumType> enumTypes() {
+     /**
+      * Returns a set of all enumeration types.
+      */
+    public Set<IEnumType> enumTypes() {
         return new HashSet<>(fEnumTypes.values());
-	}
+    }
 
-	public Set<EnumType> getEnumTypesIncludingImports() {
-		Set<EnumType> enumTypes = new HashSet<>(fEnumTypes.values());
-		for (MImportedModel importedModel : importedModels.values()) {
-			enumTypes.addAll(importedModel.getEnumTypes());
-		}
-		return enumTypes;
-	}
+     public Set<IEnumType> getEnumTypesIncludingImports() {
+        Set<IEnumType> enumTypes = new HashSet<>(fEnumTypes.values());
+        for (MImportedModel importedModel : importedModels.values()) {
+            enumTypes.addAll(importedModel.getEnumTypes());
+        }
+        return enumTypes;
+     }
 
 	/**
 	 * Adds a class invariant. The class + invariant name must have a unique

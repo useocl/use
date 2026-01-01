@@ -28,8 +28,9 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -62,17 +63,25 @@ public class ASTInvariantClause extends ASTAnnotatable {
         MClassInvariant inv = null;
         
         try {
-            if (varTokens != null && varTokens.size() > 0) {                
-            	for (Token var : varTokens) {
-            		vars.add(var, cf);
-            		ctx.exprContext().push(var.getText(), cf);
-            		varNames.add(var.getText());
-            	}
+            Type ctxType;
+            if (cf instanceof Type) {
+                ctxType = (Type) cf;
             } else {
-                // create pseudo-variable "self"
-                vars.add("self", cf, null);
-                ctx.exprContext().push("self", cf);
-                varNames.add("self");
+                // wrap meta-model classifier into OCL Type
+                ctxType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType((MClassifier) cf);
+            }
+
+            if (varTokens != null && varTokens.size() > 0) {
+             for (Token var : varTokens) {
+                    vars.add(var, ctxType);
+                    ctx.exprContext().push(var.getText(), ctxType);
+                     varNames.add(var.getText());
+             }
+            } else {
+                 // create pseudo-variable "self"
+                vars.add("self", ctxType, null);
+                ctx.exprContext().push("self", ctxType);
+                 varNames.add("self");
             }
 
             Expression expr = fExpr.gen(ctx);
@@ -95,20 +104,20 @@ public class ASTInvariantClause extends ASTAnnotatable {
             }
         } catch (MInvalidModelException ex) {
             ctx.reportError(fExpr.getStartToken(), ex);
-        } catch (ExpInvalidException ex) {
+        } catch (InvariantExpressionException ex) {
             ctx.reportError(fExpr.getStartToken(), ex);
         } catch (SemanticException ex) {
             ctx.reportError(ex);
         }
-        vars.exitScope(); 
+        vars.exitScope();
         ctx.exprContext().pop();
         return inv;
     }
 
 	protected MClassInvariant onCreateMClassInvariant(Context ctx, MClassifier cf,
 			List<String> varNames, Expression expr, String invName)
-			throws ExpInvalidException {
-		MClassInvariant inv = 
+			throws InvariantExpressionException {
+		MClassInvariant inv =
 		    ctx.modelFactory().createClassInvariant(invName, varNames, cf, expr, false);
 		return inv;
 	}

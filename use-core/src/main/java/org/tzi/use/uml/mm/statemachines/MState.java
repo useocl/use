@@ -18,7 +18,7 @@
  */
 package org.tzi.use.uml.mm.statemachines;
 
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.api.IExpression;
 
 /**
  * A state models a situation during which some (usually implicit) invariant condition holds.
@@ -37,24 +37,24 @@ public class MState extends MVertex {
 	}
 
 	/**
-	 * Simplified to Expression.
-	 * Specifies conditions that are always true when this state is the current state. 
+	 * Simplified to IExpression.
+	 * Specifies conditions that are always true when this state is the current state.
 	 * In protocol state machines, state invariants are additional conditions to the preconditions 
 	 * of the outgoing transitions, and to the postcondition of the incoming transitions.
 	 */
-	protected Expression stateInvariant;
+	protected IExpression stateInvariant;
 
 	/**
 	 * @return the stateInvariant
 	 */
-	public Expression getStateInvariant() {
+	public IExpression getStateInvariant() {
 		return stateInvariant;
 	}
 
 	/**
 	 * @param stateInvariant the stateInvariant to set
 	 */
-	public void setStateInvariant(Expression stateInvariant) {
+	public void setStateInvariant(IExpression stateInvariant) {
 		this.stateInvariant = stateInvariant;
 	}
 }

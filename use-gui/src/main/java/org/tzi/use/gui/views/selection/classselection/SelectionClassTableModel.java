@@ -141,8 +141,11 @@ public class SelectionClassTableModel extends AbstractTableModel implements Chan
 			});
 			
 			sortedNodes.addAll(classDiagram.getSystem().model().classes());
-			sortedNodes.addAll(classDiagram.getSystem().model().enumTypes());
-		
+			// enumTypes() returns API-level IEnumType; cast each element to MClassifier (concrete EnumType implements MClassifier)
+			for (org.tzi.use.uml.api.IEnumType et : classDiagram.getSystem().model().enumTypes()) {
+				sortedNodes.add((MClassifier) et);
+			}
+
 			for(MClassifier cf : sortedNodes) {
 				PlaceableNode node = visibleData.getNode(cf);
 				boolean selected = classDiagram.getNodeSelection().isSelected(node); 

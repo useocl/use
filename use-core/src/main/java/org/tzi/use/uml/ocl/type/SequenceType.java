@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.SequenceValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -70,22 +71,19 @@ public final class SequenceType extends CollectionType {
 
     public Type getLeastCommonSupertype(Type type)
     {
-    	if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
-    		return null;
-    	
-    	if (type.isTypeOfVoidType())
-    		return this;
-    	
-    	CollectionType cType = (CollectionType)type;
-    	Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
-    	
-    	if (commonElementType == null) 
-    		return null;
-    	
-    	if (type.isTypeOfSequence())
-    		return TypeFactory.mkSequence(commonElementType);
-    	else
-    		return TypeFactory.mkCollection(commonElementType);
+        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
+            return null;
+
+        if (type.isTypeOfVoidType())
+            return this;
+
+        CollectionType cType = (CollectionType)type;
+        Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
+
+        if (commonElementType == null)
+            return null;
+        else
+            return TypeFactory.mkSequence(commonElementType);
     }
     
     /** 
@@ -110,7 +108,7 @@ public final class SequenceType extends CollectionType {
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();
         res.addAll(super.allSupertypes());
-        Set<? extends Type> elemSuper = elemType().allSupertypes();
+        Set<? extends Type> elemSuper = (Set<? extends Type>) elemType().allSupertypes();
         Iterator<? extends Type> typeIter = elemSuper.iterator();
         
         while (typeIter.hasNext() ) {

@@ -19,23 +19,25 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.uml.api.InvariantExpressionException;
+
 /**
  * Signals the attempt to construct an ill-formed expression.
  *
  * @author      Mark Richters 
  */
-public class ExpInvalidException extends Exception {
+public class ExpInvalidException extends InvariantExpressionException {
 
-	/**
-	 * To get rid of the warning...
-	 */
-	private static final long serialVersionUID = 1L;
+ 	/**
+ 	 * To get rid of the warning...
+ 	 */
+ 	private static final long serialVersionUID = 1L;
 
-	public ExpInvalidException() {
-        super();
-    }
+ 	public ExpInvalidException() {
+ 	    super();
+ 	}
 
-    public ExpInvalidException(String s) {
-        super(s);
-    }
-}
+ 	public ExpInvalidException(String s) {
+ 	    super(s);
+ 	}
+ }

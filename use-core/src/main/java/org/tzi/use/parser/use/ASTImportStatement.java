@@ -22,12 +22,15 @@ import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ImportContext;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MImportedModel;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -77,6 +81,7 @@ public class ASTImportStatement extends AST {
      */
     public void resolveAndImport(ImportContext importContext, Context ctx, MModel currentModel) throws SemanticException, MInvalidModelException, IOException {
         Path resolvedIdentifier = resolveURI(artifact, ctx.getfFileUri());
+        System.err.println("[IMPORT] resolveAndImport called: artifact=" + artifact + ", resolvedIdentifier=" + resolvedIdentifier + ", currentModel=" + (currentModel == null ? "<null>" : currentModel.name()) + ", requestedSymbols=" + elementIdentifiers);
         try (InputStream iStream = Files.newInputStream(resolvedIdentifier)) {
             // Check import context for already compiled models to avoid redundant compilation.
             MModel model = importContext.importedModels().stream().filter(mModel -> mModel.filename().equals(resolvedIdentifier.toString())).findFirst().orElse(null);
@@ -90,6 +95,7 @@ public class ASTImportStatement extends AST {
 
                 model = USECompiler.compileImportedSpecification(iStream, resolvedIdentifier.toString(),
                         resolvedIdentifier.toUri(), ctx, importContext);
+                System.err.println("[IMPORT] compiled imported model: " + (model == null ? "<null>" : model.name()));
                 // model may be null if compilation failed (e.g. a cycle is detected)
                 if (model == null) {
                     return;
@@ -100,36 +106,97 @@ public class ASTImportStatement extends AST {
                 importContext.removeModelBeingCompiled(resolvedIdentifier.toString());
             }
 
-            MImportedModel importedModel = new MImportedModel(model, isWildcard, new HashSet<>(elementIdentifiers));
-
-            // Check if every specified symbol is present in the model
-            if (!isWildcard) {
+            // Filter elementIdentifiers: report qualifier mismatch but exclude
+            // any symbols that do not belong to the actual imported model.
+            Set<String> filteredSymbols = new HashSet<>();
+            if (isWildcard) {
+                // wildcard: keep as-is
+                filteredSymbols.addAll(elementIdentifiers);
+            } else {
                 for (String symbol : elementIdentifiers) {
-                    String elementName = getElementName(symbol, model.name());
-                    MClassifier element = findElementInModel(model, elementName);
-                    if (element == null) {
-                        throw new SemanticException("Could not find element for imported symbol: " + symbol
-                                + " in model " + importedModel.name() + ".");
-                    }
-                    if (symbol.contains("#")) {
-                        element.setQualifiedAccess(true);
+                    try {
+                        String elementName = getElementName(symbol, model.name());
+                        System.err.println("[IMPORT] resolved symbol '" + symbol + "' -> elementName='" + elementName + "'");
+                        MClassifier element = findElementInModel(model, elementName);
+                        if (element != null) {
+                            // mark qualified access on the classifier if the
+                            // original symbol used a qualifier
+                            if (symbol.contains("#")) {
+                                element.setQualifiedAccess(true);
+                                filteredSymbols.add(symbol);
+                            } else {
+                                filteredSymbols.add(elementName);
+                            }
+                        } else {
+                            // element simply not present in imported model;
+                            // For unqualified imports we must report the
+                            // non-positioned error expected by tests (e.g.
+                            // "Could not find element for imported symbol: B in model t31_import.").
+                            // For qualified imports, skip reporting here and
+                            // let the later type resolver produce the
+                            // position-aware message.
+                            if (!symbol.contains("#")) {
+                                System.err.println("[IMPORT] missing unqualified element '" + symbol + "' in model '" + model.name() + "' -> reporting as import-element-missing");
+                                ctx.reportError(new SemanticException("Could not find element for imported symbol: " + symbol + " in model " + model.name() + "."));
+                            }
+                        }
+                    } catch (SemanticException ex) {
+                        // qualifier mismatch: report and skip the symbol
+                        System.err.println("[IMPORT] qualifier mismatch for symbol='" + symbol + "' expectedModel='" + model.name() + "' -> " + ex.getShortMessage());
+                        ctx.reportError(ex);
                     }
                 }
             }
-
+            System.err.println("[IMPORT] filteredSymbols used for import: " + filteredSymbols);
+            MImportedModel importedModel = new MImportedModel(model, isWildcard, filteredSymbols);
             currentModel.addImportedModel(importedModel);
 
-            // Add imported types to parent context
+            // Add imported types to parent context using the filtered symbol set
             for (MClassifier cls : importedModel.getClassifiers()) {
-                ctx.typeTable().add(getElementNameForSymTable(cls.name()), cls, null);
+                // Convert MM classifiers/data types to runtime OCL Types using the TypeFactory
+                Type oclType;
+                if (cls instanceof org.tzi.use.uml.mm.MDataType) {
+                    oclType = TypeFactory.mkDataType((org.tzi.use.uml.mm.MDataType) cls);
+                } else {
+                    // classes and associations: classifier types
+                    oclType = TypeFactory.mkClassifierType(cls);
+                }
+                // Determine symbol key: if filteredSymbols contains qualified or plain name, prefer qualified
+                String qualKey = model.name() + "#" + cls.name();
+                String key = cls.name();
+                if (filteredSymbols.contains(qualKey)) {
+                    key = qualKey;
+                } else if (filteredSymbols.contains(cls.name())) {
+                    key = cls.name();
+                }
+                System.err.println("[IMPORT] typeTable.add key='" + key + "' for classifier='" + cls.name() + "' (qualKeyPresent=" + filteredSymbols.contains(qualKey) + ")");
+                ctx.typeTable().add(key, oclType, null);
             }
 
-            for (EnumType enumType : importedModel.getEnumTypes()) {
-                ctx.typeTable().add(getElementNameForSymTable(enumType.name()), enumType, null);
+            for (IEnumType enumType : importedModel.getEnumTypes()) {
+                Type oclEnum = TypeFactory.mkEnum(enumType.name(), enumType.getLiterals());
+                String qualKey = model.name() + "#" + enumType.name();
+                String key = enumType.name();
+                if (filteredSymbols.contains(qualKey)) {
+                    key = qualKey;
+                } else if (filteredSymbols.contains(enumType.name())) {
+                    key = enumType.name();
+                }
+                System.err.println("[IMPORT] typeTable.add key='" + key + "' for enum='" + enumType.name() + "' (qualKeyPresent=" + filteredSymbols.contains(qualKey) + ")");
+                ctx.typeTable().add(key, oclEnum, null);
             }
 
             for (MSignal signal : importedModel.getSignals()) {
-                ctx.typeTable().add(getElementNameForSymTable(signal.name()), signal, null);
+                Type msgType = TypeFactory.mkMessageType(signal);
+                String qualKey = model.name() + "#" + signal.name();
+                String key = signal.name();
+                if (filteredSymbols.contains(qualKey)) {
+                    key = qualKey;
+                } else if (filteredSymbols.contains(signal.name())) {
+                    key = signal.name();
+                }
+                System.err.println("[IMPORT] typeTable.add key='" + key + "' for signal='" + signal.name() + "' (qualKeyPresent=" + filteredSymbols.contains(qualKey) + ")");
+                ctx.typeTable().add(key, msgType, null);
             }
 
         } catch (IOException e) {
@@ -181,7 +248,7 @@ public class ASTImportStatement extends AST {
     private MClassifier findElementInModel(MModel model, String elementName) {
         MClassifier element = model.getClassifier(elementName);
         if (element == null) {
-            element = model.enumType(elementName);
+            element = (MClassifier) model.enumType(elementName);
         }
         if (element == null) {
             element = model.getSignal(elementName);

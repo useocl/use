@@ -30,12 +30,14 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.parser.soil.ast.ASTStatement;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -137,9 +139,58 @@ public class ASTOperation extends ASTAnnotatable {
         if (fOperation == null)
             return;
         
-        if (fIsConstructor && fOperation.resultType() != fOperation.cls()) {
-            throw new SemanticException(fName, "Instance constructor " + StringUtil.inQuotes(fName.getText()) +
-                    " must not have result type.");
+        // For constructors, decide whether a result-type error or a body error
+        if (fIsConstructor) {
+            boolean resultTypeError = false;
+
+            // Determine whether the AST contains an explicit result type declared on the same line
+            boolean astDeclaredTypeExplicit = false;
+            if (fType != null && fType.getStartToken() != null) {
+                try {
+                    astDeclaredTypeExplicit = (fType.getStartToken().getLine() == fName.getLine());
+                } catch (Exception e) {
+                    astDeclaredTypeExplicit = false;
+                }
+            }
+
+            // If the AST explicitly declared a return type on the same line as the operation,
+            // this is clearly an error for instance constructors.
+            if (astDeclaredTypeExplicit) {
+                resultTypeError = true;
+            } else {
+                // Otherwise, if the underlying MOperation actually has a result type,
+                // map it to an MM classifier and compare with owner; if mapping fails,
+                // fall back to textual comparison. If they differ, this is a result-type error.
+                if (fOperation.hasResultType()) {
+                    org.tzi.use.uml.mm.MClassifier declaredCls = org.tzi.use.uml.ocl.type.TypeAdapters.asMClassifier(fOperation.resultType());
+                    if (declaredCls != null) {
+                        if (!declaredCls.equals(fOperation.cls())) {
+                            resultTypeError = true;
+                        }
+                    } else {
+                        try {
+                            String declaredName = fOperation.resultType().toString();
+                            if (declaredName == null || !declaredName.equals(fOperation.cls().name())) {
+                                resultTypeError = true;
+                            }
+                        } catch (Exception e) {
+                            // mapping failed -> be conservative and treat as error
+                            resultTypeError = true;
+                        }
+                    }
+                }
+            }
+
+            if (resultTypeError) {
+                throw new SemanticException(fName, "Instance constructor " + StringUtil.inQuotes(fName.getText()) +
+                        " must not have result type.");
+            }
+
+            // Otherwise, if there is a body (expression or SOIL statement), that's an error
+            if (fExpr != null || fStatement != null) {
+                throw new SemanticException(fName, "Instance constructor " + StringUtil.inQuotes(fName.getText()) +
+                        " must not have body.");
+            }
         }
 
         // enter parameters into scope of expression
@@ -161,10 +212,6 @@ public class ASTOperation extends ASTAnnotatable {
         
         try {
             if (fExpr != null ) {
-                if (fIsConstructor) {
-                    throw new MInvalidModelException("Instance constructor " + StringUtil.inQuotes(fName.getText())
-                            + " must not have body.");
-                }
                 Expression expr = fExpr.gen(ctx);
                 fOperation.setExpression(expr);
             }

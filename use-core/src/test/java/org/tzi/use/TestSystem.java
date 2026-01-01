@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -34,11 +35,11 @@ import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
 import org.tzi.use.uml.ocl.expr.ExpConstString;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.sys.MSystem;
@@ -58,14 +59,14 @@ public class TestSystem {
 
 	private MSystem fSystem;
 
-	public TestSystem() throws MSystemException, MInvalidModelException, ExpInvalidException {
+	public TestSystem() throws MSystemException, MInvalidModelException, InvariantExpressionException {
 		init();
 	}
 	
 	
 	/**
 	 * Resets the state of the test system.
-	 * @throws MSystemException 
+	 * @throws MSystemException if resetting the system fails
 	 */
 	public void reset() throws MSystemException {
 		fSystem.reset();
@@ -145,10 +146,9 @@ public class TestSystem {
 	 * <code>
 	 * a1 between (o3, o4)
 	 * </code>
-	 * @throws ExpInvalidException 
-	 * @throws Exception if something can't be generated
+	 * @throws InvariantExpressionException if invariant expressions are invalid
 	 */
-	private void init() throws MSystemException, MInvalidModelException, ExpInvalidException {
+	private void init() throws MSystemException, MInvalidModelException, InvariantExpressionException {
 		ModelFactory factory = new ModelFactory();
 		MModel model = factory.createModel("testModel");
 		
@@ -241,10 +241,10 @@ public class TestSystem {
 				null);
 		
 		op8.setStatement(new MObjectOperationCallStatement(
-				new ExpVariable("self", c1), 
+				new ExpVariable("self", org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(c1)),
 				op7, new Expression[0]));
-		
-	
+
+
 		c1.addOperation(op8);
 		
 		//////////////
@@ -324,8 +324,12 @@ public class TestSystem {
 		
 		varEnv.assign("v", IntegerValue.valueOf(42));
 		
+		MAssociation assoc = getModel().getAssociation("A1");
+		if (assoc == null) {
+			throw new MSystemException("Association A1 not found in model");
+		}
 		state.createLink(
-				getModel().getAssociation("A1"),
+				assoc,
 				Arrays.asList(state.objectByName("O3"),
 						state.objectByName("O4")), null);
 		

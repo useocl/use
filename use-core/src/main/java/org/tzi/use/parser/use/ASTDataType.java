@@ -25,6 +25,7 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -52,7 +53,7 @@ public class ASTDataType extends ASTClassifier {
         fDataType.setPositionInModel(fName.getLine());
         this.genAnnotations(fDataType);
         // makes sure we have a unique data type name
-        ctx.typeTable().add(fName, fDataType);
+        ctx.typeTable().add(fName, TypeFactory.mkDataType(fDataType));
         return fDataType;
     }
 
@@ -161,11 +162,11 @@ public class ASTDataType extends ASTClassifier {
         ctx.setCurrentClassifier(fDataType);
 
         // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push("self", fDataType);
+        ctx.exprContext().push("self", TypeFactory.mkDataType(fDataType));
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add("self", fDataType, null);
+            vars.add("self", TypeFactory.mkDataType(fDataType), null);
         } catch (SemanticException ex) {
             // fatal error?
             throw new Error(ex);
@@ -202,11 +203,11 @@ public class ASTDataType extends ASTClassifier {
         ctx.setCurrentClassifier(fDataType);
 
         // enter pseudo-variable "self" into scope of expressions
-        ctx.exprContext().push("self", fDataType);
+        ctx.exprContext().push("self", TypeFactory.mkDataType(fDataType));
         Symtable vars = ctx.varTable();
         vars.enterScope();
         try {
-            vars.add("self", fDataType, null);
+            vars.add("self", TypeFactory.mkDataType(fDataType), null);
         } catch (SemanticException ex) {
             // fatal error?
             throw new Error(ex);

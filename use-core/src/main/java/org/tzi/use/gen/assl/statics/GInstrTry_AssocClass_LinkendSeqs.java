@@ -76,6 +76,6 @@ public class GInstrTry_AssocClass_LinkendSeqs extends GInstrTry implements GValu
 
 	@Override
 	public Type type() {
-		return TypeFactory.mkSet(fAssociationClass);
+		return TypeFactory.mkSet((Type) fAssociationClass);
 	}
 }

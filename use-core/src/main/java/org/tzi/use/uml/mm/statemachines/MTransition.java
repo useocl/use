@@ -20,7 +20,7 @@ package org.tzi.use.uml.mm.statemachines;
 
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.commonbehavior.communications.MTrigger;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.api.IExpression;
 
 /**
  * A transition is a directed relationship between a source vertex and a target vertex. 
@@ -59,15 +59,10 @@ public class MTransition implements MNamedElement {
 	protected MTrigger trigger;
 	
 	/**
-	 * Simplified to Expression.
-	 * 
-	 * A guard is a constraint that provides a fine-grained control over the firing of the transition. 
-	 * The guard is evaluated when an event occurrence is dispatched by the state machine. 
-	 * If the guard is true at that time, the transition may be enabled; otherwise, it is disabled. 
-	 * Guards should be pure expressions without side effects. Guard expressions with side effects are ill-formed.
+	 * Guard as API-Expression.
 	 */
-	protected Expression guard;
-	
+	protected IExpression guard;
+
 	
 	/**
 	 * @param sourceV
@@ -151,7 +146,7 @@ public class MTransition implements MNamedElement {
 	/**
 	 * @return the guard
 	 */
-	public Expression getGuard() {
+	public IExpression getGuard() {
 		return guard;
 	}
 
@@ -159,7 +154,7 @@ public class MTransition implements MNamedElement {
 	/**
 	 * @param guard the guard to set
 	 */
-	public void setGuard(Expression guard) {
+	public void setGuard(IExpression guard) {
 		this.guard = guard;
 	}
 

@@ -32,6 +32,7 @@ import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MVertex;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -109,8 +110,14 @@ public class ASTStateDefinition extends AST {
 
         try {
             // create pseudo-variable "self"
-            vars.add("self", cf, null);
-            ctx.exprContext().push("self", cf);
+            Type selfType;
+            if (cf instanceof Type) {
+                selfType = (Type) cf;
+            } else {
+                selfType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(cf);
+            }
+            vars.add("self", selfType, null);
+            ctx.exprContext().push("self", selfType);
 
             conditionExp = stateInvariant.gen(ctx);
                         

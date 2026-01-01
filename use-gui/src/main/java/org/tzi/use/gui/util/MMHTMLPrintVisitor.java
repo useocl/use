@@ -43,7 +43,6 @@ public class MMHTMLPrintVisitor extends MMPrintVisitor {
         super(out);
     }
 
-    @Override
     protected ExpressionVisitor createExpressionVisitor() {
     	return new GenerateHTMLExpressionVisitor(fOut);
     }
@@ -107,15 +106,14 @@ public class MMHTMLPrintVisitor extends MMPrintVisitor {
 		return ModelBrowserSorting.getInstance().sortOperations(c.operations());
     }
     
-    @Override
     protected String getStatementVisitorString(MStatement statement) {
     	String visitorString = super.getStatementVisitorString(statement);
     	
     	String result = 
     		visitorString.
-    		replaceAll("\n", "<br>").
-    		replaceAll("\\s", "&nbsp;");
-    	
+    		replaceAll("\\n", "<br>").
+    		replaceAll("\\\\s", "&nbsp;");
+
     	return result; 
     }
 }

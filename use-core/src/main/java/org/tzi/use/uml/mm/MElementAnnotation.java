@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IElementAnnotation;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,8 +30,8 @@ import java.util.Map;
  * @author Lars Hamann
  *
  */
-public class MElementAnnotation {
-	
+public class MElementAnnotation implements IElementAnnotation {
+
 	private String name;
 	
 	private Map<String, String> annotationValues;
@@ -56,6 +58,7 @@ public class MElementAnnotation {
 	 * The name of the annotation
 	 * @return The name of the annotation.
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -65,6 +68,7 @@ public class MElementAnnotation {
 	 * The returned <code>Map</code> is immutable.
 	 * @return An <code>UnmodifiableMap</code> which contains information defined for this annotation.
 	 */
+	@Override
 	public Map<String, String> getValues() {
 		return this.annotationValues;
 	}

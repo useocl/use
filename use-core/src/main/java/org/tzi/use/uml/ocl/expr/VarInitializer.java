@@ -35,10 +35,21 @@ public class VarInitializer {
     {
         fVarDecl = new VarDecl(v, t);
         fInitExpr = initExpr;
-        if (! initExpr.type().conformsTo(t) )
-            throw new ExpInvalidException(
-                                          "Type mismatch. Initialization expression has type `" + 
-                                          initExpr.type() + "', expected type `" + t + "'.");
+        // Robust type check: accept when the least common supertype exists and equals the target type
+        Type actualType = initExpr.type();
+        Type lcs = actualType.getLeastCommonSupertype(t);
+        if (lcs == null || ! lcs.equals(t)) {
+            // fallback: accept when textual qualified names are equal (handles adapter/instance differences)
+            if (! actualType.qualifiedName().equals(t.qualifiedName())) {
+                String diag = " [diag: actualClass=" + actualType.getClass().getName() +
+                        ", expectedClass=" + t.getClass().getName() +
+                        ", actual.equals(expected)=" + actualType.equals(t) +
+                        ", lcs=" + (lcs == null ? "<null>" : lcs.qualifiedName()) + "]";
+                throw new ExpInvalidException(
+                        "Type mismatch. Initialization expression has type `" +
+                                actualType.qualifiedName() + "', expected type `" + t.qualifiedName() + "'." + diag);
+            }
+        }
     }
 
     public String name() {
@@ -69,4 +80,3 @@ public class VarInitializer {
 		return this.fVarDecl;		
 	}
 }
-

@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.StringValue;

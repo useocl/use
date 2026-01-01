@@ -22,13 +22,14 @@ package org.tzi.use.uml.ocl.expr;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IVarDecl;
 
 /** 
  * A Variable declaration associates a variable name with a type.
  *
  * @author      Mark Richters
  */
-public class VarDecl {
+public class VarDecl implements IVarDecl {
     private String fVar;
     private Type fType;
     private SrcPos sourcePosition = null;
@@ -105,4 +106,3 @@ public class VarDecl {
 		v.visitVarDecl(this);
 	}
 }
-

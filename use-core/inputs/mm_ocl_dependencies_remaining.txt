@@ -1,0 +1,11 @@
+MAssociationEnd -> org.tzi.use.uml.ocl.type.Type (via MCallEvent, MSignalImpl etc.)
+MOperation -> org.tzi.use.uml.ocl.expr.ExpUndefined (import in MOperation)
+ModelFactory -> org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory (instantiated)
+GeneratorModelFactory -> org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory (instantiated)
+MMInstanceGenerator -> org.tzi.use.uml.ocl.type.EnumType (visitEnum signature)
+MCallEvent -> org.tzi.use.uml.ocl.type.Type (import)
+MSignal -> org.tzi.use.uml.ocl.type.MessageType (import)
+MSignalImpl -> org.tzi.use.uml.ocl.type.MessageType (import)
+
+Note: This list targets direct imports/usages of org.tzi.use.uml.ocl types in the mm package. Use this as basis for creating API interfaces and refactor one dependency at a time according to the DIP rules.
+

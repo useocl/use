@@ -27,6 +27,9 @@ import org.tzi.use.parser.ocl.ASTOperationExpression;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.type.ClassifierType;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.sys.soil.MLibraryOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MOperationCallStatement;
@@ -81,7 +84,29 @@ public class ASTOperationCallStatement extends ASTStatement {
 		objectExpression.setStringRep(fOperationCall.getStringRep());
 		Expression object = generateObjectExpression(objectExpression);
 				
-		MClass objectClass = (MClass)object.type();
+		// Determine the MM-class of the receiver in a robust way.
+		// Due to refactorings the expression type() may return either an OCL
+		// Type (e.g. ClassifierType) or — in some code paths — already an MM
+		// classifier. Handle both to avoid ClassCastException.
+		Object oType = object.type();
+		MClassifier classifier = null;
+		if (oType instanceof ClassifierType) {
+			classifier = ((ClassifierType) oType).classifier();
+		} else if (oType instanceof MClassifier) {
+			classifier = (MClassifier) oType;
+		} else if (oType instanceof Type) {
+			// other OCL types are not acceptable here
+			throw new CompilationFailedException(this,
+					"Expected object with classifier type, found " + StringUtil.inQuotes(object.type()) + ".");
+		} else {
+			throw new CompilationFailedException(this,
+					"Expected object with classifier type, found " + StringUtil.inQuotes(object.type()) + ".");
+		}
+		if (!(classifier instanceof MClass)) {
+			throw new CompilationFailedException(this,
+					"Expected object of class type, found " + StringUtil.inQuotes(object.type()) + ".");
+		}
+		MClass objectClass = (MClass) classifier;
 
 		String operationName = operationExpression.getOpToken().getText();
 		

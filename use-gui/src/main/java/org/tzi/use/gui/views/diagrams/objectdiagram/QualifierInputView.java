@@ -110,7 +110,7 @@ public class QualifierInputView extends JDialog {
 			if (end.hasQualifiers()) {
 				String[] qualifierNames = new String[end.getQualifiers().size()];
 				int index2 = 0;
-				for (VarDecl qualifier : end.getQualifiers()) {
+				for (org.tzi.use.uml.api.IVarDecl qualifier : end.getQualifiers()) {
 					qualifierNames[index2++] = qualifier.name();
 				}
 				
@@ -220,13 +220,13 @@ public class QualifierInputView extends JDialog {
 			StringWriter errorOutput = new StringWriter();
 			Expression valueAsExpression = 
 				OCLCompiler.compileExpression(
-						system.model(),
-						system.state(),
-						value, 
-						"<input>", 
-						new PrintWriter(errorOutput, true), 
-						system.varBindings());
-			
+					system.model(),
+					system.state(),
+					value,
+					"<input>",
+					new PrintWriter(errorOutput, true),
+					system.varBindings());
+
 			if (valueAsExpression == null) {
 				JOptionPane.showMessageDialog(
 						this, 

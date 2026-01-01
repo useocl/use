@@ -26,8 +26,11 @@ import java.util.Set;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
+import org.tzi.use.uml.api.IType;
+import org.tzi.use.uml.api.ITypeFactory;
+import org.tzi.use.uml.api.TypeFactoryProvider;
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -40,13 +43,13 @@ import org.tzi.use.util.StringUtil;
  */
 public class MMInstanceGenerator implements MMVisitor {
     protected PrintWriter fOut;
-    private Set<Type> fDataTypes;
+    private Set<IType> fDataTypes;
     private boolean fPass1;
     private String fModelId;
 
     public MMInstanceGenerator(PrintWriter out) {
         fOut = out;
-        fDataTypes = new HashSet<Type>();
+        fDataTypes = new HashSet<IType>();
     }
 
     /**
@@ -246,7 +249,7 @@ public class MMInstanceGenerator implements MMVisitor {
         // create all DataTypes that are required later
         fOut.println("-- DataTypes");
         
-        for (Type t : fDataTypes) {
+        for (IType t : fDataTypes) {
             if (e.getClass(t.toString()) == null ) {
                 String id = t.toString() + "DataType";
                 fOut.println("!create " + id + " : DataType");
@@ -299,11 +302,11 @@ public class MMInstanceGenerator implements MMVisitor {
 
 	@Override
 	public void visitSignal(MSignal mSignalImpl) {
-		//FIXME: implement		
+		//FIXME: implement
 	}
 
 	@Override
-	public void visitEnum(EnumType enumType) {
-		// NoOp		
-	}	
+	public void visitEnum(IEnumType enumType) {
+		// NoOp
+	}
 }

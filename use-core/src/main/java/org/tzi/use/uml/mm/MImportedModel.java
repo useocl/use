@@ -18,8 +18,8 @@
  */
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.uml.api.IEnumType;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
 
 import java.util.Collection;
 import java.util.Set;
@@ -164,8 +164,11 @@ public class MImportedModel extends MModelElementImpl {
      *
      * @return collection of EnumType objects based on filter criteria.
      */
-    public Collection<EnumType> getEnumTypes() {
-        return model.enumTypes().stream().filter(c -> isElementImported(c.name())).toList();
+    public Collection<IEnumType> getEnumTypes() {
+        return model.enumTypes().stream()
+                .filter(c -> isElementImported(c.name()))
+                .map(c -> (IEnumType) c)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -173,7 +176,7 @@ public class MImportedModel extends MModelElementImpl {
      *
      * @return EnumType with the specified name if found, otherwise null
      */
-    public EnumType getEnumType(String name) {
+    public IEnumType getEnumType(String name) {
         if (name.contains("#")) {
             return resolveQualifiedEnumType(name);
         }
@@ -190,8 +193,8 @@ public class MImportedModel extends MModelElementImpl {
      * @param name The qualified name of the data type to resolve, in the format "modelName::datatypeName".
      * @return resolved MDataType object if found, otherwise null.
      */
-    public EnumType resolveQualifiedEnumType(String name) {
-        EnumType res = model.enumTypes().stream()
+    public IEnumType resolveQualifiedEnumType(String name) {
+        IEnumType res = model.enumTypes().stream()
                 .filter(c -> c.qualifiedName().equals(name)).findFirst().orElse(null);
         if (res != null) {
             return res;

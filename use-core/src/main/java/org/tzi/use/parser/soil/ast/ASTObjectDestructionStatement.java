@@ -30,7 +30,7 @@ import org.tzi.use.uml.ocl.expr.ExpCollectionLiteral;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;

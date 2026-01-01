@@ -108,9 +108,13 @@ public final class TypeFactory {
     }
 
     public static MessageType mkMessageType(MSignal signal) {
-		return signal.getType();
-	}
-    
+        return new MessageType(signal);
+    }
+
+    public static Type mkClassifierType(org.tzi.use.uml.mm.MClassifier classifier) {
+        return new ClassifierType(classifier);
+    }
+
     public static OclAnyType mkOclAny() {
         return oclAnyType;
     }
@@ -136,5 +140,18 @@ public final class TypeFactory {
     	else {
     		return null;
     	}
+    }
+
+    /**
+     * Convenience factory method for data types. Keep callers from attempting
+     * unsafe casts from mm implementations to ocl runtime types. Delegates
+     * to mkClassifierType because MDataType is a kind of MClassifier.
+     *
+     * This is a minimal, non-invasive adaptation after the DIP refactoring
+     * so code that needs an OCL `Type` for an `MDataType` can use this
+     * explicit factory method.
+     */
+    public static Type mkDataType(org.tzi.use.uml.mm.MDataType dataType) {
+        return mkClassifierType(dataType);
     }
 }

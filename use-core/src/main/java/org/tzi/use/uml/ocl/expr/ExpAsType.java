@@ -41,7 +41,7 @@ public final class ExpAsType extends Expression {
         super(targetType);
         fSourceExpr = sourceExpr;
 
-        //FIXME diamong generalization hierarchy makes the static type not comparable?
+        //FIXME diamond generalization hierarchy makes the static type not comparable?
         /*
          * class A; class B; class C < A, B
          * A.allInstances()->selectByKind( B ) is allowed and results in all classes that inherit from A and B

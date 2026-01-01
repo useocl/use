@@ -273,3 +273,4 @@ public class MDataTypeImpl extends MClassifierImpl implements MDataType {
         v.visitDataType(this);
     }
 }
+

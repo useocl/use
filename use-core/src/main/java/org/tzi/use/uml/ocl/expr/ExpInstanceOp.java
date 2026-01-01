@@ -2,6 +2,8 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.Value;
 
 /**
@@ -20,7 +22,7 @@ public abstract class ExpInstanceOp extends Expression {
     protected final MClassifier fClassifier;
 
     public ExpInstanceOp(MOperation op, Expression[] args) {
-        super(op.resultType());
+        super(TypeAdapters.asOclType(op.resultType()));
         fOp = op;
         fArgs = args;
         fClassifier = op.cls();

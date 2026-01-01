@@ -20,136 +20,37 @@
 package org.tzi.use.uml.ocl.type;
 
 import org.tzi.use.util.BufferedToString;
-
-import java.util.Set;
+import org.tzi.use.uml.api.IType;
 
 /**
- * 
- * @author Lars Hamann
- *
+ * Low-level OCL Type. Implements the API-level IType; this interface only adds
+ * ocl-specific helpers not required by the mm layer.
  */
-public interface Type extends BufferedToString {
-	
-	public enum VoidHandling {
-		INCLUDE_VOID,
-		EXCLUDE_VOID
-	}
-	
-	/** 
-     * Overwrite this method to return a short printable name of
-     * a type (e.g. 'Set(...)') rather than a full type name.
+public interface Type extends IType, BufferedToString {
+
+    /**
+     * Return a short printable name (e.g. 'Set(...)').
      */
-	String shortName();
+    String shortName();
 
-  /**
-   * Overwrite this method to return a qualified name (modelName#typeName) for
-   * user-generated types that are part of a model.
-   */
-  String qualifiedName();
-
-	/**
-	 * The query conformsTo() gives true for a type that conforms to another. By
-	 * default, two types do not conform to each other. This query is intended
-	 * to be redefined for specific conformance situations. UML 2.4.1 p. 138
-	 * 
-	 * @param other
-	 * @return
-	 */
-	boolean conformsTo(Type other);
-
-	/** 
-     * Returns the set of all super types (including this type).
+    /**
+     * Qualified name for model-created types.
      */
-	Set<? extends Type> allSupertypes();
+    String qualifiedName();
 
-	/**
-     * Returns the least common super type of this type and the the given type.
-     * @param other
-     * @return
+    /**
+     * ocl-specific overload returning an ocl Type as common supertype.
      */
-	Type getLeastCommonSupertype(Type other);
-	
-	/**
-	 * @return Whether this type is OclVoid or an collection type 
-	 * having a void element type (recursively)
-	 */
-	boolean isVoidOrElementTypeIsVoid();
-	
-	// The following set of functions is used to 
-    // avoids numerous instanceof tests in user code.
-    // Corresponding sub types override these methods and return true.
-	
-	boolean isKindOfNumber(VoidHandling h);
+    Type getLeastCommonSupertype(Type other);
 
-    boolean isTypeOfInteger();
-    
-    boolean isKindOfInteger(VoidHandling h);
-    
-    boolean isTypeOfUnlimitedNatural();
-    
-    boolean isKindOfUnlimitedNatural(VoidHandling h);
-    
-    boolean isKindOfReal(VoidHandling h);
-
-    boolean isTypeOfReal();
-    
-    boolean isKindOfString(VoidHandling h);
-
-    boolean isTypeOfString();
-    
-    boolean isKindOfBoolean(VoidHandling h);
-
-    boolean isTypeOfBoolean();
-    
-    boolean isKindOfEnum(VoidHandling h);
-    
-    boolean isTypeOfEnum();
-    
-    boolean isKindOfCollection(VoidHandling h);
-    
-    boolean isTypeOfCollection();
-
-    boolean isKindOfSet(VoidHandling h);
-
-    boolean isTypeOfSet();
-    
-    boolean isKindOfSequence(VoidHandling h);
-    
-    boolean isTypeOfSequence();
-
-    boolean isKindOfOrderedSet(VoidHandling h);
-    
-    boolean isTypeOfOrderedSet();
-    
-    boolean isKindOfBag(VoidHandling h);
-    
-    boolean isTypeOfBag();
-
-    boolean isKindOfClassifier(VoidHandling h);
-    
-    boolean isTypeOfClassifier();
-    
-    boolean isKindOfClass(VoidHandling h);
-    
-    boolean isTypeOfClass();
-
-    boolean isKindOfDataType(VoidHandling h);
-
-    boolean isTypeOfDataType();
-
-    boolean isKindOfAssociation(VoidHandling h);
-    
-    boolean isTypeOfAssociation();
-    
-    boolean isKindOfOclAny(VoidHandling h);
-    
-    boolean isTypeOfOclAny();
-
-    boolean isKindOfTupleType(VoidHandling h);
-    
-    boolean isTypeOfTupleType();
-    
-    boolean isTypeOfVoidType();
-    
-    boolean isInstantiableCollection();
+    /**
+     * Bridge for API-level IType.getLeastCommonSupertype.
+     */
+    @Override
+    default IType getLeastCommonSupertype(IType other) {
+        if (other instanceof Type) {
+            return getLeastCommonSupertype((Type) other);
+        }
+        return null;
+    }
 }

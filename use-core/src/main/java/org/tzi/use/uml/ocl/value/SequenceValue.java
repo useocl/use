@@ -21,8 +21,8 @@ package org.tzi.use.uml.ocl.value;
 
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.util.StringUtil;
 
 import java.util.ArrayList;

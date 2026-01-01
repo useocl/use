@@ -20,6 +20,7 @@
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
@@ -29,45 +30,52 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  * A RValue which creates a new link object.
  */
 public class MRValueNewLinkObject extends MRValue {
-	/** The encapsulated new link object statement. */
-	private MNewLinkObjectStatement fNewLinkObjectStatement;
-	
-	
-	/**
-	 * Constructs a new RValue to create a new link object.  
-	 * @param newLinkObjectStatement The encapsulated new link object statement.
-	 */
-	public MRValueNewLinkObject(
-			MNewLinkObjectStatement newLinkObjectStatement) {
-		
-		fNewLinkObjectStatement = newLinkObjectStatement;
-	}
-
-	@Override
-	public Value evaluate(
-			SoilEvaluationContext context,
-			StatementEvaluationResult result) throws EvaluationFailedException {
-		
-		fNewLinkObjectStatement.execute(context, result);
-		
-		return fNewLinkObjectStatement.getCreatedLinkObject().value();
-	}
-
-	/**
-	 * @return the fNewLinkObjectStatement
-	 */
-	public MNewLinkObjectStatement getNewLinkObjectStatement() {
-		return fNewLinkObjectStatement;
-	}
-
-	@Override
-	public Type getType() {
-		return fNewLinkObjectStatement.getAssociationClass();
-	}
+    /** The encapsulated new link object statement. */
+    private MNewLinkObjectStatement fNewLinkObjectStatement;
 
 
-	@Override
-	public String toString() {
-		return fNewLinkObjectStatement.shellCommand();
-	}
+    /**
+     * Constructs a new RValue to create a new link object.
+     * @param newLinkObjectStatement The encapsulated new link object statement.
+     */
+    public MRValueNewLinkObject(
+            MNewLinkObjectStatement newLinkObjectStatement) {
+
+        fNewLinkObjectStatement = newLinkObjectStatement;
+    }
+
+    @Override
+    public Value evaluate(
+            SoilEvaluationContext context,
+            StatementEvaluationResult result) throws EvaluationFailedException {
+
+        fNewLinkObjectStatement.execute(context, result);
+
+        return fNewLinkObjectStatement.getCreatedLinkObject().value();
+    }
+
+    /**
+     * @return the fNewLinkObjectStatement
+     */
+    public MNewLinkObjectStatement getNewLinkObjectStatement() {
+        return fNewLinkObjectStatement;
+    }
+
+    @Override
+    public Type getType() {
+        Object objType = fNewLinkObjectStatement.getAssociationClass();
+        if (objType instanceof Type) {
+            return (Type) objType;
+        }
+        if (objType instanceof org.tzi.use.uml.mm.MClassifier) {
+            return TypeFactory.mkClassifierType((org.tzi.use.uml.mm.MClassifier) objType);
+        }
+        return TypeFactory.mkOclAny();
+    }
+
+
+    @Override
+    public String toString() {
+        return fNewLinkObjectStatement.shellCommand();
+    }
 }

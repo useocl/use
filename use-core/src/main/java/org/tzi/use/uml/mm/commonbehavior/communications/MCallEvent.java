@@ -21,8 +21,10 @@ package org.tzi.use.uml.mm.commonbehavior.communications;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
+import org.tzi.use.uml.api.IVarDecl;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 
 /**
  * @author Lars Hamann
@@ -59,13 +61,13 @@ public class MCallEvent extends MMessageEvent {
 		super.buildEnvironment(vars, exprContext, isPre);
 		
 		// Add parameter
-		for (VarDecl parameter : this.operation.paramList()) {
-			vars.add(parameter.name(), parameter.type(), null);
+		for (IVarDecl parameter : this.operation.paramList()) {
+			vars.add(parameter.name(), TypeAdapters.asOclType(parameter.type()), null);
 		}
 		
         // add special variable `result' in postconditions with result value
         if (! isPre && operation.hasResultType() ) {
-        	vars.add("result", operation.resultType(), null);
+            vars.add("result", TypeAdapters.asOclType(operation.resultType()), null);
         }
 	}
 }

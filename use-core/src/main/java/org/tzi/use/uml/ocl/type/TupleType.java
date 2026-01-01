@@ -43,7 +43,7 @@ public final class TupleType extends TypeImpl {
 
     public static class Part implements BufferedToString {
         private final int position;
-    	private final String fName;
+        private final String fName;
         private final Type fType;
 
         public Part(int position, String name, Type type) {
@@ -59,9 +59,9 @@ public final class TupleType extends TypeImpl {
 
         @Override
         public StringBuilder toString(StringBuilder sb) {
-        	return sb.append(fName).append(":").append(fType);
+            return sb.append(fName).append(":").append(fType);
         }
-        
+
         public String name() {
             return fName;
         }
@@ -71,13 +71,13 @@ public final class TupleType extends TypeImpl {
         }
 
         public int getPosition() {
-        	return position;
+            return position;
         }
-        
+
         public boolean equals(Object obj) {
-            if (obj == null) 
+            if (obj == null)
                 return false;
-            if (obj == this )
+            if (obj == this)
                 return true;
             if (obj.getClass().equals(getClass())) {
                 Part other = (Part) obj;
@@ -89,124 +89,136 @@ public final class TupleType extends TypeImpl {
         public int hashCode() {
             return fName.hashCode() + fType.hashCode() * 113;
         }
-        
+
     }
-        
+
     TupleType(Part[] parts) {
-    	for(int index = 0; index < parts.length; index++)
-        {
-    		fParts.put(parts[index].name(), parts[index]);
+        for (int index = 0; index < parts.length; index++) {
+            fParts.put(parts[index].name(), parts[index]);
         }
     }
 
     @Override
     public boolean isTypeOfTupleType() {
-    	return true;
+        return true;
     }
-    
+
     @Override
     public boolean isKindOfTupleType(VoidHandling h) {
-    	return true;
+        return true;
     }
-    
+
     @Override
     public boolean isKindOfOclAny(VoidHandling h) {
-    	return true;
+        return true;
     }
-    
-    
+
+
     /**
      * Returns the defined tuple parts
+     *
      * @return A map of the type Map&lt;String, Part&gt;
      */
     public Map<String, Part> getParts() {
         return fParts;
     }
 
-    /** 
-     * Returns true if this type is a subtype of <code>t</code>. 
+    /**
+     * Returns true if this type is a subtype of <code>other</code>.
      */
-    public boolean conformsTo(Type t) {
-    	if (t.isTypeOfOclAny())
-    		return true;
-    	
-    	if(!t.isTypeOfTupleType()){
-    		return false;
-    	}
+    @Override
+    public boolean conformsTo(org.tzi.use.uml.api.IType other) {
+        if (other == null) {
+            return false;
+        }
 
-    	TupleType otherType = (TupleType)t;
-    	
-    	for(TupleType.Part part : fParts.values()){
-    		if (!otherType.fParts.containsKey(part.name()))
-    			return false;
-    		
-    		TupleType.Part otherPart = otherType.fParts.get(part.name());
-    		
-    		if (!part.type().conformsTo(otherPart.type()))
-    			return false;
-    	}
-    	
-    	return true;
+        if (other instanceof Type) {
+            Type t = (Type) other;
+            if (t.isTypeOfOclAny())
+                return true;
+
+            if (!t.isTypeOfTupleType()) {
+                return false;
+            }
+
+            TupleType otherType = (TupleType) t;
+
+            for (TupleType.Part part : fParts.values()) {
+                if (!otherType.fParts.containsKey(part.name()))
+                    return false;
+
+                TupleType.Part otherPart = otherType.fParts.get(part.name());
+
+                if (!part.type().conformsTo(otherPart.type()))
+                    return false;
+            }
+
+            return true;
+        }
+
+        // conservative fallback: accept if other reports tuple-kind
+        return other.isTypeOfTupleType();
     }
 
     @Override
-	public Type getLeastCommonSupertype(Type type) {
-    	if (type.isTypeOfVoidType())
-    		return this;
-    	
-    	if(!type.isTypeOfTupleType()){
-    		return TypeFactory.mkOclAny();
-    	}
+    public Type getLeastCommonSupertype(Type type) {
+        if (type.isTypeOfVoidType())
+            return this;
 
-    	TupleType otherType = (TupleType)type;
-    	if (otherType.fParts.size() != this.fParts.size()) {
-    		return TypeFactory.mkOclAny();
-    	}
-    	
-    	Part[] commonParts = new Part[this.fParts.size()];
-    	int index = 0;
-    	
-    	for(TupleType.Part part : fParts.values()){
-    		if (!otherType.fParts.containsKey(part.name()))
-    			return TypeFactory.mkOclAny();
-    		
-    		TupleType.Part otherPart = otherType.fParts.get(part.name());
-    		commonParts[index] = new Part(index, part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
-    		index++;
-    	}
-    	
-    	TupleType commonType = TypeFactory.mkTuple(commonParts);
-    	return commonType;
-	}
+        if (!type.isTypeOfTupleType()) {
+            return TypeFactory.mkOclAny();
+        }
 
-    /** 
-     * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'. 
+        TupleType otherType = (TupleType) type;
+        if (otherType.fParts.size() != this.fParts.size()) {
+            return TypeFactory.mkOclAny();
+        }
+
+        Part[] commonParts = new Part[this.fParts.size()];
+        int index = 0;
+
+        for (TupleType.Part part : fParts.values()) {
+            if (!otherType.fParts.containsKey(part.name()))
+                return TypeFactory.mkOclAny();
+
+            TupleType.Part otherPart = otherType.fParts.get(part.name());
+            commonParts[index] = new Part(index, part.fName, part.fType.getLeastCommonSupertype(otherPart.fType));
+            index++;
+        }
+
+        TupleType commonType = TypeFactory.mkTuple(commonParts);
+        return commonType;
+    }
+
+    /**
+     * Returns a complete printable type name, e.g. 'Set(Bag(Integer))'.
      */
     @Override
     public StringBuilder toString(StringBuilder sb) {
-    	sb.append("Tuple(");
+        sb.append("Tuple(");
 
         List<TupleType.Part> sortedParts = new ArrayList<TupleType.Part>(fParts.values());
         Collections.sort(sortedParts, new Comparator<TupleType.Part>() {
-			@Override
-			public int compare(Part p1, Part p2) {
-				if (p1.position < p2.position) return -1;
-			    if (p1.position > p2.position) return  1;
-			    return 0;
-			}});
-        
-        StringUtil.fmtSeqBuffered(sb, sortedParts, ",");        
+            @Override
+            public int compare(Part p1, Part p2) {
+                if (p1.position < p2.position) return -1;
+                if (p1.position > p2.position) return 1;
+                return 0;
+            }
+        });
+
+        StringUtil.fmtSeqBuffered(sb, sortedParts, ",");
         sb.append(")");
-        
+
         return sb;
     }
 
-    /** 
+    /**
      * Overwrite to determine equality of types.
      */
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        if (obj == this ) return true;
+        if (obj == this) return true;
         if (obj.getClass().equals(getClass()))
             return fParts.equals(((TupleType) obj).fParts);
         return false;
@@ -215,16 +227,16 @@ public final class TupleType extends TypeImpl {
     public int hashCode() {
         int hashCode = 23;
         Iterator<Part> iter = fParts.values().iterator();
-        
-        while(iter.hasNext()) { 
-        	hashCode += iter.next().hashCode();
+
+        while (iter.hasNext()) {
+            hashCode += iter.next().hashCode();
         }
-        
+
         return hashCode;
     }
-    
 
-    /** 
+
+    /**
      * Returns the set of all supertypes (including this type).
      */
     public Set<Type> allSupertypes() {
@@ -237,43 +249,45 @@ public final class TupleType extends TypeImpl {
         genAllSuperTypes(selectedSupertypes, remainingTypes, res);
         return res;
     }
-    
-    private void genAllSuperTypes(List<Part> selectedSupertypes, List<Part> remainingTypes, Set<Type> result) {
-    	if (remainingTypes.isEmpty()) {
-    		TupleType tt = new TupleType( selectedSupertypes.toArray(new Part[0]));
-    		result.add(tt);
-    		return;
-    	}
-    	
-    	Part p = remainingTypes.remove(0);
-    	Set<Type> superTypes;
-    	//FIXME: Inconsistent handling of OvlVoid. Maybe use parameter (noRecusrionOnVoid) for allSupertypes() 
-    	if (p.type().isVoidOrElementTypeIsVoid()) {
-    		superTypes = new HashSet<Type>();
-    		superTypes.add(p.type());
-    	} else {
-    		superTypes = new HashSet<>(p.type().allSupertypes());
-    	}
-    	
-    	for (Type t1 : superTypes) {
-    		Part p1 = new Part(0, p.name(), t1);
-    		selectedSupertypes.add(0, p1);
-    		genAllSuperTypes(selectedSupertypes, remainingTypes, result);
-    		selectedSupertypes.remove(0);
-    	}
-    	remainingTypes.add(0,p);
-    }
 
-    /**
-     * Returns the tuple part with the given <code>name</code> or <code>null</code> if no
-     * such part exists. 
-     * @param name
-     * @return
-     */
+    private void genAllSuperTypes(List<Part> selectedSupertypes, List<Part> remainingTypes, Set<Type> result) {
+        if (remainingTypes.isEmpty()) {
+            TupleType tt = new TupleType(selectedSupertypes.toArray(new Part[0]));
+            result.add(tt);
+            return;
+        }
+
+        Part p = remainingTypes.remove(0);
+        Set<Type> superTypes;
+        //FIXME: Inconsistent handling of OvlVoid. Maybe use parameter (noRecusrionOnVoid) for allSupertypes()
+        if (p.type().isVoidOrElementTypeIsVoid()) {
+            superTypes = new HashSet<Type>();
+            superTypes.add(p.type());
+        } else {
+            // collect only low-level OCL Type instances from IType set
+            superTypes = new HashSet<>();
+            for (org.tzi.use.uml.api.IType it : p.type().allSupertypes()) {
+                if (it instanceof Type) {
+                    superTypes.add((Type) it);
+                }
+            }
+        }
+
+        for (Type t1 : superTypes) {
+            Part p1 = new Part(0, p.name(), t1);
+            selectedSupertypes.add(0, p1);
+            genAllSuperTypes(selectedSupertypes, remainingTypes, result);
+            selectedSupertypes.remove(0);
+        }
+        remainingTypes.add(0, p);
+    }
     public Part getPart(String name) {
         if (fParts.containsKey(name))
-        	return fParts.get(name);
+            return fParts.get(name);
         else
-        	return null;
+            return null;
     }
+
 }
+
+

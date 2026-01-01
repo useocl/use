@@ -85,14 +85,14 @@ class GMatcherTry_Assoc_LinkendSeqs implements IGInstructionMatcher {
         Iterator<Object> restIt = rest.iterator();
 
         for (MAssociationEnd end : ends) {
-            Type endtype = end.cls();
-            Object r = restIt.next();
+            Type endtype = (Type) end.cls();
+             Object r = restIt.next();
 
-            if (! (r instanceof GValueInstruction) ||
-                ! ((GValueInstruction) r).type()
-                .conformsTo( TypeFactory.mkSequence(endtype) ) )
-                return false;
-        }    
+             if (! (r instanceof GValueInstruction) ||
+                 ! ((GValueInstruction) r).type()
+                 .conformsTo( TypeFactory.mkSequence(endtype) ) )
+                 return false;
+         }
 
         return true;
     }

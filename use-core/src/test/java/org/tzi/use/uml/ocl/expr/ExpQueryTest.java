@@ -37,6 +37,7 @@ import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MMultiplicity;
 import org.tzi.use.uml.mm.ModelFactory;
+import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
@@ -280,7 +281,7 @@ public class ExpQueryTest extends TestCase {
             bindings.push( "B2", new ObjectValue(a1.cls(), b2));
             
            
-            ExpVariable expVar = new ExpVariable( "A1", a );
+            ExpVariable expVar = new ExpVariable( "A1", a);
             ExpNavigation nav = new ExpNavigation( expVar, ra, rb, Collections.<Expression>emptyList() );
             
             try {

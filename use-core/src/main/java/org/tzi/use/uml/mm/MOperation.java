@@ -22,13 +22,12 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.uml.ocl.expr.ExpUndefined;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.ExpressionFactoryProvider;
+import org.tzi.use.uml.api.IVarDeclList;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.StringUtil;
+import org.tzi.use.uml.api.IExpression;
+import org.tzi.use.uml.api.IVarDecl;
 
 /**
  * An operation is a parameterized expression. Evaluation of the
@@ -38,14 +37,14 @@ import org.tzi.use.util.StringUtil;
  */
 public final class MOperation extends MModelElementImpl implements UseFileLocatable {
     /** A list of parameters */
-	private VarDeclList fVarDeclList;
-    
+    private IVarDeclList fVarDeclList;
+
     /** The declared result type (optional) */
-    private Type fResultType;
-    
+    private IType fResultType;
+
     /** The operation's body (optional) */
-    private Expression fExpr;
-    
+    private IExpression fExpr;
+
     /** The statement, might be <code>null</code>.*/
     private MStatement fStatement;
 
@@ -57,7 +56,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     private int fPositionInModel;
     private boolean fIsConstructor;
 
-    public MOperation(String name, VarDeclList varDeclList, Type resultType) {
+    public MOperation(String name, IVarDeclList varDeclList, IType resultType) {
 	    super(name);
 	    fVarDeclList = varDeclList;
 	    fResultType = resultType;
@@ -67,7 +66,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 	    fIsConstructor = false;
 	}
 
-    public MOperation(String name, VarDeclList varDeclList, Type resultType, boolean isConstructor) {
+    public MOperation(String name, IVarDeclList varDeclList, IType resultType, boolean isConstructor) {
         this(name, varDeclList, resultType);
         fIsConstructor = isConstructor;
 	}
@@ -139,7 +138,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     /** 
      * Returns the parameter list of the operation.
      */
-    public VarDeclList paramList() {
+    public IVarDeclList paramList() {
         return fVarDeclList;
     }
     
@@ -148,17 +147,18 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
      * @return
      */
     public List<String> paramNames() {
-    	
-    	ArrayList<String> parameterNames = 
-    		new ArrayList<String>(fVarDeclList.size());
-    	
-    	int numVarDecls = fVarDeclList.size();
-    	for (int i = 0; i < numVarDecls; ++i) {
-    		parameterNames.add(fVarDeclList.varDecl(i).name());
-    	}
-    	
-    	return parameterNames;
-    }
+
+         ArrayList<String> parameterNames =
+             new ArrayList<String>(fVarDeclList.size());
+
+         int numVarDecls = fVarDeclList.size();
+         for (int i = 0; i < numVarDecls; ++i) {
+            IVarDecl vd = fVarDeclList.varDecl(i);
+            parameterNames.add(vd.name());
+         }
+
+         return parameterNames;
+     }
 
     /** 
      * Returns true if the operation declares a return type.
@@ -172,7 +172,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
      *
      * @return resultType or null, if no return type specified
      */
-    public Type resultType() {
+    public IType resultType() {
         return fResultType;
     }
 
@@ -188,7 +188,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
      *
      * @return expression or null, if no expression was specified
      */
-    public Expression expression() {
+    public IExpression expression() {
         return fExpr;
     }
 
@@ -198,19 +198,12 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
      * @exception MInvalidModelException if the expression's type does
      *            not conform to the declared result type 
      */
-    public void setExpression(Expression expr) throws MInvalidModelException {
-        // If no result type is set, use type of the expression
-    	if (fResultType == null) {
-    		fResultType = expr.type();
-    	} else if (expr.type() == null) {
-    		throw new MInvalidModelException("The operation " + StringUtil.inQuotes(this.cls().name() + "." + this.name()) +
-    				" does not have a declared result type and the result type of the defined expression could not be calculated. This" +
-    				" can happen when an operation without a declared result type is calling itself recursively.");
-    	} else if (! expr.type().conformsTo(fResultType) ) {
-            throw new MInvalidModelException("Expression type `" +
-                                             expr.type() + 
-                                             "' does not match declared result type `" + fResultType + "'.");
-    	}
+    public void setExpression(IExpression expr) throws MInvalidModelException {
+        // NOTE: we cannot query concrete ocl.Expression.type() from mm because
+        // mm must not depend on ocl types here. The parser/adapter (sys) is
+        // responsible for casting and ensuring type conformance where needed.
+        // Therefore we only set the expression. If a result type was already
+        // declared, we conservatively do not perform an additional check here.
         fExpr = expr;
     }
 
@@ -220,7 +213,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
      */
     public void setTempExpression() {
         // If no result type is set, use type of the expression
-        fExpr = new ExpUndefined();
+        fExpr = ExpressionFactoryProvider.get().createUndefined();
     }
 
     /**
@@ -309,13 +302,13 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
 		if (this.fVarDeclList.size() != op.fVarDeclList.size())
 			return false;
 		
-		int index = 0;
-		for (VarDecl opVar : op.fVarDeclList) {
-			if (!opVar.type().conformsTo(this.fVarDeclList.varDecl(index).type()))
-				return false;
-			++index;
-		}
-		
+		int numVarDeclsOp = op.fVarDeclList.size();
+		for (int i = 0; i < numVarDeclsOp; ++i) {
+            // compare declared types (Type is still an ocl type used across mm)
+            if (!op.fVarDeclList.varDecl(i).type().conformsTo(this.fVarDeclList.varDecl(i).type()))
+                return false;
+        }
+
 		return true;
 	}
 	

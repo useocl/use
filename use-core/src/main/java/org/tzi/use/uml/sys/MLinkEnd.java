@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.StringUtil;
 
@@ -88,13 +89,14 @@ public final class MLinkEnd {
         }
         
         for (int index = 0; index < qualifierValues.size(); ++index) {
-        	Value value = qualifierValues.get(index);
-        	Type expectedType = aend.getQualifiers().get(index).type();
-        	
-        	if (!value.type().conformsTo(expectedType))
-        		throw new MSystemException(
-        			"Type of qualifier value (" + StringUtil.inQuotes(value.toStringWithType()) + 
-        			") does not conform to expected qualifier type (" + StringUtil.inQuotes(expectedType.toString()) + ")!");
+         Value value = qualifierValues.get(index);
+         // Use TypeAdapters to adapt qualifier type to OCL Type safely
+         Type expectedType = TypeAdapters.asOclType(aend.getQualifiers().get(index).type());
+
+         if (!value.type().conformsTo(expectedType))
+             throw new MSystemException(
+                 "Type of qualifier value (" + StringUtil.inQuotes(value.toStringWithType()) +
+                 ") does not conform to expected qualifier type (" + StringUtil.inQuotes(expectedType.toString()) + ")!");
         }
         
         this.fAssociationEnd = aend;

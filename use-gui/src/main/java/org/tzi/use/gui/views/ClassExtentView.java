@@ -361,14 +361,15 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                 try {
                     Set<MObject> badObjects = new HashSet<MObject>();
                     Evaluator evaluator = new Evaluator();
-                    Expression expr = fClassInvariants[i]
+                    // getExpressionForViolatingInstances returns IExpression; cast to concrete Expression
+                    Expression expr = (Expression) fClassInvariants[i]
                             .getExpressionForViolatingInstances();
                     Value v = evaluator.eval(expr, fSystem.state(),
                             new VarBindings());
 
                     Iterator<Value> valIter = ((SetValue) v).collection().iterator();
                     while (valIter.hasNext()) {
-                    	ObjectValue oVal = (ObjectValue) valIter.next();
+                     ObjectValue oVal = (ObjectValue) valIter.next();
                         badObjects.add(oVal.value());
                     }
                     fInvBadObjects.put(fClassInvariants[i], badObjects);
@@ -387,7 +388,8 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
                                 .getSelectedColumn());
                         for (int i = 0; i < fClassInvariants.length; i++) {
                             if (fClassInvariants[i].isActive() && fClassInvariants[i].name().equals(invName)) {
-                                expr = fClassInvariants[i].expandedExpression();
+                                // expandedExpression() returns IExpression (API); cast to concrete Expression
+                                expr = (Expression) fClassInvariants[i].expandedExpression();
                                 Evaluator evaluator = new Evaluator(true);
                                 try {
                                     evaluator.eval(expr, fSystem.state());
@@ -567,3 +569,4 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
         fSystem.getEventBus().unregister(this);
     }
 }
+

@@ -20,6 +20,8 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
+import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.Value;
 
 /**
@@ -30,8 +32,29 @@ import org.tzi.use.uml.ocl.value.Value;
 public final class ExpVariable extends Expression  {
     private String fVarname;
 
+    /**
+     * Existing constructor that accepts a low-level OCL Type.
+     */
     public ExpVariable(String varname, Type t) {
         super(t);
+        fVarname = varname;
+    }
+
+    /**
+     * New constructor: accept API-level IType (or any implementation) and adapt to OCL Type.
+     * This keeps callers from having to cast their model types to the OCL Type.
+     */
+    public ExpVariable(String varname, org.tzi.use.uml.api.IType apiType) {
+        super(TypeAdapters.asOclType(apiType));
+        fVarname = varname;
+    }
+
+    /**
+     * New constructor: accept an mm.MClassifier directly and create a classifier OCL Type.
+     * Useful for call sites that still have an mm classifier instance.
+     */
+    public ExpVariable(String varname, org.tzi.use.uml.mm.MClassifier classifier) {
+        super(TypeAdapters.asOclType(classifier));
         fVarname = varname;
     }
 
@@ -71,4 +94,3 @@ public final class ExpVariable extends Expression  {
 		return false;
 	}
 }
-

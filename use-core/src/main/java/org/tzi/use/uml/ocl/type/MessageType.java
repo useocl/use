@@ -21,6 +21,8 @@ package org.tzi.use.uml.ocl.type;
 
 import java.util.Set;
 
+import org.tzi.use.uml.api.IType;
+import org.tzi.use.uml.api.IMessageType;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 
@@ -34,121 +36,137 @@ import com.google.common.hash.Hashing;
  * @author Lars Hamann
  *
  */
-public class MessageType extends TypeImpl {
+public class MessageType extends TypeImpl implements IMessageType {
 
-	private final MSignal referredSignal;
-	
-	private final MOperation referredOperation;
-	
-	private final int hashCode;
-	
-	/**
-	 * Creates a new message type referring a signal.
-	 * @param referredSignal The referred signal. Cannot be <code>null</code>.
-	 * @throws IllegalArgumentException If <code>referredSignal</code> is <code>null</code>.
-	 */
-	public MessageType(MSignal referredSignal) {
-		this.referredSignal = referredSignal;
-		this.referredOperation = null;
-		hashCode = generateHash();
-	}
-	
-	/**
-	 * Creates a new message type referring
-	 * an operation.
-	 * @param referredOperation The referred operation. Cannot be <code>null</code>.
-	 * @throws IllegalArgumentException If <code>referredOperation</code> is <code>null</code>.
-	 */
-	public MessageType(MOperation referredOperation) {
-		this.referredSignal = null;
-		this.referredOperation = referredOperation;
-		hashCode = generateHash();
-	}
+    private final MSignal referredSignal;
 
-	public boolean isReferencingSignal() {
-		return this.referredSignal != null;
-	}
-	
-	public boolean isReferencingOperation() {
-		return this.referredOperation != null;
-	}
-	
-	@Override
-	public boolean conformsTo(Type t) {
-		if (t.isTypeOfOclAny()) {
-			return true;
-		}
-		
-		if (!(t instanceof MessageType)) {
-			return false;
-		}
-		
-		MessageType otherType = (MessageType)t;
-		
-		if (this.isReferencingSignal() != otherType.isReferencingSignal()) {
-			return false;
-		}
-		
-		if (isReferencingOperation()) {
-			return this.referredOperation.equals(otherType.referredOperation);
-		} else {
-			for (MSignal parent : this.referredSignal.generalizationHierachie(true)) {
-				if (parent.equals(otherType.referredSignal))
-					return true;
-			}
-		}
-		
-		return false;
-	}
+    private final MOperation referredOperation;
 
-	@Override
-	public StringBuilder toString(StringBuilder sb) {
-		if (this.isReferencingOperation()) {
-			sb.append(this.referredOperation.name());
-		} else {
-			sb.append(this.referredSignal.name());
-		}
-		
-		return sb;
-	}
+    private final int hashCode;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof MessageType)) {
-			return false;
-		}
-		
-		MessageType mt = (MessageType)obj;
-		
-		if (this.isReferencingOperation() != mt.isReferencingOperation()) {
-			return false;
-		}
-		
-		if (this.isReferencingOperation()) {
-			return this.referredOperation.equals(mt.referredOperation);
-		} else {
-			return this.referredSignal.equals(mt.referredSignal);
-		}
-	}
+    /**
+     * Creates a new message type referring a signal.
+     * @param referredSignal The referred signal. Cannot be <code>null</code>.
+     * @throws IllegalArgumentException If <code>referredSignal</code> is <code>null</code>.
+     */
+    public MessageType(MSignal referredSignal) {
+        this.referredSignal = referredSignal;
+        this.referredOperation = null;
+        hashCode = generateHash();
+    }
 
-	private int generateHash() {
-		HashFunction hf = Hashing.md5();
-		HashCode hc = hf.newHasher()
-		       .putBoolean(isReferencingSignal())
-		       .putString(isReferencingOperation() ? this.referredOperation.name() : "", Charsets.UTF_8)
-		       .putString(isReferencingSignal() ? this.referredSignal.name() : "", Charsets.UTF_8)
-		       .hash();
-		
-		return hc.asInt();
-	}
-	
-	@Override
-	public int hashCode() {
-		return hashCode;
-	}
+    /**
+     * Creates a new message type referring
+     * an operation.
+     * @param referredOperation The referred operation. Cannot be <code>null</code>.
+     * @throws IllegalArgumentException If <code>referredOperation</code> is <code>null</code>.
+     */
+    public MessageType(MOperation referredOperation) {
+        this.referredSignal = null;
+        this.referredOperation = referredOperation;
+        hashCode = generateHash();
+    }
 
-	@Override
-	public Set<Type> allSupertypes() {
-		return null;
-	}
+    public boolean isReferencingSignal() {
+        return this.referredSignal != null;
+    }
+
+    public boolean isReferencingOperation() {
+        return this.referredOperation != null;
+    }
+
+    @Override
+    public boolean conformsTo(IType other) {
+        if (other == null) {
+            return false;
+        }
+
+        // OclAny accepts everything
+        if (other.isTypeOfOclAny()) {
+            return true;
+        }
+
+        if (!(other instanceof MessageType)) {
+            return false;
+        }
+
+        MessageType otherType = (MessageType) other;
+
+        if (this.isReferencingSignal() != otherType.isReferencingSignal()) {
+            return false;
+        }
+
+        if (isReferencingOperation()) {
+            return this.referredOperation.equals(otherType.referredOperation);
+        } else {
+            for (MSignal parent : this.referredSignal.generalizationHierachie(true)) {
+                if (parent.equals(otherType.referredSignal))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public StringBuilder toString(StringBuilder sb) {
+        if (this.isReferencingOperation()) {
+            sb.append(this.referredOperation.name());
+        } else {
+            sb.append(this.referredSignal.name());
+        }
+
+        return sb;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MessageType)) {
+            return false;
+        }
+
+        MessageType mt = (MessageType)obj;
+
+        if (this.isReferencingOperation() != mt.isReferencingOperation()) {
+            return false;
+        }
+
+        if (this.isReferencingOperation()) {
+            return this.referredOperation.equals(mt.referredOperation);
+        } else {
+            return this.referredSignal.equals(mt.referredSignal);
+        }
+    }
+
+    private int generateHash() {
+        HashFunction hf = Hashing.md5();
+        HashCode hc = hf.newHasher()
+               .putBoolean(isReferencingSignal())
+               .putString(isReferencingOperation() ? this.referredOperation.name() : "", Charsets.UTF_8)
+               .putString(isReferencingSignal() ? this.referredSignal.name() : "", Charsets.UTF_8)
+               .hash();
+
+        return hc.asInt();
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode;
+    }
+
+    @Override
+    public Set<Type> allSupertypes() {
+        java.util.Set<Type> res = new java.util.HashSet<>();
+        res.add(TypeFactory.mkOclAny());
+        res.add(this);
+        return res;
+    }
+
+    @Override
+    public org.tzi.use.uml.api.IType getLeastCommonSupertype(org.tzi.use.uml.api.IType other) {
+        if (other instanceof Type) {
+            return getLeastCommonSupertype((Type) other);
+        }
+        return TypeFactory.mkOclAny();
+    }
 }

@@ -22,6 +22,7 @@ package org.tzi.use.uml.ocl.expr;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.LinkValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
@@ -57,6 +58,24 @@ public class ExpNavigationClassifierSource extends Expression {
 		this.destination = dst;
 	}
 
+	/**
+	 * Überladener Konstruktor: akzeptiert API-level IType und adaptiert zu OCL Type.
+	 */
+	public ExpNavigationClassifierSource(org.tzi.use.uml.api.IType apiType, Expression src, MNavigableElement dst) {
+		super(TypeAdapters.asOclType(apiType));
+		this.source = src;
+		this.destination = dst;
+	}
+
+	/**
+	 * Überladener Konstruktor: akzeptiert ein mm-MClassifier und adaptiert zu OCL Type.
+	 */
+	public ExpNavigationClassifierSource(org.tzi.use.uml.mm.MClassifier classifier, Expression src, MNavigableElement dst) {
+		super(TypeAdapters.asOclType(classifier));
+		this.source = src;
+		this.destination = dst;
+	}
+
 	public MNavigableElement getDestination() {
         return this.destination;
     }
@@ -88,7 +107,11 @@ public class ExpNavigationClassifierSource extends Expression {
 			
 			MObject obj = state.getNavigableObject(link, this.destination);
 			// A link is always connected to objects, i. e., obj cannot be null
-			result = new ObjectValue((MClass)this.type(), obj);
+			org.tzi.use.uml.mm.MClassifier mclf = org.tzi.use.uml.ocl.type.TypeAdapters.asMClassifier(this.type());
+			if (mclf == null || !(mclf instanceof MClass)) {
+                throw new IllegalArgumentException("Navigation source type is not a classifier class: " + this.type());
+            }
+            result = new ObjectValue((MClass)mclf, obj);
 		}
 		
 		ctx.exit(this, result);

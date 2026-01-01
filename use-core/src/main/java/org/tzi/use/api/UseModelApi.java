@@ -31,13 +31,14 @@ import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.api.InvariantExpressionException;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
@@ -442,7 +443,7 @@ public class UseModelApi {
 
 		Symtable symTable = new Symtable();
 		try {
-			symTable.add("self", op.cls(), null);
+			symTable.add("self", TypeAdapters.asOclType(op.cls()), null);
 		} catch (SemanticException e) {
 			throw new UseApiException("Could not create query operation.", e);
 		}
@@ -575,11 +576,11 @@ public class UseModelApi {
 				Symtable vars = ctx.varTable();
 
 				// create pseudo-variable "self"
-				vars.add("self", cls, null);
-				ctx.exprContext().push("self", cls);
+				vars.add("self", TypeAdapters.asOclType(cls), null);
+				ctx.exprContext().push("self", TypeAdapters.asOclType(cls));
 				// add special variable `result' in postconditions with result value
 				if (! isPre && op.hasResultType() )
-					vars.add("result", op.resultType(), null);
+					vars.add("result", TypeAdapters.asOclType(op.resultType()), null);
 
 				ctx.setInsidePostCondition(! isPre);
 
@@ -613,7 +614,7 @@ public class UseModelApi {
 		try {
 			cond = mFactory.createPrePostCondition(name, op, isPre, condition);
 			mModel.addPrePostCondition(cond);
-		} catch (ExpInvalidException | MInvalidModelException ex) {
+		} catch (InvariantExpressionException | MInvalidModelException ex) {
 			throw new UseApiException("Could not create pre-/postcondition.", ex);
 		}
 
@@ -745,7 +746,7 @@ public class UseModelApi {
 
 		Symtable vars = new Symtable();
 		try {
-			vars.add("self", cls, new SrcPos("self", 1, 1));
+			vars.add("self", (Type) cls, new SrcPos("self", 1, 1));
 		} catch (SemanticException e1) {
 			throw new UseApiException("Could not add " + StringUtil.inQuotes("self") + " to symtable.", e1);
 		}
@@ -791,7 +792,7 @@ public class UseModelApi {
 					cls, invBody, isExistential);
 
 			mModel.addClassInvariant(mClassInvariant);
-		} catch (ExpInvalidException e) {
+		} catch (InvariantExpressionException e) {
 			throw new UseApiException("Invalid invariant expression!", e);
 		} catch (MInvalidModelException e) {
 			throw new UseApiException("Invariant creation failed!", e);

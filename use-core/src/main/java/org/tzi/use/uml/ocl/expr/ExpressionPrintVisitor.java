@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.api.IType.VoidHandling;
 
 /**
  * Default visitor to print OCL expressions.

@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.ocl.expr;
 
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.sys.MObject;
 
@@ -38,7 +40,7 @@ public class ExpObjRef extends Expression {
 	 * @param object The referenced object
 	 */
 	public ExpObjRef(MObject object) {
-		super(object.cls());
+		super(TypeAdapters.asOclType(object.cls()));
 		fObject = object;
 	}
 
@@ -62,7 +64,7 @@ public class ExpObjRef extends Expression {
 	@Override
 	public StringBuilder toString(StringBuilder sb) {
 		return sb.append("@")
-		  		 .append(fObject.name());
+			 	 .append(fObject.name());
 	}
 
 

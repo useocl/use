@@ -33,6 +33,10 @@ public class AllTests {
     private AllTests(){}
 
     public static Test suite() {
+        // Initialize required global factory providers for tests
+        org.tzi.use.uml.api.ExpressionFactoryProvider.set(new org.tzi.use.uml.ocl.OclExpressionFactoryAdapter());
+        org.tzi.use.uml.api.InvariantExpressionFactoryProvider.set(new org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory());
+        org.tzi.use.uml.api.VarDeclFactoryProvider.set(new org.tzi.use.uml.ocl.expr.OclVarDeclFactory());
         final TestSuite test = new TestSuite( "All uml tests" );
         test.addTest( org.tzi.use.uml.mm.AllTests.suite() );
         test.addTest( org.tzi.use.uml.ocl.expr.AllTests.suite() );

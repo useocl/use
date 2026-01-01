@@ -316,12 +316,13 @@ public class ClassInvariantView extends JPanel implements View {
 			public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 
                 	&& fSelectedRow >= 0 && fOpenEvalBrowserEnabled) {
-                    
+
                 	if(!fClassInvariants[fSelectedRow].isActive()){
                 		return;
                 	}
-                	
-            		Expression expr = fClassInvariants[fSelectedRow]
+
+                	// flaggedExpression() returns IExpression; cast to concrete Expression for evaluator
+                	Expression expr = (Expression) fClassInvariants[fSelectedRow]
             				.flaggedExpression();
             		Evaluator evaluator = new Evaluator(true);
             		try {
@@ -345,7 +346,7 @@ public class ClassInvariantView extends JPanel implements View {
 	    /**
 	     * Returns the max width of the column but does NOT include the header.
 	     * 
-	     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+	     * See: https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
 	     */
 	    private int getMaxWidthOfColumn(int column) {
 	        TableColumn tableColumn = fTable.getColumnModel().getColumn(column);
@@ -377,7 +378,7 @@ public class ClassInvariantView extends JPanel implements View {
 	    }
 	    
 	    /**
-	     * @see https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+	     * Tips: see tips4java Table Column Adjuster article for background
 	     */
 	    private int getColumnHeaderDimension(int column, boolean isHeight)
 		{
@@ -730,7 +731,8 @@ public class ClassInvariantView extends JPanel implements View {
 				long start = System.currentTimeMillis();
 				
 				try {
-					v = eval.eval(inv.flaggedExpression(), state);
+					// inv.flaggedExpression() returns IExpression; cast to concrete Expression
+					v = eval.eval((Expression) inv.flaggedExpression(), state);
 				} catch (MultiplicityViolationException e) {
 					message = e.getMessage();
 				}

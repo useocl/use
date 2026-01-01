@@ -19,6 +19,7 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,7 +46,7 @@ public class UniqueLeastCommonSupertypeDeterminator {
 			if (t.isVoidOrElementTypeIsVoid()) 
 				allSuperTypes.add(t); 
 			else 
-				allSuperTypes.addAll(t.allSupertypes());
+				allSuperTypes.addAll((Collection<? extends Type>) t.allSupertypes());
 		}
     	    	
     	// Second step: Select those that are common to all others 

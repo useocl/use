@@ -69,7 +69,7 @@ public class ASTGAttributeAssignment extends ASTGInstruction {
                 targetcls + "'.";
             throw new SemanticException( fAttributeName, err );
         }
-        Type type = targetAttribute.type();
+        Type type = (Type) targetAttribute.type();
 
         // fSource must be a GValueInstruction
         GInstruction source = fSource.gen(ctx);
