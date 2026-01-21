@@ -21,6 +21,7 @@ package org.tzi.use.uml.ocl.expr;
 
 import java.util.ArrayList;
 
+import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
@@ -161,15 +162,14 @@ class ThreadedEvaluator {
             	
                 Evaluator evaluator = new Evaluator();
 
-                Value v = null;
+                Value v;
                 try {
                     v = evaluator.eval(job.fExpr, fController.fSystemState);
                 } catch (Exception ex) {
                 	if (Log.isDebug())
-                        Log.debug("Caught: " + ex.getMessage());
-                    
-                    v = null;
-                    job.setIgnore(true);
+                        Log.debug("Caught during evaluation: " + ex.getMessage());
+                    // statt null + Ignore-Flag ein definiertes UndefinedValue zurückgeben
+                    v = UndefinedValue.instance;
                 }
 
                 if (Log.isDebug())
@@ -185,4 +185,3 @@ class ThreadedEvaluator {
         }
     }
 }
-

@@ -48,40 +48,43 @@ public final class ExpNavigation extends Expression {
     private final Expression fObjExp;
     
     private final Expression[] qualifierExpressions;
-    
+
     public ExpNavigation(Expression objExp,
                          MNavigableElement src,
                          MNavigableElement dst,
                          List<Expression> theQualifierExpressions)
-        throws ExpInvalidException
+            throws ExpInvalidException
     {
-        // set result type later
         super(null);
-        
+
         if (theQualifierExpressions == null) {
-        	this.qualifierExpressions = new Expression[0];
+            this.qualifierExpressions = new Expression[0];
         } else {
-        	this.qualifierExpressions = theQualifierExpressions.toArray(new Expression[theQualifierExpressions.size()]);
+            this.qualifierExpressions = theQualifierExpressions.toArray(new Expression[0]);
         }
-                
-        if ( !objExp.type().isKindOfClassifier(VoidHandling.EXCLUDE_VOID) )
+
+        if (!objExp.type().isKindOfClassifier(VoidHandling.EXCLUDE_VOID))
             throw new ExpInvalidException(
                     "Target expression of navigation operation must have " +
-                    "object type, found `" + objExp.type() + "'." );
-        
+                            "object type, found `" + objExp.type() + "'." );
+
         if (!src.hasQualifiers() && qualifierExpressions.length > 0) {
-        	throw new ExpInvalidException("The navigation end " + StringUtil.inQuotes(dst.nameAsRolename()) +
-        			" has no defined qualifiers, but qualifer values were provided.");
+            throw new ExpInvalidException("The navigation end " +
+                    StringUtil.inQuotes(dst.nameAsRolename()) +
+                    " has no defined qualifiers, but qualifer values were provided.");
         }
-        
-        // dst.getType now returns an API-level IType; adapt it to the OCL Type used by expressions
-        Type oclResultType = TypeAdapters.asOclType(dst.getType(objExp.type(), src, qualifierExpressions.length > 0));
+
+        Type oclResultType = TypeAdapters.asOclType(
+                dst.getType(objExp.type(), src, qualifierExpressions.length > 0)
+        );
+
         setResultType(oclResultType);
 
         this.fSrc = src;
         this.fDst = dst;
         this.fObjExp = objExp;
     }
+
 
     /**
      * Evaluates expression and returns result value.
@@ -103,7 +106,7 @@ public final class ExpNavigation extends Expression {
               
             // get objects at association end
         	List<Value> qualifierValues = new LinkedList<Value>();
-        		
+
     		for (Expression exp : this.qualifierExpressions) {
     			qualifierValues.add(exp.eval(ctx));
     		}
@@ -168,7 +171,7 @@ public final class ExpNavigation extends Expression {
     
     /**
      * Returns an array of defined qualifier expressions for this navigation.
-     * If no expressions where defined an empty array is returned. 
+     * If no expressions where defined an empty array is returned.
      * @return
      */
     public Expression[] getQualifierExpression(){
@@ -192,4 +195,3 @@ public final class ExpNavigation extends Expression {
 	}
 
 }
-

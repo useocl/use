@@ -103,19 +103,27 @@ public final class SetType extends CollectionType {
 
     public Type getLeastCommonSupertype(Type type)
     {
-        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
+        // Nur Collections koennen einen gemeinsamen Collection-LCS haben
+        if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
             return null;
 
+        // Reine Void-Collections: der nicht-void Typ dominiert
         if (type.isTypeOfVoidType())
             return this;
 
-        CollectionType cType = (CollectionType)type;
+        CollectionType cType = (CollectionType) type;
         Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
 
         if (commonElementType == null)
             return null;
-        else
+
+        // Wenn beide Sets sind, bleiben wir bei einem Set-Typ
+        if (type.isTypeOfSet()) {
             return TypeFactory.mkSet(commonElementType);
+        }
+
+        // Gemischte Collection-Spezialisierungen: abstrakten Collection-Typ verwenden
+        return TypeFactory.mkCollection(commonElementType);
     }
     
     @Override

@@ -362,7 +362,10 @@ public class ASTOperationExpression extends ASTExpression {
               MNavigableElement dst = srcClass3.navigableEnd( opname );
 
               if (dst == null) {
-              	throw new SemanticException(fOp, StringUtil.inQuotes(opname) + " is not a valid rolename that is reachable from class " + StringUtil.inQuotes(srcClass3.name()));
+
+              	throw new SemanticException(fOp, StringUtil.inQuotes(opname)
+              			+ " is not a valid rolename that is reachable from class "
+              			+ StringUtil.inQuotes(srcClass3.name()));
               } else {
               	res = genNavigation( ctx, fOp, srcClass3, srcExpr, dst, fExplicitRolenameOrQualifiers, fQualifiers );
               }

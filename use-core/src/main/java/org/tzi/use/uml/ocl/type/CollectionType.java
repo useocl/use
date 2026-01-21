@@ -64,24 +64,39 @@ public class CollectionType extends TypeImpl {
             return false;
         }
 
-        // If other is a low-level OCL Type, perform precise check
+        // Wenn other ein internes OCL-Type-Objekt ist, machen wir eine präzise Prüfung
         if (other instanceof Type) {
             Type o = (Type) other;
-            if (!o.isTypeOfCollection())
-                return false;
 
+            // VoidType: als Zieltyp für Collections nicht sinnvoll – keine Konformität
+            if (o.isTypeOfVoidType()) {
+                return false;
+            }
+
+            // Muss ein Collection-Typ sein, sonst nicht kompatibel
+            if (!o.isKindOfCollection(VoidHandling.INCLUDE_VOID)) {
+                return false;
+            }
+
+            // Jetzt ist garantiert, dass o tatsächlich eine CollectionType-Unterklasse ist
+            if (!(o instanceof CollectionType)) {
+                // Defensive fallback: unbekannter Collection-artiger Typ
+                return false;
+            }
             CollectionType t2 = (CollectionType) o;
+
+            // Element-Typen müssen konform sein (covariant)
             return fElemType.conformsTo(t2.elemType());
         }
 
-        // other is only API-level IType: conservatively accept if it is a collection
+        // API-level IType ohne interne Typinformation: konservativer Fallback
         return other.isTypeOfCollection();
     }
 
     /**
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Collection(T) the result is the set of
-     * all types Collection(T') where T' &lt;= T.
+     * all types Collection(T') where T' <= T.
      */
     @Override
     public Set<Type> allSupertypes() {
@@ -96,23 +111,49 @@ public class CollectionType extends TypeImpl {
     }
 
     @Override
-    public Type getLeastCommonSupertype(Type type)
-    {
-    	if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
-    		return null;
-    	
-    	if (type.isTypeOfVoidType())
-    		return this;
-    	
-    	CollectionType cType = (CollectionType)type;
-    	Type commonElementType = this.fElemType.getLeastCommonSupertype(cType.fElemType);
+    public Type getLeastCommonSupertype(Type type) {
+        if (!(type instanceof CollectionType)) {
+            return null;
+        }
 
-    	if (commonElementType == null)
-    		return null;
-    	else
-    		return TypeFactory.mkCollection(commonElementType);
+        CollectionType other = (CollectionType) type;
+        Type t1 = this.elemType();
+        Type t2 = other.elemType();
+
+        // Void-Elementtypen behandeln: der nicht-void Elementtyp dominiert
+        if (t1.isTypeOfVoidType() && !t2.isTypeOfVoidType()) {
+            Type u = t2;
+            return decideCollectionHullForLcs(other, u);
+        }
+        if (t2.isTypeOfVoidType() && !t1.isTypeOfVoidType()) {
+            Type u = t1;
+            return decideCollectionHullForLcs(other, u);
+        }
+
+        Type u = t1.getLeastCommonSupertype(t2);
+        if (u == null) {
+            // Kein gemeinsamer Element-Supertyp -> OclAny als sicherer Fallback
+            u = TypeFactory.mkOclAny();
+        }
+
+        return decideCollectionHullForLcs(other, u);
     }
-        
+
+    /**
+     * Entscheidet, welche Collection-Huelle fuer den LCS benutzt wird.
+     * Wenn beide Collections dieselbe konkrete Klasse haben (z.B. beide SetType),
+     * bleibt diese Spezialisierung erhalten. Ansonsten wird immer der
+     * abstrakte Collection-Typ verwendet.
+     */
+    private Type decideCollectionHullForLcs(CollectionType other, Type elementLcs) {
+        if (this.getClass().equals(other.getClass())) {
+            // gleiche konkrete Collection-Spezialisierung beibehalten
+            return createCollectionType(elementLcs);
+        }
+        // gemischte Spezialisierungen oder abstrakte Collections -> Collection(U)
+        return TypeFactory.mkCollection(elementLcs);
+    }
+
     @Override
     public StringBuilder toString(StringBuilder sb) {
         sb.append("Collection(");

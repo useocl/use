@@ -40,79 +40,79 @@ public final class Evaluator {
 
     /**
      * Creates a default Evaluator without building an evaluation tree.
-     * 
-     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
-     * The tree is used, e.g., in the evaluation browser.  
+     * <p>
+     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true.
+     * The tree is used, e.g., in the evaluation browser.
      *
      */
     public Evaluator() {
-    	fEnableEvalTree = false;
+        fEnableEvalTree = false;
     }
-    
+
     /**
      * Creates a default Evaluator.
-     * 
-     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true. 
-     * The tree is used, e.g., in the evaluation browser.  
+     * <p>
+     * Turns on building an evaluation tree if <code>enableEvalTree</code> is true.
+     * The tree is used, e.g., in the evaluation browser.
      *
      */
     public Evaluator(boolean enableEvalTree) {
-    	fEnableEvalTree = enableEvalTree;
+        fEnableEvalTree = enableEvalTree;
     }
 
     /**
      * Evaluates an expression in the specified system state context
-     * with a set of initial variable bindings. 
+     * with a set of initial variable bindings.
      * Detailed information is printed to <code>evalLog</code>, which can be <code>null</code>.
      */
-    public Value eval(Expression expr, 
+    public Value eval(Expression expr,
                       MSystemState preState,
                       MSystemState postState,
-                      VarBindings bindings, 
+                      VarBindings bindings,
                       PrintWriter evalLog,
                       String evalLogIndent) {
-    	if (fEnableEvalTree)
-    		fEvalContext = new DetailedEvalContext(preState, postState, bindings, evalLog, evalLogIndent);
-    	else if (evalLog != null || Log.isTracing())
-    		fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
-    	else
-    		fEvalContext = new SimpleEvalContext(preState, postState, bindings);
-    	
+        if (fEnableEvalTree)
+            fEvalContext = new DetailedEvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+        else if (evalLog != null || Log.isTracing())
+            fEvalContext = new EvalContext(preState, postState, bindings, evalLog, evalLogIndent);
+        else
+            fEvalContext = new SimpleEvalContext(preState, postState, bindings);
+
         Value res = evaluate(expr);
-        if (evalLog != null )
+        if (evalLog != null)
             evalLog.flush();
         return res;
     }
-    
+
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings. Detailed information
      * is printed to evalLog.
      */
-    public Value eval(Expression expr, 
-            MSystemState preState,
-            MSystemState postState,
-            VarBindings bindings, 
-            PrintWriter evalLog) {
-		return this.eval(expr, preState, postState, bindings, evalLog, "  ");
-	}
+    public Value eval(Expression expr,
+                      MSystemState preState,
+                      MSystemState postState,
+                      VarBindings bindings,
+                      PrintWriter evalLog) {
+        return this.eval(expr, preState, postState, bindings, evalLog, "  ");
+    }
 
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings.
-     * This evaluation method uses the provided system state for the prestate and the current state.  
+     * This evaluation method uses the provided system state for the prestate and the current state.
      * Detailed information is printed to evalLog.
-     * @param expr The expression to evaluate.
+     *
+     * @param expr      The expression to evaluate.
      * @param postState The system state used as the current and pre state
-     * @param bindings The var bindings.
-     * @param evalLog A PrintWriter for the details.
+     * @param bindings  The var bindings.
+     * @param evalLog   A PrintWriter for the details.
      * @return The result value.
      */
-    public Value eval(Expression expr, 
+    public Value eval(Expression expr,
                       MSystemState postState,
-                      VarBindings bindings, 
-                      PrintWriter evalLog)
-    {
+                      VarBindings bindings,
+                      PrintWriter evalLog) {
         return eval(expr, postState, postState, bindings, evalLog);
     }
 
@@ -120,26 +120,25 @@ public final class Evaluator {
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings.
      */
-    public Value eval(Expression expr, 
+    public Value eval(Expression expr,
                       MSystemState postState,
-                      VarBindings bindings)
-    {
+                      VarBindings bindings) {
         return eval(expr, postState, bindings, null);
     }
-    
+
     /**
      * Evaluates an expression in the specified system state context
      * with a set of initial variable bindings.
      */
     public Value eval(
-    		Expression expr,
-    		MSystemState preState,
-    		MSystemState postState,
-    		VarBindings bindings) {
-    	
-    	return eval(expr, preState, postState, bindings, null);
+            Expression expr,
+            MSystemState preState,
+            MSystemState postState,
+            VarBindings bindings) {
+
+        return eval(expr, preState, postState, bindings, null);
     }
-    
+
     /**
      * Evaluates an expression in the specified system state context.
      */
@@ -149,7 +148,7 @@ public final class Evaluator {
 
 
     private Value evaluate(Expression expr) {
-        if (Log.isTracing() )
+        if (Log.isTracing())
             Log.trace("Evaluator.eval expr: " + expr);
 
         Value res = null;
@@ -157,17 +156,17 @@ public final class Evaluator {
             res = expr.eval(fEvalContext);
         } catch (StackOverflowError ex) {
             throw new RuntimeException(
-                                       "Stack overflow. The expression is probably nested" +
-                                       " too deep or contains an infinite recursion.");
+                    "Stack overflow. The expression is probably nested" +
+                            " too deep or contains an infinite recursion.");
         }
         return res;
     }
 
     public EvalNode getEvalNodeRoot() {
-    	if (fEnableEvalTree)
-    		return ((DetailedEvalContext)fEvalContext).getEvalNodeRoot();
-    	
-    	return null;
+        if (fEnableEvalTree)
+            return ((DetailedEvalContext) fEvalContext).getEvalNodeRoot();
+
+        return null;
     }
 
     /**
@@ -179,23 +178,25 @@ public final class Evaluator {
      * become available. The order in which results are delivered is
      * the same order passed in as <code>exprList</code>, i.e.,
      * expressions are processed in FIFO order.
-     *
+     * <p>
      * If <code>numThreads == 1</code>, the expression list will be
      * processed sequentially with no thread overhead.
      *
-     * @return Queue(Value) a queue of result values for each expression.  
+     * @return Queue(Value) a queue of result values for each expression.
      */
-    public Queue evalList(int numThreads, 
-                          ArrayList<Expression> exprList, 
+    public Queue evalList(int numThreads,
+                          ArrayList<Expression> exprList,
                           MSystemState systemState) {
-        if (numThreads < 1 )
+        if (numThreads < 1)
             throw new IllegalArgumentException("numThreads == " + numThreads);
 
         Queue result = new Queue();
-        ThreadedEvaluator.Controller controller = 
-            new ThreadedEvaluator.Controller(numThreads, result, 
-                                             exprList, systemState);
+        ThreadedEvaluator.Controller controller =
+                new ThreadedEvaluator.Controller(numThreads, result,
+                        exprList, systemState);
         controller.start();
         return result;
     }
+
 }
+

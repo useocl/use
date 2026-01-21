@@ -73,9 +73,11 @@ public final class OrderedSetType extends CollectionType {
     
     @Override
     public Type getLeastCommonSupertype(Type type) {
-        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
+        // Nur Collections koennen einen gemeinsamen Collection-LCS haben
+        if (!type.isKindOfCollection(VoidHandling.INCLUDE_VOID))
             return null;
 
+        // Reine Void-Collections: der nicht-void Typ dominiert
         if (type.isTypeOfVoidType())
             return this;
 
@@ -84,8 +86,14 @@ public final class OrderedSetType extends CollectionType {
 
         if (commonElementType == null)
             return null;
-        else
+
+        // Wenn beide OrderedSets sind, bleiben wir bei einem OrderedSet-Typ
+        if (type.isTypeOfOrderedSet()) {
             return TypeFactory.mkOrderedSet(commonElementType);
+        }
+
+        // Gemischte Collection-Spezialisierungen: abstrakten Collection-Typ verwenden
+        return TypeFactory.mkCollection(commonElementType);
     }
     
     /** 

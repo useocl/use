@@ -42,6 +42,7 @@ import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.SetValue;
@@ -319,13 +320,14 @@ public class GEvalInstrTry_AssocClass_LinkendSeqs extends GEvalInstrTry
 
 	protected SetValue createResultSet(MAssociationClass association,
 			StatementEvaluationResult res) {
+        Type type = TypeAdapters.asOclType(association);
 		Value[] newObjects = new Value[res.getStateDifference().getNewObjects().size()];
 		int index = 0;
 		for (MObject o : res.getStateDifference().getNewObjects()) {
 			newObjects[index] = new ObjectValue(association, o);
 			index++;
 		}
-		SetValue result = new SetValue((Type) association, newObjects);
+		SetValue result = new SetValue(type, newObjects);
 		return result;
 	}
     

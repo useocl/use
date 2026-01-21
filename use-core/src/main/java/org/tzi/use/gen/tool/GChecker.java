@@ -34,12 +34,17 @@ import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.tool.statistics.GInvariantStatistic;
 import org.tzi.use.gen.tool.statistics.GStatistic;
 import org.tzi.use.uml.mm.MClassInvariant;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.BooleanValue;
+import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.NullPrintWriter;
 
@@ -64,7 +69,7 @@ public class GChecker implements IGChecker {
     private final Comparator<GStatistic> invariantComparator;
     
     private final Evaluator fEvaluator = new Evaluator();
-    
+
     public GChecker(MModel model, GGeneratorArguments args) {
         fCheckStructure = args.checkStructure();
         Collection<MClassInvariant> invs = model.classInvariants();
@@ -86,8 +91,8 @@ public class GChecker implements IGChecker {
     }
 
     private long sortCount = 0;
-	
-	public boolean check(final MSystemState state, final IGCollector collector) {
+
+    public boolean check(final MSystemState state, final IGCollector collector) {
         // resort the invariants starting every 10.000th check.
         // invariants, which are often invalid, will be checked first.
         if (sortCounter == checksBeforeSort) {
@@ -97,8 +102,8 @@ public class GChecker implements IGChecker {
             ++sortCount;
             
             for (int i = 0; i < fInvariantStatistics.length; ++i)
-            	fInvariantStatistics[i].localReset();
-            	
+                fInvariantStatistics[i].localReset();
+
         } else {
             ++sortCounter;
         }
@@ -108,41 +113,76 @@ public class GChecker implements IGChecker {
         long start;
         boolean valid;
         Value value;
-        
+
         for (int k = 0; k < fSize && result; k++) {
             GInvariantStatistic stat = fInvariantStatistics[k];
             if (stat.getInvariant().isActive() && !stat.isCheckedByBarrier() ) {
-            	
-            	try {
-            		start = System.nanoTime();
 
-	                value = fEvaluator.eval((Expression) stat.getInvariant().expandedExpression(), state );
+                try {
+                    start = System.nanoTime();
 
-	                valid = value.isDefined() && ((BooleanValue) value).isFalse() == stat.getInvariant().isNegated();
+                    // Build VarBindings with appropriate `self` binding if possible
+                    VarBindings bindings = new VarBindings(state);
 
-	                stat.registerResult(valid, System.nanoTime() - start);
+                    MClassInvariant inv = stat.getInvariant();
+                    MClassifier contextClassifier = inv.cls();
+                    org.tzi.use.uml.mm.MClassifier selfClassifier = TypeAdapters.asMClassifier(contextClassifier);
+                    if (selfClassifier instanceof org.tzi.use.uml.mm.MClass) {
+                        org.tzi.use.uml.mm.MClass contextClass = (org.tzi.use.uml.mm.MClass) selfClassifier;
+                        Collection<MObject> instances = state.objectsOfClass(contextClass);
 
-	                if (!valid) {
-	                	if (collector.doBasicPrinting())
-	                		collector.basicPrintWriter().println(stat.getInvariant().toString() + " invalid.");
+                        if (instances.isEmpty()) {
+                            // No instances of context type: result depends on existential flag.
+                            boolean validForEmpty = !stat.getInvariant().isExistential();
+                            stat.registerResult(validForEmpty, System.nanoTime() - start);
+                            if (!validForEmpty) {
+                                // existential invariant over empty set -> invalid
+                                if (collector.doBasicPrinting()) {
+                                    collector.basicPrintWriter().println(stat.getInvariant().toString() + " invalid.");
+                                }
+                                result = false;
+                                break;
+                            }
+                            continue; // next invariant
+                        }
 
-	                    result = false;
-	                    break;
-	                }
-	            } catch (MultiplicityViolationException e) {
-	            	if (collector.doDetailPrinting()) {
-	            		collector.detailPrintWriter().println("An error occurred while checking an invariant:");
-	            		collector.detailPrintWriter().println(e.getMessage());
-	            	}
-	            	stat.registerException();
-	            	return false;
-	            }
+                        // Binde self auf eine beliebige Instanz des Kontexttyps.
+                        MObject anyObject = instances.iterator().next();
+                        ObjectValue selfVal = new ObjectValue(selfClassifier, anyObject);
+                        bindings.push("self", selfVal);
+                    }
+
+                    value = fEvaluator.eval(
+                        (Expression) stat.getInvariant().expandedExpression(),
+                        state,
+                        bindings
+                    );
+
+                    valid = value.isDefined() && ((BooleanValue) value).isFalse() == stat.getInvariant().isNegated();
+
+                    stat.registerResult(valid, System.nanoTime() - start);
+
+                    if (!valid) {
+                        if (collector.doBasicPrinting()) {
+                            collector.basicPrintWriter().println(stat.getInvariant().toString() + " invalid.");
+                        }
+                        result = false;
+                        break;
+                    }
+                } catch (MultiplicityViolationException e) {
+                    if (collector.doDetailPrinting()) {
+                        collector.detailPrintWriter().println("An error occurred while checking an invariant:");
+                        collector.detailPrintWriter().println(e.getMessage());
+                    }
+                    stat.registerException();
+                    return false;
+                }
             }
         }
         
         // checking structure
         if (result && fCheckStructure) {
-        	start = System.nanoTime();
+            start = System.nanoTime();
             result = state.checkStructure(NullPrintWriter.getInstance(), false);
             if (!result && collector.doBasicPrinting()) {
                 collector.basicPrintWriter().println("invalid structure.");
@@ -151,8 +191,8 @@ public class GChecker implements IGChecker {
         }
         
         if (result && collector.doBasicPrinting())
-        	collector.basicPrintWriter().println("valid state.");
-        
+            collector.basicPrintWriter().println("valid state.");
+
         return result;
     }
 

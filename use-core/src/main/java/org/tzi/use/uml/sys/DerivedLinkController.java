@@ -81,7 +81,7 @@ public abstract class DerivedLinkController implements DerivedValueController {
 	 */
 	private Set<MDerivedLink> determineDerivedLinks() {
 		Set<MDerivedLink> links = new HashSet<MDerivedLink>(derivedLinks.size());
-		
+
 		for (MAssociationEnd associationEnd : derivedAssociationEnds) {			
 			determineDerivedLinks(links, associationEnd);
 		}
@@ -105,8 +105,8 @@ public abstract class DerivedLinkController implements DerivedValueController {
 		for (MAssociation association : state.system().model().associations()) {
 			for (MAssociationEnd end : association.associationEnds()) {
 				if (handles(end)) {
-					end = determineBestEnd(end);
-					derivedAssociationEnds.add(end);
+					MAssociationEnd best = determineBestEnd(end);
+					derivedAssociationEnds.add(best);
 					break;
 				}
 			}
@@ -140,12 +140,8 @@ public abstract class DerivedLinkController implements DerivedValueController {
 	
 	@Override
 	public void updateState() {
-		// This is a rather naive implementation
-		// We get all currently derived links and compare them to the previously
-		// calculated ones
 		Set<MDerivedLink> allDerivedLinks = determineDerivedLinks();
-		
-		// Get the new links
+
 		for (MDerivedLink link : allDerivedLinks) {
 			MLinkSet linkSet = linkSets.get(link.association());
 			
@@ -154,25 +150,19 @@ public abstract class DerivedLinkController implements DerivedValueController {
 			}
 		}
 		
-		// safe the new derived links
 		derivedLinks = allDerivedLinks;
 	}
 	
 	@Override
 	public final void updateState(StateDifference diff) {
-		// This is a rather naive implementation
-		// We get all currently derived links and compare them to the previously
-		// calculated ones
 		Set<MDerivedLink> allDerivedLinks = determineDerivedLinks();
-		
-		// Get the new links
+
 		for (MDerivedLink link : allDerivedLinks) {
 			if (!derivedLinks.contains(link)) {
 				linkSets.get(link.association()).add(link);
 				diff.addNewLink(link);
 				state.system().fireLinkInserted(link);
 			} else {
-				// remove from original set, so we get all deleted links at the end
 				derivedLinks.remove(link);
 			}
 		}
@@ -183,7 +173,6 @@ public abstract class DerivedLinkController implements DerivedValueController {
 			state.system().fireLinkDeleted(link);
 		}
 		
-		// safe the new derived links
 		derivedLinks = allDerivedLinks;
 	}
 }

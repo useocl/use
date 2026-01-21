@@ -21,37 +21,37 @@ package org.tzi.use.parser;
 
 import org.antlr.runtime.Token;
 
-/** 
+/**
  * Exception thrown during code generation in AST walking.
  *
  * @author      Mark Richters 
  */
 public class SemanticException extends Exception {
-	/**
-	 * To get rid of the warning...
-	 */
-	private static final long serialVersionUID = 1L;
-	
+    /**
+     * To get rid of the warning...
+     */
+    private static final long serialVersionUID = 1L;
+
     private final SrcPos fSrcPos;
 
     public SemanticException(String message) {
-    	super(message);
-    	fSrcPos = null;
+        super(message);
+        fSrcPos = null;
     }
-    
-    /** 
+
+    /**
      * Construct exception with information about source position.
      */
     public SemanticException(SrcPos pos, String message) {
         super(message);
         fSrcPos = pos;
     }
-    
+
     public SemanticException(SrcPos pos, Exception ex) {
         this(pos, ex.getMessage());
     }
-    
-    /** 
+
+    /**
      * Construct exception with information about source position
      * given by an error token.
      */
@@ -59,12 +59,12 @@ public class SemanticException extends Exception {
         super(message);
         fSrcPos = new SrcPos(token);
     }
-    
+
     public SemanticException(Token token, Exception ex) {
         this(token, ex.getMessage());
     }
 
-    
+
     /**
      * Returns the source information and the description of the exception 
      */
@@ -72,10 +72,10 @@ public class SemanticException extends Exception {
     public String getMessage() {
         return (fSrcPos == null ? "" : fSrcPos.toString()) + super.getMessage();
     }
-    
+
     /**
      * Returns only the exception message without source information.
-     * @return description of the exception 
+     * @return description of the exception
      */
     public String getShortMessage() {
         return super.getMessage();

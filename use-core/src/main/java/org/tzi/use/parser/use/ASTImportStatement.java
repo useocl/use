@@ -81,7 +81,6 @@ public class ASTImportStatement extends AST {
      */
     public void resolveAndImport(ImportContext importContext, Context ctx, MModel currentModel) throws SemanticException, MInvalidModelException, IOException {
         Path resolvedIdentifier = resolveURI(artifact, ctx.getfFileUri());
-        System.err.println("[IMPORT] resolveAndImport called: artifact=" + artifact + ", resolvedIdentifier=" + resolvedIdentifier + ", currentModel=" + (currentModel == null ? "<null>" : currentModel.name()) + ", requestedSymbols=" + elementIdentifiers);
         try (InputStream iStream = Files.newInputStream(resolvedIdentifier)) {
             // Check import context for already compiled models to avoid redundant compilation.
             MModel model = importContext.importedModels().stream().filter(mModel -> mModel.filename().equals(resolvedIdentifier.toString())).findFirst().orElse(null);
@@ -95,7 +94,6 @@ public class ASTImportStatement extends AST {
 
                 model = USECompiler.compileImportedSpecification(iStream, resolvedIdentifier.toString(),
                         resolvedIdentifier.toUri(), ctx, importContext);
-                System.err.println("[IMPORT] compiled imported model: " + (model == null ? "<null>" : model.name()));
                 // model may be null if compilation failed (e.g. a cycle is detected)
                 if (model == null) {
                     return;
@@ -116,7 +114,6 @@ public class ASTImportStatement extends AST {
                 for (String symbol : elementIdentifiers) {
                     try {
                         String elementName = getElementName(symbol, model.name());
-                        System.err.println("[IMPORT] resolved symbol '" + symbol + "' -> elementName='" + elementName + "'");
                         MClassifier element = findElementInModel(model, elementName);
                         if (element != null) {
                             // mark qualified access on the classifier if the
@@ -136,18 +133,15 @@ public class ASTImportStatement extends AST {
                             // let the later type resolver produce the
                             // position-aware message.
                             if (!symbol.contains("#")) {
-                                System.err.println("[IMPORT] missing unqualified element '" + symbol + "' in model '" + model.name() + "' -> reporting as import-element-missing");
                                 ctx.reportError(new SemanticException("Could not find element for imported symbol: " + symbol + " in model " + model.name() + "."));
                             }
                         }
                     } catch (SemanticException ex) {
                         // qualifier mismatch: report and skip the symbol
-                        System.err.println("[IMPORT] qualifier mismatch for symbol='" + symbol + "' expectedModel='" + model.name() + "' -> " + ex.getShortMessage());
                         ctx.reportError(ex);
                     }
                 }
             }
-            System.err.println("[IMPORT] filteredSymbols used for import: " + filteredSymbols);
             MImportedModel importedModel = new MImportedModel(model, isWildcard, filteredSymbols);
             currentModel.addImportedModel(importedModel);
 
@@ -169,7 +163,6 @@ public class ASTImportStatement extends AST {
                 } else if (filteredSymbols.contains(cls.name())) {
                     key = cls.name();
                 }
-                System.err.println("[IMPORT] typeTable.add key='" + key + "' for classifier='" + cls.name() + "' (qualKeyPresent=" + filteredSymbols.contains(qualKey) + ")");
                 ctx.typeTable().add(key, oclType, null);
             }
 
@@ -182,7 +175,6 @@ public class ASTImportStatement extends AST {
                 } else if (filteredSymbols.contains(enumType.name())) {
                     key = enumType.name();
                 }
-                System.err.println("[IMPORT] typeTable.add key='" + key + "' for enum='" + enumType.name() + "' (qualKeyPresent=" + filteredSymbols.contains(qualKey) + ")");
                 ctx.typeTable().add(key, oclEnum, null);
             }
 
@@ -195,7 +187,6 @@ public class ASTImportStatement extends AST {
                 } else if (filteredSymbols.contains(signal.name())) {
                     key = signal.name();
                 }
-                System.err.println("[IMPORT] typeTable.add key='" + key + "' for signal='" + signal.name() + "' (qualKeyPresent=" + filteredSymbols.contains(qualKey) + ")");
                 ctx.typeTable().add(key, msgType, null);
             }
 

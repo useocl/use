@@ -72,13 +72,22 @@ public final class TypeAdapters {
         if (apiType == null) {
             return null;
         }
+
+        // ⭐ DAS FEHLT
+        if (apiType instanceof ClassifierType) {
+            return ((ClassifierType) apiType).classifier();
+        }
+
         if (apiType instanceof MClassifier) {
             return (MClassifier) apiType;
         }
+
         if (apiType instanceof Type) {
             return asMClassifier((Type) apiType);
         }
+
         return null;
     }
+
 }
 

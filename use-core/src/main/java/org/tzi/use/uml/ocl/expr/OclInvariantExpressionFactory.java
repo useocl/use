@@ -2,6 +2,13 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.api.IInvariantExpressionFactory;
+import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.api.IVarDeclList;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.api.IVarDecl;
 
 /**
  * OCL-spezifische Implementierung der InvariantExpressionFactory.
@@ -10,16 +17,44 @@ import org.tzi.use.uml.api.IInvariantExpressionFactory;
 public class OclInvariantExpressionFactory implements IInvariantExpressionFactory {
 
     @Override
-    public IExpression buildExpandedInvariant(IExpression body, boolean existential) {
+    public IExpression buildExpandedInvariant(IExpression body, boolean existential, MClassifier classifier, IVarDeclList vars) {
         // Erwartet, dass der Body bereits eine Expression ist
         Expression bodyExpr = (Expression) body;
-        // Die ursprüngliche Logik benötigt MClassifier/VarDeclList; diese
-        // Information liegt im aktuellen Modell weiterhin in MClassInvariant
-        // und dem OCL-Umfeld. Ohne zusätzlichen Kontext kann hier nur ein
-        // Platzhalter bleiben oder eine später zu ergänzende Strategie.
-        // Für die Architekturabstraktion ist entscheidend, dass api die
-        // Signatur nicht mehr auf mm/ocl-Typen festlegt.
-        return bodyExpr;
+        try {
+            // Wenn keine Variablen deklariert sind oder die Liste leer ist,
+            // können wir nichts aufbauen -> Fallback: return body as-is
+            if (vars == null || !vars.iterator().hasNext()) {
+                return bodyExpr; // fallback: return body as-is
+            }
+
+            // create range expression: Class.allInstances()
+            Type classType = TypeAdapters.asOclType(classifier);
+            Expression rangeExp = new ExpAllInstances(classType);
+
+            // adapt vars to concrete VarDeclList if necessary
+            VarDeclList oclVarDecls;
+            if (vars instanceof VarDeclList) {
+                oclVarDecls = (VarDeclList) vars;
+            } else {
+                // convert IVarDeclList -> VarDeclList
+                oclVarDecls = new VarDeclList(false);
+                for (IVarDecl iv : vars) {
+                    String name = iv.name();
+                    org.tzi.use.uml.api.IType apiType = iv.type();
+                    Type oclType = TypeAdapters.asOclType(apiType);
+                    oclVarDecls.add(new VarDecl(name, oclType));
+                }
+            }
+
+            // build quantifier expression
+            if (existential) {
+                return new ExpExists(oclVarDecls, rangeExp, bodyExpr);
+            } else {
+                return new ExpForAll(oclVarDecls, rangeExp, bodyExpr);
+            }
+        } catch (ExpInvalidException e) {
+            throw new RuntimeException("Failed to build expanded invariant", e);
+        }
     }
 
     @Override

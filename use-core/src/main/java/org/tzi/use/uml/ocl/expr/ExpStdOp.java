@@ -46,7 +46,7 @@ import java.util.List;
  */
 public final class ExpStdOp extends Expression {
 
-	// opname / possible (overloaded) operations
+    // opname / possible (overloaded) operations
     public static ListMultimap<String, OpGeneric> opmap;
 
     // initialize operation map
@@ -60,19 +60,19 @@ public final class ExpStdOp extends Expression {
      * @param op
      */
     public static void addOperation(OpGeneric op) {
-    	opmap.put(op.name(), op);
+        opmap.put(op.name(), op);
     }
-    
+
     /***
      * Removes all given operations from list ops
      * @param ops
      */
     public static void removeAllOperations(List<OpGeneric> ops) {
-    	for (OpGeneric op : ops) {
-    		opmap.remove(op.name(), op);
-    	}
+        for (OpGeneric op : ops) {
+            opmap.remove(op.name(), op);
+        }
     }
-    
+
     /**
      * Returns true if a standard operation exists matching <code>name</code> and <code>params</code>.
      */
@@ -121,7 +121,7 @@ public final class ExpStdOp extends Expression {
         for (OpGeneric op : ops) {
             Type t = op.matches(params);
             if (t != null) {
-            	checkTypeSystemWarnings(op, args, params, t);
+                checkTypeSystemWarnings(op, args, params, t);
                 return new ExpStdOp(op, args, t);
             }
         }
@@ -132,78 +132,79 @@ public final class ExpStdOp extends Expression {
     }
 
     private static void checkTypeSystemWarnings(OpGeneric op, Expression[] params, Type[] paramTypes, Type resultType) throws ExpInvalidException {
-    	if (!Options.checkWarningsOclAnyInCollections().equals(WarningType.IGNORE))
-    		checkOclAnyCollectionsWarning(op, paramTypes, resultType, Options.checkWarningsOclAnyInCollections());
-    	
-    	if (!Options.checkWarningsUnrelatedTypes().equals(WarningType.IGNORE)) {
-    		String warn = op.checkWarningUnrelatedTypes(params);
-    		if (warn != null) {
-    			warn += StringUtil.NEWLINE + "You can change this check using the -extendedTypeSystemChecks switch.";
-    			if (Options.checkWarningsUnrelatedTypes().equals(WarningType.WARN)) {
-    				Log.warn("Warning: " + warn);
-    			} else {
-    				throw new ExpInvalidException(warn);
-    			}
-    		}
-    	}
+        if (!Options.checkWarningsOclAnyInCollections().equals(WarningType.IGNORE))
+            checkOclAnyCollectionsWarning(op, paramTypes, resultType, Options.checkWarningsOclAnyInCollections());
+
+        if (!Options.checkWarningsUnrelatedTypes().equals(WarningType.IGNORE)) {
+            String warn = op.checkWarningUnrelatedTypes(params);
+            if (warn != null) {
+                warn += StringUtil.NEWLINE + "You can change this check using the -extendedTypeSystemChecks switch.";
+                if (Options.checkWarningsUnrelatedTypes().equals(WarningType.WARN)) {
+                    Log.warn("Warning: " + warn);
+                } else {
+                    throw new ExpInvalidException(warn);
+                }
+            }
+        }
     }
-    
+
     /**
      * Validates if an operation call on a collection type with leaf element type different from OCLAny
-     * results in OCLAny or a collection with the leaf element type OCLAny. 
+     * results in OCLAny or a collection with the leaf element type OCLAny.
      * If <code>true</code> a warning is reported.
-     * <p><b>Note</b>: Leaf element type means the last element type which is not a collection.</p> 
-	 * @param op The operation which is called
-	 * @param params
-	 * @param resultType The <code>Type</code> of the result.
+     * <p><b>Note</b>: Leaf element type means the last element type which is not a collection.</p>
+     *
+     * @param op          The operation which is called
+     * @param params
+     * @param resultType  The <code>Type</code> of the result.
      * @param warningType
-     * @throws ExpInvalidException 
-	 */
-	private static void checkOclAnyCollectionsWarning(OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {
-		Type sourceType = params[0];
-		
-		if (sourceType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
-			CollectionType sourceCollectionType = (CollectionType)sourceType;
-			Type sourceElementType = sourceCollectionType.elemType();
-			
-			while (sourceElementType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
-				sourceElementType = ((CollectionType)sourceElementType).elemType();
-			}
-			
-			if (sourceElementType.isTypeOfOclAny()) return;
-			
-			Type resultElementType = resultType;
-			while (resultElementType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
-				resultElementType = ((CollectionType)resultElementType).elemType();
-			}
-			
-			if (resultElementType.isTypeOfOclAny()) {
-				StringBuilder paramTypes = new StringBuilder();
-				for (int index = 1; index < params.length; ++index) {
-					if (index > 1) {
-						paramTypes.append(",");
-					}
-					paramTypes.append(params[index].toString());
-				}
+     * @throws ExpInvalidException
+     */
+    private static void checkOclAnyCollectionsWarning(OpGeneric op, Type[] params, Type resultType, WarningType warningType) throws ExpInvalidException {
+        Type sourceType = params[0];
 
-				String message = "Operation call "
-						+ StringUtil.inQuotes(sourceType.toString() + "->"
-								+ op.name() + "(" + paramTypes.toString() + ")")
-						+ " results in type "
-						+ StringUtil.inQuotes(resultType.toString()) + "." + StringUtil.NEWLINE
-						+ "This may lead to unexpected behavior." + StringUtil.NEWLINE
-						+ "You can change this check using the -oclAnyCollectionsChecks switch.";
-				
-				if (warningType.equals(WarningType.ERROR)) {
-					throw new ExpInvalidException(message);
-				} else {
-					Log.warn("Warning: " + message);
-				}
-			}
-		}
-	}
+        if (sourceType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+            CollectionType sourceCollectionType = (CollectionType) sourceType;
+            Type sourceElementType = sourceCollectionType.elemType();
 
-	private static String opCallSignature(String name, Expression args[]) {
+            while (sourceElementType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+                sourceElementType = ((CollectionType) sourceElementType).elemType();
+            }
+
+            if (sourceElementType.isTypeOfOclAny()) return;
+
+            Type resultElementType = resultType;
+            while (resultElementType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+                resultElementType = ((CollectionType) resultElementType).elemType();
+            }
+
+            if (resultElementType.isTypeOfOclAny()) {
+                StringBuilder paramTypes = new StringBuilder();
+                for (int index = 1; index < params.length; ++index) {
+                    if (index > 1) {
+                        paramTypes.append(",");
+                    }
+                    paramTypes.append(params[index].toString());
+                }
+
+                String message = "Operation call "
+                        + StringUtil.inQuotes(sourceType.toString() + "->"
+                        + op.name() + "(" + paramTypes.toString() + ")")
+                        + " results in type "
+                        + StringUtil.inQuotes(resultType.toString()) + "." + StringUtil.NEWLINE
+                        + "This may lead to unexpected behavior." + StringUtil.NEWLINE
+                        + "You can change this check using the -oclAnyCollectionsChecks switch.";
+
+                if (warningType.equals(WarningType.ERROR)) {
+                    throw new ExpInvalidException(message);
+                } else {
+                    Log.warn("Warning: " + message);
+                }
+            }
+        }
+    }
+
+    private static String opCallSignature(String name, Expression args[]) {
         // build error message with type names of arguments
         Type srcType = args[0].type();
         StringBuffer s = new StringBuffer(srcType
@@ -238,13 +239,13 @@ public final class ExpStdOp extends Expression {
     }
 
     /**
-	 * @return the fOp
-	 */
-	public OpGeneric getOperation() {
-		return fOp;
-	}
+     * @return the fOp
+     */
+    public OpGeneric getOperation() {
+        return fOp;
+    }
 
-	public String name() {
+    public String name() {
         return getOperation().name();
     }
 
@@ -252,19 +253,19 @@ public final class ExpStdOp extends Expression {
         return fArgs;
     }
 
-	@Override
-	protected boolean childExpressionRequiresPreState() {
-		if (this.opname().equals("oclIsNew")) return true;
-		
-		for (Expression e : fArgs) {
-			if (e.requiresPreState()) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
+    @Override
+    protected boolean childExpressionRequiresPreState() {
+        if (this.opname().equals("oclIsNew")) return true;
+
+        for (Expression e : fArgs) {
+            if (e.requiresPreState()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Evaluates the expression and returns a result value.
      */
@@ -280,9 +281,9 @@ public final class ExpStdOp extends Expression {
         } else {
             final Value argValues[] = new Value[fArgs.length];
             final int opKind = getOperation().kind();
-            
+
             Value v;
-            
+
             for (int i = 0; i < fArgs.length && res == null; i++) {
                 argValues[i] = v = fArgs[i].eval(ctx);
                 // if any of the arguments is undefined, the result
@@ -290,18 +291,18 @@ public final class ExpStdOp extends Expression {
                 // call.
                 if (v.isUndefined()) {
                     switch (opKind) {
-                    case OpGeneric.OPERATION:
-                        // strict evaluation, result is undefined, no
-                        // need to call the operation's eval() method.
-                        res = UndefinedValue.instance;
-                        break;
-                    case OpGeneric.SPECIAL:
-                        // these operations handle undefined arguments
-                        // themselves
-                        break;
-                    default:
-                        throw new RuntimeException(
-                                "Unexpected operation kind: " + opKind);
+                        case OpGeneric.OPERATION:
+                            // strict evaluation, result is undefined, no
+                            // need to call the operation's eval() method.
+                            res = UndefinedValue.instance;
+                            break;
+                        case OpGeneric.SPECIAL:
+                            // these operations handle undefined arguments
+                            // themselves
+                            break;
+                        default:
+                            throw new RuntimeException(
+                                    "Unexpected operation kind: " + opKind);
                     }
                 }
             }
@@ -318,8 +319,9 @@ public final class ExpStdOp extends Expression {
         return res;
     }
 
-	@Override
-	public void processWithVisitor(ExpressionVisitor visitor) {
-		visitor.visitStdOp(this);
-	}
+    @Override
+    public void processWithVisitor(ExpressionVisitor visitor) {
+        visitor.visitStdOp(this);
+    }
 }
+

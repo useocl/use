@@ -30,6 +30,7 @@ import org.tzi.use.uml.api.IVarDeclList;
 import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.api.ITypeFactory;
 import org.tzi.use.uml.api.TypeFactoryProvider;
+import org.tzi.use.uml.ocl.type.ClassifierType;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.uml.api.IExpression;
 
@@ -46,7 +47,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     private MMultiplicity fMultiplicity; // multiplicity spec
     private int fKind; // none, aggregation, or composition
     private boolean fIsOrdered; // use as Set or OrderedSet
-    private boolean fIsNavigable = true; 
+    private boolean fIsNavigable = true;
     private boolean fIsExplicitNavigable = false;
     
     /**
@@ -236,7 +237,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
             return true;
         if (obj instanceof MAssociationEnd ) {
             MAssociationEnd aend = (MAssociationEnd) obj;
-            return name().equals(aend.name()) 
+            return name().equals(aend.name())
                 && fAssociation.equals(aend.association())
                 && fClass.equals(aend.cls());
         }
@@ -248,22 +249,49 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
     //////////////////////////////////////////////////
 
     @Override
-    public IType getType( IType sourceObjectType, MNavigableElement src, boolean qualifiedAccess ) {
+    public IType getType(IType sourceObjectType, MNavigableElement src, boolean qualifiedAccess) {
 
-    	IType t;
+        IType t;
 
-     	if (this.getRedefiningEnds().size() > 0) {
-    		t = getRedefinedType((MClass)sourceObjectType);
-     	} else {
-    		t = cls();
-     	}
+        if (this.getRedefiningEnds().size() > 0) {
 
-         if ( src.equals( src.association() ) ) {
-             return t;
-         }
+            MClass sourceClass = null;
+
+            if (sourceObjectType instanceof MClass) {
+                sourceClass = (MClass) sourceObjectType;
+
+            } else if (sourceObjectType instanceof ClassifierType) {
+                ClassifierType ct = (ClassifierType) sourceObjectType;
+
+                if (ct.classifier() instanceof MClass) {
+                    sourceClass = (MClass) ct.classifier();
+                } else {
+                    throw new IllegalArgumentException(
+                            "Expected ClassifierType to contain an MClass, but found: " +
+                                    ct.classifier().getClass().getName()
+                    );
+                }
+
+            } else {
+                throw new IllegalArgumentException(
+                        "Expected sourceObjectType to be of type MClass, but found: " +
+                                sourceObjectType.getClass().getName()
+                );
+            }
+
+            t = getRedefinedType(sourceClass);
+
+        } else {
+            t = cls();
+        }
+
+        if (src.equals(src.association())) {
+            return t;
+        }
 
         return getType(t, src.hasQualifiers(), qualifiedAccess);
-     }
+    }
+
 
      /**
       * Used internally to create a the correct collection
@@ -460,7 +488,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 	}
 	
 	/**
-	 * @return
+	 * @return the derive parameter list
 	 */
 	public IVarDeclList getDeriveParamter() {
 		return deriveParameter;
@@ -472,7 +500,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 	}
 
 	/**
-	 * @param b
+	 * @param b the new derived value
 	 */
 	public void setDerived(boolean b) {
 		this.isDerived = b;
@@ -485,7 +513,7 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
 
 	@Override
 	public boolean hasQualifiers() {
-		return getQualifiers().size() > 0;
+		return !getQualifiers().isEmpty();
 	}
 	
 	/* (non-Javadoc)

@@ -101,20 +101,13 @@ public final class BagType extends CollectionType {
         return res;
     }
 
+    @Override
     public Type getLeastCommonSupertype(Type type) {
-        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
-            return null;
-
-        if (type.isTypeOfVoidType())
-            return this;
-
-        CollectionType cType = (CollectionType) type;
-        Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
-
-        if (commonElementType == null)
-            return null;
-        else
-            return TypeFactory.mkBag(commonElementType);
+        // Verwende die zentrale CollectionType-Logik fuer die Bestimmung
+        // des LCS. Damit gilt:
+        //  - Bag(T) vs Bag(U) -> Bag(LCS(T,U))
+        //  - Bag(T) vs andere Collection-Spezialisierungen -> Collection(LCS(T,U))
+        return super.getLeastCommonSupertype(type);
     }
     
     @Override

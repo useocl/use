@@ -45,6 +45,7 @@ module use.core {
     exports org.tzi.use.parser.generator;
     exports org.tzi.use.uml.api;
     exports org.tzi.use.parser.soil;
+    exports org.tzi.use.uml.ocl;
 
 
 }

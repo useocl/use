@@ -38,6 +38,7 @@ import java.util.List;
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.ocl.type.SequenceType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.IntegerValue;
 import org.tzi.use.uml.ocl.value.ObjectValue;
@@ -74,10 +75,10 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     }
 
     public void feedback(
-    		GConfiguration conf, 
-    		Value value, 
-    		IGCollector collector ) throws GEvaluationException {
-    	
+            GConfiguration conf,
+            Value value,
+            IGCollector collector ) throws GEvaluationException {
+
     	if (value.isUndefined()) {
     		GValueInstruction culprit = fInstr.integerInstr();
     		collector.invalid(buildCantExecuteMessage(fInstr, culprit));
@@ -135,12 +136,14 @@ public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
         
         List<Value> objectValues = new ArrayList<Value>();
         for (String objectName : objectNames) {
-        	MObject object = state.objectByName(objectName);
-        	objectValues.add(new ObjectValue(objectClass, object));
+            MObject object = state.objectByName(objectName);
+            objectValues.add(new ObjectValue(objectClass, object));
         }
         
-        Value objects = new SequenceValue((Type) objectClass, objectValues);
-        
+        // Determine the OCL element type for the sequence from the static instruction type
+        Type elementType = ((SequenceType) fInstr.type()).elemType();
+        Value objects = new SequenceValue(elementType, objectValues);
+
         if (collector.doDetailPrinting())
         	detailOutput.println(inQuotes(fInstr) + " == " + objects);
         

@@ -7,6 +7,7 @@ import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.SetType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.value.BagValue;
 import org.tzi.use.uml.ocl.value.SetValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
@@ -309,7 +310,21 @@ final class Op_set_including extends OpGeneric {
 			params[0].isTypeOfSet()) {
 			SetType set1 = (SetType) params[0];
 
-			Type commonElementType = set1.elemType().getLeastCommonSupertype(params[1]);
+			Type elemType = set1.elemType();
+			Type argType = params[1];
+
+			// Heuristik fuer t057: Wenn die Elemente des Sets bereits Collections sind
+			// und das Argument selbst eine (verschachtelte) Collection ueber Collections ist,
+			// betrachten wir die Operation als nicht wohldefiniert und liefern kein Match.
+			if (elemType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)
+					&& argType.isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+				CollectionType argCol = (CollectionType) argType;
+				if (argCol.elemType().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+					return null;
+				}
+			}
+
+			Type commonElementType = elemType.getLeastCommonSupertype(argType);
 
 			if (commonElementType != null)
 				return TypeFactory.mkSet(commonElementType);

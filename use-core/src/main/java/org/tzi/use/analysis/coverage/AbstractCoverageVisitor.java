@@ -21,6 +21,8 @@ package org.tzi.use.analysis.coverage;
 
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
+import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.ClassifierType;
 
 import java.util.Stack;
 
@@ -78,7 +80,20 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 	@Override
 	public void visitAttrOp(ExpAttrOp exp) {
 		exp.objExp().processWithVisitor(this);
-		addAttributeCoverage((MClassifier) exp.objExp().type(), exp.attr());
+
+		// Typ des Objektausdrucks ermitteln und ggf. MClassifier extrahieren
+		Type objectType = exp.objExp().type();
+		MClassifier sourceClassifier = null;
+
+		if (objectType instanceof MClassifier) {
+			sourceClassifier = (MClassifier) objectType;
+		} else if (objectType instanceof ClassifierType) {
+			sourceClassifier = ((ClassifierType) objectType).classifier();
+		}
+
+		if (sourceClassifier != null) {
+			addAttributeCoverage(sourceClassifier, exp.attr());
+		}
 	}
 
 	@Override
@@ -142,8 +157,10 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 	@Override
 	public void visitIsKindOf(ExpIsKindOf exp) {
 		exp.getSourceExpr().processWithVisitor(this);
-		if (exp.getTargetType().isTypeOfClass()) {
-			addClassCoverage((MClass) exp.getTargetType());
+		Type targetType = exp.getTargetType();
+		MClass cls = extractMClassFromType(targetType);
+		if (cls != null) {
+			addClassCoverage(cls);
 		}
 	}
 
@@ -196,8 +213,15 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 			ex.processWithVisitor(this);
 		}
 
-		addOperationCoverage((MClassifier) exp.getArguments()[0].type(),
-				exp.getOperation());
+		// Das erste Argument der Instanzoperation liefert einen OCL-Typ (Type),
+		// der ggf. als ClassifierType vorliegt. Dieser darf nicht direkt zu
+		// MClassifier gecastet werden, sondern muss ueber den TypeAdapter
+		// zurueck in den Modellklassifikator gemappt werden.
+		Type argType = exp.getArguments()[0].type();
+		MClassifier argClassifier = org.tzi.use.uml.ocl.type.TypeAdapters.asMClassifier(argType);
+		if (argClassifier != null) {
+			addOperationCoverage(argClassifier, exp.getOperation());
+		}
 
 		if (expandOperations && exp.getOperation().hasExpression()
 				&& !operationStack.contains(exp.getOperation())) {
@@ -283,8 +307,10 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 
 	@Override
 	public void visitVariable(ExpVariable exp) {
-		if (exp.type().isTypeOfClass()) {
-			addClassCoverage((MClass) exp.type());
+		Type t = exp.type();
+		MClass cls = extractMClassFromType(t);
+		if (cls != null) {
+			addClassCoverage(cls);
 		}
 	}
 
@@ -330,16 +356,20 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 
 	@Override
 	public void visitSelectByKind(ExpSelectByKind expSelectByKind) {
-		if (expSelectByKind.type().elemType().isTypeOfClass()) {
-			addClassCoverage((MClass) expSelectByKind.type().elemType());
+		Type elemType = expSelectByKind.type().elemType();
+		MClass cls = extractMClassFromType(elemType);
+		if (cls != null) {
+			addClassCoverage(cls);
 		}
 		expSelectByKind.getSourceExpression().processWithVisitor(this);
 	}
 
 	@Override
 	public void visitExpSelectByType(ExpSelectByType expSelectByType) {
-		if (expSelectByType.type().elemType().isTypeOfClass()) {
-			addClassCoverage((MClass) expSelectByType.type().elemType());
+		Type elemType = expSelectByType.type().elemType();
+		MClass cls = extractMClassFromType(elemType);
+		if (cls != null) {
+			addClassCoverage(cls);
 		}
 		expSelectByType.getSourceExpression().processWithVisitor(this);
 	}
@@ -348,5 +378,28 @@ public abstract class AbstractCoverageVisitor implements ExpressionVisitor {
 	public void visitRange(ExpRange exp) {
 		exp.getStart().processWithVisitor(this);
 		exp.getEnd().processWithVisitor(this);
+	}
+
+	/**
+	 * Versucht aus einem OCL-Typ das zugrunde liegende MClass-Objekt zu
+	 * extrahieren. Behandelt sowohl direkte MClass-Referenzen (altes Verhalten)
+	 * als auch den neuen OCL-Classifiertyp, der einen MClassifier kapselt.
+	 */
+	private MClass extractMClassFromType(Type type) {
+		if (type == null) {
+			return null;
+		}
+		// Historischer Fall: der Typ ist direkt eine MClass-Instanz
+		if (type instanceof MClass) {
+			return (MClass) type;
+		}
+		// Neuer Fall: OCL-Classifiertyp kapselt ein Modell-Classifier-Objekt
+		if (type instanceof ClassifierType) {
+			org.tzi.use.uml.mm.MClassifier mc = ((ClassifierType) type).classifier();
+			if (mc instanceof MClass) {
+				return (MClass) mc;
+			}
+		}
+		return null;
 	}
 }

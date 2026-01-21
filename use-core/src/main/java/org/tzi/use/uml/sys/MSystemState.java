@@ -27,10 +27,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.*;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
@@ -50,6 +52,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
+ * S
  * A system state represents a valid instance of a model. It contains a set of
  * objects and links connecting objects. Methods allow manipulation and querying
  * of objects and links.
@@ -671,7 +674,12 @@ public final class MSystemState {
 				
 		for (MClass cls : allClasses) {
 			for (MAttribute attr : cls.attributes()) {
-				if (obj.cls().conformsTo(attr.type())) {
+				// Adapt attribute type to an mm.MClassifier if possible. The attribute
+				// may expose an OCL Type adapter; in that case obj.cls().conformsTo(attr.type())
+				// previously returned false because attr.type() was not an MClassifier.
+				IType attrIType = attr.type();
+				org.tzi.use.uml.mm.MClassifier attrClf = TypeAdapters.asMClassifier(attrIType);
+				if (attrClf != null && obj.cls().conformsTo(attrClf)) {
 					// Check for all object values
 					for (MObject relObject : this.objectsOfClassAndSubClasses(cls)) {
 						MObjectState state = relObject.state(this); 
@@ -829,7 +837,7 @@ public final class MSystemState {
 
 	/**
 	 * Validates, if a redefinition constraint of a child association of <code>toCheck</code> exists,
-	 * that is a more specific redefinition.
+		* that is a more specific redefinition.
 	 * The redefinition constraint must be suitable for the given list of <code>objects</code>.
 	 **/
 	private boolean validateRedefinesForLink(MAssociation assoc, List<MObject> objects, PrintWriter err) {
@@ -1482,44 +1490,49 @@ public final class MSystemState {
 		// add the object values to the context
 		EvalContext ctx = new SimpleEvalContext(MSystemState.this, MSystemState.this, new VarBindings());
 		List<MObject> result = new LinkedList<>();
-		
+
 		for (int i = 0; i < source.length; ++i) {
-			ObjectValue objVal = new ObjectValue((MClass)dst.getDeriveParamter().varDecl(i).type(), source[i]);
+			org.tzi.use.uml.api.IType apiType = dst.getDeriveParamter().varDecl(i).type();
+			Type paramType = (Type) apiType;
+			org.tzi.use.uml.mm.MClassifier mc = org.tzi.use.uml.ocl.type.TypeAdapters.asMClassifier(paramType);
+			if (!(mc instanceof MClass)) {
+				throw new MSystemException("Invalid derive parameter type: expected MClass-based classifier but found " + paramType);
+			}
+			MClass cls = (MClass) mc;
+			ObjectValue objVal = new ObjectValue(cls, source[i]);
 			ctx.pushVarBinding(dst.getDeriveParamter().varDecl(i).name(), objVal);
 		}
-		
-        Value res = null;
-        try {
-        	res = ((Expression) dst.getDeriveExpression()).eval(ctx);
-        } catch (MultiplicityViolationException e) {
-        	return Collections.emptyList();
-        }
-    	
-    	if (res.isUndefined()) {
-    		return Collections.emptyList();
-    	}
 
-    	if (res.type().isTypeOfClass()) {
-    		// Single object as result
-    		ObjectValue singleObject = (ObjectValue)res;
-    		result.add(singleObject.value());
-    	} else if (res.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
-    		// Collection of objects as result
-    		CollectionValue col = (CollectionValue)res;
-    		
-    		
-    		for (Value v : col) {
-    			if (!v.isUndefined()) {
-    				ObjectValue singleObject = (ObjectValue)v;
-    				result.add(singleObject.value());
-    			}
-    		}
-    	} else {
-    		// Ups....
-    		throw new MSystemException("Invalid return type of derive expression");
-    	}
-    	
-    	return result;
+		Value res = null;
+		try {
+			res = ((Expression) dst.getDeriveExpression()).eval(ctx);
+		} catch (MultiplicityViolationException e) {
+			return Collections.emptyList();
+		}
+
+		if (res.isUndefined()) {
+			return Collections.emptyList();
+		}
+
+		if (res.type().isTypeOfClass()) {
+			// Single object as result
+			ObjectValue singleObject = (ObjectValue) res;
+			result.add(singleObject.value());
+		} else if (res.type().isKindOfCollection(VoidHandling.EXCLUDE_VOID)) {
+			// Collection of objects as result
+			CollectionValue col = (CollectionValue) res;
+			for (Value v : col) {
+				if (!v.isUndefined()) {
+					ObjectValue singleObject = (ObjectValue) v;
+					result.add(singleObject.value());
+				}
+			}
+		} else {
+			// Ups....
+			throw new MSystemException("Invalid return type of derive expression");
+		}
+
+		return result;
 	}
 
 	public Value evaluateDeriveExpression(final InstanceValue source, final MAttribute attribute) {
@@ -1554,135 +1567,137 @@ public final class MSystemState {
 	 */
 	public boolean check(PrintWriter out, boolean traceEvaluation,
 			boolean showDetails, boolean allInvariants, final List<String> invNames) {
-		boolean valid = true;
-		Evaluator evaluator = new Evaluator();
+	        boolean valid = true;
+	        Evaluator evaluator = new Evaluator();
 
-		// model inherent constraints: check whether cardinalities of
-		// association links match their declaration of multiplicities
-		if (!checkStructure(out)) {
-			valid = false;
-		}
+	        // model inherent constraints: check whether cardinalities of
+	        // association links match their declaration of multiplicities
+	        if (!checkStructure(out)) {
+	            valid = false;
+	        }
 
-		if (Options.EVAL_NUMTHREADS > 1)
-			out.println("checking invariants (using " + Options.EVAL_NUMTHREADS
-					+ " concurrent threads)...");
-		else
-			out.println("checking invariants...");
-		
-		out.flush();
-		int numChecked = 0;
-		int numFailed = 0;
-		long tAll = System.currentTimeMillis();
+	        // Nach der Strukturprpfung sicherstellen, dass alle abgeleiteten
+	        // Werte (insbesondere fr Union/Subsetting) aktuell sind, bevor die
+	        // Invarianten ausgewertet werden. Dies ist fr Tests wie t113 relevant,
+	        // bei denen Invarianten direkt von abgeleiteten Links/Slots abhngen.
+	        updateDerivedValues(true);
 
-		ArrayList<MClassInvariant> invList = new ArrayList<MClassInvariant>();
-		ArrayList<Boolean> negatedList = new ArrayList<Boolean>();
-		ArrayList<Expression> exprList = new ArrayList<Expression>();
-		Collection<MClassInvariant> source;
-		
-		if (invNames.isEmpty()) {
-			source = fSystem.model().getClassInvariantsIncludingImports();
-		} else {
-			source = Collections2.filter(fSystem.model().getClassInvariantsIncludingImports(),
-					new Predicate<MClassInvariant>() {
-						@Override
-						public boolean apply(MClassInvariant input) {
-							return invNames.contains(input.name());
-						}
-					});
-		}
-		
-		for (MClassInvariant inv : source) {
-		
-			// Ignore if deactivated and not all should be checked.
-			if (!allInvariants && !inv.isActive()) continue;
-			
-			Expression expr = (Expression) inv.expandedExpression();
-			
-			if (inv.isNegated()) {
-				try {
-					Expression[] args = { expr };
-					Expression expr1 = ExpStdOp.create("not", args);
-					expr = expr1;
-				} catch (ExpInvalidException e) {
-					// This cannot happen, since in invariant is a boolean expression 
-					// (checked by MClassInvariant constructor)
-				}
-				negatedList.add(Boolean.TRUE);
-			} else {
-				negatedList.add(Boolean.FALSE);
-			}
-			invList.add(inv);
-			exprList.add(expr);
-		}
+	        if (Options.EVAL_NUMTHREADS > 1)
+				out.println("checking invariants (using " + Options.EVAL_NUMTHREADS
+						+ " concurrent threads)...");
+			else
+				out.println("checking invariants...");
 
-		// start (possibly concurrent) evaluation
-		Queue resultValues = evaluator.evalList(Options.EVAL_NUMTHREADS,
-				exprList, this);
-
-		// receive results
-		for (int i = 0; i < exprList.size(); i++) {
-			MClassInvariant inv = invList.get(i);
-			numChecked++;
-			String msg = "checking invariant (" + numChecked + ") `"
-					+ inv.cls().name() + "::" + inv.name() + "': ";
-			out.print(msg); // + inv.bodyExpression());
 			out.flush();
-			try {
-				Value v = (Value) resultValues.get();
+			int numChecked = 0;
+			int numFailed = 0;
+			long tAll = System.currentTimeMillis();
 
-				// if value 'v' is null, the invariant can not be evaluated,
-				// therefore it is N/A (not available).
-				if (v == null) {
-					out.println("N/A");
-					// if there is a value, the invariant can always be
-					// evaluated and the
-					// result can be printed.
-				} else {
-					boolean ok = v.isDefined() && ((BooleanValue) v).isTrue();
-					if (ok)
-						out.println("OK."); // (" + timeStr +").");
-					else {
-						out.println("FAILED."); // (" + timeStr +").");
-						out.println("  -> " + v.toStringWithType());
+			ArrayList<MClassInvariant> invList = new ArrayList<MClassInvariant>();
+			ArrayList<Boolean> negatedList = new ArrayList<Boolean>();
+			ArrayList<Expression> exprList = new ArrayList<Expression>();
+			Collection<MClassInvariant> source;
 
-						// repeat evaluation with output of all subexpression
-						// results
-						if (traceEvaluation) {
-							out.println("Results of subexpressions:");
-							Expression expr = exprList.get(i);
-							evaluator.eval(expr, this, new VarBindings(), out);
-						}
-
-						// show instances violating the invariant by using
-						// the OCL expression C.allInstances->reject(self |
-						// <inv>)
-						if (showDetails) {
-							out.println("Instances of " + inv.cls().name()
-									+ " violating the invariant:");
-							Expression expr = (Expression) inv
-									.getExpressionForViolatingInstances();
-							Value v1 = evaluator.eval(expr, this,
-									new VarBindings());
-							out.println("  -> " + v1.toStringWithType());
-						}
-						valid = false;
-						numFailed++;
-					}
-				}
-			} catch (InterruptedException ex) {
-				Log.error("InterruptedException: " + ex.getMessage());
+			if (invNames.isEmpty()) {
+				source = fSystem.model().getClassInvariantsIncludingImports();
+			} else {
+				source = Collections2.filter(fSystem.model().getClassInvariantsIncludingImports(),
+						new Predicate<MClassInvariant>() {
+							@Override
+							public boolean apply(MClassInvariant input) {
+								return invNames.contains(input.name());
+							}
+						});
 			}
-		}
 
-		long t = System.currentTimeMillis() - tAll;
-		String timeStr = t % 1000 + "s";
-		timeStr = (t / 1000) + "." + StringUtil.leftPad(timeStr, 4, '0');
-		out.println("checked " + numChecked + " invariant"
-				+ ((numChecked == 1) ? "" : "s") + (Options.testMode ? "" : " in " + timeStr) + ", "
-				+ numFailed + " failure" + ((numFailed == 1) ? "" : "s") + '.');
-		out.flush();
-		return valid;
-	}
+			for (MClassInvariant inv : source) {
+
+				// Ignore if deactivated and not all should be checked.
+				if (!allInvariants && !inv.isActive()) continue;
+
+				// Zuvor wurde expandedExpression() genutzt; für die tatsächliche
+				// Auswertung der Invariante (inkl. Negation/Flags) ist jedoch
+				// flaggedExpression() vorgesehen.
+				Expression expr = (Expression) inv.flaggedExpression();
+
+				if (inv.isNegated()) {
+					try {
+						Expression[] args = { expr };
+						Expression expr1 = ExpStdOp.create("not", args);
+						expr = expr1;
+					} catch (ExpInvalidException e) {
+						// This cannot happen, since in invariant is a boolean expression
+						// (checked by MClassInvariant constructor)
+					}
+					negatedList.add(Boolean.TRUE);
+				} else {
+					negatedList.add(Boolean.FALSE);
+				}
+				invList.add(inv);
+				exprList.add(expr);
+			}
+
+	        // start (possibly concurrent) evaluation
+	        Queue resultValues = evaluator.evalList(Options.EVAL_NUMTHREADS,
+	                exprList, this);
+
+	        // receive results
+	        for (int i = 0; i < exprList.size(); i++) {
+	            MClassInvariant inv = invList.get(i);
+	            numChecked++;
+	            String msg = "checking invariant (" + numChecked + ") `"
+	                    + inv.cls().name() + "::" + inv.name() + "': ";
+	            out.print(msg);
+
+	            out.flush();
+	            try {
+	                Value v = (Value) resultValues.get();
+
+	                // if value 'v' is null, the invariant can not be evaluated,
+	                // therefore it is N/A (not available).
+	                if (v == null) {
+	                    out.println("N/A");
+	                } else {
+	                    boolean ok = v.isDefined() && ((BooleanValue) v).isTrue();
+	                    if (ok)
+	                        out.println("OK.");
+	                    else {
+	                        out.println("FAILED.");
+	                        out.println("  -> " + v.toStringWithType());
+
+	                        if (traceEvaluation) {
+	                            out.println("Results of subexpressions:");
+	                            Expression expr = exprList.get(i);
+	                            evaluator.eval(expr, this, new VarBindings(), out);
+	                        }
+
+	                        if (showDetails) {
+	                            out.println("Instances of " + inv.cls().name()
+	                                    + " violating the invariant:");
+	                            Expression expr = (Expression) inv
+	                                    .getExpressionForViolatingInstances();
+	                            Value v1 = evaluator.eval(expr, this,
+	                                    new VarBindings());
+	                            out.println("  -> " + v1.toStringWithType());
+	                        }
+	                        valid = false;
+	                        numFailed++;
+	                    }
+	                }
+	            } catch (InterruptedException ex) {
+	                Log.error("InterruptedException: " + ex.getMessage());
+	            }
+	        }
+
+	        long t = System.currentTimeMillis() - tAll;
+	        String timeStr = t % 1000 + "s";
+	        timeStr = (t / 1000) + "." + StringUtil.leftPad(timeStr, 4, '0');
+	        out.println("checked " + numChecked + " invariant"
+	                + ((numChecked == 1) ? "" : "s") + (Options.testMode ? "" : " in " + timeStr) + ", "
+	                + numFailed + " failure" + ((numFailed == 1) ? "" : "s") + '.');
+	        out.flush();
+	        return valid;
+	    }
 
 	/**
 	 * Checks the whole/part hierarchy.
@@ -1899,7 +1914,7 @@ public final class MSystemState {
 		return valid;
 	}
 
-	/**
+/**
 	 * Returns a bag containing the cross product of the instances of
 	 * <code>classes</code>
 	 * 

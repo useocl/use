@@ -21,6 +21,7 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.DataTypeValueValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
@@ -72,6 +73,8 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
 
         ctx.enter(this);
 
+        final Type oclClassifierType = TypeAdapters.asOclType(fClassifier);
+
         List<String> parameterNames = fOp.paramNames();
         int argsSize = parameterNames.size();
         Value[] arguments = new Value[argsSize];
@@ -86,8 +89,10 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
         for (VarBindings.Entry e : ctx.varBindings()) {
             varBindings.put(e.getVarName(), e.getValue());
         }
+
         MInstance self = new MDataTypeValue(fClassifier, fClassifier.name(), varBindings);
-        Value result = new DataTypeValueValue((Type) fClassifier, self, argValues);
+
+        Value result = new DataTypeValueValue(oclClassifierType, self, argValues);
 
         MOperationCall operationCall = new MOperationCall(this, self, fOp, arguments);
         operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());

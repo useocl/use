@@ -28,6 +28,7 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -48,7 +49,10 @@ public class GInstrCreate_C implements GValueInstruction {
     }
 
     public Type type() {
-        return (Type) fClass;
+        // Convert UML class to its OCL type representation instead of casting
+        // the MClass directly to Type (which is no longer valid after the
+        // separation of mm classes and OCL types).
+        return TypeAdapters.asOclType(fClass);
     }
     
     public String toString() {

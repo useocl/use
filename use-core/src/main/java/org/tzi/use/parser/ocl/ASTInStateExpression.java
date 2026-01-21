@@ -24,6 +24,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.ocl.expr.ExpOclInState;
@@ -31,6 +32,7 @@ import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.api.IType.VoidHandling;
 import org.tzi.use.util.StringUtil;
 
@@ -117,23 +119,37 @@ public class ASTInStateExpression extends ASTExpression {
     		throw new SemanticException(fOpToken, "Need an object to apply `oclIsInState(" + this.fStateIdentifier.getText() + ")'.");
     	}
     	
-    	MClass srcClass = (MClass)sourceExpr.type();
+    	// Bisher wurde hier direkt von Type auf MClass gecastet, was zu einer
+    	// ClassCastException (ClassifierType -> MClass) fuehren kann.
+    	// Stattdessen muss der zugrundeliegende Modellklassifikator verwendet
+    	// und auf MClass geprueft werden.
+    	Type srcType = sourceExpr.type();
+    	if (!srcType.isKindOfClassifier(VoidHandling.EXCLUDE_VOID)) {
+    		throw new SemanticException(fOpToken, "Need an object of a class type to apply `oclIsInState(" + this.fStateIdentifier.getText() + ")'.");
+    	}
+
+    	MClassifier mClassifier = TypeAdapters.asMClassifier(srcType);
+    	if (!(mClassifier instanceof MClass)) {
+    		throw new SemanticException(fOpToken, "Need an object of a class type to apply `oclIsInState(" + this.fStateIdentifier.getText() + ")'.");
+    	}
+
+    	MClass srcClass = (MClass) mClassifier;
     	String stateName = fStateIdentifier.getText();
-        
-    	Set<MProtocolStateMachine> psms = srcClass.getAllOwnedProtocolStateMachines(); 
+
+    	Set<MProtocolStateMachine> psms = srcClass.getAllOwnedProtocolStateMachines();
     	if (psms.isEmpty()) {
             throw new SemanticException(fOpToken, "Invalid use of oclIsInState, because the class " + StringUtil.inQuotes(srcClass) + " has no defined state machines.");
         }
-    
+
     	MState state = null;
-    	
+
     	for (MProtocolStateMachine sm : psms) {
     		state = sm.getState(stateName);
     		if (state != null) {
     			break;
     		}
     	}
-    	
+
     	if (state == null) {
 			throw new SemanticException(
 					fOpToken,
@@ -142,7 +158,7 @@ public class ASTInStateExpression extends ASTExpression {
 							+ " has no state machine containing a state with the given name "
 							+ StringUtil.inQuotes(stateName) + ".");
     	}
-    	
+
     	return new ExpOclInState(sourceExpr, state);
     }
 

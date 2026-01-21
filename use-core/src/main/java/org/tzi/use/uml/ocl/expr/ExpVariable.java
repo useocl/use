@@ -64,9 +64,10 @@ public final class ExpVariable extends Expression  {
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
         Value res = ctx.getVarValue(fVarname);
-        if (res == null ) 
-            throw new RuntimeException("unbound variable `" + 
+        if (res == null ) {
+            throw new RuntimeException("unbound variable `" +
                                        fVarname + "'.");
+        }
         ctx.exit(this, res);
         return res;
     }

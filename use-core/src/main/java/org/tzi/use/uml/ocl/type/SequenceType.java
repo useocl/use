@@ -71,36 +71,63 @@ public final class SequenceType extends CollectionType {
 
     public Type getLeastCommonSupertype(Type type)
     {
-        if (!type.isKindOfCollection(IType.VoidHandling.INCLUDE_VOID))
-            return null;
-
-        if (type.isTypeOfVoidType())
+        // Reine Void-Collections behandeln: der nicht-void Typ dominiert
+        if (type == null || type.isTypeOfVoidType()) {
             return this;
+        }
 
-        CollectionType cType = (CollectionType)type;
-        Type commonElementType = this.elemType().getLeastCommonSupertype(cType.elemType());
-
-        if (commonElementType == null)
+        // Wenn der andere Typ keine Collection ist, gibt es keinen gemeinsamen Collection-LCS
+        if (!(type instanceof CollectionType)) {
             return null;
-        else
+        }
+
+        // Spezieller Pfad: beide sind Sequenzen -> LCS bleibt Sequence
+        if (type instanceof SequenceType) {
+            CollectionType cType = (CollectionType) type;
+            Type t1 = this.elemType();
+            Type t2 = cType.elemType();
+
+            Type commonElementType = t1.getLeastCommonSupertype(t2);
+            if (commonElementType == null) {
+                // Kein gemeinsamer Elementtyp -> OclAny als Fallback
+                commonElementType = TypeFactory.mkOclAny();
+            }
             return TypeFactory.mkSequence(commonElementType);
+        }
+
+        // Gemischte Collection-Spezialisierungen oder abstrakte Collections:
+        // Delegiere an CollectionType, damit dort entschieden wird, ob eine
+        // abstrakte Collection(...) verwendet wird.
+        return super.getLeastCommonSupertype(type);
     }
     
     /** 
      * Returns true if this type is a subtype of <code>t</code>. 
      */
     public boolean conformsTo(Type t) {
-        if (!t.isTypeOfCollection() && !t.isTypeOfSequence())
-            return false;
+        // Spezialfall: Sequence(T) <: Sequence(U)
+        if (t instanceof SequenceType) {
+            SequenceType t2 = (SequenceType) t;
+            Type elemType = elemType();
+            Type otherElemType = t2.elemType();
+            return elemType.conformsTo(otherElemType);
+        }
 
-        CollectionType t2 = (CollectionType) t;
-        if (elemType().conformsTo(t2.elemType()) )
-            return true;
-        
+        // Sequence(T) ist NICHT allgemeinem Collection(U) konform, da
+        // Set{Sequence{42}, Bag{42}} als Set(Collection(Integer)) getypt
+        // werden soll und nicht als Set(Sequence(Integer)).
+        //
+        // D.h. Sequence(T) hat nur Sequenzen als Collection-Supertypen,
+        // keine abstrakten Collection-Typen.
+        if (t instanceof CollectionType && !(t instanceof SequenceType)) {
+            return false;
+        }
+
+        // Alle anderen Typen sind keine Supertypen von Sequence(T)
         return false;
     }
 
-    /** 
+    /**
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Sequence(T) the result is the set of
      * all types Sequence(T') and Collection(T') where T' &lt;= T.

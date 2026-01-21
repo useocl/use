@@ -34,6 +34,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.util.StringUtil;
 
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
      * Marks this association and as a derived union, e. g., the modifier <code>union</code> was specified. 
      */
     public void setUnion(boolean newValue) {
-    	isUnion = newValue;
+        this.isUnion = newValue;
     }
     
     /**
@@ -207,7 +208,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     	if (parameter != null && !parameter.isEmpty())
     		this.deriveParameter = parameter;
     }
-    
+
     /**
      * True if a derive expression for this association end is specified. 
      * @return True if this association end is derived by an OCL expression.
@@ -234,7 +235,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     public MAssociationEnd gen(Context ctx, int kind) throws SemanticException {
         // lookup class at association end in current model
         MClass cls = ctx.model().getClass(fName.getText());
-        
+
         if (cls == null )
             // this also renders the rest of the association useless
             throw new SemanticException(fName, "Class `" + fName.getText() +
@@ -249,21 +250,32 @@ public class ASTAssociationEnd extends ASTAnnotatable {
         
         List<VarDecl> generatedQualifiers;
         if (qualifiers.size() == 0) {
-        	generatedQualifiers = Collections.emptyList();
+            generatedQualifiers = Collections.emptyList();
         } else {
-        	generatedQualifiers = new ArrayList<VarDecl>(qualifiers.size());
-        	
-        	for (ASTVariableDeclaration var : qualifiers ) {
-        		generatedQualifiers.add(var.gen(ctx));
-        	}
+            generatedQualifiers = new ArrayList<VarDecl>(qualifiers.size());
+
+            for (ASTVariableDeclaration var : qualifiers ) {
+                generatedQualifiers.add(var.gen(ctx));
+            }
         }
-        
+
         mAend = ctx.modelFactory().createAssociationEnd(cls, getRolename(ctx), 
-        												mult, kind, fOrdered, generatedQualifiers);
+                                                        mult, kind, fOrdered, generatedQualifiers);
 
         mAend.setUnion(this.isUnion);
         mAend.setDerived(this.derivedExpression != null);
-        
+
+        // Establish subset/redefine relationships if specified
+        try {
+            if (!this.subsetsRolename.isEmpty()) {
+                addSubsettedEnd(mAend, this.subsetsRolename);
+            }
+            if (!this.redefinesRolenames.isEmpty()) {
+                addRedefines(mAend, this.redefinesRolenames);
+            }
+        } catch (Throwable t) {
+        }
+
         this.genAnnotations(mAend);
         
         return mAend;
@@ -275,80 +287,114 @@ public class ASTAssociationEnd extends ASTAnnotatable {
      * @param ctx
      */
     public void genDerived(Context ctx) throws SemanticException {
-    	if (!this.isDerived()) return;
-    	
-    	VarDeclList parameter = new VarDeclList(false);
-    	boolean exprContextChanged = false;
-    	Symtable vars = ctx.varTable();
-    	vars.enterScope();
-    	
-    	
-    	try {
-			if (this.deriveParameter == null || this.deriveParameter.isEmpty()) {
-				// Short notation using self
-				if (this.mAend.association().associationEnds().size() == 2) {
-					MClass ot = mAend.getAllOtherAssociationEnds().get(0).cls();
-					// wrap the mm classifier into an OCL Type if required
-					Type otType;
-					if (ot instanceof Type) {
-						otType = (Type) ot;
-					} else {
-						otType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(ot);
-					}
-					parameter.add(new VarDecl("self", otType));
-					ctx.exprContext().push("self", otType);
-					exprContextChanged = true;
-				} else {
-					throw new SemanticException(fName, "Derived n-ary associations must define parameter for the derive expression.");
-				}
-			} else {
-	    		if (this.deriveParameter.getVarNames().size() != mAend.association().associationEnds().size() - 1) {
-	    			throw new SemanticException(fName, "Invalid number of parameter for derive expression!");
-	    		}
-	    		
-	    		int parIndex = 0;
-	    		for (int index = 0; index < mAend.association().associationEnds().size(); ++index) {
-		    		if (mAend.association().associationEnds().get(index) != mAend ) {		    			
-		    			// Use association end type. Can be more generic in declaration
-		    			Type varType = (Type) mAend.association().associationEnds().get(index).cls();
-		    			
-		    			ASTType astType = deriveParameter.getVarTypes().get(parIndex);
-		    			if (astType != null) {
-		    				Type declaredType =  astType.gen(ctx);
-		    				if (!varType.conformsTo(declaredType)) {
-		    					throw new SemanticException(astType.getStartToken(), "The derive parameter must be of type " + StringUtil.inQuotes(varType.toString()) + " or one of its supertypes.");
-		    				}
-		    				varType = declaredType;
-		    			}
-		    			
-		    			parameter.add(new VarDecl(deriveParameter.getVarTokens().get(parIndex), varType));
-		    			parIndex++;
-		    		}
-	    		}
-	    	}
-			
-	    	parameter.addVariablesToSymtable(vars);
-	    	
-	    	Expression exp = derivedExpression.gen(ctx);
-	    	
-	    	// We can ignore redefinition here
-	    	if (!exp.type().conformsTo(mAend.getType())) {
-	    		throw new SemanticException(derivedExpression.getStartToken(), 
-	    				"The type " +
-	    				StringUtil.inQuotes(exp.type().toString()) + " of the derive expression at association end " +
-	    				StringUtil.inQuotes(mAend.association().toString() + "::" + getRolename(ctx)) + " does not conform to the end type " + StringUtil.inQuotes(mAend.getType()) + ".");
-	    	}
-	    	
-	    	mAend.setDeriveExpression(parameter, exp);
-    	} finally {
-    		ctx.varTable().exitScope();
-    		if (exprContextChanged)
-    			ctx.exprContext().pop();
-    	}
+        if (!this.isDerived()) return;
+
+        VarDeclList parameter = new VarDeclList(false);
+        boolean exprContextChanged = false;
+        Symtable vars = ctx.varTable();
+        vars.enterScope();
+
+        try {
+            if (this.deriveParameter == null || this.deriveParameter.isEmpty()) {
+                // Short notation using self
+                if (this.mAend.association().associationEnds().size() == 2) {
+                    MClass ot = mAend.getAllOtherAssociationEnds().get(0).cls();
+                    // wrap the mm classifier into an OCL Type if required
+                    Type otType;
+                    if (ot instanceof Type) {
+                        otType = (Type) ot;
+                    } else {
+                        otType = org.tzi.use.uml.ocl.type.TypeFactory.mkClassifierType(ot);
+                    }
+                    parameter.add(new VarDecl("self", otType));
+                    ctx.exprContext().push("self", otType);
+                    exprContextChanged = true;
+                } else {
+                    throw new SemanticException(fName, "Derived n-ary associations must define parameter for the derive expression.");
+                }
+            } else {
+                if (this.deriveParameter.getVarNames().size() != mAend.association().associationEnds().size() - 1) {
+                    throw new SemanticException(fName, "Invalid number of parameter for derive expression!");
+                }
+
+                int parIndex = 0;
+                for (int index = 0; index < mAend.association().associationEnds().size(); ++index) {
+                    if (mAend.association().associationEnds().get(index) != mAend ) {
+                        // Use association end type. Can be more generic in declaration
+                        MClass endClass = mAend.association().associationEnds().get(index).cls();
+                        Type varType = TypeAdapters.asOclType(endClass);
+
+                        ASTType astType = deriveParameter.getVarTypes().get(parIndex);
+                        if (astType != null) {
+                            Type declaredType =  astType.gen(ctx);
+                            if (!varType.conformsTo(declaredType)) {
+                                throw new SemanticException(astType.getStartToken(), "The derive parameter must be of type " + StringUtil.inQuotes(varType.toString()) + " or one of its supertypes.");
+                            }
+                            varType = declaredType;
+                        }
+
+                        parameter.add(new VarDecl(deriveParameter.getVarTokens().get(parIndex), varType));
+                        parIndex++;
+                    }
+                }
+            }
+
+            parameter.addVariablesToSymtable(vars);
+
+            Expression exp = derivedExpression.gen(ctx);
+
+            // We can ignore redefinition here
+            if (!exp.type().conformsTo(mAend.getType())) {
+                throw new SemanticException(derivedExpression.getStartToken(),
+                        "The type " +
+                                StringUtil.inQuotes(exp.type().toString()) + " of the derive expression at association end " +
+                                StringUtil.inQuotes(mAend.association().toString() + "::" + getRolename(ctx)) + " does not conform to the end type " + StringUtil.inQuotes(mAend.getType()) + ".");
+
+            }
+
+            mAend.setDeriveExpression(parameter, exp);
+        } finally {
+            ctx.varTable().exitScope();
+            if (exprContextChanged)
+                ctx.exprContext().pop();
+        }
     }
     
     @Override
     public String toString() {
         return (fRolename == null ? "unnamed end on " + getClassName() : fRolename.getText());
+    }
+
+    private void addSubsettedEnd(MAssociationEnd end, java.util.List<org.antlr.runtime.Token> subsetsRolename) {
+        if (end == null || end.association() == null) return;
+        for (org.antlr.runtime.Token tok : subsetsRolename) {
+            String role = tok.getText();
+            org.tzi.use.uml.mm.MNavigableElement target = end.association().navigableEnd(role);
+            if (target instanceof MAssociationEnd) {
+                MAssociationEnd subsetTarget = (MAssociationEnd) target;
+                end.addSubsettedEnd(subsetTarget);
+                subsetTarget.addSubsettingEnd(end);
+            } else {
+            }
+        }
+    }
+
+    private void addRedefines(MAssociationEnd end, java.util.List<org.antlr.runtime.Token> redefinesRolenames) {
+        if (end == null || end.association() == null) return;
+        for (org.antlr.runtime.Token tok : redefinesRolenames) {
+            String role = tok.getText();
+            org.tzi.use.uml.mm.MNavigableElement target = end.association().navigableEnd(role);
+            if (target instanceof MAssociationEnd) {
+                MAssociationEnd redefineTarget = (MAssociationEnd) target;
+                end.addRedefinedEnd(redefineTarget);
+                redefineTarget.addRedefiningEnd(end);
+            } else {
+            }
+        }
+    }
+
+    private org.tzi.use.uml.mm.MAssociationEnd resolveOtherEnd(org.tzi.use.uml.mm.MAssociationEnd mAend) {
+        org.tzi.use.uml.mm.MClass ot = mAend.getAllOtherAssociationEnds().get(0).cls();
+        return mAend;
     }
 }

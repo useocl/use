@@ -31,7 +31,9 @@ import java.util.List;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -80,13 +82,15 @@ class GMatcherInsert_Assoc_Linkends implements IGInstructionMatcher {
         Iterator<Object> restIt = rest.iterator();
 
         for (MAssociationEnd end : ends) {
-            Type endtype = (Type) end.cls();
+            // adapt UML classifier at association end to an OCL type instead of casting
+            MClass endClass = end.cls();
+            Type endtype = TypeAdapters.asOclType(endClass);
             Object r = restIt.next();
 
             if (! (r instanceof GValueInstruction) ||
                 ! ((GValueInstruction) r).type().conformsTo( endtype ) )
                 return false;
-        }    
+        }
 
         return true;
     }

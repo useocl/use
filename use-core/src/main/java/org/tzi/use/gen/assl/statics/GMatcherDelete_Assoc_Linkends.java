@@ -32,6 +32,7 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -80,7 +81,7 @@ class GMatcherDelete_Assoc_Linkends implements IGInstructionMatcher {
         Iterator<Object> restIt = rest.iterator();
 
         for (MAssociationEnd end : ends) {
-        	Type endtype = (Type) end.cls();
+        	Type endtype = TypeAdapters.asOclType(end.cls());
             Object r = restIt.next();
 
             if (! (r instanceof GValueInstruction) ||

@@ -3,12 +3,23 @@ package org.tzi.use.main.gui;
 import org.tzi.use.main.gui.fx.MainJavaFX;
 import org.tzi.use.main.gui.swing.MainSwing;
 import org.tzi.use.util.USEWriter;
+import org.tzi.use.uml.api.ExpressionFactoryProvider;
+import org.tzi.use.uml.api.InvariantExpressionFactoryProvider;
+import org.tzi.use.uml.api.VarDeclFactoryProvider;
+import org.tzi.use.uml.ocl.OclExpressionFactoryAdapter;
+import org.tzi.use.uml.ocl.expr.OclInvariantExpressionFactory;
+import org.tzi.use.uml.ocl.expr.OclVarDeclFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        // Initialisierung der API-Expression-Factories, bevor irgendein mm-/parser-Code läuft
+        ExpressionFactoryProvider.set(new OclExpressionFactoryAdapter());
+        InvariantExpressionFactoryProvider.set(new OclInvariantExpressionFactory());
+        VarDeclFactoryProvider.set(new OclVarDeclFactory());
+
         // set System.out to the USEWriter to protocol the output.
         System.setOut(USEWriter.getInstance().getOut());
         // set System.err to the USEWriter to protocol the output.

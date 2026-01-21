@@ -49,19 +49,20 @@ final class Op_equal extends OpGeneric {
 			return null;
 	}
 
-	@Override
-	public String checkWarningUnrelatedTypes(Expression args[]) {
-		Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
-		
-		if ((!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) ||
-				(!(args[0].type().isTypeOfCollection() || args[1].type().isTypeOfCollection()) && lcst.isTypeOfCollection())) {
-			return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) + 
-					 " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) + 
-					 " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
-		}
-		
-		return null;
-	}
+    @Override
+    public String checkWarningUnrelatedTypes(Expression args[]) {
+        Type lcst = args[0].type().getLeastCommonSupertype(args[1].type());
+
+        if ((!(args[0].type().isTypeOfOclAny() || args[1].type().isTypeOfOclAny()) && lcst.isTypeOfOclAny()) ||
+                (!(args[0].type().isTypeOfCollection() || args[1].type().isTypeOfCollection()) && lcst.isTypeOfCollection())) {
+            return "Expression " + StringUtil.inQuotes(this.stringRep(args, "")) +
+                    " can never evaluate to true because " + StringUtil.inQuotes(args[0].type()) +
+                    " and " + StringUtil.inQuotes(args[1].type()) + " are unrelated.";
+        }
+
+        return null;
+    }
+
 	
 	public Value eval(EvalContext ctx, Value[] args, Type resultType) {
 		boolean res;

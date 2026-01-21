@@ -117,3 +117,7 @@ fabric.properties
 /use-assembly/target
 
 **/.DS_Store
+tmp_gui_contents.txt
+use-core/src/main/java/org/tzi/use/util/Debug.java
+use-gui/src/main/java/org/tzi/use/main/shell/DiagnoseClassIdentity.java
+use-gui/src/main/java/org/tzi/use/main/shell/DiagnoseMain.java

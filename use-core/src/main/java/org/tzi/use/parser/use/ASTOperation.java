@@ -37,7 +37,6 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
@@ -106,9 +105,15 @@ public class ASTOperation extends ASTAnnotatable {
         }
         Type resultType = null;
         if (fType == null) {
-        	if (this.fExpr != null) {
-        		throw new SemanticException(fName, "Missing return type for OCL query operation " + StringUtil.inQuotes(fName.getText()) + ".");
-        	}
+            if (this.fExpr != null) {
+                // Wenn eine OCL-Query-Operation (mit Rumpf) keinen Rueckgabetyp deklariert,
+                // soll eine eindeutige Fehlermeldung erzeugt werden. Diese Meldung wird
+                // spaeter direkt mit Datei/Positionsangabe ausgegeben und darf nicht noch
+                // einmal separat als allgemeine [REPORT]-Zeile erscheinen. Deshalb geben
+                // wir hier nur den Klartext ohne zusaetzlichen Punkt am Ende zurueck,
+                // die eigentliche Positionierung passiert in SemanticException.
+                throw new SemanticException(fName, "Missing return type for OCL query operation " + StringUtil.inQuotes(fName.getText()) + ".");
+            }
         } else {
             resultType = fType.gen(ctx);
         }
@@ -123,9 +128,9 @@ public class ASTOperation extends ASTAnnotatable {
         // recursive call to this operation, or a forward reference is
         // made to another operation
         if (fExpr != null ) {
-        	fOperation.setTempExpression();
+            fOperation.setTempExpression();
         } else if (fStatement != null) {
-        	fOperation.setStatement(MEmptyStatement.getInstance());
+            fOperation.setStatement(MEmptyStatement.getInstance());
         }
         
         this.genAnnotations(fOperation);
@@ -157,27 +162,16 @@ public class ASTOperation extends ASTAnnotatable {
             // this is clearly an error for instance constructors.
             if (astDeclaredTypeExplicit) {
                 resultTypeError = true;
-            } else {
-                // Otherwise, if the underlying MOperation actually has a result type,
-                // map it to an MM classifier and compare with owner; if mapping fails,
-                // fall back to textual comparison. If they differ, this is a result-type error.
-                if (fOperation.hasResultType()) {
-                    org.tzi.use.uml.mm.MClassifier declaredCls = org.tzi.use.uml.ocl.type.TypeAdapters.asMClassifier(fOperation.resultType());
-                    if (declaredCls != null) {
-                        if (!declaredCls.equals(fOperation.cls())) {
-                            resultTypeError = true;
-                        }
-                    } else {
-                        try {
-                            String declaredName = fOperation.resultType().toString();
-                            if (declaredName == null || !declaredName.equals(fOperation.cls().name())) {
-                                resultTypeError = true;
-                            }
-                        } catch (Exception e) {
-                            // mapping failed -> be conservative and treat as error
-                            resultTypeError = true;
-                        }
+            } else if (fOperation.hasResultType()) {
+                // Vergleiche deklarierten Rueckgabetyp mit der besitzenden Klasse ueber den
+                // Modell-Typnamen, ohne eine direkte Abhaengigkeit zu ocl.type.* zu verwenden.
+                try {
+                    String declaredName = fOperation.resultType().toString();
+                    if (declaredName == null || !declaredName.equals(fOperation.cls().name())) {
+                        resultTypeError = true;
                     }
+                } catch (Exception e) {
+                    resultTypeError = true;
                 }
             }
 

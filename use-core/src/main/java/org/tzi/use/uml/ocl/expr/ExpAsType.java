@@ -20,7 +20,9 @@
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.value.ObjectValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
@@ -88,8 +90,13 @@ public final class ExpAsType extends Expression {
             MObject obj = ov.value();
             // Note: an undefined value can still be casted to a
             // subtype!  See initialization of res above
-            if (obj.exists(ctx.postState()) && obj.cls().conformsTo(targetType) )
-                res = new ObjectValue((MClass) targetType, obj);
+            // Try to extract a UML classifier from the target OCL Type and
+            // test conformance against that classifier. This avoids the
+            // problematic call obj.cls().conformsTo(Type) which returns
+            // false for OCL Type wrappers.
+            MClassifier targetMc = TypeAdapters.asMClassifier(targetType);
+            if (obj.exists(ctx.postState()) && targetMc != null && obj.cls().conformsTo(targetMc) )
+                res = new ObjectValue(targetMc, obj);
         } else {
             // value is fine if its type is equal or a subtype of the
             // expected type

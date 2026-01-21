@@ -158,7 +158,7 @@ public final class MClassInvariant extends MModelElementImpl implements UseFileL
 
     private void calculateExpandedExpression() {
         // Die Factory baut aus dem Body die global auswertbare Invariante
-        fExpanded = exprFactory.buildExpandedInvariant(fBody, fIsExistential);
+        fExpanded = exprFactory.buildExpandedInvariant(fBody, fIsExistential, fClassifier, fVars);
 	}
 
 	/** 

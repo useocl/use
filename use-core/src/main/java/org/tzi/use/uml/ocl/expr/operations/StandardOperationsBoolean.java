@@ -9,6 +9,7 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.StringValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 
 import com.google.common.collect.Multimap;
 

@@ -30,6 +30,7 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstrTry_AssocClass_LinkendSeqs;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.util.StringUtil;
 
@@ -76,6 +77,7 @@ public class GInstrTry_AssocClass_LinkendSeqs extends GInstrTry implements GValu
 
 	@Override
 	public Type type() {
-		return TypeFactory.mkSet((Type) fAssociationClass);
+		Type assocType = TypeAdapters.asOclType(fAssociationClass);
+		return TypeFactory.mkSet(assocType);
 	}
 }

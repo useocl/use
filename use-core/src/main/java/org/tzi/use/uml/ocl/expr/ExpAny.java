@@ -24,6 +24,7 @@ import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.ocl.value.CollectionValue;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.Log;
 
 /** 
  * OCL any expression.
@@ -71,7 +72,7 @@ public class ExpAny extends ExpQuery {
         Value v = fRangeExp.eval(ctx);
         if (v.isUndefined())
             return UndefinedValue.instance;
-        
+
         CollectionValue rangeVal = (CollectionValue) v;
 
         if (!fElemVarDecls.isEmpty())
@@ -110,4 +111,3 @@ public class ExpAny extends ExpQuery {
 		visitor.visitAny(this);
 	}
 }
-

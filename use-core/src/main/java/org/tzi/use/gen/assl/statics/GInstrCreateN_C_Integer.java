@@ -29,6 +29,7 @@ import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.SequenceType;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 
 /**
  * @see org.tzi.use.gen.assl.statics
@@ -55,7 +56,11 @@ public class GInstrCreateN_C_Integer implements GValueInstruction {
     }
 
     public Type type() {
-        return new SequenceType((Type) fClass);
+        // Create a sequence type whose element type is the OCL view of the UML class
+        // (instead of casting the MClass directly to Type, which caused ClassCastException
+        // after decoupling mm classes from OCL Type hierarchy).
+        Type elementType = TypeAdapters.asOclType(fClass);
+        return new SequenceType(elementType);
     }
     
     public String toString() {

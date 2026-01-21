@@ -23,30 +23,18 @@ public class ASTModelQualifiedType extends ASTSimpleType {
 
     public Type gen(Context ctx) throws SemanticException {
         String name = modelQualifier.getText() + "#" + getName().getText();
-        System.err.println("[TRES] ASTModelQualifiedType.gen called: token='" + getName().getText() + "', name='" + name + "', ctx.model=" + (ctx.model()==null?"<null>":ctx.model().name()));
 
         IEnumType enumType = ctx.model().enumType(name);
-        System.err.println("[TRES] lookup enumType('" + name + "') -> " + (enumType != null));
          if (enumType != null) {
              return TypeFactory.mkEnum(enumType.name(), enumType.getLiterals());
          }
 
          org.tzi.use.uml.mm.MClassifier mmClf = ctx.model().getClassifier(name);
-        System.err.println("[TRES] lookup classifier('" + name + "') -> " + (mmClf != null));
         if (mmClf != null) {
-            try {
-                String clfName = mmClf.name();
-                String qn = mmClf.qualifiedName();
-                String mdl = mmClf.model() == null ? "<null>" : mmClf.model().name();
-                System.err.println("[TRES] found classifier details: name='" + clfName + "', qualifiedName='" + qn + "', model='" + mdl + "'");
-            } catch (Exception e) {
-                System.err.println("[TRES] error inspecting mmClf: " + e.getMessage());
-            }
              return TypeAdapters.asOclType(mmClf);
          }
 
         Type res = ctx.typeTable().lookup(name);
-        System.err.println("[TRES] lookup typeTable('" + name + "') -> " + (res != null));
          if (res != null) {
              return res;
          }

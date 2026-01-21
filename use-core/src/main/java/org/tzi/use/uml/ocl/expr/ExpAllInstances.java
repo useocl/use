@@ -130,7 +130,8 @@ public final class ExpAllInstances extends Expression {
 
     @Override
     public StringBuilder toString(StringBuilder sb) {
-        fSourceType.toString(sb);
+        // Use the OCL Type adapter for consistent printing
+        TypeAdapters.asOclType(fSourceType).toString(sb);
         sb.append(".").append(name());
         return sb.append(atPre());
     }
