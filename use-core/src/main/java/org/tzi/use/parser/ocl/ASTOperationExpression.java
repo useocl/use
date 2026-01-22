@@ -197,9 +197,11 @@ public class ASTOperationExpression extends ASTExpression {
             if (! fHasParentheses ) {
                 // variable?
                 // (7) check for variable
-                Type type = ctx.varTable().lookup(opname);
-                if (type != null )
+                org.tzi.use.uml.api.IType apiType = ctx.varTable().lookup(opname);
+                if (apiType != null ) {
+                    Type type = apiType instanceof Type ? (Type) apiType : TypeAdapters.asOclType(apiType);
                     res = new ExpVariable(opname, type);
+                }
             }
 
             // do we have a context expression that is implicitly
@@ -211,7 +213,9 @@ public class ASTOperationExpression extends ASTExpression {
                 if (! ec.isEmpty() ) {
                     // construct source expression
                     ExprContext.Entry e = ec.peek();
-                    srcExpr = new ExpVariable(e.fName, e.fType);
+                    // convert API-level type to OCL Type if necessary for ExpVariable
+                    Type eOclType = e.fType instanceof Type ? (Type) e.fType : TypeAdapters.asOclType(e.fType);
+                    srcExpr = new ExpVariable(e.fName, eOclType);
                     if (e.fType.isKindOfCollection(VoidHandling.EXCLUDE_VOID) )
                         fFollowsArrow = true;
                     res = gen1(ctx, srcExpr);

@@ -25,7 +25,7 @@ import java.util.Stack;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.ocl.value.VarBindings;
 
@@ -42,10 +42,10 @@ public class Symtable {
      */
     class Entry {
         String fName;
-        Type fType;
+        IType fType;
         SrcPos fSrcPos;     // may be null
 
-        Entry(String name, Type t, SrcPos pos) {
+        Entry(String name, IType t, SrcPos pos) {
             fName = name;
             fType = t;
             fSrcPos = pos;
@@ -94,7 +94,7 @@ public class Symtable {
      *
      * @throws SemanticException name to be added already exists.
      */
-    public void add( String name, Type type, SrcPos pos )
+    public void add( String name, IType type, SrcPos pos )
             throws SemanticException {
         Map<String, Entry> names = fScopes.peek();
         Entry e = names.get( name );
@@ -109,7 +109,7 @@ public class Symtable {
         names.put( name, new Entry( name, type, pos ) );
     }
         
-    public void add(Token token, Type type)
+    public void add(Token token, IType type)
         throws SemanticException
     {
         this.add(token.getText(), type, new SrcPos(token));
@@ -121,7 +121,7 @@ public class Symtable {
      *
      * @return null if variable not found.
      */
-    public Type lookup(String name) {
+    public IType lookup(String name) {
         // System.out.println("--- lookup: " + name);
         for (int i = fScopes.size() - 1; i >= 0; i--) {
             Map<String, Entry> names = fScopes.elementAt(i);

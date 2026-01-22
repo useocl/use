@@ -30,7 +30,8 @@ import org.tzi.use.uml.api.IVarDeclList;
 import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.api.ITypeFactory;
 import org.tzi.use.uml.api.TypeFactoryProvider;
-import org.tzi.use.uml.ocl.type.ClassifierType;
+import org.tzi.use.uml.mm.TypeAdapterProvider;
+import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.uml.api.IExpression;
 
@@ -260,23 +261,17 @@ public final class MAssociationEnd extends MModelElementImpl implements MNavigab
             if (sourceObjectType instanceof MClass) {
                 sourceClass = (MClass) sourceObjectType;
 
-            } else if (sourceObjectType instanceof ClassifierType) {
-                ClassifierType ct = (ClassifierType) sourceObjectType;
-
-                if (ct.classifier() instanceof MClass) {
-                    sourceClass = (MClass) ct.classifier();
+            } else {
+                // Versuche, über den TypeAdapter einen MClassifier zu extrahieren.
+                org.tzi.use.uml.mm.MClassifier extracted = org.tzi.use.uml.mm.TypeAdapterProvider.get().asMClassifier(sourceObjectType);
+                if (extracted instanceof MClass) {
+                    sourceClass = (MClass) extracted;
                 } else {
                     throw new IllegalArgumentException(
-                            "Expected ClassifierType to contain an MClass, but found: " +
-                                    ct.classifier().getClass().getName()
+                            "Expected sourceObjectType to be of type MClass or an IType wrapping one, but found: " +
+                                    (sourceObjectType == null ? "null" : sourceObjectType.getClass().getName())
                     );
                 }
-
-            } else {
-                throw new IllegalArgumentException(
-                        "Expected sourceObjectType to be of type MClass, but found: " +
-                                sourceObjectType.getClass().getName()
-                );
             }
 
             t = getRedefinedType(sourceClass);

@@ -24,6 +24,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeAdapters;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.api.IEnumType;
 
@@ -62,7 +63,12 @@ public class ASTSimpleType extends ASTType {
                     res = TypeAdapters.asOclType(cls);
                 } else {
                     // only consult the type table if no classifier with this name exists
-                    res = ctx.typeTable().lookup(name);
+                    IType apiType = ctx.typeTable().lookup(name);
+                    if (apiType instanceof Type) {
+                        res = (Type) apiType;
+                    } else {
+                        res = TypeAdapters.asOclType(apiType);
+                    }
                 }
 
                 if (res == null ) {

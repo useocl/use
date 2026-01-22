@@ -24,8 +24,9 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -67,9 +68,14 @@ public class ASTDataType extends ASTClassifier {
                 // lookup parent by name
                 MDataType parent = ctx.model().getDataType(id.getText());
                 if (parent == null) {
-                    Type type = ctx.typeTable().lookup(id.getText());
-                    if (type instanceof MDataType) {
-                        parent = (MDataType) type;
+                    IType apiType = ctx.typeTable().lookup(id.getText());
+                    if (apiType instanceof MDataType) {
+                        parent = (MDataType) apiType;
+                    } else {
+                        org.tzi.use.uml.mm.MClassifier clf = TypeAdapters.asMClassifier(apiType);
+                        if (clf instanceof MDataType) {
+                            parent = (MDataType) clf;
+                        }
                     }
                 }
                 if (parent == null) {

@@ -3,10 +3,11 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.api.IEnumType;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.api.IEnumType;
 
 /**
  * Represents an type with a model qualifier in an OCL expression. This class resolves qualified type names
@@ -34,10 +35,13 @@ public class ASTModelQualifiedType extends ASTSimpleType {
              return TypeAdapters.asOclType(mmClf);
          }
 
-        Type res = ctx.typeTable().lookup(name);
-         if (res != null) {
-             return res;
-         }
+        IType apiType = ctx.typeTable().lookup(name);
+        if (apiType != null) {
+            if (apiType instanceof Type) {
+                return (Type) apiType;
+            }
+            return TypeAdapters.asOclType(apiType);
+        }
          throw new SemanticException(getName(), "Could not find model qualified type '" + getName().getText() + "'.");
      }
-}
+ }

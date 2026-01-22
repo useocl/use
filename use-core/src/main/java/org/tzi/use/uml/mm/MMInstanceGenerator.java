@@ -30,7 +30,6 @@ import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.api.ITypeFactory;
 import org.tzi.use.uml.api.TypeFactoryProvider;
 import org.tzi.use.uml.api.IEnumType;
-import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.util.StringUtil;
 
 /**

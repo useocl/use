@@ -8,11 +8,22 @@ import org.tzi.use.uml.ocl.type.TypeFactory;
 
 import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
+import org.tzi.use.uml.ocl.type.OclTypeAdapter;
 
 /**
  * Adapter implementing API ITypeFactory using ocl TypeFactory.
  */
 public class OclTypeFactoryAdapter implements ITypeFactory {
+
+    static {
+        try {
+            // register for mm provider so mm-layer can access type adapter without
+            // depending on ocl at compile time
+            org.tzi.use.uml.mm.TypeAdapterProvider.set(new OclTypeAdapter());
+        } catch (Throwable t) {
+            // ignore
+        }
+    }
 
     @Override
     public IType mkSet(IType elementType) {

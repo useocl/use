@@ -35,7 +35,7 @@ import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.gen.assl.statics.GVariableAssignment;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.api.IType;
 
 public class ASTGVariableAssignment extends ASTGInstruction {
     private Token fTarget;
@@ -49,7 +49,7 @@ public class ASTGVariableAssignment extends ASTGInstruction {
 
     public GInstruction gen(Context ctx) throws SemanticException {
         // check whether the target variable was declared
-        Type type = ctx.varTable().lookup( fTarget.getText() );
+        IType type = ctx.varTable().lookup( fTarget.getText() );
         if (type == null ) {
             String err = "Variable "+fTarget.getText()+" must be declared.";
             throw new SemanticException( fTarget, err );
