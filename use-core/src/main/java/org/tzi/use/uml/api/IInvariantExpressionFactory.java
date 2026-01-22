@@ -1,7 +1,5 @@
 package org.tzi.use.uml.api;
 
-import org.tzi.use.uml.mm.MClassifier;
-
 /**
  * Factory-Schnittstelle zum Erzeugen von Expressions, die speziell
  * für Klasseninvarianten benötigt werden. Implementierungen liegen im
@@ -14,7 +12,7 @@ public interface IInvariantExpressionFactory {
      * Erzeugt die global auswertbare Invarianten-Expression aus dem
      * Invariantenkörper.
      */
-    IExpression buildExpandedInvariant(IExpression body, boolean existential, MClassifier classifier, IVarDeclList vars);
+    IExpression buildExpandedInvariant(IExpression body, boolean existential, IType classifier, IVarDeclList vars);
 
     /**
      * Erzeugt eine Expression, die alle verletzenden Instanzen liefert

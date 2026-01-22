@@ -2,12 +2,10 @@ package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.uml.api.IExpression;
 import org.tzi.use.uml.api.IInvariantExpressionFactory;
-import org.tzi.use.uml.mm.MClassifier;
+import org.tzi.use.uml.api.IType;
 import org.tzi.use.uml.api.IVarDeclList;
 import org.tzi.use.uml.ocl.type.TypeAdapters;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.api.IVarDecl;
 
 /**
@@ -17,7 +15,7 @@ import org.tzi.use.uml.api.IVarDecl;
 public class OclInvariantExpressionFactory implements IInvariantExpressionFactory {
 
     @Override
-    public IExpression buildExpandedInvariant(IExpression body, boolean existential, MClassifier classifier, IVarDeclList vars) {
+    public IExpression buildExpandedInvariant(IExpression body, boolean existential, IType classifier, IVarDeclList vars) {
         // Erwartet, dass der Body bereits eine Expression ist
         Expression bodyExpr = (Expression) body;
         try {
