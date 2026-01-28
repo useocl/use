@@ -19,7 +19,6 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import jnr.ffi.annotations.In;
 import org.tzi.use.gui.util.GridBagHelper;
 
 import javax.swing.*;

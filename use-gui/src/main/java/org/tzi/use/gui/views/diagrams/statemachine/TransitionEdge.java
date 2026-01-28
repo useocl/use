@@ -18,7 +18,6 @@
  */
 package org.tzi.use.gui.views.diagrams.statemachine;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
