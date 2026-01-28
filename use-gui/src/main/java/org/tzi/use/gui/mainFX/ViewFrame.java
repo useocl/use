@@ -5,22 +5,14 @@ import javafx.print.PageLayout;
 import javafx.print.PrinterJob;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.SnapshotResult;
-import javafx.scene.transform.Scale;
-import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.gui.viewsFX.PrintableView;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 
 /**
  * A JavaFX container holding a view of a system state.

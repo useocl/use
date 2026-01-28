@@ -12,7 +12,6 @@ import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationClassImpl;
 import org.tzi.use.uml.sys.MLinkObject;
 
-import javax.swing.*;
 import java.util.*;
 
 

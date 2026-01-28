@@ -19,7 +19,6 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import org.tzi.use.gui.util.GridBagHelper;
 import org.tzi.use.gui.views.diagrams.behavior.shared.CancelButton;
 import org.tzi.use.gui.views.diagrams.behavior.shared.OKButton;
 
