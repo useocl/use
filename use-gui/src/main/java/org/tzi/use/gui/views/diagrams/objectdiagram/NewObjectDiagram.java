@@ -129,7 +129,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * edges. When hiding or showing objects the data is moved between the
 	 * fields {@link NewObjectDiagram#visibleData} and
 	 * {@link NewObjectDiagram#hiddenData}.
-	 * 
+	 *
 	 * @author Lars Hamann
 	 */
 	public static class ObjectDiagramData implements DiagramData {
@@ -139,24 +139,24 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		 */
 		public Map<MObject, ObjectNode> fObjectToNodeMap;
 		/**
-		 * 
+		 *
 		 */
 		public Map<MLink, BinaryAssociationOrLinkEdge> fBinaryLinkToEdgeMap;
 		/**
-		 * 
+		 *
 		 */
 		public Map<MLink, DiamondNode> fNaryLinkToDiamondNodeMap;
 		/**
-		 * 
+		 *
 		 */
 		public Map<MLink, List<EdgeBase>> fHalfLinkToEdgeMap;
 		/**
-		 * 
+		 *
 		 */
 		public Map<MLinkObject, EdgeBase> fLinkObjectToNodeEdge;
 
 		/**
-		 * 
+		 *
 		 */
 		public ObjectDiagramData() {
 			fObjectToNodeMap = new HashMap<MObject, ObjectNode>();
@@ -202,7 +202,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		/**
 		 * Copies all data to the target object
-		 * 
+		 *
 		 * @param hiddenData
 		 */
 		public void copyTo(ObjectDiagramData target) {
@@ -311,16 +311,16 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		MModelElement elem = e.getModelElement();
-		List<EdgeBase> edges = new ArrayList<EdgeBase>();
+		List<EdgeBase> edges = new ArrayList<>();
 		boolean allEdgesSelected = true;
 
 		// elem is an association
-		if (elem != null && elem instanceof MAssociation) {
+		if (elem instanceof MAssociation) {
 			MAssociation assoc = (MAssociation) elem;
 			int size = assoc.associationEnds().size();
 
 			Set<MLink> links = fParent.system().state().linksOfAssociation(assoc).links();
-			EdgeBase eb = null;
+			EdgeBase eb;
 
 			if (size == 2) {
 				for (MLink link : links) {
@@ -341,8 +341,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				}
 			}
 
-			// check all edges in the list if they are suppose to be selected
-			// or deselected.
+			// check all edges in the list if they are supposed to be selected
 			for (EdgeBase edge : edges) {
 				if (edge != null) {
 					if (e.getHighlight()) {
@@ -357,7 +356,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		// elem is a class
-		if (elem != null && elem instanceof MClass) {
+		if (elem instanceof MClass) {
 			for (MObject obj : fParent.system().state().objectsOfClass((MClass) elem)) {
 				PlaceableNode node = visibleData.fObjectToNodeMap.get(obj);
 				if (elem instanceof MAssociationClass) {
@@ -388,11 +387,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 	}
 
-	/**
-	 * Hides all currently visible elements. The diagram is not repainted!
-	 */
 	public void hideAll() {
-        Set<MObject> objects = new HashSet<>(this.visibleData.fObjectToNodeMap.keySet());
+		Set<MObject> objects = new HashSet<>(this.visibleData.fObjectToNodeMap.keySet());
 		objects.forEach(obj -> hideObject(obj));
 	}
 
@@ -688,7 +684,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	protected void addNAryLink(MLink link) {
 		getRandomNextPosition();
 		
-		List<ObjectNode> linkedObjectNodes = new ArrayList<ObjectNode>();
+		List<ObjectNode> linkedObjectNodes = new ArrayList<>();
 		for(MObject linkedObject : link.linkedObjects()) {
 			linkedObjectNodes.add(visibleData.fObjectToNodeMap.get(linkedObject));
 		}
@@ -834,11 +830,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		ObjectDiagramData source = (show ? hiddenData : visibleData);
 		ObjectDiagramData target = (show ? visibleData : hiddenData);
 
-		DiamondNode node = source.fNaryLinkToDiamondNodeMap.get(link);	
+		DiamondNode node = source.fNaryLinkToDiamondNodeMap.get(link);
 		if (show){
 			if (node == null){
 				node = target.fNaryLinkToDiamondNodeMap.get(link);
-			}		
+			}
 			fGraph.add(node);
 		} else {
 			fGraph.remove(node);
@@ -846,7 +842,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		target.fNaryLinkToDiamondNodeMap.put(link, node);
 		source.fNaryLinkToDiamondNodeMap.remove(link);
 		
-	
+
 		// connected to an "object link"
 		if (link instanceof MLinkObject) {
 			EdgeBase e = source.fLinkObjectToNodeEdge.get(link);
@@ -1221,12 +1217,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				|| !hiddenData.fNaryLinkToDiamondNodeMap.isEmpty() || !hiddenData.fHalfLinkToEdgeMap.isEmpty()
 				|| !hiddenData.fLinkObjectToNodeEdge.isEmpty()) {
 			final JMenuItem showAllObjects = new JMenuItem("Show hidden elements");
-			showAllObjects.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					showAll();
-					showAllLinks();
-					invalidateContent(true);
-				}
+			showAllObjects.addActionListener(ev -> {
+				showAll();
+				showAllLinks();
+				invalidateContent(true);
 			});
 
 			popupMenu.insert(showAllObjects, pos++);
@@ -1256,10 +1250,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					if (selectedLinks.size() > 0) {
+					if (!selectedLinks.isEmpty()) {
 						selectedLinks.forEach(link -> hideLink(link));
 					}
-					if (selectedObjects.size() > 0) {
+					if (!selectedObjects.isEmpty()) {
 						selectedObjects.forEach(obj -> hideObject(obj));
 					}
 					repaint();
@@ -1294,7 +1288,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 					popupMenu.insert(new AbstractAction(labelGreyed + " " + node.name()) {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							node.setGreyed(node.isGreyed() ? false : true);
+							node.setGreyed(!node.isGreyed());
 							repaint();
 						}
 					}, pos++);
@@ -1302,13 +1296,13 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			} else if (selectedObjects.size() > 1) {
 				Set<ObjectNode> objToGreyIn = new HashSet<>();
 				selectedObjects.stream().filter(obj -> visibleData.fObjectToNodeMap.get(obj).isGreyed())
-						.forEach(obj -> objToGreyIn.add(visibleData.fObjectToNodeMap.get(obj)));
+					.forEach(obj -> objToGreyIn.add(visibleData.fObjectToNodeMap.get(obj)));
 
 				Set<ObjectNode> objToGreyOut = new HashSet<>();
 				selectedObjects.stream().filter(obj -> !visibleData.fObjectToNodeMap.get(obj).isGreyed())
-						.forEach(obj -> objToGreyOut.add(visibleData.fObjectToNodeMap.get(obj)));
+					.forEach(obj -> objToGreyOut.add(visibleData.fObjectToNodeMap.get(obj)));
 
-				if (objToGreyIn.size() > 0) {
+				if (!objToGreyIn.isEmpty()) {
 					popupMenu.insert(new AbstractAction("Grey in " + objToGreyIn.size() + " elements") {
 
 						@Override
@@ -1320,7 +1314,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				}
 
 				// Action for grey out more elements
-				if (objToGreyOut.size() > 0) {
+				if (!objToGreyOut.isEmpty()) {
 					popupMenu.insert(new AbstractAction("Grey out " + objToGreyOut.size() + " elements") {
 
 						@Override
@@ -1381,7 +1375,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			if (selectedObjects.size() == 1) {
 				final MObject obj = exactlyOne(selectedObjects);
 
-				List<MProtocolStateMachine> sortedPSMs = new LinkedList<MProtocolStateMachine>(
+				List<MProtocolStateMachine> sortedPSMs = new LinkedList<> (
 						obj.cls().getAllOwnedProtocolStateMachines());
 				Collections.sort(sortedPSMs, new MNamedElementComparator());
 
