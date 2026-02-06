@@ -27,7 +27,6 @@ import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.views.PrintableView;
 import org.tzi.use.gui.views.View;
 import org.tzi.use.main.runtime.IRuntime;
-import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.ocl.type.EnumType;

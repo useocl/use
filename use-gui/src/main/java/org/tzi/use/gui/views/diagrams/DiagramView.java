@@ -45,7 +45,6 @@ import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
-import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
 import org.tzi.use.runtime.gui.impl.StyleInfoProvider;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;
