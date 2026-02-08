@@ -1,37 +1,111 @@
 name: Java CI with Maven
-on: 
+on:
   push
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'adopt'
-        cache: maven
-    - name: Build with Maven
-      run: |
-        start_time=$(date +%s)
-        mvn --batch-mode --update-snapshots verify | tee build_output.log
-        end_time=$(date +%s)
-        build_time=$((end_time - start_time))
-        echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
-    - name: Upload build result
-      run: mkdir staging && cp use-assembly/target/*.zip staging
-    - uses: actions/upload-artifact@v4
-      with:
-        name: Package
-        path: staging
-    - uses: actions/upload-artifact@v4
-      with: 
-        name: build-log
-        path: build_output.log
-    - uses: actions/upload-artifact@v4
-      with:
-        name: failure-reports
-        path: |
-          docs/archunit-results/cycles-current-failure-report.txt
-          docs/archunit-results/layers-current-failure-report.txt
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+          cache: maven
+      - name: Build with Maven
+        run: |
+          start_time=$(date +%s)
+          mvn --batch-mode --update-snapshots verify | tee build_output.log
+          end_time=$(date +%s)
+          build_time=$((end_time - start_time))
+          echo "BUILD_TIME_SECONDS=$build_time" >> build_output.log
+      - name: Upload build result
+        run: mkdir staging && cp use-assembly/target/*.zip staging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Package
+          path: staging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build_output.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: failure-reports
+          path: |
+            docs/archunit-results/cycles-current-failure-report.txt
+            docs/archunit-results/layers-current-failure-report.txt
+            
+      - name: Upload build result use-api
+        run: mkdir testphase && cp use-api/target/use-api-7.1.1.jar testphase
+      - uses: actions/upload-artifact@v4
+        with:
+          name: constructed_use-api
+          path: testphase
+
+      - name: Upload postman tests
+        run: mkdir postmantests && cp use-api/src/it/java/org.tzi.use/postman_collection/use-webapi.postman_collection.json postmantests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: postman_tests
+          path: postmantests
+
+      - name: Upload docker image
+        run: mkdir docker && cp use-api/docker-compose.yml docker && cp use-api/Dockerfile docker
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker_image
+          path: docker
+
+
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+
+      - name: Download Artifact use-api jar
+        uses: actions/download-artifact@v4
+        with:
+          name: constructed_use-api
+
+      - name: Download Artifact postman tests
+        uses: actions/download-artifact@v4
+        with:
+          name: postman_tests
+
+      - name: Download Aritfact Dockerimage
+        uses: actions/download-artifact@v4
+        with:
+          name: docker_image
+
+      - name: move the jar
+        run: mkdir target && cp use-api-7.1.1.jar target
+
+      - name: Run docker compose
+        run: docker compose up -d --wait
+        env:
+          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+          MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+          MONGODB_HOST: mongodb_cicd
+
+
+      - name: Wait for docker to be ready
+        run: sleep 20
+
+      - name: Run Postman tests
+        run: |
+          npm install -g newman
+          newman run use-webapi.postman_collection.json
+
+      - name: Stop services
+        if: always()
+        run: docker compose down
