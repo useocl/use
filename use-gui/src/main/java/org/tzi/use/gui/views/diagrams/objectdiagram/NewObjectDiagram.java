@@ -107,7 +107,6 @@ import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.*;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.w3c.dom.Element;
 
 import com.ximpleware.AutoPilot;
@@ -121,7 +120,6 @@ import com.ximpleware.XPathParseException;
  * @author Mark Richters
  * @author Lars Hamann
  */
-@SuppressWarnings("serial")
 public class NewObjectDiagram extends DiagramViewWithObjectNode implements HighlightChangeListener, SortChangeListener {
 
 	/**
@@ -217,31 +215,31 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		public Map<MLinkObject, EdgeBase> getLinkObjectToNodeEdge() { return fLinkObjectToNodeEdge; }
 	}
 
-	protected ObjectDiagramData visibleData = new ObjectDiagramData();
+	protected final ObjectDiagramData visibleData = new ObjectDiagramData();
 
-	private ObjectDiagramData hiddenData = new ObjectDiagramData();
+	private final ObjectDiagramData hiddenData = new ObjectDiagramData();
 
-	private NewObjectDiagramView fParent;
+	private final NewObjectDiagramView fParent;
 
 	/**
 	 * The position of the next object node. This is either set to a random
 	 * value or to a specific position when an object is created by drag & drop.
 	 */
-	protected Point2D.Double nextNodePosition = new Point2D.Double();
+ 	protected Point2D.Double nextNodePosition = new Point2D.Double();
 
 	/**
 	 * Last position of deleted nodes and links. In case of restoration, the
 	 * nodes (object nodes, linkobject nodes) are positioned as they were
 	 * before. Objects use {@link StrategyFixed}, so we just save the position.
 	 */
-	private Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
-	private Map<MLink, PositionStrategy> lastKnownLinkPositions = new WeakHashMap<>();
+	private final Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
+	private final Map<MLink, PositionStrategy> lastKnownLinkPositions = new WeakHashMap<>();
 
-	protected ShowObjectPropertiesViewMouseListener showObjectPropertiesViewMouseListener = new ShowObjectPropertiesViewMouseListener();
+	protected final ShowObjectPropertiesViewMouseListener showObjectPropertiesViewMouseListener = new ShowObjectPropertiesViewMouseListener();
 
-	private ObjectSelection fSelection;
+	private final ObjectSelection fSelection;
 
-	protected DiagramInputHandling inputHandling;
+	protected final DiagramInputHandling inputHandling;
 
 	private static boolean javaFxCall = false;
 
@@ -959,15 +957,15 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Adds a new Link to the objectdiagram.
 	 */
 	class ActionInsertLink extends AbstractAction {
-		private MAssociation fAssociation;
-		private MObject[] fParticipants;
+		private final MAssociation fAssociation;
+		private final MObject[] fParticipants;
 
 		ActionInsertLink(MAssociation association, MObject[] participants) {
 			fAssociation = association;
 			fParticipants = participants;
 
 			StringBuilder txt = new StringBuilder("insert (");
-			StringUtil.fmtSeq(txt, participants, ",", (MObject element) -> element.name());
+			StringUtil.fmtSeq(txt, participants, ",", MObject::name);
 
 			txt.append(") into ").append(association.name());
 
@@ -983,7 +981,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Deletes a Link from the object diagram.
 	 */
 	class ActionDeleteLink extends AbstractAction {
-		private MLink link;
+		private final MLink link;
 
 		ActionDeleteLink(MLink link) {
 			this.link = link;
@@ -1016,7 +1014,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Deletes the selected objects.
 	 */
 	class ActionDelete extends AbstractAction {
-		private Set<MObject> fObjects;
+		private final Set<MObject> fObjects;
 
 		ActionDelete(String text, Set<MObject> objects) {
 			super(text);
@@ -1033,7 +1031,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Show properties of objects
 	 */
 	class ActionShowProperties extends AbstractAction {
-		private MObject fObject;
+		private final MObject fObject;
 
 		ActionShowProperties(String text, MObject object) {
 			super(text);
