@@ -230,7 +230,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
 			
 			List<MObject> adjacentObjects = getLink().linkedObjects();
 			for (MObject adjacentObject : adjacentObjects) {
-				ObjectNode node = visibleData.fObjectToNodeMap.get(adjacentObject);
+				ObjectNode node = visibleData.getObjectToNodeMap().get(adjacentObject);
 				if(node.isGreyed()) {
 					return true;
 				}
