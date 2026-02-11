@@ -381,7 +381,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	public void hideAll() {
 		Set<MObject> objects = new HashSet<>(this.visibleData.getObjectToNodeMap().keySet());
-		objects.forEach(obj -> hideObject(obj));
+		objects.forEach(this::hideObject);
 	}
 
 	/**
@@ -967,12 +967,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			fParticipants = participants;
 
 			StringBuilder txt = new StringBuilder("insert (");
-			StringUtil.fmtSeq(txt, participants, ",", new IElementFormatter<MObject>() {
-				@Override
-				public String format(MObject element) {
-					return element.name();
-				}
-			});
+			StringUtil.fmtSeq(txt, participants, ",", (MObject element) -> element.name());
 
 			txt.append(") into ").append(association.name());
 
@@ -1127,7 +1122,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		// Just to be sure to delete an object only once
-		Set<MObject> selectedObjectsSet = new HashSet<MObject>(selectedObjects);
+		Set<MObject> selectedObjectsSet = new HashSet<>(selectedObjects);
 
 		// This text is reused often
 		String selectedObjectsText = null;
@@ -1242,10 +1237,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					if (!selectedLinks.isEmpty()) {
-						selectedLinks.forEach(link -> hideLink(link));
+						selectedLinks.forEach(NewObjectDiagram.this::hideLink);
 					}
 					if (!selectedObjects.isEmpty()) {
-						selectedObjects.forEach(obj -> hideObject(obj));
+						selectedObjects.forEach(NewObjectDiagram.this::hideObject);
 					}
 					repaint();
 				}
@@ -1500,12 +1495,18 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			}
 			dtde.dropComplete(true);
 		} catch (IOException exception) {
-			exception.printStackTrace();
-			System.err.println("Exception" + exception.getMessage());
+			if (fLog != null) {
+				fLog.append("IOException in dropObjectFromModelBrowser: " + exception.getMessage());
+			} else {
+				System.err.println("IOException in dropObjectFromModelBrowser: " + exception.getMessage());
+			}
 			dtde.dropComplete(false);
 		} catch (UnsupportedFlavorException ufException) {
-			ufException.printStackTrace();
-			System.err.println("Exception" + ufException.getMessage());
+			if (fLog != null) {
+				fLog.append("UnsupportedFlavorException in dropObjectFromModelBrowser: " + ufException.getMessage());
+			} else {
+				System.err.println("UnsupportedFlavorException in dropObjectFromModelBrowser: " + ufException.getMessage());
+			}
 			dtde.dropComplete(false);
 		}
 	}
@@ -1640,7 +1641,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 									.state()
 									.linkBetweenObjects(assoc,
 											Arrays.asList(sourceObject, targetObject),
-											Collections.<List<Value>>emptyList());
+											Collections.emptyList());
 						}
 						
 						if (link != null) {
@@ -1689,7 +1690,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 									.state()
 									.linkBetweenObjects(assoc,
 											Arrays.asList(sourceObject, targetObject),
-											Collections.<List<Value>> emptyList());
+											Collections.emptyList());
 						}
 						
 						if (link != null) {
@@ -1774,8 +1775,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						continue;
 					
 					// n-ary links cannot be qualified therefore an empty list for the qualifer values is provided
-					MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects, Collections.<List<Value>>emptyList());
-					
+					MLink link = fParent.system().state().linkBetweenObjects(assoc, connectedObjects, Collections.emptyList());
+
 					// Could be deleted
 					if (link != null) {
 						DiamondNode node = visibleData.fNaryLinkToDiamondNodeMap.get(link);
@@ -1889,14 +1890,14 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * @return
 	 */
 	public TreeMap<String, List<MLink>> mapLinksToKindOfAssociation() {
-		HashMap<String, List<MLink>> assocs = new HashMap<>();
-		final String derrivedLinks = "Derrived links";
+		Map<String, List<MLink>> assocs = new HashMap<>();
+		final String derivedLinks = "Derived links";
 		final String associationClass = "Linkobjects";
 		final String nAryLinks = "N-Ary links";
-		final String reflexivLinks = "Reflexiv links";
+		final String reflexiveLinks = "Reflexive links";
 		final String binaryLinks = "Binary links";
 		final String aggregation = "Aggregations";
-		final String compositon = "Compositons";
+		final String composition = "Compositions";
 
 		for (MAssociation assoc : fParent.system().model().associations()) {
 
@@ -1911,37 +1912,17 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				Set<MLink> links = fParent.system().state().linksOfAssociation(assoc).links();
 				for (MLink link : links) {
 					if (link.association().isDerived() || link.association().isUnion()) {
-						if (!assocs.containsKey(derrivedLinks)) {
-							assocs.put(derrivedLinks, new ArrayList<MLink>() {{ add(link); }});
-						} else {
-							assocs.get(derrivedLinks).add(link);
-						}
+						assocs.computeIfAbsent(derivedLinks, k -> new ArrayList<>()).add(link);
 					} else if (MAssociationClassImpl.class.isInstance(link.association())) {
-						if (!assocs.containsKey(associationClass)) {
-							assocs.put(associationClass, new ArrayList<MLink>() {{ add(link); }});
-						} else {
-							assocs.get(associationClass).add(link);
-						}
+						assocs.computeIfAbsent(associationClass, k -> new ArrayList<>()).add(link);
 					} else if (MAssociation.class.isInstance(link.association()) && link.linkEnds().size() > 2) {
-						if (!assocs.containsKey(nAryLinks)) {
-							assocs.put(nAryLinks, new ArrayList<MLink>() {{ add(link); }});
-						} else {
-							assocs.get(nAryLinks).add(link);
-						}
+						assocs.computeIfAbsent(nAryLinks, k -> new ArrayList<>()).add(link);
 					} else if (MAssociation.class.isInstance(link.association())
-							&& link.association().associatedClasses().size() == 1 ) {
-						if (!assocs.containsKey(reflexivLinks)) {
-							assocs.put(reflexivLinks, new ArrayList<MLink>() {{ add(link); }});
-						} else {
-							assocs.get(reflexivLinks).add(link);
-						}
+							&& link.association().associatedClasses().size() == 1) {
+						assocs.computeIfAbsent(reflexiveLinks, k -> new ArrayList<>()).add(link);
 					} else if (MAssociation.class.isInstance(link.association()) && link.linkedObjects().size() == 2
 							&& !link.linkedObjects().get(0).equals(link.linkedObjects().get(1))) {
-						if (!assocs.containsKey(binaryLinks)) {
-							assocs.put(binaryLinks, new ArrayList<MLink>() {{ add(link); }});
-						} else {
-							assocs.get(binaryLinks).add(link);
-						}
+						assocs.computeIfAbsent(binaryLinks, k -> new ArrayList<>()).add(link);
 					} else {
 						System.err.println("ERROR: NO MATCH IN ASSOC-KIND");
 					}
@@ -1954,38 +1935,22 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				Set<MLink> aggregations = fParent.system().state().linksOfAssociation(assoc).links();
 
 				for (MLink agg : aggregations) {
-					if (!assocs.containsKey(aggregation)) {
-						assocs.put(aggregation, new ArrayList<MLink>() {
-							{
-								add(agg);
-							}
-						});
-					} else {
-						assocs.get(aggregation).add(agg);
-					}
+					assocs.computeIfAbsent(aggregation, k -> new ArrayList<>()).add(agg);
 				}
 				break;
 
-			case 2: // Compositon
+			case 2: // Composition
 
-				// Get Compositon
-				Set<MLink> compositons = fParent.system().state().linksOfAssociation(assoc).links();
+				// Get Compositions
+				Set<MLink> compositions = fParent.system().state().linksOfAssociation(assoc).links();
 
-				for (MLink comp : compositons) {
-					if (!assocs.containsKey(compositon)) {
-						assocs.put(compositon, new ArrayList<MLink>() {
-							{
-								add(comp);
-							}
-						});
-					} else {
-						assocs.get(compositon).add(comp);
-					}
+				for (MLink comp : compositions) {
+					assocs.computeIfAbsent(composition, k -> new ArrayList<>()).add(comp);
 				}
 				break;
 			}
 		}
-		return new TreeMap<String, List<MLink>>(assocs);
+		return new TreeMap<>(assocs);
 
 	}
 
