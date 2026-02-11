@@ -1356,7 +1356,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 				List<MProtocolStateMachine> sortedPSMs = new LinkedList<>(
 						obj.cls().getAllOwnedProtocolStateMachines());
-				Collections.sort(sortedPSMs, new MNamedElementComparator());
+				sortedPSMs.sort(new MNamedElementComparator());
 
 				for (MProtocolStateMachine psm : sortedPSMs) {
 					showProtocolStateMachine.setEnabled(true);
@@ -1381,12 +1381,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		final JCheckBoxMenuItem showStates = new JCheckBoxMenuItem("Show states", getOptions().isShowStates());
-		showStates.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent ev) {
-				getOptions().setShowStates(ev.getStateChange() == ItemEvent.SELECTED);
-				invalidateContent(true);
-			}
+		showStates.addItemListener(ev -> {
+			getOptions().setShowStates(ev.getStateChange() == ItemEvent.SELECTED);
+			invalidateContent(true);
 		});
 
 		popupMenu.insert(showStates, pos + 3);
@@ -1494,14 +1491,14 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			dtde.dropComplete(true);
 		} catch (IOException exception) {
 			if (fLog != null) {
-				fLog.append("IOException in dropObjectFromModelBrowser: " + exception.getMessage());
+				fLog.println("IOException in dropObjectFromModelBrowser: " + exception.getMessage());
 			} else {
 				System.err.println("IOException in dropObjectFromModelBrowser: " + exception.getMessage());
 			}
 			dtde.dropComplete(false);
 		} catch (UnsupportedFlavorException ufException) {
 			if (fLog != null) {
-				fLog.append("UnsupportedFlavorException in dropObjectFromModelBrowser: " + ufException.getMessage());
+				fLog.println("UnsupportedFlavorException in dropObjectFromModelBrowser: " + ufException.getMessage());
 			} else {
 				System.err.println("UnsupportedFlavorException in dropObjectFromModelBrowser: " + ufException.getMessage());
 			}
@@ -1780,7 +1777,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						DiamondNode node = visibleData.fNaryLinkToDiamondNodeMap.get(link);
 						helper.toParent();
 						node.restorePlacementInfo(helper, version);
-					}   
+					}
 				}
 			} catch (XPathEvalException e) {
 				fLog.append(e.getMessage());
