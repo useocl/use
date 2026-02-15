@@ -31,4 +31,8 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.behavior.shared to com.google.common;
     exports org.tzi.use.gui.views.selection to com.google.common;
     exports org.tzi.use.gui.views.diagrams.statemachine to com.google.common;
+    exports org.tzi.use.gui.views.diagrams.elements;
+    exports org.tzi.use.gui.views.diagrams.elements.edges;
+    exports org.tzi.use.gui.views.diagrams.event;
+    exports org.tzi.use.gui.views.selection.objectselection;
 }
