@@ -675,8 +675,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			}
 			if (linkObjEdge != null) {
 				halfEdges.add(linkObjEdge);
-                edgeIds.add(((MLinkObject) link).name());
-            }
+				edgeIds.add(((MLinkObject) link).name());
+			}
 		}
 
 		node.setHalfEdges(halfEdges, edgeIds);
