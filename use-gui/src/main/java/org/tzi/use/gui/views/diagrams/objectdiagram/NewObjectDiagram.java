@@ -1880,10 +1880,38 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		for (MLink l : allLinks) {
 			if (l == null) continue;
 			List<MObject> linked = l.linkedObjects();
-			if (linked == null || linked.size() != objects.size()) continue;
+	 * (optionally) matches the serialized linkValue. This method reverses what
+	 * BinaryAssociationOrLinkEdge.storeAdditionalInfo wrote using link.toString().
+	 *
+	 * If there is exactly one link connecting the given objects, that link is
+	 * returned without checking linkValue (robust against toString() changes).
+	 * If multiple links connect the same objects, linkValue is used to
+	 * disambiguate via link.toString().
+	 */
+	private MLink getLinkByValue(MAssociation assoc, List<MObject> objects, String linkValue) {
+		if (assoc == null || objects == null) {
+			return null;
+		}
 
-			// Use List.equals which performs element-wise, null-safe comparisons
-			if (linked.equals(objects)) {
+		Set<MLink> allLinks = fParent.system().state().linksOfAssociation(assoc).links();
+
+		// First, collect all links that connect exactly the given objects (in order).
+		List<MLink> matchingLinks = new ArrayList<>();
+		for (MLink l : allLinks) {
+			List<MObject> linked = l.linkedObjects();
+			if (linked.size() != objects.size()) {
+				continue;
+			}
+
+			boolean sameObjects = true;
+			for (int i = 0; i < linked.size(); i++) {
+				if (!linked.get(i).equals(objects.get(i))) {
+					sameObjects = false;
+					break;
+				}
+			}
+
+			if (sameObjects) {
 				matchingLinks.add(l);
 			}
 		}
@@ -1895,7 +1923,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		// Single candidate: return it directly without relying on toString().
 		if (matchingLinks.size() == 1) {
-			return matchingLinks.getFirst();
+			return matchingLinks.get(0);
 		}
 
 		// Multiple candidates: use linkValue (if available) to disambiguate.
@@ -1904,7 +1932,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		for (MLink l : matchingLinks) {
-			if (Objects.equals(linkValue, l == null ? null : l.toString())) {
+			if (linkValue.equals(l.toString())) {
 				return l;
 			}
 		}
