@@ -1947,11 +1947,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	@Override
 	protected String getDefaultLayoutFileSuffix() {
-		// Use a dedicated suffix for object diagram default layouts (consistent with other diagrams)
-		return "_objdia.clt";
+		// Returning null preserves the historic behavior: object diagrams do not
+		// auto-load/auto-save a default layout via DiagramView.getDefaultLayoutFile().
+		// Introducing a non-null suffix here would be a user-visible persistence change.
+		return null;
 	}
-
-
 	@Override
 	public void stateChanged(SortChangeEvent e) {
 		for (ObjectNode n : this.visibleData.getObjectToNodeMap().values()) {
