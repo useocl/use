@@ -994,7 +994,6 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	/**
 	 * Show properties of objects
 	 */
-	@SuppressWarnings("unused")
 	static class ActionShowProperties extends AbstractAction {
 		private final MObject fObject;
 
