@@ -34,5 +34,5 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.elements;
     exports org.tzi.use.gui.views.diagrams.elements.edges;
     exports org.tzi.use.gui.views.diagrams.event;
-    exports org.tzi.use.gui.views.selection.objectselection;
+    exports org.tzi.use.gui.views.selection.objectselection to com.google.common;
 }
