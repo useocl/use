@@ -912,12 +912,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 */
 	public void updateObject(MInstance obj) {
 		// Only update if the instance is actually an MObject to avoid ClassCastException
-		if (!(obj instanceof MObject)) {
+		if (!(obj instanceof MObject mObj)) {
 			return;
 		}
 
-		MObject mObj = (MObject) obj;
-		visibleData.getObjectToNodeMap().computeIfPresent(mObj, (k, node) -> {
+        visibleData.getObjectToNodeMap().computeIfPresent(mObj, (k, node) -> {
 			invalidateNode(node);
 			return node; // keep the existing mapping
 		});
@@ -1866,8 +1865,12 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	/**
 	 * Finds a link for the given association that connects the provided objects and
-	 * matches the serialized linkValue. This method reverses what BinaryAssociationOrLinkEdge.storeAdditionalInfo
-	 * wrote using link.toString(). It prefers exact object-list match and the string representation.
+	 * (optionally) matches the serialized linkValue. This method reverses what
+	 * BinaryAssociationOrLinkEdge.storeAdditionalInfo wrote using link.toString().
+	 * If there is exactly one link connecting the given objects, that link is
+	 * returned without checking linkValue (robust against toString() changes).
+	 * If multiple links connect the same objects, linkValue is used to
+	 * disambiguate via link.toString().
 	 */
 	private MLink getLinkByValue(MAssociation assoc, List<MObject> objects, String linkValue) {
 		// defensive preconditions
@@ -1875,7 +1878,16 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			return null;
 		}
 
-		Set<MLink> allLinks = fParent.system().state().linksOfAssociation(assoc).links();
+		// Retrieve all links for the association in a defensive manner
+		Set<MLink> allLinks;
+		try {
+			allLinks = fParent.system().state().linksOfAssociation(assoc).links();
+		} catch (Exception ex) {
+			// In case state or linksOfAssociation returns unexpectedly (defensive)
+			if (fLog != null) fLog.println(ex.getMessage());
+			else System.err.println(ex.getMessage());
+			return null;
+		}
 		if (allLinks == null || allLinks.isEmpty()) {
 			return null;
 		}
@@ -1885,32 +1897,13 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		for (MLink l : allLinks) {
 			if (l == null) continue;
 			List<MObject> linked = l.linkedObjects();
-	 * (optionally) matches the serialized linkValue. This method reverses what
-	 * BinaryAssociationOrLinkEdge.storeAdditionalInfo wrote using link.toString().
-	 *
-	 * If there is exactly one link connecting the given objects, that link is
-	 * returned without checking linkValue (robust against toString() changes).
-	 * If multiple links connect the same objects, linkValue is used to
-	 * disambiguate via link.toString().
-	 */
-	private MLink getLinkByValue(MAssociation assoc, List<MObject> objects, String linkValue) {
-		if (assoc == null || objects == null) {
-			return null;
-		}
-
-		Set<MLink> allLinks = fParent.system().state().linksOfAssociation(assoc).links();
-
-		// First, collect all links that connect exactly the given objects (in order).
-		List<MLink> matchingLinks = new ArrayList<>();
-		for (MLink l : allLinks) {
-			List<MObject> linked = l.linkedObjects();
-			if (linked.size() != objects.size()) {
-				continue;
-			}
+			if (linked == null || linked.size() != objects.size()) continue;
 
 			boolean sameObjects = true;
 			for (int i = 0; i < linked.size(); i++) {
-				if (!linked.get(i).equals(objects.get(i))) {
+				MObject a = linked.get(i);
+				MObject b = objects.get(i);
+				if (!Objects.equals(a, b)) {
 					sameObjects = false;
 					break;
 				}
@@ -1928,7 +1921,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		// Single candidate: return it directly without relying on toString().
 		if (matchingLinks.size() == 1) {
-			return matchingLinks.get(0);
+			return matchingLinks.getFirst();
 		}
 
 		// Multiple candidates: use linkValue (if available) to disambiguate.
@@ -1937,7 +1930,14 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		for (MLink l : matchingLinks) {
-			if (linkValue.equals(l.toString())) {
+			if (l == null) continue;
+			String s = null;
+			try {
+				s = l.toString();
+			} catch (Exception ex) {
+				// ignore toString exceptions defensively
+			}
+			if (Objects.equals(linkValue, s)) {
 				return l;
 			}
 		}
