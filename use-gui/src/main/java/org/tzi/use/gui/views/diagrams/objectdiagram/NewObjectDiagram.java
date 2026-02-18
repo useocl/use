@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -1864,30 +1865,50 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * wrote using link.toString(). It prefers exact object-list match and the string representation.
 	 */
 	private MLink getLinkByValue(MAssociation assoc, List<MObject> objects, String linkValue) {
-		if (assoc == null || objects == null || linkValue == null) {
+		// defensive preconditions
+		if (assoc == null || objects == null) {
 			return null;
 		}
 
-		Set<MLink> candidates = fParent.system().state().linksOfAssociation(assoc).links();
-		for (MLink l : candidates) {
-			// first ensure the linked objects match the expected ordering/collection
-			List<MObject> linked = l.linkedObjects();
-			if (linked.size() == objects.size()) {
-				boolean sameObjects = true;
-				for (int i = 0; i < linked.size(); i++) {
-					if (!linked.get(i).equals(objects.get(i))) {
-						sameObjects = false;
-						break;
-					}
-				}
-				if (!sameObjects) continue;
+		Set<MLink> allLinks = fParent.system().state().linksOfAssociation(assoc).links();
+		if (allLinks == null || allLinks.isEmpty()) {
+			return null;
+		}
 
-				// compare the string representation stored by the edge
-				if (linkValue.equals(l.toString())) {
-					return l;
-				}
+		// First, collect all links that connect exactly the given objects (in order).
+		List<MLink> matchingLinks = new ArrayList<>();
+		for (MLink l : allLinks) {
+			if (l == null) continue;
+			List<MObject> linked = l.linkedObjects();
+			if (linked == null || linked.size() != objects.size()) continue;
+
+			// Use List.equals which performs element-wise, null-safe comparisons
+			if (linked.equals(objects)) {
+				matchingLinks.add(l);
 			}
 		}
+
+		// No link connects exactly these objects.
+		if (matchingLinks.isEmpty()) {
+			return null;
+		}
+
+		// Single candidate: return it directly without relying on toString().
+		if (matchingLinks.size() == 1) {
+			return matchingLinks.getFirst();
+		}
+
+		// Multiple candidates: use linkValue (if available) to disambiguate.
+		if (linkValue == null) {
+			return null;
+		}
+
+		for (MLink l : matchingLinks) {
+			if (Objects.equals(linkValue, l == null ? null : l.toString())) {
+				return l;
+			}
+		}
+
 		return null;
 	}
 
