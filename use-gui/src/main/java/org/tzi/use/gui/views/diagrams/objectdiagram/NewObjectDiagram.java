@@ -1906,7 +1906,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	@Override
 	public void stateChanged(SortChangeEvent e) {
-		for (ObjectNode n : this.visibleData.fObjectToNodeMap.values()) {
+		for (ObjectNode n : this.visibleData.getObjectToNodeMap().values()) {
 			n.stateChanged(e);
 		}
 	}
