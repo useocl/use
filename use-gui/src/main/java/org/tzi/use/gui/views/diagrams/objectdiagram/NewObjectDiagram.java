@@ -1854,7 +1854,6 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * Restore helper to determine hidden state for items when restoring layout.
 	 * Mirrors the implementation used in ClassDiagram to remain consistent across diagrams.
 	 */
-	@SuppressWarnings("unused")
 	protected boolean isHidden(PersistHelper helper, int version) {
 		// The 'version' parameter is reserved for future format-specific logic.
 		return helper.getElementBooleanValue(LayoutTags.HIDDEN);
