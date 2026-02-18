@@ -1913,11 +1913,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	}
 
 	/**
-	 * A kleine Helfermethode zum Erstellen von Actions mit weniger Boilerplate-Code.
+	 * A small helper method for creating {@link Action} instances with less boilerplate code.
 	 *
-	 * @param text Der Text der Action.
-	 * @param listener Der ActionListener, der die Action ausführt.
-	 * @return Die erstellte Action.
+	 * @param text The text of the action.
+	 * @param listener The {@link ActionListener} that executes the action.
+	 * @return The created action.
 	 */
 	private Action createAction(String text, ActionListener listener) {
 		return new AbstractAction(text) {
