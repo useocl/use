@@ -1505,7 +1505,6 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	}
 
 	// Helper: restore binary association edges placement info
-	@SuppressWarnings("unused")
 	private void restoreBinaryEdges(PersistHelper helper, int version, Set<MObject> hiddenObjects) {
 		AutoPilot ap = new AutoPilot(helper.getNav());
 		helper.getNav().push();
