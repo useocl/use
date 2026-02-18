@@ -911,8 +911,13 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * @param obj the MInstance whose node should be refreshed
 	 */
 	public void updateObject(MInstance obj) {
-		// Use computeIfPresent with an explicit cast of the key to the Map's key type (MObject)
-		visibleData.getObjectToNodeMap().computeIfPresent((MObject) obj, (k, node) -> {
+		// Only update if the instance is actually an MObject to avoid ClassCastException
+		if (!(obj instanceof MObject)) {
+			return;
+		}
+
+		MObject mObj = (MObject) obj;
+		visibleData.getObjectToNodeMap().computeIfPresent(mObj, (k, node) -> {
 			invalidateNode(node);
 			return node; // keep the existing mapping
 		});
