@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JPopupMenu;
 
 
 import org.tzi.use.gui.main.MainWindow;
@@ -70,7 +71,7 @@ import com.google.common.eventbus.Subscribe;
  */
 @SuppressWarnings("serial")
 public class NewObjectDiagramView extends JPanel 
-  implements View, PrintableView, SortChangeListener {
+  implements View, PrintableView, SortChangeListener, INewObjectDiagramView {
 
     protected final MSystem fSystem;
     protected final MainWindow fMainWindow;
@@ -94,13 +95,23 @@ public class NewObjectDiagramView extends JPanel
     }
 
     public void initDiagram(boolean loadDefaultLayout, ObjDiagramOptions opt) {
-    	if (opt == null)
-			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter());
-		else
-			fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter(), new ObjDiagramOptions(opt));
-		
-		fObjectDiagram.setStatusBar(fMainWindow.statusBar());
-		this.removeAll();
+        if (opt == null)
+            fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter());
+        else
+            fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter(), new ObjDiagramOptions(opt));
+
+        // wire MVP skeleton with no-op services (no behavior change)
+        ObjectDiagramModel model = new ObjectDiagramModel();
+        NewObjectDiagramPresenter presenter = new NewObjectDiagramPresenter(
+                this,
+                model,
+                new NullPlacementRepository(),
+                new NullApplicationController(),
+                new NullContextMenuProvider());
+        fObjectDiagram.setPresenter(presenter);
+
+        fObjectDiagram.setStatusBar(fMainWindow.statusBar());
+        this.removeAll();
         add( new JScrollPane(fObjectDiagram) );
         initState();
 	}
@@ -151,55 +162,73 @@ public class NewObjectDiagramView extends JPanel
     
     @Subscribe
     public void onTransition(TransitionEvent e) {
-    	fObjectDiagram.updateObject(e.getSource());
-    	fObjectDiagram.invalidateContent(true);
-    }
-    
-    @Subscribe
-    public void onObjectCeated(ObjectCreatedEvent e) {
-    	if (e.getCreatedObject() instanceof MLink) {
-    		return;
-    	}
+        if (fObjectDiagram.getPresenter() != null) {
+            fObjectDiagram.getPresenter().onTransition(e);
+        }
+         fObjectDiagram.updateObject(e.getSource());
+         fObjectDiagram.invalidateContent(true);
+     }
 
-    	fObjectDiagram.addObject(e.getCreatedObject());
-    	fObjectDiagram.invalidateContent(true);
-    }
-    
-    @Subscribe
-    public void onObjectDestroyed(ObjectDestroyedEvent e) {
-    	if (e.getDestroyedObject() instanceof MLink) {
-    		return;
-    	}
-    	
-    	fObjectDiagram.deleteObject(e.getDestroyedObject());
-    	fObjectDiagram.invalidateContent(true);
-    }
-    
-    @Subscribe
-    public void onAttributeAssigned(AttributeAssignedEvent e) {
-    	fObjectDiagram.updateObject(e.getObject());
-    	fObjectDiagram.invalidateContent(true);
-    }
-    
-    @Subscribe
-    public void onLinkCeated(LinkInsertedEvent e) {
-    	if (e.getAssociation() instanceof MAssociationClass) {
-    		fObjectDiagram.addObject((MLinkObject)e.getLink());	
-    	}
-    	fObjectDiagram.addLink(e.getLink());
-    	fObjectDiagram.invalidateContent(true);
-    }
-    
-    @Subscribe
-    public void onLinkDeleted(LinkDeletedEvent e) {
-    	if (e.getAssociation() instanceof MAssociationClass) {
-    		fObjectDiagram.deleteObject((MLinkObject)e.getLink());
-    	}
-    	
-    	fObjectDiagram.deleteLink(e.getLink());
-    	fObjectDiagram.invalidateContent(true);
-    }
-    
+     @Subscribe
+     public void onObjectCeated(ObjectCreatedEvent e) {
+         if (e.getCreatedObject() instanceof MLink) {
+             return;
+         }
+
+        if (fObjectDiagram.getPresenter() != null) {
+            fObjectDiagram.getPresenter().onObjectCreated(e.getCreatedObject());
+        }
+         fObjectDiagram.addObject(e.getCreatedObject());
+         fObjectDiagram.invalidateContent(true);
+     }
+
+     @Subscribe
+     public void onObjectDestroyed(ObjectDestroyedEvent e) {
+         if (e.getDestroyedObject() instanceof MLink) {
+             return;
+         }
+
+        if (fObjectDiagram.getPresenter() != null) {
+            fObjectDiagram.getPresenter().onObjectDestroyed(e.getDestroyedObject());
+        }
+         fObjectDiagram.deleteObject(e.getDestroyedObject());
+         fObjectDiagram.invalidateContent(true);
+     }
+
+     @Subscribe
+     public void onAttributeAssigned(AttributeAssignedEvent e) {
+        if (fObjectDiagram.getPresenter() != null) {
+            fObjectDiagram.getPresenter().onAttributeAssigned(e);
+        }
+         fObjectDiagram.updateObject(e.getObject());
+         fObjectDiagram.invalidateContent(true);
+     }
+
+     @Subscribe
+     public void onLinkCeated(LinkInsertedEvent e) {
+        if (fObjectDiagram.getPresenter() != null) {
+            fObjectDiagram.getPresenter().onLinkInserted(e);
+        }
+         if (e.getAssociation() instanceof MAssociationClass) {
+             fObjectDiagram.addObject((MLinkObject)e.getLink());
+         }
+         fObjectDiagram.addLink(e.getLink());
+         fObjectDiagram.invalidateContent(true);
+     }
+
+     @Subscribe
+     public void onLinkDeleted(LinkDeletedEvent e) {
+        if (fObjectDiagram.getPresenter() != null) {
+            fObjectDiagram.getPresenter().onLinkDeleted(e);
+        }
+         if (e.getAssociation() instanceof MAssociationClass) {
+             fObjectDiagram.deleteObject((MLinkObject)e.getLink());
+         }
+
+         fObjectDiagram.deleteLink(e.getLink());
+         fObjectDiagram.invalidateContent(true);
+     }
+
     /**
      * After the occurence of an event the view is updated.
      */
@@ -257,8 +286,8 @@ public class NewObjectDiagramView extends JPanel
 			} catch (MSystemException e) {
 				JOptionPane.showMessageDialog(
 						fMainWindow, 
-						e.getMessage(), 
-						"Error", 
+					 e.getMessage(),
+						"Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
     	}
@@ -333,4 +362,31 @@ public class NewObjectDiagramView extends JPanel
 	public float getContentWidth() {
 		return fObjectDiagram.getPreferredSize().width;
 	}
+
+    @Override
+    public void showPopup(JPopupMenu popup) {
+        if (fObjectDiagram != null) {
+            popup.show(fObjectDiagram, fObjectDiagram.getWidth() / 2, fObjectDiagram.getHeight() / 2);
+        } else {
+            popup.show(this, getWidth() / 2, getHeight() / 2);
+        }
+    }
+
+    @Override
+    public void refresh() {
+        if (fObjectDiagram != null) {
+            fObjectDiagram.invalidateContent(true);
+            fObjectDiagram.repaint();
+        } else {
+            revalidate();
+            repaint();
+        }
+    }
+
+    @Override
+    public void setStatus(String status) {
+        if (fMainWindow != null && fMainWindow.statusBar() != null) {
+            fMainWindow.statusBar().showTmpMessage(status);
+        }
+    }
 }
