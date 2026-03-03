@@ -7,7 +7,7 @@ import java.awt.Graphics;
 /**
  * Placeholder canvas implementing the view interface. Rendering will be migrated later.
  */
-public class DiagramCanvas extends JComponent implements INewObjectDiagramView {
+public class DiagramCanvas extends JComponent implements NewObjectDiagramUI {
 
     @Override
     protected void paintComponent(Graphics g) {

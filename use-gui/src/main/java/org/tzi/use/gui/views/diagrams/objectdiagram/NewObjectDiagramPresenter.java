@@ -1,89 +1,90 @@
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectDiagramModel;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
 import org.tzi.use.uml.sys.events.TransitionEvent;
 import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.gui.util.PersistHelper;
+import org.tzi.use.uml.sys.MSystem;
+import org.w3c.dom.Element;
+import javax.swing.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
- * MVP presenter for the object diagram. Currently a skeleton with no logic; wiring will be added incrementally.
+ * Presenter boundary for the object diagram (MVP, passive view).
+ * Responsibilities: translate UI/input into model/system mutations, listen to system events,
+ * and push UI updates via the view; keep UI components free of system logic.
  */
-public class NewObjectDiagramPresenter implements INewObjectDiagramPresenter {
+public interface NewObjectDiagramPresenter {
+    void onRequestPopup();
+    void onAddObject(Value value);
+    void onRefreshRequested();
+    void onCreateObject(String clsName);
+    void onResetDiagram(ObjDiagramOptions options);
+    void onHighlightChange(HighlightChangeEvent e);
 
-    private final INewObjectDiagramView view;
-    private final ObjectDiagramModel model;
-    private final PlacementRepository placementRepository;
-    private final ApplicationController applicationController;
-    private final ContextMenuProvider contextMenuProvider;
+    default void onTransition(TransitionEvent e) {}
+    default void onObjectCreated(MObject obj) {}
+    default void onObjectDestroyed(MObject obj) {}
+    default void onAttributeAssigned(AttributeAssignedEvent e) {}
+    default void onLinkInserted(LinkInsertedEvent e) {}
+    default void onLinkDeleted(LinkDeletedEvent e) {}
 
-    public NewObjectDiagramPresenter(INewObjectDiagramView view,
-                                     ObjectDiagramModel model,
-                                     PlacementRepository placementRepository,
-                                     ApplicationController applicationController,
-                                     ContextMenuProvider contextMenuProvider) {
-        this.view = view;
-        this.model = model;
-        this.placementRepository = placementRepository;
-        this.applicationController = applicationController;
-        this.contextMenuProvider = contextMenuProvider;
-    }
+    default void onPopupMenuPrepared(JPopupMenu menu,
+                                     Set<MObject> selectedObjects,
+                                     Set<MLink> selectedLinks,
+                                     Set<MObject> selectedAssocObjects) {}
+    default void onStatusMessage(String status) {}
 
-    @Override
-    public void onRequestPopup() {
-        // will be implemented when ContextMenuProvider is wired
-    }
+    default void onInsertLink(MAssociation association, List<MObject> participants) {}
+    default void onDeleteLink(MLink link) {}
+    default void onDeleteObjects(Set<MObject> objects) {}
 
-    @Override
-    public void onAddObject(Value value) {
-        // will be implemented during migration
-    }
+    /** Notify presenter that selection changed in the diagram. */
+    default void onSelectionChanged(Set<MObject> selectedObjects, Set<MLink> selectedLinks) {}
 
-    @Override
-    public void onRefreshRequested() {
-        // will be implemented during migration
-    }
+    /** Notify presenter that the current selection was dragged by the given delta. */
+    default void onDragSelectionMoved(int dx, int dy) {}
 
-    @Override
-    public void onCreateObject(String clsName) {
-        if (applicationController != null) {
-            applicationController.createObject(clsName);
-        }
-    }
+    /** Show properties for the given object. */
+    default void onShowObjectProperties(MObject object) {}
 
-    @Override
-    public void onTransition(TransitionEvent e) {
-        // hook for future logic
-    }
+    /** Fetch links of an association from the model/state. */
+    default Set<MLink> fetchLinksOfAssociation(MAssociation association) { return Set.of(); }
 
-    @Override
-    public void onObjectCreated(MObject obj) {
-        // hook for future logic
-    }
+    /** Fetch all objects of the given class from the state. */
+    default Set<MObject> fetchObjectsOfClass(MClass cls) { return Set.of(); }
 
-    @Override
-    public void onObjectDestroyed(MObject obj) {
-        // hook for future logic
-    }
+    /** Fetch all associations of the current model. */
+    default Collection<MAssociation> fetchAllAssociations() { return Set.of(); }
 
-    @Override
-    public void onAttributeAssigned(AttributeAssignedEvent e) {
-        // hook for future logic
-    }
+    default void onHideLinks(Collection<MLink> links) {}
+    default void onHideObjects(Collection<MObject> objects) {}
+    default void onHideAllLinks() {}
+    default void onShowAllLinks() {}
+    default void onShowHiddenElements() {}
+    default void onCropSelection(Collection<MObject> objectsToHide) {}
+    default void onGrayOut(Collection<MObject> objects) {}
+    default void onGrayIn(Collection<MObject> objects) {}
+    default void onToggleShowStates(boolean show) {}
 
-    @Override
-    public void onLinkInserted(LinkInsertedEvent e) {
-        // hook for future logic
-    }
+    default void onStoreLayout(PersistHelper helper,
+                               Element root,
+                               NewObjectDiagramModel model) {}
+    default Set<MObject> onRestoreLayout(PersistHelper helper,
+                                         int version,
+                                         NewObjectDiagramModel model,
+                                         MSystem system) { return Set.of(); }
 
-    @Override
-    public void onLinkDeleted(LinkDeletedEvent e) {
-        // hook for future logic
-    }
+    /** Lifecycle hook to release resources (e.g., event bus). */
+    default void detach() {}
+ }
 
-    public ObjectDiagramModel getModel() {
-        return model;
-    }
-}

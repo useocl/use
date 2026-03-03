@@ -149,13 +149,11 @@ public class DiagramInputHandling implements MouseListener,
                 // untouched). In any case this click may be used to
                 // start dragging selected items.
                 if (!(pickedObjectNode instanceof ResizeNode) && !fNodeSelection.isSelected(pickedObjectNode)) {
-                    // clear selection
                     fNodeSelection.clear();
                     fEdgeSelection.clear();
-                    // add this component as the only selected item
                     fNodeSelection.add(pickedObjectNode);
                     fDiagram.repaint();
-                } 
+                 }
                 // subsequent dragging events will move selected items
                 if (pickedObjectNode instanceof ResizeNode) {
                 	resizeNode = (ResizeNode)pickedObjectNode;
@@ -165,22 +163,20 @@ public class DiagramInputHandling implements MouseListener,
                 	fDragMode = DragMode.DRAG_ITEMS;
                 	resizeNode = null;
                 }
-                
+
                 fDragStart = e.getPoint();
             } else if (pickedEdge != null) {
             	if (!fEdgeSelection.isSelected(pickedEdge)) {
-                    // clear selection
-                    fNodeSelection.clear();
-                    fEdgeSelection.clear();
-                    // add this component as the only selected item
-                    fEdgeSelection.add(pickedEdge);
-                    fDiagram.repaint();
-                }
-            } else {
+                     fNodeSelection.clear();
+                     fEdgeSelection.clear();
+                     fEdgeSelection.add(pickedEdge);
+                     fDiagram.repaint();
+                  }
+             } else {
                 // click in background, clear selection
             	fNodeSelection.clear();
             	fEdgeSelection.clear();
-                
+
                 // init selection rectangle
                 selectionRectangle = fDiagram.createSelectionBox(e.getPoint());
                 fDiagram.add(selectionRectangle);
@@ -196,7 +192,7 @@ public class DiagramInputHandling implements MouseListener,
 		    		fNodeSelection.remove( pickedObjectNode );
 		    	else
 		    		fNodeSelection.add( pickedObjectNode );
-		        
+
 		    	fDiagram.repaint();
 		    }
 		    else if (pickedEdge != null) {
@@ -205,14 +201,14 @@ public class DiagramInputHandling implements MouseListener,
 		        	fEdgeSelection.remove(pickedEdge);
 		        else
 		        	fEdgeSelection.add( pickedEdge );
-		        
+
 		        fDiagram.repaint();
 		    }
 		    else {
 		    	// additive selection rectangle
 		    	selectionRectangle = fDiagram.createSelectionBox(e.getPoint());
                 fDiagram.add(selectionRectangle);
-                
+
                 fDiagram.repaint();
 		    }
 		break;
@@ -270,8 +266,11 @@ public class DiagramInputHandling implements MouseListener,
     
     @Override
 	public void mouseExited(MouseEvent e) {
-    	if (fDiagram.getStatusBar() != null)
-    		fDiagram.getStatusBar().clearMessage();
+    	if (fDiagram instanceof NewObjectDiagram objDiag) {
+            objDiag.onPointerExited();
+        } else if (fDiagram.getStatusBar() != null) {
+	    	    fDiagram.getStatusBar().clearMessage();
+        }
     }
     
     @Override
@@ -299,10 +298,10 @@ public class DiagramInputHandling implements MouseListener,
             int dy = p.y - fDragStart.y;
             
             moveSelectedObjects(dx, dy);
-            
-            fDragStart = p;
-        }
-        
+
+             fDragStart = p;
+         }
+
         if (fDragMode == DragMode.RESIZE_ITEM) {
             resizeSelectedObjects(e.getPoint());
         }
@@ -356,65 +355,6 @@ public class DiagramInputHandling implements MouseListener,
 	}
     
     @Override
-	public void mouseMoved(MouseEvent e) {
-    	if (fDiagram.getStatusBar() != null)
-    		fDiagram.getStatusBar().showMessage("[x=" + e.getPoint().getX() + ", y=" + e.getPoint().getY() + "] ", BorderLayout.EAST);
-    	
-    	PlaceableNode targetNode = null;
-    	
-    	// We allow selected nodes to change the mouse cursor
-    	for (PlaceableNode n : fNodeSelection) {
-    		if (n.occupies(e.getX(), e.getY())) {
-    			targetNode = n;
-    		} else {
-    			targetNode = n.getRelatedNode(e.getX(), e.getY());
-    		}
-    		
-    		if (targetNode != null) {
-    			fDiagram.setCursor(targetNode.getCursor());
-    			return;
-    		}
-    	}
-    	
-    	fDiagram.setCursor(Cursor.getDefaultCursor());
-    }
-    
-    // implementation of interface DragTargetListener
-    @Override
-	public void dragEnter(DropTargetDragEvent dtde) {
-        //Log.trace(this, "dragEnter");
-        dtde.acceptDrag(DnDConstants.ACTION_MOVE);
-    }
-    
-    @Override
-	public void dragOver(DropTargetDragEvent dtde) {
-        //Log.trace(this, "dragOver");
-        dtde.acceptDrag(DnDConstants.ACTION_MOVE);
-    }
-    
-    @Override
-	public void dropActionChanged(DropTargetDragEvent dtde) {
-        //Log.trace(this, "dropActionChanged");
-        dtde.acceptDrag(DnDConstants.ACTION_MOVE);
-    }
-    
-    @Override
-	public void dragExit(DropTargetEvent dte) {
-        //Log.trace(this, "dragExit");
-    }
-    
-    /**
-     * Accepts a drag of a class from the ModelBrowser. A new object of this
-     * class will be created.
-     */
-    @Override
-	public void drop(DropTargetDropEvent dtde) {
-        if ( fDiagram instanceof NewObjectDiagram ) {
-            ((NewObjectDiagram) fDiagram).dropObjectFromModelBrowser( dtde );
-        }
-    }
-
-	@Override
 	public void keyTyped(KeyEvent e) { }
 
 	@Override
@@ -450,4 +390,53 @@ public class DiagramInputHandling implements MouseListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) { }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if (fDiagram instanceof NewObjectDiagram objDiag) {
+            objDiag.onPointerMoved(e.getPoint());
+        } else if (fDiagram.getStatusBar() != null) {
+            fDiagram.getStatusBar()
+                    .showMessage("[x=" + e.getPoint().getX() + ", y=" + e.getPoint().getY() + "] ", BorderLayout.EAST);
+        }
+
+        PlaceableNode targetNode = null;
+        for (PlaceableNode n : fNodeSelection) {
+            targetNode = n.occupies(e.getX(), e.getY()) ? n : n.getRelatedNode(e.getX(), e.getY());
+            if (targetNode != null) {
+                fDiagram.setCursor(targetNode.getCursor());
+                return;
+            }
+        }
+        fDiagram.setCursor(Cursor.getDefaultCursor());
+    }
+
+	@Override
+    public void dragEnter(DropTargetDragEvent dtde) {
+        dtde.acceptDrag(DnDConstants.ACTION_MOVE);
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent dtde) {
+        dtde.acceptDrag(DnDConstants.ACTION_MOVE);
+    }
+
+    @Override
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+        dtde.acceptDrag(DnDConstants.ACTION_MOVE);
+    }
+
+    @Override
+    public void dragExit(DropTargetEvent dte) {
+        // no-op
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent dtde) {
+        if (fDiagram instanceof NewObjectDiagram objDiag) {
+            objDiag.dropObjectFromModelBrowser(dtde);
+        } else {
+            dtde.rejectDrop();
+        }
+    }
 }

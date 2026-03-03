@@ -366,7 +366,13 @@ public class ObjectSelection {
 			JMenuItem hideAll = new JMenuItem("Hide all");
 			hideAll.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
-					((NewObjectDiagram) diagram).hideLink(menu.getKey(), links);
+					List<MLink> matching = new ArrayList<>();
+					for (MLink link : links) {
+						if (menu.getKey().equals(link.association().toString())) {
+							matching.add(link);
+						}
+					}
+					((NewObjectDiagram) diagram).hideLink(matching);
 					diagram.repaint();
 				}
 			});
@@ -509,7 +515,13 @@ public class ObjectSelection {
 			JMenuItem showAll = new JMenuItem("Show all");
 			showAll.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
-					((NewObjectDiagram) diagram).showLink(menu.getKey(), links);
+					List<MLink> matching = new ArrayList<>();
+					for (MLink link : links) {
+						if (menu.getKey().equals(link.association().toString())) {
+							matching.add(link);
+						}
+					}
+					((NewObjectDiagram) diagram).showLink(matching);
 					diagram.repaint();
 				}
 			});
