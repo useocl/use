@@ -16,6 +16,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -27,8 +28,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DefaultContextMenuProvider implements ContextMenuProvider {
-
-    private static final int INSERT_SLOT_COUNT = 3;
 
     @Override
     public void enhanceMenu(JPopupMenu popupMenu,
@@ -162,15 +161,23 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
             return items;
         }
 
-        if (!selectedObjects.isEmpty()) {
+        Collection<MAssociation> assocCollection = presenter.fetchAllAssociations();
+        List<MAssociation> associations = assocCollection == null ? new ArrayList<>() : new ArrayList<>(assocCollection);
+        associations.removeIf(Objects::isNull);
+        associations.sort(Comparator.comparing(
+                MAssociation::name,
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+
+        boolean addedCombinationEntries = false;
+
+        if (selectedObjects != null && !selectedObjects.isEmpty()) {
             List<MObject> selList = new ArrayList<>(selectedObjects);
+            selList.removeIf(Objects::isNull);
+            selList.sort(Comparator.comparing(this::safeName, String.CASE_INSENSITIVE_ORDER));
             int m = selList.size();
-            Collection<MAssociation> associations = presenter.fetchAllAssociations();
-            if (associations == null) {
-                return items;
-            }
+
             for (MAssociation assoc : associations) {
-                if (assoc.isReadOnly()) {
+                if (assoc == null || assoc.isReadOnly()) {
                     continue;
                 }
                 List<MAssociationEnd> ends = assoc.associationEnds();
@@ -178,10 +185,17 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
                 if (n == 0 || m > n) {
                     continue;
                 }
+
+                Collection<MLink> associationLinks = presenter.fetchLinksOfAssociation(assoc);
+                if (associationLinks == null) {
+                    associationLinks = List.of();
+                }
+
                 int pow = 1;
                 for (int i = 0; i < n; i++) {
                     pow *= m;
                 }
+
                 for (int value = 0; value < pow; value++) {
                     int[] digits = radixConversion(value, m, n);
                     if (!isCompleteObjectCombination(digits, m)) {
@@ -196,31 +210,33 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
                     if (!assoc.isAssignableFrom(types)) {
                         continue;
                     }
-                    String joined = Arrays.stream(tuple).map(this::safeName).reduce((a, b) -> a + "," + b).orElse("...");
-                    items.add(buildMenuItem("insert (" + joined + ") into " + assoc.name(),
-                            ev -> presenter.onInsertLink(assoc, Arrays.asList(tuple))));
-                    if (items.size() == INSERT_SLOT_COUNT) {
-                        return items;
+
+                    String joined = Arrays.stream(tuple)
+                            .map(this::safeName)
+                            .reduce((a, b) -> a + "," + b)
+                            .orElse("...");
+
+                    MLink existingLink = findMatchingLink(tuple, associationLinks);
+                    if (existingLink != null) {
+                        MLink linkForDeletion = existingLink;
+                        items.add(buildMenuItem("delete (" + joined + ") from " + assoc.name(),
+                                ev -> presenter.onDeleteLink(linkForDeletion)));
+                    } else {
+                        MAssociation currentAssoc = assoc;
+                        List<MObject> tupleList = Arrays.asList(tuple.clone());
+                        items.add(buildMenuItem("insert (" + joined + ") into " + assoc.name(),
+                                ev -> presenter.onInsertLink(currentAssoc, tupleList)));
                     }
+                    addedCombinationEntries = true;
                 }
             }
         }
 
-        Collection<MAssociation> associations = presenter.fetchAllAssociations();
-        if (associations != null) {
-            for (MAssociation assoc : associations) {
-                items.add(buildMenuItem("insert (...) into " + assoc.name(),
-                        ev -> presenter.onInsertLinkInteractive(selectedObjects)));
-                if (items.size() == INSERT_SLOT_COUNT) {
-                    return items;
-                }
-            }
-        }
-
-        while (items.size() < INSERT_SLOT_COUNT) {
+        if (!addedCombinationEntries) {
             items.add(buildMenuItem("insert (...) into ...",
-                    ev -> presenter.onInsertLinkInteractive(selectedObjects)));
+                    ev -> presenter.onInsertLinkInteractive(selectedObjects == null ? Set.of() : selectedObjects)));
         }
+
         return items;
     }
 
@@ -426,4 +442,21 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
         }
         return usedCount == m;
     }
+
+    private MLink findMatchingLink(MObject[] tuple, Collection<MLink> associationLinks) {
+        outerLinks: for (MLink link : associationLinks) {
+            List<MObject> linkObjects = link.linkedObjects();
+            if (linkObjects == null || linkObjects.size() != tuple.length) {
+                continue;
+            }
+            for (int idx = 0; idx < tuple.length; idx++) {
+                if (linkObjects.get(idx) != tuple[idx]) {
+                    continue outerLinks;
+                }
+            }
+            return link;
+        }
+        return null;
+    }
 }
+
