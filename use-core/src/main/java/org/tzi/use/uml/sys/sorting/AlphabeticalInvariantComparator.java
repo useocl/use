@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.util.uml.sorting;
+package org.tzi.use.uml.sys.sorting;
 
 import java.util.Comparator;
 

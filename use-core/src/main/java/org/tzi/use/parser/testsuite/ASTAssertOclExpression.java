@@ -6,8 +6,8 @@ import org.tzi.use.parser.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.testsuite.MAssert;
-import org.tzi.use.uml.sys.testsuite.MAssertOclExpression;
+import org.tzi.use.parser.testsuite.sys.MAssert;
+import org.tzi.use.parser.testsuite.sys.MAssertOclExpression;
 
 public class ASTAssertOclExpression extends ASTAssert {
 	private ASTExpression expression;

@@ -21,7 +21,7 @@ package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.sys.events.tags.EventContext;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 /**
  * Payload for the event raised after a

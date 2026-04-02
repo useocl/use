@@ -16,9 +16,9 @@ import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.testsuite.MAssert;
+import org.tzi.use.parser.testsuite.sys.MAssert;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 public class ASTTestCase extends AST {
 	public enum TestResult {
@@ -78,7 +78,7 @@ public class ASTTestCase extends AST {
 				MStatement mCmd;
 				
 				try {
-					mCmd = astCmd.generateStatement(ctx, system.getVariableEnvironment().constructSymbolTable());
+					mCmd = astCmd.generateStatement(ctx, new org.tzi.use.parser.soil.environment.SymbolTable(system.getVariableEnvironment()));
 				} catch (CompilationFailedException e) {
 					failureDetails = "Line " + astCmd.getSourcePosition().line() + ": " + astCmd.toString() + " command failed: " + e.getMessage();
 					return TestResult.ERROR;

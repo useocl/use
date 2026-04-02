@@ -36,8 +36,8 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.util.soil.SymbolTable;
-import org.tzi.use.util.soil.VariableEnvironment;
+import org.tzi.use.parser.soil.environment.SymbolTable;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 
 
 /**
@@ -272,7 +272,7 @@ public class VariableEnvironmentTest extends TestCase {
 		ve.assign(n3, v3);
 		// ST
 		// [n1 -> Type(v1), n2 -> Type(v2), n3 -> Type(v3)]
-		SymbolTable st = ve.constructSymbolTable();
+		SymbolTable st = new SymbolTable(ve);
 		assertEquals(st.getType(n1), v1.type());
 		assertEquals(st.getType(n2), v2.type());
 		assertEquals(st.getType(n3), v3.type());
@@ -284,7 +284,7 @@ public class VariableEnvironmentTest extends TestCase {
 		ve.assign(n3, v1);
 		// ST
 		// [n1 -> Type(v2), n2 -> Type(v3), n3 -> Type(v1)]
-		st = ve.constructSymbolTable();
+		st = new SymbolTable(ve);
 		assertEquals(st.getType(n1), v2.type());
 		assertEquals(st.getType(n2), v3.type());
 		assertEquals(st.getType(n3), v1.type());

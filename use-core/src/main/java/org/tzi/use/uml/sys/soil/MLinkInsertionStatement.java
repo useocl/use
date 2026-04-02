@@ -30,7 +30,7 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 /**
  * This statement inserts a new link into an association.

@@ -13,8 +13,8 @@ import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.sys.testsuite.MAssert;
-import org.tzi.use.uml.sys.testsuite.MAssertPre;
+import org.tzi.use.parser.testsuite.sys.MAssert;
+import org.tzi.use.parser.testsuite.sys.MAssertPre;
 
 public class ASTAssertPre extends ASTAssert {
 

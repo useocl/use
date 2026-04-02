@@ -18,6 +18,7 @@
  */
 
 package org.tzi.use.parser;
+import org.tzi.use.util.SrcPos;
 
 import java.util.HashMap;
 import java.util.Map;

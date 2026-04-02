@@ -48,7 +48,7 @@ import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.testsuite.MTestSuite;
+import org.tzi.use.parser.testsuite.sys.MTestSuite;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.Report;
 import org.tzi.use.util.StringUtil;
@@ -56,7 +56,7 @@ import org.tzi.use.util.USEWriter;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.SocketReadline;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 import java.io.*;
 import java.net.InetAddress;

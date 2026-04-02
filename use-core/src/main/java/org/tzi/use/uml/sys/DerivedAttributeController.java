@@ -25,7 +25,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 import java.util.Collections;
 import java.util.HashSet;

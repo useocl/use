@@ -27,7 +27,7 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.soil.MConditionalExecutionStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**

@@ -17,28 +17,31 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.util.uml.sorting;
+package org.tzi.use.uml.sys.sorting;
 
 import java.util.Comparator;
 
-import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.MNamedElement;
 
 /**
  *
- * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  * @author Lars Hamann
+ * 
  */
-public class AlphabeticalOperationComparator implements Comparator<MOperation> {
+public class AlphabeticalNamedElementComparator implements Comparator<MNamedElement> {
 
     /**
-     * Compares two operations by their name
-     * @param object1 first operation (has to be of type MAttribute)
-     * @param object2 second operation (has to be of type MAttribute)
+     * Compares two associations by their name
+     * @param object1 first association (has to be of type MAssociation)
+     * @param object2 second association (has to be of type
+     * MAssociation)
      * @return a negative integer, zero, or a positive integer as the
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final MOperation object1, final MOperation object2) {
-        return object1.name().compareToIgnoreCase(object2.name());
+    public int compare(final MNamedElement object1, final MNamedElement object2) {
+        final String nameOfObject1 = object1.name();
+        final String nameOfObject2 = object2.name();
+        return nameOfObject1.compareToIgnoreCase(nameOfObject2);
     }
 }

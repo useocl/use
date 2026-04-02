@@ -48,8 +48,8 @@ import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance.Transitio
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.UniqueNameGenerator;
-import org.tzi.use.util.soil.VariableEnvironment;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 import java.io.InputStream;
 import java.io.PrintWriter;

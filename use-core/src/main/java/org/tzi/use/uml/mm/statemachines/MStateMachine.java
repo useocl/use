@@ -22,7 +22,7 @@ package org.tzi.use.uml.mm.statemachines;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.UseFileLocatable;

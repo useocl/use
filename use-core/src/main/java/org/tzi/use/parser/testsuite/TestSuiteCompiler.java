@@ -12,7 +12,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.sys.testsuite.MTestSuite;
+import org.tzi.use.parser.testsuite.sys.MTestSuite;
 
 public class TestSuiteCompiler {
 	// utility class

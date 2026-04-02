@@ -24,7 +24,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.CollectionType;
