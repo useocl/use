@@ -29,7 +29,7 @@ import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.mm.TestModelUtil;
+import org.tzi.use.core.test.TestModelUtil;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 
 /**

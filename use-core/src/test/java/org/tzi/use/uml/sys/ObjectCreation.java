@@ -22,7 +22,7 @@ package org.tzi.use.uml.sys;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.TestModelUtil;
+import org.tzi.use.core.test.TestModelUtil;
 
 
 /**

@@ -429,7 +429,7 @@ Cycle detected: Slice analysis ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (465 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   3. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String, java.lang.Throwable)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -750,7 +750,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Method <org.tzi.use.uml.ocl.expr.ExpStdOp.checkOclAnyCollectionsWarning(org.tzi.use.uml.ocl.expr.operations.OpGeneric, [Lorg.tzi.use.uml.ocl.type.Type;, org.tzi.use.uml.ocl.type.Type, org.tzi.use.config.Options$WarningType)> has parameter of type <org.tzi.use.config.Options$WarningType> in (ExpStdOp.java:0)
     - Method <org.tzi.use.uml.ocl.expr.ExpStdOp.checkTypeSystemWarnings(org.tzi.use.uml.ocl.expr.operations.OpGeneric, [Lorg.tzi.use.uml.ocl.expr.Expression;, [Lorg.tzi.use.uml.ocl.type.Type;, org.tzi.use.uml.ocl.type.Type)> calls method <org.tzi.use.config.Options$WarningType.equals(java.lang.Object)> in (ExpStdOp.java:135)
@@ -831,7 +831,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -886,7 +886,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Method <org.tzi.use.uml.ocl.expr.ExpStdOp.checkOclAnyCollectionsWarning(org.tzi.use.uml.ocl.expr.operations.OpGeneric, [Lorg.tzi.use.uml.ocl.type.Type;, org.tzi.use.uml.ocl.type.Type, org.tzi.use.config.Options$WarningType)> has parameter of type <org.tzi.use.config.Options$WarningType> in (ExpStdOp.java:0)
     - Method <org.tzi.use.uml.ocl.expr.ExpStdOp.checkTypeSystemWarnings(org.tzi.use.uml.ocl.expr.operations.OpGeneric, [Lorg.tzi.use.uml.ocl.expr.Expression;, [Lorg.tzi.use.uml.ocl.type.Type;, org.tzi.use.uml.ocl.type.Type)> calls method <org.tzi.use.config.Options$WarningType.equals(java.lang.Object)> in (ExpStdOp.java:135)
@@ -956,7 +956,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -1013,7 +1013,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -1082,7 +1082,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Constructor <org.tzi.use.uml.mm.statemachines.MProtocolStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MProtocolStateMachine.java:0)
     - Constructor <org.tzi.use.uml.mm.statemachines.MStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MStateMachine.java:0)
@@ -1167,7 +1167,7 @@ Cycle detected: Slice config ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Constructor <org.tzi.use.uml.mm.statemachines.MProtocolStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MProtocolStateMachine.java:0)
     - Constructor <org.tzi.use.uml.mm.statemachines.MStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MStateMachine.java:0)
@@ -1271,7 +1271,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -1327,7 +1327,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -1563,7 +1563,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (465 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   3. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String, java.lang.Throwable)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -1712,7 +1712,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -1764,7 +1764,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Field <org.tzi.use.uml.sys.MSystem.fGenerator> has type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
@@ -1817,7 +1817,7 @@ Cycle detected: Slice gen ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Constructor <org.tzi.use.uml.mm.statemachines.MProtocolStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MProtocolStateMachine.java:0)
     - Constructor <org.tzi.use.uml.mm.statemachines.MStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MStateMachine.java:0)
@@ -1900,7 +1900,7 @@ Cycle detected: Slice graph ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   4. Dependencies of Slice uml
     - Class <org.tzi.use.uml.mm.MGeneralization> implements interface <org.tzi.use.graph.DirectedEdge> in (MGeneralization.java:0)
     - Field <org.tzi.use.uml.mm.MModel.fGenGraph> has type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
@@ -1950,7 +1950,7 @@ Cycle detected: Slice graph ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Class <org.tzi.use.uml.mm.MGeneralization> implements interface <org.tzi.use.graph.DirectedEdge> in (MGeneralization.java:0)
     - Field <org.tzi.use.uml.mm.MModel.fGenGraph> has type <org.tzi.use.graph.DirectedGraph> in (MModel.java:0)
@@ -1997,7 +1997,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   2. Dependencies of Slice uml
     - Constructor <org.tzi.use.uml.mm.statemachines.MProtocolStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MProtocolStateMachine.java:0)
     - Constructor <org.tzi.use.uml.mm.statemachines.MStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MStateMachine.java:0)
@@ -2045,7 +2045,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.association> has type <org.tzi.use.uml.mm.MAssociation> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociation$AssociationEndConstraintsGenerator.model> has type <org.tzi.use.uml.mm.MModel> in (ASTAssociation.java:0)
     - Field <org.tzi.use.parser.use.ASTAssociationClass.fAssocClass> has type <org.tzi.use.uml.mm.MAssociationClass> in (ASTAssociationClass.java:0)
-    (1059 further dependencies have been omitted...)
+    (1060 further dependencies have been omitted...)
   2. Dependencies of Slice uml
     - Class <org.tzi.use.uml.ocl.expr.ExpTupleLiteral$Part> implements interface <org.tzi.use.util.BufferedToString> in (ExpTupleLiteral.java:0)
     - Class <org.tzi.use.uml.ocl.expr.Expression> implements interface <org.tzi.use.util.BufferedToString> in (Expression.java:0)
@@ -2067,7 +2067,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (465 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   3. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String, java.lang.Throwable)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -2160,7 +2160,7 @@ Cycle detected: Slice parser ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
   3. Dependencies of Slice uml
     - Constructor <org.tzi.use.uml.mm.statemachines.MProtocolStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MProtocolStateMachine.java:0)
     - Constructor <org.tzi.use.uml.mm.statemachines.MStateMachine.<init>(java.lang.String, org.tzi.use.parser.SrcPos, org.tzi.use.uml.mm.MClassifier)> has parameter of type <org.tzi.use.parser.SrcPos> in (MStateMachine.java:0)
@@ -2207,7 +2207,7 @@ Cycle detected: Slice uml ->
     - Field <org.tzi.use.uml.sys.events.StatementExecutedEvent.changes> has type <org.tzi.use.util.soil.StateDifference> in (StatementExecutedEvent.java:0)
     - Interface <org.tzi.use.uml.ocl.type.Type> extends interface <org.tzi.use.util.BufferedToString> in (Type.java:0)
     - Method <org.tzi.use.uml.ocl.expr.Evaluator.evalList(int, java.util.ArrayList, org.tzi.use.uml.sys.MSystemState)> has return type <org.tzi.use.util.collections.Queue> in (Evaluator.java:0)
-    (465 further dependencies have been omitted...)
+    (464 further dependencies have been omitted...)
   2. Dependencies of Slice util
     - Class <org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator> has generic interface <java.util.Comparator<org.tzi.use.uml.mm.MPrePostCondition>> with type argument depending on <org.tzi.use.uml.mm.MPrePostCondition> in (AlphabeticalConditionByNameComparator.java:0)
     - Class <org.tzi.use.util.uml.sorting.AlphabeticalConditionComparator> has generic interface <java.util.Comparator<org.tzi.use.uml.mm.MPrePostCondition>> with type argument depending on <org.tzi.use.uml.mm.MPrePostCondition> in (AlphabeticalConditionComparator.java:0)
@@ -2229,6 +2229,6 @@ Cycle detected: Slice uml ->
     - Field <org.tzi.use.util.soil.SymbolTable.fVisibleState> has type <org.tzi.use.uml.sys.MSystemState> in (SymbolTable.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fCurrentFrame> has generic type <java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
     - Field <org.tzi.use.util.soil.VariableEnvironment.fFrames> has generic type <java.util.Deque<java.util.Map<java.lang.String, org.tzi.use.uml.ocl.value.Value>>> with type argument depending on <org.tzi.use.uml.ocl.value.Value> in (VariableEnvironment.java:0)
-    (150 further dependencies have been omitted...)
+    (151 further dependencies have been omitted...)
 
 Cycle count: 34

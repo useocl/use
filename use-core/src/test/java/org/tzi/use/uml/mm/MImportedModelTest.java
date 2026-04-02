@@ -18,6 +18,8 @@
  */
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.core.test.TestModelUtil;
+
 import org.junit.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;

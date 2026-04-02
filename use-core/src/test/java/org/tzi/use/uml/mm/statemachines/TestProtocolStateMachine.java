@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.TestModelUtil;
+import org.tzi.use.core.test.TestModelUtil;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
 import org.tzi.use.uml.sys.MSystemException;
