@@ -179,7 +179,7 @@ public class TestModelUtil {
 
             api.createAssociationClass("Job", false,
             		                   "Person" , "person" , "0..1", MAggregationKind.NONE, 
-		                               "Company", "company", "0..1", MAggregationKind.NONE);
+	                               "Company", "company", "0..1", MAggregationKind.NONE);
 
             api.createAttribute( "Job", "salary", "Integer" );
             return api.getModel();
@@ -221,9 +221,9 @@ public class TestModelUtil {
             
             api.createAssociationClass("Job", false, 
             		                   new String[] {"Person", "Company", "Salary"},
-            						   new String[] {"person", "company", "salary"},
-            						   new String[] {"0..1",   "0..1",    "0..1"},
-            						   new int[]    {MAggregationKind.NONE, MAggregationKind.NONE, MAggregationKind.NONE});
+            					       new String[] {"person", "company", "salary"},
+            					       new String[] {"0..1",   "0..1",    "0..1"},
+            					       new int[]    {MAggregationKind.NONE, MAggregationKind.NONE, MAggregationKind.NONE});
 
             return api.getModel();
         } catch ( UseApiException e ) {
@@ -249,9 +249,9 @@ public class TestModelUtil {
             		              new int[] {MAggregationKind.NONE, MAggregationKind.NONE},
             		              new boolean[] {false, false},
             		              new String[][][] {
-            							new String[][]{new String[] {"accountNr", "String"}},
-            							new String[][]{}}
-            		              );
+            					  		new String[][]{new String[] {"accountNr", "String"}},
+            					  		new String[][]{}
+            		              });
 
             return api.getModel();
         } catch ( UseApiException e ) {
@@ -274,8 +274,8 @@ public class TestModelUtil {
             
             // adds an associationclass between Person and Company named Job
             api.createAssociationClass("Job", false, 
-            						   "Person", "employee", "0..1", MAggregationKind.NONE, 
-            						   "Company", "company", "0..1", MAggregationKind.NONE);
+            					       "Person", "employee", "0..1", MAggregationKind.NONE, 
+            					       "Company", "company", "0..1", MAggregationKind.NONE);
 
             // adds an association between Person itself named isBoss
             api.createAssociation( "isBoss", 
