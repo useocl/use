@@ -25,6 +25,9 @@ import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.ocl.expr.ExprContext;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.uml.ocl.expr.Symtable;
 import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 

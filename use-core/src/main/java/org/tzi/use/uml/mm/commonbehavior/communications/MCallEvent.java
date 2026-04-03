@@ -18,9 +18,9 @@
  */
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.Symtable;
+import org.tzi.use.uml.ocl.expr.ExprContext;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.uml.ocl.expr.Symtable;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 

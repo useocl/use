@@ -37,7 +37,7 @@ import org.tzi.use.gen.assl.statics.GIfThenElse;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 
 public class ASTGIfThenElse extends ASTGInstruction {
     private Token fname;

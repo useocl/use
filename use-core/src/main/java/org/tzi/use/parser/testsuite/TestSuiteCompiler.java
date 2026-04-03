@@ -10,7 +10,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.parser.testsuite.sys.MTestSuite;
 

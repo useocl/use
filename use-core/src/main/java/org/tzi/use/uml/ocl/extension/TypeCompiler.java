@@ -17,42 +17,29 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.parser.ocl;
+package org.tzi.use.uml.ocl.extension;
 
-import java.util.Set;
+import java.io.PrintWriter;
 
-import org.tzi.use.parser.Context;
-import org.tzi.use.uml.ocl.expr.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpUndefined;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**
- * Node of the abstract syntax tree constructed by the parser.
+ * Functional interface for compiling type expressions from string representations.
+ * This decouples the extension system from the parser's OCLCompiler.
  *
- * @author  Mark Richters
+ * @author Trong-Nghia Be
  */
-public class ASTUndefinedLiteral extends ASTExpression {
-
-    private ASTType fType;
-
-	public ASTUndefinedLiteral(ASTType t) { 
-    	this.fType = t;
-    }
-
-    public ASTUndefinedLiteral() { }
-
-    public Expression gen(Context ctx) throws SemanticException {
-    	if (fType == null) {
-    		return new ExpUndefined();
-    	} else {
-    		Type t = fType.gen(ctx);
-    		return new ExpUndefined(t);
-    	}
-    }
-
-	@Override
-	public void getFreeVariables(Set<String> freeVars) {
-		
-	}
+@FunctionalInterface
+public interface TypeCompiler {
+    /**
+     * Compiles a type name string into a Type object.
+     *
+     * @param model the model context for resolving types
+     * @param typeName the string representation of the type
+     * @param context a description of the context (for error messages)
+     * @param err writer for error output
+     * @return the compiled Type, or null if compilation fails
+     */
+    Type compileType(MModel model, String typeName, String context, PrintWriter err);
 }

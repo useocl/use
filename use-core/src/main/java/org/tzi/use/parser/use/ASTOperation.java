@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.Symtable;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.uml.ocl.expr.Symtable;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
