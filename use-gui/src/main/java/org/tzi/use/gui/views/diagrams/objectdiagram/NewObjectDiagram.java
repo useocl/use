@@ -878,6 +878,22 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		});
 	}
 
+	/** Clears the current node and edge selection. */
+	public void clearSelection() {
+		if (model != null) {
+			model.replaceSelection(Set.of(), Set.of());
+			applySelectionFromModel();
+		}
+		fNodeSelection.clear();
+		fEdgeSelection.clear();
+		invalidateContent(true);
+	}
+
+	public ObjectSelection getObjectSelection() {
+		return fSelection;
+	}
+
+
 	/**
 	 * Adds a new Link to the objectdiagram.
 	 */
@@ -1008,7 +1024,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			}
 		}
 
-		presenter.onPopupMenuPrepared(popupMenu, selectedObjects, selectedLinks, selectedObjectsOfAssociation);
+		presenter.onPopupMenuPrepared(popupMenu, popupInfo.position, selectedObjects, selectedLinks, selectedObjectsOfAssociation);
 		presenter.onStatusMessage("Object diagram context menu opened");
 		return popupInfo;
 	}

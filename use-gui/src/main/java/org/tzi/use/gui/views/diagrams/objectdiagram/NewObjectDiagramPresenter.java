@@ -10,10 +10,12 @@ import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.uml.sys.MSystem;
 import org.w3c.dom.Element;
-import javax.swing.*;
+import javax.swing.JPopupMenu;
+import java.awt.Point;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,10 +41,13 @@ public interface NewObjectDiagramPresenter {
     default void onLinkDeleted(LinkDeletedEvent e) {}
 
     default void onPopupMenuPrepared(JPopupMenu menu,
+                                     Point popupPosition,
                                      Set<MObject> selectedObjects,
                                      Set<MLink> selectedLinks,
                                      Set<MObject> selectedAssocObjects) {}
     default void onStatusMessage(String status) {}
+
+    default void onBuildShowHideCropMenu(ShowHideCropMenuBuilder builder, Set<MObject> selectedObjects) {}
 
     default void onInsertLink(MAssociation association, List<MObject> participants) {}
     default void onDeleteLink(MLink link) {}
@@ -57,8 +62,14 @@ public interface NewObjectDiagramPresenter {
     /** Show properties for the given object. */
     default void onShowObjectProperties(MObject object) {}
 
+    /** Open the protocol state machine view for the given instance. */
+    default void onShowProtocolStateMachine(MProtocolStateMachine stateMachine, MObject instance) {}
+
     /** Fetch links of an association from the model/state. */
     default Set<MLink> fetchLinksOfAssociation(MAssociation association) { return Set.of(); }
+
+    /** Fetch protocol state machines available for the given object. */
+    default Set<MProtocolStateMachine> fetchProtocolStateMachines(MObject object) { return Set.of(); }
 
     /** Fetch all objects of the given class from the state. */
     default Set<MObject> fetchObjectsOfClass(MClass cls) { return Set.of(); }
@@ -67,6 +78,7 @@ public interface NewObjectDiagramPresenter {
     default Collection<MAssociation> fetchAllAssociations() { return Set.of(); }
 
     default void onHideLinks(Collection<MLink> links) {}
+    default void onShowLinks(Collection<MLink> links) {}
     default void onHideObjects(Collection<MObject> objects) {}
     default void onHideAllLinks() {}
     default void onShowAllLinks() {}
@@ -86,5 +98,4 @@ public interface NewObjectDiagramPresenter {
 
     /** Lifecycle hook to release resources (e.g., event bus). */
     default void detach() {}
- }
-
+}

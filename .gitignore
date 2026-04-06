@@ -117,3 +117,15 @@ fabric.properties
 /use-assembly/target
 
 **/.DS_Store
+/.idea
+/tools/
+/pic/
+*.txt
+/use_refactor_logs/
+*.csv
+*.ps1
+
+/backups/
+/use-gui/scripts/
+*.puml
+/use-gui/src/main/resources/lib/

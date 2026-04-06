@@ -1,6 +1,8 @@
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
@@ -14,6 +16,7 @@ import org.tzi.use.uml.sys.MSystem;
 import com.google.common.eventbus.Subscribe;
 
 import javax.swing.JPopupMenu;
+import java.awt.Point;
 import java.util.Collection;
 import java.util.Set;
 import java.util.List;
@@ -115,8 +118,15 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
         }
     }
 
-    @Override
     @Subscribe
+    public void onObjectCreated(ObjectCreatedEvent e) {
+        if (e == null) {
+            return;
+        }
+        onObjectCreated(e.getCreatedObject());
+    }
+
+    @Override
     public void onObjectCreated(MObject obj) {
         if (diagram == null || obj == null || obj instanceof MLink) {
             return;
@@ -125,8 +135,15 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
         refreshDiagram(true);
     }
 
-    @Override
     @Subscribe
+    public void onObjectDestroyed(ObjectDestroyedEvent e) {
+        if (e == null) {
+            return;
+        }
+        onObjectDestroyed(e.getDestroyedObject());
+    }
+
+    @Override
     public void onObjectDestroyed(MObject obj) {
         if (diagram == null || obj == null || obj instanceof MLink) {
             return;
@@ -181,11 +198,12 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     @Override
     public void onPopupMenuPrepared(JPopupMenu menu,
+                                    Point popupPosition,
                                     Set<MObject> selectedObjects,
                                     Set<MLink> selectedLinks,
                                     Set<MObject> selectedAssocObjects) {
         if (contextMenuProvider != null && menu != null) {
-            contextMenuProvider.enhanceMenu(menu, diagram, this,
+            contextMenuProvider.enhanceMenu(menu, diagram, this, popupPosition,
                     selectedObjects, selectedLinks, selectedAssocObjects);
         }
     }
@@ -195,6 +213,18 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
         if (view != null && status != null) {
             view.setStatus(status);
         }
+    }
+
+    @Override
+    public void onBuildShowHideCropMenu(ShowHideCropMenuBuilder builder, Set<MObject> selectedObjects) {
+        if (builder == null) {
+            return;
+        }
+        if (selectedObjects != null && !selectedObjects.isEmpty()) {
+            builder.addSelectedObjectPathView(selectedObjects);
+        }
+        builder.addSelectionWithOCLViewAction();
+        builder.addSelectionObjectView();
     }
 
     @Override
@@ -213,6 +243,9 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
         } else if (view instanceof NewObjectDiagramView v) {
             v.deleteLink(link);
         }
+        if (diagram != null) {
+            diagram.clearSelection();
+        }
     }
 
     @Override
@@ -221,6 +254,9 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
             applicationController.deleteObjects(objects);
         } else if (view instanceof NewObjectDiagramView v) {
             v.deleteObjects(objects);
+        }
+        if (diagram != null) {
+            diagram.clearSelection();
         }
     }
 
@@ -262,6 +298,17 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
         }
         links.forEach(diagram::hideLink);
         refreshDiagram(true);
+    }
+
+    @Override
+    public void onShowLinks(Collection<MLink> links) {
+        if (diagram == null || links == null) {
+            return;
+        }
+        if (diagram instanceof NewObjectDiagram newDiagram) {
+            newDiagram.showLink(new java.util.ArrayList<>(links));
+            refreshDiagram(true);
+        }
     }
 
     @Override

@@ -1,2 +1,0 @@
-Specification of the actionsemantics model
--> OMG RFP ad/98-11-01
