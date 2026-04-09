@@ -1,0 +1,10 @@
+Test suite 'CivilStatus' with 3 test cases
+Executing test 1/3 `testSetUp'... success
+Executing test 2/3 `uniqueNames'... success
+Executing test 3/3 `excludeBigamie'... success
+
+Test suite 'CivilStatus' with 3 test cases
+Executing test 1/3 `testSetUp'... success
+Executing test 2/3 `uniqueNames'... success
+Executing test 3/3 `excludeBigamie'... failure
+  Assertion failure in line 59.

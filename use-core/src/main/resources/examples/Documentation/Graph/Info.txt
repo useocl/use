@@ -1,0 +1,21 @@
+This example describes a graph with nodes and edges.
+The operation
+newTarget creates a new link (edge) between a
+source node and exactly one new node.
+This operation uses the operation oclIsNew.
+
+The example corresponds to
+the section `Validating Pre- and Postconditions
+with USE´
+
+Graph.use:
+one class Node and one association Edge
+one operation newTarget with two postconditions
+
+Graph.cmd:
+three calls of newTarget
+both postconditions evaluate to true after the first call
+the first postcondition evaluates to false and the
+second to true after the second call
+and the first postcondition evaluates to true
+and the second to false after the last call

@@ -1,0 +1,21 @@
+This Example shows the use of openter and opexit
+for an operation with side effects. 
+With four postconditions different expressions using 
+@pre are presented.
+
+AB.use:
+two classes A,B and one association R
+
+AB.cmd:
+creates state 1 with two objects and one link
+calls the operation with openter
+creates state 2 by chancing attribute values,
+changing links and creating a new object
+then opexit
+
+AB1.cmd:
+creates state 1
+
+AB2.cmd:
+creates state 2
+

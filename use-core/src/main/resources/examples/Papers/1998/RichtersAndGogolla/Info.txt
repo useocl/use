@@ -1,0 +1,22 @@
+An example with generalization. There are
+vehicles (abstract class) and cars resp. motorcycles
+(subclasses).
+Vehicles belong to companies, which
+have a branch RentalStation (aggregation).
+Persons work for rental stations or manage them.
+
+The example corresponds to the paper:
+Mark Richters and Martin Gogolla,
+"On Formalizing the UML Object Constraint Language OCL",
+Figure 1
+
+CarRental.use:
+six classes Company, RentalStation, Person,
+Vehicle (abstract class), Car, Motorcycle
+with generalization
+attributes and queries
+four associations Owns, hasBranch (aggregation),
+managedBy, WorksFor and some explicit role names
+
+CarRental.cmd:
+empty

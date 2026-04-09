@@ -1,0 +1,15 @@
+An example with persons working for a company.
+Salary and employee ranking are represented by
+association classes.
+
+This example is part of
+"Improvements in USE 2.2.0"
+
+AssociationClass.use:
+two classes Company and Person
+two association classes WorksFor, EmployeeRanking
+no Constraints
+
+AssociationClass.cmd:
+creates objects for classes and
+association classes

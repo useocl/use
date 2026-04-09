@@ -1,0 +1,19 @@
+This example shows the handling of nested operation
+calls. It is based on the factorial function
+with return type Integer.
+The operation can be used as query operation and
+with openter and opexit, too.
+
+NestedOperationCalls.use:
+one Class Rec
+one operation fac, computing and returning the factorial
+of the functions argument
+this operation is defined as query and has
+pre- and postconditions
+
+
+NestedOperationCalls.cmd:
+calls the Function three times with different
+arguments (not as query)
+and it ends the calls in the same order
+all pre- and postconditions evaluate to true

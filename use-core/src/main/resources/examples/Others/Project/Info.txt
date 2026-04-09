@@ -1,0 +1,13 @@
+Example from exercises of the lecture
+Object-oriented Software Design.
+
+This example equals /Documentation/Demo, but the
+invariants are ordered differently.
+In this example the constraints are defined in the
+class definition.
+
+Project.use:
+~Demo.use
+
+Project.cmd:
+empty

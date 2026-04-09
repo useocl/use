@@ -1,0 +1,21 @@
+This is a complex version of the
+examples/Papers/1998/RichtersAndGogolla example
+with simple invariants to ensure object diagrams
+which make sense and pre-/postconditions
+for every operation with side effects.
+
+CarRental2.use:
+more classes and associations than the simple example
+there is a 3-ary association
+
+many attributes (with primitive and complex types)
+there are queries and operations changing the system
+state
+
+CarRental2.cmd:
+creates a state with at least
+one object per class and assigned attribute values
+not all constraints evaluate to true
+there are inconsistent invariants
+
+CarRental2.olt:

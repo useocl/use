@@ -1,0 +1,7 @@
+An empty class and object diagram.
+
+Empty.use:
+empty model
+
+Empty.cmd:
+empty

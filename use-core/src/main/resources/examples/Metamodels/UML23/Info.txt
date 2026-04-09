@@ -1,0 +1,7 @@
+Specification of a metamodel for OCL expressions
+(structured-)classifiers, association ends and attributes.
+
+OCL2MM.use:
+
+OCL2MM.cmd:
+empty

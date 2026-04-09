@@ -1,0 +1,13 @@
+This example describes Jobs and Persons who have Jobs.
+Students and employees are persons.
+
+Job.use:
+four classes Person, Student (subclass of Person),
+Employee (subclass of Person) and Job
+one association Works between Job and Person
+no constraints
+
+Job.cmd:
+one object is created for every class
+one link between a student and a job is created
+then two objects are destroyed and the link deleted

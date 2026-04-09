@@ -1,0 +1,12 @@
+Modeled after an example taken from:
+Jos Warmer and Anneke Kleppe,
+"The Object Constraint Language:
+Precise Modeling with UML", Addison-Wesley, 1998. (p. 12)
+
+RoyalAndLoyal.use:
+several classes and attributes
+no operations and constraints
+several associations
+
+RoyalAndLoyal.cmd:
+empty

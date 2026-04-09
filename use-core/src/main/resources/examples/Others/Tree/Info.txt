@@ -1,0 +1,35 @@
+Trees can be created with this model.
+There is a class, which represents the nodes of a tree.
+A link of the association Parentship can be created
+between two nodes.
+A parent may have several children
+but only one parent or no parent,
+if it is the root node.
+
+Tree.use:
+one class TreeNode
+one association Parantship
+one invariant (does not allow cycles)
+four complex operations:
+  - childPlus1 (recursive) returns all objects
+    the calling object is connected with (transitive).
+    The union of sets, collect and flatten is used.
+    Does not terminate if there are cycles in the graph.
+  - childPlus2 like childPlus2; it uses the operation
+    childPlusOnNodeSet
+  - childPlusOnNodeSet (recursive) collects all
+    objects the objects in the set (argument)
+    are connected with (transitive) and checks for all
+    elements if all directly connected children are
+    also element of the set (termination condition).
+    With this check, cycles are no problem.
+  - childPlus3 can handle cycles
+    because the search depth equals the maximum depth
+    of the tree.
+
+Tree.cmd:
+creates a graph with cycles
+
+Tree2.cmd:
+creates a graph with two nodes
+the invariant evaluates to false

@@ -1,0 +1,9 @@
+
+context Train
+  inv Chain_tooWeak:
+  self.waggon->select(w: Waggon | w.predecessor->isEmpty)->size = 1
+
+context Waggon
+  inv PredecessorInSameTrain:
+  (not self.predecessor->isEmpty) implies
+    self.predecessor.train = self.train

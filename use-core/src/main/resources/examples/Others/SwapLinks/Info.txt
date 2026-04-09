@@ -1,0 +1,23 @@
+This model contains two classes A and B with 
+associations R1 and R2 between them. 
+The operation swap_b swaps the two R1 and R2 links
+for an A object. The expected state resulting from the
+operation is asserted by a postcondition. 
+The command file uses features introduced in 
+USE 2.1.0: note the expressions in the insert and
+delete commands, and the new let command.
+
+SwapLinks.use:
+two classes A (with one Operation) and B
+two associations between A and B
+one object of type A has to be connected with
+exactly one object of type B for each association
+pre- and postconditions for the operation
+
+SwapLinks.cmd:
+two objects of type B and one Object a of type A
+are created
+a is connected with the other objects 
+with two links from the different associations
+then the operation is called and the objects 
+swap (let is used)

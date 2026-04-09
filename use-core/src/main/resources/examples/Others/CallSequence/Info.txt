@@ -1,0 +1,12 @@
+This example shows nested operation calls with different
+objects.
+
+CallSequence.use:
+two classes with one operation (without parameters
+and definition)
+each
+
+CallSequence.cmd:
+creates two objects with differen types
+it follows a sequence of alternating openter and
+opexit commands
