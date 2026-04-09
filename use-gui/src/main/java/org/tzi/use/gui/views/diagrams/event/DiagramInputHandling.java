@@ -149,8 +149,10 @@ public class DiagramInputHandling implements MouseListener,
                 // untouched). In any case this click may be used to
                 // start dragging selected items.
                 if (!(pickedObjectNode instanceof ResizeNode) && !fNodeSelection.isSelected(pickedObjectNode)) {
+                    // clear selection
                     fNodeSelection.clear();
                     fEdgeSelection.clear();
+                    // add this component as the only selected item
                     fNodeSelection.add(pickedObjectNode);
                     fDiagram.repaint();
                  }
@@ -167,8 +169,10 @@ public class DiagramInputHandling implements MouseListener,
                 fDragStart = e.getPoint();
             } else if (pickedEdge != null) {
             	if (!fEdgeSelection.isSelected(pickedEdge)) {
+                    // clear selection
                      fNodeSelection.clear();
                      fEdgeSelection.clear();
+                    // add this component as the only selected item
                      fEdgeSelection.add(pickedEdge);
                      fDiagram.repaint();
                   }
@@ -310,9 +314,9 @@ public class DiagramInputHandling implements MouseListener,
     }
 
     /**
-     * 
-     * @param dx
-     * @param dy
+     * Resize the currently selected node(s) according to the pointer position.
+     * Only active when a ResizeNode was the initial drag handle.
+     * @param p current mouse position used to compute delta from fDragStart
      */
     protected void resizeSelectedObjects(Point p) {
         // Just to be sure
@@ -329,13 +333,15 @@ public class DiagramInputHandling implements MouseListener,
 			resizeNode.setDraggedPosition(dx, dy);
 			fDiagram.invalidateNode(theNode);
 			fDragStart = p;
-			return;
 		}
     }
-    
+
 	/**
-	 * @param dx
-	 * @param dy
+	 * Move all selected objects by the given delta.
+	 * Special-case: associated class/object nodes are not moved when multiple nodes are selected
+	 * to avoid them being moved twice.
+	 * @param dx horizontal delta to move selected nodes
+	 * @param dy vertical delta to move selected nodes
 	 */
 	protected void moveSelectedObjects(int dx, int dy) {
 		// move all selected components to new position, 
@@ -400,7 +406,7 @@ public class DiagramInputHandling implements MouseListener,
                     .showMessage("[x=" + e.getPoint().getX() + ", y=" + e.getPoint().getY() + "] ", BorderLayout.EAST);
         }
 
-        PlaceableNode targetNode = null;
+        PlaceableNode targetNode;
         for (PlaceableNode n : fNodeSelection) {
             targetNode = n.occupies(e.getX(), e.getY()) ? n : n.getRelatedNode(e.getX(), e.getY());
             if (targetNode != null) {
