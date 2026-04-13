@@ -6,7 +6,11 @@ import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.util.MenuScroller;
 import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
-import org.tzi.use.uml.mm.*;
+import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MAssociationEnd;
+import org.tzi.use.uml.mm.MAssociationClassImpl;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.MNamedElementComparator;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
@@ -22,6 +26,21 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DefaultContextMenuProvider implements ContextMenuProvider {
+    // common UI label constants to avoid duplicated string literals (Sonar S1192)
+    private static final String LABEL_HIDE = "Hide ";
+    private static final String LABEL_SHOW = "Show ";
+    private static final String LABEL_HIDE_ALL = "Hide all";
+    private static final String LABEL_SHOW_ALL = "Show all";
+    private static final String LABEL_CLASS_PREFIX = "Class ";
+    private static final String LABEL_LINKS_SUFFIX = " links";
+    // link kind labels
+    private static final String KIND_DERIVED = "Derived links";
+    private static final String KIND_ASSOCIATION_CLASS = "Association class links";
+    private static final String KIND_NARY = "N-ary links";
+    private static final String KIND_REFLEXIVE = "Reflexive links";
+    private static final String KIND_BINARY = "Binary links";
+    private static final String KIND_AGGREGATION = "Aggregation links";
+    private static final String KIND_COMPOSITION = "Composition links";
 
     @Override
 
@@ -46,7 +65,6 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
         }
 
         List<Component> baseItems = new ArrayList<>(Arrays.asList(popupMenu.getComponents()));
-
         popupMenu.removeAll();
 
         Set<MObject> safeObjects = selectedObjects == null ? Set.of() : selectedObjects;
@@ -105,7 +123,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         if (hasSelectedLinks) {
 
-            addComponent(ordered, buildHideSelectedLinksItem(diagram, presenter, safeLinks));
+            addComponent(ordered, buildHideSelectedLinksItem(presenter, safeLinks));
 
             addComponent(ordered, buildCropSelectedLinksItem(diagram, presenter, safeLinks, safeAssocObjects));
 
@@ -141,47 +159,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         addSeparator(ordered);
 
-        addComponent(ordered, extractOrFallback(baseItems, "Show attributes", () -> buildStatusItem("Show attributes", presenter)));
-
-        addComponent(ordered, buildShowStatesToggle(diagram, presenter));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Show association names", () -> buildStatusItem("Show association names", presenter)));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Show role names", () -> buildStatusItem("Show role names", presenter)));
-
-        addSeparator(ordered);
-
-        addComponent(ordered, extractOrFallback(baseItems, "Align elements", () -> new JMenu("Align elements")));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Anti-aliasing", () -> buildStatusItem("Anti-aliasing", presenter)));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Show grid", () -> buildStatusItem("Show grid", presenter)));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Grayscale view", () -> buildStatusItem("Grayscale view", presenter)));
-
-        addSeparator(ordered);
-
-        addComponent(ordered, extractOrFallback(baseItems, "Auto-Layout", () -> buildStatusItem("Auto-Layout", presenter)));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Layouts", () -> new JMenu("Layouts")));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Reset layout", () -> buildStatusItem("Reset layout", presenter)));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Load layout...", () -> buildStatusItem("Load layout...", presenter)));
-
-        addComponent(ordered, extractOrFallback(baseItems, "Save layout...", () -> buildStatusItem("Save layout...", presenter)));
-
-        if (diagram instanceof NewObjectDiagram newDiagram && newDiagram.getVisibleData() != null
-
-                && newDiagram.getVisibleData().hasNodes()) {
-
-            addSeparator(ordered);
-
-            addComponent(ordered, extractOrFallback(baseItems, "Select all nodes", () -> buildStatusItem("Select all nodes", presenter)));
-
-            addComponent(ordered, extractOrFallback(baseItems, "Select all edges", () -> buildStatusItem("Select all edges", presenter)));
-
-        }
+        buildViewAndLayoutOptions(ordered, baseItems, diagram, presenter);
 
         ordered.stream().filter(Objects::nonNull).forEach(popupMenu::add);
 
@@ -307,223 +285,45 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         }
 
-        Collection<MAssociation> assocCollection = presenter.fetchAllAssociations();
+        List<MAssociation> associations = prepareAssociations(presenter);
+        List<MObject> selList = prepareSelectedList(selectedObjects);
 
-        List<MAssociation> associations = assocCollection == null ? new ArrayList<>() : new ArrayList<>(assocCollection);
-
-        associations.removeIf(Objects::isNull);
-
-        associations.sort(Comparator.comparing(
-
-                MAssociation::name,
-
-                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
-
-        if (selectedObjects == null || selectedObjects.isEmpty() || associations.isEmpty()) {
-
+        if (selList.isEmpty() || associations.isEmpty()) {
             return items;
-
-        }
-
-        List<MObject> selList = new ArrayList<>(selectedObjects);
-
-        selList.removeIf(Objects::isNull);
-
-        selList.sort(Comparator.comparing(this::safeName, String.CASE_INSENSITIVE_ORDER));
-
-        int m = selList.size();
-
-        if (m == 0) {
-
-            return items;
-
         }
 
         for (MAssociation assoc : associations) {
-
-            if (assoc == null || assoc.isReadOnly()) {
-
-                continue;
-
-            }
-
-            List<MAssociationEnd> ends = assoc.associationEnds();
-
-            int n = ends == null ? 0 : ends.size();
-
-            if (n == 0) {
-
-                continue;
-
-            }
-
-            Collection<MLink> associationLinks = presenter.fetchLinksOfAssociation(assoc);
-
-            if (associationLinks == null) {
-
-                associationLinks = List.of();
-
-            }
-
-            int pow = 1;
-
-            for (int i = 0; i < n; i++) {
-
-                pow *= m;
-
-            }
-
-            for (int value = 0; value < pow; value++) {
-
-                int[] digits = radixConversion(value, m, n);
-
-                if (!isCompleteObjectCombination(digits, m)) {
-
-                    continue;
-
-                }
-
-                MObject[] tuple = new MObject[n];
-
-                MClass[] types = new MClass[n];
-
-                for (int idx = 0; idx < n; idx++) {
-
-                    tuple[idx] = selList.get(digits[idx]);
-
-                    types[idx] = tuple[idx].cls();
-
-                }
-
-                if (!assoc.isAssignableFrom(types)) {
-
-                    continue;
-
-                }
-
-                StringBuilder joined = new StringBuilder();
-
-                for (int idx = 0; idx < tuple.length; idx++) {
-
-                    if (idx > 0) {
-
-                        joined.append(',');
-
-                    }
-
-                    joined.append(safeName(tuple[idx]));
-
-                }
-
-                List<MLink> matchingLinks = new ArrayList<>();
-
-                for (MLink link : associationLinks) {
-
-                    List<MObject> linkObjects = link.linkedObjects();
-
-                    if (linkObjects == null || linkObjects.size() != tuple.length) {
-
-                        continue;
-
-                    }
-
-                    boolean sameTuple = true;
-
-                    for (int idx = 0; idx < tuple.length; idx++) {
-
-                        if (linkObjects.get(idx) != tuple[idx]) {
-
-                            sameTuple = false;
-
-                            break;
-
-                        }
-
-                    }
-
-                    if (sameTuple) {
-
-                        matchingLinks.add(link);
-
-                    }
-
-                }
-
-                if (matchingLinks.isEmpty()) {
-
-                    List<MObject> tupleList = Arrays.asList(tuple.clone());
-
-                    items.add(buildMenuItem("insert (" + joined + ") into " + assoc.name(),
-
-                            ev -> presenter.onInsertLink(assoc, tupleList)));
-
-                } else {
-
-                    for (MLink link : matchingLinks) {
-
-                        StringBuilder deleteLabel = new StringBuilder("delete (");
-
-                        List<List<?>> qualifiers = castQualifiers(link.getQualifier());
-
-                        for (int idx = 0; idx < tuple.length; idx++) {
-
-                            if (idx > 0) {
-
-                                deleteLabel.append(',');
-
-                            }
-
-                            deleteLabel.append(safeName(tuple[idx]));
-
-                            if (qualifiers != null && idx < qualifiers.size()) {
-
-                                List<?> qualifierForEnd = qualifiers.get(idx);
-
-                                if (qualifierForEnd != null && !qualifierForEnd.isEmpty()) {
-
-                                    deleteLabel.append('{');
-
-                                    for (int q = 0; q < qualifierForEnd.size(); q++) {
-
-                                        if (q > 0) {
-
-                                            deleteLabel.append(',');
-
-                                        }
-
-                                        deleteLabel.append(qualifierForEnd.get(q));
-
-                                    }
-
-                                    deleteLabel.append('}');
-
-                                }
-
-                            }
-
-                        }
-
-                        deleteLabel.append(") from ").append(assoc.name());
-
-                        items.add(buildMenuItem(deleteLabel.toString(), ev -> presenter.onDeleteLink(link)));
-
-                    }
-
-                }
-
-            }
-
+            addInsertItemsForAssociation(assoc, selList, presenter, items);
         }
 
         return items;
 
     }
 
+    private List<MAssociation> prepareAssociations(NewObjectDiagramPresenter presenter) {
+        Collection<MAssociation> assocCollection = presenter.fetchAllAssociations();
+        List<MAssociation> associations = assocCollection == null ? new ArrayList<>() : new ArrayList<>(assocCollection);
+        associations.removeIf(Objects::isNull);
+        associations.sort(Comparator.comparing(
+                MAssociation::name,
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+        return associations;
+    }
+
+    private List<MObject> prepareSelectedList(Set<MObject> selectedObjects) {
+        if (selectedObjects == null || selectedObjects.isEmpty()) {
+            return List.of();
+        }
+        List<MObject> selList = new ArrayList<>(selectedObjects);
+        selList.removeIf(Objects::isNull);
+        selList.sort(Comparator.comparing(this::safeName, String.CASE_INSENSITIVE_ORDER));
+        return selList;
+    }
+
     private JMenuItem buildHideSelectedItem(NewObjectDiagramPresenter presenter, Set<MObject> selectedObjects) {
 
-        return buildMenuItem("Hide " + describeSelection(selectedObjects),
-
-                ev -> hideOrWarn(presenter, selectedObjects, objs -> presenter.onHideObjects(objs)));
+        return buildMenuItem(LABEL_HIDE + describeSelection(selectedObjects),
+                ev -> hideOrWarn(presenter, selectedObjects, presenter::onHideObjects));
 
     }
 
@@ -617,7 +417,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         for (MClass cls : classes) {
 
-            JMenu classMenu = new JMenu("Class " + cls.name());
+            JMenu classMenu = new JMenu(LABEL_CLASS_PREFIX + cls.name());
 
             MenuScroller.setScrollerFor(classMenu, 15, 125, 0, 0);
 
@@ -625,7 +425,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
             classObjects.sort(Comparator.comparing(this::safeName, String.CASE_INSENSITIVE_ORDER));
 
-            JMenuItem hideClassAll = new JMenuItem("Hide all");
+            JMenuItem hideClassAll = new JMenuItem(LABEL_HIDE_ALL);
 
             hideClassAll.addActionListener(ev -> presenter.onHideObjects(new LinkedHashSet<>(classObjects)));
 
@@ -635,7 +435,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
             for (MObject obj : classObjects) {
 
-                classMenu.add(buildMenuItem("Hide " + obj.name(), ev -> presenter.onHideObjects(Set.of(obj))));
+                classMenu.add(buildMenuItem(LABEL_HIDE + obj.name(), ev -> presenter.onHideObjects(Set.of(obj))));
 
             }
 
@@ -667,7 +467,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         }
 
-        JMenuItem hideAllLinks = new JMenuItem("Hide all links");
+                JMenuItem hideAllLinks = new JMenuItem(LABEL_HIDE_ALL + LABEL_LINKS_SUFFIX);
 
         hideAllLinks.setEnabled(!newDiagram.getVisibleData().getEdges().isEmpty());
 
@@ -687,16 +487,14 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
             List<MLink> assocLinks = entry.getValue();
 
-            assocMenu.add(buildMenuItem("Hide all", ev -> presenter.onHideLinks(assocLinks)));
+            assocMenu.add(buildMenuItem(LABEL_HIDE_ALL, ev -> presenter.onHideLinks(assocLinks)));
 
             assocMenu.addSeparator();
 
             assocLinks.sort(linkComparator());
 
             for (MLink link : assocLinks) {
-
-                assocMenu.add(buildMenuItem("Hide " + formatLinkName(link), ev -> presenter.onHideLinks(List.of(link))));
-
+                assocMenu.add(buildMenuItem(LABEL_HIDE + formatLinkName(link), ev -> presenter.onHideLinks(List.of(link))));
             }
 
             menu.add(assocMenu);
@@ -727,7 +525,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         }
 
-        JMenuItem showAllLinks = new JMenuItem("Show all links");
+        JMenuItem showAllLinks = new JMenuItem(LABEL_SHOW_ALL + LABEL_LINKS_SUFFIX);
 
         showAllLinks.setEnabled(!newDiagram.getHiddenData().getEdges().isEmpty());
 
@@ -747,16 +545,14 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
             List<MLink> assocLinks = entry.getValue();
 
-            assocMenu.add(buildMenuItem("Show all", ev -> presenter.onShowLinks(assocLinks)));
+            assocMenu.add(buildMenuItem(LABEL_SHOW_ALL, ev -> presenter.onShowLinks(assocLinks)));
 
             assocMenu.addSeparator();
 
             assocLinks.sort(linkComparator());
 
             for (MLink link : assocLinks) {
-
-                assocMenu.add(buildMenuItem("Show " + formatLinkName(link), ev -> presenter.onShowLinks(List.of(link))));
-
+                assocMenu.add(buildMenuItem(LABEL_SHOW + formatLinkName(link), ev -> presenter.onShowLinks(List.of(link))));
             }
 
             menu.add(assocMenu);
@@ -789,7 +585,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         }
 
-        JMenuItem showAllObjects = new JMenuItem("Show all hidden objects");
+        JMenuItem showAllObjects = new JMenuItem(LABEL_SHOW_ALL + " hidden objects");
 
         showAllObjects.setEnabled(true);
 
@@ -811,27 +607,17 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
             MObject obj = node.object();
 
-            if (!classMenus.containsKey(cls)) {
-
-                JMenu subm = new JMenu("Class " + cls.name());
-
+            JMenu parent = classMenus.computeIfAbsent(cls, k -> {
+                JMenu subm = new JMenu(LABEL_CLASS_PREFIX + k.name());
                 MenuScroller.setScrollerFor(subm, 15, 125, 0, 0);
-
-                classMenus.put(cls, subm);
-
-                JMenuItem showAll = new JMenuItem("Show all");
-
+                JMenuItem showAll = new JMenuItem(LABEL_SHOW_ALL);
                 showAll.addActionListener(e -> presenter.onShowHiddenElements());
-
                 subm.add(showAll);
-
                 subm.addSeparator();
+                return subm;
+            });
 
-            }
-
-            JMenu parent = classMenus.get(cls);
-
-            parent.add(buildMenuItem("Show " + obj.name(), ev -> presenter.onShowHiddenElements()));
+            parent.add(buildMenuItem(LABEL_SHOW + obj.name(), ev -> presenter.onShowHiddenElements()));
 
         }
 
@@ -909,9 +695,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
     }
 
-    private JMenuItem buildHideSelectedLinksItem(ObjectDiagramInteractor diagram,
-
-                                                 NewObjectDiagramPresenter presenter,
+    private JMenuItem buildHideSelectedLinksItem(NewObjectDiagramPresenter presenter,
 
                                                  Set<MLink> selectedLinks) {
 
@@ -923,9 +707,9 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         }
 
-        String label = links.size() == 1 ? formatLinkName(links.getFirst()) : links.size() + " links";
+        String label = links.size() == 1 ? formatLinkName(links.getFirst()) : links.size() + LABEL_LINKS_SUFFIX;
 
-        return buildMenuItem("Hide " + label, ev -> presenter.onHideLinks(links));
+        return buildMenuItem(LABEL_HIDE + label, ev -> presenter.onHideLinks(links));
 
     }
 
@@ -945,7 +729,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         }
 
-        String label = links.size() == 1 ? formatLinkName(links.getFirst()) : links.size() + " links";
+        String label = links.size() == 1 ? formatLinkName(links.getFirst()) : links.size() + LABEL_LINKS_SUFFIX;
 
         Set<MObject> keepObjects = selectedAssocObjects == null ? Set.of() : new LinkedHashSet<>(selectedAssocObjects);
 
@@ -1018,75 +802,10 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
         MenuScroller.setScrollerFor(menu, 15, 125, 0, 0);
 
         List<MLink> allLinks = grouped.values().stream().flatMap(Collection::stream).distinct().toList();
-
-        int linkState = newDiagram.isHidden(allLinks);
-
-        if (linkState == 1 || linkState == 2) {
-
-            menu.add(buildMenuItem("Show all links", ev -> presenter.onShowAllLinks()));
-
-        }
-
-        if (linkState == 0 || linkState == 2) {
-
-            menu.add(buildMenuItem("Hide all links", ev -> presenter.onHideAllLinks()));
-
-        }
-
+        addGlobalLinksShowHide(menu, newDiagram, presenter, allLinks);
         menu.addSeparator();
-
         for (Map.Entry<String, List<MLink>> entry : grouped.entrySet()) {
-
-            List<MLink> links = entry.getValue();
-
-            if (links == null || links.isEmpty()) {
-
-                continue;
-
-            }
-
-            JMenu assocMenu = new JMenu(entry.getKey());
-
-            MenuScroller.setScrollerFor(assocMenu, 20, 125, 0, 0);
-
-            List<MLink> assocLinks = new ArrayList<>(links);
-
-            int assocLinkState = newDiagram.isHidden(assocLinks);
-
-            if (assocLinkState == 1 || assocLinkState == 2) {
-
-                assocMenu.add(buildMenuItem("Show all", ev -> presenter.onShowLinks(assocLinks)));
-
-            }
-
-            if (assocLinkState == 0 || assocLinkState == 2) {
-
-                assocMenu.add(buildMenuItem("Hide all", ev -> presenter.onHideLinks(assocLinks)));
-
-            }
-
-            assocMenu.addSeparator();
-
-            List<MLink> sortedLinks = new ArrayList<>(links);
-
-            sortedLinks.sort(linkComparator());
-
-            for (MLink link : sortedLinks) {
-
-                if (newDiagram.isHidden(link)) {
-
-                    assocMenu.add(buildMenuItem("Show " + formatLinkName(link), ev -> presenter.onShowLinks(List.of(link))));
-
-                } else {
-
-                    assocMenu.add(buildMenuItem("Hide " + formatLinkName(link), ev -> presenter.onHideLinks(List.of(link))));
-
-                }
-
-            }
-
-            menu.add(assocMenu);
-
+            addLinksByKindAssocMenu(menu, entry.getKey(), entry.getValue(), presenter, newDiagram);
         }
 
         return menu;
@@ -1097,114 +816,201 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         TreeMap<String, List<MLink>> assocs = new TreeMap<>();
 
-        Collection<MAssociation> associations = presenter.fetchAllAssociations();
-
-        if (associations == null) {
-
+        List<MAssociation> associations = prepareAssociations(presenter);
+        if (associations.isEmpty()) {
             return assocs;
-
         }
-
-        final String derrivedLinks = "Derived links";
-
-        final String associationClass = "Association class links";
-
-        final String nAryLinks = "N-ary links";
-
-        final String reflexivLinks = "Reflexive links";
-
-        final String binaryLinks = "Binary links";
-
-        final String aggregation = "Aggregation links";
-
-        final String compositon = "Composition links";
-
         for (MAssociation assoc : associations) {
-
-            if (assoc == null) {
-
-                continue;
-
-            }
-
             Set<MLink> links = presenter.fetchLinksOfAssociation(assoc);
-
             if (links == null || links.isEmpty()) {
-
                 continue;
-
             }
-
-            switch (assoc.aggregationKind()) {
-
-                case 0:
-
-                    for (MLink link : links) {
-
-                        if (link.association().isDerived() || link.association().isUnion()) {
-
-                            assocs.computeIfAbsent(derrivedLinks, k -> new ArrayList<>()).add(link);
-
-                        } else if (link.association() instanceof MAssociationClassImpl) {
-
-                            assocs.computeIfAbsent(associationClass, k -> new ArrayList<>()).add(link);
-
-                        } else if (link.linkEnds().size() > 2) {
-
-                            assocs.computeIfAbsent(nAryLinks, k -> new ArrayList<>()).add(link);
-
-                        } else if (link.association().associatedClasses().size() == 1) {
-
-                            assocs.computeIfAbsent(reflexivLinks, k -> new ArrayList<>()).add(link);
-
-                        } else if (link.linkedObjects().size() == 2
-
-                                && !link.linkedObjects().get(0).equals(link.linkedObjects().get(1))) {
-
-                            assocs.computeIfAbsent(binaryLinks, k -> new ArrayList<>()).add(link);
-
-                        }
-
-                    }
-
-                    break;
-
-                case 1:
-
-                    for (MLink link : links) {
-
-                        assocs.computeIfAbsent(aggregation, k -> new ArrayList<>()).add(link);
-
-                    }
-
-                    break;
-
-                case 2:
-
-                    for (MLink link : links) {
-
-                        assocs.computeIfAbsent(compositon, k -> new ArrayList<>()).add(link);
-
-                    }
-
-                    break;
-
-                default:
-
-                    break;
-
+            for (MLink link : links) {
+                String kind = computeLinkKind(assoc, link);
+                if (kind != null) {
+                    assocs.computeIfAbsent(kind, k -> new ArrayList<>()).add(link);
+                }
             }
-
         }
 
         return assocs;
 
     }
 
-    private String formatLinkLabel(String prefix, MLink link) {
+    // formatLinkLabel removed: unused helper removed to reduce noise
 
-        return prefix + " " + link.toString();
+    /**
+     * Helper to add insert items for a single association. Extracted from buildInsertItems to reduce complexity.
+     */
+    private void addInsertItemsForAssociation(MAssociation assoc,
+                                              List<MObject> selList,
+                                              NewObjectDiagramPresenter presenter,
+                                              List<JMenuItem> items) {
+        if (assoc == null || assoc.isReadOnly()) {
+            return;
+        }
 
+        List<MAssociationEnd> ends = assoc.associationEnds();
+        int n = ends == null ? 0 : ends.size();
+        if (n == 0) {
+            return;
+        }
+
+        Collection<MLink> associationLinks = presenter.fetchLinksOfAssociation(assoc);
+        if (associationLinks == null) {
+            associationLinks = List.of();
+        }
+
+        int m = selList.size();
+
+        List<int[]> tuples = computeValidTuples(m, n);
+        for (int[] digits : tuples) {
+            MObject[] tuple = new MObject[n];
+            MClass[] types = new MClass[n];
+            for (int idx = 0; idx < n; idx++) {
+                tuple[idx] = selList.get(digits[idx]);
+                types[idx] = tuple[idx].cls();
+            }
+            if (!assoc.isAssignableFrom(types)) {
+                continue;
+            }
+            processTupleForAssociation(assoc, tuple, associationLinks, presenter, items);
+        }
+    }
+    private List<int[]> computeValidTuples(int m, int n) {
+        List<int[]> result = new ArrayList<>();
+        if (m <= 0 || n <= 0) {
+            return result;
+        }
+        int pow = 1;
+        for (int i = 0; i < n; i++) {
+            pow *= m;
+        }
+        for (int value = 0; value < pow; value++) {
+            int[] digits = radixConversion(value, m, n);
+            if (isCompleteObjectCombination(digits, m)) {
+                result.add(digits);
+            }
+        }
+        return result;
+    }
+
+    private void processTupleForAssociation(MAssociation assoc,
+                                            MObject[] tuple,
+                                            Collection<MLink> associationLinks,
+                                            NewObjectDiagramPresenter presenter,
+                                            List<JMenuItem> items) {
+        StringBuilder joined = new StringBuilder();
+        for (int idx = 0; idx < tuple.length; idx++) {
+            if (idx > 0) {
+                joined.append(',');
+            }
+            joined.append(safeName(tuple[idx]));
+        }
+
+        List<MLink> matchingLinks = findMatchingLinks(tuple, associationLinks);
+
+        if (matchingLinks.isEmpty()) {
+            List<MObject> tupleList = Arrays.asList(tuple.clone());
+            items.add(buildMenuItem("insert (" + joined + ") into " + assoc.name(), ev -> presenter.onInsertLink(assoc, tupleList)));
+        } else {
+            for (MLink link : matchingLinks) {
+                String deleteLabel = buildDeleteLabel(tuple, castQualifiers(link.getQualifier()), assoc.name());
+                items.add(buildMenuItem(deleteLabel, ev -> presenter.onDeleteLink(link)));
+            }
+        }
+    }
+
+    private List<MLink> findMatchingLinks(MObject[] tuple, Collection<MLink> associationLinks) {
+        List<MLink> matchingLinks = new ArrayList<>();
+        for (MLink link : associationLinks) {
+            List<MObject> linkObjects = link.linkedObjects();
+            if (linkObjects == null || linkObjects.size() != tuple.length) {
+                continue;
+            }
+            boolean sameTuple = true;
+            for (int idx = 0; idx < tuple.length; idx++) {
+                if (linkObjects.get(idx) != tuple[idx]) {
+                    sameTuple = false;
+                    break;
+                }
+            }
+            if (sameTuple) {
+                matchingLinks.add(link);
+            }
+        }
+        return matchingLinks;
+    }
+
+    private String buildDeleteLabel(MObject[] tuple, List<List<?>> qualifiers, String assocName) {
+        StringBuilder deleteLabel = new StringBuilder("delete (");
+        for (int idx = 0; idx < tuple.length; idx++) {
+            if (idx > 0) {
+                deleteLabel.append(',');
+            }
+            deleteLabel.append(safeName(tuple[idx]));
+            if (idx < qualifiers.size()) {
+                deleteLabel.append(formatQualifierList(qualifiers.get(idx)));
+            }
+        }
+        deleteLabel.append(") from ").append(assocName);
+        return deleteLabel.toString();
+    }
+
+    private String formatQualifierList(List<?> qualifierForEnd) {
+        if (qualifierForEnd == null || qualifierForEnd.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for (int q = 0; q < qualifierForEnd.size(); q++) {
+            if (q > 0) {
+                sb.append(',');
+            }
+            sb.append(qualifierForEnd.get(q));
+        }
+        sb.append('}');
+        return sb.toString();
+    }
+
+    /**
+     * Helper to build and add the submenu for a grouped association entry in the links-by-kind menu.
+     */
+    private void addLinksByKindAssocMenu(JMenu parentMenu, String key, List<MLink> links, NewObjectDiagramPresenter presenter, NewObjectDiagram newDiagram) {
+        if (links == null || links.isEmpty()) {
+            return;
+        }
+        JMenu assocMenu = new JMenu(key);
+        MenuScroller.setScrollerFor(assocMenu, 20, 125, 0, 0);
+        List<MLink> assocLinks = new ArrayList<>(links);
+        int assocLinkState = newDiagram.isHidden(assocLinks);
+        if (assocLinkState == 1 || assocLinkState == 2) {
+            assocMenu.add(buildMenuItem(LABEL_SHOW_ALL, ev -> presenter.onShowLinks(assocLinks)));
+        }
+        if (assocLinkState == 0 || assocLinkState == 2) {
+            assocMenu.add(buildMenuItem(LABEL_HIDE_ALL, ev -> presenter.onHideLinks(assocLinks)));
+        }
+        assocMenu.addSeparator();
+        List<MLink> sortedLinks = new ArrayList<>(links);
+        sortedLinks.sort(linkComparator());
+        for (MLink link : sortedLinks) {
+            if (newDiagram.isHidden(link)) {
+                assocMenu.add(buildMenuItem(LABEL_SHOW + formatLinkName(link), ev -> presenter.onShowLinks(List.of(link))));
+            } else {
+                assocMenu.add(buildMenuItem(LABEL_HIDE + formatLinkName(link), ev -> presenter.onHideLinks(List.of(link))));
+            }
+        }
+        parentMenu.add(assocMenu);
+    }
+
+    private void addGlobalLinksShowHide(JMenu menu, NewObjectDiagram newDiagram, NewObjectDiagramPresenter presenter, List<MLink> allLinks) {
+        int linkState = newDiagram.isHidden(allLinks);
+        if (linkState == 1 || linkState == 2) {
+            menu.add(buildMenuItem(LABEL_SHOW_ALL + LABEL_LINKS_SUFFIX, ev -> presenter.onShowAllLinks()));
+        }
+        if (linkState == 0 || linkState == 2) {
+            menu.add(buildMenuItem(LABEL_HIDE_ALL + LABEL_LINKS_SUFFIX, ev -> presenter.onHideAllLinks()));
+        }
     }
 
     private String formatLinkName(MLink link) {
@@ -1251,6 +1057,63 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         return label.toString();
 
+    }
+
+    private void buildViewAndLayoutOptions(List<Component> ordered, List<Component> baseItems, ObjectDiagramInteractor diagram, NewObjectDiagramPresenter presenter) {
+        addComponent(ordered, extractOrFallback(baseItems, "Show attributes", () -> buildStatusItem("Show attributes", presenter)));
+        addComponent(ordered, buildShowStatesToggle(diagram, presenter));
+        addComponent(ordered, extractOrFallback(baseItems, "Show association names", () -> buildStatusItem("Show association names", presenter)));
+        addComponent(ordered, extractOrFallback(baseItems, "Show role names", () -> buildStatusItem("Show role names", presenter)));
+        addSeparator(ordered);
+        addComponent(ordered, extractOrFallback(baseItems, "Align elements", () -> new JMenu("Align elements")));
+        addComponent(ordered, extractOrFallback(baseItems, "Anti-aliasing", () -> buildStatusItem("Anti-aliasing", presenter)));
+        addComponent(ordered, extractOrFallback(baseItems, "Show grid", () -> buildStatusItem("Show grid", presenter)));
+        addComponent(ordered, extractOrFallback(baseItems, "Grayscale view", () -> buildStatusItem("Grayscale view", presenter)));
+        addSeparator(ordered);
+        addComponent(ordered, extractOrFallback(baseItems, "Auto-Layout", () -> buildStatusItem("Auto-Layout", presenter)));
+        addComponent(ordered, extractOrFallback(baseItems, "Layouts", () -> new JMenu("Layouts")));
+        addComponent(ordered, extractOrFallback(baseItems, "Reset layout", () -> buildStatusItem("Reset layout", presenter)));
+        addComponent(ordered, extractOrFallback(baseItems, "Load layout...", () -> buildStatusItem("Load layout...", presenter)));
+        addComponent(ordered, extractOrFallback(baseItems, "Save layout...", () -> buildStatusItem("Save layout...", presenter)));
+        if (diagram instanceof NewObjectDiagram newDiagram && newDiagram.getVisibleData() != null && newDiagram.getVisibleData().hasNodes()) {
+            addSeparator(ordered);
+            addComponent(ordered, extractOrFallback(baseItems, "Select all nodes", () -> buildStatusItem("Select all nodes", presenter)));
+            addComponent(ordered, extractOrFallback(baseItems, "Select all edges", () -> buildStatusItem("Select all edges", presenter)));
+        }
+    }
+
+    private String computeLinkKind(MAssociation assoc, MLink link) {
+        if (assoc == null || link == null) {
+            return null;
+        }
+
+        switch (assoc.aggregationKind()) {
+            case 0:
+                if (link.association().isDerived() || link.association().isUnion()) {
+                    return KIND_DERIVED;
+                }
+                if (link.association() instanceof MAssociationClassImpl) {
+                    return KIND_ASSOCIATION_CLASS;
+                }
+                if (link.linkEnds().size() > 2) {
+                    return KIND_NARY;
+                }
+                if (link.association().associatedClasses().size() == 1) {
+                    return KIND_REFLEXIVE;
+                }
+                if (link.linkedObjects().size() == 2 && !link.linkedObjects().get(0).equals(link.linkedObjects().get(1))) {
+                    return KIND_BINARY;
+                }
+                break;
+            case 1:
+                return KIND_AGGREGATION;
+            case 2:
+                return KIND_COMPOSITION;
+            default:
+                break;
+        }
+
+        return null;
     }
 
     private List<MLink> collectUniqueLinks(Set<EdgeBase> edges) {
@@ -1512,21 +1375,16 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
     private List<List<?>> castQualifiers(List<?> qualifiers) {
 
         if (qualifiers == null) {
-
-            return null;
-
+            // return empty list instead of null to simplify callers
+            return List.of();
         }
 
         List<List<?>> casted = new ArrayList<>(qualifiers.size());
 
         for (Object qualifier : qualifiers) {
-
             if (qualifier instanceof List<?> list) {
-
                 casted.add(list);
-
             } else {
-
                 casted.add(List.of());
 
             }

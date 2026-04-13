@@ -14,7 +14,8 @@ public class PresenterFileLoggerTestMain {
         PresenterFileLogger.log("afterSwitch", "main", "entry after switching test name");
         PresenterFileLogger.log("t_test_manual", "explicit-message-after-switch");
 
-        System.out.println("PresenterFileLoggerTestMain finished — check use_refactor_logs in user home and working dir.");
+        // Do not write to standard output for logging — use the file logger instead.
+        PresenterFileLogger.log("PresenterFileLoggerTestMain finished — check use_refactor_logs in user home and working dir.");
     }
 }
 

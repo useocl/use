@@ -2,7 +2,6 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MObject;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.gui.views.ObjectPropertiesView;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjDiagramOptions;
 
 /**
  * Default bridge to execute domain commands against the USE system.
@@ -29,6 +27,10 @@ class DefaultApplicationController implements ApplicationController {
     private final MainWindow mainWindow;
     private final MSystem system;
     private final DiagramContext diagramContext;
+    /**
+     * Dialog title used for error dialogs. Extracted to avoid duplicated string literal (Sonar S1192).
+     */
+    private static final String DLG_TITLE_ERROR = "Error";
 
     DefaultApplicationController(MainWindow mainWindow, MSystem system, DiagramContext diagramContext) {
         this.mainWindow = mainWindow;
@@ -54,7 +56,7 @@ class DefaultApplicationController implements ApplicationController {
         try {
             system.execute(new MLinkInsertionStatement(association, objects, Collections.<List<Value>>emptyList()));
         } catch (MSystemException e) {
-            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), DLG_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -63,7 +65,7 @@ class DefaultApplicationController implements ApplicationController {
         try {
             system.execute(new MLinkDeletionStatement(link));
         } catch (MSystemException e) {
-            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), DLG_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -79,7 +81,7 @@ class DefaultApplicationController implements ApplicationController {
         try {
             system.execute(sequence.simplify());
         } catch (MSystemException e) {
-            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), DLG_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }
 

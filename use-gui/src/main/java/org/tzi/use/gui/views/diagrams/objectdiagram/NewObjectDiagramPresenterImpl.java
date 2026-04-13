@@ -39,6 +39,18 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     private final MSystem system;
 
+    // Common log message fragments extracted to constants to avoid duplicated literals (Sonar S1192)
+    private static final String PREFIX_EVENT = "event=";
+    private static final String PREFIX_OBJECT = "object=";
+    private static final String PREFIX_LINK = "link=";
+    private static final String PREFIX_COUNT = "count=";
+    private static final String PREFIX_ASSOCIATION = "association=";
+    private static final String PREFIX_CLASS = "class=";
+    private static final String MSG_REQUESTED = "requested";
+    private static final String CONSTRUCTED_PREFIX = "constructed; view=";
+    private static final String COMMA_DIAGRAM = ", diagram=";
+    private static final String COMMA_MODEL = ", model=";
+
     public NewObjectDiagramPresenterImpl(NewObjectDiagramUI view,
 
                                          ObjectDiagramInteractor diagram,
@@ -67,11 +79,9 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
         this.system = system;
 
-        log("<init>", "constructed; view=" + (view == null ? "null" : view.getClass().getSimpleName())
-
-                + ", diagram=" + (diagram == null ? "null" : diagram.getClass().getSimpleName())
-
-                + ", model=" + (model == null ? "null" : model.getClass().getSimpleName()));
+        log("<init>", CONSTRUCTED_PREFIX + (view == null ? "null" : view.getClass().getSimpleName())
+                + COMMA_DIAGRAM + (diagram == null ? "null" : diagram.getClass().getSimpleName())
+                + COMMA_MODEL + (model == null ? "null" : model.getClass().getSimpleName()));
 
         if (this.system != null) {
 
@@ -181,7 +191,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onHighlightChange(HighlightChangeEvent e) {
 
-        log("onHighlightChange", "event=" + e);
+        log("onHighlightChange", PREFIX_EVENT + e);
 
         if (diagram instanceof NewObjectDiagram diag && e != null) {
 
@@ -197,7 +207,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onTransition(TransitionEvent e) {
 
-        log("onTransition", "event=" + e);
+        log("onTransition", PREFIX_EVENT + e);
 
         if (diagram == null || e == null) {
 
@@ -245,7 +255,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onObjectCreated(MObject obj) {
 
-        log("onObjectCreated", "object=" + obj);
+        log("onObjectCreated", PREFIX_OBJECT + obj);
 
         if (diagram == null || obj == null || obj instanceof MLink) {
 
@@ -277,7 +287,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onObjectDestroyed(MObject obj) {
 
-        log("onObjectDestroyed", "object=" + obj);
+        log("onObjectDestroyed", PREFIX_OBJECT + obj);
 
         if (diagram == null || obj == null || obj instanceof MLink) {
 
@@ -297,7 +307,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onAttributeAssigned(AttributeAssignedEvent e) {
 
-        log("onAttributeAssigned", "event=" + e);
+        log("onAttributeAssigned", PREFIX_EVENT + e);
 
         if (diagram == null || e == null || e.getObject() == null) {
 
@@ -317,7 +327,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onLinkInserted(LinkInsertedEvent e) {
 
-        log("onLinkInserted", "event=" + e);
+        log("onLinkInserted", PREFIX_EVENT + e);
 
         if (diagram == null || e == null) {
 
@@ -351,7 +361,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onLinkDeleted(LinkDeletedEvent e) {
 
-        log("onLinkDeleted", "event=" + e);
+        log("onLinkDeleted", PREFIX_EVENT + e);
 
         if (diagram == null || e == null) {
 
@@ -447,7 +457,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onInsertLink(MAssociation association, List<MObject> participants) {
 
-        log("onInsertLink", "association=" + association + ", participants=" + sizeOf(participants));
+        log("onInsertLink", PREFIX_ASSOCIATION + association + ", participants=" + sizeOf(participants));
 
         if (applicationController != null) {
 
@@ -465,7 +475,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onDeleteLink(MLink link) {
 
-        log("onDeleteLink", "link=" + link);
+        log("onDeleteLink", PREFIX_LINK + link);
 
         if (applicationController != null) {
 
@@ -489,7 +499,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onDeleteObjects(Set<MObject> objects) {
 
-        log("onDeleteObjects", "count=" + sizeOf(objects));
+        log("onDeleteObjects", PREFIX_COUNT + sizeOf(objects));
 
         if (applicationController != null) {
 
@@ -513,7 +523,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onShowObjectProperties(MObject object) {
 
-        log("onShowObjectProperties", "object=" + object);
+        log("onShowObjectProperties", PREFIX_OBJECT + object);
 
         if (applicationController != null && object != null) {
 
@@ -527,7 +537,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public Set<MLink> fetchLinksOfAssociation(MAssociation association) {
 
-        log("fetchLinksOfAssociation", "association=" + association);
+        log("fetchLinksOfAssociation", PREFIX_ASSOCIATION + association);
 
         if (association == null || system == null) {
 
@@ -543,7 +553,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public Set<MObject> fetchObjectsOfClass(MClass cls) {
 
-        log("fetchObjectsOfClass", "class=" + cls);
+        log("fetchObjectsOfClass", PREFIX_CLASS + cls);
 
         if (cls == null || system == null) {
 
@@ -559,7 +569,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public Collection<MAssociation> fetchAllAssociations() {
 
-        log("fetchAllAssociations", "requested");
+        log("fetchAllAssociations", MSG_REQUESTED);
 
         if (system == null) {
 
@@ -575,7 +585,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onHideLinks(Collection<MLink> links) {
 
-        log("onHideLinks", "count=" + sizeOf(links));
+        log("onHideLinks", PREFIX_COUNT + sizeOf(links));
 
         if (diagram == null || links == null) {
 
@@ -593,7 +603,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onShowLinks(Collection<MLink> links) {
 
-        log("onShowLinks", "count=" + sizeOf(links));
+        log("onShowLinks", PREFIX_COUNT + sizeOf(links));
 
         if (diagram == null || links == null) {
 
@@ -615,7 +625,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onHideObjects(Collection<MObject> objects) {
 
-        log("onHideObjects", "count=" + sizeOf(objects));
+        log("onHideObjects", PREFIX_COUNT + sizeOf(objects));
 
         if (diagram == null || objects == null) {
 
@@ -633,7 +643,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onHideAllLinks() {
 
-        log("onHideAllLinks", "requested");
+        log("onHideAllLinks", MSG_REQUESTED);
 
         if (diagram == null) {
 
@@ -651,7 +661,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onShowAllLinks() {
 
-        log("onShowAllLinks", "requested");
+        log("onShowAllLinks", MSG_REQUESTED);
 
         if (diagram == null) {
 
@@ -723,7 +733,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onGrayOut(Collection<MObject> objects) {
 
-        log("onGrayOut", "count=" + sizeOf(objects));
+        log("onGrayOut", PREFIX_COUNT + sizeOf(objects));
 
         if (diagram == null || objects == null) {
 
@@ -741,7 +751,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void onGrayIn(Collection<MObject> objects) {
 
-        log("onGrayIn", "count=" + sizeOf(objects));
+        log("onGrayIn", PREFIX_COUNT + sizeOf(objects));
 
         if (diagram == null || objects == null) {
 
@@ -781,7 +791,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
                               NewObjectDiagramModel model) {
 
-        log("onStoreLayout", "helper=" + helper + ", root=" + root + ", model=" + model);
+        log("onStoreLayout", "helper=" + helper + ", root=" + root + COMMA_MODEL + model);
 
         if (placementRepository != null && helper != null && root != null) {
 
@@ -801,7 +811,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
                                         MSystem system) {
 
-        log("onRestoreLayout", "version=" + version + ", helper=" + helper + ", model=" + model);
+        log("onRestoreLayout", "version=" + version + ", helper=" + helper + COMMA_MODEL + model);
 
         if (placementRepository != null && helper != null) {
 
@@ -829,7 +839,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     public void detach() {
 
-        log("detach", "requested");
+        log("detach", MSG_REQUESTED);
 
         if (system != null) {
 

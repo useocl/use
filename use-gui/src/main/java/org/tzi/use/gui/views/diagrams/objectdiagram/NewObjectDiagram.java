@@ -26,8 +26,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+// removed unused ActionEvent import
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -36,7 +35,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+// action helper classes were moved to context menu provider
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComponent;
@@ -58,7 +56,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ModelBrowser;
+// ModelBrowser is accessed via constructor parameter now
 import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.PersistHelper;
@@ -86,7 +84,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.*;
-import org.tzi.use.util.StringUtil;
+// StringUtil usages moved/removed with context-menu refactor
 import org.w3c.dom.Element;
 
 /**
@@ -132,9 +130,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		 */
 		public boolean containsLink(MLink link) {
 			boolean has = fBinaryLinkToEdgeMap.containsKey(link) || fNaryLinkToDiamondNodeMap.containsKey(link);
-			if (!has && link instanceof MLinkObject) {
-				has = fLinkObjectToNodeEdge.containsKey((MLinkObject) link);
-			}
+						if (!has && link instanceof MLinkObject ml) {
+							has = fLinkObjectToNodeEdge.containsKey(ml);
+						}
 			return has;
 		}
 
@@ -210,33 +208,35 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 	}
 
-	private ObjectDiagramData visibleData = new ObjectDiagramData();
+	private transient ObjectDiagramData visibleData = new ObjectDiagramData();
 
-    private ObjectDiagramData hiddenData = new ObjectDiagramData();
+	private transient ObjectDiagramData hiddenData = new ObjectDiagramData();
 
-     private final DiagramContext context;
-     private final NewObjectDiagramView view;
-     private final ModelBrowser modelBrowser;
-     private NewObjectDiagramModel model;
-     private MSystem system;
-     private final java.util.function.BooleanSupplier isSelectedView;
+		private final transient DiagramContext context;
+		private final transient NewObjectDiagramView view;
+		private transient NewObjectDiagramModel model;
+		private transient MSystem system;
+		private final transient java.util.function.BooleanSupplier isSelectedView;
 
 	/**
 	 * The position of the next object node. This is either set to a random
 	 * value or to a specific position when an object is created by drag & drop.
 	 */
-	protected Point2D.Double nextNodePosition = new Point2D.Double();
+	protected transient Point2D.Double nextNodePosition = new Point2D.Double();
 
 	// show object properties listener is attached inline in constructor (no field required)
 
-	private final ObjectSelection fSelection;
+	private final transient ObjectSelection fSelection;
 
-	protected final DiagramInputHandling inputHandling;
+	protected final transient DiagramInputHandling inputHandling;
 
-	private static boolean javaFxCall = false;
+	// JavaFX mode is tracked in MainWindow; delegate setter to central place.
 
 	/** Presenter reference for incremental MVP refactor. */
-	private NewObjectDiagramPresenter presenter;
+	private transient NewObjectDiagramPresenter presenter;
+
+	/** Secure random used for non-security-sensitive random layout choices. Replaces ThreadLocalRandom to satisfy Sonar rule S2245. */
+	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private MSystem system() {
         return system;
@@ -269,7 +269,6 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		context = parent;
 		view = (parent instanceof NewObjectDiagramView v) ? v : null;
 		this.system = parent.system();
-		this.modelBrowser = parent.getModelBrowser();
 		this.isSelectedView = parent::isSelectedView;
 		this.model = new NewObjectDiagramModel();
 		rebindModelData();
@@ -284,7 +283,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		inputHandling = new DiagramInputHandling(fNodeSelection, fEdgeSelection, this);
 
-		modelBrowser.addHighlightChangeListener(this);
+		parent.getModelBrowser().addHighlightChangeListener(this);
 		ModelBrowserSorting.getInstance().addSortChangeListener(this);
 		addKeyListener(inputHandling);
 
@@ -303,6 +302,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		});
 
 		addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				// need a new layouter to adapt to new window size
 				fLayouter = null;
@@ -370,11 +370,11 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
             selectedLinks.addAll(links);
         }
 
-        if (elem instanceof MClass) {
-            Set<MObject> objs = presenter != null ? presenter.fetchObjectsOfClass((MClass) elem)
-                    : system().state().objectsOfClass((MClass) elem);
-            selectedObjects.addAll(objs);
-        }
+		if (elem instanceof MClass mclass) {
+			Set<MObject> objs = presenter != null ? presenter.fetchObjectsOfClass(mclass)
+					: system().state().objectsOfClass(mclass);
+			selectedObjects.addAll(objs);
+		}
 
         if (!e.getHighlight()) {
             selectedObjects.clear();
@@ -483,33 +483,34 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 		showOrHideObjectNode(obj, true);
 
-		boolean isLinkObject = false;
+		boolean isLinkObject = obj instanceof MLinkObject;
 
 		Set<MAssociation> assocs = obj.cls().allAssociations();
-		if (obj instanceof MLinkObject) {
+		if (isLinkObject) {
 			assocs.add((MAssociation) obj.cls());
-			isLinkObject = true;
 		}
 
-		// Show all links the object participates in,
-		// when all other objects are visible, too.
 		for (MAssociation assoc : assocs) {
-            Set<MLink> links = presenter != null ? presenter.fetchLinksOfAssociation(assoc)
-                    : system().state().linksOfAssociation(assoc).links();
-			// TODO: Not very fast!
-			for (MLink link : links) {
-				if (link.linkedObjects().contains(obj) || (isLinkObject && link.equals(obj))) {
-					boolean allVisible = true;
-					for (MObject linkedO : link.linkedObjects()) {
-						if (!visibleData.getObjectToNodeMap().containsKey(linkedO)) {
-							allVisible = false;
-							break;
-						}
-					}
+			showLinksForAssociation(obj, assoc, isLinkObject);
+		}
+	}
 
-					if (allVisible && (!isLinkObject || visibleData.getObjectToNodeMap().containsKey(obj)))
-						showLink(link);
+	private void showLinksForAssociation(MObject obj, MAssociation assoc, boolean isLinkObject) {
+		Set<MLink> links = presenter != null ? presenter.fetchLinksOfAssociation(assoc)
+				: system().state().linksOfAssociation(assoc).links();
+		for (MLink link : links) {
+			if (!link.linkedObjects().contains(obj) && !(isLinkObject && link.equals(obj))) {
+				continue;
+			}
+			boolean allVisible = true;
+			for (MObject linkedO : link.linkedObjects()) {
+				if (!visibleData.getObjectToNodeMap().containsKey(linkedO)) {
+					allVisible = false;
+					break;
 				}
+			}
+			if (allVisible && (!isLinkObject || visibleData.getObjectToNodeMap().containsKey(obj))) {
+				showLink(link);
 			}
 		}
 	}
@@ -632,12 +633,12 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		fGraph.add(node);
 
 		// connected to an "object link"
-		if (link instanceof MLinkObject) {
+		if (link instanceof MLinkObject ml) {
 			NAryAssociationClassOrObjectEdge e = NAryAssociationClassOrObjectEdge.create(node,
-					visibleData.getObjectToNodeMap().get(link), this, link.association(), true);
+					visibleData.getObjectToNodeMap().get(ml), this, link.association(), true);
 
 			fGraph.addEdge(e);
-			visibleData.getLinkObjectToNodeEdge().put((MLinkObject) link, e);
+			visibleData.getLinkObjectToNodeEdge().put(ml, e);
 			fLayouter = null;
 		}
 		// connected to a "normal" link
@@ -660,15 +661,15 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		// If there is an associated link-object edge, add it once (avoid duplicate map access)
-		{
-			EdgeBase linkObjEdge = null;
-			if (link instanceof MLinkObject) {
-				linkObjEdge = visibleData.getLinkObjectToNodeEdge().get((MLinkObject) link);
-			}
-			if (linkObjEdge != null) {
-				halfEdges.add(linkObjEdge);
-				edgeIds.add(((MLinkObject) link).name());
-			}
+		EdgeBase linkObjEdge = null;
+		String linkObjName = null;
+		if (link instanceof MLinkObject ml) {
+			linkObjEdge = visibleData.getLinkObjectToNodeEdge().get(ml);
+			linkObjName = ml.name();
+		}
+		if (linkObjEdge != null) {
+			halfEdges.add(linkObjEdge);
+			edgeIds.add(linkObjName);
 		}
 
 		node.setHalfEdges(halfEdges, edgeIds);
@@ -686,8 +687,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		if (visibleData.containsLink(link))
 			return;
 
-		if (link instanceof MLinkObject) {
-			showObject((MObject) link);
+		if (link instanceof MLinkObject ml) {
+			showObject(ml);
 		}
 
 		if (visibleData.containsLink(link))
@@ -720,8 +721,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		// Hide Linkobject, if link has a linkobject
-		if (link instanceof MLinkObject && visibleData.getObjectToNodeMap().containsKey(link)) {
-			hideObject((MObject) link);
+		if (link instanceof MLinkObject ml && visibleData.getObjectToNodeMap().containsKey(ml)) {
+			hideObject(ml);
 		}
 	}
 
@@ -779,24 +780,27 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		if (link instanceof MLinkObject ml) {
 			EdgeBase e = model.moveLinkObjectEdge(ml, show);
 			if (e != null) {
-				if (show) {
-					fGraph.addEdge(e);
-				} else {
-					fGraph.removeEdge(e);
-				}
-				fLayouter = null;
+				adjustGraphForEdge(e, show);
 			}
 		}
 
 		List<EdgeBase> halfEdges = model.moveHalfEdges(link, show);
 		if (halfEdges != null) {
 			for (EdgeBase edge : halfEdges) {
-				if (show) {
-					fGraph.addEdge(edge);
-				} else {
-					fGraph.removeEdge(edge);
-				}
+				adjustGraphForEdge(edge, show);
 			}
+		}
+	}
+
+	/** Small helper to add/remove an edge to the graph and mark layout dirty. */
+	private void adjustGraphForEdge(EdgeBase e, boolean show) {
+		if (e == null) {
+			return;
+		}
+		if (show) {
+			fGraph.addEdge(e);
+		} else {
+			fGraph.removeEdge(e);
 		}
 		fLayouter = null;
 	}
@@ -807,56 +811,67 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	@Override
 	public void deleteLink(MLink link) {
 		if (link.linkEnds().size() == 2) {
-			boolean wasVisible = visibleData.containsLink(link);
-			boolean isLinkObject = link instanceof MLinkObject;
+			deleteBinaryLinkInternal(link);
+		} else {
+			deleteNAryLinkInternal(link);
+		}
+	}
 
-			EdgeBase e = isLinkObject ? model.popLinkObjectEdge((MLinkObject) link) : model.popBinaryLink(link);
-			if (e == null) {
-				return;
-			}
-
-			if (isLinkObject && e instanceof BinaryAssociationClassOrObject edge) {
+	private void deleteBinaryLinkInternal(MLink link) {
+		boolean wasVisible = visibleData.containsLink(link);
+		if (link instanceof MLinkObject ml) {
+			EdgeBase e = model.popLinkObjectEdge(ml);
+			if (e == null) return;
+			if (e instanceof BinaryAssociationClassOrObject edge) {
 				PlaceableNode objectNode = edge.getClassOrObjectNode();
 				linkPositionCache().put(link, objectNode.getStrategy());
 			}
-
 			if (wasVisible) {
 				fGraph.removeEdge(e);
 				fLayouter = null;
 			}
 			e.dispose();
-		} else { // n-ary association
-			boolean wasVisible = visibleData.getNaryLinkToDiamondNodeMap().containsKey(link);
-			DiamondNode n = model.popNaryLinkNode(link);
-
-			if (n == null) {
-				throw new RuntimeException("no diamond node for n-ary link `" + link + "' in current state.");
+		} else {
+			EdgeBase e = model.popBinaryLink(link);
+			if (e == null) return;
+			if (wasVisible) {
+				fGraph.removeEdge(e);
+				fLayouter = null;
 			}
+			e.dispose();
+		}
+	}
 
-			model.popHalfEdges(link).forEach(edge -> {
+	private void deleteNAryLinkInternal(MLink link) {
+		boolean wasVisible = visibleData.getNaryLinkToDiamondNodeMap().containsKey(link);
+		DiamondNode n = model.popNaryLinkNode(link);
+		if (n == null) {
+			throw new IllegalStateException("no diamond node for n-ary link `" + link + "' in current state.");
+		}
+
+		model.popHalfEdges(link).forEach(edge -> {
+			if (wasVisible) {
+				fGraph.removeEdge(edge);
+			}
+			edge.dispose();
+		});
+
+		if (wasVisible) {
+			fGraph.remove(n);
+			fLayouter = null;
+		}
+
+		n.dispose();
+
+		if (link instanceof MLinkObject ml) {
+			EdgeBase edge = model.popLinkObjectEdge(ml);
+			if (edge != null) {
+				linkPositionCache().put(link,
+						((NAryAssociationClassOrObjectEdge) edge).getClassOrLinkObjectNode().getStrategy());
 				if (wasVisible) {
 					fGraph.removeEdge(edge);
 				}
 				edge.dispose();
-			});
-
-			if (wasVisible) {
-				fGraph.remove(n);
-				fLayouter = null;
-			}
-
-			n.dispose();
-
-			if (link instanceof MLinkObject) {
-				EdgeBase edge = model.popLinkObjectEdge((MLinkObject) link);
-				if (edge != null) {
-					linkPositionCache().put(link,
-							((NAryAssociationClassOrObjectEdge) edge).getClassOrLinkObjectNode().getStrategy());
-					if (wasVisible) {
-						fGraph.removeEdge(edge);
-					}
-					edge.dispose();
-				}
 			}
 		}
 	}
@@ -894,107 +909,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	}
 
 
-	/**
-	 * Adds a new Link to the objectdiagram.
-	 */
-	class ActionInsertLink extends AbstractAction {
- 		private final MAssociation fAssociation;
- 		private final MObject[] fParticipants;
+	// helper action classes were moved to the context menu provider; removed here as unused.
 
- 		ActionInsertLink(MAssociation association, MObject[] participants) {
- 			fAssociation = association;
- 			fParticipants = participants;
-
- 		 StringBuilder txt = new StringBuilder("insert (");
- 		 StringUtil.fmtSeq(txt, participants, ",", MObject::name);
-
- 		 txt.append(") into ").append(association.name());
-
- 		 putValue(Action.NAME, txt.toString());
-      }
-
-      public void actionPerformed(ActionEvent e) {
-            if (presenter != null) {
-                presenter.onInsertLink(fAssociation, Arrays.asList(fParticipants));
-            }
-      }
-   }
-
-	/**
-	 * Deletes a Link from the object diagram.
-	 */
-	class ActionDeleteLink extends AbstractAction {
- 		private final MLink link;
-
- 		ActionDeleteLink(MLink link) {
- 			this.link = link;
- 			MObject[] participants = link.linkedObjectsAsArray();
- 			StringBuilder txt = new StringBuilder("delete (");
-
- 			for (int i = 0; i < participants.length; ++i) {
- 				if (i > 0) {
- 					txt.append(",");
- 				}
- 				txt.append(participants[i].name());
- 				if (!link.getQualifier().isEmpty() && !link.getQualifier().get(i).isEmpty()) {
- 					txt.append("{");
- 					StringUtil.fmtSeq(txt, link.getQualifier().get(i), ",");
- 					txt.append("}");
- 				}
- 			}
- 			txt.append(") from ").append(link.association().name());
-
- 			putValue(Action.NAME, txt.toString());
- 		}
-
- 		public void actionPerformed(ActionEvent e) {
-            if (presenter != null) {
-                presenter.onDeleteLink(link);
-            }
-            fEdgeSelection.clear();
- 		}
- 	}
-
-	/**
-	 * Deletes the selected objects.
-	 */
-	class ActionDelete extends AbstractAction {
- 		private final Set<MObject> fObjects;
-
- 		ActionDelete(String text, Set<MObject> objects) {
- 			super(text);
- 			fObjects = objects;
- 		}
-
- 		public void actionPerformed(ActionEvent e) {
-			if (presenter != null) {
-				presenter.onDeleteObjects(fObjects);
-			}
-			fNodeSelection.clear();
-		}
- 	}
-
-	/**
-	 * Show properties of objects
-	 */
-	class ActionShowProperties extends AbstractAction {
-        private final MObject fObject;
-
-        ActionShowProperties(String text, MObject object) {
-            super(text);
-            fObject = object;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (presenter != null) {
-                presenter.onShowObjectProperties(fObject);
-            }
-        }
-    }
-
-	/**
-	 * Creates and shows popup menu if mouse event is the trigger for popups.
-	 */
+	// Creates and shows popup menu if mouse event is the trigger for popups.
+	@Override
 	protected PopupMenuInfo unionOfPopUpMenu() {
 		PopupMenuInfo popupInfo = super.unionOfPopUpMenu();
 		if (presenter == null) {
@@ -1029,32 +947,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		return popupInfo;
 	}
 
-	/**
-	 * Finds all nodes which are not selected.
-	 *
-	 * @param selectedNodes Nodes which are selected at this point in the diagram.
-	 * @return A HashSet of the none selected objects in the diagram.
-	 */
-	private Set<MObject> getNoneSelectedNodes(Set<MObject> selectedNodes) {
-		Set<MObject> noneSelectedNodes = new HashSet<>();
-		for (PlaceableNode o : fGraph) {
-			if (o instanceof ObjectNode) {
-				MObject obj = ((ObjectNode) o).object();
-				if (!selectedNodes.contains(obj)) {
-					noneSelectedNodes.add(obj);
-				}
-			}
-		}
+	// getNoneSelectedNodes was removed; this logic moved to context menu provider where needed.
 
-		selectedNodes.forEach(elem -> {
-			if (elem instanceof MLinkObjectImpl) {
-				((MLinkObjectImpl) elem).linkedObjects().forEach(noneSelectedNodes::remove);
-			}
-		});
-		return noneSelectedNodes;
-	}
-
-	private JWindow fObjectInfoWin = null;
+	private transient JWindow fObjectInfoWin = null;
 
 	private void displayObjectInfo(MObject obj, MouseEvent e) {
 		if (fObjectInfoWin != null) {
@@ -1089,7 +984,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		Point p = e.getPoint();
 		SwingUtilities.convertPointToScreen(p, (JComponent) e.getSource());
 
-		fObjectInfoWin.setLocation(p);// e.getPoint());
+		fObjectInfoWin.setLocation(p);
 		fObjectInfoWin.pack();
 		fObjectInfoWin.setVisible(true);
 	}
@@ -1138,8 +1033,8 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	public void mayBeShowObjectInfo(MouseEvent e) {
 		if (fNodeSelection.size() == 1) {
 			PlaceableNode node = fNodeSelection.iterator().next();
-			if (node instanceof ObjectNode) {
-				displayObjectInfo(((ObjectNode) node).object(), e);
+			if (node instanceof ObjectNode on) {
+				displayObjectInfo(on.object(), e);
 			}
 		}
 	}
@@ -1155,29 +1050,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 	}
 
-	private int[] radixConversion(int number, int base, int maxDigits) {
-		int[] res = new int[maxDigits];
-		for (int i = 0; i < maxDigits; ++i) {
-			res[i] = number % base;
-			number = number / base;
-		}
-		return res;
-	}
-
-	private boolean isCompleteObjectCombination(int[] c, int base) {
-		for (int i = 0; i < base; i++) {
-			boolean found = false;
-			for (int v : c) {
-				if (v == i) {
-					found = true;
-					break;
-				}
-			}
-			if (!found)
-				return false;
-		}
-		return true;
-	}
+	// Helper methods removed: moved to context menu provider where they are used.
 
 	/**
 	 * Finds a random new position for the next object node.
@@ -1185,8 +1058,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	protected void getRandomNextPosition() {
 		// getWidth and getHeight return 0
 		// if we are called on a new diagram.
-		nextNodePosition.x = Math.random() * Math.max(100, getWidth() - 100);
-		nextNodePosition.y = Math.random() * Math.max(100, getHeight() - 100);
+		double w = Math.max(100, getWidth() - 100);
+		double h = Math.max(100, getHeight() - 100);
+		nextNodePosition.x = SECURE_RANDOM.nextDouble() * w;
+		nextNodePosition.y = SECURE_RANDOM.nextDouble() * h;
 	}
 
 	@Override
@@ -1221,21 +1096,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
         return null;
     }
 
-	/**
-	 * A small helper method for creating {@link Action} instances with less boilerplate code.
-	 *
-	 * @param text The text of the action.
-	 * @param listener The {@link.ActionListener} that executes the action.
-	 * @return The created action.
-	 */
-	private Action createAction(String text, ActionListener listener) {
-		return new AbstractAction(text) {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				listener.actionPerformed(e);
-			}
-		};
-	}
+	// helper Action factory removed as unused
 
 	protected void addBinaryLink(MLink link) {
 		MAssociation assoc = link.association();
@@ -1247,20 +1108,20 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		MObject obj2 = linkEnd2.object();
 
 		// object link
-		if (link instanceof MLinkObject) {
+		if (link instanceof MLinkObject ml) {
 			BinaryAssociationClassOrObject e = BinaryAssociationClassOrObject.create(
 					visibleData.getObjectToNodeMap().get(obj1), visibleData.getObjectToNodeMap().get(obj2),
-					linkEnd1, linkEnd2, visibleData.getObjectToNodeMap().get(link), this,
+					linkEnd1, linkEnd2, visibleData.getObjectToNodeMap().get(ml), this,
 					link);
 
-			BinaryAssociationClassOrObject edge = (BinaryAssociationClassOrObject) visibleData.getLinkObjectToNodeEdge().get((MLinkObject) link);
+			BinaryAssociationClassOrObject edge = (BinaryAssociationClassOrObject) visibleData.getLinkObjectToNodeEdge().get(ml);
 			if (edge != null) {
 				PlaceableNode objectNode = edge.getClassOrObjectNode();
 				linkPositionCache().put(link, objectNode.getStrategy());
 			}
 
 			fGraph.addEdge(e);
-			visibleData.getLinkObjectToNodeEdge().put((MLinkObject) link, e);
+			visibleData.getLinkObjectToNodeEdge().put(ml, e);
 			fLayouter = null;
 		} else {
 			// binary link
@@ -1324,7 +1185,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
     /** Used by JavaFX caller to toggle FX-mode behavior. */
     public static void setJavaFxCall(boolean value) {
-        javaFxCall = value;
+		MainWindow.setJavaFxCall(value);
     }
 
     /** Sort change from ModelBrowserSorting. */
@@ -1362,8 +1223,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
         return 0;
     }
 
-    /** Group links by association name for ObjectSelection needs. */
-    public Map<String, List<MLink>> mapLinksToKindOfAssociation(List<MLink> links) {
+	/** Group links by association name for ObjectSelection needs. */
+	@SuppressWarnings("unused")
+	public Map<String, List<MLink>> mapLinksToKindOfAssociation(List<MLink> links) {
         Map<String, List<MLink>> result = new HashMap<>();
         for (MLink link : links) {
             String key = link.association().name();
@@ -1372,9 +1234,10 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
         return result;
     }
 
-    /** Legacy overload: collects all links grouped by association. */
-    public TreeMap<String, List<MLink>> mapLinksToKindOfAssociation() {
-        TreeMap<String, List<MLink>> result = new TreeMap<>();
+	/** Legacy overload: collects all links grouped by association. */
+	@SuppressWarnings("unused")
+	public Map<String, List<MLink>> mapLinksToKindOfAssociation() {
+		Map<String, List<MLink>> result = new TreeMap<>();
         Collection<MAssociation> assocs = presenter != null ? presenter.fetchAllAssociations()
                 : system().model().associations();
         for (MAssociation assoc : assocs) {

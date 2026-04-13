@@ -6,7 +6,6 @@ import org.tzi.use.uml.sys.MLink;
 import java.util.List;
 import java.util.Set;
 
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjDiagramOptions;
 
 /**
  * Boundary for executing application/system commands.

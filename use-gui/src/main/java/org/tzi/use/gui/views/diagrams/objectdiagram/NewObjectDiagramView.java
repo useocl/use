@@ -26,6 +26,7 @@ import java.awt.event.KeyListener;
 import java.awt.print.PageFormat;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -50,17 +51,24 @@ import org.tzi.use.uml.sys.MSystem;
  * 
  * @author      Mark Richters 
  */
-@SuppressWarnings("serial")
-public class NewObjectDiagramView extends JPanel 
+public class NewObjectDiagramView extends JPanel
   implements View, PrintableView, SortChangeListener, NewObjectDiagramUI, DiagramContext {
 
-    protected final MSystem fSystem;
-    protected final MainWindow fMainWindow;
-    private ApplicationController appController;
+    private static final long serialVersionUID = 1L;
 
-    protected NewObjectDiagram fObjectDiagram;
-    public static int viewcount = 0;
-    
+    /** The system shown in this view. Marked transient because MSystem is not serializable. */
+    protected final transient MSystem fSystem;
+    /** Reference to main window; transient because MainWindow is not serializable. */
+    protected final transient MainWindow fMainWindow;
+    /** Controller used for commands; transient because controllers are not serializable. */
+    private transient ApplicationController appController;
+
+    /** The underlying diagram component. transient because Swing components are not serializable. */
+    protected transient NewObjectDiagram fObjectDiagram;
+
+    /** Number of active views. Use AtomicInteger to avoid instance methods writing plain static fields. */
+    private static final AtomicInteger VIEW_COUNT = new AtomicInteger(0);
+
     public NewObjectDiagramView(MainWindow mainWindow, MSystem system) {
         fMainWindow = mainWindow;
         fSystem = system;
@@ -75,6 +83,7 @@ public class NewObjectDiagramView extends JPanel
         initDiagram(false, null);
     }
 
+    @SuppressWarnings("unused")
     public void initDiagram(boolean loadDefaultLayout, ObjDiagramOptions opt) {
         if (opt == null)
             fObjectDiagram = new NewObjectDiagram( this, fMainWindow.logWriter());
@@ -85,17 +94,19 @@ public class NewObjectDiagramView extends JPanel
         NewObjectDiagramModel model = new NewObjectDiagramModel();
         PlacementRepository placementRepository = new DefaultPlacementRepository();
 
-         NewObjectDiagramPresenterImpl presenter = new NewObjectDiagramPresenterImpl(
-                 this,
-                 fObjectDiagram,
-                 model,
-                 appController = new DefaultApplicationController(fMainWindow, fSystem, this),
-                 new DefaultContextMenuProvider(),
-                 placementRepository,
-                 fSystem);
+        // avoid assignment inside method invocation (Sonar S1121)
+        appController = new DefaultApplicationController(fMainWindow, fSystem, this);
+        NewObjectDiagramPresenterImpl presenter = new NewObjectDiagramPresenterImpl(
+                this,
+                fObjectDiagram,
+                model,
+                appController,
+                new DefaultContextMenuProvider(),
+                placementRepository,
+                fSystem);
          fObjectDiagram.setPresenter(presenter);
 
-         fObjectDiagram.setStatusBar(fMainWindow.statusBar());
+          fObjectDiagram.setStatusBar(fMainWindow.statusBar());
          this.removeAll();
          add( new JScrollPane(fObjectDiagram) );
           initState();
@@ -119,7 +130,7 @@ public class NewObjectDiagramView extends JPanel
         }
         
         fObjectDiagram.initialize();
-        viewcount++;
+        VIEW_COUNT.incrementAndGet();
     }
     
     // legacy helpers removed; use public DiagramContext methods below
@@ -127,9 +138,37 @@ public class NewObjectDiagramView extends JPanel
     @Override public MSystem system() { return fSystem; }
     @Override public ModelBrowser getModelBrowser() { return fMainWindow.getModelBrowser(); }
     @Override public boolean isSelectedView() { return fMainWindow.getSelectedView() != null && fMainWindow.getSelectedView().equals(this); }
-    @Override public void addKeyListener(KeyListener l) { super.addKeyListener(l); }
-    @Override public Font getFont() { return super.getFont(); }
-    @Override public void setFont(Font font) { super.setFont(font); }
+    /**
+     * Adds a key listener and ensures the component is focusable so it can receive key events.
+     */
+    @Override
+    public synchronized void addKeyListener(KeyListener l) {
+        super.addKeyListener(l);
+        // make sure the component can receive focus when a key listener is added
+        setFocusable(true);
+    }
+
+    /**
+     * Returns the font of this component. If no font is set, fall back to the main window font.
+     */
+    @Override
+    public Font getFont() {
+        Font f = super.getFont();
+        if (f == null && fMainWindow != null) {
+            return fMainWindow.getFont();
+        }
+        return f;
+    }
+
+    /**
+     * Sets the font and triggers a revalidation/repaint to reflect the change.
+     */
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        revalidate();
+        repaint();
+    }
     @Override public void createObject(String className) {
         if (fObjectDiagram != null && fObjectDiagram.getPresenter() != null) {
             fObjectDiagram.getPresenter().onCreateObject(className);
@@ -176,7 +215,16 @@ public class NewObjectDiagramView extends JPanel
         }
         ModelBrowserSorting.getInstance().removeSortChangeListener( this );
         fSystem.unregisterRequiresAllDerivedValues();
-        viewcount--;
+        VIEW_COUNT.decrementAndGet();
+    }
+
+    /**
+     * Returns the current number of active views.
+     *
+     * @return the view count
+     */
+    public static int getViewcount() {
+        return VIEW_COUNT.get();
     }
 
     @Override

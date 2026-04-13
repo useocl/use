@@ -40,47 +40,19 @@ public final class PresenterFileLogger {
 
         // Best-effort: create directories and write an initialization line into the test log.
 
-        try {
+        // Ensure directories exist (ignore failures)
+        safeCreateDirs(LOG_DIR);
+        safeCreateDirs(WORK_DIR_LOG);
 
-            Files.createDirectories(LOG_DIR);
+        // write an init line into the current test log file (no stdout/stderr) using structured format
+        String initTs = TS_FORMAT.format(Instant.now());
+        String initLine = initTs + " [PresenterFileLogger#init] initialized test=" + currentTest + System.lineSeparator();
 
-            Files.createDirectories(WORK_DIR_LOG);
+        Path p = LOG_DIR.resolve(currentTest + ".log");
+        safeWriteString(p, initLine);
 
-            // write an init line into the current test log file (no stdout/stderr) using structured format
-
-            String initTs = TS_FORMAT.format(Instant.now());
-
-            String initLine = initTs + " [PresenterFileLogger#init] initialized test=" + currentTest + System.lineSeparator();
-
-            try {
-
-                Path p = LOG_DIR.resolve(currentTest + ".log");
-
-                Files.writeString(p, initLine, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-            } catch (IOException ignored) {
-
-                // ignore — best-effort
-
-            }
-
-            try {
-
-                Path pWork = WORK_DIR_LOG.resolve(currentTest + ".log");
-
-                Files.writeString(pWork, initLine, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-            } catch (IOException ignored) {
-
-                // ignore
-
-            }
-
-        } catch (IOException ignored) {
-
-            // ignore directory creation failures — logger is best-effort and must not print to stdout/stderr
-
-        }
+        Path pWork = WORK_DIR_LOG.resolve(currentTest + ".log");
+        safeWriteString(pWork, initLine);
 
     }
 
@@ -88,6 +60,24 @@ public final class PresenterFileLogger {
 
         // utility
 
+    }
+
+    // Helper: create directories without nesting try-catch blocks at call sites
+    private static void safeCreateDirs(Path dir) {
+        try {
+            Files.createDirectories(dir);
+        } catch (IOException ignored) {
+            // best-effort: ignore
+        }
+    }
+
+    // Helper: write string to file in append mode, ignore failures
+    private static void safeWriteString(Path file, String content) {
+        try {
+            Files.writeString(file, content, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException ignored) {
+            // best-effort: ignore
+        }
     }
 
     private static boolean readEnabledFlag() {
@@ -127,54 +117,22 @@ public final class PresenterFileLogger {
         currentTest = testName;
 
         if (!enabled) {
-
             return;
-
         }
 
-        try {
+        // Ensure both directories exist when changing the test name so subsequent writes succeed
+        safeCreateDirs(LOG_DIR);
+        safeCreateDirs(WORK_DIR_LOG);
 
-            // Ensure both directories exist when changing the test name so subsequent writes succeed
+        // write an init line into the new current test log file (best-effort, no stdout/stderr)
+        String initTs = TS_FORMAT.format(Instant.now());
+        String initLine = initTs + " [PresenterFileLogger#setCurrentTest] switched test=" + currentTest + System.lineSeparator();
 
-            Files.createDirectories(LOG_DIR);
+        Path p = LOG_DIR.resolve(currentTest + ".log");
+        safeWriteString(p, initLine);
 
-            Files.createDirectories(WORK_DIR_LOG);
-
-            // write an init line into the new current test log file (best-effort, no stdout/stderr)
-
-            String initTs = TS_FORMAT.format(Instant.now());
-
-            String initLine = initTs + " [PresenterFileLogger#setCurrentTest] switched test=" + currentTest + System.lineSeparator();
-
-            try {
-
-                Path p = LOG_DIR.resolve(currentTest + ".log");
-
-                Files.writeString(p, initLine, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-            } catch (IOException ignored) {
-
-                // ignore — best-effort
-
-            }
-
-            try {
-
-                Path pWork = WORK_DIR_LOG.resolve(currentTest + ".log");
-
-                Files.writeString(pWork, initLine, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-            } catch (IOException ignored) {
-
-                // ignore
-
-            }
-
-        } catch (IOException ignored) {
-
-            // ignore directory creation failures — logger is best-effort and must not print to stdout/stderr
-
-        }
+        Path pWork = WORK_DIR_LOG.resolve(currentTest + ".log");
+        safeWriteString(pWork, initLine);
 
     }
 
@@ -194,47 +152,12 @@ public final class PresenterFileLogger {
 
         Path pWork = WORK_DIR_LOG.resolve(fileName);
 
-        try {
+        // ensure directories exist (in case setCurrentTest wasn't called since class init)
+        safeCreateDirs(LOG_DIR);
+        safeCreateDirs(WORK_DIR_LOG);
 
-            // ensure directories exist (in case setCurrentTest wasn't called since class init)
-
-            Files.createDirectories(LOG_DIR);
-
-        } catch (IOException ignored) {
-
-            // ignore
-
-        }
-
-        try {
-
-            Files.createDirectories(WORK_DIR_LOG);
-
-        } catch (IOException ignored) {
-
-            // ignore
-
-        }
-
-        try {
-
-            Files.writeString(p, line, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException ignored) {
-
-            // ignore
-
-        }
-
-        try {
-
-            Files.writeString(pWork, line, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException ignored) {
-
-            // ignore
-
-        }
+        safeWriteString(p, line);
+        safeWriteString(pWork, line);
 
     }
 

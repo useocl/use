@@ -2,7 +2,6 @@ package org.tzi.use.gui.views.selection.objectselection;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,13 +59,25 @@ public class ObjectSelection {
 
 	private final MSystem system;
 
-	// Conrols for ScrollMenu
-	private final int numOfElems = 20;
-	private final int interval = 125;
-	private final int topFixedCount = 0;
-	private final int bottomFixedCount = 0;
+	// Controls for ScrollMenu
+	private static final int NUM_OF_ELEMS = 20;
+	private static final int INTERVAL = 125;
+	private static final int TOP_FIXED_COUNT = 0;
+	private static final int BOTTOM_FIXED_COUNT = 0;
 
-	private final AlphanumComparator keyComparator;
+	// UI label constants to avoid duplicated string literals
+	private static final String LABEL_HIDE_OBJECTS = "Hide objects";
+	private static final String LABEL_HIDE_ALL_OBJECTS = "Hide all objects";
+	private static final String LABEL_HIDE = "Hide ";
+	private static final String LABEL_CLASS_PREFIX = "Class ";
+	private static final String LABEL_SHOW = "Show ";
+	private static final String LABEL_SHOW_ALL_HIDDEN_OBJECTS = "Show all hidden objects";
+	private static final String LABEL_HIDE_ALL_LINKS = "Hide all links";
+	private static final String LABEL_SHOW_ALL_LINKS = "Show all links";
+	private static final String LABEL_HIDE_ALL = "Hide all";
+	private static final String LABEL_SHOW_ALL = "Show all";
+	private static final String OBJECT_PROPERTIES_ICON = "ObjectProperties.gif";
+
 	private final Comparator<MLink> linkComparator;
 	private final Comparator<ObjectNodeActivity> objectComparator;
 
@@ -76,7 +87,7 @@ public class ObjectSelection {
 	public ObjectSelection(DiagramViewWithObjectNode diagram, MSystem system) {
 		this.diagram = diagram;
 		this.system = system;
-		this.keyComparator = new AlphanumComparator();
+		AlphanumComparator keyComparator = new AlphanumComparator();
 		this.linkComparator = Comparator
 				.comparing((MLink link) -> link.linkedObjects().get(0).toString(), keyComparator)
 				.thenComparing(link -> link.linkedObjects().get(1).toString(), keyComparator);
@@ -84,24 +95,23 @@ public class ObjectSelection {
 
 	}
 
-	@SuppressWarnings("serial")
 	class ActionSelectedObjectPathView extends AbstractAction {
-		private Set<MObject> selectedObjects;
+		private final transient Set<MObject> selectedObjects;
 
 		ActionSelectedObjectPathView(String text, Set<MObject> sc) {
 			super(text);
-			selectedObjects = sc;
+			this.selectedObjects = sc;
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.instance(), system, diagram,
 					selectedObjects);
-			ViewFrame f = new ViewFrame("Selection by path length", opv, "ObjectProperties.gif");
+			ViewFrame f = new ViewFrame("Selection by path length", opv, OBJECT_PROPERTIES_ICON);
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (Boolean.TRUE.equals(MainWindow.getJavaFxCall())){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(opv);
@@ -120,7 +130,6 @@ public class ObjectSelection {
 		return new ActionSelectedObjectPathView(text, sc);
 	}
 
-	@SuppressWarnings("serial")
 	class ActionSelectionObjectView extends AbstractAction {
 		ActionSelectionObjectView() {
 			super("With view...");
@@ -128,12 +137,12 @@ public class ObjectSelection {
 
 		public void actionPerformed(ActionEvent e) {
 			SelectionObjectView opv = new SelectionObjectView(MainWindow.instance(), system, diagram);
-			ViewFrame f = new ViewFrame("Select objects", opv, "ObjectProperties.gif");
+			ViewFrame f = new ViewFrame("Select objects", opv, OBJECT_PROPERTIES_ICON);
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (Boolean.TRUE.equals(MainWindow.getJavaFxCall())){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(opv);
@@ -155,7 +164,6 @@ public class ObjectSelection {
 	/**
 	 * Show Selection OCL View
 	 */
-	@SuppressWarnings("serial")
 	class ActionSelectionOCLView extends AbstractAction {
 		ActionSelectionOCLView() {
 			super("With OCL...");
@@ -163,13 +171,13 @@ public class ObjectSelection {
 
 		public void actionPerformed(ActionEvent e) {
 			SelectionOCLView opv = new SelectionOCLView(MainWindow.instance(), system, diagram);
-			ViewFrame f = new ViewFrame("Selection by OCL expression", opv, "ObjectProperties.gif");
+			ViewFrame f = new ViewFrame("Selection by OCL expression", opv, OBJECT_PROPERTIES_ICON);
 			JComponent c = (JComponent) f.getContentPane();
 
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (Boolean.TRUE.equals(MainWindow.getJavaFxCall())){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(opv);
@@ -193,56 +201,132 @@ public class ObjectSelection {
 	 * which are connected with the Association selected by the user.
 	 */
 	public Set<MObject> getSelectedObjectsofAssociation(MAssociation node, Set<MObject> selectedObjectsOfAssociation) {
-		HashSet<MObject> objects = new HashSet<MObject>();
-		Iterator<EdgeBase> it = this.diagram.getGraph().edgeIterator();
-		String name = node.name();
+		if (node == null) {
+			return Set.of();
+		}
 
+		Set<MObject> safeSelected = selectedObjectsOfAssociation == null ? Set.of() : selectedObjectsOfAssociation;
+
+		Set<MObject> fromEdges = findObjectsFromEdges(node, safeSelected);
+		if (!fromEdges.isEmpty()) {
+			return fromEdges;
+		}
+
+		return findObjectsFromDiamonds(node.name(), safeSelected);
+	}
+
+	private Set<MObject> findObjectsFromEdges(MAssociation node, Set<MObject> selectedObjectsOfAssociation) {
+		Set<MObject> objects = new HashSet<>();
+		return findMatchingEdge(node)
+				.map(edge -> {
+					MObject mo1 = ((ObjectNodeActivity) edge.source()).object();
+					MObject mo2 = ((ObjectNodeActivity) edge.target()).object();
+					if (!selectedObjectsOfAssociation.contains(mo1)) {
+						objects.add(mo1);
+					}
+					if (!selectedObjectsOfAssociation.contains(mo2)) {
+						objects.add(mo2);
+					}
+					return objects;
+				})
+				.orElse(objects);
+	}
+
+	private java.util.Optional<BinaryAssociationOrLinkEdge> findMatchingEdge(MAssociation node) {
+		Iterator<EdgeBase> it = this.diagram.getGraph().edgeIterator();
 		while (it.hasNext()) {
 			EdgeBase o = it.next();
-
-			if (o instanceof BinaryAssociationOrLinkEdge) {
-				BinaryAssociationOrLinkEdge edge = (BinaryAssociationOrLinkEdge) o;
-
-				if (edge.getAssociation() != null && edge.getAssociation().equals(node)) {
-					MObject mo = ((ObjectNodeActivity) (edge.source())).object();
-					if (!selectedObjectsOfAssociation.contains(mo)) {
-						objects.add(mo);
-					}
-					mo = ((ObjectNodeActivity) (edge.target())).object();
-					if (!selectedObjectsOfAssociation.contains(mo) && !objects.contains(mo)) {
-						objects.add(mo);
-					}
-					return objects;
-				}
+			if (o instanceof BinaryAssociationOrLinkEdge edge && edge.getAssociation() != null
+					&& edge.getAssociation().equals(node)) {
+				return java.util.Optional.of(edge);
 			}
 		}
+		return java.util.Optional.empty();
+	}
 
+	private Set<MObject> findObjectsFromDiamonds(String name, Set<MObject> selectedObjectsOfAssociation) {
+		return findMatchingDiamond(name).map(dnode -> {
+			Set<MObject> objects = new HashSet<>();
+			for (MObject mo : dnode.link().linkedObjects()) {
+				if (!selectedObjectsOfAssociation.contains(mo)) {
+					objects.add(mo);
+				}
+			}
+			return objects;
+		}).orElse(Set.of());
+	}
+
+	private java.util.Optional<DiamondNode> findMatchingDiamond(String name) {
 		Iterator<PlaceableNode> nodeIter = diagram.getGraph().iterator();
-
-		while (it.hasNext()) {
+		while (nodeIter.hasNext()) {
 			PlaceableNode o = nodeIter.next();
-			if (o instanceof DiamondNode) {
-				if (((DiamondNode) o).name().equalsIgnoreCase(name)) {
-					DiamondNode dnode = (DiamondNode) o;
+			if (o instanceof DiamondNode dnode && dnode.name().equalsIgnoreCase(name)) {
+				return java.util.Optional.of(dnode);
+			}
+		}
+		return java.util.Optional.empty();
+	}
 
-					for (MObject mo : dnode.link().linkedObjects()) {
-						if (!selectedObjectsOfAssociation.contains(mo) && !objects.contains(mo)) {
-							objects.add(mo);
-						}
-					}
-					return objects;
+	/**
+	 * Collect unique links and prepare association menus for the given edges.
+	 */
+	private void collectAssociationNamesAndLinks(Set<EdgeBase> edges, Map<String, JMenu> associationNames,
+			List<MLink> links) {
+		for (EdgeBase edge : edges) {
+			if (edge instanceof LinkEdge aEdge) {
+				MLink link = aEdge.getLink();
+				if (!links.contains(link)) {
+					JMenu menu = new JMenu(link.association().toString());
+					MenuScroller.setScrollerFor(menu, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
+					associationNames.put(link.association().toString(), menu);
+					links.add(link);
 				}
 			}
 		}
-		return objects;
 	}
 
-	private class ObjectNodeActivityComparator implements Comparator<ObjectNodeActivity> {
-		@Override
-		public int compare(ObjectNodeActivity o1, ObjectNodeActivity o2) {
-			return o1.object().name().compareTo(o2.object().name());
+	private JMenuItem createMenuItem(String label, Runnable action) {
+		JMenuItem item = new JMenuItem(label);
+		item.addActionListener(e -> action.run());
+		return item;
+	}
+
+	/**
+	 * Add menu entries (show or hide) for an association menu entry.
+	 */
+	private void addAssociationMenuItems(Entry<String, JMenu> menuEntry, List<MLink> links, boolean showMode) {
+		JMenu assocMenu = menuEntry.getValue();
+		String key = menuEntry.getKey();
+
+		String allLabel = showMode ? LABEL_SHOW_ALL : LABEL_HIDE_ALL;
+		assocMenu.add(createMenuItem(allLabel, () -> {
+			List<MLink> matching = links.stream().filter(l -> key.equals(l.association().toString())).toList();
+			if (showMode) {
+				((NewObjectDiagram) diagram).showLink(matching);
+			} else {
+				((NewObjectDiagram) diagram).hideLink(matching);
+			}
+			diagram.repaint();
+		}));
+
+		assocMenu.addSeparator();
+
+		for (MLink link : links) {
+			if (key.equals(link.association().toString())) {
+				String label = (showMode ? LABEL_SHOW : LABEL_HIDE) + formatLinkName(link);
+				assocMenu.add(createMenuItem(label, () -> {
+					if (showMode) {
+						((NewObjectDiagram) diagram).showLink(link);
+					} else {
+						((NewObjectDiagram) diagram).hideLink(link);
+					}
+					diagram.repaint();
+				}));
+			}
 		}
 	}
+
+	// ObjectNodeActivityComparator removed — not used (S3985)
 
 	/**
 	 * Method getSubMenuHideObject supplies a list of the sorted objects in the
@@ -255,59 +339,51 @@ public class ObjectSelection {
 		Set<ObjectNodeActivity> visibleObjectNodes = CollectionUtil.filterByType(visibleNodes,
 				ObjectNodeActivity.class);
 
-		JMenu subMenuHideObject = new JMenu("Hide objects");
-		MenuScroller.setScrollerFor(subMenuHideObject, numOfElems, interval, topFixedCount, bottomFixedCount);
+		JMenu subMenuHideObject = new JMenu(LABEL_HIDE_OBJECTS);
+		MenuScroller.setScrollerFor(subMenuHideObject, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 
-		final JMenuItem hideAllObjects = new JMenuItem("Hide all objects");
+		final JMenuItem hideAllObjects = new JMenuItem(LABEL_HIDE_ALL_OBJECTS);
 		hideAllObjects.setEnabled(diagram.getVisibleData().hasNodes());
-		hideAllObjects.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				diagram.hideAll();
-				diagram.repaint();
-			}
+		hideAllObjects.addActionListener(ev -> {
+			diagram.hideAll();
+			diagram.repaint();
 		});
 		subMenuHideObject.add(hideAllObjects);
 		subMenuHideObject.addSeparator();
 
-		TreeSet<ObjectNodeActivity> sortedObjectNodes = new TreeSet<ObjectNodeActivity>(objectComparator);
+		TreeSet<ObjectNodeActivity> sortedObjectNodes = new TreeSet<>(objectComparator);
 		sortedObjectNodes.addAll(visibleObjectNodes);
-		Map<MClass, JMenu> classMenus = new HashMap<MClass, JMenu>();
+		Map<MClass, JMenu> classMenus = new HashMap<>();
 
 		for (ObjectNodeActivity objNode : sortedObjectNodes) {
 			final MClass cls = objNode.cls();
 			final MObject obj = objNode.object();
 
-			if (!classMenus.containsKey(cls)) {
-				JMenu subm = new JMenu("Class " + cls.name());
-				classMenus.put(cls, subm);
-
-				// Add show all
-				JMenuItem showAll = new JMenuItem("Hide all");
-				showAll.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						diagram.hideObjects(getVisibleObjects(cls));
-						diagram.repaint();
-					}
+			JMenu parent = classMenus.computeIfAbsent(cls, k -> {
+				JMenu subm = new JMenu(LABEL_CLASS_PREFIX + k.name());
+				MenuScroller.setScrollerFor(subm, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
+				JMenuItem showAll = new JMenuItem(LABEL_HIDE_ALL);
+				showAll.addActionListener(e -> {
+					diagram.hideObjects(getVisibleObjects(k));
+					diagram.repaint();
 				});
 				subm.add(showAll);
 				subm.addSeparator();
-			}
+				return subm;
+			});
 
-			JMenu parent = classMenus.get(cls);
-			final JMenuItem hideObject = new JMenuItem("Hide " + obj.name());
-			hideObject.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					diagram.hideObject(obj);
-					diagram.repaint();
-				}
+			final JMenuItem hideObject = new JMenuItem(LABEL_HIDE + obj.name());
+			hideObject.addActionListener(ev -> {
+				diagram.hideObject(obj);
+				diagram.repaint();
 			});
 			parent.add(hideObject);
 		}
-		List<MClass> classes = new ArrayList<MClass>(classMenus.keySet());
+
+		List<MClass> classes = new ArrayList<>(classMenus.keySet());
 		Collections.sort(classes, new MNamedElementComparator());
 		for (JMenu m : classMenus.values()) {
-			MenuScroller.setScrollerFor(m, numOfElems, interval, topFixedCount, bottomFixedCount);
+			MenuScroller.setScrollerFor(m, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 		}
 
 		for (MClass cls : classes) {
@@ -324,17 +400,14 @@ public class ObjectSelection {
 	 * @return JMenu
 	 */
 	public JMenu getSubMenuHideLinks() {
-		JMenu subMenuHideAssoc = new JMenu("Hide links");
-		MenuScroller.setScrollerFor(subMenuHideAssoc, numOfElems, interval, topFixedCount, bottomFixedCount);
+		JMenu subMenuHideAssoc = new JMenu(LABEL_HIDE + "links");
+		MenuScroller.setScrollerFor(subMenuHideAssoc, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 
-		final JMenuItem hideAllAssoc = new JMenuItem("Hide all links");
+		final JMenuItem hideAllAssoc = new JMenuItem(LABEL_HIDE_ALL_LINKS);
 		hideAllAssoc.setEnabled(!diagram.getVisibleData().getEdges().isEmpty());
-		hideAllAssoc.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				((NewObjectDiagram) diagram).hideAllLinks();
-				diagram.repaint();
-			}
+		hideAllAssoc.addActionListener(e -> {
+			((NewObjectDiagram) diagram).hideAllLinks();
+			diagram.repaint();
 		});
 		subMenuHideAssoc.add(hideAllAssoc);
 		subMenuHideAssoc.addSeparator();
@@ -345,55 +418,13 @@ public class ObjectSelection {
 		final Map<String, JMenu> associationNames = new TreeMap<>();
 		final List<MLink> links = new ArrayList<>();
 
-		for (EdgeBase edge : edges) {
+		collectAssociationNamesAndLinks(edges, associationNames, links);
 
-			if (edge instanceof LinkEdge) {
-				LinkEdge aEdge = (LinkEdge) edge;
-
-				MLink link = aEdge.getLink();
-				if (!links.contains(link)) {
-					JMenu menu = new JMenu(link.association().toString());
-					MenuScroller.setScrollerFor(menu, numOfElems, interval, topFixedCount, bottomFixedCount);
-
-					associationNames.put(link.association().toString(), menu);
-					links.add(link);
-				}
-			}
-		}
+		links.sort(linkComparator);
 
 		for (final Entry<String, JMenu> menu : associationNames.entrySet()) {
 			subMenuHideAssoc.add(menu.getValue());
-			JMenuItem hideAll = new JMenuItem("Hide all");
-			hideAll.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					List<MLink> matching = new ArrayList<>();
-					for (MLink link : links) {
-						if (menu.getKey().equals(link.association().toString())) {
-							matching.add(link);
-						}
-					}
-					((NewObjectDiagram) diagram).hideLink(matching);
-					diagram.repaint();
-				}
-			});
-			menu.getValue().add(hideAll);
-			menu.getValue().addSeparator();
-
-			Collections.sort(links, linkComparator);
-
-			for (final MLink link : links) {
-				if (menu.getKey().equals(link.association().toString())) {
-
-					JMenuItem hideLink = new JMenuItem("Hide " + formatLinkName(link));
-					hideLink.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							((NewObjectDiagram) diagram).hideLink(link);
-							diagram.repaint();
-						}
-					});
-					menu.getValue().add(hideLink);
-				}
-			}
+			addAssociationMenuItems(menu, links, false);
 		}
 		return subMenuHideAssoc;
 	}
@@ -415,8 +446,8 @@ public class ObjectSelection {
 		label.append("(");
 
 		// if linkobject
-		if (MLinkObjectImpl.class.isInstance(link)) {
-			label.append(((MLinkObjectImpl) link).name());
+		if (link instanceof MLinkObjectImpl lom) {
+			label.append(lom.name());
 			label.append(" : ");
 
 		}
@@ -474,17 +505,14 @@ public class ObjectSelection {
 	 */
 	public JMenu getSubMenuShowLinks() {
 
-		JMenu subMenuShowLinks = new JMenu("Show links");
-		MenuScroller.setScrollerFor(subMenuShowLinks, numOfElems, interval, topFixedCount, bottomFixedCount);
+		JMenu subMenuShowLinks = new JMenu(LABEL_SHOW + "links");
+		MenuScroller.setScrollerFor(subMenuShowLinks, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 
-		final JMenuItem showAllLinks = new JMenuItem("Show all links");
+		final JMenuItem showAllLinks = new JMenuItem(LABEL_SHOW_ALL_LINKS);
 		showAllLinks.setEnabled(!diagram.getHiddenData().getEdges().isEmpty());
-		showAllLinks.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				((NewObjectDiagram) diagram).showAllLinks();
-				diagram.repaint();
-			}
+		showAllLinks.addActionListener(e -> {
+			((NewObjectDiagram) diagram).showAllLinks();
+			diagram.repaint();
 		});
 		subMenuShowLinks.add(showAllLinks);
 		subMenuShowLinks.addSeparator();
@@ -494,54 +522,13 @@ public class ObjectSelection {
 		final Map<String, JMenu> associationNames = new TreeMap<>();
 		final List<MLink> links = new ArrayList<>();
 
-		for (EdgeBase edge : edges) {
+		collectAssociationNamesAndLinks(edges, associationNames, links);
 
-			if (edge instanceof LinkEdge) {
-				LinkEdge aEdge = (LinkEdge) edge;
-
-				MLink link = aEdge.getLink();
-				if (!links.contains(link)) {
-					JMenu menu = new JMenu(link.association().toString());
-					MenuScroller.setScrollerFor(menu, numOfElems, interval, topFixedCount, bottomFixedCount);
-
-					associationNames.put(link.association().toString(), menu);
-					links.add(link);
-				}
-			}
-		}
+		links.sort(linkComparator);
 
 		for (final Entry<String, JMenu> menu : associationNames.entrySet()) {
 			subMenuShowLinks.add(menu.getValue());
-			JMenuItem showAll = new JMenuItem("Show all");
-			showAll.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					List<MLink> matching = new ArrayList<>();
-					for (MLink link : links) {
-						if (menu.getKey().equals(link.association().toString())) {
-							matching.add(link);
-						}
-					}
-					((NewObjectDiagram) diagram).showLink(matching);
-					diagram.repaint();
-				}
-			});
-			menu.getValue().add(showAll);
-			menu.getValue().addSeparator();
-
-			Collections.sort(links, linkComparator);
-
-			for (final MLink link : links) {
-				if (menu.getKey().equals(link.association().toString())) {
-					JMenuItem showLink = new JMenuItem("Show " + formatLinkName(link));
-					showLink.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							((NewObjectDiagram) diagram).showLink(link);
-							diagram.repaint();
-						}
-					});
-					menu.getValue().add(showLink);
-				}
-			}
+			addAssociationMenuItems(menu, links, true);
 		}
 
 		return subMenuShowLinks;
@@ -555,100 +542,62 @@ public class ObjectSelection {
 	 */
 	public JMenu getSubMenuLinksByKind() {
 		JMenu subMenuAssociation = new JMenu("Show/hide links-by-kind");
-		MenuScroller.setScrollerFor(subMenuAssociation, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuAssociation, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 
 		if (!diagram.getVisibleData().getEdges().isEmpty()) {
-			final JMenuItem hideAllAssoc = new JMenuItem("Hide all links");
-			hideAllAssoc.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					((NewObjectDiagram) diagram).hideAllLinks();
-					diagram.repaint();
-				}
+			final JMenuItem hideAllAssoc = new JMenuItem(LABEL_HIDE_ALL_LINKS);
+			hideAllAssoc.addActionListener(e -> {
+				((NewObjectDiagram) diagram).hideAllLinks();
+				diagram.repaint();
 			});
 			subMenuAssociation.add(hideAllAssoc);
 		}
 
 		if (!diagram.getHiddenData().getEdges().isEmpty()) {
-			final JMenuItem showAllAssoc = new JMenuItem("Show all links");
-			showAllAssoc.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					((NewObjectDiagram) diagram).showAllLinks();
-					diagram.repaint();
-				}
+			final JMenuItem showAllAssoc = new JMenuItem(LABEL_SHOW_ALL_LINKS);
+			showAllAssoc.addActionListener(e -> {
+				((NewObjectDiagram) diagram).showAllLinks();
+				diagram.repaint();
 			});
 			subMenuAssociation.add(showAllAssoc);
 		}
 
 		subMenuAssociation.addSeparator();
 
-		TreeMap<String, List<MLink>> assocs = ((NewObjectDiagram) diagram).mapLinksToKindOfAssociation();
+		Map<String, List<MLink>> assocs = ((NewObjectDiagram) diagram).mapLinksToKindOfAssociation();
 		for (Map.Entry<String, List<MLink>> a : assocs.entrySet()) {
-
-			final JMenu assocMenu = new JMenu(a.getKey());
-			MenuScroller.setScrollerFor(assocMenu, numOfElems, interval, topFixedCount, bottomFixedCount);
-
-			if (((NewObjectDiagram) diagram).isHidden(a.getValue()) == 1
-					|| ((NewObjectDiagram) diagram).isHidden(a.getValue()) == 2) {
-
-				JMenuItem hideAllLinksOfAssoc = new JMenuItem("Hide all " + a.getKey());
-				hideAllLinksOfAssoc.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						((NewObjectDiagram) diagram).hideLink(a.getValue());
-						diagram.repaint();
-					}
-				});
-				assocMenu.add(hideAllLinksOfAssoc);
-			}
-
-			if (((NewObjectDiagram) diagram).isHidden(a.getValue()) == 0
-					|| ((NewObjectDiagram) diagram).isHidden(a.getValue()) == 2) {
-
-				JMenuItem showAllLinksOfAssoc = new JMenuItem("Show all " + a.getKey());
-				showAllLinksOfAssoc.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						((NewObjectDiagram) diagram).showLink(a.getValue());
-						diagram.repaint();
-					}
-				});
-				assocMenu.add(showAllLinksOfAssoc);
-			}
-			assocMenu.addSeparator();
-
-			Collections.sort(a.getValue(), linkComparator);
-
-			for (MLink link : a.getValue()) {
-
-				if (((NewObjectDiagram) diagram).isHidden(link)) {
-					JMenuItem linkItem = new JMenuItem("Show " + formatLinkName(link));
-					linkItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							((NewObjectDiagram) diagram).showLink(link);
-							diagram.repaint();
-						}
-					});
-					assocMenu.add(linkItem);
-				} else {
-					JMenuItem linkItem = new JMenuItem("Hide " + formatLinkName(link));
-					linkItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							((NewObjectDiagram) diagram).hideLink(link);
-							diagram.repaint();
-						}
-					});
-					assocMenu.add(linkItem);
-				}
-			}
-			subMenuAssociation.add(assocMenu);
+			addLinksByKindEntry(subMenuAssociation, a.getKey(), a.getValue());
 		}
 		return subMenuAssociation;
+	}
+
+	private void addLinksByKindEntry(JMenu parentMenu, String key, List<MLink> assocLinks) {
+		if (assocLinks == null || assocLinks.isEmpty()) {
+			return;
+		}
+		JMenu assocMenu = new JMenu(key);
+		MenuScroller.setScrollerFor(assocMenu, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
+
+		List<MLink> links = new ArrayList<>(assocLinks);
+		int assocLinkState = ((NewObjectDiagram) diagram).isHidden(links);
+		if (assocLinkState == 1 || assocLinkState == 2) {
+			assocMenu.add(createMenuItem(LABEL_SHOW_ALL, () -> ((NewObjectDiagram) diagram).showLink(links)));
+		}
+		if (assocLinkState == 0 || assocLinkState == 2) {
+			assocMenu.add(createMenuItem(LABEL_HIDE_ALL, () -> ((NewObjectDiagram) diagram).hideLink(links)));
+		}
+		assocMenu.addSeparator();
+
+		links.sort(linkComparator);
+
+		for (MLink link : links) {
+			if (((NewObjectDiagram) diagram).isHidden(link)) {
+				assocMenu.add(createMenuItem(LABEL_SHOW + formatLinkName(link), () -> ((NewObjectDiagram) diagram).showLink(link)));
+			} else {
+				assocMenu.add(createMenuItem(LABEL_HIDE + formatLinkName(link), () -> ((NewObjectDiagram) diagram).hideLink(link)));
+			}
+		}
+		parentMenu.add(assocMenu);
 	}
 
 	/**
@@ -658,70 +607,59 @@ public class ObjectSelection {
 	 * @return JMenu
 	 */
 	public JMenu getSubMenuShowObject() {
-		JMenu subMenuShowObject = new JMenu("Show objects");
-		MenuScroller.setScrollerFor(subMenuShowObject, numOfElems, interval, topFixedCount, bottomFixedCount);
+		JMenu subMenuShowObject = new JMenu(LABEL_SHOW + "objects");
+		MenuScroller.setScrollerFor(subMenuShowObject, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 
 		Set<? extends PlaceableNode> hiddenNodes = diagram.getHiddenNodes();
 		Set<ObjectNodeActivity> hiddenObjectNodes = CollectionUtil.filterByType(hiddenNodes, ObjectNodeActivity.class);
 
-		final JMenuItem showAllObjects = new JMenuItem("Show all hidden objects");
+		final JMenuItem showAllObjects = new JMenuItem(LABEL_SHOW_ALL_HIDDEN_OBJECTS);
 		showAllObjects.setEnabled(!hiddenObjectNodes.isEmpty());
-		showAllObjects.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				diagram.showAll();
-				diagram.repaint();
-			}
+		showAllObjects.addActionListener(ev -> {
+			diagram.showAll();
+			diagram.repaint();
 		});
 
 		subMenuShowObject.add(showAllObjects);
 		subMenuShowObject.addSeparator();
 
-		TreeSet<ObjectNodeActivity> sortedNodes = new TreeSet<ObjectNodeActivity>(objectComparator);
+		TreeSet<ObjectNodeActivity> sortedNodes = new TreeSet<>(objectComparator);
 
 		sortedNodes.addAll(hiddenObjectNodes);
 
-		Map<MClass, JMenu> classMenus = new HashMap<MClass, JMenu>();
+		Map<MClass, JMenu> classMenus = new HashMap<>();
 		for (ObjectNodeActivity node : sortedNodes) {
 			final ObjectNodeActivity objNode = node;
 			final MClass cls = objNode.cls();
 			final MObject obj = objNode.object();
 
-			if (!classMenus.containsKey(cls)) {
-				JMenu subm = new JMenu("Class " + cls.name());
-				MenuScroller.setScrollerFor(subm, numOfElems, interval, topFixedCount, bottomFixedCount);
+			JMenu parent = classMenus.computeIfAbsent(cls, k -> {
+				JMenu subm = new JMenu(LABEL_CLASS_PREFIX + k.name());
+				MenuScroller.setScrollerFor(subm, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 
-				classMenus.put(cls, subm);
-
-				// Add show all
-				JMenuItem showAll = new JMenuItem("Show all");
-				showAll.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						diagram.showObjects(getHiddenObjects(cls));
-						diagram.repaint();
-					}
+				JMenuItem showAll = new JMenuItem(LABEL_SHOW_ALL);
+				showAll.addActionListener(e -> {
+					diagram.showObjects(getHiddenObjects(k));
+					diagram.repaint();
 				});
 				subm.add(showAll);
 				subm.addSeparator();
-			}
+				return subm;
+			});
 
-			JMenu parent = classMenus.get(cls);
-
-			final JMenuItem showObject = new JMenuItem("Show " + obj.name());
-			showObject.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					diagram.showObject(obj);
-					diagram.repaint();
-				}
+			final JMenuItem showObject = new JMenuItem(LABEL_SHOW + obj.name());
+			showObject.addActionListener(ev -> {
+				diagram.showObject(obj);
+				diagram.repaint();
 			});
 			parent.add(showObject);
 		}
 
-		List<MClass> classes = new ArrayList<MClass>(classMenus.keySet());
+		List<MClass> classes = new ArrayList<>(classMenus.keySet());
 		Collections.sort(classes, new MNamedElementComparator());
 
 		for (JMenu m : classMenus.values()) {
-			MenuScroller.setScrollerFor(m, numOfElems, interval, topFixedCount, bottomFixedCount);
+			MenuScroller.setScrollerFor(m, NUM_OF_ELEMS, INTERVAL, TOP_FIXED_COUNT, BOTTOM_FIXED_COUNT);
 		}
 
 		for (MClass cls : classes) {
@@ -738,16 +676,13 @@ public class ObjectSelection {
 	 * @return
 	 */
 	public Set<MObject> getDisplayedObjectsForClasses(Set<MClass> allClasses) {
-		Set<MObject> objects = new HashSet<MObject>();
+		Set<MObject> objects = new HashSet<>();
 		Iterator<PlaceableNode> itobject = diagram.getVisibleData().getNodes().iterator();
 
 		while (itobject.hasNext()) {
 			Object node = itobject.next();
-			if (node instanceof ObjectNodeActivity) {
-				MObject mobj = ((ObjectNodeActivity) node).object();
-				if (allClasses.contains(mobj.cls())) {
-					objects.add(mobj);
-				}
+			if (node instanceof ObjectNodeActivity ona && allClasses.contains(ona.object().cls())) {
+				objects.add(ona.object());
 			}
 		}
 
@@ -761,14 +696,11 @@ public class ObjectSelection {
 	 * @return
 	 */
 	public Set<MObject> getVisibleObjects(MClass cls) {
-		Set<MObject> objects = new HashSet<MObject>();
+		Set<MObject> objects = new HashSet<>();
 
 		for (PlaceableNode node : diagram.getVisibleData().getNodes()) {
-			if (node instanceof ObjectNodeActivity) {
-				MObject mobj = ((ObjectNodeActivity) node).object();
-				if (cls.equals(mobj.cls())) {
-					objects.add(mobj);
-				}
+			if (node instanceof ObjectNodeActivity ona && cls.equals(ona.object().cls())) {
+				objects.add(ona.object());
 			}
 		}
 
@@ -776,26 +708,19 @@ public class ObjectSelection {
 	}
 
 	public Set<MObject> getCropHideObjects(Set<MClass> classes) {
-		Set<MClass> classesToHide = new HashSet<MClass>();
+		Set<MClass> classesToHide = new HashSet<>();
 		Iterator<PlaceableNode> itg = diagram.getGraph().iterator();
 
 		while (itg.hasNext()) {
 			Object node = itg.next();
-			if (node instanceof ObjectNodeActivity) {
-				MObject mobj = ((ObjectNodeActivity) node).object();
-				if (!classes.contains(mobj.cls())) {
-					classesToHide.add(mobj.cls());
-				}
+			if (node instanceof ObjectNodeActivity ona && !classes.contains(ona.object().cls())) {
+				classesToHide.add(ona.object().cls());
 			}
 		}
 
 		for (Object node : diagram.getHiddenNodes()) {
-			if (node instanceof MObject) {
-				MObject mobj = (MObject) (node);
-
-				if (!classes.contains(mobj.cls())) {
-					classesToHide.add(mobj.cls());
-				}
+			if (node instanceof MObject mobj && !classes.contains(mobj.cls())) {
+				classesToHide.add(mobj.cls());
 			}
 		}
 
@@ -803,14 +728,11 @@ public class ObjectSelection {
 	}
 
 	public Set<MObject> getHiddenObjects(Set<MClass> classes) {
-		final Set<MObject> objects = new HashSet<MObject>();
+		final Set<MObject> objects = new HashSet<>();
 
 		for (PlaceableNode node : diagram.getHiddenNodes()) {
-			if (node instanceof ObjectNodeActivity) {
-				ObjectNodeActivity mobj = (ObjectNodeActivity) (node);
-				if (classes.contains(mobj.cls())) {
-					objects.add(mobj.object());
-				}
+			if (node instanceof ObjectNodeActivity ona && classes.contains(ona.cls())) {
+				objects.add(ona.object());
 			}
 		}
 
@@ -818,14 +740,11 @@ public class ObjectSelection {
 	}
 
 	public Set<MObject> getHiddenObjects(MClass cls) {
-		final Set<MObject> objects = new HashSet<MObject>();
+		final Set<MObject> objects = new HashSet<>();
 
 		for (PlaceableNode node : diagram.getHiddenNodes()) {
-			if (node instanceof ObjectNodeActivity) {
-				ObjectNodeActivity mobj = (ObjectNodeActivity) (node);
-				if (mobj.cls().equals(cls)) {
-					objects.add(mobj.object());
-				}
+			if (node instanceof ObjectNodeActivity ona && ona.cls().equals(cls)) {
+				objects.add(ona.object());
 			}
 		}
 

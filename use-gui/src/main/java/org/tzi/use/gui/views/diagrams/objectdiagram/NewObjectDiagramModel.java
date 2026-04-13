@@ -14,7 +14,6 @@ import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge;
-import org.tzi.use.gui.views.diagrams.elements.edges.NAryAssociationClassOrObjectEdge;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram.ObjectDiagramData;
 import org.tzi.use.uml.sys.MLink;
