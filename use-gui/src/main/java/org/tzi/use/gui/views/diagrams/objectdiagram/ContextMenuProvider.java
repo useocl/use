@@ -17,4 +17,16 @@ public interface ContextMenuProvider {
                      Set<MObject> selectedObjects,
                      Set<MLink> selectedLinks,
                      Set<MObject> selectedAssocObjects);
+
+    /**
+     * Helper interface to contribute show/hide/crop submenu entries without
+     * exposing Swing types to the presenter. This logically belongs to the
+     * context menu provider since it is used to build parts of the context
+     * menu; keeping it nested helps grouping related APIs.
+     */
+    interface ShowHideCropMenuBuilder {
+        void addSelectedObjectPathView(Set<MObject> selectedObjects);
+        void addSelectionWithOCLViewAction();
+        void addSelectionObjectView();
+    }
 }

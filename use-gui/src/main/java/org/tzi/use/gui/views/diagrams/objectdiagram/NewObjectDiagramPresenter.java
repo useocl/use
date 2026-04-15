@@ -47,7 +47,7 @@ public interface NewObjectDiagramPresenter {
                                      Set<MObject> selectedAssocObjects) {}
     default void onStatusMessage(String status) {}
 
-    default void onBuildShowHideCropMenu(ShowHideCropMenuBuilder builder, Set<MObject> selectedObjects) {}
+    default void onBuildShowHideCropMenu(ContextMenuProvider.ShowHideCropMenuBuilder builder, Set<MObject> selectedObjects) {}
 
     default void onInsertLink(MAssociation association, List<MObject> participants) {}
     default void onDeleteLink(MLink link) {}

@@ -431,7 +431,7 @@ public class NewObjectDiagramPresenterImpl implements NewObjectDiagramPresenter 
 
     @Override
 
-    public void onBuildShowHideCropMenu(ShowHideCropMenuBuilder builder, Set<MObject> selectedObjects) {
+    public void onBuildShowHideCropMenu(ContextMenuProvider.ShowHideCropMenuBuilder builder, Set<MObject> selectedObjects) {
 
         log("onBuildShowHideCropMenu", "selectedObjects=" + sizeOf(selectedObjects));
 

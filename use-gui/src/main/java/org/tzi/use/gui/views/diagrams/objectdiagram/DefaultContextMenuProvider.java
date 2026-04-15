@@ -651,7 +651,7 @@ public class DefaultContextMenuProvider implements ContextMenuProvider {
 
         ObjectSelection selection = diagram != null ? diagram.getObjectSelection() : null;
 
-        presenter.onBuildShowHideCropMenu(new ShowHideCropMenuBuilder() {
+        presenter.onBuildShowHideCropMenu(new ContextMenuProvider.ShowHideCropMenuBuilder() {
 
             @Override
 
