@@ -47,7 +47,7 @@ public final class MDataTypeValueState implements MInstanceState {
 
         List<MAttribute> atts = instance.cls().allAttributes();
         // initialize attribute slots with instance values
-        fAttrSlots = new HashMap<MAttribute, Value>(atts.size());
+        fAttrSlots = new HashMap<>(atts.size());
 
         for (MAttribute attr : atts) {
             fAttrSlots.put(attr, instance.value().getValues().get(attr.name()));
@@ -58,7 +58,7 @@ public final class MDataTypeValueState implements MInstanceState {
      * Copy constructor.
      */
     public MDataTypeValueState(MDataTypeValueState x) {
-        this.fAttrSlots = new HashMap<MAttribute, Value>(x.fAttrSlots);
+        this.fAttrSlots = new HashMap<>(x.fAttrSlots);
         this.fInstance = x.fInstance;
     }
 

@@ -75,7 +75,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     /**
      * <code>true</code> if a derive expression is specified for
      * this attribute.
-     * @return
+     * @return <code>true</code> if a derive expression is specified for this attribute.
      */
     public boolean isDerived() {
     	return deriveExpression != null;
