@@ -6,4 +6,9 @@ dataType Time
     pre: hour >= 0 and hour < 24
     pre: minute >= 0 and minute < 60
     pre: second >= 0 and second < 60
+
+    before(other: Time) : Boolean =
+       self.hour < other.hour implies
+         self.minute < other.minute implies
+           self.second < other.second
 end
