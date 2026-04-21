@@ -1,0 +1,60 @@
+-- Test indirect imports
+
+import { Date } from "imports/t133_import_date.use"
+import { Time } from "imports/t133_import_time.use"
+import { DateTime } from "imports/t133_import_datetime.use"
+
+model Bootsverleih
+
+class Boot
+  attributes
+    bezeichnung : String
+    kapazitaet : Integer
+end
+
+class Bootstyp
+  attributes
+    bezeichnung : String
+end
+
+class Vermietung
+  attributes
+    start : DateTime
+    ende : DateTime
+  constraints
+    inv validDuration:
+      self.start.before(self.ende)
+    inv businessHours:
+      self.start.time.hour >= 9 and
+      self.start.time.hour < 19 and
+      self.ende.time.hour < 19 and
+      self.ende.time.hour >= 9
+    inv kapazitaetNichtUeberschritten:
+      self.mitfaherer->size() <= self.boot.kapazitaet
+end
+
+class Person
+  attributes
+    name : String
+    telefonNr : String
+end
+
+association A_BootBootstyp between
+  Boot[*]
+  Bootstyp[1]
+end
+
+association A_Vermietung_Boot between
+  Vermietung[*]
+  Boot[1]
+end
+
+association A_Vermietung_Hauptmieter between
+  Vermietung[*] role bootsmieten
+  Person[1] role hauptmieter
+end
+
+association A_Vermietung_Mitfahrer between
+  Vermietung[*] role mitfahrten
+  Person[0..*] role mitfaherer
+end

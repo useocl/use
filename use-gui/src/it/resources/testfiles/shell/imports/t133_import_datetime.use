@@ -1,0 +1,13 @@
+import Date from "t133_import_date.use"
+import Time from "t133_import_time.use"
+
+model DateTime
+
+dataType DateTime
+  operations
+    DateTime(date:Date, time:Time)
+
+    before(other:DateTime):Boolean =
+	  self.date.before(other.date) or
+	    (self.date.equals(other.date) and self.time.before(other.time))
+end
