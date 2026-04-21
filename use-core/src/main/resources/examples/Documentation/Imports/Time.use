@@ -8,7 +8,8 @@ dataType Time
     pre: second >= 0 and second < 60
 
     before(other: Time) : Boolean =
-       self.hour < other.hour implies
-         self.minute < other.minute implies
-           self.second < other.second
+       self.hour < other.hour or
+       (self.hour = other.hour and self.minute < other.minute) or
+       (self.hour = other.hour and self.minute = other.minute and
+         self.second < other.second)
 end
