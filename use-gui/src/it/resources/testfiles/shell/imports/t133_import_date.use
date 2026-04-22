@@ -49,7 +49,7 @@ dataType Date
         )
 
     getEasterSunday() : Date =
-       // Following Gauss algorithm to calculate eastern
+       // Following Gauss' algorithm to calculate Easter Sunday
        // See: https://de.wikipedia.org/wiki/Gau%C3%9Fsche_Osterformel
 
        let k:Integer = (self.year / 100).floor() in
