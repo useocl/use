@@ -4,7 +4,7 @@ on:
     workflows: ["Java CI with Maven"]
     types:
       - completed
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   collect-metrics:
