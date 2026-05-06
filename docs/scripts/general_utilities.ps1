@@ -166,11 +166,11 @@ function Store-ArchTest {
     param(
         $TestFilePath
     )
-    # In case we're not on master already
-    git checkout -q master
+    # In case we're not on main already
+    git checkout -q main
 
     if (-not (Test-Path $TestFilePath)) {
-        Log-Message "Required file $TestFilePath not found in master branch. Exiting."
+        Log-Message "Required file $TestFilePath not found in main branch. Exiting."
         exit 1
     }
 

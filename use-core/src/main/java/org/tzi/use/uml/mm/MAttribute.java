@@ -24,6 +24,8 @@ import org.tzi.use.uml.ocl.type.Type;
 
 import com.google.common.base.Optional;
 
+import java.util.Objects;
+
 /**
  * An Attribute is a model element that is part of a classifier.
  *
@@ -73,7 +75,7 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     /**
      * <code>true</code> if a derive expression is specified for
      * this attribute.
-     * @return
+     * @return <code>true</code> if a derive expression is specified for this attribute.
      */
     public boolean isDerived() {
     	return deriveExpression != null;
@@ -141,14 +143,18 @@ public final class MAttribute extends MModelElementImpl implements UseFileLocata
     public boolean equals(Object obj) {
         if (obj == this )
             return true;
-        if (obj instanceof MAttribute ) {
-        	MAttribute other = (MAttribute)obj;
+        if (obj instanceof MAttribute other) {
             return fOwner.equals(other.fOwner) && name().equals(other.name());
         }
         
         return false;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), fOwner);
+    }
+
     /**
      * Process this element with visitor.
      */

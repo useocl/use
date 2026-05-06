@@ -97,7 +97,7 @@ function Process-Commit {
 Initialize-Results-File -FilePath $RESULTS_DIR -Header "date,time,commit,buildtime"
 
 Setup-Repo -TempDir $TEMP_DIR -OriginalUseDir $ORIGINAL_USE_DIR
-git checkout -q master
+git checkout -q main
 
 #########################################
 # Main Loop starts here #
