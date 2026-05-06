@@ -20,6 +20,24 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 - **Fix direction:** Introduce interfaces/abstractions at the `uml.ocl` ↔ `uml.sys`
   boundary. Value types should not hold concrete runtime references.
 
+<!-- BEGIN MERMAID:bug-1 -->
+**uml.* triangle** — 5 cycle(s), 6 edge(s) across 3 package(s)
+
+```mermaid
+flowchart LR
+    mm["mm"]
+    ocl["ocl"]
+    sys["sys"]
+    mm --> ocl
+    ocl --> mm
+    ocl --> sys
+    sys --> mm
+    mm --> sys
+    sys --> ocl
+    linkStyle 0,1,2,3,4,5 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-1 -->
+
 ## Bug 2: `gui.main` and `gui.views` internal cycles (use-gui)
 
 - **Severity:** Medium — 1 cycle each, 14 GUI-specific cycles total
@@ -27,6 +45,30 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 - **Problem:** Subpackages within `gui.main` and `gui.views` have circular dependencies
   between each other.
 - **Fix direction:** Extract shared types into a common subpackage or flatten the hierarchy.
+
+<!-- BEGIN MERMAID:bug-2 -->
+**gui.main** — 1 cycle(s), 2 edge(s) across 2 package(s)
+
+```mermaid
+flowchart LR
+    root["root"]
+    runtime["runtime"]
+    root --> runtime
+    runtime --> root
+    linkStyle 0,1 stroke:#d33,stroke-width:2px
+```
+
+**gui.views** — 1 cycle(s), 2 edge(s) across 2 package(s)
+
+```mermaid
+flowchart LR
+    diagrams["diagrams"]
+    selection["selection"]
+    diagrams --> selection
+    selection --> diagrams
+    linkStyle 0,1 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-2 -->
 
 ## Bug 3: `runtime` package cycles (use-gui)
 
@@ -37,6 +79,41 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 - **Fix direction:** Needs further investigation — identify which runtime subpackages
   are involved and break the dependency chains.
 
+<!-- BEGIN MERMAID:bug-3 -->
+**runtime** — 43 cycle(s), 20 edge(s) across 6 package(s)
+
+```mermaid
+flowchart LR
+    gui["gui"]
+    impl["impl"]
+    root["root"]
+    service["service"]
+    shell["shell"]
+    util["util"]
+    gui --> impl
+    impl --> gui
+    impl --> root
+    root --> gui
+    impl --> service
+    service --> root
+    impl --> shell
+    shell --> root
+    shell --> util
+    util --> gui
+    util --> root
+    util --> service
+    impl --> util
+    util --> shell
+    gui --> root
+    root --> impl
+    gui --> util
+    util --> impl
+    shell --> impl
+    root --> service
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-3 -->
+
 ## Bug 4: `api.impl` ↔ `api` factory cycle (use-core)
 
 - **Severity:** Low — 1 cycle
@@ -45,6 +122,19 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
   construct `UseSystemApiNative` and `UseSystemApiUndoable` from `api.impl`,
   while `impl` depends back on root API types.
 - **Fix direction:** Use a provider/registry pattern or move factory methods into `impl`.
+
+<!-- BEGIN MERMAID:bug-4 -->
+**api / api.impl** — 1 cycle(s), 2 edge(s) across 2 package(s)
+
+```mermaid
+flowchart LR
+    impl["impl"]
+    root["root"]
+    impl --> root
+    root --> impl
+    linkStyle 0,1 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-4 -->
 
 ## Bug 5: `gen.assl` ↔ `gen.tool` cycle (use-core)
 
@@ -55,6 +145,19 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 - **Fix direction:** Move `IGCollector` interface to a shared package, or invert
   the dependency with callbacks.
 
+<!-- BEGIN MERMAID:bug-5 -->
+**gen.assl / gen.tool** — 1 cycle(s), 2 edge(s) across 2 package(s)
+
+```mermaid
+flowchart LR
+    assl["assl"]
+    tool["tool"]
+    assl --> tool
+    tool --> assl
+    linkStyle 0,1 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-5 -->
+
 ## Bug 6: `parser.ocl` ↔ `parser.use` / `parser.soil` cycles (use-core)
 
 - **Severity:** Low — 2 cycles
@@ -62,6 +165,22 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 - **Problem:** SOIL AST nodes reference OCL AST types (`ASTType`, `ASTExpression`),
   and the OCL parser references USE parser types, creating mutual dependencies.
 - **Fix direction:** Extract shared AST base types into a common `parser.ast` package.
+
+<!-- BEGIN MERMAID:bug-6 -->
+**parser.*** — 2 cycle(s), 4 edge(s) across 3 package(s)
+
+```mermaid
+flowchart LR
+    ocl["ocl"]
+    use["use"]
+    soil["soil"]
+    ocl --> use
+    use --> ocl
+    use --> soil
+    soil --> ocl
+    linkStyle 0,1,2,3 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-6 -->
 
 ## Bug 7: Layer violations in GUI launcher (use-gui)
 
@@ -73,6 +192,24 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
   - `util.test.DiagramUtilTest` calls into `gui.views.diagrams.util.Util`.
 - **Fix direction:** Launchers should use a factory or DI to obtain window instances.
   Move `DiagramUtilTest` to the GUI test source root.
+
+<!-- BEGIN MERMAID:bug-7 -->
+**GUI launcher layer violations** — 21 violation(s) across 3 caller→callee pair(s)
+
+```mermaid
+flowchart LR
+    n0["main.gui.fx<br/>JavaFXAppLauncher"]
+    n1["gui.mainFX<br/>MainWindow"]
+    n2["main.gui.swing<br/>MainSwing"]
+    n3["gui.main<br/>MainWindow"]
+    n4["util.test<br/>DiagramUtilTest"]
+    n5["gui.views.diagrams.util<br/>Util"]
+    n0 -. "5 call(s)" .-> n1
+    n2 -. "2 call(s)" .-> n3
+    n4 -. "14 call(s)" .-> n5
+    linkStyle 0,1,2 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-7 -->
 
 ---
 

@@ -1,0 +1,13 @@
+Cycle detected: Slice root -> 
+                Slice runtime -> 
+                Slice root
+  1. Dependencies of Slice root
+    - Method <org.tzi.use.gui.main.ModelBrowser.displayInfo(org.tzi.use.uml.mm.MModelElement)> calls method <org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint.createMMHTMLPrintVisitor(java.io.PrintWriter, org.tzi.use.gui.main.ModelBrowser)> in (ModelBrowser.java:322)
+    - Constructor <org.tzi.use.gui.main.MainWindow.<init>(org.tzi.use.main.Session, org.tzi.use.main.runtime.IRuntime)> calls method <org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint.createPluginActions(org.tzi.use.main.Session, org.tzi.use.gui.main.MainWindow)> in (MainWindow.java:462)
+  2. Dependencies of Slice runtime
+    - Method <org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint.createPluginActions(org.tzi.use.main.Session, org.tzi.use.gui.main.MainWindow)> has parameter of type <org.tzi.use.gui.main.MainWindow> in (IPluginActionExtensionPoint.java:0)
+    - Method <org.tzi.use.gui.main.runtime.IPluginMMVisitor.modelBrowser()> has return type <org.tzi.use.gui.main.ModelBrowser> in (IPluginMMVisitor.java:0)
+    - Method <org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint.createMMHTMLPrintVisitor(java.io.PrintWriter, org.tzi.use.gui.main.ModelBrowser)> has parameter of type <org.tzi.use.gui.main.ModelBrowser> in (IPluginMModelExtensionPoint.java:0)
+    - Method <org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint.createMMPrintVisitor(java.io.PrintWriter, org.tzi.use.gui.main.ModelBrowser)> has parameter of type <org.tzi.use.gui.main.ModelBrowser> in (IPluginMModelExtensionPoint.java:0)
+
+Cycle count: 1
