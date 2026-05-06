@@ -22,8 +22,7 @@ package org.tzi.use.gui.views.diagrams.objectdiagram;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+// action events handled with lambdas; explicit listener imports removed
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -67,29 +66,30 @@ import org.tzi.use.util.StringUtil;
 public class QualifierInputView extends JDialog {
 
 	private static final long serialVersionUID = -6361281949862418261L;
-	
+	private static final String DLG_TITLE_ERROR = "Error";
+
 	/**
 	 * The system to execute the insert link statement on.
 	 */
-	private MSystem system;
-	
+	private final transient MSystem system;
+
 	/**
 	 * The association to insert the link into
 	 */
-	private MAssociation association;
-	
+	private final transient MAssociation association;
+
 	/**
 	 * The objects participating in the link
 	 */
-	private MObject[] participants;
-	
+	private final transient MObject[] participants;
+
 	/**
 	 * A table model for each end with qualifier	
 	 */
-	private TableModel[] tableModels;
-	
-	private JTable[] tables;
-	
+	private transient TableModel[] tableModels;
+
+	private transient JTable[] tables;
+
 	public QualifierInputView(Frame owner, MSystem system, MAssociation association, MObject[] participants) {
 		super(owner, "Enter qualifier values");
 		this.system = system;
@@ -133,20 +133,12 @@ public class QualifierInputView extends JDialog {
         JButton btnApply = new JButton("Insert");
         btnApply.setMnemonic('I');
         btnApply.setVerifyInputWhenFocusTarget(true);
-        btnApply.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    apply();
-                }
-            });
-        
+		btnApply.addActionListener(e -> apply());
+
         JButton btnReset = new JButton("Reset");
         btnReset.setMnemonic('R');
         btnReset.setVerifyInputWhenFocusTarget(false);
-        btnReset.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    reset();
-                }
-            });
+		btnReset.addActionListener(e -> reset());
 
         // layout the buttons centered from left to right
         JPanel buttonPane = new JPanel();
@@ -172,15 +164,14 @@ public class QualifierInputView extends JDialog {
 		}
 		
 		List<List<Value>> qualifier = new ArrayList<>();
-		for (int i = 0; i < this.tableModels.length; ++i) {
-			TableModel model = this.tableModels[i];
+		for (TableModel model : this.tableModels) {
 			if (model == null) {
-				qualifier.add(Collections.<Value>emptyList());
+				qualifier.add(Collections.emptyList());
 			} else {
 				List<Value> endValues = getEndValues(model);
-				
-				if (endValues == null) return;
-				
+				if (endValues == null) {
+					return;
+				}
 				qualifier.add(endValues);
 			}
 		}
@@ -193,7 +184,7 @@ public class QualifierInputView extends JDialog {
 			JOptionPane.showMessageDialog(
 					getParent(), 
 					e.getMessage(), 
-					"Error", 
+					DLG_TITLE_ERROR,
 					JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -201,10 +192,15 @@ public class QualifierInputView extends JDialog {
 	}
 
 	/**
-	 * @param model
+	 * Parse and evaluate qualifier expressions from the provided table model.
+	 *
+	 * @param model the table model providing qualifier expression strings
+	 * @return a list of evaluated {@link Value} objects or null if the user
+	 *         cancelled or input was invalid
 	 */
+	@SuppressWarnings("squid:S1168") // null is used to signal user-cancel/invalid input to caller
 	protected List<Value> getEndValues(TableModel model) {
-		List<Value> endValues = new ArrayList<Value>();
+		List<Value> endValues = new ArrayList<>();
 		for (int i2 = 0; i2 < model.getValues().length; ++i2) {
 			String value = model.getValues()[i2];
 			
@@ -212,7 +208,7 @@ public class QualifierInputView extends JDialog {
 				JOptionPane.showMessageDialog(
 						this, 
 						"Please provide a value for the qualifier " + model.getQualifierNames()[i2], 
-						"Error", 
+						DLG_TITLE_ERROR,
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
@@ -231,9 +227,9 @@ public class QualifierInputView extends JDialog {
 				JOptionPane.showMessageDialog(
 						this, 
 						errorOutput, 
-						"Error", 
+						DLG_TITLE_ERROR,
 						JOptionPane.ERROR_MESSAGE);
-				return null;
+				return null; // null indicates user-cancelled/invalid input
 			}
 			
 			try {
@@ -241,23 +237,23 @@ public class QualifierInputView extends JDialog {
 		        Evaluator evaluator = new Evaluator(true);
 		        Value val = evaluator.eval(valueAsExpression, system.state(), system.varBindings());
 		        endValues.add(val);
-		    } catch (MultiplicityViolationException e) {
-		    	JOptionPane.showMessageDialog(
-						this, 
+			} catch (MultiplicityViolationException e) {
+				JOptionPane.showMessageDialog(
+						this,
 						"Could not evaluate. " + e.getMessage(), 
-						"Error", 
+						DLG_TITLE_ERROR,
 						JOptionPane.ERROR_MESSAGE);
-		    	return null;
-		    }
+				return null;
+			}
 		}
 		
 		return endValues;
 	}
 	
 	private void reset() {
-		for (int i = 0; i < this.tableModels.length; ++i) {
-			if (this.tableModels[i] != null) {
-				this.tableModels[i].reset();
+		for (TableModel tm : this.tableModels) {
+			if (tm != null) {
+				tm.reset();
 			}
 		}
 	}
@@ -265,7 +261,7 @@ public class QualifierInputView extends JDialog {
 	/**
      * The table model.
      */
-    class TableModel extends AbstractTableModel {    
+	static class TableModel extends AbstractTableModel {
         /**
 		 * 
 		 */
@@ -273,17 +269,19 @@ public class QualifierInputView extends JDialog {
 
 		final String[] columnNames = { "Qualifier", "Value" };
 
-        private String[] qualifierNames;
-        
-        private String[] qualifierValues;
-        
+		private final String[] qualifierNames;
+
+		private final String[] qualifierValues;
+
         TableModel(String[] qualifierNames) {
         	this.qualifierNames = qualifierNames;
         	this.qualifierValues = new String[qualifierNames.length];
         }
 
-        /**
-		 * @return
+		/**
+		 * Return the qualifier names for this table model.
+		 *
+		 * @return an array of qualifier names
 		 */
 		public String[] getQualifierNames() {
 			return this.qualifierNames;
@@ -299,29 +297,34 @@ public class QualifierInputView extends JDialog {
 			this.fireTableDataChanged();
 		}
 
+		@Override
 		public String getColumnName(int col) {
             return columnNames[col];
         }
 
-        public int getColumnCount() { 
-            return 2; 
+		@Override
+		public int getColumnCount() {
+            return 2;
         }
         
-        public int getRowCount() { 
+		@Override
+		public int getRowCount() {
             return qualifierNames.length;
         }
         
-        public Object getValueAt(int row, int col) { 
+		@Override
+		public Object getValueAt(int row, int col) {
             if (col == 0 )
                 return qualifierNames[row];
             else
                 return qualifierValues[row];
         }
-        public boolean isCellEditable(int row, int col) {
+		@Override
+		public boolean isCellEditable(int row, int col) {
             return col == 1;
         }
-
-        public void setValueAt(Object value, int row, int col) {
+		@Override
+		public void setValueAt(Object value, int row, int col) {
             qualifierValues[row] = value.toString();
         }
         
