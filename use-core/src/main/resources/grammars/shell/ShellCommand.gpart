@@ -57,6 +57,7 @@ import java.util.Arrays;
 package org.tzi.use.parser.shell;
 
 import org.tzi.use.parser.ParseErrorHandler;
+import org.tzi.use.util.SrcPos;
 }
 
 @lexer::members {

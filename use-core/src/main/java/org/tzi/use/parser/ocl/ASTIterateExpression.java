@@ -24,9 +24,9 @@ import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.Symtable;
+import org.tzi.use.uml.ocl.expr.ExprContext;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.uml.ocl.expr.Symtable;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpIterate;
 import org.tzi.use.uml.ocl.expr.ExpVariable;

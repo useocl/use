@@ -41,7 +41,7 @@ import org.tzi.use.util.collections.Bag;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.util.collections.HashBag;
 import org.tzi.use.util.collections.Queue;
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

@@ -47,7 +47,7 @@ import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
-import org.tzi.use.util.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 
 /**
  * Helper to setup a test system.

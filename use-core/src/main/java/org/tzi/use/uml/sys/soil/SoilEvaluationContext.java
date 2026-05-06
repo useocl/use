@@ -25,7 +25,7 @@ import java.util.Deque;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.util.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 
 /**
  * This context objects comprises everything that is required to execute

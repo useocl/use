@@ -30,8 +30,8 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.VariableSet;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.uml.sys.soil.VariableSet;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**
@@ -141,7 +141,7 @@ public class ASTSequenceStatement extends ASTStatement {
 			for (Type assignedType : assignedTypes) {
 				for (Type boundType : boundTypes) {
 					if (!assignedType.conformsTo(boundType)) {
-						ASTStatement cause = fSymtable.getCause(name);
+						ASTStatement cause = (ASTStatement) fSymtable.getCause(name);
 						throw new CompilationFailedException(
 								this,
 								"Statement "

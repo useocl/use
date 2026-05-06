@@ -38,7 +38,6 @@ import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
@@ -94,7 +93,13 @@ public class GGenerator {
             e.printStackTrace();
         }
     }
-    
+
+	private IProcedureCompiler procedureCompiler;
+
+	public void setProcedureCompiler(IProcedureCompiler procedureCompiler) {
+		this.procedureCompiler = procedureCompiler;
+	}
+
 	public void startProcedure(String callstr, GGeneratorArguments args) {
         fLastResult = null;
         fConfig = args;
@@ -110,14 +115,17 @@ public class GGenerator {
         
         try {
             Log.verbose("Compiling procedures from " + fConfig.getFilename() + ".");
-            fProcedures = ASSLCompiler.compileProcedures(
+            if (this.procedureCompiler == null) {
+                throw new IllegalStateException("IProcedureCompiler not set on GGenerator");
+            }
+            fProcedures = this.procedureCompiler.compileProcedures(
                                                      fSystem.model(),
                                                      new FileInputStream(fConfig.getFilename()),
                                                      fConfig.getFilename(),
                                                      new PrintWriter(System.err) );
             if (fProcedures != null) {
                 Log.verbose("Compiling `" + callstr + "'.");
-                call = ASSLCompiler.compileProcedureCall(fSystem.model(),
+                call = this.procedureCompiler.compileProcedureCall(fSystem.model(),
                                                         fSystem.state(),
                                                         fProcedures,
                                                         callstr,

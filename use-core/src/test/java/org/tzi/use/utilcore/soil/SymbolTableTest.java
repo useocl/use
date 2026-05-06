@@ -27,7 +27,7 @@ import org.tzi.use.parser.soil.ast.ASTEmptyStatement;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.util.soil.SymbolTable;
+import org.tzi.use.parser.soil.environment.SymbolTable;
 
 
 /**

@@ -32,7 +32,7 @@ import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 /**
  * Statement used internally as the inverse statement of an object

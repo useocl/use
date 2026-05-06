@@ -36,7 +36,7 @@ import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GProcedureCall;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.parser.use.ASTConstraintDefinition;
 import org.tzi.use.uml.mm.GeneratorModelFactory;
 import org.tzi.use.uml.mm.MClassInvariant;
@@ -46,6 +46,18 @@ import org.tzi.use.uml.sys.MSystemState;
 public class ASSLCompiler {
 
     private ASSLCompiler() {} // no instances
+    
+    public static final org.tzi.use.gen.tool.IProcedureCompiler PROCEDURE_COMPILER = new org.tzi.use.gen.tool.IProcedureCompiler() {
+        @Override
+        public java.util.List<org.tzi.use.gen.assl.statics.GProcedure> compileProcedures(org.tzi.use.uml.mm.MModel model, java.io.InputStream in, String inName, java.io.PrintWriter err) {
+            return ASSLCompiler.compileProcedures(model, in, inName, err);
+        }
+
+        @Override
+        public org.tzi.use.gen.tool.GProcedureCall compileProcedureCall(org.tzi.use.uml.mm.MModel model, org.tzi.use.uml.sys.MSystemState systemState, java.util.List<org.tzi.use.gen.assl.statics.GProcedure> procedures, String in, String inName, java.io.PrintWriter err) {
+            return ASSLCompiler.compileProcedureCall(model, systemState, procedures, in, inName, err);
+        }
+    };
     
     /**
      * Compiles generator procedures

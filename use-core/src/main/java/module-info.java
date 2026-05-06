@@ -18,7 +18,7 @@ module use.core {
     exports org.tzi.use.uml.sys;
     exports org.tzi.use.util;
     exports org.tzi.use.uml.mm.statemachines;
-    exports org.tzi.use.util.uml.sorting;
+    exports org.tzi.use.uml.sys.sorting;
     exports org.tzi.use.util.collections;
     exports org.tzi.use.analysis.coverage;
     exports org.tzi.use.uml.mm.commonbehavior.communications;
@@ -33,13 +33,15 @@ module use.core {
     exports org.tzi.use.parser.ocl;
     exports org.tzi.use.util.input;
     exports org.tzi.use.uml.sys.statemachines;
-    exports org.tzi.use.util.soil.exceptions;
     exports org.tzi.use.uml.sys.ppcHandling;
-    exports org.tzi.use.uml.sys.testsuite;
+    exports org.tzi.use.parser.testsuite.sys;
     exports org.tzi.use.gen.tool;
     exports org.tzi.use.parser.shell;
     exports org.tzi.use.parser.testsuite;
+    exports org.tzi.use.core.test;
     exports org.tzi.use.api;
     exports org.tzi.use.main;
     exports org.tzi.use.parser.generator;
+    exports org.tzi.use.parser.soil.exceptions;
+    exports org.tzi.use.parser.soil.environment;
 }

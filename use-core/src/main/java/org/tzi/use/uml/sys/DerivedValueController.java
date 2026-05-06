@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 /**
  * Interface for controllers that calculate values

@@ -21,8 +21,6 @@ package org.tzi.use.uml.sys;
 
 import com.google.common.eventbus.EventBus;
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.tool.GGenerator;
-import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
@@ -48,8 +46,8 @@ import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance.Transitio
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.UniqueNameGenerator;
-import org.tzi.use.util.soil.VariableEnvironment;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -84,9 +82,6 @@ public final class MSystem {
 
 	/** Last called operation (used by test suite) */
 	private MOperationCall lastOperationCall;
-
-	/** Snapshot generator */
-	private GGenerator fGenerator;
 
 	/** The variables of this system */
 	private VariableEnvironment fVariableEnvironment;
@@ -154,7 +149,6 @@ public final class MSystem {
 		fObjects = new HashMap<>();
 		fUniqueNameGenerator = new UniqueNameGenerator();
 		fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
-		fGenerator = new GGenerator(this);
 		fVariableEnvironment = new VariableEnvironment(fCurrentState);
 		fStatementEvaluationResults = new ArrayDeque<>();
 		fCallStack = new ArrayDeque<>();
@@ -183,12 +177,7 @@ public final class MSystem {
 		return fModel;
 	}
 
-	/**
-	 * Returns the system's instance generator.
-	 */
-	public GGenerator generator() {
-		return fGenerator;
-	}
+
 
 	public VarBindings varBindings() {
 		return fVariableEnvironment.constructVarBindings();
@@ -296,8 +285,26 @@ public final class MSystem {
 		fObjects.remove(obj.name());
 	}
 
+	/**
+	 * The invariant compiler used to compile invariant definitions.
+	 * Must be set via setInvariantCompiler() before calling loadInvariants().
+	 */
+	private InvariantCompiler invariantCompiler;
+
+	/**
+	 * Sets the invariant compiler used to compile invariant definitions.
+	 * @param invariantCompiler the compiler to use
+	 */
+	public void setInvariantCompiler(InvariantCompiler invariantCompiler) {
+		this.invariantCompiler = invariantCompiler;
+	}
+
 	public void loadInvariants(InputStream in, String inputName, boolean doEcho, PrintWriter out) {
-		Collection<MClassInvariant> invs = ASSLCompiler
+		if (invariantCompiler == null) {
+			Log.warn("InvariantCompiler not set. Cannot load invariants.");
+			return;
+		}
+		Collection<MClassInvariant> invs = invariantCompiler
 				.compileInvariants(fModel, in, inputName,
 						out);
 
