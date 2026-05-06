@@ -25,7 +25,7 @@ public class AntCyclicDependenciesGUITest {
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackages("org.tzi.use.gui");
 
-    private static final String PROJECT_ROOT = new File("").getAbsolutePath();
+    private static final String PROJECT_ROOT = new File("target/archunit-results").getAbsolutePath();
     private static final String ALL_PACKAGES_RESULTS_FILE = new File(PROJECT_ROOT, "ant_cyclic_dependencies_entire_gui_results.csv").getAbsolutePath();
     private static final String GRAPHLAYOUT_PACKAGE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_graphlayout_results.csv").getAbsolutePath();
     private static final String MAIN_PACKAGE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_main_gui_results.csv").getAbsolutePath();

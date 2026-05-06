@@ -20,19 +20,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MavenCyclicDependenciesGUITest {
 
-    // hier ist es nicht möglich, nur GUI Packages zu importieren, wg. Namensdopplungen
-    // (org.tzi.use.util, org.tzi.use.util.input, org.tzi.use.main) & da GUI Zugriff auf
-    // diese Packages von Core hat. Dh. kann nie akkurat die Anzahl an Cycles in GUI gemessen
-    // werden. Es können höchsten diejenigen Subpackages analysiert werden, die eindeutige
-    // Namen besitzen.
+    // It is impossible to import only GUI packages here due to naming duplications
+    // (org.tzi.use.util, org.tzi.use.util.input, org.tzi.use.main),
+    // and because the GUI accesses these packages from `use-core`.
+    // Therefore, the number of cycles in the GUI can never be accurately measured.
+    // Only subpackages with unique names can be analyzed.
     private final JavaClasses classes = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackages("org.tzi.use");
 
-    private static final String ENTIRE_PROJECT_RESULTS = "maven_cyclic_dependencies_entire_project_results.csv";
-    private static final String GUI_PACKAGE_RESULTS = "maven_cyclic_dependencies_gui_results.csv";
-    private static final String RUNTIME_PACKAGE_RESULTS = "maven_cyclic_dependencies_runtime_results.csv";
-    private static final String SHELL_PACKAGE_RESULTS = "maven_cyclic_dependencies_shell_results.csv";
+    private static final String RESULTS_DIR = new File("target/archunit-results").getAbsolutePath();
+    private static final String ENTIRE_PROJECT_RESULTS = new File(RESULTS_DIR,
+            "maven_cyclic_dependencies_entire_project_results.csv").getAbsolutePath();
+    private static final String GUI_PACKAGE_RESULTS = new File(RESULTS_DIR, "maven_cyclic_dependencies_gui_results.csv")
+            .getAbsolutePath();
+    private static final String RUNTIME_PACKAGE_RESULTS = new File(RESULTS_DIR,
+            "maven_cyclic_dependencies_runtime_results.csv").getAbsolutePath();
+    private static final String SHELL_PACKAGE_RESULTS = new File(RESULTS_DIR,
+            "maven_cyclic_dependencies_shell_results.csv").getAbsolutePath();
 
     @Before
     public void setup() {
@@ -106,18 +111,18 @@ public class MavenCyclicDependenciesGUITest {
                     cycleCount.incrementAndGet();
                     String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
                     cycleDetails.add(cycleInfo);
-                    //System.out.println(cycleInfo);
+                    // System.out.println(cycleInfo);
                 });
 
-        //System.out.println("Cycle details for " + packageName + ":");
-        //cycleDetails.forEach(System.out::println);
-        //System.out.println("Total cycles found: " + cycleCount.get());
+        // System.out.println("Cycle details for " + packageName + ":");
+        // cycleDetails.forEach(System.out::println);
+        // System.out.println("Total cycles found: " + cycleCount.get());
 
         return cycleCount.get();
     }
 
     private void writeResult(int result, String filename) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))){
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
             out.println(result);
         } catch (IOException e) {
             e.printStackTrace();
