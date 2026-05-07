@@ -114,27 +114,36 @@ flowchart LR
 ```
 <!-- END MERMAID:bug-3 -->
 
-## Bug 4: `api.impl` ↔ `api` factory cycle (use-core)
+## Bug 4: `api.impl` ↔ `api` factory cycle (use-core) — ✅ RESOLVED
 
-- **Severity:** Low — 1 cycle
+- **Severity:** ~~Low — 1 cycle~~ → **0 cycles**
 - **Location:** `org.tzi.use.api`, `org.tzi.use.api.impl`
 - **Problem:** `UseSystemApi` factory methods in the root `api` package directly
   construct `UseSystemApiNative` and `UseSystemApiUndoable` from `api.impl`,
   while `impl` depends back on root API types.
-- **Fix direction:** Use a provider/registry pattern or move factory methods into `impl`.
+- **Fix:** Moved factory methods into `api.impl.UseSystemApiFactory`. The root
+  `api` package no longer imports `api.impl`, making the dependency
+  unidirectional (`impl → root` only). Updated all 26 call sites across 10 files.
 
-<!-- BEGIN MERMAID:bug-4 -->
-**api / api.impl** — 1 cycle(s), 2 edge(s) across 2 package(s)
+### Before (1 cycle)
 
 ```mermaid
 flowchart LR
-    impl["impl"]
-    root["root"]
-    impl --> root
-    root --> impl
-    linkStyle 0,1 stroke:#d33,stroke-width:2px
+    impl["api.impl"] -->|"extends UseSystemApi<br/>throws UseApiException"| root["api"]
+    root -->|"UseSystemApi.create() calls<br/>new UseSystemApiNative/Undoable"| impl
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
+    linkStyle 1 stroke:#d33,stroke-width:2px
 ```
-<!-- END MERMAID:bug-4 -->
+
+### After (0 cycles) ✅
+
+```mermaid
+flowchart LR
+    impl["api.impl<br/>(UseSystemApiFactory)"] -->|"extends UseSystemApi<br/>throws UseApiException"| root["api"]
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
+```
+
+> _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-4_failure_report_maven_cycles_api.txt`_
 
 ## Bug 5: `gen.assl` ↔ `gen.tool` cycle (use-core)
 

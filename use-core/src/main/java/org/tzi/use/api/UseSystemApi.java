@@ -18,11 +18,8 @@
  */
 package org.tzi.use.api;
 
-import org.tzi.use.api.impl.UseSystemApiNative;
-import org.tzi.use.api.impl.UseSystemApiUndoable;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
-import org.tzi.use.main.Session;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Evaluator;
@@ -51,43 +48,6 @@ import java.util.List;
  * @author Lars Hamann
  */
 public abstract class UseSystemApi {
-	
-	/**
-	 * Creates a new system API for the given session.
-	 * The returned API implementation is designed to be used
-	 * inside a running USE application session. 
-	 * @param session The session to create a new system API for. 
-	 * @return A new UseSystemApi instance with an empty system state to manipulate.
-	 */
-	public static UseSystemApi create(Session session) {
-		return new UseSystemApiUndoable(session);
-	}
-	
-	/**
-	 * Creates a new system API for the given system.
-	 * @param system The system to encapsulate with the API.
-	 * @param enableUndo Whether the API should generate undo statements
-	 * @return A new UseSystemApi instance with the system state encapsulated to manipulate it.
-	 */
-	public static UseSystemApi create(MSystem system, boolean enableUndo) {
-		if (enableUndo)
-			return new UseSystemApiUndoable(system);
-		else 
-			return new UseSystemApiNative(system);
-	}
-
-	/**
-	 * Creates a new system API for the given model.
-	 * @param model The model to create a new system API for. 
-	 * @param enableUndo Whether the API should generate undo statements
-	 * @return A new UseSystemApi instance with an empty system state to manipulate.
-	 */
-	public static UseSystemApi create(MModel model, boolean enableUndo) {
-		if (enableUndo)
-			return new UseSystemApiUndoable(model);
-		else 
-			return new UseSystemApiNative(model);
-	}
 	
 	protected final MSystem system;
 	

@@ -28,6 +28,7 @@ import junit.framework.TestSuite;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -60,7 +61,7 @@ public class MAssociationClassTest extends TestCase {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
                         
-            UseSystemApi api = UseSystemApi.create(model, false);
+            UseSystemApi api = UseSystemApiFactory.create(model, false);
 
             api.createObjects("Person", "p1", "p2");
             api.createObjects("Company", "c1");

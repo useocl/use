@@ -32,7 +32,8 @@ SOURCES: list[tuple[str, list[tuple[Path, str, str]]]] = [
         (GUI_REPORTS / "failure_report_maven_cycles_gui_views.txt", "cycles", "gui.views"),
     ]),
     ("bug-3", [(GUI_REPORTS / "failure_report_maven_cycles_runtime.txt", "cycles", "runtime")]),
-    ("bug-4", [(CORE_REPORTS / "failure_report_maven_cycles_api.txt", "cycles", "api / api.impl")]),
+    # bug-4 resolved: api↔api.impl cycle fixed, inline before/after diagrams in README
+    # ("bug-4", [(CORE_REPORTS / "failure_report_maven_cycles_api.txt", "cycles", "api / api.impl")]),
     ("bug-5", [(CORE_REPORTS / "failure_report_maven_cycles_gen.txt", "cycles", "gen.assl / gen.tool")]),
     ("bug-6", [(CORE_REPORTS / "failure_report_maven_cycles_parser.txt", "cycles", "parser.*")]),
     ("bug-7", [(GUI_REPORTS / "failure_report_maven_layers.txt", "layers", "GUI launcher layer violations")]),

@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 import org.tzi.use.uml.ocl.value.CollectionValue;
@@ -60,7 +61,7 @@ public class MCmdDestroyObjectsTest extends TestCase {
             fail( ex.getMessage() );
         }
         
-        systemApi = UseSystemApi.create(modelApi.getModel(), false);
+        systemApi = UseSystemApiFactory.create(modelApi.getModel(), false);
     }
     
     /**

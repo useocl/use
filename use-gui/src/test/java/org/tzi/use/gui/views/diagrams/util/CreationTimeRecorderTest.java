@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CreationTimeRecorder;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.MMessage;
 import org.tzi.use.uml.mm.MModel;
@@ -52,7 +53,7 @@ public class CreationTimeRecorderTest extends TestCase {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
             
-            UseSystemApi api = UseSystemApi.create(model, true);
+            UseSystemApi api = UseSystemApiFactory.create(model, true);
             
             // creation of an object (p1) of the class Person
             api.createObjects("Person", "p1");
@@ -85,7 +86,7 @@ public class CreationTimeRecorderTest extends TestCase {
 			assertEquals(i+1, rec.getTime());
 		}
 		
-		UseSystemApi api = UseSystemApi.create(system, true);
+		UseSystemApi api = UseSystemApiFactory.create(system, true);
 		MObject p1 = api.getObject("p1");
 		assertEquals(0, rec.getLastCreationTime(p1));
 		

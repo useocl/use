@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.type.TypeFactory;
 import org.tzi.use.uml.ocl.value.BagValue;
@@ -293,7 +294,7 @@ public class AbstractBagTest extends TestCase {
             b = mApi.createClass("B", false);
             c = mApi.createClass("C", false);
             
-            UseSystemApi sApi = UseSystemApi.create(mApi.getModel(), false);
+            UseSystemApi sApi = UseSystemApiFactory.create(mApi.getModel(), false);
             
             sApi.createObjectsEx(a, "a1");
             sApi.createObjectsEx(b, "b1");

@@ -40,6 +40,7 @@ module use.core {
     exports org.tzi.use.parser.shell;
     exports org.tzi.use.parser.testsuite;
     exports org.tzi.use.api;
+    exports org.tzi.use.api.impl;
     exports org.tzi.use.main;
     exports org.tzi.use.parser.generator;
 }

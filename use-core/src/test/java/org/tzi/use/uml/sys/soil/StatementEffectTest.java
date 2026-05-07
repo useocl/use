@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.TestSystem;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;
@@ -63,7 +64,7 @@ public class StatementEffectTest extends TestCase {
 	@Override
 	public void setUp() throws MInvalidModelException, MSystemException, ExpInvalidException {
 		fTestSystem = new TestSystem();
-		systemApi = UseSystemApi.create(fTestSystem.getSystem(), false);
+		systemApi = UseSystemApiFactory.create(fTestSystem.getSystem(), false);
 		fState = fTestSystem.getState();
 		fOldState = new MSystemState("oldState", fState);
 		fOldVarEnv = new VariableEnvironment(fTestSystem.getVarEnv());

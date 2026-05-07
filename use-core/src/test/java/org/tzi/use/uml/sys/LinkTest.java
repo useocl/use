@@ -26,6 +26,7 @@ import junit.framework.TestSuite;
 
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MModel;
@@ -76,7 +77,7 @@ public class LinkTest extends TestCase {
         try {
             MSystem system = createModelWithObject();
             
-            UseSystemApi api = UseSystemApi.create(system, false);
+            UseSystemApi api = UseSystemApiFactory.create(system, false);
 
             assertEquals( "j1", system.state().objectByName( "j1" ).name() );
 
@@ -107,7 +108,7 @@ public class LinkTest extends TestCase {
         try {
             MSystem system = createModelWithObject();
             
-            UseSystemApi api = UseSystemApi.create(system, false);
+            UseSystemApi api = UseSystemApiFactory.create(system, false);
             
             MAssociation assoc = system.model().getAssociation("Job");
                    
@@ -165,7 +166,7 @@ public class LinkTest extends TestCase {
         try {
             MSystem system = createModelWithoutLinkObject();
             
-            UseSystemApi api = UseSystemApi.create(system, false);
+            UseSystemApi api = UseSystemApiFactory.create(system, false);
              
             api.createLink("Job", "p1", "c1");
             
@@ -191,7 +192,7 @@ public class LinkTest extends TestCase {
         try {
             system = createModelWithoutLinkObject();
             
-            UseSystemApi api = UseSystemApi.create(system, false);
+            UseSystemApi api = UseSystemApiFactory.create(system, false);
             api.createObjects("Job", "j1");
 
         } catch ( UseApiException e ) {
@@ -217,7 +218,7 @@ public class LinkTest extends TestCase {
         try {
             system = createModelWithoutLinkObject();
            
-            UseSystemApi api = UseSystemApi.create(system, false);
+            UseSystemApi api = UseSystemApiFactory.create(system, false);
              
             // Insert the first LinkObject
             api.createLinkObject("Job", "j1", new String[]{"p1", "c1"});
@@ -244,7 +245,7 @@ public class LinkTest extends TestCase {
             system = createModelWithoutLinkObject();
             assocClass = system.model().getAssociationClass("Job");
             
-            UseSystemApi api = UseSystemApi.create(system, false);
+            UseSystemApi api = UseSystemApiFactory.create(system, false);
                
             // Insert the first LinkObject
             api.createLink("Job", "p1", "c1");
@@ -289,7 +290,7 @@ public class LinkTest extends TestCase {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
             
-            UseSystemApi api = UseSystemApi.create(model, true);
+            UseSystemApi api = UseSystemApiFactory.create(model, true);
             
             // creation of an object (p1) of the class Person
             api.createObjects("Person", "p1");
@@ -322,7 +323,7 @@ public class LinkTest extends TestCase {
             MModel model = TestModelUtil.getInstance()
                     .createModelWithClassAndAssocClass();
             
-            UseSystemApi api = UseSystemApi.create(model, false);
+            UseSystemApi api = UseSystemApiFactory.create(model, false);
             
             // creation of an object (p1) of the class Person
             api.createObjects("Person", "p1");

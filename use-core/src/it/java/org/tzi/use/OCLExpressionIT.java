@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
-import org.tzi.use.api.impl.UseSystemApiNative;
-import org.tzi.use.uml.mm.MModel;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.uml.ocl.value.Value;
 
 public class OCLExpressionIT {
@@ -17,7 +16,7 @@ public class OCLExpressionIT {
     @Test
     void testExpression() {
         UseModelApi modelApi = new UseModelApi("Integration tests");
-        UseSystemApi sysAPI = new UseSystemApiNative(modelApi.getModel());
+        UseSystemApi sysAPI = UseSystemApiFactory.create(modelApi.getModel(), false);
 
         Value result = null;
         try {

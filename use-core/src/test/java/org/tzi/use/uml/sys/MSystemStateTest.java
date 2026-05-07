@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiFactory;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
@@ -49,7 +50,7 @@ public class MSystemStateTest extends TestCase {
         MClass c2 = api.createClass("C2", false);
         MClass c3 = api.createClass("C3", false);
         
-        UseSystemApi sysApi = UseSystemApi.create(api.getModel(), false);
+        UseSystemApi sysApi = UseSystemApiFactory.create(api.getModel(), false);
 
     	sysApi.createObjectEx(c1,"o1_1");
     	sysApi.createObjectEx(c2,"o2_1");
@@ -81,7 +82,7 @@ public class MSystemStateTest extends TestCase {
     	MClass test = api.createClass("Test", false);
     	MClass test1 = api.createClass("Test1", false);
     	
-    	UseSystemApi sys = UseSystemApi.create(api.getModel(), true);
+    	UseSystemApi sys = UseSystemApiFactory.create(api.getModel(), true);
 
     	try {
 	    	createObjects(sys, test, numObjects);
@@ -127,7 +128,7 @@ public class MSystemStateTest extends TestCase {
     	MClass test = api.createClass("Test", false);
     	MClass test1 = api.createClass("Test1", false);
     	
-    	UseSystemApi sys = UseSystemApi.create(api.getModel(), true);
+    	UseSystemApi sys = UseSystemApiFactory.create(api.getModel(), true);
     	MObject obj;
     	
 		obj = sys.createObjectEx(test, null);
