@@ -220,13 +220,33 @@ flowchart LR
 ```
 <!-- END MERMAID:bug-7 -->
 
+## Bug 8: `shell` ↔ `shell.runtime` cycle (use-gui)
+
+- **Severity:** Low — 1 cycle
+- **Location:** `org.tzi.use.main.shell`, `org.tzi.use.main.shell.runtime`
+- **Problem:** `Shell` (in `root` slice of `shell` package) depends on `IPluginShellExtensionPoint` (in `runtime` slice), which in turn depends back on `Shell` via `IPluginShellCmd.getShell()`.
+- **Fix direction:** Extract interfaces or restructure the dependency so the runtime does not depend back on the concrete shell.
+
+<!-- BEGIN MERMAID:bug-8 -->
+**shell / shell.runtime** — 1 cycle(s), 2 edge(s) across 2 package(s)
+
+```mermaid
+flowchart LR
+    root["root"]
+    runtime["runtime"]
+    root --> runtime
+    runtime --> root
+    linkStyle 0,1 stroke:#d33,stroke-width:2px
+```
+<!-- END MERMAID:bug-8 -->
+
 ---
 
 ## Current Metrics
 
 | Module   | Cycles | Worst Area                          |
 |----------|--------|-------------------------------------|
-| use-core | 43     | `uml` package (Bug 1: 34 cycles)   |
+| use-core | 42     | `uml` package (Bug 1: 34 cycles)   |
 | use-gui  | 384*   | `runtime` (Bug 3: 43 cycles)       |
 
 \* Project-wide count; GUI-only is 14 cycles.
