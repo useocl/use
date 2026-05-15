@@ -36,6 +36,7 @@ import java.util.List;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
+import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.parser.generator.ASSLCompiler;

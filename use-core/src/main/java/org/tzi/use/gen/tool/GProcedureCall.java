@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.gen.assl.statics.GSignature;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.type.Type;

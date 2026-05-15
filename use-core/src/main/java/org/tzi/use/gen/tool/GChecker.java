@@ -29,10 +29,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 
+import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
+import org.tzi.use.gen.assl.dynamics.GStatistic;
 import org.tzi.use.gen.assl.dynamics.IGChecker;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.tool.statistics.GInvariantStatistic;
-import org.tzi.use.gen.tool.statistics.GStatistic;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.ocl.expr.Evaluator;

@@ -31,7 +31,6 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.util.Random;
 
-import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;

@@ -19,6 +19,7 @@
 
 package org.tzi.use.gen.tool.statistics;
 
+import org.tzi.use.gen.assl.dynamics.GStatistic;
 import org.tzi.use.uml.mm.MClassInvariant;
 
 /**

@@ -20,7 +20,7 @@
 package org.tzi.use.main.shell;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.tool.GGeneratorArguments;
+import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;

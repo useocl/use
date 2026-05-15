@@ -173,25 +173,64 @@ flowchart LR
 
 > _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-4_failure_report_maven_cycles_api.txt`_
 
-## Bug 5: `gen.assl` ↔ `gen.tool` cycle (use-core)
+## Bug 5: `gen.assl` ↔ `gen.tool` cycle (use-core) — ✅ RESOLVED
 
-- **Severity:** Low — 1 cycle
+- **Severity:** ~~Low — 1 cycle~~ → **0 cycles**
 - **Location:** `org.tzi.use.gen.assl`, `org.tzi.use.gen.tool`
-- **Problem:** `GChecker` (in `gen.tool`) calls `IGCollector` methods (in
-  `gen.assl.dynamics`), while ASSL dynamics depends back on tool types.
-- **Fix direction:** Move `IGCollector` interface to a shared package, or invert
-  the dependency with callbacks.
+- **Problem:** the language layer (`gen.assl.statics` / `gen.assl.dynamics`)
+  imported three types living in `gen.tool`, while `gen.tool` already
+  imports `gen.assl` (its natural direction). The four offending
+  edges were:
+  - `GConfiguration` (assl.dynamics) → `GGeneratorArguments` (tool)
+  - `GEvalProcedure` (assl.dynamics) → `GGeneratorArguments` (tool)
+  - `GProcedure` (assl.statics) → `GSignature` (tool)
+  - `GInstrBarrier` (assl.statics) → `GStatistic` (tool.statistics)
+- **Fix:** moved each of the three shared types out of `gen.tool` and
+  into the `gen.assl` subpackage where its dependencies already live —
+  no behavior change, only a package move:
+  - `org.tzi.use.gen.tool.GSignature` → `org.tzi.use.gen.assl.statics.GSignature`
+  - `org.tzi.use.gen.tool.GGeneratorArguments` → `org.tzi.use.gen.assl.dynamics.GGeneratorArguments`
+  - `org.tzi.use.gen.tool.statistics.GStatistic` → `org.tzi.use.gen.assl.dynamics.GStatistic`
+
+  `GInvariantStatistic` (extends `GStatistic`) stays in
+  `gen.tool.statistics` and now imports the moved base class — that
+  edge points `tool → assl`, the natural direction. Updated callers
+  in `gen.tool` (`GChecker`, `GGenerator`, `GProcedureCall`,
+  `GInvariantStatistic`), in the parser (`ASTGProcedureCall`,
+  `ASTGAsslCall`), and in `use-gui` (`Shell`). Added
+  `exports org.tzi.use.gen.assl.dynamics` to `module-info` so the
+  shell can still see `GGeneratorArguments`.
+- **Verification:** ArchUnit slice rule on `org.tzi.use.gen` (slicing
+  by first sub-package) reports **0 cycles** after the move. The
+  `assl → tool` direction has zero remaining import edges; only
+  `tool → assl` remains.
+- **⚠ Breaking API change — migration note:** the three classes
+  changed package. External callers must update their imports:
+  ```
+  org.tzi.use.gen.tool.GSignature                  → org.tzi.use.gen.assl.statics.GSignature
+  org.tzi.use.gen.tool.GGeneratorArguments         → org.tzi.use.gen.assl.dynamics.GGeneratorArguments
+  org.tzi.use.gen.tool.statistics.GStatistic       → org.tzi.use.gen.assl.dynamics.GStatistic
+  ```
+  No signature, field, or behavior change — only the package moves.
+  Suggested release-note tag: `[breaking] gen`.
 
 <!-- BEGIN MERMAID:bug-5 -->
-**gen.assl / gen.tool** — 1 cycle(s), 2 edge(s) across 2 package(s)
+### Before (1 cycle)
 
 ```mermaid
 flowchart LR
-    assl["assl"]
-    tool["tool"]
-    assl --> tool
-    tool --> assl
-    linkStyle 0,1 stroke:#d33,stroke-width:2px
+    assl["gen.assl<br/>(statics, dynamics)"] -->|"GSignature, GGeneratorArguments,<br/>GStatistic field/param types"| tool["gen.tool<br/>(+ tool.statistics)"]
+    tool -->|"GProcedure, IGCollector,<br/>GInstrBarrier (natural)"| assl
+    linkStyle 0 stroke:#d33,stroke-width:2px
+    linkStyle 1 stroke:#2a9d8f,stroke-width:2px
+```
+
+### After (0 cycles) ✅
+
+```mermaid
+flowchart LR
+    tool["gen.tool<br/>(+ tool.statistics)"] -->|"uses GProcedure, IGCollector,<br/>GSignature, GGeneratorArguments,<br/>GStatistic"| assl["gen.assl<br/>(statics, dynamics)"]
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
 ```
 <!-- END MERMAID:bug-5 -->
 

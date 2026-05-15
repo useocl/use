@@ -21,7 +21,7 @@ package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.gen.assl.dynamics.GEvalBarrier;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
-import org.tzi.use.gen.tool.statistics.GStatistic;
+import org.tzi.use.gen.assl.dynamics.GStatistic;
 import org.tzi.use.uml.ocl.expr.Expression;
 
 /**
