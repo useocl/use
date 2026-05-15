@@ -44,10 +44,9 @@ public class MavenCyclicDependenciesGUITest {
 
     @Before
     public void setup() {
-        // Delete the results file if it exists
-        File file = new File(GUI_PACKAGE_RESULTS);
-        if (file.exists()) {
-            file.delete();
+        File resultsDir = new File(RESULTS_DIR);
+        if (!resultsDir.exists() && !resultsDir.mkdirs()) {
+            System.err.println("Could not create results directory: " + RESULTS_DIR);
         }
         System.out.println("No. of imported classes : " + classes.size());
     }
@@ -128,17 +127,20 @@ public class MavenCyclicDependenciesGUITest {
     }
 
     private void writeFailureReport(EvaluationResult result, String shortName, int cycleCount) {
-        if (cycleCount == 0) {
-            return;
-        }
         File reportsDir = new File(REPORTS_DIR);
         if (!reportsDir.exists() && !reportsDir.mkdirs()) {
             System.err.println("Could not create reports directory: " + REPORTS_DIR);
             return;
         }
-        String filename = new File(reportsDir,
-                "failure_report_maven_cycles_" + shortName + ".txt").getAbsolutePath();
-        try (PrintWriter out = new PrintWriter(new FileWriter(filename))) {
+        File reportFile = new File(reportsDir, "failure_report_maven_cycles_" + shortName + ".txt");
+        if (cycleCount == 0) {
+            // Drop any stale report from a previous run so the directory reflects the current state.
+            if (reportFile.exists() && !reportFile.delete()) {
+                System.err.println("Could not delete stale report: " + reportFile.getAbsolutePath());
+            }
+            return;
+        }
+        try (PrintWriter out = new PrintWriter(new FileWriter(reportFile))) {
             for (String detail : result.getFailureReport().getDetails()) {
                 out.println(detail);
             }
@@ -150,7 +152,7 @@ public class MavenCyclicDependenciesGUITest {
     }
 
     private void writeResult(int result, String filename) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename))) {
             out.println(result);
         } catch (IOException e) {
             e.printStackTrace();
