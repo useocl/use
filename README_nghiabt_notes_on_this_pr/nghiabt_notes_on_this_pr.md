@@ -130,6 +130,26 @@ flowchart LR
   `api.factory` only; `api.impl` stays unexported, keeping the
   implementation classes off the public surface. Dependencies
   remain unidirectional: `factory → impl → api`.
+- **⚠ Breaking API change — migration note:** the static factory
+  methods `UseSystemApi.create(Session)`,
+  `UseSystemApi.create(MSystem, boolean)`, and
+  `UseSystemApi.create(MModel, boolean)` are **removed**, not
+  deprecated. A deprecated bridge inside `UseSystemApi` is not
+  feasible: any delegation from `api` to `api.factory` (which depends
+  on `api.impl`, which extends `UseSystemApi`) would re-introduce the
+  exact `api → … → api` cycle this fix removes. External consumers
+  must rename call sites:
+  ```
+  UseSystemApi.create(session)        →  UseSystemApiFactory.create(session)
+  UseSystemApi.create(system, undo)   →  UseSystemApiFactory.create(system, undo)
+  UseSystemApi.create(model,  undo)   →  UseSystemApiFactory.create(model,  undo)
+  ```
+  The import changes from `org.tzi.use.api.UseSystemApi` (already
+  imported for the return type) to additionally importing
+  `org.tzi.use.api.factory.UseSystemApiFactory`. No signature, return
+  type, or runtime behavior changes — only the declaring class moves.
+  Suggested release-note tag: `[breaking] api`. Recommended for a
+  minor/major bump on the next published artifact.
 
 ### Before (1 cycle)
 
