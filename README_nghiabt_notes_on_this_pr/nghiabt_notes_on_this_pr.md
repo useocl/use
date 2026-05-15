@@ -234,28 +234,74 @@ flowchart LR
 ```
 <!-- END MERMAID:bug-5 -->
 
-## Bug 6: `parser.ocl` ↔ `parser.use` / `parser.soil` cycles (use-core)
+## Bug 6: `parser.ocl` ↔ `parser.use` / `parser.soil` cycles (use-core) — ✅ RESOLVED
 
-- **Severity:** Low — 2 cycles
-- **Location:** `org.tzi.use.parser.*`
-- **Problem:** SOIL AST nodes reference OCL AST types (`ASTType`, `ASTExpression`),
-  and the OCL parser references USE parser types, creating mutual dependencies.
-- **Fix direction:** Extract shared AST base types into a common `parser.ast` package.
+- **Severity:** ~~Low — 2 cycles~~ → **0 cycles**
+- **Location:** `org.tzi.use.parser.{ocl, use, soil.ast}`
+- **Problem:** the ArchUnit report listed two cycles in the
+  `org.tzi.use.parser` slice:
+  1. `ocl → use → ocl`
+  2. `ocl → use → soil → ocl`
+
+  Both cycles shared **one and the same** `ocl → use` edge — the only
+  import from `parser.ocl` into `parser.use` in the codebase:
+  `parser.ocl.ASTEnumTypeDefinition extends parser.use.ASTClassifier`.
+  The other directions (`use → ocl`, `use → soil`, `soil → ocl`) are
+  many edges and represent the natural data flow of the parser AST
+  (USE/SOIL AST nodes referencing OCL types and expressions).
+- **Fix:** moved
+  `org.tzi.use.parser.ocl.ASTEnumTypeDefinition` →
+  `org.tzi.use.parser.use.ASTEnumTypeDefinition`. The class already
+  extended `parser.use.ASTClassifier`, so the move *removes* a
+  cross-package import rather than adding one. Enum type definitions
+  are declared at the model level (in `.use` files), which is the
+  USE-language grammar — `parser.use` is the semantically correct
+  home. Updated callers: dropped the now-unused
+  `import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;` from
+  `parser.use.ASTModel`. The generated `USEParser.java` (built from
+  `USE.g`) lives in `parser.use` and resolves the symbol via
+  same-package lookup — **no grammar change required**.
+- **Verification:** ArchUnit slice rule on `org.tzi.use.parser`
+  (slicing by first sub-package) reports **0 cycles** after the move;
+  the `ocl → use` direction has zero remaining import edges.
+- **⚠ Breaking API change — migration note:** the class
+  `org.tzi.use.parser.ocl.ASTEnumTypeDefinition` is renamed
+  (package-moved) to
+  `org.tzi.use.parser.use.ASTEnumTypeDefinition`. External callers
+  that import it by FQN must update the import:
+  ```
+  org.tzi.use.parser.ocl.ASTEnumTypeDefinition  →  org.tzi.use.parser.use.ASTEnumTypeDefinition
+  ```
+  No signature, field, or behavior change — only the package moves.
+  Suggested release-note tag: `[breaking] parser`.
 
 <!-- BEGIN MERMAID:bug-6 -->
-**parser.*** — 2 cycle(s), 4 edge(s) across 3 package(s)
+### Before (2 cycles, 4 edges)
 
 ```mermaid
 flowchart LR
-    ocl["ocl"]
-    use["use"]
-    soil["soil"]
-    ocl --> use
-    use --> ocl
-    use --> soil
-    soil --> ocl
-    linkStyle 0,1,2,3 stroke:#d33,stroke-width:2px
+    ocl["parser.ocl"]
+    use["parser.use"]
+    soil["parser.soil.ast"]
+    ocl -->|"ASTEnumTypeDefinition<br/>extends ASTClassifier"| use
+    use -->|"ASTType, ASTExpression,<br/>ASTVariableDeclaration, …"| ocl
+    use -->|"ASTStatement, ASTBlockStatement, …"| soil
+    soil -->|"ASTType, ASTExpression, …"| ocl
+    linkStyle 0 stroke:#d33,stroke-width:2px
+    linkStyle 1,2,3 stroke:#2a9d8f,stroke-width:2px
 ```
+
+### After (0 cycles) ✅
+
+```mermaid
+flowchart LR
+    use["parser.use<br/>(+ ASTEnumTypeDefinition)"] -->|"natural"| ocl["parser.ocl"]
+    use -->|"natural"| soil["parser.soil.ast"]
+    soil -->|"natural"| ocl
+    linkStyle 0,1,2 stroke:#2a9d8f,stroke-width:2px
+```
+
+> _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-6_failure_report_maven_cycles_parser.txt`_
 <!-- END MERMAID:bug-6 -->
 
 ## Bug 7: Layer violations in GUI launcher (use-gui)

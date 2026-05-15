@@ -136,10 +136,10 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.calcualteCoverage(java.util.List)> calls constructor <org.tzi.use.analysis.coverage.BasicCoverageData.<init>()> in (BasicInstructionCoverageCalulator.java:45)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitAttributeAssignment(org.tzi.use.gen.assl.statics.GAttributeAssignment)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAttributes()> in (BasicInstructionCoverageCalulator.java:59)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrDelete_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:108)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:119)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:123)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:118)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:122)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrInsert_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:125)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:144)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:143)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrTry_Assoc_LinkendSeqs(org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:158)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrCreate_AC(org.tzi.use.gen.assl.statics.GInstrCreate_AC)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:225)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.addClassCoverage(org.tzi.use.uml.mm.MClassifier)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredClasses()> in (BasicInstructionCoverageCalulator.java:233)
@@ -182,10 +182,10 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.calcualteCoverage(java.util.List)> calls constructor <org.tzi.use.analysis.coverage.BasicCoverageData.<init>()> in (BasicInstructionCoverageCalulator.java:45)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitAttributeAssignment(org.tzi.use.gen.assl.statics.GAttributeAssignment)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAttributes()> in (BasicInstructionCoverageCalulator.java:59)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrDelete_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:108)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:119)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:123)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:118)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:122)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrInsert_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:125)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:144)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:143)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrTry_Assoc_LinkendSeqs(org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:158)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrCreate_AC(org.tzi.use.gen.assl.statics.GInstrCreate_AC)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:225)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.addClassCoverage(org.tzi.use.uml.mm.MClassifier)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredClasses()> in (BasicInstructionCoverageCalulator.java:233)
@@ -283,10 +283,10 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.calcualteCoverage(java.util.List)> calls constructor <org.tzi.use.analysis.coverage.BasicCoverageData.<init>()> in (BasicInstructionCoverageCalulator.java:45)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitAttributeAssignment(org.tzi.use.gen.assl.statics.GAttributeAssignment)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAttributes()> in (BasicInstructionCoverageCalulator.java:59)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrDelete_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:108)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:119)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:123)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:118)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:122)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrInsert_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:125)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:144)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:143)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrTry_Assoc_LinkendSeqs(org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:158)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrCreate_AC(org.tzi.use.gen.assl.statics.GInstrCreate_AC)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:225)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.addClassCoverage(org.tzi.use.uml.mm.MClassifier)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredClasses()> in (BasicInstructionCoverageCalulator.java:233)
@@ -370,10 +370,10 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.calcualteCoverage(java.util.List)> calls constructor <org.tzi.use.analysis.coverage.BasicCoverageData.<init>()> in (BasicInstructionCoverageCalulator.java:45)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitAttributeAssignment(org.tzi.use.gen.assl.statics.GAttributeAssignment)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAttributes()> in (BasicInstructionCoverageCalulator.java:59)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrDelete_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:108)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:119)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:123)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:118)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:122)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrInsert_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:125)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:144)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:143)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrTry_Assoc_LinkendSeqs(org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:158)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrCreate_AC(org.tzi.use.gen.assl.statics.GInstrCreate_AC)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:225)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.addClassCoverage(org.tzi.use.uml.mm.MClassifier)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredClasses()> in (BasicInstructionCoverageCalulator.java:233)
@@ -468,10 +468,10 @@ Cycle detected: Slice analysis ->
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.calcualteCoverage(java.util.List)> calls constructor <org.tzi.use.analysis.coverage.BasicCoverageData.<init>()> in (BasicInstructionCoverageCalulator.java:45)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitAttributeAssignment(org.tzi.use.gen.assl.statics.GAttributeAssignment)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAttributes()> in (BasicInstructionCoverageCalulator.java:59)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrDelete_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:108)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:119)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:123)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls constructor <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.<init>(boolean)> in (GProcedure.java:118)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator.calcualteCoverage(org.tzi.use.uml.ocl.expr.Expression)> in (GProcedure.java:122)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrInsert_Assoc_Linkends(org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:125)
-    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:144)
+    - Method <org.tzi.use.gen.assl.statics.GProcedure.calculateBarriers(org.tzi.use.gen.assl.dynamics.IGCollector, org.tzi.use.uml.mm.MModel)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.disjoint(org.tzi.use.analysis.coverage.BasicCoverageData)> in (GProcedure.java:143)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrTry_Assoc_LinkendSeqs(org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:158)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.visitInstrCreate_AC(org.tzi.use.gen.assl.statics.GInstrCreate_AC)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredAssociations()> in (BasicInstructionCoverageCalulator.java:225)
     - Method <org.tzi.use.gen.assl.statics.BasicInstructionCoverageCalulator.addClassCoverage(org.tzi.use.uml.mm.MClassifier)> calls method <org.tzi.use.analysis.coverage.BasicCoverageData.getCoveredClasses()> in (BasicInstructionCoverageCalulator.java:233)
@@ -587,7 +587,7 @@ Cycle detected: Slice config ->
     (49 further dependencies have been omitted...)
   4. Dependencies of Slice gen
     - Constructor <org.tzi.use.gen.assl.dynamics.GEvalInstrTry.<init>(boolean)> gets field <org.tzi.use.config.Options.testMode> in (GEvalInstrTry.java:37)
-    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:77)
+    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:78)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice parser -> 
@@ -649,8 +649,8 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.parser.generator.ASTGProcedureCall.gen(org.tzi.use.parser.Context)> has return type <org.tzi.use.gen.tool.GProcedureCall> in (ASTGProcedureCall.java:0)
     (49 further dependencies have been omitted...)
   4. Dependencies of Slice gen
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GAttributeAssignment.<init>(org.tzi.use.gen.assl.statics.GValueInstruction, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GValueInstruction)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GAttributeAssignment.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrBarrier.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GInstrBarrier.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInstrCalculatedBarrier.java:0)
@@ -663,10 +663,10 @@ Cycle detected: Slice config ->
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.<init>(org.tzi.use.uml.mm.MAssociation, java.util.List)> has parameter of type <org.tzi.use.uml.mm.MAssociation> in (GInstrTry_Assoc_LinkendSeqs.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Attribute.<init>(org.tzi.use.gen.assl.statics.GOCLExpression, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GOCLExpression)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GInstrTry_Attribute.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GOCLExpression.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GOCLExpression.java:0)
-    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
+    - Constructor <org.tzi.use.gen.assl.statics.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
+    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
     - Constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> has parameter of type <org.tzi.use.uml.sys.MSystem> in (GGenerator.java:0)
     - Constructor <org.tzi.use.gen.tool.GProcedureCall.<init>(org.tzi.use.gen.assl.statics.GProcedure, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.expr.Expression>> with type argument depending on <org.tzi.use.uml.ocl.expr.Expression> in (GProcedureCall.java:0)
-    - Constructor <org.tzi.use.gen.tool.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
     - Constructor <org.tzi.use.gen.tool.statistics.GInvariantStatistic.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInvariantStatistic.java:0)
     - Field <org.tzi.use.gen.assl.dynamics.GConfiguration.fEvaluator> has type <org.tzi.use.uml.ocl.expr.Evaluator> in (GConfiguration.java:0)
     (527 further dependencies have been omitted...)
@@ -837,7 +837,7 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.uml.sys.MSystem.init()> calls constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> in (MSystem.java:157)
   5. Dependencies of Slice gen
     - Constructor <org.tzi.use.gen.assl.dynamics.GEvalInstrTry.<init>(boolean)> gets field <org.tzi.use.config.Options.testMode> in (GEvalInstrTry.java:37)
-    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:77)
+    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:78)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice uml -> 
@@ -962,7 +962,7 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.uml.sys.MSystem.init()> calls constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> in (MSystem.java:157)
   4. Dependencies of Slice gen
     - Constructor <org.tzi.use.gen.assl.dynamics.GEvalInstrTry.<init>(boolean)> gets field <org.tzi.use.config.Options.testMode> in (GEvalInstrTry.java:37)
-    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:77)
+    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:78)
 Cycle detected: Slice config -> 
                 Slice util -> 
                 Slice uml -> 
@@ -1018,8 +1018,8 @@ Cycle detected: Slice config ->
     - Method <org.tzi.use.uml.sys.MSystem.generator()> has return type <org.tzi.use.gen.tool.GGenerator> in (MSystem.java:0)
     - Method <org.tzi.use.uml.sys.MSystem.init()> calls constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> in (MSystem.java:157)
   4. Dependencies of Slice gen
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:113)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:120)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:114)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:121)
   5. Dependencies of Slice parser
     - Method <org.tzi.use.parser.ocl.ASTInStateExpression.gen(org.tzi.use.parser.Context)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTInStateExpression.java:97)
     - Method <org.tzi.use.parser.ocl.ASTTypeArgExpression.gen(org.tzi.use.parser.Context)> gets field <org.tzi.use.config.Options.disableCollectShorthand> in (ASTTypeArgExpression.java:101)
@@ -1211,13 +1211,13 @@ Cycle detected: Slice config ->
     (49 further dependencies have been omitted...)
   5. Dependencies of Slice gen
     - Constructor <org.tzi.use.gen.assl.dynamics.GEvalInstrTry.<init>(boolean)> gets field <org.tzi.use.config.Options.testMode> in (GEvalInstrTry.java:37)
-    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:77)
+    - Method <org.tzi.use.gen.tool.GGenerator.internalError(org.tzi.use.gen.assl.dynamics.GEvaluationException, long)> gets field <org.tzi.use.config.Options.LINE_SEPARATOR> in (GGenerator.java:78)
 Cycle detected: Slice gen -> 
                 Slice parser -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:113)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:120)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:114)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:121)
   2. Dependencies of Slice parser
     - Field <org.tzi.use.parser.Context.generatorProcedures> has generic type <java.util.List<org.tzi.use.gen.assl.statics.GProcedure>> with type argument depending on <org.tzi.use.gen.assl.statics.GProcedure> in (Context.java:0)
     - Field <org.tzi.use.parser.generator.ASTGProcedure.proc> has type <org.tzi.use.gen.assl.statics.GProcedure> in (ASTGProcedure.java:0)
@@ -1245,8 +1245,8 @@ Cycle detected: Slice gen ->
                 Slice uml -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:113)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:120)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:114)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:121)
   2. Dependencies of Slice parser
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.mm.ModelFactory> in (Context.java:0)
     - Constructor <org.tzi.use.parser.Context.<init>(java.lang.String, java.io.PrintWriter, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.uml.mm.ModelFactory)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (Context.java:0)
@@ -1279,8 +1279,8 @@ Cycle detected: Slice gen ->
                 Slice uml -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:113)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:120)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedures(org.tzi.use.uml.mm.MModel, java.io.InputStream, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:114)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.parser.generator.ASSLCompiler.compileProcedureCall(org.tzi.use.uml.mm.MModel, org.tzi.use.uml.sys.MSystemState, java.util.List, java.lang.String, java.lang.String, java.io.PrintWriter)> in (GGenerator.java:121)
   2. Dependencies of Slice parser
     - Field <org.tzi.use.parser.soil.ast.ASTStatement.fAssignedSet> has type <org.tzi.use.util.soil.VariableSet> in (ASTStatement.java:0)
     - Field <org.tzi.use.parser.soil.ast.ASTStatement.fBoundSet> has type <org.tzi.use.util.soil.VariableSet> in (ASTStatement.java:0)
@@ -1333,8 +1333,8 @@ Cycle detected: Slice gen ->
                 Slice uml -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GAttributeAssignment.<init>(org.tzi.use.gen.assl.statics.GValueInstruction, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GValueInstruction)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GAttributeAssignment.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrBarrier.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GInstrBarrier.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInstrCalculatedBarrier.java:0)
@@ -1347,10 +1347,10 @@ Cycle detected: Slice gen ->
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.<init>(org.tzi.use.uml.mm.MAssociation, java.util.List)> has parameter of type <org.tzi.use.uml.mm.MAssociation> in (GInstrTry_Assoc_LinkendSeqs.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Attribute.<init>(org.tzi.use.gen.assl.statics.GOCLExpression, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GOCLExpression)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GInstrTry_Attribute.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GOCLExpression.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GOCLExpression.java:0)
-    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
+    - Constructor <org.tzi.use.gen.assl.statics.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
+    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
     - Constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> has parameter of type <org.tzi.use.uml.sys.MSystem> in (GGenerator.java:0)
     - Constructor <org.tzi.use.gen.tool.GProcedureCall.<init>(org.tzi.use.gen.assl.statics.GProcedure, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.expr.Expression>> with type argument depending on <org.tzi.use.uml.ocl.expr.Expression> in (GProcedureCall.java:0)
-    - Constructor <org.tzi.use.gen.tool.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
     - Constructor <org.tzi.use.gen.tool.statistics.GInvariantStatistic.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInvariantStatistic.java:0)
     - Field <org.tzi.use.gen.assl.dynamics.GConfiguration.fEvaluator> has type <org.tzi.use.uml.ocl.expr.Evaluator> in (GConfiguration.java:0)
     (527 further dependencies have been omitted...)
@@ -1365,8 +1365,8 @@ Cycle detected: Slice gen ->
                 Slice parser -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GAttributeAssignment.<init>(org.tzi.use.gen.assl.statics.GValueInstruction, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GValueInstruction)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GAttributeAssignment.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrBarrier.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GInstrBarrier.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInstrCalculatedBarrier.java:0)
@@ -1379,10 +1379,10 @@ Cycle detected: Slice gen ->
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.<init>(org.tzi.use.uml.mm.MAssociation, java.util.List)> has parameter of type <org.tzi.use.uml.mm.MAssociation> in (GInstrTry_Assoc_LinkendSeqs.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Attribute.<init>(org.tzi.use.gen.assl.statics.GOCLExpression, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GOCLExpression)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GInstrTry_Attribute.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GOCLExpression.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GOCLExpression.java:0)
-    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
+    - Constructor <org.tzi.use.gen.assl.statics.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
+    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
     - Constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> has parameter of type <org.tzi.use.uml.sys.MSystem> in (GGenerator.java:0)
     - Constructor <org.tzi.use.gen.tool.GProcedureCall.<init>(org.tzi.use.gen.assl.statics.GProcedure, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.expr.Expression>> with type argument depending on <org.tzi.use.uml.ocl.expr.Expression> in (GProcedureCall.java:0)
-    - Constructor <org.tzi.use.gen.tool.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
     - Constructor <org.tzi.use.gen.tool.statistics.GInvariantStatistic.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInvariantStatistic.java:0)
     - Field <org.tzi.use.gen.assl.dynamics.GConfiguration.fEvaluator> has type <org.tzi.use.uml.ocl.expr.Evaluator> in (GConfiguration.java:0)
     (527 further dependencies have been omitted...)
@@ -1447,8 +1447,8 @@ Cycle detected: Slice gen ->
                 Slice parser -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GAttributeAssignment.<init>(org.tzi.use.gen.assl.statics.GValueInstruction, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GValueInstruction)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GAttributeAssignment.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrBarrier.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GInstrBarrier.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInstrCalculatedBarrier.java:0)
@@ -1461,10 +1461,10 @@ Cycle detected: Slice gen ->
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.<init>(org.tzi.use.uml.mm.MAssociation, java.util.List)> has parameter of type <org.tzi.use.uml.mm.MAssociation> in (GInstrTry_Assoc_LinkendSeqs.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Attribute.<init>(org.tzi.use.gen.assl.statics.GOCLExpression, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GOCLExpression)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GInstrTry_Attribute.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GOCLExpression.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GOCLExpression.java:0)
-    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
+    - Constructor <org.tzi.use.gen.assl.statics.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
+    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
     - Constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> has parameter of type <org.tzi.use.uml.sys.MSystem> in (GGenerator.java:0)
     - Constructor <org.tzi.use.gen.tool.GProcedureCall.<init>(org.tzi.use.gen.assl.statics.GProcedure, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.expr.Expression>> with type argument depending on <org.tzi.use.uml.ocl.expr.Expression> in (GProcedureCall.java:0)
-    - Constructor <org.tzi.use.gen.tool.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
     - Constructor <org.tzi.use.gen.tool.statistics.GInvariantStatistic.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInvariantStatistic.java:0)
     - Field <org.tzi.use.gen.assl.dynamics.GConfiguration.fEvaluator> has type <org.tzi.use.uml.ocl.expr.Evaluator> in (GConfiguration.java:0)
     (527 further dependencies have been omitted...)
@@ -1518,8 +1518,8 @@ Cycle detected: Slice gen ->
                 Slice parser -> 
                 Slice gen
   1. Dependencies of Slice gen
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
-    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.ocl.value.VarBindings> in (GConfiguration.java:0)
+    - Constructor <org.tzi.use.gen.assl.dynamics.GConfiguration.<init>(org.tzi.use.uml.sys.MSystemState, org.tzi.use.uml.ocl.value.VarBindings, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.sys.MSystemState> in (GConfiguration.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GAttributeAssignment.<init>(org.tzi.use.gen.assl.statics.GValueInstruction, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GValueInstruction)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GAttributeAssignment.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrBarrier.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GInstrBarrier.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInstrCalculatedBarrier.java:0)
@@ -1532,10 +1532,10 @@ Cycle detected: Slice gen ->
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.<init>(org.tzi.use.uml.mm.MAssociation, java.util.List)> has parameter of type <org.tzi.use.uml.mm.MAssociation> in (GInstrTry_Assoc_LinkendSeqs.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GInstrTry_Attribute.<init>(org.tzi.use.gen.assl.statics.GOCLExpression, org.tzi.use.uml.mm.MAttribute, org.tzi.use.gen.assl.statics.GOCLExpression)> has parameter of type <org.tzi.use.uml.mm.MAttribute> in (GInstrTry_Attribute.java:0)
     - Constructor <org.tzi.use.gen.assl.statics.GOCLExpression.<init>(org.tzi.use.uml.ocl.expr.Expression)> has parameter of type <org.tzi.use.uml.ocl.expr.Expression> in (GOCLExpression.java:0)
-    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.tool.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
+    - Constructor <org.tzi.use.gen.assl.statics.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
+    - Constructor <org.tzi.use.gen.tool.GChecker.<init>(org.tzi.use.uml.mm.MModel, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> has parameter of type <org.tzi.use.uml.mm.MModel> in (GChecker.java:0)
     - Constructor <org.tzi.use.gen.tool.GGenerator.<init>(org.tzi.use.uml.sys.MSystem)> has parameter of type <org.tzi.use.uml.sys.MSystem> in (GGenerator.java:0)
     - Constructor <org.tzi.use.gen.tool.GProcedureCall.<init>(org.tzi.use.gen.assl.statics.GProcedure, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.expr.Expression>> with type argument depending on <org.tzi.use.uml.ocl.expr.Expression> in (GProcedureCall.java:0)
-    - Constructor <org.tzi.use.gen.tool.GSignature.<init>(java.lang.String, java.util.List)> has generic parameter type <java.util.List<org.tzi.use.uml.ocl.type.Type>> with type argument depending on <org.tzi.use.uml.ocl.type.Type> in (GSignature.java:0)
     - Constructor <org.tzi.use.gen.tool.statistics.GInvariantStatistic.<init>(org.tzi.use.uml.mm.MClassInvariant)> has parameter of type <org.tzi.use.uml.mm.MClassInvariant> in (GInvariantStatistic.java:0)
     - Field <org.tzi.use.gen.assl.dynamics.GConfiguration.fEvaluator> has type <org.tzi.use.uml.ocl.expr.Evaluator> in (GConfiguration.java:0)
     (527 further dependencies have been omitted...)
@@ -1600,8 +1600,8 @@ Cycle detected: Slice gen ->
   1. Dependencies of Slice gen
     - Method <org.tzi.use.gen.assl.statics.GInstrASSLCall.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Collection, java.lang.String)> in (GInstrASSLCall.java:30)
     - Method <org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrInsert_Assoc_Linkends.java:60)
+    - Method <org.tzi.use.gen.assl.statics.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:60)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_Assoc_LinkendSeqs.java:61)
-    - Method <org.tzi.use.gen.tool.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:61)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrDelete_Assoc_Linkends.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_AssocClass_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_AssocClass_LinkendSeqs.java:64)
@@ -1612,12 +1612,12 @@ Cycle detected: Slice gen ->
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:94)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:102)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:104)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:109)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:110)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:112)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:119)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:113)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:120)
     (58 further dependencies have been omitted...)
   2. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -1659,8 +1659,8 @@ Cycle detected: Slice gen ->
   1. Dependencies of Slice gen
     - Method <org.tzi.use.gen.assl.statics.GInstrASSLCall.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Collection, java.lang.String)> in (GInstrASSLCall.java:30)
     - Method <org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrInsert_Assoc_Linkends.java:60)
+    - Method <org.tzi.use.gen.assl.statics.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:60)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_Assoc_LinkendSeqs.java:61)
-    - Method <org.tzi.use.gen.tool.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:61)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrDelete_Assoc_Linkends.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_AssocClass_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_AssocClass_LinkendSeqs.java:64)
@@ -1671,12 +1671,12 @@ Cycle detected: Slice gen ->
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:94)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:102)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:104)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:109)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:110)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:112)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:119)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:113)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:120)
     (58 further dependencies have been omitted...)
   2. Dependencies of Slice util
     - Constructor <org.tzi.use.util.soil.exceptions.CompilationFailedException.<init>(org.tzi.use.parser.soil.ast.ASTStatement, java.lang.String)> has parameter of type <org.tzi.use.parser.soil.ast.ASTStatement> in (CompilationFailedException.java:0)
@@ -1721,8 +1721,8 @@ Cycle detected: Slice gen ->
   1. Dependencies of Slice gen
     - Method <org.tzi.use.gen.assl.statics.GInstrASSLCall.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Collection, java.lang.String)> in (GInstrASSLCall.java:30)
     - Method <org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrInsert_Assoc_Linkends.java:60)
+    - Method <org.tzi.use.gen.assl.statics.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:60)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_Assoc_LinkendSeqs.java:61)
-    - Method <org.tzi.use.gen.tool.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:61)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrDelete_Assoc_Linkends.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_AssocClass_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_AssocClass_LinkendSeqs.java:64)
@@ -1733,12 +1733,12 @@ Cycle detected: Slice gen ->
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:94)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:102)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:104)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:109)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:110)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:112)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:119)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:113)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:120)
     (58 further dependencies have been omitted...)
   2. Dependencies of Slice util
     - Class <org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator> has generic interface <java.util.Comparator<org.tzi.use.uml.mm.MPrePostCondition>> with type argument depending on <org.tzi.use.uml.mm.MPrePostCondition> in (AlphabeticalConditionByNameComparator.java:0)
@@ -1774,8 +1774,8 @@ Cycle detected: Slice gen ->
   1. Dependencies of Slice gen
     - Method <org.tzi.use.gen.assl.statics.GInstrASSLCall.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Collection, java.lang.String)> in (GInstrASSLCall.java:30)
     - Method <org.tzi.use.gen.assl.statics.GInstrInsert_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrInsert_Assoc_Linkends.java:60)
+    - Method <org.tzi.use.gen.assl.statics.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:60)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_Assoc_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_Assoc_LinkendSeqs.java:61)
-    - Method <org.tzi.use.gen.tool.GSignature.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GSignature.java:61)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrDelete_Assoc_Linkends.java:63)
     - Method <org.tzi.use.gen.assl.statics.GInstrTry_AssocClass_LinkendSeqs.toString()> calls method <org.tzi.use.util.StringUtil.fmtSeq(java.util.Iterator, java.lang.String)> in (GInstrTry_AssocClass_LinkendSeqs.java:64)
@@ -1786,12 +1786,12 @@ Cycle detected: Slice gen ->
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreate_C.java:92)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer.feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.StringUtil.inQuotes(java.lang.Object)> in (GEvalInstrCreateN_C_Integer.java:94)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:102)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.isShowWarnings()> in (GGenerator.java:103)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.setShowWarnings(boolean)> in (GGenerator.java:104)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:109)
     - Method <org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_C.eval(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.gen.assl.dynamics.IGCaller, org.tzi.use.gen.assl.dynamics.IGCollector)> calls method <org.tzi.use.util.UniqueNameGenerator.popState()> in (GEvalInstrCreate_C.java:110)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:112)
-    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.tool.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:119)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:113)
+    - Method <org.tzi.use.gen.tool.GGenerator.startProcedure(java.lang.String, org.tzi.use.gen.assl.dynamics.GGeneratorArguments)> calls method <org.tzi.use.util.Log.verbose(java.lang.String)> in (GGenerator.java:120)
     (58 further dependencies have been omitted...)
   2. Dependencies of Slice util
     - Class <org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator> has generic interface <java.util.Comparator<org.tzi.use.uml.mm.MPrePostCondition>> with type argument depending on <org.tzi.use.uml.mm.MPrePostCondition> in (AlphabeticalConditionByNameComparator.java:0)

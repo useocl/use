@@ -23,7 +23,6 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ImportContext;
 import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
 import org.tzi.use.parser.use.statemachines.ASTSignal;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
