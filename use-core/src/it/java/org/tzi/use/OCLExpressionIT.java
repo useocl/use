@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
-import org.tzi.use.api.impl.UseSystemApiFactory;
+import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.uml.ocl.value.Value;
 
 public class OCLExpressionIT {

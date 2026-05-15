@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
-import org.tzi.use.api.impl.UseSystemApiFactory;
+import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CreationTimeRecorder;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.MMessage;
 import org.tzi.use.uml.mm.MModel;

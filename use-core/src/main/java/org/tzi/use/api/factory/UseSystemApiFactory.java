@@ -16,9 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.tzi.use.api.impl;
+package org.tzi.use.api.factory;
 
 import org.tzi.use.api.UseSystemApi;
+import org.tzi.use.api.impl.UseSystemApiNative;
+import org.tzi.use.api.impl.UseSystemApiUndoable;
 import org.tzi.use.main.Session;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.sys.MSystem;
@@ -26,17 +28,15 @@ import org.tzi.use.uml.sys.MSystem;
 /**
  * Factory for creating {@link UseSystemApi} instances.
  * <p>
- * This factory is located in {@code api.impl} (rather than the root
- * {@code api} package) to avoid a circular dependency between
- * {@code api} and {@code api.impl}. The {@code impl} package naturally
- * depends on the root {@code api} package (subclassing), so placing
- * the factory here keeps the dependency unidirectional.
+ * The factory lives in its own package (separate from {@code api.impl}) so that
+ * the module only needs to export this factory package — implementation classes
+ * in {@code api.impl} stay encapsulated and are not part of the module's public
+ * surface. The dependency chain {@code factory -> impl -> api} remains
+ * unidirectional, so no cycle is introduced.
  * </p>
  *
  * @author Lars Hamann
  * @see UseSystemApi
- * @see UseSystemApiNative
- * @see UseSystemApiUndoable
  */
 public final class UseSystemApiFactory {
 

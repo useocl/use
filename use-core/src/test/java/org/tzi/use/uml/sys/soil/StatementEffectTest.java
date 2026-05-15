@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.TestSystem;
 import org.tzi.use.api.UseSystemApi;
-import org.tzi.use.api.impl.UseSystemApiFactory;
+import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.ocl.expr.ExpInvalidException;

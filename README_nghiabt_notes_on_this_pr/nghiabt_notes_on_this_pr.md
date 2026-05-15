@@ -117,13 +117,19 @@ flowchart LR
 ## Bug 4: `api.impl` ↔ `api` factory cycle (use-core) — ✅ RESOLVED
 
 - **Severity:** ~~Low — 1 cycle~~ → **0 cycles**
-- **Location:** `org.tzi.use.api`, `org.tzi.use.api.impl`
+- **Location:** `org.tzi.use.api`, `org.tzi.use.api.impl`, `org.tzi.use.api.factory`
 - **Problem:** `UseSystemApi` factory methods in the root `api` package directly
   construct `UseSystemApiNative` and `UseSystemApiUndoable` from `api.impl`,
   while `impl` depends back on root API types.
-- **Fix:** Moved factory methods into `api.impl.UseSystemApiFactory`. The root
-  `api` package no longer imports `api.impl`, making the dependency
-  unidirectional (`impl → root` only). Updated all 26 call sites across 10 files.
+- **Fix:** Moved factory methods into `api.impl.UseSystemApiFactory`.
+  The root `api` package no longer imports `api.impl`, making the
+  dependency unidirectional (`impl → root` only). Updated all 26
+  call sites across 10 files.
+- **Follow-up (PR review):** factory further relocated to
+  `org.tzi.use.api.factory` so the module exports `api` and
+  `api.factory` only; `api.impl` stays unexported, keeping the
+  implementation classes off the public surface. Dependencies
+  remain unidirectional: `factory → impl → api`.
 
 ### Before (1 cycle)
 
@@ -139,8 +145,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    impl["api.impl<br/>(UseSystemApiFactory)"] -->|"extends UseSystemApi<br/>throws UseApiException"| root["api"]
-    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
+    factory["api.factory<br/>(UseSystemApiFactory)"] -->|"instantiates"| impl["api.impl<br/>(UseSystemApiNative,<br/>UseSystemApiUndoable)"]
+    factory -->|"returns / throws"| root["api<br/>(UseSystemApi,<br/>UseApiException)"]
+    impl -->|"extends UseSystemApi<br/>throws UseApiException"| root
+    linkStyle 0,1,2 stroke:#2a9d8f,stroke-width:2px
 ```
 
 > _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-4_failure_report_maven_cycles_api.txt`_
