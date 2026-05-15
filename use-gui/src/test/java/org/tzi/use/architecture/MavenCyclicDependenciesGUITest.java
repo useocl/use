@@ -24,7 +24,7 @@ public class MavenCyclicDependenciesGUITest {
     // Therefore, the number of cycles in the GUI can never be accurately measured.
     // Only subpackages with unique names can be analyzed.
     private final JavaClasses classes = new ClassFileImporter()
-            .withImportOption(ImportOption.Predefined.DO_NOuse-gui/target/archunit-results use-gui/target/archunit-reportsT_INCLUDE_TESTS)
+            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackages("org.tzi.use");
 
     private static final String RESULTS_DIR = new File("target/archunit-results").getAbsolutePath();
