@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.tzi.use.main.Session;
-import org.tzi.use.main.shell.Shell;
+import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
 import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
 
@@ -48,7 +48,7 @@ public class PluginShellCmdFactory {
 	 *            The application's Shell object
 	 * @return A sorted list of Plugin Shell Command Containers
 	 */
-	public List<PluginShellCmdContainer> createPluginCmds(Vector<IPluginShellCmdDescriptor> cmds, Session session, Shell shell) {
+	public List<PluginShellCmdContainer> createPluginCmds(Vector<IPluginShellCmdDescriptor> cmds, Session session, IShell shell) {
 
 		List<PluginShellCmdContainer> cmdList = new ArrayList<PluginShellCmdContainer>(cmds.size());
 		

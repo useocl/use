@@ -1,8 +1,8 @@
 package org.tzi.use.runtime.shell.impl;
 
 import org.tzi.use.main.Session;
-import org.tzi.use.main.shell.Shell;
 import org.tzi.use.main.shell.runtime.IPluginShellCmd;
+import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.IPlugin;
 import org.tzi.use.runtime.IPluginRuntime;
 import org.tzi.use.runtime.impl.PluginRuntime;
@@ -21,7 +21,7 @@ public abstract class PluginShellCmd implements IPluginShellCmd {
 	private IPluginShellCmdDelegate pluginCmdDelegate;
 	private final IPluginShellCmdDescriptor pluginCmdDescriptor;
 	private final Session fSession;
-	private final Shell fShell;
+	private final IShell fShell;
 	private String cmd;
 	private String cmdArguments;
 	private String[] cmdArgumentList;
@@ -38,7 +38,7 @@ public abstract class PluginShellCmd implements IPluginShellCmd {
 	 *            The application's Shell object
 	 */
 	public PluginShellCmd(IPluginShellCmdDescriptor pluginCmdDescriptor,
-			Session session, Shell shell) {
+			Session session, IShell shell) {
 		this.pluginCmdDescriptor = pluginCmdDescriptor;
 		this.fSession = session;
 		this.fShell = shell;
@@ -101,7 +101,7 @@ public abstract class PluginShellCmd implements IPluginShellCmd {
 		return this.fSession;
 	}
 
-	public Shell getShell() {
+	public IShell getShell() {
 		return this.fShell;
 	}
 }

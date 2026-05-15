@@ -5,8 +5,8 @@ import java.util.Vector;
 
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IDescriptor;
-import org.tzi.use.main.shell.Shell;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
 import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
@@ -41,7 +41,7 @@ public class ShellExtensionPoint implements IPluginShellExtensionPoint {
 
 	private Vector<IPluginShellCmdDescriptor> registeredCmds;
 
-	public List<PluginShellCmdContainer> createPluginCmds(Session session, Shell shell) {
+	public List<PluginShellCmdContainer> createPluginCmds(Session session, IShell shell) {
 		PluginShellCmdFactory cmdFactory = PluginShellCmdFactory.getInstance();
 		return cmdFactory.createPluginCmds(getRegisteredCmds(), session, shell);
 	}

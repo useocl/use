@@ -26,6 +26,7 @@ import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
@@ -81,7 +82,7 @@ class NoSystemException extends Exception {
  * @author Mark Richters
  */
 
-public final class Shell implements Runnable, PPCHandler {
+public final class Shell implements Runnable, PPCHandler, IShell {
 	public static final String PROMPT = "use> ";
 
 	public static final String CONTINUE_PROMPT = "> ";

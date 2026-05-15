@@ -1,7 +1,7 @@
 package org.tzi.use.runtime.shell.impl;
 
 import org.tzi.use.main.Session;
-import org.tzi.use.main.shell.Shell;
+import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
 
 /**
@@ -23,7 +23,7 @@ public class PluginShellCmdProxy extends PluginShellCmd {
 	 *            the application's Shell object
 	 */
 	public PluginShellCmdProxy(IPluginShellCmdDescriptor pluginCmdDescriptor,
-			Session session, Shell shell) {
+			Session session, IShell shell) {
 		super(pluginCmdDescriptor, session, shell);
 
 	}

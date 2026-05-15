@@ -228,25 +228,43 @@ flowchart LR
 ```
 <!-- END MERMAID:bug-7 -->
 
-## Bug 8: `shell` ↔ `shell.runtime` cycle (use-gui)
+## Bug 8: `shell` ↔ `shell.runtime` cycle (use-gui) — ✅ RESOLVED
 
-- **Severity:** Low — 1 cycle
+- **Severity:** ~~Low — 1 cycle~~ → **0 cycles**
 - **Location:** `org.tzi.use.main.shell`, `org.tzi.use.main.shell.runtime`
-- **Problem:** `Shell` (in `root` slice of `shell` package) depends on `IPluginShellExtensionPoint` (in `runtime` slice), which in turn depends back on `Shell` via `IPluginShellCmd.getShell()`.
-- **Fix direction:** Extract interfaces or restructure the dependency so the runtime does not depend back on the concrete shell.
+- **Problem:** `Shell` (root slice) depends on `IPluginShellExtensionPoint`
+  and `IPluginShellCmd` (runtime slice), which in turn name `Shell` in their
+  signatures (`IPluginShellCmd.getShell()`,
+  `IPluginShellExtensionPoint.createPluginCmds(Session, Shell)`), forming a
+  cycle.
+- **Fix:** Introduced a marker interface
+  `org.tzi.use.main.shell.runtime.IShell` and changed the runtime SPI to use
+  it (`getShell()` returns `IShell`; `createPluginCmds` takes `IShell`).
+  `Shell` now `implements IShell`, so plugins continue to receive the same
+  object instance. The only remaining edge is `shell → shell.runtime` (Shell
+  implementing/using the SPI). The two dead back-edges that existed only to
+  thread `Shell` through `PluginShellCmd.fShell` (a field with zero external
+  readers) are gone.
 
-<!-- BEGIN MERMAID:bug-8 -->
-**shell / shell.runtime** — 1 cycle(s), 2 edge(s) across 2 package(s)
+### Before (1 cycle)
 
 ```mermaid
 flowchart LR
-    root["root"]
-    runtime["runtime"]
-    root --> runtime
-    runtime --> root
-    linkStyle 0,1 stroke:#d33,stroke-width:2px
+    root["main.shell<br/>(Shell)"] -->|"depends on SPI"| runtime["main.shell.runtime<br/>(IPluginShellCmd,<br/>IPluginShellExtensionPoint)"]
+    runtime -->|"getShell() / createPluginCmds(...Shell)"| root
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
+    linkStyle 1 stroke:#d33,stroke-width:2px
 ```
-<!-- END MERMAID:bug-8 -->
+
+### After (0 cycles) ✅
+
+```mermaid
+flowchart LR
+    root["main.shell<br/>(Shell implements IShell)"] -->|"depends on SPI"| runtime["main.shell.runtime<br/>(IShell, IPluginShellCmd,<br/>IPluginShellExtensionPoint)"]
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
+```
+
+> _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-8_failure_report_maven_cycles_shell.txt`_
 
 ---
 
