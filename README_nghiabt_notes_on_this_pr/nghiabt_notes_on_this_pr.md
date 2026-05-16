@@ -7,21 +7,71 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 
 ---
 
-## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core)
+## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core) — Phase A DONE (5 → 3)
 
-- **Severity:** Critical — 34 cycles, 2231 dependency violations
-- **Location:** `org.tzi.use.uml.*`
-- **Problem:** The metamodel (`mm`), OCL layer (`ocl`), and runtime system (`sys`) form
-  a tightly coupled triangle. This is the single largest source of cycles in the project.
-  - `uml.ocl.value` types (`ObjectValue`, `LinkValue`, `InstanceValue`) hold direct
-    references to `uml.sys` runtime objects (`MObject`, `MLink`, `MInstance`).
-  - `uml.sys.soil.*` statement constructors take `uml.ocl.expr.Expression` parameters.
+- **Severity:** Critical — 5 cycles in `org.tzi.use.uml` slice + 34
+  in whole-core slice. The single largest source of cycles in the
+  project.
+- **Location:** `org.tzi.use.uml.{mm, ocl, sys}`.
+- **Problem:** The metamodel (`mm`), OCL layer (`ocl`), and runtime
+  system (`sys`) form a tightly coupled triangle.
+  - `uml.ocl.value` types (`ObjectValue`, `LinkValue`, `InstanceValue`)
+    hold direct references to `uml.sys` runtime objects (`MObject`,
+    `MLink`, `MInstance`).
+  - `uml.sys.soil.*` statement constructors take `uml.ocl.expr.Expression`
+    parameters.
   - `util.soil.VariableEnvironment` depends on `uml.ocl.value.Value`.
-- **Fix direction:** Introduce interfaces/abstractions at the `uml.ocl` ↔ `uml.sys`
-  boundary. Value types should not hold concrete runtime references.
+- **Plan:** see [`README_nghiabt_notes_on_this_pr/bug-1_plan.md`](./bug-1_plan.md).
+  Three phases — Phase A (break `mm → sys`), Phase B (break
+  `ocl → sys`), Phase C (break `mm → ocl`).
+- **Phase A — DONE** (this commit):
+  - Removed the dead `mm.statemachines.TransitionListener` (declared
+    but no implementations existed; kills the `mm → sys.events` edge
+    for free).
+  - Changed `MClassifier.hasStateMachineWhichHandles(MOperationCall)`
+    → `(MOperation)`. The implementation only ever used
+    `operationCall.getOperation()`. Single caller in
+    `MSystem.copyPreStateIfNeccessary` updated to pass
+    `operationCall.getOperation()`. Kills 5 of the 11 `mm → sys`
+    imports (`MClassifier`, `MClass`, `MClassifierImpl`, `MClassImpl`,
+    `MAssociationClassImpl`).
+  - Inlined `MProtocolStateMachine.createInstance(MObject)` into its
+    single caller `MObjectState`. The factory method lived in mm but
+    returned a sys type (`MProtocolStateMachineInstance`); the caller
+    in sys now constructs the instance directly. Kills the two
+    `mm.statemachines → sys` imports on `MProtocolStateMachine`.
+  - Introduced a minimal marker interface
+    `org.tzi.use.uml.mm.IStatement` exposing the single method the
+    model layer needs (`toConcreteSyntax(int, int)`).
+    `sys.soil.MStatement implements IStatement`.
+    `MOperation.fStatement` is now typed `IStatement`;
+    `MMPrintVisitor.getStatementVisitorString(IStatement)` follows
+    suit. `MObjectOperationCallStatement` (sys.soil, can see the
+    concrete type) downcasts at the boundary. Kills the two
+    `MOperation → MStatement` and `MMPrintVisitor → MStatement`
+    imports.
+  - `MRegion.addTransition/addSubvertex` switched
+    `throws MSystemException` → `throws MInvalidModelException`
+    (existing mm exception). Parser caller
+    (`ASTProtocolStateMachine`) and test (`TestProtocolStateMachine`)
+    updated. Kills the last `mm.statemachines → sys` import.
+  - **Result:** `mm → sys` import count: **0** (was 11).
+  - **Cycles in `org.tzi.use.uml`: 5 → 3.** The two cycles
+    `mm → sys → mm` and `mm → sys → ocl → mm` are gone. Three remain:
+    `mm → ocl → mm`, `mm → ocl → sys → mm`, `ocl → sys → ocl`.
+  - All 271 use-core + 18 use-gui tests pass.
+  - ⚠ **Breaking API change:** `MClassifier.hasStateMachineWhichHandles`
+    signature change (parameter type `MOperationCall` →
+    `MOperation`); `MOperation.getStatement()` /
+    `setStatement(MStatement)` return/parameter types widened to
+    `IStatement`; `MRegion.addTransition` /
+    `MRegion.addSubvertex` declared exception narrowed from
+    `MSystemException` to `MInvalidModelException`;
+    `MProtocolStateMachine.createInstance` removed (inlined into the
+    one caller). Suggested release-note tag: `[breaking] uml.mm`.
 
 <!-- BEGIN MERMAID:bug-1 -->
-**uml.* triangle** — 5 cycle(s), 6 edge(s) across 3 package(s)
+### Before Phase A — 5 cycle(s), 6 edge(s) across 3 package(s)
 
 ```mermaid
 flowchart LR
@@ -36,6 +86,51 @@ flowchart LR
     sys --> ocl
     linkStyle 0,1,2,3,4,5 stroke:#d33,stroke-width:2px
 ```
+
+### After Phase A — 3 cycle(s), 5 edge(s) across 3 package(s)
+
+`mm → sys` is gone (11 → 0 imports). Cycles through that edge
+vanished.
+
+```mermaid
+flowchart LR
+    mm["mm"]
+    ocl["ocl"]
+    sys["sys"]
+    mm --> ocl
+    ocl --> mm
+    ocl --> sys
+    sys --> mm
+    sys --> ocl
+    linkStyle 0,1,2 stroke:#d33,stroke-width:2px
+    linkStyle 3,4 stroke:#2a9d8f,stroke-width:2px
+```
+
+### Δ Phase A — what closed the gap
+
+```mermaid
+flowchart LR
+    subgraph removed["✅ Removed by Phase A (1 edge → 2 cycles)"]
+        direction LR
+        r_mm["mm"]
+        r_sys["sys"]
+        r_mm -- "gone (11 imports)" --> r_sys
+    end
+    subgraph mechanism["How"]
+        direction TB
+        m1["TransitionListener deleted<br/>(dead code)"]
+        m2["hasStateMachineWhichHandles(MOperationCall)<br/>→ (MOperation)"]
+        m3["MProtocolStateMachine.createInstance(MObject)<br/>inlined into MObjectState"]
+        m4["IStatement marker iface in mm;<br/>MStatement implements IStatement;<br/>MOperation typed against iface"]
+        m5["MRegion throws MInvalidModelException<br/>(was MSystemException)"]
+    end
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
+```
+
+> _Before-fix reports archived at_
+> `docs/archunit-history/before-fix/bug-1_failure_report_maven_cycles_uml.txt`
+> _and_
+> `docs/archunit-history/before-fix/bug-1_failure_report_maven_cycles_core.txt`.
 <!-- END MERMAID:bug-1 -->
 
 ## Bug 2: `gui.main` and `gui.views` internal cycles (use-gui) — ✅ RESOLVED

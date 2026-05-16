@@ -83,7 +83,7 @@ public final class MObjectState implements MInstanceState {
         	this.protocolStateMachines = new HashSet<MProtocolStateMachineInstance>();
         	// Initialize possible protocol state machines
 	        for (MProtocolStateMachine psm : psms) {
-	        	this.protocolStateMachines.add(psm.createInstance(this.fObject));
+	        	this.protocolStateMachines.add(new MProtocolStateMachineInstance(psm, this.fObject));
 	        }
         }
     }

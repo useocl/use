@@ -27,7 +27,6 @@ import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -47,7 +46,7 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     private Expression fExpr;
     
     /** The statement, might be <code>null</code>.*/
-    private MStatement fStatement;
+    private IStatement fStatement;
 
     /** The owner */
     private MClassifier fClassifier;
@@ -82,10 +81,10 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     }
     
 	/**
-	 * Returns the defined SOIL statement of the body or <code>null</code>. 
+	 * Returns the defined SOIL statement of the body or <code>null</code>.
 	 * @return The statement of the body if defined otherwise <code>null</code>.
 	 */
-    public MStatement getStatement() {
+    public IStatement getStatement() {
     	return fStatement;
     }
     
@@ -103,10 +102,10 @@ public final class MOperation extends MModelElementImpl implements UseFileLocata
     
     
     /**
-     * Sets the given SOIL statement as the operation body. 
+     * Sets the given SOIL statement as the operation body.
      * @param statement The operation body statement.
      */
-    public void setStatement(MStatement statement) {
+    public void setStatement(IStatement statement) {
     	fStatement = statement;
     }
     

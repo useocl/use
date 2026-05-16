@@ -25,7 +25,7 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.TestModelUtil;
 import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
 import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.MInvalidModelException;
 
 /**
  * @author Lars Hamann
@@ -42,14 +42,14 @@ public class TestProtocolStateMachine extends TestCase {
 		try {
 			psm.getDefaultRegion().addSubvertex(new MState("state1"));
 			psm.getDefaultRegion().addSubvertex(new MState("state2"));
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			fail(e.getMessage());
 		}
 		
 		try {
 			psm.getDefaultRegion().addSubvertex(new MState("state1"));
 			fail("Duplicate state name!");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 	}
@@ -70,7 +70,7 @@ public class TestProtocolStateMachine extends TestCase {
 			defaultRegion.addSubvertex(initial);
 			defaultRegion.addSubvertex(state1);
 			defaultRegion.addSubvertex(state2);
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			fail(e.getMessage());
 		}
 		
@@ -78,7 +78,7 @@ public class TestProtocolStateMachine extends TestCase {
 		try {
 			defaultRegion.addSubvertex(new MPseudoState("init2", MPseudoStateKind.initial));
 			fail("Duplicate initial state!");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 		
@@ -89,7 +89,7 @@ public class TestProtocolStateMachine extends TestCase {
 			t.setGuard(new ExpressionWithValue(BooleanValue.TRUE));
 			defaultRegion.addTransition(t);
 			fail("Accepted guard for initial state transition");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 		assertEquals("Added invalid transition!", numTransitions, defaultRegion
@@ -99,7 +99,7 @@ public class TestProtocolStateMachine extends TestCase {
 		try {
 			MTransition t = new MTransition(defaultRegion, initial, state1);
 			defaultRegion.addTransition(t);
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			fail(e.getMessage());
 		}
 		assertEquals("Valid transition was not added!", ++numTransitions,
@@ -110,7 +110,7 @@ public class TestProtocolStateMachine extends TestCase {
 			MTransition t = new MTransition(defaultRegion, initial, state2);
 			defaultRegion.addTransition(t);
 			fail("More than one transition from an initial state");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 		assertEquals("Added invalid transition!", numTransitions, defaultRegion
@@ -121,7 +121,7 @@ public class TestProtocolStateMachine extends TestCase {
 			MTransition t = new MTransition(defaultRegion, state2, initial);
 			defaultRegion.addTransition(t);
 			fail("Incoming transition to initial state!");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 		assertEquals("Added invalid transition!", numTransitions, defaultRegion
@@ -161,7 +161,7 @@ public class TestProtocolStateMachine extends TestCase {
 			
 			t = new MTransition(defaultRegion, state3, final1);
 			defaultRegion.addTransition(t);
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			fail(e.getMessage());
 		}
 		
@@ -171,7 +171,7 @@ public class TestProtocolStateMachine extends TestCase {
 		try {
 			defaultRegion.addSubvertex(final2_dup);
 			fail("Accepted final state with duplicate name");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 		assertEquals("Added invalid subvertex!", defaultRegion.getSubvertices().size(), 6);
@@ -182,7 +182,7 @@ public class TestProtocolStateMachine extends TestCase {
 			MTransition t = new MTransition(defaultRegion, final1, state1);
 			defaultRegion.addTransition(t);
 			fail("Outgoing transition from final state!");
-		} catch (MSystemException e) {
+		} catch (MInvalidModelException e) {
 			
 		}
 		assertEquals("Added invalid transition!", numTransitions, defaultRegion.getTransitions().size());

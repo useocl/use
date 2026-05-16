@@ -26,7 +26,7 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
 import org.tzi.use.uml.ocl.expr.GenerateHTMLExpressionVisitor;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.IStatement;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -108,7 +108,7 @@ public class MMHTMLPrintVisitor extends MMPrintVisitor {
     }
     
     @Override
-    protected String getStatementVisitorString(MStatement statement) {
+    protected String getStatementVisitorString(IStatement statement) {
     	String visitorString = super.getStatementVisitorString(statement);
     	
     	String result = 

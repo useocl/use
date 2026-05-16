@@ -100,7 +100,7 @@ public class MObjectOperationCallStatement extends MOperationCallStatement {
         MObject self = EvalUtil.evaluateObjectExpression(context, fObject);
 
         MOperation operation = self.cls().operation(fOperation.name(), true);
-        MStatement operationBody = operation.getStatement();
+        MStatement operationBody = (MStatement) operation.getStatement();
 
         // evaluate arguments
         Value[] arguments = new Value[fArguments.length];

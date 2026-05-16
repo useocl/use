@@ -821,7 +821,7 @@ public final class MSystem {
 		// if the post conditions of this operations require a pre state
 		// require a state copy, create it
 		if (isRunningTestSuite || operationCall.hasPostConditions() && operationCall.getOperation().postConditionsRequirePreState()
-				|| operationCall.getSelf().cls().hasStateMachineWhichHandles(operationCall)) {
+				|| operationCall.getSelf().cls().hasStateMachineWhichHandles(operationCall.getOperation())) {
 
 			operationCall.setPreState(new MSystemState(fUniqueNameGenerator.generate("state#"), fCurrentState));
 		} else {

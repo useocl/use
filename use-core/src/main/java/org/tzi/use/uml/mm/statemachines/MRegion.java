@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm.statemachines;
 
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.MInvalidModelException;
 
 import java.util.*;
 
@@ -75,18 +75,18 @@ public class MRegion {
 		return transition;
 	}
 
-	public void addTransition(MTransition t) throws MSystemException {
+	public void addTransition(MTransition t) throws MInvalidModelException {
 		
 		if (t.getSource() instanceof MPseudoState
 				&& ((MPseudoState) t.getSource()).getKind() == MPseudoStateKind.initial) {
 			if (initialState != null)
-				throw new MSystemException("An initial state of a state machine can only have one outgoing transition!");
+				throw new MInvalidModelException("An initial state of a state machine can only have one outgoing transition!");
 			
 			if (t.getGuard() != null)
-				throw new MSystemException("An transition from the initial state cannot have a guard!");
+				throw new MInvalidModelException("An transition from the initial state cannot have a guard!");
 
 			if (t.getTarget().equals(t.getSource())) {
-				throw new MSystemException("A reflexive transition on an inital state is not allowed!");
+				throw new MInvalidModelException("A reflexive transition on an inital state is not allowed!");
 			}
 			
 			initialState = (MState)t.getTarget();
@@ -96,11 +96,11 @@ public class MRegion {
 		
 		if (t.getTarget() instanceof MPseudoState
 				&& ((MPseudoState) t.getTarget()).getKind() == MPseudoStateKind.initial) {
-			throw new MSystemException("An initial state of a state machine cannot have incoming transitions!");
+			throw new MInvalidModelException("An initial state of a state machine cannot have incoming transitions!");
 		}
 		
 		if (t.getSource() instanceof MFinalState) {
-			throw new MSystemException("An final state of a state machine cannot have outgoing transitions!");
+			throw new MInvalidModelException("An final state of a state machine cannot have outgoing transitions!");
 		}
 		
 		this.transition.add(t);
@@ -119,16 +119,16 @@ public class MRegion {
 		return subvertex.values();
 	}
 	
-	public void addSubvertex(MVertex v) throws MSystemException {
+	public void addSubvertex(MVertex v) throws MInvalidModelException {
 		if (this.subvertex.containsKey(v.name()))
-			throw new MSystemException("The state names inside one region must be unique!");
+			throw new MInvalidModelException("The state names inside one region must be unique!");
 		
 		if (v instanceof MPseudoState &&
 			((MPseudoState)v).getKind() == MPseudoStateKind.initial ) {
 			for (MVertex ev : this.subvertex.values()) {
 				if (ev instanceof MPseudoState &&
 					((MPseudoState)ev).getKind() == MPseudoStateKind.initial ) {
-						throw new MSystemException("A region can have only one initial pseudo state!");
+						throw new MInvalidModelException("A region can have only one initial pseudo state!");
 				}
 			}
 		}

@@ -21,8 +21,6 @@ package org.tzi.use.uml.mm.statemachines;
 import org.tzi.use.parser.SrcPos;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 
 /**
  * A <i>protocol state machine</i> is always defined in the context of a classifier. 
@@ -45,14 +43,6 @@ public class MProtocolStateMachine extends MStateMachine {
 	 */
 	public MProtocolStateMachine(String name, SrcPos srcPos, MClassifier context) {
 		super(name, srcPos, context);
-	}
-	
-	/**
-	 * @param object
-	 * @return
-	 */
-	public MProtocolStateMachineInstance createInstance(MObject object) {
-		return new MProtocolStateMachineInstance(this, object);
 	}
 
 	/**
