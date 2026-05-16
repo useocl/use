@@ -8,7 +8,7 @@ import org.tzi.use.gui.main.runtime.IMainWindow;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IDescriptor;
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.gui.IPluginActionDescriptor;
 import org.tzi.use.runtime.model.PluginActionModel;
 import org.tzi.use.runtime.util.ActionRegistry;

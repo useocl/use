@@ -3,8 +3,8 @@ package org.tzi.use.runtime.shell.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-import org.tzi.use.runtime.IPluginClassLoader;
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginClassLoader;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
 import org.tzi.use.runtime.shell.IPluginShellCmdDelegate;
 import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;

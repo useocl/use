@@ -1,8 +1,8 @@
 package org.tzi.use.runtime.impl;
 
 import org.tzi.use.main.runtime.IExtensionPoint;
-import org.tzi.use.runtime.IPluginDescriptor;
-import org.tzi.use.runtime.IPluginRuntime;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginRuntime;
 import org.tzi.use.runtime.gui.impl.ActionExtensionPoint;
 import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
 import org.tzi.use.runtime.gui.impl.MModelExtensionPoint;

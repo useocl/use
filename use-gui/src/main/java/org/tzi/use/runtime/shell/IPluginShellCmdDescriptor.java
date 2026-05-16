@@ -1,6 +1,6 @@
 package org.tzi.use.runtime.shell;
 
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
 
 /**

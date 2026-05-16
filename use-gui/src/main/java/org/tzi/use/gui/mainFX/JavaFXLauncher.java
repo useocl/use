@@ -77,7 +77,7 @@ public class JavaFXLauncher extends Application implements Launcher {
             Path pluginDirURL = Options.pluginDir;
             Log.verbose("Plugin path: [" + pluginDirURL + "]");
             try {
-                Class<?> clazz = Class.forName("org.tzi.use.runtime.MainPluginRuntime");
+                Class<?> clazz = Class.forName("org.tzi.use.runtime.bootstrap.MainPluginRuntime");
                 Method run = clazz.getMethod("run", Path.class);
                 pluginRuntime = (IRuntime) run.invoke(null, pluginDirURL);
                 Log.debug("Starting plugin runtime, got class [" + pluginRuntime.getClass() + "]");

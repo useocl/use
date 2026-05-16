@@ -18,7 +18,8 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.classdiagram;
     exports org.tzi.use.gui.views.diagrams.objectdiagram;
     exports org.tzi.use.runtime.gui.impl;
-    exports org.tzi.use.runtime;
+    exports org.tzi.use.runtime.spi;
+    exports org.tzi.use.runtime.bootstrap;
     exports org.tzi.use.main.shell;
     exports org.tzi.use.gui.mainFX;
     exports org.tzi.use.gui.mainFX.runtime;

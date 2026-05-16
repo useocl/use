@@ -2,8 +2,8 @@ package org.tzi.use.runtime.gui.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.tzi.use.runtime.IPluginClassLoader;
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginClassLoader;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;
 import org.tzi.use.runtime.gui.IPluginActionDescriptor;
 import org.tzi.use.runtime.model.PluginActionModel;

@@ -2,7 +2,7 @@ package org.tzi.use.runtime.gui;
 
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.main.runtime.IExtensionPoint;
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.gui.impl.StyleInfoProvider;
 
 import java.util.List;

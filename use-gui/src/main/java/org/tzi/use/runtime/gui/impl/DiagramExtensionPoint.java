@@ -1,7 +1,7 @@
 package org.tzi.use.runtime.gui.impl;
 
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.gui.DiagramPlugin;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
 import org.tzi.use.util.Log;
