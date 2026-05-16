@@ -25,18 +25,20 @@ CORE_REPORTS = REPO / "use-core" / "target_archunit_temp" / "archunit-reports"
 GUI_REPORTS = REPO / "use-gui" / "target_archunit_temp" / "archunit-reports"
 
 # (marker, [(report-path, kind, optional title)])
+#
+# Only list *unresolved* bugs here. Once a bug is fixed, its failure report is
+# removed from `target_archunit_temp/`, and re-running the script with a stale
+# entry would replace the hand-curated before/after mermaid in the README with
+# a "report not present" placeholder. Resolved bugs keep their inline diagrams
+# under the existing marker tags but are no longer regenerated.
 SOURCES: list[tuple[str, list[tuple[Path, str, str]]]] = [
     ("bug-1", [(CORE_REPORTS / "failure_report_maven_cycles_uml.txt", "cycles", "uml.* triangle")]),
-    ("bug-2", [
-        (GUI_REPORTS / "failure_report_maven_cycles_gui_main.txt", "cycles", "gui.main"),
-        (GUI_REPORTS / "failure_report_maven_cycles_gui_views.txt", "cycles", "gui.views"),
-    ]),
+    # bug-2 resolved: gui.main / gui.views cycles fixed, marker removed from README
     ("bug-3", [(GUI_REPORTS / "failure_report_maven_cycles_runtime.txt", "cycles", "runtime")]),
     # bug-4 resolved: api↔api.impl cycle fixed, inline before/after diagrams in README
-    # ("bug-4", [(CORE_REPORTS / "failure_report_maven_cycles_api.txt", "cycles", "api / api.impl")]),
-    ("bug-5", [(CORE_REPORTS / "failure_report_maven_cycles_gen.txt", "cycles", "gen.assl / gen.tool")]),
-    ("bug-6", [(CORE_REPORTS / "failure_report_maven_cycles_parser.txt", "cycles", "parser.*")]),
-    ("bug-7", [(GUI_REPORTS / "failure_report_maven_layers.txt", "layers", "GUI launcher layer violations")]),
+    # bug-5 resolved: gen.assl / gen.tool cycle fixed, inline before/after diagrams in README
+    # bug-6 resolved: parser cycles fixed, inline before/after diagrams in README
+    # bug-7 resolved: GUI launcher layer violations fixed, inline before/after diagrams in README
 ]
 
 CYCLE_HEADER = re.compile(r"^Cycle detected:\s*Slice (\S+)\s*(?:->)?\s*$")
