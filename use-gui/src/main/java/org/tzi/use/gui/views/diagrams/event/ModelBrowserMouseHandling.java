@@ -33,8 +33,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.tzi.use.gui.main.ModelBrowser;
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.StateMachineOrder;
+import org.tzi.use.gui.util.ModelBrowserSorting;
+import org.tzi.use.gui.util.ModelBrowserSorting.StateMachineOrder;
 import org.tzi.use.uml.mm.MModelElement;
 
 /**

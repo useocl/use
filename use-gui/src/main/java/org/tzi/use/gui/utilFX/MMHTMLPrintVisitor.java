@@ -19,7 +19,6 @@
 
 package org.tzi.use.gui.utilFX;
 
-import org.tzi.use.gui.mainFX.ModelBrowserSorting;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMPrintVisitor;

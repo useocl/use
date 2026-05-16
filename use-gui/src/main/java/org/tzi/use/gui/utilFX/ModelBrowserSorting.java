@@ -19,55 +19,29 @@
 
 /* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
-package org.tzi.use.gui.main;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EventListener;
-import java.util.EventObject;
-import java.util.List;
-
-import javax.swing.event.EventListenerList;
+package org.tzi.use.gui.utilFX;
 
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalConditionComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalInvariantComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalNamedElementComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalOperationComparator;
-import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
+import org.tzi.use.util.uml.sorting.*;
+
+import javax.swing.event.EventListenerList;
+import java.util.*;
 
 
 /**
  * ModelBrowserSorting is used to put the tree nodes of the
  * ModelBrowser in a specific order. It provides all the
- * sorting algorithm.
+ * sorting algorithem.
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
-public class ModelBrowserSorting  {
-    
-    /**
-     * A SortChangeEvent is used to notify interested listeners that the
-     * sorting order has changed.  
-     */
-    @SuppressWarnings("serial")
-	public class SortChangeEvent extends EventObject {
-        public SortChangeEvent(Object source) {
-            super(source);
-        }
-    }
+public class ModelBrowserSorting {
 
-    public interface SortChangeListener extends EventListener {
-        void stateChanged(ModelBrowserSorting.SortChangeEvent e);
-    }
 
-    
     private static ModelBrowserSorting fModelBrowserSorting = null;
     private EventListenerList fListenerList;
-    
+
     /**
      * Starting classes order.
      */
@@ -97,12 +71,12 @@ public class ModelBrowserSorting  {
      * Starting state machine order.
      */
     public StateMachineOrder stateMachineOrder = StateMachineOrder.USE;
-    
+
     public enum StateMachineOrder {
     	USE,
     	ALPHABETIC
     }
-    
+
     /**
      * Signals that the classes will be sorted in alphabetic order.
      */
@@ -147,7 +121,7 @@ public class ModelBrowserSorting  {
     public static final int ASSOC_USE_ORDER = 2;
 
     /**
-     * Signals that all invarants will be sorted in alphabetic order 
+     * Signals that all invarants will be sorted in alphabetic order
      * by class name first
      */
     public static final int INV_ALPHABETIC_BY_CLASS = 1;
@@ -159,7 +133,7 @@ public class ModelBrowserSorting  {
     public static final int INV_USE_ORDER = 2;
 
     /**
-     * Signals that all invarants will be sorted in alphabetic order 
+     * Signals that all invarants will be sorted in alphabetic order
      * by invariant name first
      */
     public static final int INV_ALPHABETIC_INV_NAME = 5;
@@ -170,7 +144,7 @@ public class ModelBrowserSorting  {
     public static final int COND_USE_ORDER = 10;
 
 
-    private ModelBrowserSorting() {
+    ModelBrowserSorting() {
         fListenerList = new EventListenerList();
     }
  
@@ -181,36 +155,27 @@ public class ModelBrowserSorting  {
         return fModelBrowserSorting;
     }
     
-    
     /**
-     * Adds Listeners who are interested on a change event of sorting.
-     * @param l The listener who is interested
-     */
-    public void addSortChangeListener( SortChangeListener l ) {
-        fListenerList.add( SortChangeListener.class, l );
-    }
-    
-    /**
-     * Calls the specific algorithm in which way the tree will be sorted.
+     * Calls the specific algorithem in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    public Collection<MClassifier> sortClasses( Collection<MClassifier> items) {
-        ArrayList<MClassifier> classifiers = new ArrayList<MClassifier>( items );
+    public Collection<MClass> sortClasses( Collection<MClass> items) {
+        ArrayList<MClass> classes = new ArrayList<MClass>( items );
         
-        if (classifiers.size() > 0) {
+        if (classes.size() > 0) {
             switch (clsOrder) {
                 case CLS_ALPHABETIC:
-                    Collections.sort(classifiers, new AlphabeticalNamedElementComparator());
+                    Collections.sort(classes, new AlphabeticalNamedElementComparator());
                     break;
                 case CLS_USE_ORDER:
-                    Collections.sort(classifiers, new UseFileOrderComparator());
+                    Collections.sort(classes, new UseFileOrderComparator());
                     break;
                 default:
                     break;
             }
         }
-        return classifiers;
+        return classes;
     }
     
     /**
@@ -238,7 +203,7 @@ public class ModelBrowserSorting  {
     }
     
     /**
-     * Calls the specific algorithm in which way the tree will be sorted.
+     * Calls the specific algorithem in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
@@ -261,11 +226,11 @@ public class ModelBrowserSorting  {
     }
     
     /**
-     * Calls the specific algorithm in which way the tree will be sorted.
+     * Calls the specific algorithem in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    ArrayList<MAssociation> sortAssociations(final ArrayList<MAssociation> associations) {
+    public ArrayList<MAssociation> sortAssociations(final ArrayList<MAssociation> associations) {
         ArrayList<MAssociation> onlyAssocs = new ArrayList<MAssociation>();
         if (associations.size() > 0) {
             for (MAssociation assoc : associations) {
@@ -291,7 +256,7 @@ public class ModelBrowserSorting  {
     }
 
     /**
-     * Calls the specific algorithm in which way the tree will be sorted.
+     * Calls the specific algorithem in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
@@ -318,11 +283,11 @@ public class ModelBrowserSorting  {
     }
 
     /**
-     * Calls the specific algorithm in which way the tree will be sorted.
+     * Calls the specific algorithem in which way the tree will be sorted.
      *
      * @return The correct sorted <code>ArrayList</code>.
      */
-    Collection<MPrePostCondition> sortPrePostConditions(final Collection<MPrePostCondition> items) {
+    public Collection<MPrePostCondition> sortPrePostConditions(final Collection<MPrePostCondition> items) {
         final ArrayList<MPrePostCondition> sortedConds = new ArrayList<MPrePostCondition>(items);
 
         if (sortedConds.size() > 0) {
@@ -347,42 +312,68 @@ public class ModelBrowserSorting  {
         return sortedConds;
     }
 
-	Collection<?> sortPluginCollection(Collection<?> value) {
+	public Collection<?> sortPluginCollection(Collection<?> value) {
 		return value;
 	}
 
-    
-    /*
-     * Notify all listeners that have registered interest for
-     * notification on this event type.  The event instance 
-     * is lazily created using the parameters passed into 
-     * the fire method.
-     */
-    public void fireStateChanged() {
-        // Guaranteed to return a non-null array
-        Object[] listeners = fListenerList.getListenerList();
-        SortChangeEvent e = null;
-        // Process the listeners last to first, notifying
-        // those that are interested in this event
-        for (int i = listeners.length-2; i >= 0; i -= 2) {
-            if (listeners[i] == SortChangeListener.class ) {
-                // Lazily create the event:
-                if (e == null) {
-                    e = new SortChangeEvent(this);
-                }
-                ((SortChangeListener) listeners[i+1]).stateChanged(e);
-            }          
-        }
+
+    public int getClsOrder() {
+        return clsOrder;
     }
 
-	/**
-	 * @param newObjectDiagramView
-	 */
-	public void removeSortChangeListener(SortChangeListener l) {
-		fListenerList.remove( SortChangeListener.class, l );
-	}
+    public void setClsOrder(int clsOrder) {
+        this.clsOrder = clsOrder;
+    }
 
-	/**
+    public int getAttrOrder() {
+        return attrOrder;
+    }
+
+    public void setAttrOrder(int attrOrder) {
+        this.attrOrder = attrOrder;
+    }
+
+    public int getOprOrder() {
+        return oprOrder;
+    }
+
+    public void setOprOrder(int oprOrder) {
+        this.oprOrder = oprOrder;
+    }
+
+    public int getAssocOrder() {
+        return assocOrder;
+    }
+
+    public void setAssocOrder(int assocOrder) {
+        this.assocOrder = assocOrder;
+    }
+
+    public int getInvOrder() {
+        return invOrder;
+    }
+
+    public void setInvOrder(int invOrder) {
+        this.invOrder = invOrder;
+    }
+
+    public StateMachineOrder getStateMachineOrder() {
+        return stateMachineOrder;
+    }
+
+    public void setStateMachineOrder(StateMachineOrder stateMachineOrder) {
+        this.stateMachineOrder = stateMachineOrder;
+    }
+
+    public int getCondOrder() {
+        return condOrder;
+    }
+
+    public void setCondOrder(int condOrder) {
+        this.condOrder = condOrder;
+    }
+
+    /**
 	 * @param allOwnedProtocolStateMachines
 	 * @return
 	 */

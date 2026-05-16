@@ -22,7 +22,6 @@ package org.tzi.use.gui.util;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.tzi.use.gui.main.ModelBrowserSorting;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMPrintVisitor;

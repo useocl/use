@@ -22,6 +22,7 @@ package org.tzi.use.gui.main;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
+import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
