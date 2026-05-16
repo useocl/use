@@ -1,4 +1,4 @@
-package org.tzi.use.runtime.gui;
+package org.tzi.use.runtime.spi;
 
 /**
  * This interface provides the Plugin Action's behaviour implemented by the

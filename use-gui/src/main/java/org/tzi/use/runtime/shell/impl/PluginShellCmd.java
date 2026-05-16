@@ -6,8 +6,8 @@ import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.spi.IPlugin;
 import org.tzi.use.runtime.spi.IPluginRuntime;
 import org.tzi.use.runtime.impl.PluginRuntime;
-import org.tzi.use.runtime.shell.IPluginShellCmdDelegate;
-import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
+import org.tzi.use.runtime.spi.IPluginShellCmdDelegate;
+import org.tzi.use.runtime.spi.IPluginShellCmdDescriptor;
 import org.tzi.use.util.Log;
 
 /**

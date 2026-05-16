@@ -9,7 +9,7 @@ import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
-import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
+import org.tzi.use.runtime.spi.IPluginShellCmdDescriptor;
 import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
 import org.tzi.use.runtime.util.ShellCmdRegistry;
 import org.tzi.use.util.Log;

@@ -163,9 +163,9 @@ flowchart LR
 > _and_
 > `docs/archunit-history/before-fix/bug-2_failure_report_maven_cycles_gui_views.txt`
 
-## Bug 3: `runtime` package cycles (use-gui) — 🟡 Phase A done (43 → 12)
+## Bug 3: `runtime` package cycles (use-gui) — 🟡 Phase A + B done (43 → 5)
 
-- **Severity:** High — was 43 cycles, now 12 (–31, –72%).
+- **Severity:** High — was 43 cycles, now 5 (–38, –88%).
 - **Location:** `org.tzi.use.runtime`
 - **Problem:** the runtime root package mixed two roles —
   it held the **SPI interfaces** (`IPlugin`, `IPluginRuntime`,
@@ -192,14 +192,29 @@ flowchart LR
     package rename, no signature change). External plugin authors
     must update their imports. Suggested release-note tag:
     `[breaking] runtime-spi`.
-- **Phase B / C — pending.** Residual 12 cycles flow through the
-  bidirectional pairs `gui ↔ impl`, `gui ↔ util`, `impl ↔ shell`,
-  `impl ↔ util`, `shell ↔ util`, plus one new `service ↔ spi` 2-cycle
-  introduced by Phase A (because `IPluginRuntime.getServices()`
-  returns `Map<String, IPluginServiceDescriptor>`, which lives in
-  `service`). Phase B's `IPluginServiceDescriptor → runtime.spi`
-  move addresses the reverse edge; the forward edge needs the
-  per-host descriptor types moved or DIP applied.
+- **Phase B — DONE** (commit pending push):
+  - moved 7 more SPI interfaces into `runtime/spi/`:
+    `IPluginActionDescriptor`, `IPluginActionDelegate`, `IPluginAction`
+    (gui→spi); `IPluginShellCmdDescriptor`, `IPluginShellCmdDelegate`
+    (shell→spi); `IPluginServiceDescriptor`, `IPluginService`
+    (service→spi).
+  - moved 3 concrete descriptors **into `util/`** alongside their
+    factories (bug-5 "consolidate before slicing" pattern):
+    `gui.impl.PluginActionDescriptor`,
+    `shell.impl.PluginShellCmdDescriptor`,
+    `service.impl.PluginServiceDescriptor` → `runtime.util.*`.
+  - the `service` slice vanished entirely (every file relocated;
+    `service/` and `service/impl/` directories removed).
+  - the `service ↔ spi` 2-cycle introduced by Phase A is gone.
+  - **5 cycles remain** in the runtime slice, all in the
+    `{gui, impl, shell, util}` cluster.
+- **Phase C — pending.** The 5 residuals are all
+  extension-point-lookup cycles: `gui.impl.*ExtensionPoint` classes
+  call `impl.PluginRuntime.getInstance()`, and
+  `impl.PluginRuntime` looks them up by static `getInstance()`. Same
+  structural pattern Bug 8 fixed for `shell ↔ shell.runtime`:
+  introduce per-host marker interfaces (`IExtensionPoint`) so the
+  lookup uses spi types and the downcasts happen at the boundary.
 
 <!-- BEGIN MERMAID:bug-3 -->
 ### Before Phase A — 43 cycle(s), 20 edge(s) across 6 package(s)
@@ -297,6 +312,64 @@ flowchart LR
     classDef dead fill:#eee,stroke:#999,stroke-dasharray:4 4;
     linkStyle 0,1,2,3,4,5,6,7,8,9 stroke:#2a9d8f,stroke-width:2px
     linkStyle 10,11 stroke:#e08e0b,stroke-width:2px
+```
+
+### After Phase B — 5 cycle(s), 8 edge(s) across 4 package(s)
+
+`service` slice also vanished. SPI surface now consolidated into
+`spi/` (12 interfaces). Concrete descriptors live next to their
+factories in `util/`.
+
+```mermaid
+flowchart LR
+    gui["gui"]
+    impl["impl"]
+    shell["shell"]
+    util["util"]
+    gui --> impl
+    impl --> gui
+    impl --> shell
+    shell --> impl
+    impl --> util
+    util --> impl
+    shell --> util
+    gui --> util
+    linkStyle 0,1,2,3,4,5,6,7 stroke:#d33,stroke-width:2px
+```
+
+### Δ Phase B — what changed
+
+```mermaid
+flowchart LR
+    subgraph removed["✅ Removed by Phase B (8 edges, 7 cycles)"]
+        direction LR
+        r_spi["spi"]
+        r_service["service"]:::dead
+        r_util["util"]
+        r_gui["gui"]
+        r_shell["shell"]
+        r_spi -- gone --> r_service
+        r_service -- gone --> r_spi
+        r_util -- gone --> r_gui
+        r_util -- gone --> r_shell
+        r_util -- gone --> r_service
+    end
+    subgraph kept["⏳ Phase C residuals (5 cycles, all extension-point lookups)"]
+        direction LR
+        k_gui["gui"]
+        k_impl["impl"]
+        k_shell["shell"]
+        k_util["util"]
+        k_gui --> k_impl
+        k_impl --> k_gui
+        k_impl --> k_shell
+        k_shell --> k_impl
+        k_impl --> k_util
+        k_util --> k_impl
+    end
+    classDef dead fill:#eee,stroke:#999,stroke-dasharray:4 4;
+    linkStyle 0,1,2,3,4 stroke:#2a9d8f,stroke-width:2px
+    linkStyle 5,6,7,8,9,10 stroke:#d33,stroke-width:2px
 ```
 
 > _Before-fix report archived at `docs/archunit-history/before-fix/bug-3_failure_report_maven_cycles_runtime.txt`._

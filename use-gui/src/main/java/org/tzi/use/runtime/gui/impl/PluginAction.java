@@ -4,9 +4,9 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IPlugin;
 import org.tzi.use.runtime.spi.IPluginRuntime;
-import org.tzi.use.runtime.gui.IPluginAction;
-import org.tzi.use.runtime.gui.IPluginActionDelegate;
-import org.tzi.use.runtime.gui.IPluginActionDescriptor;
+import org.tzi.use.runtime.spi.IPluginAction;
+import org.tzi.use.runtime.spi.IPluginActionDelegate;
+import org.tzi.use.runtime.spi.IPluginActionDescriptor;
 import org.tzi.use.runtime.impl.PluginRuntime;
 import org.tzi.use.util.Log;
 

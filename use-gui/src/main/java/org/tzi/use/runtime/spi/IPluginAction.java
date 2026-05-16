@@ -1,4 +1,4 @@
-package org.tzi.use.runtime.gui;
+package org.tzi.use.runtime.spi;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;

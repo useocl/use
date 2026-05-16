@@ -3,7 +3,7 @@ package org.tzi.use.runtime.gui.impl;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
-import org.tzi.use.runtime.gui.IPluginActionDescriptor;
+import org.tzi.use.runtime.spi.IPluginActionDescriptor;
 import org.tzi.use.util.Log;
 
 import javax.swing.*;

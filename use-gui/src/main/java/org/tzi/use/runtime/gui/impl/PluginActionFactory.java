@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
-import org.tzi.use.runtime.gui.IPluginActionDescriptor;
+import org.tzi.use.runtime.spi.IPluginActionDescriptor;
 import org.tzi.use.runtime.model.PluginActionModel;
 
 /**

@@ -1,4 +1,4 @@
-package org.tzi.use.runtime.service;
+package org.tzi.use.runtime.spi;
 
 /**
  * This interface provides the behavioru for Plugin Services. This interface

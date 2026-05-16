@@ -9,7 +9,7 @@ import java.util.Vector;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
-import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
+import org.tzi.use.runtime.spi.IPluginShellCmdDescriptor;
 
 /**
  * This class provides the Plugin Shell Command Proxy Factory to create Plugin

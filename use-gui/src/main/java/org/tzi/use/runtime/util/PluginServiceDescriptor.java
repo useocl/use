@@ -1,12 +1,12 @@
-package org.tzi.use.runtime.service.impl;
+package org.tzi.use.runtime.util;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.tzi.use.runtime.spi.IPluginClassLoader;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginServiceModel;
-import org.tzi.use.runtime.service.IPluginService;
-import org.tzi.use.runtime.service.IPluginServiceDescriptor;
+import org.tzi.use.runtime.spi.IPluginService;
+import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
 import org.tzi.use.util.Log;
 
 /**

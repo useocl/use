@@ -4,8 +4,8 @@ import java.net.URL;
 
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
-import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
-import org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor;
+import org.tzi.use.runtime.spi.IPluginShellCmdDescriptor;
+import org.tzi.use.runtime.util.PluginShellCmdDescriptor;
 import org.tzi.use.util.Log;
 
 /**

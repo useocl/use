@@ -2,7 +2,7 @@ package org.tzi.use.runtime.shell.impl;
 
 import org.tzi.use.main.Session;
 import org.tzi.use.main.shell.runtime.IShell;
-import org.tzi.use.runtime.shell.IPluginShellCmdDescriptor;
+import org.tzi.use.runtime.spi.IPluginShellCmdDescriptor;
 
 /**
  * This class provides the implementation for the Plugin Shell Command Proxy.
