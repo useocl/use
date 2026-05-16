@@ -854,17 +854,124 @@ flowchart LR
 
 ---
 
+## Bug 9: `uml → analysis` dead instrumentation (use-core) — ✅ RESOLVED
+
+- **Severity:** Low — 1 import, but participated in 5 of the 34 whole-core cycles.
+- **Location:** `org.tzi.use.uml.sys.DerivedAttributeController`.
+- **Problem:** `determineDerivedAttributes()` instantiated a
+  `CoverageCalculationVisitor`, processed each derive expression with
+  it, and then **discarded the result** — leftover instrumentation
+  from an experiment.
+- **Fix:** Removed the three lines and the import. The visitor was
+  the only `uml → analysis` reference in the codebase; that edge is
+  now gone.
+- **Verification:** core whole-slice cycles `analysis → uml → … →
+  analysis` (4 paths) vanish in lockstep with the direct
+  `analysis → uml → analysis` cycle.
+
+## Bug 10: `graph → util` cleanup — ✅ RESOLVED
+
+- **Severity:** Low — 1 import, but it was the only thing keeping
+  `graph` from being a strict leaf.
+- **Location:** `org.tzi.use.graph.NodeDoesNotExistException`.
+- **Problem:** The exception's message-building constructor called
+  `StringUtil.inQuotes(node.toString())` just to wrap the name in
+  backticks (`"` `` ` `` `…' "`).
+- **Fix:** Inlined the literal — the entire body of `inQuotes` is
+  `"`" + o.toString() + "'"`, two chars and a concat.
+- **Verification:** core whole-slice cycle paths
+  `graph → util → uml → graph` and `graph → util → parser → uml →
+  graph` are gone.
+
+## Bug 12: `ModelBrowserSorting` location (use-gui) — ✅ RESOLVED (GUI 14 → 10)
+
+- **Severity:** Medium — drove the `util → main` and `utilFX → mainFX`
+  back-edges plus several `views → main` paths.
+- **Location:** `org.tzi.use.gui.main.ModelBrowserSorting` (Swing)
+  and `org.tzi.use.gui.mainFX.ModelBrowserSorting` (FX).
+- **Problem:** Both files are sort-strategy holders used by views,
+  util, and main panels alike. Their placement in `main`/`mainFX`
+  meant every `util/MMHTMLPrintVisitor`-style class that wanted to
+  sort attributes/operations had to look *upwards* into the main
+  panel package — a structural inversion.
+- **Fix:** Moved (no behavior change):
+  ```
+  gui/main/ModelBrowserSorting.java     → gui/util/ModelBrowserSorting.java
+  gui/mainFX/ModelBrowserSorting.java   → gui/utilFX/ModelBrowserSorting.java
+  ```
+  Three previously package-private methods (`sortAssociations`,
+  `sortPrePostConditions`, `sortPluginCollection`) widened to public
+  so the still-in-package callers in main/mainFX can continue
+  calling them. Imports rewritten in 11 Swing callers + 3 FX callers.
+- **Verification:** GUI slice cycle count drops from 14 to 10
+  (4 cycles eliminated: `main → util → main`,
+  `mainFX → utilFX → mainFX`, `mainFX → util → main`,
+  `mainFX → util → views → main`). Entire-project slice 275 → 246.
+
+## Bug 13: `viewsFX → mainFX` ResourceStream call (use-gui) — ✅ RESOLVED (GUI 10 → 9)
+
+- **Severity:** Low — 1 file, 1 import.
+- **Location:** `org.tzi.use.gui.viewsFX.evalbrowser.ExprEvalBrowser`.
+- **Problem:** The icon-loader helper called
+  `MainWindow.class.getResourceAsStream(…)` for its sole reference
+  to mainFX. The `Class` only serves as a classpath anchor; any
+  same-module class works.
+- **Fix:** Switched to `ExprEvalBrowser.class.getResourceAsStream(…)`.
+- **Verification:** Cycle `mainFX → viewsFX → mainFX` (direct) gone.
+
+## Bug 14: `util → views` back-edges (use-gui) — ✅ RESOLVED (GUI 9 → 5)
+
+- **Severity:** Medium — 2 util-side classes pulled `views/diagrams`
+  types into their signatures, driving 4 distinct cycle paths.
+- **Location:** `org.tzi.use.gui.util.{Selection, PersistHelper}`.
+- **Problem:**
+  - `Selection<T extends Selectable>` parameterised on
+    `gui.views.diagrams.Selectable`.
+  - `PersistHelper.allNodes : Map<String, PlaceableNode>` typed
+    against `gui.views.diagrams.elements.PlaceableNode`.
+- **Fix:**
+  1. Moved `Selectable.java` from `gui.views.diagrams` to `gui.util`.
+     The interface has zero dependencies; its semantic home is the
+     lower util layer where `Selection<T>` is defined. Six
+     implementing/referencing files updated.
+  2. Erased `PersistHelper.allNodes`'s parameterization to
+     `Map<String, Object>`; `setAllNodes` accepts `Map<String, ?>`
+     (with one suppressed unchecked cast inside PersistHelper).
+     Five callers in `views/diagrams/...` added explicit
+     `(PlaceableNode)` casts when retrieving.
+- **Verification:** GUI slice 9 → 5. Cycles gone:
+  `util → views → util`, `main → util → views → main`,
+  `main → util → views → mainFX → main`,
+  `mainFX → util → views → mainFX`.
+
+---
+
 ## Current Metrics
 
-| Module   | Cycles | Worst Area                          |
-|----------|--------|-------------------------------------|
-| use-core | 42     | `uml` package (Bug 1: 34 cycles)   |
-| use-gui  | 275*   | `gui` package (14 cycles); `runtime` resolved (Bug 3) |
+| Module         | Before | After  | Δ      |
+|----------------|-------:|-------:|-------:|
+| `uml` slice    |      5 |      3 |  −40%  |
+| core whole     |     34 |     29 |  −15%  |
+| `gui` slice    |     14 |      5 |  −64%  |
+| entire-project |    275 |    246 |  −11%  |
 
-\* Project-wide count; GUI-only is 14 cycles.
+### Remaining open work
+
+- **Bug 1 Phase B+C** (uml triangle): break `ocl → sys` (35 imports
+  — IModelState / IObject / ILink / IInstance interface extraction)
+  and `mm → ocl` (47 imports — promote `Type` to `mm.types`).
+  See [`bug-1_plan.md`](./bug-1_plan.md) for the detailed plan.
+- **Bug 11** (gen → analysis): 3 imports across 2 files. Requires
+  detangling `BasicExpressionCoverageCalulator` from
+  `AbstractCoverageVisitor`.
+- **GUI residuals**: 5 cycles all rooted in `views → main`,
+  `views → mainFX`, or `graphlayout → views` (concrete-node
+  `instanceof` checks in swimlane-layout). Each requires significant
+  interface extraction.
 
 ### Measurement Limitation
 
-The "entire GUI" cycle count cannot be measured in isolation because GUI and Core share
-overlapping package names (`org.tzi.use.util`, `org.tzi.use.main`). The ArchUnit importer
-pulls in Core classes when scanning these packages, inflating the GUI-only count.
+The "entire GUI" cycle count cannot be measured in isolation because
+GUI and Core share overlapping package names (`org.tzi.use.util`,
+`org.tzi.use.main`). The ArchUnit importer pulls in Core classes
+when scanning these packages, inflating the GUI-only count.
