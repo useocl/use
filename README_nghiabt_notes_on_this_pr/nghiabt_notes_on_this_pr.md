@@ -163,17 +163,46 @@ flowchart LR
 > _and_
 > `docs/archunit-history/before-fix/bug-2_failure_report_maven_cycles_gui_views.txt`
 
-## Bug 3: `runtime` package cycles (use-gui)
+## Bug 3: `runtime` package cycles (use-gui) — 🟡 Phase A done (43 → 12)
 
-- **Severity:** High — 43 cycles
+- **Severity:** High — was 43 cycles, now 12 (–31, –72%).
 - **Location:** `org.tzi.use.runtime`
-- **Problem:** The runtime package has heavy internal coupling (43 cycles detected in
-  Maven structure analysis).
-- **Fix direction:** Needs further investigation — identify which runtime subpackages
-  are involved and break the dependency chains.
+- **Problem:** the runtime root package mixed two roles —
+  it held the **SPI interfaces** (`IPlugin`, `IPluginRuntime`,
+  `IPluginDescriptor`, `IPluginClassLoader`) which everything below
+  needed to import (so the `root` slice was the *bottom* of gravity),
+  *and* the **orchestrator** `MainPluginRuntime` which wired
+  `gui` / `impl` / `shell` together at startup (so `root` was also the
+  *top* of gravity). That dual role guaranteed cycles regardless of
+  what the leaves did.
+- **Plan:** see `README_nghiabt_notes_on_this_pr/bug-3_plan.md`. Three
+  phases — Phase A (split root), Phase B (descriptors → spi), Phase C
+  (marker-interface DIP on the gui/shell ↔ impl extension-point
+  edges).
+- **Phase A — DONE** (commit `9435ae3b`):
+  - moved `runtime/IPlugin*.java` → `runtime/spi/IPlugin*.java`
+    (the four SPI interfaces).
+  - moved `runtime/MainPluginRuntime.java` → `runtime/bootstrap/MainPluginRuntime.java`.
+  - the `root` slice no longer exists in the cycle graph (no `.java`
+    files left directly under `runtime/`).
+  - updated ~20 importing files, two `Class.forName(…)` reflection
+    sites in the launchers, and `module-info.java` exports.
+  - ⚠ **Breaking API change:** plugin SPI interfaces moved from
+    `org.tzi.use.runtime.*` to `org.tzi.use.runtime.spi.*` (pure
+    package rename, no signature change). External plugin authors
+    must update their imports. Suggested release-note tag:
+    `[breaking] runtime-spi`.
+- **Phase B / C — pending.** Residual 12 cycles flow through the
+  bidirectional pairs `gui ↔ impl`, `gui ↔ util`, `impl ↔ shell`,
+  `impl ↔ util`, `shell ↔ util`, plus one new `service ↔ spi` 2-cycle
+  introduced by Phase A (because `IPluginRuntime.getServices()`
+  returns `Map<String, IPluginServiceDescriptor>`, which lives in
+  `service`). Phase B's `IPluginServiceDescriptor → runtime.spi`
+  move addresses the reverse edge; the forward edge needs the
+  per-host descriptor types moved or DIP applied.
 
 <!-- BEGIN MERMAID:bug-3 -->
-**runtime** — 43 cycle(s), 20 edge(s) across 6 package(s)
+### Before Phase A — 43 cycle(s), 20 edge(s) across 6 package(s)
 
 ```mermaid
 flowchart LR
@@ -205,6 +234,72 @@ flowchart LR
     root --> service
     linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 stroke:#d33,stroke-width:2px
 ```
+
+### After Phase A — 12 cycle(s), 12 edge(s) across 6 package(s)
+
+`root` slice vanished (its files moved to new slices `spi` and
+`bootstrap`). `bootstrap` has only outbound edges and is therefore
+acyclic; not shown.
+
+```mermaid
+flowchart LR
+    gui["gui"]
+    impl["impl"]
+    shell["shell"]
+    util["util"]
+    service["service"]
+    spi["spi (new)"]
+    gui --> impl
+    impl --> gui
+    gui --> util
+    util --> gui
+    impl --> shell
+    shell --> impl
+    impl --> util
+    util --> impl
+    shell --> util
+    util --> shell
+    spi --> service
+    service --> spi
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11 stroke:#d33,stroke-width:2px
+```
+
+### Δ Phase A — cycles gone vs added
+
+```mermaid
+flowchart LR
+    subgraph removed["✅ Removed by Phase A (10 edges)"]
+        direction LR
+        r_root["root"]:::dead
+        r_gui["gui"]
+        r_impl["impl"]
+        r_shell["shell"]
+        r_util["util"]
+        r_service["service"]
+        r_root -- gone --> r_gui
+        r_root -- gone --> r_impl
+        r_root -- gone --> r_service
+        r_gui -- gone --> r_root
+        r_impl -- gone --> r_root
+        r_impl -- gone --> r_service
+        r_shell -- gone --> r_root
+        r_util -- gone --> r_root
+        r_util -- gone --> r_service
+        r_service -- gone --> r_root
+    end
+    subgraph added["⚠ Added by Phase A (2 edges)"]
+        direction LR
+        a_spi["spi"]
+        a_service["service"]
+        a_spi -- new --> a_service
+        a_service -- new --> a_spi
+    end
+    classDef dead fill:#eee,stroke:#999,stroke-dasharray:4 4;
+    linkStyle 0,1,2,3,4,5,6,7,8,9 stroke:#2a9d8f,stroke-width:2px
+    linkStyle 10,11 stroke:#e08e0b,stroke-width:2px
+```
+
+> _Before-fix report archived at `docs/archunit-history/before-fix/bug-3_failure_report_maven_cycles_runtime.txt`._
 <!-- END MERMAID:bug-3 -->
 
 ## Bug 4: `api.impl` ↔ `api` factory cycle (use-core) — ✅ RESOLVED
