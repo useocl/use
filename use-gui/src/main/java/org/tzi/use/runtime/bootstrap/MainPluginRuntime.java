@@ -4,7 +4,11 @@ import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
 import org.tzi.use.runtime.gui.IPluginDiagramExtensionPoint;
+import org.tzi.use.runtime.gui.impl.ActionExtensionPoint;
+import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
+import org.tzi.use.runtime.gui.impl.MModelExtensionPoint;
 import org.tzi.use.runtime.impl.PluginRuntime;
+import org.tzi.use.runtime.shell.impl.ShellExtensionPoint;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.spi.IPluginRuntime;
 import org.tzi.use.util.Log;
@@ -78,6 +82,10 @@ public class MainPluginRuntime {
 				+ " files in directory");
 
 		IPluginRuntime pluginRuntime = PluginRuntime.getInstance();
+		pluginRuntime.registerExtensionPoint("action", ActionExtensionPoint.getInstance());
+		pluginRuntime.registerExtensionPoint("shell", ShellExtensionPoint.getInstance());
+		pluginRuntime.registerExtensionPoint("model", MModelExtensionPoint.getInstance());
+		pluginRuntime.registerExtensionPoint("diagram", DiagramExtensionPoint.getInstance());
 		for (int cntFiles = 0; cntFiles < pluginFileNames.length;) {
 			String pluginFilename = pluginFileNames[cntFiles];
 			Log.debug("Current plugin filename [" + pluginFilename + "]");

@@ -3,14 +3,10 @@ package org.tzi.use.runtime.impl;
 import org.tzi.use.main.runtime.IExtensionPoint;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.spi.IPluginRuntime;
-import org.tzi.use.runtime.gui.impl.ActionExtensionPoint;
-import org.tzi.use.runtime.gui.impl.DiagramExtensionPoint;
-import org.tzi.use.runtime.gui.impl.MModelExtensionPoint;
 import org.tzi.use.runtime.model.PluginServiceModel;
 import org.tzi.use.runtime.spi.IPluginService;
 import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
 import org.tzi.use.runtime.util.PluginServiceDescriptor;
-import org.tzi.use.runtime.shell.impl.ShellExtensionPoint;
 import org.tzi.use.runtime.util.PluginRegistry;
 import org.tzi.use.runtime.util.ServiceRegistry;
 import org.tzi.use.util.Log;
@@ -43,14 +39,14 @@ public class PluginRuntime implements IPluginRuntime {
 
 	private Map<String, IPluginServiceDescriptor> registeredServices = new HashMap<String, IPluginServiceDescriptor>();
 
+	private final Map<String, IExtensionPoint> extensionPoints = new HashMap<>();
+
 	public IExtensionPoint getExtensionPoint(String extensionPoint) {
-        return switch (extensionPoint) {
-            case "action" -> ActionExtensionPoint.getInstance();
-            case "shell" -> ShellExtensionPoint.getInstance();
-            case "model" -> MModelExtensionPoint.getInstance();
-			case "diagram" -> DiagramExtensionPoint.getInstance();
-            default -> null;
-        };
+		return extensionPoints.get(extensionPoint);
+	}
+
+	public void registerExtensionPoint(String name, IExtensionPoint point) {
+		extensionPoints.put(name, point);
 	}
 
 	/**

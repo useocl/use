@@ -9,7 +9,7 @@ import java.util.jar.JarFile;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.tzi.use.runtime.spi.IPluginDescriptor;
-import org.tzi.use.runtime.impl.PluginDescriptor;
+import org.tzi.use.runtime.util.PluginDescriptor;
 import org.tzi.use.runtime.model.PluginModel;
 import org.tzi.use.util.Log;
 import org.xml.sax.InputSource;

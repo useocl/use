@@ -3,6 +3,7 @@ package org.tzi.use.runtime.spi;
 import java.net.URL;
 import java.util.Map;
 
+import org.tzi.use.main.runtime.IExtensionPoint;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.runtime.spi.IPluginService;
 import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
@@ -51,10 +52,20 @@ public interface IPluginRuntime extends IRuntime {
 
 	/**
 	 * Method to register all Services by PluginDescriptor provided by a Plugin.
-	 * 
+	 *
 	 * @param currentPluginDescriptor
 	 *            The PluginDescriptor
 	 */
 	public void registerServices(IPluginDescriptor currentPluginDescriptor);
+
+	/**
+	 * Method to register an extension point under a symbolic name. The bootstrap
+	 * wires the host-specific extension-point singletons in at startup so the
+	 * runtime impl does not need a static reference to them.
+	 *
+	 * @param name  the symbolic key used by {@link #getExtensionPoint(String)}
+	 * @param point the extension-point singleton to register
+	 */
+	public void registerExtensionPoint(String name, IExtensionPoint point);
 
 }

@@ -163,9 +163,9 @@ flowchart LR
 > _and_
 > `docs/archunit-history/before-fix/bug-2_failure_report_maven_cycles_gui_views.txt`
 
-## Bug 3: `runtime` package cycles (use-gui) — 🟡 Phase A + B done (43 → 5)
+## Bug 3: `runtime` package cycles (use-gui) — ✅ RESOLVED (43 → 0)
 
-- **Severity:** High — was 43 cycles, now 5 (–38, –88%).
+- **Severity:** ~~High — 43 cycles~~ → **0 cycles**.
 - **Location:** `org.tzi.use.runtime`
 - **Problem:** the runtime root package mixed two roles —
   it held the **SPI interfaces** (`IPlugin`, `IPluginRuntime`,
@@ -208,13 +208,25 @@ flowchart LR
   - the `service ↔ spi` 2-cycle introduced by Phase A is gone.
   - **5 cycles remain** in the runtime slice, all in the
     `{gui, impl, shell, util}` cluster.
-- **Phase C — pending.** The 5 residuals are all
-  extension-point-lookup cycles: `gui.impl.*ExtensionPoint` classes
-  call `impl.PluginRuntime.getInstance()`, and
-  `impl.PluginRuntime` looks them up by static `getInstance()`. Same
-  structural pattern Bug 8 fixed for `shell ↔ shell.runtime`:
-  introduce per-host marker interfaces (`IExtensionPoint`) so the
-  lookup uses spi types and the downcasts happen at the boundary.
+- **Phase C — DONE** (commit pending push):
+  - **Externalised the extension-point lookup.** Dropped the switch
+    statement in `impl.PluginRuntime.getExtensionPoint(String)`
+    that named the four concrete `gui.impl.*ExtensionPoint` and
+    `shell.impl.ShellExtensionPoint` classes. Replaced with a
+    `Map<String, IExtensionPoint>` populated by a new SPI method
+    `IPluginRuntime.registerExtensionPoint(String, IExtensionPoint)`.
+    `bootstrap.MainPluginRuntime.run()` registers all four
+    extension-point singletons at startup (it's already L5 / top of
+    gravity, so it may import any layer below). Kills `impl→gui`
+    and `impl→shell`.
+  - **Moved `impl.PluginDescriptor → util.PluginDescriptor`** —
+    `util.PluginRegistry` was the only consumer outside `impl`,
+    constructing the concrete descriptor. Co-locating the descriptor
+    record with its registry (bug-5 / Phase B consolidation pattern)
+    makes the construction intra-`util` and kills `util→impl`.
+  - All 5 residual cycles vanish; the runtime slice now reports
+    `Number of cycles in org.tzi.use.runtime: 0`. The failure
+    report file is no longer generated.
 
 <!-- BEGIN MERMAID:bug-3 -->
 ### Before Phase A — 43 cycle(s), 20 edge(s) across 6 package(s)
@@ -370,6 +382,57 @@ flowchart LR
     classDef dead fill:#eee,stroke:#999,stroke-dasharray:4 4;
     linkStyle 0,1,2,3,4 stroke:#2a9d8f,stroke-width:2px
     linkStyle 5,6,7,8,9,10 stroke:#d33,stroke-width:2px
+```
+
+### After Phase C — 0 cycles ✅
+
+```mermaid
+flowchart LR
+    bootstrap["bootstrap<br/>(L5)"]
+    gui["gui (L4)"]
+    shell["shell (L4)"]
+    impl["impl (L3)"]
+    util["util (L2)"]
+    spi["spi (L1)"]
+    bootstrap --> gui
+    bootstrap --> shell
+    bootstrap --> impl
+    bootstrap --> spi
+    gui --> impl
+    gui --> util
+    gui --> spi
+    shell --> impl
+    shell --> util
+    shell --> spi
+    impl --> util
+    impl --> spi
+    util --> spi
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12 stroke:#2a9d8f,stroke-width:2px
+```
+
+Gravity restored: every edge flows L5 → L4 → L3 → L2 → L1.
+
+### Δ Phase C — what closed the gap
+
+```mermaid
+flowchart LR
+    subgraph removed["✅ Removed by Phase C (3 edges → 5 cycles)"]
+        direction LR
+        r_impl["impl"]
+        r_gui["gui"]
+        r_shell["shell"]
+        r_util["util"]
+        r_impl -- gone --> r_gui
+        r_impl -- gone --> r_shell
+        r_util -- gone --> r_impl
+    end
+    subgraph mechanism["How"]
+        direction TB
+        m1["impl.PluginRuntime.getExtensionPoint<br/>switch ⇒ Map lookup;<br/>bootstrap registers points at startup"]
+        m2["impl.PluginDescriptor moved into util/<br/>(co-located with PluginRegistry that constructs it)"]
+    end
+    classDef dead fill:#eee,stroke:#999,stroke-dasharray:4 4;
+    linkStyle 0,1,2 stroke:#2a9d8f,stroke-width:2px
 ```
 
 > _Before-fix report archived at `docs/archunit-history/before-fix/bug-3_failure_report_maven_cycles_runtime.txt`._
@@ -701,7 +764,7 @@ flowchart LR
 | Module   | Cycles | Worst Area                          |
 |----------|--------|-------------------------------------|
 | use-core | 42     | `uml` package (Bug 1: 34 cycles)   |
-| use-gui  | 384*   | `runtime` (Bug 3: 43 cycles)       |
+| use-gui  | 275*   | `gui` package (14 cycles); `runtime` resolved (Bug 3) |
 
 \* Project-wide count; GUI-only is 14 cycles.
 
