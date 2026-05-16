@@ -39,7 +39,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.tzi.use.gui.mainFX.MainWindow;
 import org.tzi.use.main.gui.Main;
 import org.tzi.use.uml.ocl.expr.*;
 import org.tzi.use.uml.ocl.type.Type;
@@ -844,7 +843,7 @@ public class ExprEvalBrowser extends BorderPane {
 
     private static ImageView getIcon(String name) {
         // Load the image from the resource path
-        Image image = new Image(Objects.requireNonNull(MainWindow.class.getResourceAsStream("/images/" + name)));
+        Image image = new Image(Objects.requireNonNull(ExprEvalBrowser.class.getResourceAsStream("/images/" + name)));
         // Create an ImageView to display the image
         return new ImageView(image);
     }
