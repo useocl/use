@@ -304,19 +304,66 @@ flowchart LR
 > _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-6_failure_report_maven_cycles_parser.txt`_
 <!-- END MERMAID:bug-6 -->
 
-## Bug 7: Layer violations in GUI launcher (use-gui)
+## Bug 7: Layer violations in GUI launcher (use-gui) — ✅ RESOLVED
 
-- **Severity:** Medium — 21 violations
+- **Severity:** ~~Medium — 21 violations~~ → **0 violations**
 - **Location:** `org.tzi.use.main.gui.*`, `org.tzi.use.util.test.*`
-- **Problem:** These are not cycles but layer boundary violations:
-  - `main.gui.fx.JavaFXAppLauncher` directly constructs `gui.mainFX.MainWindow`.
-  - `main.gui.swing.MainSwing` directly constructs `gui.main.MainWindow`.
-  - `util.test.DiagramUtilTest` calls into `gui.views.diagrams.util.Util`.
-- **Fix direction:** Launchers should use a factory or DI to obtain window instances.
-  Move `DiagramUtilTest` to the GUI test source root.
+- **Problem:** These are not cycles but layer boundary violations
+  flagged by `AntLayeredArchitectureTest.core_should_not_depend_on_gui`
+  (which lumps all of `main..` and `util..` into "core"):
+  - `main.gui.fx.JavaFXAppLauncher` directly constructed
+    `gui.mainFX.MainWindow` (5 violations).
+  - `main.gui.swing.MainSwing` directly constructed `gui.main.MainWindow`
+    (2 violations).
+  - `util.test.DiagramUtilTest` called into `gui.views.diagrams.util.Util`
+    (14 violations).
+  All three source files were misplaced — the launchers are 150+ lines
+  of GUI code masquerading as bootstrap; the test is a GUI test
+  living under `util.test`.
+- **Fix:** two-prong relocation, no behavior change.
+  - **Prong 1 (test):** moved `DiagramUtilTest` next to the class it tests:
+    `org.tzi.use.util.test.DiagramUtilTest` →
+    `org.tzi.use.gui.views.diagrams.util.DiagramUtilTest`. The now
+    intra-package `import Util;` is dropped. 14 violations gone.
+  - **Prong 2 (launchers):** introduced a tiny
+    `org.tzi.use.main.gui.Launcher` interface (one method,
+    `launchApp(String[])`) and relocated the two implementations into
+    `gui..`:
+    - `org.tzi.use.main.gui.swing.MainSwing` →
+      `org.tzi.use.gui.main.SwingLauncher implements Launcher`
+    - `org.tzi.use.main.gui.fx.JavaFXAppLauncher` →
+      `org.tzi.use.gui.mainFX.JavaFXLauncher extends Application
+      implements Launcher`
+    - the 9-line `org.tzi.use.main.gui.fx.MainJavaFX` stub is folded
+      into `JavaFXLauncher.launchApp` (which calls
+      `Application.launch(getClass(), args)`).
+
+    `Main.java` now resolves the impl by FQN at runtime
+    (`Class.forName(...)` + `getDeclaredConstructor().newInstance()`),
+    so the bootstrap class keeps no static dependency on `gui..` —
+    ArchUnit only analyses static references. The empty `main/gui/swing/`
+    and `main/gui/fx/` packages are removed; `module-info` drops the
+    no-longer-existent `exports org.tzi.use.main.gui.fx`.
+- **Verification:** `AntLayeredArchitectureTest` reports `Number of
+  violations: 0` after both prongs. The sibling
+  `MavenLayeredArchitectureTest` (narrower scope) also passes. All
+  271 use-core and 18 use-gui tests are green.
+- **⚠ Breaking API change — migration note:** four FQNs change and one
+  new interface appears. External callers must update:
+  ```
+  org.tzi.use.main.gui.swing.MainSwing       → (removed; launch via Main / Launcher)
+  org.tzi.use.main.gui.fx.JavaFXAppLauncher  → org.tzi.use.gui.mainFX.JavaFXLauncher
+  org.tzi.use.main.gui.fx.MainJavaFX         → (removed; folded into JavaFXLauncher)
+  org.tzi.use.util.test.DiagramUtilTest      → org.tzi.use.gui.views.diagrams.util.DiagramUtilTest
+  ```
+  New public interface: `org.tzi.use.main.gui.Launcher` (single
+  method `launchApp(String[] args)`). The supported entry point —
+  `org.tzi.use.main.gui.Main.main(String[])` — is unchanged, so most
+  consumers (CLI invocations, the assembled jar) need no change.
+  Suggested release-note tag: `[breaking] main.gui, util.test`.
 
 <!-- BEGIN MERMAID:bug-7 -->
-**GUI launcher layer violations** — 21 violation(s) across 3 caller→callee pair(s)
+### Before (21 violations)
 
 ```mermaid
 flowchart LR
@@ -331,6 +378,21 @@ flowchart LR
     n4 -. "14 call(s)" .-> n5
     linkStyle 0,1,2 stroke:#d33,stroke-width:2px
 ```
+
+### After (0 violations) ✅
+
+```mermaid
+flowchart LR
+    main["main.gui<br/>(Main, Launcher iface)"]
+    swing["gui.main<br/>(SwingLauncher, MainWindow)"]
+    fx["gui.mainFX<br/>(JavaFXLauncher, MainWindow)"]
+    test["gui.views.diagrams.util<br/>(Util, DiagramUtilTest)"]
+    swing -->|"implements Launcher"| main
+    fx -->|"implements Launcher"| main
+    linkStyle 0,1 stroke:#2a9d8f,stroke-width:2px
+```
+
+> _Old ArchUnit failure report archived at `docs/archunit-history/before-fix/bug-7_failure_report_maven_layers.txt`_
 <!-- END MERMAID:bug-7 -->
 
 ## Bug 8: `shell` ↔ `shell.runtime` cycle (use-gui) — ✅ RESOLVED

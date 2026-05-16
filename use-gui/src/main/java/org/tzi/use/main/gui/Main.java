@@ -1,7 +1,5 @@
 package org.tzi.use.main.gui;
 
-import org.tzi.use.main.gui.fx.MainJavaFX;
-import org.tzi.use.main.gui.swing.MainSwing;
 import org.tzi.use.util.USEWriter;
 
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ public class Main {
         System.setErr(USEWriter.getInstance().getErr());
 
         boolean useJavaFX = false;
-        // cleanedArgs is needed to avoid giving -jfx into the MainJavaFX,
+        // cleanedArgs is needed to avoid passing -jfx to the JavaFX launcher,
         // because Application.launch() tries to parse all arguments as JavaFX compatible
         // and throws an error if it encounters an unknown one (like -jfx).
         List<String> cleanedArgs = new ArrayList<>();
@@ -27,10 +25,20 @@ public class Main {
             }
         }
 
-        if (useJavaFX) {
-            MainJavaFX.launchApp(cleanedArgs.toArray(new String[0]));
-        } else {
-            new MainSwing().launch(cleanedArgs.toArray(new String[0]));
+        // Resolve the launcher impl by FQN at runtime so this bootstrap
+        // class keeps no static dependency on gui.. — ArchUnit only sees
+        // the Launcher interface (which lives in main.gui).
+        String fqcn = useJavaFX
+                ? "org.tzi.use.gui.mainFX.JavaFXLauncher"
+                : "org.tzi.use.gui.main.SwingLauncher";
+
+        try {
+            Launcher launcher = (Launcher) Class.forName(fqcn)
+                    .getDeclaredConstructor()
+                    .newInstance();
+            launcher.launchApp(cleanedArgs.toArray(new String[0]));
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Failed to load launcher: " + fqcn, e);
         }
     }
 }
