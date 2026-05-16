@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.main.runtime.IMainWindow;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IDescriptor;
@@ -39,10 +40,10 @@ public class ActionExtensionPoint implements IPluginActionExtensionPoint {
 
 	private Vector<IPluginActionDescriptor> registeredActions;
 
-	public Map<Map<String, String>, PluginActionProxy> createPluginActions(Session session, MainWindow mainWindow) {
+	public Map<Map<String, String>, PluginActionProxy> createPluginActions(Session session, IMainWindow mainWindow) {
 		PluginActionFactory actionFactory = PluginActionFactory.getInstance();
 		return actionFactory.createPluginActions(getPluginActions(), session,
-				mainWindow);
+				(MainWindow) mainWindow);
 	}
 
 	private Vector<IPluginActionDescriptor> getPluginActions() {

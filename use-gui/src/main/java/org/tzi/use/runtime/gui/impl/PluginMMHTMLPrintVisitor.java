@@ -3,6 +3,7 @@ package org.tzi.use.runtime.gui.impl;
 import java.io.PrintWriter;
 
 import org.tzi.use.gui.main.ModelBrowser;
+import org.tzi.use.gui.main.runtime.IModelBrowser;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.util.MMHTMLPrintVisitor;
 import org.tzi.use.runtime.gui.IPluginMModelElement;
@@ -30,9 +31,9 @@ public class PluginMMHTMLPrintVisitor extends MMHTMLPrintVisitor implements
 	 * @param modelBrowser
 	 *            The ModelBrowser object
 	 */
-	public PluginMMHTMLPrintVisitor(PrintWriter out, ModelBrowser modelBrowser) {
+	public PluginMMHTMLPrintVisitor(PrintWriter out, IModelBrowser modelBrowser) {
 		super(out);
-		setModelBrowser(modelBrowser);
+		setModelBrowser((ModelBrowser) modelBrowser);
 
 	}
 
@@ -41,7 +42,7 @@ public class PluginMMHTMLPrintVisitor extends MMHTMLPrintVisitor implements
 
 	}
 
-	public ModelBrowser modelBrowser() {
+	public IModelBrowser modelBrowser() {
 		return this.modelBrowser;
 	}
 

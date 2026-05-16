@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
-import org.tzi.use.gui.views.selection.objectselection.DataHolder;
+import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
 import org.tzi.use.uml.sys.MObject;
 
 /**

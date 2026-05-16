@@ -49,8 +49,9 @@ import java.util.*;
  * @author      Mark Richters
  */
 @SuppressWarnings("serial")
-public class ModelBrowser extends JPanel 
-    implements DragSourceListener, DragGestureListener, ModelBrowserSorting.SortChangeListener {
+public class ModelBrowser extends JPanel
+    implements DragSourceListener, DragGestureListener, ModelBrowserSorting.SortChangeListener,
+               org.tzi.use.gui.main.runtime.IModelBrowser {
     private MModel fModel;
     private JTree fTree;
     private JEditorPane fHtmlPane;

@@ -2,7 +2,6 @@ package org.tzi.use.gui.main.runtime;
 
 import java.io.PrintWriter;
 
-import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.main.runtime.IExtensionPoint;
 
 /**
@@ -23,7 +22,7 @@ public interface IPluginMModelExtensionPoint extends IExtensionPoint {
 	 * @return The MMPrintVisitor instance.
 	 */
 	IPluginMMVisitor createMMPrintVisitor(PrintWriter printWriter,
-			ModelBrowser modelBrowser);
+			IModelBrowser modelBrowser);
 
 	/**
 	 * Method to create a MMHTMLPrintVisitor
@@ -35,6 +34,6 @@ public interface IPluginMModelExtensionPoint extends IExtensionPoint {
 	 * @return The MMHTMLPrintVisitor instance.
 	 */
 	IPluginMMVisitor createMMHTMLPrintVisitor(PrintWriter printWriter,
-			ModelBrowser modelBrowser);
+			IModelBrowser modelBrowser);
 
 }

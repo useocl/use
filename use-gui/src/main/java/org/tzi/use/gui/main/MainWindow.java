@@ -97,7 +97,7 @@ import java.util.List;
  * @author Stefan Schoon
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.IMainWindow {
     private final Session fSession;
 
     private final StatusBar fStatusBar;

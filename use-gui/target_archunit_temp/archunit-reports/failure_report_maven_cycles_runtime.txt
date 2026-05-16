@@ -290,7 +290,7 @@ Cycle detected: Slice gui ->
     - Method <org.tzi.use.runtime.gui.impl.PluginActionProxy.createImageIcon(org.tzi.use.runtime.gui.IPluginActionDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginLocation()> in (PluginActionProxy.java:40)
     - Method <org.tzi.use.runtime.gui.impl.PluginActionDescriptor.getActionClass()> calls method <org.tzi.use.runtime.IPluginClassLoader.loadClass(java.lang.String)> in (PluginActionDescriptor.java:52)
     - Method <org.tzi.use.runtime.gui.impl.DiagramExtensionPoint.registerDiagramManipulators(org.tzi.use.runtime.IPluginDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (DiagramExtensionPoint.java:55)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:64)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:65)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (PluginAction.java:86)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.run(org.tzi.use.runtime.IPluginRuntime)> in (PluginAction.java:94)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.getName()> in (PluginAction.java:96)
@@ -313,7 +313,7 @@ Cycle detected: Slice gui ->
     - Method <org.tzi.use.runtime.gui.impl.PluginActionProxy.createImageIcon(org.tzi.use.runtime.gui.IPluginActionDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginLocation()> in (PluginActionProxy.java:40)
     - Method <org.tzi.use.runtime.gui.impl.PluginActionDescriptor.getActionClass()> calls method <org.tzi.use.runtime.IPluginClassLoader.loadClass(java.lang.String)> in (PluginActionDescriptor.java:52)
     - Method <org.tzi.use.runtime.gui.impl.DiagramExtensionPoint.registerDiagramManipulators(org.tzi.use.runtime.IPluginDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (DiagramExtensionPoint.java:55)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:64)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:65)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (PluginAction.java:86)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.run(org.tzi.use.runtime.IPluginRuntime)> in (PluginAction.java:94)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.getName()> in (PluginAction.java:96)
@@ -342,7 +342,7 @@ Cycle detected: Slice gui ->
     - Method <org.tzi.use.runtime.gui.impl.PluginActionProxy.createImageIcon(org.tzi.use.runtime.gui.IPluginActionDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginLocation()> in (PluginActionProxy.java:40)
     - Method <org.tzi.use.runtime.gui.impl.PluginActionDescriptor.getActionClass()> calls method <org.tzi.use.runtime.IPluginClassLoader.loadClass(java.lang.String)> in (PluginActionDescriptor.java:52)
     - Method <org.tzi.use.runtime.gui.impl.DiagramExtensionPoint.registerDiagramManipulators(org.tzi.use.runtime.IPluginDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (DiagramExtensionPoint.java:55)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:64)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:65)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (PluginAction.java:86)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.run(org.tzi.use.runtime.IPluginRuntime)> in (PluginAction.java:94)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.getName()> in (PluginAction.java:96)
@@ -374,7 +374,7 @@ Cycle detected: Slice gui ->
     - Method <org.tzi.use.runtime.gui.impl.PluginActionProxy.createImageIcon(org.tzi.use.runtime.gui.IPluginActionDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginLocation()> in (PluginActionProxy.java:40)
     - Method <org.tzi.use.runtime.gui.impl.PluginActionDescriptor.getActionClass()> calls method <org.tzi.use.runtime.IPluginClassLoader.loadClass(java.lang.String)> in (PluginActionDescriptor.java:52)
     - Method <org.tzi.use.runtime.gui.impl.DiagramExtensionPoint.registerDiagramManipulators(org.tzi.use.runtime.IPluginDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (DiagramExtensionPoint.java:55)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:64)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginModel()> in (ActionExtensionPoint.java:65)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPluginDescriptor.getPluginClass()> in (PluginAction.java:86)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.run(org.tzi.use.runtime.IPluginRuntime)> in (PluginAction.java:94)
     - Method <org.tzi.use.runtime.gui.impl.PluginAction.createActionDelegate()> calls method <org.tzi.use.runtime.IPlugin.getName()> in (PluginAction.java:96)
@@ -394,8 +394,8 @@ Cycle detected: Slice gui ->
                 Slice util -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> has return type <org.tzi.use.runtime.gui.impl.PluginActionDescriptor> in (ActionRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> calls constructor <org.tzi.use.runtime.gui.impl.PluginActionDescriptor.<init>(org.tzi.use.runtime.model.PluginActionModel, org.tzi.use.runtime.IPluginClassLoader, org.tzi.use.runtime.IPluginDescriptor)> in (ActionRegistry.java:60)
@@ -404,8 +404,8 @@ Cycle detected: Slice gui ->
                 Slice impl -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.PluginRegistry.createPluginDescriptor(org.tzi.use.runtime.model.PluginModel, java.net.URL)> calls constructor <org.tzi.use.runtime.impl.PluginDescriptor.<init>(org.tzi.use.runtime.model.PluginModel, java.net.URL)> in (PluginRegistry.java:48)
   3. Dependencies of Slice impl
@@ -418,8 +418,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.PluginRegistry.createPluginDescriptor(org.tzi.use.runtime.model.PluginModel, java.net.URL)> calls constructor <org.tzi.use.runtime.impl.PluginDescriptor.<init>(org.tzi.use.runtime.model.PluginModel, java.net.URL)> in (PluginRegistry.java:48)
   3. Dependencies of Slice impl
@@ -453,8 +453,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.PluginRegistry.createPluginDescriptor(org.tzi.use.runtime.model.PluginModel, java.net.URL)> calls constructor <org.tzi.use.runtime.impl.PluginDescriptor.<init>(org.tzi.use.runtime.model.PluginModel, java.net.URL)> in (PluginRegistry.java:48)
   3. Dependencies of Slice impl
@@ -482,8 +482,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.PluginRegistry.createPluginDescriptor(org.tzi.use.runtime.model.PluginModel, java.net.URL)> calls constructor <org.tzi.use.runtime.impl.PluginDescriptor.<init>(org.tzi.use.runtime.model.PluginModel, java.net.URL)> in (PluginRegistry.java:48)
   3. Dependencies of Slice impl
@@ -507,8 +507,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Class <org.tzi.use.runtime.util.PluginClassLoader> implements interface <org.tzi.use.runtime.IPluginClassLoader> in (PluginClassLoader.java:0)
     - Method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> has parameter of type <org.tzi.use.runtime.IPluginDescriptor> in (ActionRegistry.java:0)
@@ -526,8 +526,8 @@ Cycle detected: Slice gui ->
                 Slice impl -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Class <org.tzi.use.runtime.util.PluginClassLoader> implements interface <org.tzi.use.runtime.IPluginClassLoader> in (PluginClassLoader.java:0)
     - Method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> has parameter of type <org.tzi.use.runtime.IPluginDescriptor> in (ActionRegistry.java:0)
@@ -549,8 +549,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ServiceRegistry.registerPluginService(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginServiceModel)> has return type <org.tzi.use.runtime.service.IPluginServiceDescriptor> in (ServiceRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ServiceRegistry.registerPluginService(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginServiceModel)> calls constructor <org.tzi.use.runtime.service.impl.PluginServiceDescriptor.<init>(org.tzi.use.runtime.model.PluginServiceModel, org.tzi.use.runtime.IPluginDescriptor)> in (ServiceRegistry.java:59)
@@ -571,8 +571,8 @@ Cycle detected: Slice gui ->
                 Slice impl -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ServiceRegistry.registerPluginService(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginServiceModel)> has return type <org.tzi.use.runtime.service.IPluginServiceDescriptor> in (ServiceRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ServiceRegistry.registerPluginService(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginServiceModel)> calls constructor <org.tzi.use.runtime.service.impl.PluginServiceDescriptor.<init>(org.tzi.use.runtime.model.PluginServiceModel, org.tzi.use.runtime.IPluginDescriptor)> in (ServiceRegistry.java:59)
@@ -596,8 +596,8 @@ Cycle detected: Slice gui ->
                 Slice impl -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> has return type <org.tzi.use.runtime.shell.IPluginShellCmdDescriptor> in (ShellCmdRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> calls constructor <org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor.<init>(org.tzi.use.runtime.model.PluginShellCmdModel, java.net.URL, org.tzi.use.runtime.IPluginDescriptor)> in (ShellCmdRegistry.java:62)
@@ -614,8 +614,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> has return type <org.tzi.use.runtime.shell.IPluginShellCmdDescriptor> in (ShellCmdRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> calls constructor <org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor.<init>(org.tzi.use.runtime.model.PluginShellCmdModel, java.net.URL, org.tzi.use.runtime.IPluginDescriptor)> in (ShellCmdRegistry.java:62)
@@ -653,8 +653,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> has return type <org.tzi.use.runtime.shell.IPluginShellCmdDescriptor> in (ShellCmdRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> calls constructor <org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor.<init>(org.tzi.use.runtime.model.PluginShellCmdModel, java.net.URL, org.tzi.use.runtime.IPluginDescriptor)> in (ShellCmdRegistry.java:62)
@@ -684,8 +684,8 @@ Cycle detected: Slice gui ->
                 Slice root -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> has return type <org.tzi.use.runtime.shell.IPluginShellCmdDescriptor> in (ShellCmdRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> calls constructor <org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor.<init>(org.tzi.use.runtime.model.PluginShellCmdModel, java.net.URL, org.tzi.use.runtime.IPluginDescriptor)> in (ShellCmdRegistry.java:62)
@@ -710,8 +710,8 @@ Cycle detected: Slice gui ->
                 Slice impl -> 
                 Slice gui
   1. Dependencies of Slice gui
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:60)
-    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:69)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.getInstance()> in (ActionExtensionPoint.java:61)
+    - Method <org.tzi.use.runtime.gui.impl.ActionExtensionPoint.registerActions(org.tzi.use.main.runtime.IDescriptor)> calls method <org.tzi.use.runtime.util.ActionRegistry.registerPluginAction(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginActionModel)> in (ActionExtensionPoint.java:70)
   2. Dependencies of Slice util
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> has return type <org.tzi.use.runtime.shell.IPluginShellCmdDescriptor> in (ShellCmdRegistry.java:0)
     - Method <org.tzi.use.runtime.util.ShellCmdRegistry.registerPluginCmd(org.tzi.use.runtime.IPluginDescriptor, org.tzi.use.runtime.model.PluginShellCmdModel)> calls constructor <org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor.<init>(org.tzi.use.runtime.model.PluginShellCmdModel, java.net.URL, org.tzi.use.runtime.IPluginDescriptor)> in (ShellCmdRegistry.java:62)

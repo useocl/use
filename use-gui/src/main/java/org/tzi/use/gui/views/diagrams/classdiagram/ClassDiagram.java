@@ -71,7 +71,7 @@ import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
-import org.tzi.use.gui.views.selection.classselection.ClassSelection;
+import org.tzi.use.gui.views.diagrams.selection.classselection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;

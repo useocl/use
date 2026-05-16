@@ -38,37 +38,130 @@ flowchart LR
 ```
 <!-- END MERMAID:bug-1 -->
 
-## Bug 2: `gui.main` and `gui.views` internal cycles (use-gui)
+## Bug 2: `gui.main` and `gui.views` internal cycles (use-gui) — ✅ RESOLVED
 
-- **Severity:** Medium — 1 cycle each, 14 GUI-specific cycles total
-- **Location:** `org.tzi.use.gui.main`, `org.tzi.use.gui.views`
-- **Problem:** Subpackages within `gui.main` and `gui.views` have circular dependencies
-  between each other.
-- **Fix direction:** Extract shared types into a common subpackage or flatten the hierarchy.
+- **Severity:** ~~Medium — 1 cycle each~~ → **0 cycles in both `gui.main` and `gui.views`**
+- **Location:** `org.tzi.use.gui.main` ↔ `org.tzi.use.gui.main.runtime`,
+  and `org.tzi.use.gui.views.diagrams` ↔ `org.tzi.use.gui.views.selection`
+- **Problem:** two structurally distinct cycles, both Swing-side:
+  - **2a (`gui.main`, 1 cycle / 2 edges)** — the plugin SPI in
+    `gui.main.runtime` named the concrete `gui.main.MainWindow` and
+    `gui.main.ModelBrowser` in its method signatures, while `MainWindow`
+    and `ModelBrowser` called those SPI methods at runtime. Same shape
+    as Bug 8 (`shell ↔ shell.runtime`).
+  - **2b (`gui.views`, 1 cycle / 304 listed edges)** — `gui.views.diagrams`
+    and `gui.views.selection` were two sides of one logical feature
+    ("select & filter elements in a diagram"). Diagram classes held
+    `fSelection` fields and implemented `DataHolder`; selection
+    classes took concrete diagram types as constructor parameters and
+    referenced diagram-side helpers. With 300+ edges in the cycle, an
+    interface-extraction fix would have required ~6 new interfaces;
+    instead the structural answer was to recognise selection as a
+    sub-component of diagrams.
+- **Fix — two prongs, both inspired by prior fixes in this PR:**
+  - **Prong A (Bug 8 pattern):** added two marker interfaces in
+    `gui.main.runtime` — `IMainWindow` and `IModelBrowser` — and made
+    `MainWindow` / `ModelBrowser` implement them. Re-typed the three
+    plugin SPIs to use the markers:
+    - `IPluginActionExtensionPoint.createPluginActions(Session, MainWindow)`
+      → `… (Session, IMainWindow)`.
+    - `IPluginMMVisitor.modelBrowser(): ModelBrowser` →
+      `… : IModelBrowser`.
+    - `IPluginMModelExtensionPoint.createMM[HTML]PrintVisitor(PrintWriter, ModelBrowser)`
+      → `… (PrintWriter, IModelBrowser)`.
 
-<!-- BEGIN MERMAID:bug-2 -->
-**gui.main** — 1 cycle(s), 2 edge(s) across 2 package(s)
+    Impls in `runtime.gui.impl..` (outside the `gui.main` slice)
+    accept the interface type and downcast at the one boundary point
+    where the concrete class is genuinely needed
+    (`PluginActionFactory` still takes `MainWindow` since its callers
+    are all `runtime.gui.impl`).
+  - **Prong B (Bug 5 pattern):** moved every file under
+    `org.tzi.use.gui.views.selection.**` to
+    `org.tzi.use.gui.views.diagrams.selection.**` — 19 source files
+    plus the 5 external callers (`DiagramViewWithObjectNode`,
+    `ClassDiagram`, `NewObjectDiagram`, `CommunicationDiagram`,
+    `SequenceDiagram`) had their imports rewritten by mechanical FQN
+    substitution. Once both sides live under the same first
+    sub-package of `gui.views`, they belong to the same slice
+    (`diagrams`) and the cycle is gone.
+
+  `module-info` updated: the qualified `exports … selection to com.google.common`
+  now points at the new FQN. The two `classselection` /
+  `objectselection` subpackages were already encapsulated and remain so.
+- **Verification:** `MavenCyclicDependenciesGUITest` reports:
+  - `Number of cycles in org.tzi.use.gui.main: 0` (was 1)
+  - `Number of cycles in org.tzi.use.gui.views: 0` (was 1)
+
+  All 271 use-core + 18 use-gui tests pass; the stale
+  `failure_report_maven_cycles_gui_{main,views}.txt` files no longer
+  regenerate and have been deleted from `target_archunit_temp`.
+- **⚠ Breaking API change — migration note:** two new public marker
+  interfaces and four SPI signature changes; one whole sub-package
+  tree moves. External callers (plugins) must:
+  ```
+  -- new types --
+  org.tzi.use.gui.main.runtime.IMainWindow      (MainWindow implements)
+  org.tzi.use.gui.main.runtime.IModelBrowser    (ModelBrowser implements)
+
+  -- SPI signature swaps (gui.main.runtime) --
+  IPluginActionExtensionPoint.createPluginActions(Session, MainWindow)
+      → IPluginActionExtensionPoint.createPluginActions(Session, IMainWindow)
+  IPluginMMVisitor.modelBrowser() : ModelBrowser
+      → IPluginMMVisitor.modelBrowser() : IModelBrowser
+  IPluginMModelExtensionPoint.createMMPrintVisitor(PrintWriter, ModelBrowser)
+      → IPluginMModelExtensionPoint.createMMPrintVisitor(PrintWriter, IModelBrowser)
+  IPluginMModelExtensionPoint.createMMHTMLPrintVisitor(PrintWriter, ModelBrowser)
+      → IPluginMModelExtensionPoint.createMMHTMLPrintVisitor(PrintWriter, IModelBrowser)
+
+  -- package move (mechanical, no behavior change) --
+  org.tzi.use.gui.views.selection.**
+      → org.tzi.use.gui.views.diagrams.selection.**
+  ```
+  Plugins that hold a `MainWindow` / `ModelBrowser` reference and
+  call the SPI need no source change (implicit widening); plugins
+  that *implement* the SPI must update parameter types. Callers
+  that import any `org.tzi.use.gui.views.selection.…` type must
+  rewrite the import to the `diagrams.selection` prefix. Suggested
+  release-note tag: `[breaking] gui.views, gui.main.runtime`.
+
+### Before (2 cycles)
 
 ```mermaid
 flowchart LR
-    root["root"]
-    runtime["runtime"]
-    root --> runtime
-    runtime --> root
-    linkStyle 0,1 stroke:#d33,stroke-width:2px
+    subgraph guiMain[gui.main]
+      root["gui.main<br/>(MainWindow, ModelBrowser)"]
+      runtime["gui.main.runtime<br/>(IPlugin* SPIs)"]
+      root -->|"call createPluginActions(...this)<br/>createMMHTMLPrintVisitor(...this)"| runtime
+      runtime -->|"createPluginActions(...MainWindow)<br/>modelBrowser() : ModelBrowser<br/>createMM*Visitor(... ModelBrowser)"| root
+    end
+    subgraph guiViews[gui.views]
+      diagrams["diagrams<br/>(ClassDiagram, NewObjectDiagram,<br/>CommunicationDiagram, SequenceDiagram,<br/>DiagramViewWithObjectNode)"]
+      selection["selection<br/>(*View, *TableModel,<br/>ClassSelection, ObjectSelection)"]
+      diagrams -->|"fSelection fields,<br/>implements DataHolder,<br/>menu/handler calls"| selection
+      selection -->|"ClassDiagram, DiagramViewWithObjectNode<br/>as ctor/field types"| diagrams
+    end
+    linkStyle 0,1,2,3 stroke:#d33,stroke-width:2px
 ```
 
-**gui.views** — 1 cycle(s), 2 edge(s) across 2 package(s)
+### After (0 cycles) ✅
 
 ```mermaid
 flowchart LR
-    diagrams["diagrams"]
-    selection["selection"]
-    diagrams --> selection
-    selection --> diagrams
-    linkStyle 0,1 stroke:#d33,stroke-width:2px
+    subgraph guiMain2[gui.main]
+      root2["gui.main<br/>(MainWindow implements IMainWindow,<br/>ModelBrowser implements IModelBrowser)"]
+      runtime2["gui.main.runtime<br/>(IMainWindow, IModelBrowser,<br/>IPlugin* SPIs typed against interfaces)"]
+      root2 -->|"calls SPI"| runtime2
+    end
+    subgraph guiViews2[gui.views]
+      diagrams2["diagrams (+ diagrams.selection.**)<br/>one slice — selection collapsed into diagrams"]
+    end
+    linkStyle 0 stroke:#2a9d8f,stroke-width:2px
 ```
-<!-- END MERMAID:bug-2 -->
+
+> _Old ArchUnit failure reports archived at_
+> `docs/archunit-history/before-fix/bug-2_failure_report_maven_cycles_gui_main.txt`
+> _and_
+> `docs/archunit-history/before-fix/bug-2_failure_report_maven_cycles_gui_views.txt`
 
 ## Bug 3: `runtime` package cycles (use-gui)
 
