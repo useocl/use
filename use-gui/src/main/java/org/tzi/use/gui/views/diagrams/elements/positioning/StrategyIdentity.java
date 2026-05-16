@@ -102,7 +102,7 @@ public class StrategyIdentity extends StatefullPositionStrategy {
 			PersistHelper helper, int version) throws RestoreLayoutException {
 		super.restoreAdditionalInfo(owner, helper, version);
 		String identityId = helper.getElementStringValue("identitySource");
-		setIdentitySource(helper.getAllNodes().get(identityId));
+		setIdentitySource((PlaceableNode) helper.getAllNodes().get(identityId));
 			
 		if (getIdentitySource() == null)
 			throw new RestoreLayoutException("Unknown identity source.");

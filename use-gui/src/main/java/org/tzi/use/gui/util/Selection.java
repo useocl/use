@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
-import org.tzi.use.gui.views.diagrams.Selectable;
 
 /** 
  * A selection maintains a collection of objects that implement 

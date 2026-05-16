@@ -164,7 +164,7 @@ public class StrategyRelativeToAttached extends StatefullPositionStrategy {
 		
 		String attachedId = helper.getElementStringValue("attached");
 		
-		PlaceableNode n = helper.getAllNodes().get(attachedId);
+		PlaceableNode n = (PlaceableNode) helper.getAllNodes().get(attachedId);
 			
 		if (n == null || !(n instanceof AttachedWayPoint))
 			throw new RestoreLayoutException("Unknown attached way point source.");

@@ -255,7 +255,7 @@ public class StrategyRelativeToCorner extends StatefullPositionStrategy {
 		this.corner = Direction.valueOf(helper.getElementStringValue("corner"));
 		
 		String relativeId = helper.getElementStringValue("relativeNodeId");
-		setRelativeNode(helper.getAllNodes().get(relativeId));
+		setRelativeNode((PlaceableNode) helper.getAllNodes().get(relativeId));
 		
 		if (this.getRelativeNode() == null) {
 			throw new RestoreLayoutException("Unknown relative node");
