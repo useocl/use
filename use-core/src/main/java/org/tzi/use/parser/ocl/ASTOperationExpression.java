@@ -19,6 +19,10 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.tzi.use.uml.sys.expr.ExpObjOp;
+
+import org.tzi.use.uml.sys.expr.ExpInstanceConstructor;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;

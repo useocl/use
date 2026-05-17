@@ -104,7 +104,7 @@ public class EvalContext {
     /**
      * Pops the last numToPop added variable bindings from the binding stack 
      */
-    void popVarBindings(int numToPop) {
+    public void popVarBindings(int numToPop) {
     	for (int i = 0; i < numToPop; ++i) {
     		popVarBinding();
     	}
@@ -142,7 +142,7 @@ public class EvalContext {
         return fVarBindings.getValue(name);
     }
 
-    void enter(Expression expr) {
+    public void enter(Expression expr) {
         if (isTracing) {
         	++fNesting;
             String ec = expr.getClass().getName();
@@ -151,7 +151,7 @@ public class EvalContext {
         }
     }
 
-    void exit(Expression expr, Value result) {
+    public void exit(Expression expr, Value result) {
         if (isTracing) {
         	--fNesting;
             Log.trace(this, indent() + "exit  \"" + expr + "\" = " + result);

@@ -17,7 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm.expr;
+package org.tzi.use.uml.sys.expr;
+
+import org.tzi.use.uml.sys.MSystemState;
+
+import org.tzi.use.uml.mm.expr.VarDeclList;
+
+import org.tzi.use.uml.mm.expr.ExpInstanceOp;
+
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+
+import org.tzi.use.uml.mm.expr.EvalContext;
+
+import org.tzi.use.uml.mm.expr.Expression;
 
 import org.tzi.use.uml.sys.MSystem;
 
@@ -119,7 +131,7 @@ public final class ExpObjOp extends ExpInstanceOp {
     	
     	operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());
     	
-    	MSystem system = ((org.tzi.use.uml.sys.MSystemState) ctx.postState()).system();
+    	MSystem system = ((MSystemState) ctx.postState()).system();
     	
     	try {
     		system.enterQueryOperation(ctx, operationCall, false);

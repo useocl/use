@@ -59,7 +59,7 @@ public class DetailedEvalContext extends EvalContext {
 	}
 	
 	@Override
-	void enter(Expression expr) {
+	public void enter(Expression expr) {
 		super.enter(expr);
 		EvalNode n = new EvalNode(varBindings());
 		n.setExpression(expr);
@@ -67,7 +67,7 @@ public class DetailedEvalContext extends EvalContext {
 	}
 
 	@Override
-	void exit(Expression expr, Value result) {
+	public void exit(Expression expr, Value result) {
 		super.exit(expr, result);
 	    EvalNode n = fNodeStack.pop();
 	    n.setResult(result);

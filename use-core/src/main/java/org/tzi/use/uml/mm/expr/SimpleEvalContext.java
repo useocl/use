@@ -41,8 +41,8 @@ public final class SimpleEvalContext extends EvalContext {
 	}
 
 	@Override
-	final void enter(Expression expr) { }
+	public final void enter(Expression expr) { }
 
 	@Override
-	final void exit(Expression expr, Value result) { }
+	public final void exit(Expression expr, Value result) { }
 }

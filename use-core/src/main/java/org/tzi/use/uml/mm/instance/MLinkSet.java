@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm.instance;
 
-import org.tzi.use.uml.sys.MLinkImpl;
+import org.tzi.use.uml.mm.instance.MLinkImpl;
 
 import org.tzi.use.uml.mm.instance.MSystemException;
 
