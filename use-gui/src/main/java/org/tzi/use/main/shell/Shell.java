@@ -21,8 +21,11 @@ package org.tzi.use.main.shell;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
+import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GGenerator;
 import org.tzi.use.gen.tool.GNoResultException;
+import org.tzi.use.gen.tool.GProcedureCall;
+import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
@@ -1663,7 +1666,34 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 		args.setFilename(this.getFilenameToOpen(args.getFilename()));
 		this.setFileClosed();
 
-		generator(system).startProcedure(args.getCallString(), args);
+		String callstr = args.getCallString();
+		GProcedureCall call = null;
+		try (FileInputStream in = new FileInputStream(args.getFilename())) {
+			Log.verbose("Compiling procedures from " + args.getFilename() + ".");
+			List<GProcedure> procedures = ASSLCompiler.compileProcedures(
+					system.model(),
+					in,
+					args.getFilename(),
+					new PrintWriter(System.err));
+			if (procedures != null) {
+				Log.verbose("Compiling `" + callstr + "'.");
+				call = ASSLCompiler.compileProcedureCall(
+						system.model(),
+						system.state(),
+						procedures,
+						callstr,
+						"<input>",
+						new PrintWriter(System.err));
+			}
+		} catch (FileNotFoundException e) {
+			Log.error(e.getMessage());
+			return;
+		} catch (IOException e) {
+			Log.error(e.getMessage());
+			return;
+		}
+
+		generator(system).startProcedure(callstr, args, call);
 	}
 
 	private MSystem system() throws NoSystemException {

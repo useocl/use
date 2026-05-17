@@ -38,6 +38,7 @@ module use.core {
     exports org.tzi.use.uml.sys.testsuite;
     exports org.tzi.use.gen.tool;
     exports org.tzi.use.gen.assl.dynamics;
+    exports org.tzi.use.gen.assl.statics;
     exports org.tzi.use.parser.shell;
     exports org.tzi.use.parser.testsuite;
     exports org.tzi.use.api;

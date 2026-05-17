@@ -25,21 +25,16 @@
 package org.tzi.use.gen.tool;
 
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.List;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GEvalProcedure;
 import org.tzi.use.gen.assl.dynamics.GEvaluationException;
 import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
-import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
@@ -64,9 +59,7 @@ public class GGenerator {
     protected GGeneratorArguments fConfig;
     
     private GCollectorImpl collector;
-    
-    private List<GProcedure> fProcedures;
-    
+
     public GGenerator( MSystem system ) {
         fSystem = system;
         fModel = system.model();
@@ -96,39 +89,27 @@ public class GGenerator {
         }
     }
     
-	public void startProcedure(String callstr, GGeneratorArguments args) {
+    /**
+     * Runs a pre-compiled procedure call against the current system state.
+     * The caller is responsible for compiling {@code procedures} and {@code call}
+     * (see {@code org.tzi.use.parser.generator.ASSLCompiler} in use-core); this
+     * class deliberately does not depend on the parser package.
+     */
+    public void startProcedure(String callstr, GGeneratorArguments args, GProcedureCall call) {
         fLastResult = null;
         fConfig = args;
-        
+
         boolean didShowWarnigs = Log.isShowWarnings();
         Log.setShowWarnings(false);
 
-        GProcedureCall call = null;
         PrintWriter pw = null;
         PrintWriter resultPw = null;
 
         long startTime = System.currentTimeMillis();
-        
+
         try {
-            Log.verbose("Compiling procedures from " + fConfig.getFilename() + ".");
-            fProcedures = ASSLCompiler.compileProcedures(
-                                                     fSystem.model(),
-                                                     new FileInputStream(fConfig.getFilename()),
-                                                     fConfig.getFilename(),
-                                                     new PrintWriter(System.err) );
-            if (fProcedures != null) {
-                Log.verbose("Compiling `" + callstr + "'.");
-                call = ASSLCompiler.compileProcedureCall(fSystem.model(),
-                                                        fSystem.state(),
-                                                        fProcedures,
-                                                        callstr,
-                                                        "<input>",
-                                                        new PrintWriter(System.err)
-                                                        );
-            }
-            
             if (call == null) {
-            	Log.error( "No procedure found for call " + callstr + " in " + fConfig.getFilename() );
+                Log.error( "No procedure found for call " + callstr + " in " + fConfig.getFilename() );
             } else {
                 resultPw = new PrintWriter(System.out);
                 if (fConfig.getPrintFilename() == null)
@@ -147,10 +128,10 @@ public class GGenerator {
                 if (fConfig.isCalculateBarriers()) {
                 	call.getProcedure().calculateBarriers(collector, fModel);
                 }
-                
+
                 GChecker checker = new GChecker(fModel, fConfig);
                 Log.verbose(call.getProcedure().toString() + " started...");
-                
+
                 try {
                     GEvalProcedure evalproc = new GEvalProcedure( call.getProcedure() );
                     evalproc.eval(call.evaluateParams(fSystem.state()),
@@ -158,20 +139,20 @@ public class GGenerator {
                                   collector,
                                   checker,
                                   fConfig);
-                    
+
                     long endTime = System.currentTimeMillis();
                     fLastResult = new GResult( collector,
                                                checker,
                                                fConfig.getRandomNr().longValue(),
                                                endTime - startTime);
-                    
+
                     if (collector.existsInvalidMessage()) {
                     	pw.print("There were errors.");
                         if (!fConfig.doBasicPrinting()) {
                         	pw.print(" Use the -b or -d option to get further information.");
                         } else {
                         	pw.print(" See output ");
-                        	if (fConfig.getPrintFilename() != null) { 
+                        	if (fConfig.getPrintFilename() != null) {
                         		pw.print("(" + fConfig.getPrintFilename() + ")");
                         	}
                             pw.println("for details.");
@@ -184,7 +165,7 @@ public class GGenerator {
                         throw new RuntimeException(
                                                    "Although the generator computed a result, it"
                                                    + "is not available for printing." );
-                    }                  
+                    }
                 } catch (GEvaluationException e) {
                     internalError(e, fConfig.getRandomNr().longValue());
                     Log.error("The system state may be changed in use.");
@@ -195,8 +176,6 @@ public class GGenerator {
                     Log.error("The system state may be changed in use.");
                 }
             }
-        } catch (FileNotFoundException e) {
-            Log.error( e.getMessage() );
         } catch (IOException e) {
             Log.error( e.getMessage() );
         } finally {
@@ -207,7 +186,7 @@ public class GGenerator {
             }
             if (resultPw != null )
                 resultPw.flush();
-            
+
             Log.setShowWarnings(didShowWarnigs);
         }
     }
