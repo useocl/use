@@ -21,7 +21,6 @@ package org.tzi.use.uml.sys;
 
 import com.google.common.eventbus.EventBus;
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.tool.GGenerator;
 import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
@@ -84,9 +83,6 @@ public final class MSystem {
 
 	/** Last called operation (used by test suite) */
 	private MOperationCall lastOperationCall;
-
-	/** Snapshot generator */
-	private GGenerator fGenerator;
 
 	/** The variables of this system */
 	private VariableEnvironment fVariableEnvironment;
@@ -154,7 +150,6 @@ public final class MSystem {
 		fObjects = new HashMap<>();
 		fUniqueNameGenerator = new UniqueNameGenerator();
 		fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
-		fGenerator = new GGenerator(this);
 		fVariableEnvironment = new VariableEnvironment(fCurrentState);
 		fStatementEvaluationResults = new ArrayDeque<>();
 		fCallStack = new ArrayDeque<>();
@@ -181,13 +176,6 @@ public final class MSystem {
 	 */
 	public MModel model() {
 		return fModel;
-	}
-
-	/**
-	 * Returns the system's instance generator.
-	 */
-	public GGenerator generator() {
-		return fGenerator;
 	}
 
 	public VarBindings varBindings() {

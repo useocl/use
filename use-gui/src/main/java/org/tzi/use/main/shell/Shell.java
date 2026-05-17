@@ -21,6 +21,7 @@ package org.tzi.use.main.shell;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
+import org.tzi.use.gen.tool.GGenerator;
 import org.tzi.use.gen.tool.GNoResultException;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
@@ -120,6 +121,12 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 	private static Shell fShell = null;
 
     private final List<PluginShellCmdContainer> pluginCommands;
+
+    private final java.util.WeakHashMap<MSystem, GGenerator> systemGenerators = new java.util.WeakHashMap<>();
+
+    private GGenerator generator(MSystem system) {
+        return systemGenerators.computeIfAbsent(system, GGenerator::new);
+    }
 
     /**
 	 * Constructs a new shell.
@@ -1540,7 +1547,7 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 	}
 
 	private void cmdGenPrintLoadedInvariants(MSystem system) {
-		system.generator().printLoadedInvariants();
+		generator(system).printLoadedInvariants();
 	}
 
 	private void cmdGenResult(String str, MSystem system) {
@@ -1548,12 +1555,12 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 		try {
 			if (str.isEmpty()) {
 				PrintWriter pw = new PrintWriter(System.out);
-				system.generator().printResult(pw);
+				generator(system).printResult(pw);
 				pw.flush();
 			} else if (str.equals("inv")) {
-				system.generator().printResultStatistics();
+				generator(system).printResultStatistics();
 			} else if (str.equals("accept")) {
-				system.generator().acceptResult();
+				generator(system).acceptResult();
 			} else {
 				Log.error("Unknown command `result " + str + "'. Try help.");
 			}
@@ -1635,7 +1642,7 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 			Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
 		}
 		else if (disabled == null && negated == null){
-			system.generator().printInvariantFlags(invs);
+			generator(system).printInvariantFlags(invs);
 		}
 		else {
 			system.setClassInvariantFlags(invs, (disabled == null)? null : !disabled, negated);
@@ -1656,7 +1663,7 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 		args.setFilename(this.getFilenameToOpen(args.getFilename()));
 		this.setFileClosed();
 
-		system.generator().startProcedure(args.getCallString(), args);
+		generator(system).startProcedure(args.getCallString(), args);
 	}
 
 	private MSystem system() throws NoSystemException {
