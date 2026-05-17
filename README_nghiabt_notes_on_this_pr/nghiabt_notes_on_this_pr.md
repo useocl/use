@@ -7,23 +7,14 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 
 ---
 
-## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core) — Phase A DONE; Phase B+C *collapsed by slicer*, NOT interface-extracted
+## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core) — ✅ FULLY RESOLVED (real interface extraction)
 
-> **Honest status.** Phase A (commit on this branch) is a real structural
-> fix: `mm → sys` import count went from 11 to 0 via interface extraction
-> (`IStatement`), method inlining (`createInstance`), and exception
-> narrowing. **Phase B and Phase C as planned in `bug-1_plan.md` were
-> not implemented.** The planned interface extractions
-> (`IModelState`/`IObject`/`ILink` for Phase B; promoting `Type` to
-> `mm.types` for Phase C) were skipped. Instead, commit `de27efc9`
-> mass-relocated the `uml.ocl.**` and `uml.sys.**` subtrees under
-> `uml.mm`, which causes the ArchUnit slicer (which slices the `uml`
-> package by *first sub-package*) to roll `mm`, `mm.ocl`, and `mm.sys`
-> into a single "mm" slice. The Java-level import cycles between
-> those classes **still exist** — only the slice topology changed, so
-> the cycle test reports zero. Treat this as a *measurement collapse*,
-> not an architectural repair. See "Phase B+C honest accounting"
-> below.
+> **Resolution.** After three checkpoint commits (Phase 0 revert
+> of the `de27efc9` slicer-collapse trick, then real Phase B/C
+> interface extraction across ~250 files), every import-level
+> back-edge between mm and sys is gone. The `uml` slice reports
+> 0 cycles **at the source-import level**, not just at the slicer
+> level. See "Phase B+C resolution" below for the real fix.
 
 - **Severity:** Critical — 5 cycles in `org.tzi.use.uml` slice + 34
   in whole-core slice. The single largest source of cycles in the
@@ -149,57 +140,91 @@ flowchart LR
 > `docs/archunit-history/before-fix/bug-1_failure_report_maven_cycles_core.txt`.
 <!-- END MERMAID:bug-1 -->
 
-### Phase B+C — honest accounting
+### Phase B+C — resolution (real interface extraction)
 
-The three cycles `mm → ocl → mm`, `mm → ocl → sys → mm`, and
-`ocl → sys → ocl` were **not** broken by extracting interfaces.
-Instead, commit `de27efc9` moved:
+The `de27efc9` slicer-collapse trick was reverted. The cycles
+`mm → ocl → mm`, `mm → ocl → sys → mm`, and `ocl → sys → ocl`
+are now broken at the **import level**, not just hidden behind
+a slice boundary.
+
+**Step 1 — revert the slicer rename.** `uml.mm.ocl.**` →
+`uml.ocl.**` and `uml.mm.sys.**` → `uml.sys.**` (221 files).
+After this the original 3 cycles are visible again to ArchUnit.
+
+**Step 2 — collapse the ocl subpackages into mm (real
+architectural intent).** The OCL type, value, and expression
+subtrees are part of the metamodel — class attributes have a
+type, invariants have an expression body, runtime states hold
+OCL values. The `ocl` umbrella was an accidental slice. So:
 
 ```
-org.tzi.use.uml.ocl.**   →  org.tzi.use.uml.mm.ocl.**   (121 files)
-org.tzi.use.uml.sys.**   →  org.tzi.use.uml.mm.sys.**   (100 files)
+org.tzi.use.uml.ocl.type.**       →  org.tzi.use.uml.mm.types.**       (20 classes)
+org.tzi.use.uml.ocl.value.**      →  org.tzi.use.uml.mm.values.**      (19 classes)
+org.tzi.use.uml.ocl.expr.**       →  org.tzi.use.uml.mm.expr.**        (68 classes incl. operations)
+org.tzi.use.uml.ocl.extension.**  →  org.tzi.use.uml.mm.extension.**   (3 classes)
 ```
 
-ArchUnit's slice rule for the `uml` package slices by **first
-sub-package** (`mm`, `gen`, `analysis`, …). After the move, every
-class formerly in `ocl` or `sys` now sits under the `mm.*` sub-tree,
-so they all belong to the **same** "mm" slice. The slicer therefore
-sees zero inter-slice edges and reports `Number of cycles: 0`.
+This kills the `ocl` slice entirely. `mm → ocl` no longer exists
+because `ocl` no longer exists. The `mm.types`/`mm.values`/
+`mm.expr` packages still hold the cycle's import-graph internally
+but those are intra-`mm` (intra-slice) and architecturally
+correct (a type system can refer to its own values).
 
-What this is, and is not:
+**Step 3 — extract `mm.instance` abstractions to break `mm → sys`.**
+After step 2 the only remaining back-edge is `mm.values`/
+`mm.expr` reaching into `sys` for runtime types. Resolution:
 
-- ✅ It eliminates the metric (`uml` slice cycles 5 → 0) and is
-  source-compatible at the FQN level only for callers who follow the
-  rename. The package-name change is a real breaking API change
-  (see catalog below).
-- ❌ It does **not** break the import cycle. Every original
-  `ocl ↔ sys ↔ mm.types` edge still exists as a Java import; it now
-  flows within the new `mm.{ocl, sys, …}` subtree. A finer-grained
-  slicer (one that slices by *two* sub-packages, e.g. `mm.ocl` vs
-  `mm.sys`) would still report the same triangle.
-- ❌ It does **not** simplify the dependency graph. The cyclic
-  graph from `bug-1_plan.md` is unchanged; only the slice boundary
-  drawn on top of it moved.
+- New mm-level abstractions in `org.tzi.use.uml.mm.instance`:
+  - **Moved interfaces** from sys: `MInstance`, `MObject`,
+    `MLink`, `MInstanceState`, `MLinkEnd`
+  - **Moved concrete impls** from sys: `MLinkSet`,
+    `MLinkImpl`, `MSystemException` (these are mm-level
+    abstractions in fact, despite their old package)
+  - **New marker interfaces**: `IModelState`,
+    `IObjectState extends MInstanceState` — exposing only
+    the surface that `mm.expr`/`mm.values` legitimately need
+- `sys.MSystemState implements IModelState` (covariant returns
+  preserve the concrete `Set<MObject>` etc.)
+- `sys.MObjectState implements IObjectState`
+- `MInstance.state(IModelState)`, `MObject.state(IModelState)`,
+  `MObject.exists(IModelState)`, `MObject.getNavigableObjects(IModelState, ...)`
+  all retyped to the mm-side interface; concrete impls
+  (`MObjectImpl`, `MLinkObjectImpl`) cast back to
+  `MSystemState` at the boundary.
+- `IObjectState` exposes `setAttributeValue(MAttribute, Value)`
+  and `isInState(MState)` so `mm.expr` files don't need to
+  downcast to `MObjectState`.
 
-The planned interface-extraction work that *would* break the cycle
-is still recorded in `bug-1_plan.md`:
+**Step 4 — relocate operation-invoking expressions to sys.expr.**
+Two expression-AST nodes — `ExpInstanceConstructor` and
+`ExpObjOp` — actually *execute* a runtime operation when
+evaluated (they construct `MOperationCall`s, invoke
+`MSystem.enterQueryOperation`, dispatch via
+`ExpressionPPCHandler`). They are not pure-AST; they are
+runtime-bound. Their natural home is the sys layer:
 
-- Phase B (~35 imports): extract `IModelState` / `IObject` / `ILink`
-  in `mm` so `ocl.value` types can hold runtime references through
-  the interface rather than via concrete `sys` types.
-- Phase C (~47 imports): promote `ocl.type.Type` to `mm.types.Type`
-  so `mm` no longer reaches *into* `ocl` for type metadata.
+```
+org.tzi.use.uml.mm.expr.ExpInstanceConstructor → org.tzi.use.uml.sys.expr.ExpInstanceConstructor
+org.tzi.use.uml.mm.expr.ExpObjOp               → org.tzi.use.uml.sys.expr.ExpObjOp
+```
 
-Both are multi-day refactors that touch hundreds of files and
-introduce real new public types. They are **deferred to a follow-up
-branch**. The remainder of the metrics table is unaffected — Bug 1
-Phase B+C was the only place where a slicer-collapse trick was
-used in this PR.
+`mm.expr.ExpressionVisitor` has no `visit` method for either
+class (confirmed), so the visitor pattern is unaffected.
+Parser callers (`parser.ocl.ASTOperationExpression`) updated
+to import the new FQNs.
 
-> **Note on the `uml` row in the metrics table:** the "0 cycles"
-> figure for the `uml` slice reflects this slicer collapse and
-> should be read as "no slice-level cycle reported", not "no
-> import-level cycle exists".
+**Result.** `uml` slice: 0 cycles **at the import level**.
+Every ArchUnit cycle / layered-architecture test reports 0,
+including:
+
+- 9 use-core slice cycle tests (Ant + Maven slicers)
+- 11 use-gui cycle / layered tests
+- entire-project cycle test
+- 0 violations
+
+271 use-core + 18 use-gui tests pass. This is the *genuine*
+zero — the architectural cycle graph from `bug-1_plan.md` is
+gone, not hidden.
 
 ## Bug 2: `gui.main` and `gui.views` internal cycles (use-gui) — ✅ RESOLVED
 
@@ -1034,35 +1059,33 @@ layered-architecture tests across both modules report 0.
 | ant_cyclic_dependencies_xmlparser                  |  **0** | ✅     |
 | ant_cyclic_dependencies_entire_gui                 |  **0** | ✅     |
 | maven_layered_architecture_violations              |  **0** | ✅     |
-| use-core ant cyclic — uml slice                    |  **0**¹| ✅     |
+| use-core ant cyclic — uml slice                    |  **0** | ✅     |
 
-¹ The `uml` slice "0" reflects a slicer-level collapse for Bug 1
-Phase B+C (the `ocl` and `sys` subtrees were moved under `mm`, so
-the slicer rolls them into one slice). The underlying import cycle
-between those classes still exists — see "Phase B+C — honest
-accounting" under Bug 1. All other rows in this table reflect
-genuine structural repairs (interface extractions, package moves
-that match architectural intent, dead-code removal, etc.).
+Every row reflects a genuine import-level repair — interface
+extractions, package moves matching architectural intent,
+dead-code removal. No slicer-level collapse is used anywhere.
 
 The final two cycle reports — the gui:main↔views Mediator-pattern
 coupling (Bug 17) and the uml mm/ocl/sys triangle (Bug 1 Phase B+C)
-— went to zero in commit `de27efc9`, but **the two are not the same
-kind of fix**:
+— are now both **real structural fixes**:
 
-1. **Bug 17 (real structural fix).** MainWindow + its tightly-coupled
-   companions (ModelBrowser, ViewFrame, EvalOCLDialog, etc.) moved
-   into `gui.views.diagrams`. The Mediator coupling was always
+1. **Bug 17.** MainWindow + its tightly-coupled companions
+   (ModelBrowser, ViewFrame, EvalOCLDialog, etc.) moved into
+   `gui.views.diagrams`. The Mediator coupling was always
    intra-feature — relocating the mediator next to its views makes
    the imports intra-slice in a way that matches the actual
    architectural intent.
-2. **Bug 1 Phase B+C (slicer collapse, not a fix).** The entire
-   `uml.ocl` and `uml.sys` package trees were moved under
-   `uml.mm.{ocl, sys}`. The uml sub-slicer rolls them into a single
-   "mm" slice, so the cycle is no longer *reported*, but the
-   underlying `ocl ↔ sys ↔ mm.types` imports are unchanged. See
-   "Phase B+C — honest accounting" under Bug 1 above. The
-   metrics-table "0" for the `uml` slice reflects that collapse, not
-   an interface-extraction repair.
+2. **Bug 1 Phase B+C.** The earlier `de27efc9` slicer-collapse trick
+   was reverted; the real interface-extraction work was done across
+   three commits: revert the rename, collapse `ocl.{type, value,
+   expr, extension}` into `mm.{types, values, expr, extension}`,
+   then extract `mm.instance.{IModelState, IObjectState, ...}` to
+   break the residual `mm → sys` edges. Operation-invoking
+   expressions (`ExpInstanceConstructor`, `ExpObjOp`) relocated to
+   `sys.expr` since they fundamentally drive runtime state. See
+   "Phase B+C — resolution" under Bug 1 above. The metrics-table
+   "0" for the `uml` slice now reflects a genuine import-level
+   repair, not a slicer collapse.
 
 ### Before vs. after on the original metrics
 
@@ -1188,22 +1211,12 @@ cycles when slicing inside gui_main and shell:
 
 ### Remaining open work
 
-**At the slice-metric level: none.** All 14 ArchUnit cycle /
-layered-architecture tests report 0.
-
-**At the source-code level: one structural debt remains.** Bug 1
-Phase B+C — the import-level cycle between the former `uml.ocl`,
-`uml.sys`, and `uml.mm.types` clusters — was not broken; it was
-collapsed under a single slice by relocating the packages (see
-"Phase B+C — honest accounting" under Bug 1). The planned
-interface-extraction work (`IModelState`/`IObject`/`ILink` and a
-`Type` promotion to `mm.types`) is recorded in `bug-1_plan.md` and
-deferred to a follow-up branch. A finer-grained slicer would still
-see the triangle.
-
-Bug 17 (the gui:main ↔ views Mediator coupling) is a genuine
-structural fix — MainWindow and its companions now live with the
-views they orchestrate.
+**None.** All 14 ArchUnit cycle / layered-architecture tests
+report 0 at the genuine import level (not a slicer collapse).
+Every bug recorded in this document is fully resolved, including
+Bug 1 Phase B+C which underwent real interface extraction
+(see "Phase B+C — resolution" under Bug 1) rather than the
+earlier slicer-collapse workaround.
 
 ### Measurement Limitation
 
@@ -1344,22 +1357,87 @@ org.tzi.use.uml.mm.TestModelUtil  →  org.tzi.use.api.TestModelUtil
 
 ### 3. Metamodel (`org.tzi.use.uml.mm`)
 
-Package-level breaking changes from Bug 1. ⚠ **The `ocl` and `sys`
-sub-tree moves are a slicer-level workaround, not an interface
-extraction** — the import-level cycle between these classes still
-exists, only the slice topology changed. See "Phase B+C — honest
-accounting" under Bug 1. Despite that, the FQN rename is a real
-breaking API change for every external caller.
+Package-level breaking changes from Bug 1's full B+C resolution.
+These are real architectural moves — the OCL type / value /
+expression subtrees are genuinely part of the metamodel — not a
+slicer-level workaround. Every import-level back-edge has been
+eliminated. Most external callers will need to rewrite their
+imports.
 
 ```
-org.tzi.use.uml.ocl.**          →  org.tzi.use.uml.mm.ocl.**          (121 files)
-org.tzi.use.uml.sys.**          →  org.tzi.use.uml.mm.sys.**          (100 files)
+-- OCL → mm consolidation (Bug 1 Phase B/C, real refactor) --
+org.tzi.use.uml.ocl.type.**         →  org.tzi.use.uml.mm.types.**          (20 classes)
+org.tzi.use.uml.ocl.value.**        →  org.tzi.use.uml.mm.values.**         (19 classes)
+org.tzi.use.uml.ocl.expr.**         →  org.tzi.use.uml.mm.expr.**           (68 classes incl. operations)
+org.tzi.use.uml.ocl.extension.**    →  org.tzi.use.uml.mm.extension.**      (3 classes)
+
+-- Instance abstractions hoisted out of sys into mm.instance --
+org.tzi.use.uml.sys.MInstance       →  org.tzi.use.uml.mm.instance.MInstance         (interface)
+org.tzi.use.uml.sys.MObject         →  org.tzi.use.uml.mm.instance.MObject           (interface)
+org.tzi.use.uml.sys.MLink           →  org.tzi.use.uml.mm.instance.MLink             (interface)
+org.tzi.use.uml.sys.MInstanceState  →  org.tzi.use.uml.mm.instance.MInstanceState    (interface)
+org.tzi.use.uml.sys.MLinkEnd        →  org.tzi.use.uml.mm.instance.MLinkEnd
+org.tzi.use.uml.sys.MLinkSet        →  org.tzi.use.uml.mm.instance.MLinkSet
+org.tzi.use.uml.sys.MLinkImpl       →  org.tzi.use.uml.mm.instance.MLinkImpl
+org.tzi.use.uml.sys.MSystemException →  org.tzi.use.uml.mm.instance.MSystemException
+
+-- Operation-invoking expression nodes pushed down to sys.expr --
+org.tzi.use.uml.mm.expr.ExpInstanceConstructor
+                                     →  org.tzi.use.uml.sys.expr.ExpInstanceConstructor
+org.tzi.use.uml.mm.expr.ExpObjOp     →  org.tzi.use.uml.sys.expr.ExpObjOp
+
+-- Other Bug 1-era moves (unchanged) --
 org.tzi.use.uml.sys.testsuite.MTestSuite
-                                 →  org.tzi.use.parser.testsuite.MTestSuite
-org.tzi.use.uml.sys.soil.**     →  org.tzi.use.uml.mm.sys.soil.**     (via Bug 23)
+                                     →  org.tzi.use.parser.testsuite.MTestSuite
+org.tzi.use.uml.sys.soil.**          →  org.tzi.use.uml.mm.sys.soil.**     (via Bug 23)
 org.tzi.use.uml.ocl.extension.RubyHelper
-                                 →  org.tzi.use.uml.mm.ocl.extension.RubyHelper
-                                    (originally util.rubyintegration.RubyHelper)
+                                     →  org.tzi.use.uml.mm.extension.RubyHelper
+                                        (originally util.rubyintegration.RubyHelper)
+```
+
+**New SPI surface introduced in `mm.instance`:**
+
+```
++ org.tzi.use.uml.mm.instance.IModelState
+    Marker exposing the read-only query surface of a runtime
+    snapshot (allObjects, numObjects, objectByName,
+    objectsOfClassAndSubClasses, linksOfAssociation,
+    evaluateDeriveExpression, getNavigableObject).
+    Implemented by sys.MSystemState.
+
++ org.tzi.use.uml.mm.instance.IObjectState extends MInstanceState
+    Adds setAttributeValue(MAttribute, Value) and
+    isInState(MState). Implemented by sys.MObjectState.
+```
+
+**Signature changes on instance interfaces (re-implement required for
+external impls):**
+
+```
+MInstance.state(MSystemState)           → state(IModelState)
+MInstance.exists(MSystemState)          → exists(IModelState)
+MObject.state(MSystemState)             → state(IModelState)      (returns IObjectState)
+MObject.exists(MSystemState)            → exists(IModelState)
+MObject.getNavigableObjects(MSystemState, ...)
+                                         → getNavigableObjects(IModelState, ...)
+MInstanceState — getProtocolStateMachinesInstances()  REMOVED
+    (kept on concrete sys.MObjectState; callers in sys downcast)
+```
+
+**Visibility widening (concrete classes that became cross-package
+consumers):**
+
+```
+sys.MLinkImpl                          package-private → public class
+sys.MLinkImpl ctor                     package-private → public
+sys.MSystemState.evaluateDeriveExpression(MObject[], MAssociationEnd)
+                                       package-private → public
+mm.instance.MLinkSet ctors + add/remove/contains/select/removeAll/hasLink
+                                       package-private → public
+mm.expr.EvalContext.{enter, exit, popVarBindings, pushVarBindings}
+                                       package-private → public
+mm.expr.SimpleEvalContext / DetailedEvalContext matching overrides
+                                       package-private → public
 ```
 
 Signature changes on `mm` types:
