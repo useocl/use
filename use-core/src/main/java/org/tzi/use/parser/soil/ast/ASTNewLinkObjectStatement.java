@@ -23,9 +23,9 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTSimpleType;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.soil.MNewLinkObjectStatement;
+import org.tzi.use.uml.mm.sys.soil.MRValue;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 

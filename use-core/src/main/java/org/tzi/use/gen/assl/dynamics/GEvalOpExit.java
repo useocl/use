@@ -1,10 +1,10 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GInstrOpExit;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MExitOperationStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
+import org.tzi.use.uml.mm.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 public class GEvalOpExit extends GEvalInstruction {
 

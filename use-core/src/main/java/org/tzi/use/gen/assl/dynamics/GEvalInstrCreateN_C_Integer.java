@@ -38,18 +38,18 @@ import java.util.List;
 import org.tzi.use.gen.assl.statics.GInstrCreateN_C_Integer;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.sys.soil.MSequenceStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.ocl.value.IntegerValue;
+import org.tzi.use.uml.mm.ocl.value.ObjectValue;
+import org.tzi.use.uml.mm.ocl.value.SequenceValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
+import org.tzi.use.uml.mm.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.mm.sys.soil.MSequenceStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 public class GEvalInstrCreateN_C_Integer extends GEvalInstruction
     implements IGCaller {

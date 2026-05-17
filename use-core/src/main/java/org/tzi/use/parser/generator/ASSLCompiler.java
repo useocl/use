@@ -41,7 +41,7 @@ import org.tzi.use.parser.use.ASTConstraintDefinition;
 import org.tzi.use.uml.mm.GeneratorModelFactory;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.MSystemState;
 
 public class ASSLCompiler {
 

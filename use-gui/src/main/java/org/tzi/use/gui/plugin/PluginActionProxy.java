@@ -1,7 +1,7 @@
 package org.tzi.use.gui.plugin;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IPluginActionDescriptor;
 import org.tzi.use.util.Log;

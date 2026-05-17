@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.tzi.use.gui.views.diagrams.selection.TableModel;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.sys.MObject;
 
 /** 
  * ObjectPathTableModel is derived from TableModel 

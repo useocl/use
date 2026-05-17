@@ -1,10 +1,10 @@
 require 'date'
 require 'java'
-import "org.tzi.use.uml.ocl.expr.ExpObjOp"
-import "org.tzi.use.uml.ocl.expr.Expression"
-import "org.tzi.use.uml.ocl.type.TypeFactory"
-import "org.tzi.use.uml.sys.MCmdCreateObjects"
-import "org.tzi.use.uml.ocl.extension.RubyHelper"
+import "org.tzi.use.uml.mm.ocl.expr.ExpObjOp"
+import "org.tzi.use.uml.mm.ocl.expr.Expression"
+import "org.tzi.use.uml.mm.ocl.type.TypeFactory"
+import "org.tzi.use.uml.mm.sys.MCmdCreateObjects"
+import "org.tzi.use.uml.mm.ocl.extension.RubyHelper"
 
 class Object
 	def method_missing(methId, *args)

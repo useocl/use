@@ -11,9 +11,9 @@ import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.util.AlphanumComparator;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemState;
 
 /**
  * This table model stores represents all objects of a given MClass and allows

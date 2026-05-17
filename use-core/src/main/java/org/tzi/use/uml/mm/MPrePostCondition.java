@@ -19,8 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
 
 
 /**

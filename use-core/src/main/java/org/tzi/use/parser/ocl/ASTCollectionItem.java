@@ -24,8 +24,8 @@ import java.util.Set;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpRange;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.ExpRange;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

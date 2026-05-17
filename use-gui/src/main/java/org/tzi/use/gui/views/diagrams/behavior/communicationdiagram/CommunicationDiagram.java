@@ -42,7 +42,7 @@ import javax.swing.*;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.views.ViewFrame;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.DiagramView;
@@ -62,17 +62,17 @@ import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelection;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
-import org.tzi.use.uml.sys.events.Event;
-import org.tzi.use.uml.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.mm.ocl.value.ObjectValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MLink;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.events.AttributeAssignedEvent;
+import org.tzi.use.uml.mm.sys.events.Event;
+import org.tzi.use.uml.mm.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.mm.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.mm.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.mm.sys.events.OperationEnteredEvent;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.w3c.dom.Element;
 
@@ -517,7 +517,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 		final JMenuItem seqDia = new JMenuItem("Create synchronized sequence diagram");
 		ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (org.tzi.use.gui.main.MainWindow.getJavaFxCall()){
+				if (org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall()){
 					Platform.runLater(() ->{
 						// to create an instance of a SwingNode, which is used to hold the Swing-Components
 						SwingNode swingNode = new SwingNode();
@@ -579,7 +579,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Creates a new PropertiesWindow object.
 	 */
 	private void createPropertiesWindow() {
-		Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+		Window owner = org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.views.diagrams.MainWindow.instance();
 		PropertiesWindow propWin = new PropertiesWindow(owner, this.getParentDiagram());
 		propWin.showWindow();
 	}
@@ -596,7 +596,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Creates a new message selection view object.
 	 */
 	private void createMessageSelectionWindow() {
-		Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+		Window owner = org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.views.diagrams.MainWindow.instance();
 		MessageSelectionView propWin = new MessageSelectionView(owner, this, true);
 		propWin.showWindow();
 	}
@@ -605,7 +605,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Creates a new CmdChooseWindow object.
 	 */
 	private void createCmdChooseWindow() {
-		Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+		Window owner = org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.views.diagrams.MainWindow.instance();
 		CmdChooseWindow chooseWin = new CmdChooseWindow(owner,this);
 		chooseWin.showWindow();
 	}

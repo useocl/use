@@ -39,9 +39,9 @@ import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 import org.tzi.use.util.Log;
 
 

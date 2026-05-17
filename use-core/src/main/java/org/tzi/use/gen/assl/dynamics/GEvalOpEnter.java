@@ -7,14 +7,14 @@ import org.tzi.use.gen.assl.statics.GOCLExpression;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
+import org.tzi.use.uml.mm.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 public class GEvalOpEnter extends GEvalInstruction  implements IGCaller {
 

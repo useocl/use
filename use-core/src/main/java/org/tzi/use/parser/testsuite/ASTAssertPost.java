@@ -4,9 +4,9 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.mm.MPrePostCondition;
-import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.testsuite.MAssert;
-import org.tzi.use.uml.sys.testsuite.MAssertPost;
+import org.tzi.use.uml.mm.sys.MOperationCall;
+import org.tzi.use.uml.mm.sys.testsuite.MAssert;
+import org.tzi.use.uml.mm.sys.testsuite.MAssertPost;
 
 public class ASTAssertPost extends ASTAssert {
 	private Token conditionName = null;

@@ -5,7 +5,7 @@ import java.util.Comparator;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.sys.MObject;
 
 /** 
  * SelectionComparator serves sorting different object

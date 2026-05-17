@@ -6,7 +6,7 @@ package org.tzi.use.gui.main.runtime;
  * Lives in the {@code gui.main.runtime} package so that runtime plugin
  * interfaces ({@link IPluginMMVisitor}, {@link IPluginMModelExtensionPoint})
  * can refer to a model browser without depending on the concrete
- * {@code org.tzi.use.gui.main.ModelBrowser} class in the parent package.
+ * {@code org.tzi.use.gui.views.diagrams.ModelBrowser} class in the parent package.
  * {@code ModelBrowser} implements this interface, so plugins continue to
  * receive the same object instance.
  * </p>

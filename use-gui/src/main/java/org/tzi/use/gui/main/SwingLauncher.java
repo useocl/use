@@ -11,8 +11,8 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.extension.ExtensionManager;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.ocl.extension.ExtensionManager;
+import org.tzi.use.uml.mm.sys.MSystem;
 import org.tzi.use.util.Log;
 
 import javax.swing.plaf.FontUIResource;
@@ -106,12 +106,23 @@ public class SwingLauncher implements Launcher {
         session.setSystem(system);
 
         if (Options.doGUI) {
-            if (pluginRuntime == null) {
-                Log.debug("Starting gui without plugin runtime!");
-                MainWindow.create(session);
-            } else {
-                Log.debug("Starting gui with plugin runtime.");
-                MainWindow.create(session, pluginRuntime);
+            // MainWindow lives in gui.views (to break the historic gui.main ↔
+            // gui.views cycle); call its static create() reflectively so this
+            // launcher does not import a gui.views type.
+            try {
+                Class<?> mw = Class.forName("org.tzi.use.gui.views.diagrams.MainWindow");
+                if (pluginRuntime == null) {
+                    Log.debug("Starting gui without plugin runtime!");
+                    mw.getMethod("create", org.tzi.use.main.Session.class).invoke(null, session);
+                } else {
+                    Log.debug("Starting gui with plugin runtime.");
+                    mw.getMethod("create", org.tzi.use.main.Session.class,
+                                 org.tzi.use.runtime.spi.IRuntime.class)
+                      .invoke(null, session, pluginRuntime);
+                }
+            } catch (ReflectiveOperationException e) {
+                Log.error("Could not start GUI: " + e.getMessage());
+                System.exit(1);
             }
         }
 

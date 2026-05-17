@@ -31,7 +31,7 @@ import java.util.List;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
 
 /**

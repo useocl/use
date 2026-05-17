@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.mm.ocl.type.EnumType;
 
 import java.util.Collection;
 import java.util.Set;

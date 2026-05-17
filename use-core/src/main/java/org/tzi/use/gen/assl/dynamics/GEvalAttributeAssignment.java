@@ -34,17 +34,17 @@ import java.io.PrintWriter;
 import org.tzi.use.gen.assl.statics.GAttributeAssignment;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.ExpressionWithValue;
+import org.tzi.use.uml.mm.ocl.value.ObjectValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
+import org.tzi.use.uml.mm.sys.soil.MAttributeAssignmentStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 public class GEvalAttributeAssignment extends GEvalInstruction
     implements IGCaller {

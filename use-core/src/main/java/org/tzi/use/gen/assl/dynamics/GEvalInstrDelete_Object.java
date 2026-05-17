@@ -33,14 +33,14 @@ import java.io.PrintWriter;
 
 import org.tzi.use.gen.assl.statics.GInstrDelete_Object;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.ocl.value.ObjectValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
+import org.tzi.use.uml.mm.sys.soil.MObjectDestructionStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 
 public class GEvalInstrDelete_Object extends GEvalInstruction

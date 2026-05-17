@@ -47,13 +47,13 @@ import javax.swing.table.TableCellEditor;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkSet;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MLink;
+import org.tzi.use.uml.mm.sys.MLinkSet;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MObjectState;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemState;
 
 /**
  * Window for the Object Properties 

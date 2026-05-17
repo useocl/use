@@ -32,22 +32,22 @@ import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.MMultiplicity;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.ExpConstBoolean;
-import org.tzi.use.uml.ocl.expr.ExpConstString;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.soil.MEmptyStatement;
-import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
-import org.tzi.use.uml.sys.soil.MVariableAssignmentStatement;
-import org.tzi.use.uml.sys.soil.VariableEnvironment;
+import org.tzi.use.uml.mm.ocl.expr.ExpConstBoolean;
+import org.tzi.use.uml.mm.ocl.expr.ExpConstString;
+import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.ocl.expr.ExpVariable;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.VarDecl;
+import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
+import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.ocl.value.IntegerValue;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.soil.MEmptyStatement;
+import org.tzi.use.uml.mm.sys.soil.MObjectOperationCallStatement;
+import org.tzi.use.uml.mm.sys.soil.MVariableAssignmentStatement;
+import org.tzi.use.uml.mm.sys.soil.VariableEnvironment;
 
 /**
  * Helper to setup a test system.

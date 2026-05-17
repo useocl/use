@@ -29,9 +29,9 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.sys.soil.MBlockStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.ocl.expr.VarDecl;
+import org.tzi.use.uml.mm.sys.soil.MBlockStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

@@ -25,9 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.parser.soil.ast.ASTEmptyStatement;
 import org.tzi.use.parser.soil.ast.ASTStatement;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.soil.SymbolTable;
+import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.sys.soil.SymbolTable;
 
 
 /**

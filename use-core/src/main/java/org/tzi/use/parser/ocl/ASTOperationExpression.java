@@ -26,11 +26,11 @@ import org.tzi.use.parser.ExprContext;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.*;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.TupleType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.ocl.expr.*;
+import org.tzi.use.uml.mm.ocl.type.CollectionType;
+import org.tzi.use.uml.mm.ocl.type.TupleType;
+import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.type.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 

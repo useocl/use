@@ -22,8 +22,8 @@ package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 import java.util.Collection;
 import java.util.Vector;
 
-import org.tzi.use.uml.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.mm.sys.events.ObjectCreatedEvent;
 import org.tzi.use.util.MathUtil;
 
 import com.google.common.collect.ArrayListMultimap;

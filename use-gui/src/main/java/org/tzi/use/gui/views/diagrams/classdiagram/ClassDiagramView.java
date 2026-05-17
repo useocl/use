@@ -22,15 +22,15 @@
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
 import org.tzi.use.graph.DirectedGraph;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ModelBrowser;
-import org.tzi.use.gui.views.PrintableView;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.ModelBrowser;
+import org.tzi.use.gui.views.diagrams.PrintableView;
 import org.tzi.use.gui.main.View;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.ocl.type.EnumType;
+import org.tzi.use.uml.mm.sys.MSystem;
 
 import javax.swing.*;
 import java.awt.*;

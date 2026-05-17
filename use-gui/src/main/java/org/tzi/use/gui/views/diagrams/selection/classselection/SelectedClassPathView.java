@@ -37,7 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.selection.ClassSelectionView;

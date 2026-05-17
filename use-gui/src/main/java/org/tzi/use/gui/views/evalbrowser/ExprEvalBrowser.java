@@ -73,26 +73,25 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.CaptureTheWindow;
 import org.tzi.use.gui.util.MMHTMLPrintVisitor;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MMVisitor;
-import org.tzi.use.uml.ocl.expr.EvalNode;
-import org.tzi.use.uml.ocl.expr.EvalNode.TreeValue;
-import org.tzi.use.uml.ocl.expr.ExpExists;
-import org.tzi.use.uml.ocl.expr.ExpForAll;
-import org.tzi.use.uml.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.operations.StandardOperationsBoolean;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings.Entry;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.ocl.expr.EvalNode;
+import org.tzi.use.uml.mm.ocl.expr.EvalNode.TreeValue;
+import org.tzi.use.uml.mm.ocl.expr.ExpExists;
+import org.tzi.use.uml.mm.ocl.expr.ExpForAll;
+import org.tzi.use.uml.mm.ocl.expr.ExpStdOp;
+import org.tzi.use.uml.mm.ocl.expr.ExpVariable;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.operations.StandardOperationsBoolean;
+import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.value.BooleanValue;
+import org.tzi.use.uml.mm.ocl.value.ObjectValue;
+import org.tzi.use.uml.mm.ocl.value.UndefinedValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.ocl.value.VarBindings.Entry;
+import org.tzi.use.uml.mm.sys.MSystem;
 
 /**
  * A tree view showing evaluation results of an expression. Each node is adorned
@@ -459,7 +458,10 @@ public class ExprEvalBrowser extends JPanel {
         f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         f.setPreferredSize(new Dimension(800, 300));
         f.pack();
-        f.setLocationRelativeTo(MainWindow.instance());
+        // Anchor on whatever active window currently has focus rather than
+        // statically referencing gui.views.MainWindow (would create a
+        // sub-slice cycle in gui_views).
+        f.setLocationRelativeTo(java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow());
         f.setVisible(true);
 
         // set the default configuration for the eval browser

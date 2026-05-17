@@ -28,15 +28,15 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.tzi.use.uml.ocl.value.StringValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
-import org.tzi.use.uml.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
+import org.tzi.use.uml.mm.ocl.value.StringValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.soil.MLinkInsertionStatement;
+import org.tzi.use.uml.mm.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.mm.sys.soil.MRValue;
+import org.tzi.use.uml.mm.sys.soil.MRValueExpression;
 
 /**
  * The class <code>ModelCreationTest</code> tries to instantiate Objects

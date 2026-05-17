@@ -31,7 +31,7 @@ package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GInstructionList;
 import org.tzi.use.gen.assl.statics.GInstruction;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.ocl.value.Value;
 
 import java.util.ListIterator;
 

@@ -46,12 +46,12 @@ import org.tzi.use.main.gui.Main;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.expr.EvalNode;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.ocl.expr.EvalNode;
+import org.tzi.use.uml.mm.ocl.expr.Evaluator;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.MSystem;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TeeWriter;
 

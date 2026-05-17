@@ -47,8 +47,8 @@ import javax.swing.*;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.ViewFrame;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramType;
@@ -64,15 +64,15 @@ import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
 import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelectionHelper;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.*;
-import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
-import org.tzi.use.uml.sys.events.Event;
-import org.tzi.use.uml.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.uml.sys.events.OperationEnteredEvent;
-import org.tzi.use.uml.sys.events.OperationExitedEvent;
+import org.tzi.use.uml.mm.sys.*;
+import org.tzi.use.uml.mm.sys.events.AttributeAssignedEvent;
+import org.tzi.use.uml.mm.sys.events.Event;
+import org.tzi.use.uml.mm.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.mm.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.mm.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.mm.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.mm.sys.events.OperationExitedEvent;
 
 /**
  * A SequenceDiagram shows an UML sequence diagram of events.
@@ -769,7 +769,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
         final JMenuItem comDia = new JMenuItem("Create sync. communication dia.");
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (org.tzi.use.gui.main.MainWindow.getJavaFxCall()) {
+                if (org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall()) {
                     Platform.runLater(() -> {
                         // to create an instance of a SwingNode, which is used to hold the Swing-Components
                         SwingNode swingNode = new SwingNode();
@@ -814,7 +814,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
      * Creates a new CmdChooseWindow object.
      */
     private void createCmdChooseWindow() {
-        Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+        Window owner = org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.views.diagrams.MainWindow.instance();
         CmdChooseWindow chooseWin = new CmdChooseWindow(owner, this);
         chooseWin.showWindow();
     }

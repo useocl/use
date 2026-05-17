@@ -35,14 +35,14 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.selection.ObjectSelectionView;
 import org.tzi.use.gui.views.diagrams.selection.TableModel.Row;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MLink;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MSystem;
 
 /** 
  * a view of SelectedObjectPath

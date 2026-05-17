@@ -30,10 +30,10 @@ import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CreationTime
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.MMessage;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.api.TestModelUtil;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.events.Event;
-import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.events.Event;
+import org.tzi.use.uml.mm.sys.events.LinkDeletedEvent;
 
 /**
  * Tests the message recorder

@@ -33,7 +33,7 @@ import java.io.PrintWriter;
 
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GInstrCalculatedBarrier;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 public interface IGCollector {
     /**

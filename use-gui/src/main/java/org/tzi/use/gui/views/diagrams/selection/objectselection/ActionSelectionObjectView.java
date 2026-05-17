@@ -21,10 +21,10 @@ package org.tzi.use.gui.views.diagrams.selection.objectselection;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.ViewFrame;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.views.diagrams.DiagramType;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystem;
 
 import javax.swing.*;
 import java.awt.*;

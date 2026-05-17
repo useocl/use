@@ -20,9 +20,9 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GInstrBarrier;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.ocl.value.BooleanValue;
+import org.tzi.use.uml.mm.ocl.value.Value;
 
 /**
  * Dynamic part of the barrier instruction.
@@ -72,7 +72,7 @@ public class GEvalBarrier extends GEvalInstruction implements IGCaller {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.dynamics.IGCaller#feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCaller#feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.mm.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)
 	 */
 	@Override
 	public void feedback(GConfiguration configuration, Value value,

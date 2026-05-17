@@ -21,8 +21,8 @@ package org.tzi.use.uml.mm;
 
 import java.util.List;
 
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
 
 /**
  * Model factory used by generator to add loaded class invariants.

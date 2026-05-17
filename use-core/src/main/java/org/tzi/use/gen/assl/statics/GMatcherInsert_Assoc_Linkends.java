@@ -31,7 +31,7 @@ import java.util.List;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.type.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics

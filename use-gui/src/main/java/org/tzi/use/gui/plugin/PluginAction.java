@@ -1,7 +1,7 @@
 package org.tzi.use.gui.plugin;
 
 import org.tzi.use.gui.main.runtime.IPluginActionProxy;
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IPlugin;
 import org.tzi.use.runtime.spi.IPluginRuntime;

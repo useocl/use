@@ -20,10 +20,10 @@
 package org.tzi.use.parser.soil.ast;
 
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.sys.soil.MOperationCallStatement;
-import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.uml.sys.soil.MRValueExpression;
-import org.tzi.use.uml.sys.soil.MRValueOperationCall;
+import org.tzi.use.uml.mm.sys.soil.MOperationCallStatement;
+import org.tzi.use.uml.mm.sys.soil.MRValue;
+import org.tzi.use.uml.mm.sys.soil.MRValueExpression;
+import org.tzi.use.uml.mm.sys.soil.MRValueOperationCall;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.selection.objectselection;
 
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.sys.MObject;
 
 import java.util.Set;
 

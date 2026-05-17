@@ -24,8 +24,8 @@ import java.util.EventObject;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 
 /**
  * A session manages a system and its model. System and model may

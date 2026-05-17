@@ -25,10 +25,10 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpLet;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.ocl.expr.ExpLet;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.type.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

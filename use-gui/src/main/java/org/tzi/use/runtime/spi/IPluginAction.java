@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
  *
  * <p>{@code getSession()} and {@code getParent()} return {@link Object} because
  * the SPI deliberately does not depend on the concrete application types
- * (e.g. {@code org.tzi.use.main.Session}, {@code org.tzi.use.gui.main.MainWindow}).
+ * (e.g. {@code org.tzi.use.main.Session}, {@code org.tzi.use.gui.views.diagrams.MainWindow}).
  * Plugin code that already lives in the application is expected to cast the
  * returned object to the concrete type it knows.</p>
  *
@@ -34,7 +34,7 @@ public interface IPluginAction {
 	/**
 	 * Returns the application's main window (typed as Object to keep the SPI
 	 * free of upstream package dependencies). Callers downcast to
-	 * {@code org.tzi.use.gui.main.MainWindow} where the concrete type is needed.
+	 * {@code org.tzi.use.gui.views.diagrams.MainWindow} where the concrete type is needed.
 	 */
 	Object getParent();
 }

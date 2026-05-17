@@ -30,7 +30,7 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GVariableAssignment;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.ocl.value.Value;
 
 public class GEvalVariableAssignment extends GEvalInstruction
     implements IGCaller {

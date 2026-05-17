@@ -28,9 +28,9 @@ import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.*;
-import org.tzi.use.uml.sys.events.*;
+import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.sys.*;
+import org.tzi.use.uml.mm.sys.events.*;
 import org.tzi.use.util.StringUtil;
 
 import java.util.*;

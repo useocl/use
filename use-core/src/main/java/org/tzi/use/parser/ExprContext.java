@@ -21,7 +21,7 @@ package org.tzi.use.parser;
 
 import java.util.Stack;
 
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.type.Type;
 
 /**
  * Stack for default context variable in nested expressions.

@@ -22,9 +22,9 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpConstEnum;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.mm.ocl.expr.ExpConstEnum;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.type.EnumType;
 
 import java.util.Set;
 

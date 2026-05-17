@@ -6,7 +6,7 @@ package org.tzi.use.gui.main.runtime;
  * Lives in the {@code gui.main.runtime} package so that runtime plugin
  * interfaces ({@link IPluginActionExtensionPoint}) can refer to a main
  * window without depending on the concrete
- * {@code org.tzi.use.gui.main.MainWindow} class in the parent package.
+ * {@code org.tzi.use.gui.views.diagrams.MainWindow} class in the parent package.
  * {@code MainWindow} implements this interface, so plugins continue to
  * receive the same object instance.
  * </p>

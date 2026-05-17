@@ -26,10 +26,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemState;
-import org.tzi.use.uml.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

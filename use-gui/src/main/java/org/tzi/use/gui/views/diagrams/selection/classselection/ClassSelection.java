@@ -17,8 +17,8 @@ import javax.swing.JMenuItem;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.ViewFrame;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
@@ -32,7 +32,7 @@ import org.tzi.use.gui.views.diagrams.selection.SelectionComparator;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.sys.MObject;
 import org.tzi.use.util.collections.CollectionUtil;
 
 /**

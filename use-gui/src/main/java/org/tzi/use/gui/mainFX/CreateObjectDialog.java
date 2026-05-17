@@ -38,7 +38,7 @@ import org.tzi.use.main.Session;
 import org.tzi.use.main.gui.Main;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystem;
 
 import java.util.ArrayList;
 import java.util.List;

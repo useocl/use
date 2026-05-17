@@ -30,10 +30,10 @@ import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MMultiplicity;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.VarDecl;
+import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
+import org.tzi.use.uml.mm.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
 import java.util.ArrayList;

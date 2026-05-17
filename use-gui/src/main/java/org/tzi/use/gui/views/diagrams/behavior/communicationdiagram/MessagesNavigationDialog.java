@@ -36,7 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import org.tzi.use.gui.util.GridBagHelper;
-import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.mm.sys.events.Event;
 
 import com.google.common.eventbus.Subscribe;
 

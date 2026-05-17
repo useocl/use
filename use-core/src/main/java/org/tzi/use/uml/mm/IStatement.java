@@ -21,7 +21,7 @@ package org.tzi.use.uml.mm;
 
 /**
  * Marker interface for the body of an {@link MOperation}.
- * Concrete implementations live in {@code org.tzi.use.uml.sys.soil}
+ * Concrete implementations live in {@code org.tzi.use.uml.mm.sys.soil}
  * (e.g. {@code MStatement}); this interface exposes only what the
  * model layer needs so that {@code mm} does not depend on {@code sys}.
  */

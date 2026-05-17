@@ -20,8 +20,8 @@
 package org.tzi.use.gui.views.diagrams.behavior.shared;
 
 import com.google.common.eventbus.Subscribe;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.events.*;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.events.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -39,8 +39,8 @@ import org.tzi.use.uml.mm.statemachines.MPseudoStateKind;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.mm.statemachines.MVertex;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.VarDecl;
 import org.tzi.use.util.StringUtil;
 
 /**

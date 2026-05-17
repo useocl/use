@@ -55,9 +55,13 @@ import org.tzi.use.config.RecentItems;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.utilFX.StatusBar;
 import org.tzi.use.gui.views.*;
+import org.tzi.use.gui.views.diagrams.AssociationEndsInfo;
+import org.tzi.use.gui.views.diagrams.ClassExtentView;
+import org.tzi.use.gui.views.diagrams.ClassInvariantView;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.IFXWindowHost;
-import org.tzi.use.gui.views.ViewFrame;
+import org.tzi.use.gui.views.diagrams.ObjectPropertiesView;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;
@@ -80,14 +84,14 @@ import org.tzi.use.gui.main.runtime.IPluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
-import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
-import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
-import org.tzi.use.uml.sys.soil.MExitOperationStatement;
-import org.tzi.use.uml.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.sys.soil.MStatement;
+import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.sys.MSystemException;
+import org.tzi.use.uml.mm.sys.events.tags.SystemStateChangedEvent;
+import org.tzi.use.uml.mm.sys.events.tags.SystemStructureChangedEvent;
+import org.tzi.use.uml.mm.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.mm.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.mm.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.mm.sys.soil.MStatement;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.USEWriter;
@@ -155,7 +159,7 @@ public class MainWindow implements IFXWindowHost {
     private static IRuntime fPluginRuntime;
     private Stage primaryStage;  // Reference to the primary stage
     private static MainWindow instance;
-    private org.tzi.use.gui.main.MainWindow swingMainWindow; // just for Loading Plugins
+    private org.tzi.use.gui.views.diagrams.MainWindow swingMainWindow; // just for Loading Plugins
     private PageLayout fPageLayout;
     private PrinterJob fPrinterJob;
     private CheckMenuItem fCbMenuItemCheckStructure;
@@ -282,8 +286,8 @@ public class MainWindow implements IFXWindowHost {
 
         // 1.2 If we don’t yet have a Swing MainWindow, create a hidden one
         if (swingMainWindow == null) {
-            org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);   // suppress UI
-            swingMainWindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+            org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);   // suppress UI
+            swingMainWindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
         }
 
         /*  actionEP.createPluginActions(..) returns exactly the same structure the
@@ -1414,11 +1418,11 @@ public class MainWindow implements IFXWindowHost {
         boolean loadLayout = (ActionEvent.SHIFT_MASK) == 0;
 
         //setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         ClassDiagram.setJavaFxCall(true); // so that class diagrams don't save any state
 
         // Calling the Swing MainWindow to get the ClassDiagram out of it
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         ClassDiagramView cdv = new ClassDiagramView(mainwindow, fSession.system(), loadLayout, fPluginRuntime);
         ViewFrame f = new ViewFrame("Class diagram", cdv, "ClassDiagram.gif");
@@ -1464,10 +1468,10 @@ public class MainWindow implements IFXWindowHost {
         SwingNode node = new SwingNode();
 
         // Make Swing think we run head-less
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
 
-        org.tzi.use.gui.main.MainWindow swingMW =
-                org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow swingMW =
+                org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         StateMachineDiagramView dv = new StateMachineDiagramView(swingMW, fSession.system(), sm);
 
@@ -1491,11 +1495,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the NewObjectDiagramView and the enclosing ViewFrame
         NewObjectDiagramView odv = new NewObjectDiagramView(mainwindow, fSession.system());
@@ -1550,11 +1554,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the ClassInvariantView and the enclosing ViewFrame
         ClassInvariantView civ = new ClassInvariantView(mainwindow, fSession.system());
@@ -1582,11 +1586,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the ClassInvariantView and the enclosing ViewFrame
         ObjectPropertiesView opv = new ObjectPropertiesView(mainwindow, fSession.system());
@@ -1613,11 +1617,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the ClassExtentView and the enclosing ViewFrame
         ClassExtentView cev = new ClassExtentView(mainwindow, fSession.system());
@@ -1644,11 +1648,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the ClassExtentView and the enclosing ViewFrame
         SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(fSession.system(), mainwindow, null);
@@ -1675,11 +1679,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the ClassExtentView and the enclosing ViewFrame
         CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(mainwindow, fSession.system(), VisibleDataManager.createVisibleDataManager(fSession.system()));
@@ -1706,11 +1710,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the CallStackView and the enclosing ViewFrame
         CallStackView csv = new CallStackView(fSession.system());
@@ -1739,7 +1743,7 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the ClassExtentView and the enclosing ViewFrame
@@ -1767,11 +1771,11 @@ public class MainWindow implements IFXWindowHost {
         swingNode = new SwingNode();
 
         // setting the visibility of the MainWindow (Swing Gui) to false because we don't want it to be shown
-        org.tzi.use.gui.main.MainWindow.setJavaFxCall(true);
+        org.tzi.use.gui.views.diagrams.MainWindow.setJavaFxCall(true);
         NewObjectDiagram.setJavaFxCall(true); // so that NewObjectDiagram doesn't save any state
 
         // Create the Swing MainWindow instance
-        org.tzi.use.gui.main.MainWindow mainwindow = org.tzi.use.gui.main.MainWindow.create(fSession, fPluginRuntime);
+        org.tzi.use.gui.views.diagrams.MainWindow mainwindow = org.tzi.use.gui.views.diagrams.MainWindow.create(fSession, fPluginRuntime);
 
         // Create the ClassExtentView and the enclosing ViewFrame
         AssociationEndsInfo clv = new AssociationEndsInfo(mainwindow, fSession.system());

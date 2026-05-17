@@ -20,9 +20,9 @@
 package org.tzi.use.uml.analysis.coverage;
 
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.ExpObjectByUseId;
-import org.tzi.use.uml.ocl.expr.ExpRange;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.ocl.expr.ExpObjectByUseId;
+import org.tzi.use.uml.mm.ocl.expr.ExpRange;
+import org.tzi.use.uml.mm.ocl.expr.Expression;
 
 /**
  * This coverage visitor simply adds all covered
