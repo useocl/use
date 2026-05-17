@@ -951,23 +951,89 @@ flowchart LR
 | Module         | Before | After  | Δ      |
 |----------------|-------:|-------:|-------:|
 | `uml` slice    |      5 |      3 |  −40%  |
-| core whole     |     34 |     29 |  −15%  |
+| core whole     |     34 |      ? |   —    |
 | `gui` slice    |     14 |      5 |  −64%  |
-| entire-project |    275 |    246 |  −11%  |
+| entire-project |    275 |      3 |  −99%  |
 
-### Remaining open work
+Tests: 271 use-core + 18 use-gui still passing.
 
-- **Bug 1 Phase B+C** (uml triangle): break `ocl → sys` (35 imports
-  — IModelState / IObject / ILink / IInstance interface extraction)
-  and `mm → ocl` (47 imports — promote `Type` to `mm.types`).
-  See [`bug-1_plan.md`](./bug-1_plan.md) for the detailed plan.
-- **Bug 11** (gen → analysis): 3 imports across 2 files. Requires
-  detangling `BasicExpressionCoverageCalulator` from
-  `AbstractCoverageVisitor`.
-- **GUI residuals**: 5 cycles all rooted in `views → main`,
-  `views → mainFX`, or `graphlayout → views` (concrete-node
-  `instanceof` checks in swimlane-layout). Each requires significant
-  interface extraction.
+(`core whole` count is no longer observable: the JUnit-5 surefire setup
+in `use-core` predates jupiter discovery, so `MavenCyclicDependenciesCoreTest`
+is silently skipped during `mvn test`. The entire-project metric — which
+slices the merged classpath of both modules — is the authoritative
+overall measurement.)
+
+### What landed this PR (Bugs 1A, 2–10, 11, 12–14, 15, 16, 19, 20, 23)
+
+- **Bug 19** (`uml → gen`): killed the only `MSystem → GGenerator` edge
+  by moving the cache to Shell. Collapsed 9 core cycles + 33
+  entire-project.
+- **Bug 20** (`gen → parser`): split `GGenerator.startProcedure` so the
+  parser-aware compile happens in the caller (Shell). Removed the only
+  `ASSLCompiler` reference from `gen.tool`.
+- **Bug 16** (`util → parser`): moved `CompilationFailedException` to
+  `parser.soil.exceptions`; loosened `SymbolTable.cause` from
+  `ASTStatement` to `Object` (downcast at the two parser callers).
+- **Bug 11** (`gen → analysis`): split the coverage primitives. Shared
+  pieces (`AbstractCoverageVisitor`, `AttributeAccessInfo`,
+  `BasicCoverageData`, `BasicExpressionCoverageCalulator`) moved to
+  `uml.analysis.coverage`; `analysis.coverage` keeps
+  `CoverageData`/`CoverageCalculationVisitor`.
+- **Bug 21** (uml-internal): moved `util.uml.sorting` → `uml.mm.sorting`
+  so the comparators sit alongside the types they sort.
+- **Bug 23** (`util → uml`): moved `util.soil.*` → `uml.sys.soil`
+  (49 import sites rewritten); moved
+  `util.rubyintegration.RubyHelper` → `uml.ocl.extension`.
+- **Bug 15** (`uml → parser`): moved `SrcPos` and `SemanticException`
+  out of `parser` into `util` (27 callers rewritten). Removed the
+  remaining `uml→parser` edges: collapsed `MSystem.loadInvariants` into
+  the Shell caller; removed `MEvent.buildEnvironment` (inlined into its
+  single `ASTTransitionDefinition` caller); removed
+  `VarDeclList.addVariablesToSymtable` (inlined into 3 parser callers);
+  replaced `ExtensionManager.getType`'s direct `OCLCompiler` call with a
+  `TypeResolver` SPI wired at startup; moved `MTestSuite` from
+  `uml.sys.testsuite` to `parser.testsuite` (it stored AST nodes
+  anyway).
+- **Bug 24** (cross-module): moved `ShellReadline` from
+  `util.input.shell` to `main.shell` (the package it actually belongs
+  in — a single misplacement was inflating cross-module cycles by 76).
+- **Bug 25** (`uml → api`): moved `TestModelUtil` from `uml.mm` to
+  `api` (it's a test-fixture builder for the API). Collapsed the last
+  uml→api back-edge.
+
+### Remaining open work (3 entire-project cycles, all in the plugin SPI)
+
+The three remaining cycles all sit in the `gui ↔ main ↔ runtime`
+plugin-system triangle:
+
+1. `gui → runtime → gui` — `MainWindow.pluginActions` is typed
+   `Map<…, PluginActionProxy>` (concrete impl in `runtime.gui.impl`).
+   `PluginActionProxy extends PluginAction (javax.swing.Action)`,
+   constructed with a `MainWindow` parameter. To break: extract an
+   `IPluginActionProxy` SPI interface that lives where runtime can
+   depend on it (or move `PluginActionProxy` to gui).
+2. `main → runtime → main` — `Shell.pluginCommands` is typed
+   `List<PluginShellCmdContainer>` (concrete impl). Same pattern:
+   needs an `IPluginShellCmdContainer` SPI.
+3. `gui → main → runtime → gui` — composite of the first two; closes
+   automatically when either back-edge is broken.
+
+The right way to fix these is a proper plugin-SPI redesign — move all
+`runtime.*.impl` types behind interfaces declared in a neutral package
+(or in `main.runtime` if you accept main as the SPI owner). That is
+genuinely a half-day refactor; out of scope for this branch.
+
+### Bug 1 (uml triangle) — Phase B+C still open
+
+Phase A landed. The remaining 3 cycles in the `uml` slice are:
+- `mm → ocl → mm`
+- `mm → ocl → sys → mm`
+- `ocl → sys → ocl`
+
+Phase B (break `ocl → sys`, 35 imports) and Phase C (promote `Type`
+to `mm.types`, 47 imports) are documented in
+[`bug-1_plan.md`](./bug-1_plan.md). Both are significant interface
+extractions; deferred to a focused follow-up branch.
 
 ### Measurement Limitation
 
@@ -975,3 +1041,11 @@ The "entire GUI" cycle count cannot be measured in isolation because
 GUI and Core share overlapping package names (`org.tzi.use.util`,
 `org.tzi.use.main`). The ArchUnit importer pulls in Core classes
 when scanning these packages, inflating the GUI-only count.
+
+Likewise the `core whole` count in the table above is "?" because
+`use-core`'s surefire-plugin (2.12.4) doesn't pick up JUnit-5 tests, so
+`MavenCyclicDependenciesCoreTest` doesn't actually run during
+`mvn test`. The `AntCyclicDependenciesCoreTest` (JUnit-4) is what's
+exercised. Updating the surefire-plugin is a separate concern; the
+entire-project measurement reflects the merged classpath state
+authoritatively.
