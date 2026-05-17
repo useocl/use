@@ -36,7 +36,7 @@ import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.model.PluginModel;
-import org.tzi.use.main.shell.plugin.PluginShellCmdFactory.PluginShellCmdContainer;
+import org.tzi.use.main.shell.runtime.IPluginShellCmdContainer;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
@@ -123,7 +123,7 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 
 	private static Shell fShell = null;
 
-    private final List<PluginShellCmdContainer> pluginCommands;
+    private final List<IPluginShellCmdContainer> pluginCommands;
 
     private final java.util.WeakHashMap<MSystem, GGenerator> systemGenerators = new java.util.WeakHashMap<>();
 
@@ -469,11 +469,11 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 			}
 			Options.setDebug(value);
 		} else if (Options.doPLUGIN) {
-			PluginShellCmdContainer cmd = null;
+			IPluginShellCmdContainer cmd = null;
 
 			boolean alias = false;
 			
-			for (PluginShellCmdContainer currentCmdMapEntry : pluginCommands) {
+			for (IPluginShellCmdContainer currentCmdMapEntry : pluginCommands) {
 				if (line.startsWith(currentCmdMapEntry.getCmd())) {
 					cmd = currentCmdMapEntry;
 					break;
@@ -494,10 +494,10 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 					arguments = line.substring(cmd.getCmd().length());
 				}
 				try {
-					cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
+					cmd.executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
 				}
 				catch(Exception ex){
-					PluginModel crashedPlugin = cmd.getProxy().getDescriptor().getParent().getPluginModel();
+					PluginModel crashedPlugin = cmd.getDescriptor().getParent().getPluginModel();
 					System.err.println();
 					String nl = Options.LINE_SEPARATOR;
 					System.err.println("INTERNAL ERROR in Plugin "
@@ -537,7 +537,7 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 	private void cmdShowPlugins() {
 		System.out.println("================== Plugin commands available ====================");
 
-		for (PluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
+		for (IPluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
 			System.out.println(currentCmdMapEntry.getCmd() + " : " + currentCmdMapEntry.getHelp());
 			if(currentCmdMapEntry.getAlias() != null){
 				System.out.println("  Alias: " + currentCmdMapEntry.getAlias());

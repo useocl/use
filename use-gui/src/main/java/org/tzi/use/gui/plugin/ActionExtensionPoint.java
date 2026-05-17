@@ -3,7 +3,7 @@ package org.tzi.use.gui.plugin;
 import java.util.Map;
 import java.util.Vector;
 
-import org.tzi.use.gui.main.IPluginActionProxy;
+import org.tzi.use.gui.main.runtime.IPluginActionProxy;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.runtime.IMainWindow;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;

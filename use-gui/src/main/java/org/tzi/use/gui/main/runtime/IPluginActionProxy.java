@@ -1,4 +1,4 @@
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.main.runtime;
 
 import javax.swing.Action;
 

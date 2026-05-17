@@ -5,7 +5,6 @@ import java.util.List;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IDescriptor;
 import org.tzi.use.runtime.spi.IExtensionPoint;
-import org.tzi.use.main.shell.plugin.PluginShellCmdFactory.PluginShellCmdContainer;
 
 /**
  * This interface provides the Shell Command Extension Point. The implementation
@@ -34,6 +33,6 @@ public interface IPluginShellExtensionPoint extends IExtensionPoint {
 	 *            The Shell object
 	 * @return List of created Shell Command Containers
 	 */
-	List<PluginShellCmdContainer> createPluginCmds(Session session, IShell shell);
+	List<IPluginShellCmdContainer> createPluginCmds(Session session, IShell shell);
 
 }

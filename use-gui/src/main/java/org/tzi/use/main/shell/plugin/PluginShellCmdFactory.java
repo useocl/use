@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.tzi.use.main.Session;
+import org.tzi.use.main.shell.runtime.IPluginShellCmdContainer;
 import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.runtime.model.PluginShellCmdModel;
 import org.tzi.use.runtime.spi.IPluginShellCmdDescriptor;
@@ -48,38 +49,38 @@ public class PluginShellCmdFactory {
 	 *            The application's Shell object
 	 * @return A sorted list of Plugin Shell Command Containers
 	 */
-	public List<PluginShellCmdContainer> createPluginCmds(Vector<IPluginShellCmdDescriptor> cmds, Session session, IShell shell) {
+	public List<IPluginShellCmdContainer> createPluginCmds(Vector<IPluginShellCmdDescriptor> cmds, Session session, IShell shell) {
 
-		List<PluginShellCmdContainer> cmdList = new ArrayList<PluginShellCmdContainer>(cmds.size());
-		
+		List<IPluginShellCmdContainer> cmdList = new ArrayList<IPluginShellCmdContainer>(cmds.size());
+
 		for (IPluginShellCmdDescriptor currentCmdDescriptor : cmds) {
 			PluginShellCmdModel currentCmdModel = currentCmdDescriptor.getPluginCmdModel();
 			cmdList.add(new PluginShellCmdContainer(currentCmdModel.getShellCmd(), currentCmdModel.getAlias(), currentCmdModel.getCmdHelp(),
 					new PluginShellCmdProxy(currentCmdDescriptor, session, shell)));
 		}
-		
+
 		/*
 		 * Sort the list so longer entries are at the front. This is to prevent
 		 * shorter commands from hiding longer commands by matching a suffix of
 		 * the other commands.
 		 * E.g. 'command' hides 'commandOther' if it is matched first.
 		 */
-		Collections.sort(cmdList, new Comparator<PluginShellCmdContainer>() {
+		Collections.sort(cmdList, new Comparator<IPluginShellCmdContainer>() {
 			@Override
-			public int compare(PluginShellCmdContainer o1, PluginShellCmdContainer o2) {
-				return o2.cmd.length() - o1.cmd.length();
+			public int compare(IPluginShellCmdContainer o1, IPluginShellCmdContainer o2) {
+				return o2.getCmd().length() - o1.getCmd().length();
 			}
 		});
-		
+
 		return cmdList;
 	}
-	
-	public static class PluginShellCmdContainer {
+
+	public static class PluginShellCmdContainer implements IPluginShellCmdContainer {
 		private final String cmd;
 		private final String alias;
 		private final String help;
 		private final PluginShellCmdProxy proxy;
-		
+
 		private PluginShellCmdContainer(String cmd, String alias, String help, PluginShellCmdProxy proxy){
 			this.cmd = cmd;
 			this.alias = alias;
@@ -87,21 +88,30 @@ public class PluginShellCmdFactory {
 			this.proxy = proxy;
 		}
 
+		@Override
 		public String getCmd() {
 			return cmd;
 		}
 
+		@Override
 		public String getAlias() {
 			return alias;
 		}
-		
+
+		@Override
 		public String getHelp() {
 			return help;
 		}
 
-		public PluginShellCmdProxy getProxy() {
-			return proxy;
+		@Override
+		public void executeCmd(String c, String arguments, String[] argumentList) {
+			proxy.executeCmd(c, arguments, argumentList);
+		}
+
+		@Override
+		public IPluginShellCmdDescriptor getDescriptor() {
+			return proxy.getDescriptor();
 		}
 	}
-	
+
 }

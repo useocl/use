@@ -26,6 +26,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.tzi.use.gui.main.runtime.IPluginActionProxy;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.RecentItems;
 import org.tzi.use.config.RecentItems.RecentItemsObserver;

@@ -76,7 +76,7 @@ import org.tzi.use.main.gui.Main;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.gui.main.IPluginActionProxy;
+import org.tzi.use.gui.main.runtime.IPluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;

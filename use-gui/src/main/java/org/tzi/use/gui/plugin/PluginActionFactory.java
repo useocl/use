@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import org.tzi.use.gui.main.IPluginActionProxy;
+import org.tzi.use.gui.main.runtime.IPluginActionProxy;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IPluginActionDescriptor;
