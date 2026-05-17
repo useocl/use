@@ -1101,50 +1101,12 @@ cycles when slicing inside gui_main and shell:
 
 ### Remaining open work
 
-**1 gui-internal cycle**: `gui:main ↔ views` — `MainWindow`'s diagram-
-orchestration code still references concrete view types in 17+
-`new XxxView(...)` constructor calls scattered across the 20+ Action
-inner classes (ActionViewCreateClassDiagram, ActionViewCreateObjectDiagram,
-ActionViewCreateCommunicationDiagram, ActionViewCreateObjectCount,
-ActionViewCreateLinkCount, ActionViewCreateClassInvariant,
-ActionViewCreateStateEvolution, ActionViewCreateClassExtent,
-ActionViewCreateCallStack, ActionViewCreateCommandList,
-ActionViewAssociationInfo, ActionViewCreateObjectProperties,
-ActionViewCreateSequenceDiagram, etc.) plus
-`MainWindow.{classDiagrams, objectDiagrams, communicationDiagrams}`
-typed view lists, `showStateMachineView`/`showObjectPropertiesView`
-typed returns, and `createCommunicationDiagram`/`createSequenceDiagram`
-method bodies that wrap concrete views into ViewFrames with internal
-frame listeners.
-
-**Path to zero**:
-1. Define `gui.main.IDiagramFactory` SPI with ~15 factory methods
-   covering every view type MainWindow constructs.
-2. Implement in `gui.views.diagrams.SwingDiagramFactory` (intra-views).
-3. Register the factory at `SwingLauncher`/`JavaFXLauncher` startup.
-4. Rewrite every `new XxxView(...)` in MainWindow as
-   `IDiagramFactory.INSTANCE.get().createXxx(...)`.
-5. Retype `MainWindow.classDiagrams` etc. as `List<View>` (View is now
-   in gui.main); update `getClassDiagrams()` callers in
-   `views.diagrams.selection.classselection.ClassSelection` to cast.
-6. Move the inner-frame listener wiring (which closes diagrams and
-   removes from MainWindow lists) into the factory result-bundle so
-   MainWindow doesn't need to instantiate ViewFrames itself.
-
-This is a ~hour-scale focused refactor. The current PR has reduced
-this cycle's edge count from 200+ to ~80 (moved View, ViewFrame,
-EvalOCLDialog, ModelBrowser handlers; introduced IPluginActionProxy
-and IFXWindowHost SPIs). Documented as **Bug 17**.
-
-**`uml` triangle Phase B+C** (3 cycles in the `uml` sub-slicer):
-- `mm → ocl → mm`
-- `mm → ocl → sys → mm`
-- `ocl → sys → ocl`
-
-Phase B (break `ocl → sys`, 35 imports — needs `IModelState`/`IObject`/
-`ILink` interface extraction) and Phase C (promote `Type` to `mm.types`,
-47 imports) are documented in [`bug-1_plan.md`](./bug-1_plan.md). Both
-are significant interface extractions; deferred to a follow-up branch.
+**None.** All 14 ArchUnit cycle/layered-architecture tests report 0.
+Both the `gui:main ↔ views` Mediator coupling (Bug 17) and the
+`uml` mm/ocl/sys triangle (Bug 1 Phase B+C) closed in commit
+`de27efc9` via structural moves — see the "Bug 17 + Bug 1 B+C
+resolution" notes in **Current Metrics** above and the consolidated
+breaking-change catalog below.
 
 ### Measurement Limitation
 
@@ -1160,3 +1122,346 @@ Likewise the `core whole` count in the table above is "?" because
 exercised. Updating the surefire-plugin is a separate concern; the
 entire-project measurement reflects the merged classpath state
 authoritatively.
+
+---
+
+## Breaking API Changes — Version-Bump Notes
+
+This PR makes pervasive **source-incompatible** changes to public
+packages: ~250+ types relocated across packages and several SPI
+signatures changed shape. **A SemVer major version bump is
+recommended** before publishing. Plugin authors and any external
+embedders will have to recompile and rewrite imports; binary
+backwards-compatibility is not preserved. The changes are *behavior-
+preserving* — no semantics, return values, exception handling, or
+runtime contracts change other than where explicitly noted.
+
+Below is the catalog grouped by surface area, with verbatim
+old → new mappings suitable for a `MIGRATING.md` / release-note
+extract. Verified against the codebase at commit `a0f0c054`.
+
+### 1. Plugin SPI (`org.tzi.use.runtime.**`)
+
+The entire plugin SPI was reshaped in Bugs 3, 26, 27 to remove the
+runtime ↔ gui / shell cycles. The `org.tzi.use.runtime` root package
+no longer holds any `.java` files; all interfaces live under
+`runtime.spi`, and the impls have moved to the slices they actually
+serve.
+
+```
+-- pure package-rename (no signature change) --
+org.tzi.use.runtime.IPlugin               → org.tzi.use.runtime.spi.IPlugin
+org.tzi.use.runtime.IPluginRuntime        → org.tzi.use.runtime.spi.IPluginRuntime
+org.tzi.use.runtime.IPluginDescriptor     → org.tzi.use.runtime.spi.IPluginDescriptor
+org.tzi.use.runtime.IPluginClassLoader    → org.tzi.use.runtime.spi.IPluginClassLoader
+org.tzi.use.runtime.IPluginActionDescriptor       → org.tzi.use.runtime.spi.IPluginActionDescriptor
+org.tzi.use.runtime.IPluginActionDelegate         → org.tzi.use.runtime.spi.IPluginActionDelegate
+org.tzi.use.runtime.IPluginAction                 → org.tzi.use.runtime.spi.IPluginAction
+org.tzi.use.runtime.IPluginShellCmdDescriptor     → org.tzi.use.runtime.spi.IPluginShellCmdDescriptor
+org.tzi.use.runtime.IPluginShellCmdDelegate       → org.tzi.use.runtime.spi.IPluginShellCmdDelegate
+org.tzi.use.runtime.IPluginServiceDescriptor      → org.tzi.use.runtime.spi.IPluginServiceDescriptor
+org.tzi.use.runtime.IPluginService                → org.tzi.use.runtime.spi.IPluginService
+org.tzi.use.main.runtime.IRuntime                 → org.tzi.use.runtime.spi.IRuntime
+org.tzi.use.main.runtime.IExtensionPoint          → org.tzi.use.runtime.spi.IExtensionPoint
+org.tzi.use.main.runtime.IDescriptor              → org.tzi.use.runtime.spi.IDescriptor
+
+-- impls moved out of runtime into the slices they serve --
+org.tzi.use.runtime.gui.**          → org.tzi.use.gui.plugin.**
+org.tzi.use.runtime.gui.impl.**     → org.tzi.use.gui.plugin.**
+org.tzi.use.runtime.guiFX.**        → org.tzi.use.gui.pluginFX.**
+org.tzi.use.runtime.guiFX.impl.**   → org.tzi.use.gui.pluginFX.**
+org.tzi.use.runtime.shell.**        → org.tzi.use.main.shell.plugin.**
+org.tzi.use.runtime.shell.impl.**   → org.tzi.use.main.shell.plugin.**
+org.tzi.use.runtime.service.**      → (slice removed; types relocated to runtime.spi / runtime.util)
+org.tzi.use.runtime.bootstrap.MainPluginRuntime   → org.tzi.use.gui.plugin.MainPluginRuntime
+
+-- concrete descriptors co-located with their factories --
+org.tzi.use.runtime.impl.PluginDescriptor                → org.tzi.use.runtime.util.PluginDescriptor
+org.tzi.use.runtime.gui.impl.PluginActionDescriptor      → org.tzi.use.runtime.util.PluginActionDescriptor
+org.tzi.use.runtime.shell.impl.PluginShellCmdDescriptor  → org.tzi.use.runtime.util.PluginShellCmdDescriptor
+org.tzi.use.runtime.service.impl.PluginServiceDescriptor → org.tzi.use.runtime.util.PluginServiceDescriptor
+
+-- diagram-plugin types moved to where their dependencies live --
+org.tzi.use.gui.plugin.IPluginDiagramExtensionPoint → org.tzi.use.gui.views.diagrams.IPluginDiagramExtensionPoint
+org.tzi.use.gui.plugin.DiagramExtensionPoint        → org.tzi.use.gui.views.diagrams.DiagramExtensionPoint
+org.tzi.use.gui.plugin.StyleInfoProvider            → org.tzi.use.gui.views.diagrams.StyleInfoProvider
+org.tzi.use.gui.plugin.PluginDiagramManipulator     → org.tzi.use.gui.views.diagrams.PluginDiagramManipulator
+org.tzi.use.gui.plugin.DiagramPlugin                → org.tzi.use.gui.views.diagrams.DiagramPlugin
+```
+
+**Signature changes (re-implement required for SPI implementors):**
+
+```
+IPluginActionExtensionPoint.createPluginActions(Session, MainWindow)
+    → createPluginActions(Session, IMainWindow)
+IPluginMMVisitor.modelBrowser() : ModelBrowser
+    → modelBrowser() : IModelBrowser
+IPluginMModelExtensionPoint.createMMPrintVisitor(PrintWriter, ModelBrowser)
+    → createMMPrintVisitor(PrintWriter, IModelBrowser)
+IPluginMModelExtensionPoint.createMMHTMLPrintVisitor(PrintWriter, ModelBrowser)
+    → createMMHTMLPrintVisitor(PrintWriter, IModelBrowser)
+
+IPluginAction.getSession() : Session   → getSession() : Object   (downcast at call site)
+IPluginAction.getParent()  : MainWindow → getParent()  : Object   (downcast at call site)
+IPluginActionDelegate.shouldBeEnabled — `hasSystem()` now invoked reflectively
+IPluginShellCmdDelegate.performCommand(... Shell ...) → (... Object ...)
+IPluginShellCmd.getShell()  : Shell    → getShell() : IShell
+IPluginShellExtensionPoint.createPluginCmds(Session, Shell)
+    → createPluginCmds(Session, IShell)
+IPluginShellExtensionPoint.createPluginCmds(...)  // return type
+    : List<PluginShellCmdContainer>   → : List<IPluginShellCmdContainer>
+
+-- new SPI method on IPluginRuntime (must be implemented) --
++ void registerExtensionPoint(String name, IExtensionPoint ep)
+```
+
+**New SPI types introduced (consumers may implement / call):**
+
+```
+org.tzi.use.gui.main.IMainWindow            (MainWindow implements)
+org.tzi.use.gui.main.IModelBrowser          (ModelBrowser implements)
+org.tzi.use.gui.main.runtime.IPluginActionProxy
+org.tzi.use.main.shell.runtime.IShell       (Shell implements)
+org.tzi.use.main.shell.runtime.IPluginShellCmdContainer
+                                            (PluginShellCmdContainer implements)
+org.tzi.use.main.gui.Launcher               (entry-point contract)
+org.tzi.use.gui.views.diagrams.IFXWindowHost (FX-side static SPI)
+```
+
+### 2. Public API surface (`org.tzi.use.api`)
+
+```
+-- factory methods removed; replacement class --
+UseSystemApi.create(Session)               →  UseSystemApiFactory.create(Session)
+UseSystemApi.create(MSystem, boolean)      →  UseSystemApiFactory.create(MSystem, boolean)
+UseSystemApi.create(MModel,  boolean)      →  UseSystemApiFactory.create(MModel,  boolean)
+
+-- declaring class --
+org.tzi.use.api.UseSystemApi (no longer hosts factory methods)
+org.tzi.use.api.factory.UseSystemApiFactory  (new — exported)
+org.tzi.use.api.impl.**                       (kept unexported)
+
+-- test-fixture relocation --
+org.tzi.use.uml.mm.TestModelUtil  →  org.tzi.use.api.TestModelUtil
+```
+
+### 3. Metamodel (`org.tzi.use.uml.mm`)
+
+Package-level breaking changes from Bug 1 (mass-relocation of `ocl`
+and `sys` subtrees under `mm`):
+
+```
+org.tzi.use.uml.ocl.**          →  org.tzi.use.uml.mm.ocl.**          (121 files)
+org.tzi.use.uml.sys.**          →  org.tzi.use.uml.mm.sys.**          (100 files)
+org.tzi.use.uml.sys.testsuite.MTestSuite
+                                 →  org.tzi.use.parser.testsuite.MTestSuite
+org.tzi.use.uml.sys.soil.**     →  org.tzi.use.uml.mm.sys.soil.**     (via Bug 23)
+org.tzi.use.uml.ocl.extension.RubyHelper
+                                 →  org.tzi.use.uml.mm.ocl.extension.RubyHelper
+                                    (originally util.rubyintegration.RubyHelper)
+```
+
+Signature changes on `mm` types:
+
+```
+MClassifier.hasStateMachineWhichHandles(MOperationCall)
+                              →  hasStateMachineWhichHandles(MOperation)
+MOperation.getStatement()  : MStatement   →  : IStatement
+MOperation.setStatement(MStatement)        →  setStatement(IStatement)
+MMPrintVisitor.getStatementVisitorString(MStatement)
+                              →  getStatementVisitorString(IStatement)
+MRegion.addTransition    throws MSystemException  →  throws MInvalidModelException
+MRegion.addSubvertex     throws MSystemException  →  throws MInvalidModelException
+MProtocolStateMachine.createInstance(MObject)     →  REMOVED (inlined into MObjectState)
+MSystem.loadInvariants(...)                        →  REMOVED (logic moved into Shell)
+MEvent.buildEnvironment(...)                       →  REMOVED (inlined into single parser caller)
+VarDeclList.addVariablesToSymtable(...)            →  REMOVED (inlined into 3 parser callers)
+```
+
+New type in `mm`:
+
+```
++ org.tzi.use.uml.mm.IStatement   (marker interface; MStatement implements)
+```
+
+### 4. Parser (`org.tzi.use.parser`)
+
+```
+-- AST node relocation --
+org.tzi.use.parser.ocl.ASTEnumTypeDefinition
+                            →  org.tzi.use.parser.use.ASTEnumTypeDefinition
+
+-- exception relocation (Bug 16) --
+org.tzi.use.util.CompilationFailedException
+                            →  org.tzi.use.parser.soil.exceptions.CompilationFailedException
+
+-- Symtable signature change (Bug 16) --
+SymbolTable.cause : ASTStatement  →  : Object   (parser call sites downcast)
+
+-- generator hooks (Bugs 19, 20) --
+GGenerator.startProcedure(...)  // body split — parser-aware compile now happens in the caller (Shell);
+                                    direct ASSLCompiler reference dropped from gen.tool
+MSystem  // no longer caches GGenerator (the cache moved to Shell);
+            removes the uml→gen back-edge
+```
+
+New SPI:
+
+```
++ org.tzi.use.uml.<plugin-host>.TypeResolver   (replaces direct OCLCompiler call
+                                                in ExtensionManager.getType)
+```
+
+### 5. Code generator (`org.tzi.use.gen`)
+
+Pure package renames (Bug 5):
+
+```
+org.tzi.use.gen.tool.GSignature              → org.tzi.use.gen.assl.statics.GSignature
+org.tzi.use.gen.tool.GGeneratorArguments     → org.tzi.use.gen.assl.dynamics.GGeneratorArguments
+org.tzi.use.gen.tool.statistics.GStatistic   → org.tzi.use.gen.assl.dynamics.GStatistic
+```
+
+### 6. Coverage / analysis (`org.tzi.use.analysis`, `org.tzi.use.uml.analysis`)
+
+Shared coverage primitives split out (Bug 11):
+
+```
+analysis.coverage.AbstractCoverageVisitor              → uml.analysis.coverage.AbstractCoverageVisitor
+analysis.coverage.AttributeAccessInfo                  → uml.analysis.coverage.AttributeAccessInfo
+analysis.coverage.BasicCoverageData                    → uml.analysis.coverage.BasicCoverageData
+analysis.coverage.BasicExpressionCoverageCalulator     → uml.analysis.coverage.BasicExpressionCoverageCalulator
+-- kept in place --
+analysis.coverage.CoverageData
+analysis.coverage.CoverageCalculationVisitor
+```
+
+### 7. Utilities (`org.tzi.use.util`)
+
+```
+-- promoted out of parser into util (Bug 15) --
+org.tzi.use.parser.SrcPos              →  org.tzi.use.util.SrcPos
+org.tzi.use.parser.SemanticException   →  org.tzi.use.util.SemanticException
+
+-- promoted out of util into the slice that owns them --
+org.tzi.use.util.soil.**               →  org.tzi.use.uml.mm.sys.soil.**
+org.tzi.use.util.rubyintegration.RubyHelper
+                                       →  org.tzi.use.uml.mm.ocl.extension.RubyHelper
+org.tzi.use.util.uml.sorting.**        →  org.tzi.use.uml.mm.sorting.**
+org.tzi.use.util.input.shell.ShellReadline
+                                       →  org.tzi.use.main.shell.ShellReadline
+org.tzi.use.util.test.DiagramUtilTest  →  org.tzi.use.gui.views.diagrams.util.DiagramUtilTest
+```
+
+### 8. GUI (`org.tzi.use.gui`)
+
+The Mediator coupling between `gui.main` and `gui.views` was the
+single largest source of cycles. Resolution required mass relocation
+of `MainWindow` and its companions into `gui.views.diagrams`:
+
+```
+-- Mediator collapse (Bug 17, commit de27efc9) --
+org.tzi.use.gui.main.MainWindow            →  org.tzi.use.gui.views.diagrams.MainWindow
+org.tzi.use.gui.main.ModelBrowser          →  org.tzi.use.gui.views.diagrams.ModelBrowser
+org.tzi.use.gui.main.ViewFrame             →  org.tzi.use.gui.views.diagrams.ViewFrame
+org.tzi.use.gui.main.EvalOCLDialog         →  org.tzi.use.gui.views.diagrams.EvalOCLDialog
+org.tzi.use.gui.main.AboutDialog           →  org.tzi.use.gui.views.diagrams.AboutDialog
+org.tzi.use.gui.main.CreateObjectDialog    →  org.tzi.use.gui.views.diagrams.CreateObjectDialog
+org.tzi.use.gui.main.ModelBrowserMouseHandling
+    + HighlightChangeEvent / HighlightChangeListener
+                                            →  org.tzi.use.gui.views.diagrams.**
+org.tzi.use.gui.views.View (interface)     →  org.tzi.use.gui.main.View
+                                              (consumer slice owns the contract)
+
+-- visibility widening (constructors / methods) --
+AboutDialog          package-private  →  public
+CreateObjectDialog   package-private  →  public
+EvalOCLDialog        package-private  →  public
+ModelBrowserSorting.sortAssociations / sortPrePostConditions / sortPluginCollection
+                     package-private  →  public
+
+-- selection sub-package collapsed into diagrams (Bug 2b) --
+org.tzi.use.gui.views.selection.**         →  org.tzi.use.gui.views.diagrams.selection.**
+
+-- launcher relocation (Bug 7) --
+org.tzi.use.main.gui.swing.MainSwing       →  org.tzi.use.gui.main.SwingLauncher
+                                              implements Launcher
+org.tzi.use.main.gui.fx.JavaFXAppLauncher  →  org.tzi.use.gui.mainFX.JavaFXLauncher
+                                              implements Launcher
+org.tzi.use.main.gui.fx.MainJavaFX         →  REMOVED (folded into JavaFXLauncher)
+
+-- sort-strategy holders moved to util (Bug 12) --
+org.tzi.use.gui.main.ModelBrowserSorting   →  org.tzi.use.gui.util.ModelBrowserSorting
+org.tzi.use.gui.mainFX.ModelBrowserSorting →  org.tzi.use.gui.utilFX.ModelBrowserSorting
+
+-- back-edge cleanups (Bug 14) --
+org.tzi.use.gui.views.diagrams.Selectable  →  org.tzi.use.gui.util.Selectable
+PersistHelper.allNodes type
+    Map<String, PlaceableNode>             →  Map<String, Object>
+PersistHelper.setAllNodes(Map<String, PlaceableNode>)
+                                            →  setAllNodes(Map<String, ?>)
+```
+
+### 9. Module exports (`module-info.java`)
+
+Both `use.core` and `use.gui` have their `exports` and `opens`
+clauses updated to reflect the new package shape. External consumers
+that read modules reflectively or read `module-info` descriptors
+will need to refresh those references. Notably:
+
+- `org.tzi.use.runtime` is no longer exported as a root package;
+  the SPI is now exported from `runtime.spi`.
+- `org.tzi.use.main.runtime` is no longer exported from
+  `use-core` (the three types moved to `runtime.spi` in `use-gui`).
+- `org.tzi.use.main.gui.fx` is no longer exported (package empty).
+- `org.tzi.use.gen.assl.dynamics` is **newly** exported (to expose
+  the relocated `GGeneratorArguments`).
+- `org.tzi.use.api.factory` is **newly** exported; `api.impl`
+  remains unexported.
+- The `gui.views.selection.* to com.google.common` qualified export
+  is rewritten to point at `gui.views.diagrams.selection.*`.
+
+### 10. Summary — release-note tags
+
+Suggested release-note tags by area (use one per CHANGELOG entry):
+
+| Area                    | Tag                              |
+|-------------------------|----------------------------------|
+| `runtime.spi`           | `[breaking] runtime-spi`         |
+| Plugin host & shell     | `[breaking] gui.main.runtime`, `[breaking] gui.views, gui.main.runtime`, `[breaking] shell-runtime` |
+| Public API              | `[breaking] api`                 |
+| Metamodel               | `[breaking] uml.mm`              |
+| Parser                  | `[breaking] parser`              |
+| Code generator          | `[breaking] gen`                 |
+| Coverage / analysis     | `[breaking] analysis`            |
+| Utilities               | `[breaking] util`                |
+| GUI launchers / dialogs | `[breaking] main.gui, util.test`, `[breaking] gui.views` |
+
+### 11. Recommendation
+
+Given:
+
+- **>250 type relocations** (packages renamed wholesale), each
+  forcing every external import site to be rewritten;
+- **multiple SPI signature changes** that require source edits to
+  any plugin that implements `IPluginAction`,
+  `IPluginShellCmdDelegate`, `IPluginActionExtensionPoint`, etc.;
+- **module export reshape** (`runtime`, `main.runtime`,
+  `main.gui.fx`, `api.factory`, `gen.assl.dynamics`);
+- **removed methods** with no shim (`UseSystemApi.create(...)`,
+  `MProtocolStateMachine.createInstance`, `MSystem.loadInvariants`,
+  `MEvent.buildEnvironment`, `VarDeclList.addVariablesToSymtable`),
+
+→ a **SemVer major-version bump** is required for the next published
+artifact. Suggested versioning: if the previous release was `N.x.y`,
+the next should be `(N+1).0.0`. A `MIGRATING.md` with the verbatim
+old → new mappings in sections 1–8 above should ship with the
+release.
+
+### 12. Verification
+
+All 28 documented bug-fix claims were cross-checked against the
+codebase at commit `a0f0c054` and confirmed to match the actual
+package layout, signatures, and module-info exports (Tasks #23,
+#24). 271 use-core + 18 use-gui unit tests pass. All 14 ArchUnit
+cycle/layered-architecture tests report 0 cycles / 0 violations.
