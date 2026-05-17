@@ -24,7 +24,7 @@ import org.tzi.use.uml.mm.IStatement;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * Base class for all SOIL statements. MStatement instances provides the methods

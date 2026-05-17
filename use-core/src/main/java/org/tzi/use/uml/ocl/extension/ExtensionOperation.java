@@ -7,7 +7,7 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.UndefinedValue;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.util.Log;
-import org.tzi.use.util.rubyintegration.RubyHelper;
+import org.tzi.use.uml.ocl.extension.RubyHelper;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;

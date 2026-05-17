@@ -1,4 +1,4 @@
-package org.tzi.use.util.rubyintegration;
+package org.tzi.use.uml.ocl.extension;
 
 import java.util.ArrayList;
 import java.util.List;

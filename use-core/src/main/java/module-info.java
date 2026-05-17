@@ -27,6 +27,7 @@ module use.core {
     exports org.tzi.use.uml.sys.events;
     exports org.tzi.use.uml.sys.events.tags;
     exports org.tzi.use.uml.sys.soil;
+    exports org.tzi.use.uml.sys.soil.exceptions;
     exports org.tzi.use.uml.ocl.expr;
     exports org.tzi.use.uml.ocl.value;
     exports org.tzi.use.uml.ocl.expr.operations;
@@ -34,7 +35,6 @@ module use.core {
     exports org.tzi.use.parser.ocl;
     exports org.tzi.use.util.input;
     exports org.tzi.use.uml.sys.statemachines;
-    exports org.tzi.use.util.soil.exceptions;
     exports org.tzi.use.parser.soil.exceptions;
     exports org.tzi.use.uml.sys.ppcHandling;
     exports org.tzi.use.uml.sys.testsuite;

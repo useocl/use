@@ -61,7 +61,7 @@ import org.tzi.use.util.USEWriter;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.SocketReadline;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 import java.io.*;
 import java.net.InetAddress;

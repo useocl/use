@@ -32,8 +32,8 @@ import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.SymbolTable;
-import org.tzi.use.util.soil.VariableSet;
+import org.tzi.use.uml.sys.soil.SymbolTable;
+import org.tzi.use.uml.sys.soil.VariableSet;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 import java.io.PrintWriter;

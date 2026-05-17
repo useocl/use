@@ -36,8 +36,8 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.util.soil.SymbolTable;
-import org.tzi.use.util.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.SymbolTable;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 
 
 /**
