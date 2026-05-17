@@ -23,7 +23,7 @@ package org.tzi.use.gui.utilFX;
 
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.util.uml.sorting.*;
+import org.tzi.use.uml.mm.sorting.*;
 
 import javax.swing.event.EventListenerList;
 import java.util.*;

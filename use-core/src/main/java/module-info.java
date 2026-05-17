@@ -18,7 +18,7 @@ module use.core {
     exports org.tzi.use.uml.sys;
     exports org.tzi.use.util;
     exports org.tzi.use.uml.mm.statemachines;
-    exports org.tzi.use.util.uml.sorting;
+    exports org.tzi.use.uml.mm.sorting;
     exports org.tzi.use.util.collections;
     exports org.tzi.use.analysis.coverage;
     exports org.tzi.use.uml.mm.commonbehavior.communications;

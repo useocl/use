@@ -25,8 +25,8 @@ import org.tzi.use.uml.ocl.expr.ExpressionVisitor;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
-import org.tzi.use.util.uml.sorting.UseModelElementFileOrderComparator;
+import org.tzi.use.uml.mm.sorting.UseFileOrderComparator;
+import org.tzi.use.uml.mm.sorting.UseModelElementFileOrderComparator;
 
 import java.io.PrintWriter;
 import java.util.*;

@@ -17,32 +17,24 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.util.uml.sorting;
+package org.tzi.use.uml.mm.sorting;
 
 import java.util.Comparator;
 
-import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.UseFileLocatable;
 
 /**
- * A wrapper for {@link UseFileOrderComparator} using {@link MModelElement}s.
- * <p>
- * <b>Note:</b> All accessed members must be a subtype of {@link UseFileLocatable}
+ * A comparator that compares elements by the (line) order in the USE specification file.
  * 
  * @author Frank Hilken
  */
-public class UseModelElementFileOrderComparator implements Comparator<MModelElement> {
-	private final UseFileOrderComparator comparator = new UseFileOrderComparator();
+public class UseFileOrderComparator implements Comparator<UseFileLocatable> {
 
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * <b>Note:</b> All accessed members must be a subtype of {@link UseFileLocatable}
-	 * 
-	 * @throws ClassCastException when elements are not subtype of {@link UseFileLocatable}
-	 */
 	@Override
-	public int compare(MModelElement o1, MModelElement o2) {
-		return comparator.compare((UseFileLocatable) o1, (UseFileLocatable) o2);
+	public int compare(UseFileLocatable o1, UseFileLocatable o2) {
+		final int firstPosition = o1.getPositionInModel();
+        final int secondPosition = o2.getPositionInModel();
+		return Integer.compare(firstPosition, secondPosition);
 	}
+
 }

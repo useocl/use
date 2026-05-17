@@ -17,33 +17,42 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.util.uml.sorting;
-
-import org.tzi.use.uml.mm.MPrePostCondition;
+package org.tzi.use.uml.mm.sorting;
 
 import java.util.Comparator;
+
+import org.tzi.use.uml.mm.MClassInvariant;
 
 /**
  *
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
- * @author Lars Hamann
  */
-public class AlphabeticalConditionByNameComparator implements Comparator<MPrePostCondition> {
-   
+public class AlphabeticalInvariantComparator implements Comparator<MClassInvariant> {
+    private final boolean classNameSortsFirst;
+
     /**
-     * Compares two Pre-/Postconditions by their name
-     * @param firstCondition first Pre-/Postcondition (has to be of type MPrePostCondition)
-     * @param secondCondition second Pre-/Postcondition (has to be of type MPrePostCondition)
+     * Constructor of AlphabeticalInvariantByClassComparator
+     */
+    public AlphabeticalInvariantComparator(boolean classNameSortsFirst) {
+    	this.classNameSortsFirst = classNameSortsFirst;
+    }
+
+    /**
+     * Compares two invariants by the name of their class
+     * @param object1 first invariant (has to be of type MClassInvariant)
+     * @param object2 second invariant (has to be of type MClassInvariant)
      * @return a negative integer, zero, or a positive integer as the
      *         first argument is less than, equal to, or greater than the
      *         second.
      */
-    public int compare(final MPrePostCondition firstCondition, final MPrePostCondition secondCondition) {
-    	int result = firstCondition.name().compareTo(secondCondition.name());
-        if (result != 0) {
-        	return result;
-        }
-        
-        return firstCondition.operation().name().compareTo(secondCondition.operation().name());
+    public int compare(final MClassInvariant object1, final MClassInvariant object2) {
+    	if (classNameSortsFirst) {
+    		int result = object1.cls().name().compareToIgnoreCase(object2.cls().name());
+    		if (result != 0) {
+    			return result;
+    		}
+    	}
+    	
+    	return object1.name().compareToIgnoreCase(object2.name());
     }
 }

@@ -32,12 +32,12 @@ import javax.swing.event.EventListenerList;
 
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.util.uml.sorting.AlphabeticalConditionByNameComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalConditionComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalInvariantComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalNamedElementComparator;
-import org.tzi.use.util.uml.sorting.AlphabeticalOperationComparator;
-import org.tzi.use.util.uml.sorting.UseFileOrderComparator;
+import org.tzi.use.uml.mm.sorting.AlphabeticalConditionByNameComparator;
+import org.tzi.use.uml.mm.sorting.AlphabeticalConditionComparator;
+import org.tzi.use.uml.mm.sorting.AlphabeticalInvariantComparator;
+import org.tzi.use.uml.mm.sorting.AlphabeticalNamedElementComparator;
+import org.tzi.use.uml.mm.sorting.AlphabeticalOperationComparator;
+import org.tzi.use.uml.mm.sorting.UseFileOrderComparator;
 
 
 /**
