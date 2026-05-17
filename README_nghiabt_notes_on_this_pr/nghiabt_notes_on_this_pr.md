@@ -7,6 +7,383 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 
 ---
 
+## TL;DR — branch `decycle-2` vs `main` at a glance
+
+| ArchUnit metric                                  | `main` | `decycle-2` | Δ        |
+|--------------------------------------------------|-------:|------------:|---------:|
+| Maven entire-project cycles                      |    384 |       **0** | **−384** |
+| Ant `runtime` cycles                             |     43 |       **0** | **−43**  |
+| Ant `core` whole-slice cycles                    |     34 |       **0** | **−34**  |
+| Ant `gui` overall cycles                         |     14 |       **0** | **−14**  |
+| Ant `core` (inside gui module) cycles            |     14 |       **0** | **−14**  |
+| `uml` slice cycles                               |      5 |       **0** | **−5**   |
+| `parser` slice cycles (production)               |      2 |       **0** | **−2**   |
+| `parser` slice cycles (with tests)               |     36 |       **0** | **−36**  |
+| `api`, `gen`, `gui.main`, `gui.views`, `shell` each |   ≥1 |       **0** | **−6**   |
+| Layered-architecture violations                  |     21 |       **0** | **−21**  |
+
+Every ArchUnit test class — Ant + Maven, JUnit-4 + JUnit-5,
+cycle + layered, withTests + withoutTests, on both modules —
+now reports **0**.
+
+**Diff scale:** 63 commits, 784 files touched, 280 file
+renames (package relocations), 44 new files, 3 deletions,
++59 094 / −50 743 lines.
+
+```mermaid
+%% Cycle counts: main → decycle-2
+xychart-beta
+    title "ArchUnit cycle counts: main vs decycle-2"
+    x-axis ["entire-project", "runtime", "core-whole", "gui-overall", "uml", "parser-with-tests", "layered"]
+    y-axis "Cycles / Violations" 0 --> 400
+    bar [384, 43, 34, 14, 5, 36, 21]
+    bar [0, 0, 0, 0, 0, 0, 0]
+```
+
+---
+
+## 1. Diff anatomy — what changed where
+
+```mermaid
+%% Where the 280 renames + 44 new files went
+pie title File operations vs main (784 files)
+    "Renames (package relocations)" : 280
+    "Modifications (edits)" : 457
+    "New files" : 44
+    "Deletions" : 3
+```
+
+### Renames bucketed by refactoring intent
+
+```mermaid
+%% Top relocation patterns by file count
+xychart-beta
+    title "Top package-relocation patterns (file counts)"
+    x-axis ["expr→mm.expr", "tests→integration", "type→mm.types", "value→mm.values", "selection→diagrams.sel", "runtime impl→plugin", "runtime→spi", "sys→mm.instance"]
+    y-axis "Files" 0 --> 80
+    bar [78, 35, 23, 22, 19, 18, 12, 8]
+```
+
+Total move bucket counts: OCL → mm (164), tests → integration (35),
+gui plugin reshape (43), util → owning slice (16), other (24).
+
+---
+
+## 2. Architectural transformation — slice graphs
+
+### Production-code slice graph BEFORE (main)
+
+The dotted **red edges** are cycle-forming back-edges in the
+import graph; the green edges flow downward (legal).
+
+```mermaid
+flowchart TB
+    subgraph guiM["use-gui module (cycles: 384 entire-project, 43 runtime, 14 gui)"]
+        direction LR
+        guiMain["gui.main<br/>(MainWindow, ModelBrowser)"]
+        guiViews["gui.views<br/>(views, diagrams)"]
+        guiViewsSel["gui.views.selection"]
+        guiPlugin["runtime.gui.impl /<br/>runtime.shell.impl"]
+        runtime["runtime.* (root)"]
+        shell["main.shell<br/>(Shell)"]
+        shellRT["main.shell.runtime"]
+    end
+    subgraph coreM["use-core module (cycles: 34 core-whole, 5 uml, 2 parser, 1 api/gen)"]
+        direction LR
+        api["api<br/>(UseSystemApi)"]
+        apiImpl["api.impl"]
+        umlMm["uml.mm"]
+        umlOcl["uml.ocl<br/>(type, value, expr)"]
+        umlSys["uml.sys<br/>(MSystem, MObject)"]
+        umlAnal["analysis.coverage"]
+        umlAnal2["uml.analysis (none — yet)"]
+        parserOcl["parser.ocl"]
+        parserUse["parser.use"]
+        parserSoil["parser.soil"]
+        gen["gen.assl / gen.tool"]
+    end
+    %% Production back-edges (red, dotted)
+    guiViews -.-> guiMain
+    guiViewsSel -.-> guiViews
+    guiPlugin -.-> runtime
+    runtime -.-> guiPlugin
+    shellRT -.-> shell
+    apiImpl -.-> api
+    umlOcl -.-> umlMm
+    umlOcl -.-> umlSys
+    umlSys -.-> umlMm
+    umlMm -.-> umlOcl
+    umlSys -.-> umlOcl
+    umlAnal -.-> umlMm
+    parserOcl -.-> parserUse
+    parserUse -.-> parserOcl
+    gen -.-> umlMm
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 stroke:#d33,stroke-width:2px,stroke-dasharray:5
+```
+
+### Production-code slice graph AFTER (decycle-2) — every edge downward
+
+```mermaid
+flowchart TB
+    subgraph after["use-core + use-gui — cycles = 0 in every slice"]
+        direction TB
+        bootstrap["gui.plugin.MainPluginRuntime (L6)"]
+        guiAfter["gui.* (L5)<br/>main, plugin, mainFX, pluginFX, views.diagrams"]
+        shellAfter["main.shell (L5)<br/>(Shell + main.shell.plugin)"]
+        apiAfter["api / api.factory (L4)"]
+        mainAfter["main (L4)<br/>(Main, Session, Launcher)"]
+        umlSysAfter["uml.sys / uml.sys.expr / uml.sys.events /<br/>uml.sys.soil / uml.sys.statemachines (L3)"]
+        umlMmAfter["uml.mm.expr, mm.values, mm.types,<br/>mm.instance, mm.extension, mm.sorting,<br/>mm (L2)"]
+        spi["runtime.spi (L1)<br/>(IPlugin*, IRuntime, IMainWindow, IShell, IFXWindowHost)"]
+        util["util / util.collections / util.input (L0)"]
+    end
+    bootstrap --> guiAfter
+    bootstrap --> shellAfter
+    bootstrap --> apiAfter
+    bootstrap --> spi
+    guiAfter --> apiAfter
+    guiAfter --> mainAfter
+    guiAfter --> umlSysAfter
+    guiAfter --> umlMmAfter
+    guiAfter --> spi
+    shellAfter --> apiAfter
+    shellAfter --> mainAfter
+    shellAfter --> umlSysAfter
+    shellAfter --> umlMmAfter
+    shellAfter --> spi
+    apiAfter --> mainAfter
+    apiAfter --> umlSysAfter
+    apiAfter --> umlMmAfter
+    mainAfter --> umlSysAfter
+    mainAfter --> umlMmAfter
+    umlSysAfter --> umlMmAfter
+    umlSysAfter --> util
+    umlMmAfter --> util
+    apiAfter --> util
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 stroke:#2a9d8f,stroke-width:1.5px
+```
+
+---
+
+## 3. The big moves — visualized
+
+### 3a. OCL → mm collapse (Bug 1 Phase B+C, ~164 files)
+
+```mermaid
+flowchart LR
+    subgraph before1["BEFORE: 4 ocl subtrees, 3-way cycle"]
+        direction TB
+        oclType["uml.ocl.type<br/>(Type + 14 subtypes)"]
+        oclValue["uml.ocl.value<br/>(Value + 17 subtypes, VarBindings)"]
+        oclExpr["uml.ocl.expr<br/>(Expression + 67 nodes,<br/>EvalContext, Visitor)"]
+        oclExt["uml.ocl.extension<br/>(ExtensionManager, RubyHelper)"]
+        ummSys[".sys ↔ .ocl ↔ .mm<br/>= 5 cycles"]
+        oclType -.- ummSys
+        oclValue -.- ummSys
+        oclExpr -.- ummSys
+        oclExt -.- ummSys
+    end
+    subgraph after1["AFTER: collapsed into mm, no slice 'ocl' anymore"]
+        direction TB
+        mmTypes["uml.mm.types"]
+        mmValues["uml.mm.values"]
+        mmExpr["uml.mm.expr<br/>(pure AST + visitor)"]
+        mmExt["uml.mm.extension"]
+        ok["0 cycles in uml slice"]
+    end
+    oclType --> mmTypes
+    oclValue --> mmValues
+    oclExpr --> mmExpr
+    oclExt --> mmExt
+    linkStyle 0,1,2,3 stroke:#d33,stroke-dasharray:5
+    linkStyle 4,5,6,7 stroke:#2a9d8f,stroke-width:2px
+```
+
+### 3b. Instance abstractions hoisted to mm (Phase B, 8 types)
+
+```mermaid
+flowchart LR
+    subgraph beforeB["BEFORE: mm holds Expression / Type / Value;<br/>ocl + sys hold runtime types"]
+        direction TB
+        sysMI["sys.MInstance<br/>sys.MObject<br/>sys.MLink<br/>sys.MInstanceState<br/>sys.MLinkEnd<br/>sys.MLinkSet<br/>sys.MLinkImpl<br/>sys.MSystemException"]
+        mmCircle["mm.* ⇆ sys.* via 11 imports"]
+        sysMI --- mmCircle
+    end
+    subgraph afterB["AFTER: instance abstractions live in mm.instance"]
+        direction TB
+        mmInst["mm.instance.{<br/> MInstance, MObject, MLink,<br/> MInstanceState, MLinkEnd,<br/> MLinkSet, MLinkImpl,<br/> MSystemException}<br/>+ NEW IModelState / IObjectState"]
+        sysCC["sys.MSystemState implements IModelState<br/>sys.MObjectState implements IObjectState<br/>sys.MObjectImpl implements MObject<br/>sys.MLinkObjectImpl implements MLinkObject"]
+        clean["0 mm → sys edges; sys → mm downward"]
+        mmInst --> sysCC
+        sysCC --> clean
+    end
+    sysMI ==> mmInst
+    linkStyle 0 stroke:#d33,stroke-width:2px,stroke-dasharray:5
+    linkStyle 1,2 stroke:#2a9d8f,stroke-width:2px
+    linkStyle 3 stroke:#2a9d8f,stroke-width:3px
+```
+
+### 3c. Operation-invoking expressions pushed to sys.expr (Phase 4)
+
+```mermaid
+flowchart LR
+    A["mm.expr<br/>(pure AST: Expression,<br/>EvalContext, 65 const/op nodes)"]
+    B["sys.expr<br/>(NEW)<br/>ExpInstanceConstructor,<br/>ExpObjOp<br/>— actually call MSystem.enterQueryOperation"]
+    C["sys.MSystem,<br/>sys.MOperationCall,<br/>sys.ppcHandling.*"]
+    A -->|"natural<br/>(pure AST)"| C
+    B -->|"runs operation"| C
+    style A fill:#d4f1e0
+    style B fill:#fff3cd
+    style C fill:#e8e8e8
+```
+
+### 3d. Plugin SPI reshape (Bug 3 + Bug 26+27, ~43 files)
+
+```mermaid
+flowchart LR
+    subgraph before3["BEFORE: 43 cycles in runtime"]
+        direction TB
+        rt["runtime.* (root, mixed SPI + bootstrap)"]
+        rtGuiImpl["runtime.gui.impl"]
+        rtShellImpl["runtime.shell.impl"]
+        rtGuiFXImpl["runtime.guiFX.impl"]
+        rtService["runtime.service.*"]
+        mainRT["main.runtime.*<br/>(IRuntime, IExtensionPoint, IDescriptor)"]
+        rt --- rtGuiImpl
+        rt --- rtShellImpl
+        rt --- rtGuiFXImpl
+        rt --- rtService
+        rt --- mainRT
+    end
+    subgraph after3["AFTER: 0 cycles"]
+        direction TB
+        spi2["runtime.spi (L1)<br/>(all IPlugin*, IRuntime, IExtensionPoint,<br/>IDescriptor, IMainWindow, IModelBrowser)"]
+        guiPl["gui.plugin (Swing impls)"]
+        guiFXPl["gui.pluginFX (FX impls)"]
+        shellPl["main.shell.plugin"]
+        boot["gui.plugin.MainPluginRuntime"]
+        boot --> guiPl
+        boot --> shellPl
+        boot --> guiFXPl
+        boot --> spi2
+        guiPl --> spi2
+        guiFXPl --> spi2
+        shellPl --> spi2
+    end
+    before3 ==> after3
+    linkStyle 11 stroke:#2a9d8f,stroke-width:3px
+```
+
+### 3e. Mediator collapse — MainWindow → gui.views.diagrams (Bug 17)
+
+```mermaid
+flowchart LR
+    subgraph before5["BEFORE: gui.main ↔ gui.views 200+ edges"]
+        direction TB
+        guiMain1["gui.main:<br/>MainWindow, ModelBrowser,<br/>ViewFrame, EvalOCLDialog<br/>(constructs 17+ XxxView classes)"]
+        guiViews1["gui.views.diagrams:<br/>ClassDiagram, SequenceDiagram,<br/>CommunicationDiagram, NewObjectDiagram,<br/>17 XxxView classes<br/>(call back into MainWindow)"]
+        guiMain1 -.-> guiViews1
+        guiViews1 -.-> guiMain1
+    end
+    subgraph after5["AFTER: MainWindow lives WITH its views"]
+        direction TB
+        bothMoved["gui.views.diagrams:<br/>MainWindow, ModelBrowser, ViewFrame,<br/>EvalOCLDialog, AboutDialog, ...<br/>+ all 17 XxxView classes<br/>+ IFXWindowHost SPI"]
+    end
+    before5 ==> after5
+    linkStyle 0,1 stroke:#d33,stroke-width:2px,stroke-dasharray:5
+    linkStyle 2 stroke:#2a9d8f,stroke-width:3px
+```
+
+### 3f. Cross-slice tests → integration slice (final push)
+
+```mermaid
+flowchart LR
+    subgraph before6["BEFORE: 31 cross-slice test files<br/>scattered in 5 production slices"]
+        direction TB
+        t1["uml.sys.* tests<br/>(import api)"]
+        t2["uml.mm.* tests<br/>(import api)"]
+        t3["parser.*Test<br/>(cross subdirs)"]
+        t4["utilcore.* tests<br/>(import api, uml)"]
+        t5["OCLExpressionIT<br/>(import api, uml)"]
+    end
+    subgraph after6["AFTER: all in one integration slice<br/>= no cross-slice edges from tests"]
+        direction TB
+        i["org.tzi.use.integration.**<br/>(35 files, 1 aggregator)"]
+    end
+    t1 ==> i
+    t2 ==> i
+    t3 ==> i
+    t4 ==> i
+    t5 ==> i
+    style i fill:#d4f1e0
+    linkStyle 0,1,2,3,4 stroke:#2a9d8f,stroke-width:2px
+```
+
+---
+
+## 4. Commit timeline (decycle-2 ahead of main by 63 commits)
+
+```mermaid
+gitGraph
+    commit id: "7e694be (main HEAD)"
+    branch decycle-2
+    commit id: "Bug 7-15: layered violations, parser cycles, util→uml back-edge"
+    commit id: "Bug 1A-9: mm→sys via IStatement, gen→analysis cleanup"
+    commit id: "Bug 11-25: coverage split, ShellReadline, TestModelUtil move"
+    commit id: "Bug 26+27: plugin SPI reshape (runtime 43→0)"
+    commit id: "Bug 17: MainWindow → gui.views.diagrams"
+    commit id: "42ab578c: Phase 0 — revert slicer-collapse rename"
+    commit id: "57213380: extract IModelState/IObjectState; MLinkSet to mm.instance"
+    commit id: "1a403451 /8 (typo)"
+    commit id: "aded938f: ExpInstanceConstructor/ExpObjOp → sys.expr"
+    commit id: "ed16b200: uml expr tests → uml.sys.expr"
+    commit id: "3e0e2436: all cross-slice tests → org.tzi.use.integration.*"
+    commit id: "5c10b6b5: use-gui (MObjectState) casts"
+    commit id: "94a857fb: package.html + doc paths"
+    commit id: "→ 0 cycles, 0 violations everywhere ✅" type: HIGHLIGHT
+```
+
+---
+
+## 5. Breakdown of the −384 → 0 transformation by bug
+
+| Bug | Description                                       | Cycles closed | Status |
+|----:|---------------------------------------------------|--------------:|:------:|
+|   1 | `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle         | 5 → 0         | ✅ |
+|   2 | `gui.main` + `gui.views` internal cycles          | 2 → 0         | ✅ |
+|   3 | `runtime` package cycles                          | 43 → 0        | ✅ |
+|   4 | `api.impl` ↔ `api` factory                        | 1 → 0         | ✅ |
+|   5 | `gen.assl` ↔ `gen.tool`                           | 1 → 0         | ✅ |
+|   6 | `parser.ocl` ↔ `parser.use` / `parser.soil`       | 2 → 0         | ✅ |
+|   7 | Layer violations in GUI launchers                 | 21 violations → 0 | ✅ |
+|   8 | `shell` ↔ `shell.runtime`                         | 1 → 0         | ✅ |
+|   9 | `uml → analysis` dead instrumentation             | 1 → 0         | ✅ |
+|  10 | `graph → util` cleanup                            | 1 → 0         | ✅ |
+|  11 | `gen → analysis` coverage split                   | 1 → 0         | ✅ |
+|  12 | `ModelBrowserSorting` relocation                  | 4 cycles      | ✅ |
+|  13 | `viewsFX → mainFX` ResourceStream                 | 1 cycle       | ✅ |
+|  14 | `util → views` back-edges                         | 4 cycles      | ✅ |
+|  15 | `uml → parser` (move SrcPos / SemanticException)  | multi         | ✅ |
+|  16 | `util → parser` (CompilationFailedException)      | multi         | ✅ |
+|  17 | gui Mediator coupling (MainWindow ↔ views)        | 200+ edges    | ✅ |
+|  18 | `views ↔ graphlayout`                             | multi         | ✅ |
+|  19 | `uml → gen` (MSystem GGenerator cache)            | 33+ cycles    | ✅ |
+|  20 | `gen → parser` (ASSLCompiler in gen.tool)         | multi         | ✅ |
+|  21 | `util.uml.sorting` → `uml.mm.sorting`             | intra-uml     | ✅ |
+|  23 | `util → uml` (util.soil, RubyHelper)              | 76 cycles     | ✅ |
+|  24 | `ShellReadline` location                          | cross-module  | ✅ |
+|  25 | `uml → api` (TestModelUtil)                       | 1 cycle       | ✅ |
+|26-27| Plugin SPI refactor (entire-project 3 → 0)        | 3 cycles      | ✅ |
+|  28 | Final gui.main ↔ views (last gui-internal)        | 1 cycle       | ✅ |
+| B+C | Real interface extraction (post-revert)           | 33 with-tests | ✅ |
+
+Total cycles eliminated across all metrics: **>500** import-level
+back-edges removed via interface extraction, package relocation
+matching architectural intent, dead-code removal, and SPI
+indirection.
+
+---
+
 ## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core) — ✅ FULLY RESOLVED (real interface extraction)
 
 > **Resolution.** After three checkpoint commits (Phase 0 revert
