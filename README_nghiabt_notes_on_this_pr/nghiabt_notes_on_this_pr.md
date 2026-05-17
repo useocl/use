@@ -1475,13 +1475,15 @@ org.tzi.use.uml.mm.expr.ExpInstanceConstructor
                                      →  org.tzi.use.uml.sys.expr.ExpInstanceConstructor
 org.tzi.use.uml.mm.expr.ExpObjOp     →  org.tzi.use.uml.sys.expr.ExpObjOp
 
--- Other Bug 1-era moves (unchanged) --
+-- Other Bug 1-era moves (current end state) --
 org.tzi.use.uml.sys.testsuite.MTestSuite
                                      →  org.tzi.use.parser.testsuite.MTestSuite
-org.tzi.use.uml.sys.soil.**          →  org.tzi.use.uml.mm.sys.soil.**     (via Bug 23)
-org.tzi.use.uml.ocl.extension.RubyHelper
+org.tzi.use.util.soil.**             →  org.tzi.use.uml.sys.soil.**         (via Bug 23;
+                                        the intermediate uml.mm.sys.soil from the slicer-collapse era
+                                        was reverted to uml.sys.soil in Phase 0)
+org.tzi.use.util.rubyintegration.RubyHelper
                                      →  org.tzi.use.uml.mm.extension.RubyHelper
-                                        (originally util.rubyintegration.RubyHelper)
+                                        (was uml.ocl.extension.RubyHelper between Bug 23 and Bug 1 Phase B+C)
 ```
 
 **New SPI surface introduced in `mm.instance`:**
@@ -1622,9 +1624,9 @@ org.tzi.use.parser.SrcPos              →  org.tzi.use.util.SrcPos
 org.tzi.use.parser.SemanticException   →  org.tzi.use.util.SemanticException
 
 -- promoted out of util into the slice that owns them --
-org.tzi.use.util.soil.**               →  org.tzi.use.uml.mm.sys.soil.**
+org.tzi.use.util.soil.**               →  org.tzi.use.uml.sys.soil.**
 org.tzi.use.util.rubyintegration.RubyHelper
-                                       →  org.tzi.use.uml.mm.ocl.extension.RubyHelper
+                                       →  org.tzi.use.uml.mm.extension.RubyHelper
 org.tzi.use.util.uml.sorting.**        →  org.tzi.use.uml.mm.sorting.**
 org.tzi.use.util.input.shell.ShellReadline
                                        →  org.tzi.use.main.shell.ShellReadline
