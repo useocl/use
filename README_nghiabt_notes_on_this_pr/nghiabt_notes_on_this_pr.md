@@ -948,12 +948,17 @@ flowchart LR
 
 ## Current Metrics
 
-| Module         | Before | After  | Δ      |
-|----------------|-------:|-------:|-------:|
-| `uml` slice    |      5 |      3 |  −40%  |
-| core whole     |     34 |      ? |   —    |
-| `gui` slice    |     14 |      1 |  −93%  |
-| entire-project |    275 |  **0** | **−100%** ✅ |
+| Module               | Before | After  | Δ      |
+|----------------------|-------:|-------:|-------:|
+| `uml` slice          |      5 |      3 |  −40%  |
+| core whole           |     34 |      ? |   —    |
+| `gui` slice          |     14 |      1 |  −93%  |
+| `gui_main` sub-slice |   (>0) |  **0** |  ✅    |
+| `gui_views` sub-slice|   (>0) |  **0** |  ✅    |
+| `shell` sub-slice    |   (>0) |  **0** |  ✅    |
+| `runtime` sub-slice  |   (>0) |  **0** |  ✅    |
+| entire-project       |    275 |  **0** | **−100%** ✅ |
+| layered-arch viol.   |   (>0) |  **0** |  ✅    |
 
 Tests: 271 use-core + 18 use-gui still passing.
 
@@ -1046,17 +1051,47 @@ The plugin-system triangle (`gui ↔ main ↔ runtime`) is fully untangled:
   `views.diagrams.objectdiagram.NewObjectDiagram` to dispatch through
   the SPI rather than statically reaching `mainFX.MainWindow`.
 
+### Plugin sub-slice cleanups — DONE ✅
+
+After the Bug 26+27 plugin SPI refactor, ArchUnit detected two sub-slice
+cycles when slicing inside gui_main and shell:
+
+- **gui_main:root ↔ runtime**: `gui.main.runtime.IPluginActionExtensionPoint`
+  returned `Map<…, IPluginActionProxy>` where `IPluginActionProxy` was in
+  the parent `gui.main` package. Moved `IPluginActionProxy` →
+  `gui.main.runtime`. Cycle gone.
+- **shell:plugin ↔ runtime**: `IPluginShellExtensionPoint.createPluginCmds`
+  returned `List<PluginShellCmdContainer>` (concrete impl in
+  `main.shell.plugin`). Introduced `IPluginShellCmdContainer` SPI
+  interface in `main.shell.runtime`; `PluginShellCmdContainer` implements
+  it; `IPluginShellExtensionPoint` returns the interface. Shell.java's
+  `.getProxy().executeCmd(...)` collapses to `.executeCmd(...)` directly.
+
+### gui sub-slice 12 → 1 cleanups — DONE ✅
+
+- Moved `ModelBrowserMouseHandling`, `HighlightChangeEvent`,
+  `HighlightChangeListener` from `gui.views.diagrams.event` → `gui.main`
+  (they're event handlers for `gui.main.ModelBrowser`).
+- Moved `EvalOCLDialog` from `gui.main` → `gui.views` (it wraps
+  `ExprEvalBrowser`, a view).
+- Moved `View` interface from `gui.views` → `gui.main` (consumer slice
+  owns the contract).
+- Moved `ViewFrame` from `gui.main` → `gui.views`.
+- `ViewManager.closeFrame` invokes `ViewFrame.close()` reflectively to
+  avoid the static back-edge.
+
 ### Remaining open work
 
-**1 gui-internal cycle**: `main ↔ views` — the deep MainWindow ↔ View
-bidirectional coupling. MainWindow stores typed `List<ClassDiagramView>`
-etc.; views take `MainWindow` ctor parameters; `ViewFrame` lives in
-`gui.main` but holds a `View` from `gui.views`; `EvalOCLDialog`,
-`ModelBrowser` similarly cross-reference. Breaking this requires either
-relocating `ViewFrame`/`ModelBrowser` into `gui.views` (invasive: many
-callers in gui.main) or retyping the lists against the `gui.views.View`
-parent interface (loses static typing at use sites). Documented as
-**Bug 17**, deferred to a focused follow-up.
+**1 gui-internal cycle**: `gui:main ↔ views` — `MainWindow`'s diagram-
+orchestration code still references concrete `ClassDiagramView`,
+`CommunicationDiagramView`, `NewObjectDiagramView`, `SequenceDiagramView`,
+`StateMachineDiagramView`, `ObjectPropertiesView`, `VisibleDataManager`,
+`SDScrollPane` types (8 imports plus the typed `List<…View>` fields and
+typed method returns). Closing this fully needs a factory-pattern
+refactor (moving diagram creation into a `gui.main.IDiagramFactory`
+interface implemented in `gui.views`, so `MainWindow` only depends on
+the interface). Documented as **Bug 17**, deferred to a focused
+follow-up.
 
 **`uml` triangle Phase B+C** (3 cycles in the `uml` sub-slicer):
 - `mm → ocl → mm`
