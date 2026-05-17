@@ -25,7 +25,7 @@ import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;

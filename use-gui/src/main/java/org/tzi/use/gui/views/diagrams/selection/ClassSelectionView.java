@@ -17,7 +17,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramData;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassifierNode;
@@ -234,7 +234,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	/**
 	 * Method detachModel detaches the view from its model.
 	 * 
-	 * @see org.tzi.use.gui.views.View#detachModel()
+	 * @see org.tzi.use.gui.main.View#detachModel()
 	 */
 	public void detachModel() {
 		fSystem.getEventBus().unregister(this);

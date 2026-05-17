@@ -47,7 +47,7 @@ import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;

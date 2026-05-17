@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views;
 
+import org.tzi.use.gui.main.View;
+
 import java.util.Map;
 
 import javax.swing.JTree;

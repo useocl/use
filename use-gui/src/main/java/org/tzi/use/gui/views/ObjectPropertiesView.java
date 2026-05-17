@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views;
 
+import org.tzi.use.gui.main.View;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;

@@ -20,6 +20,8 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
+import org.tzi.use.gui.main.View;
+
 import com.google.common.collect.Sets;
 import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;

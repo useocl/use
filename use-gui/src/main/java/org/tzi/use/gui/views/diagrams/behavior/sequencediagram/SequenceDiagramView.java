@@ -21,7 +21,7 @@ package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.Event;

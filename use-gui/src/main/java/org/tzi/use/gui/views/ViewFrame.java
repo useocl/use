@@ -21,7 +21,7 @@ package org.tzi.use.gui.views;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 
 import javax.swing.*;
 import java.awt.*;

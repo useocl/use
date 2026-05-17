@@ -19,7 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
