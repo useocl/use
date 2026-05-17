@@ -11,7 +11,6 @@ module use.core {
     requires java.datatransfer;
     requires java.desktop;
     exports org.tzi.use.config;
-    exports org.tzi.use.main.runtime;
     exports org.tzi.use.parser.use;
     exports org.tzi.use.uml.mm;
     exports org.tzi.use.uml.ocl.extension;

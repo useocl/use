@@ -17,14 +17,13 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
     exports org.tzi.use.gui.views.diagrams.classdiagram;
     exports org.tzi.use.gui.views.diagrams.objectdiagram;
-    exports org.tzi.use.runtime.gui.impl;
     exports org.tzi.use.runtime.spi;
-    exports org.tzi.use.runtime.bootstrap;
+    exports org.tzi.use.gui.plugin;
     exports org.tzi.use.main.shell;
     exports org.tzi.use.gui.mainFX;
     exports org.tzi.use.gui.mainFX.runtime;
     opens org.tzi.use.gui.mainFX to javafx.fxml;
-    exports org.tzi.use.runtime.guiFX.impl;
+    exports org.tzi.use.gui.pluginFX;
     exports org.tzi.use.gui.utilFX;
     exports org.tzi.use.gui.viewsFX.evalbrowser;
     exports org.tzi.use.gui.views.diagrams;

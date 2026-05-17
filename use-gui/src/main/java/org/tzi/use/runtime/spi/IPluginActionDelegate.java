@@ -28,6 +28,13 @@ public interface IPluginActionDelegate {
 	 * @return <code>true</code>, if user interface elements for invoking this action should be enabled.
 	 */
 	default boolean shouldBeEnabled(IPluginAction pluginAction) {
-		return pluginAction.getSession().hasSystem();
+		// Session is exposed as Object in IPluginAction to keep the SPI free of
+		// upstream package dependencies. Downcast to call hasSystem() reflectively.
+		Object session = pluginAction.getSession();
+		try {
+			return (Boolean) session.getClass().getMethod("hasSystem").invoke(session);
+		} catch (ReflectiveOperationException e) {
+			return false;
+		}
 	}
 }

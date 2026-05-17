@@ -26,7 +26,7 @@ import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
 import org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 
 import javax.swing.*;

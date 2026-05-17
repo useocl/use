@@ -3,8 +3,8 @@ package org.tzi.use.runtime.spi;
 import java.net.URL;
 import java.util.Map;
 
-import org.tzi.use.main.runtime.IExtensionPoint;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.spi.IExtensionPoint;
+import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.runtime.spi.IPluginService;
 import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
 

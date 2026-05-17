@@ -3,7 +3,7 @@ package org.tzi.use.gui.main;
 import org.tzi.use.config.Options;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.gui.Launcher;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
@@ -54,7 +54,7 @@ public class SwingLauncher implements Launcher {
             Path pluginDirURL = Options.pluginDir;
             Log.verbose("Plugin path: [" + pluginDirURL + "]");
             try {
-                Class<?> mainPluginRuntimeClass = Class.forName("org.tzi.use.runtime.bootstrap.MainPluginRuntime");
+                Class<?> mainPluginRuntimeClass = Class.forName("org.tzi.use.gui.plugin.MainPluginRuntime");
                 Method run = mainPluginRuntimeClass.getMethod("run", Path.class);
                 pluginRuntime = (IRuntime) run.invoke(null, pluginDirURL);
                 Log.debug("Starting plugin runtime, got class [" + pluginRuntime.getClass() + "]");

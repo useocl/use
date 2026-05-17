@@ -2,7 +2,7 @@ package org.tzi.use.gui.main.runtime;
 
 import java.io.PrintWriter;
 
-import org.tzi.use.main.runtime.IExtensionPoint;
+import org.tzi.use.runtime.spi.IExtensionPoint;
 
 /**
  * This interface provides the behaviour of the Plugin MModel Extension Point.

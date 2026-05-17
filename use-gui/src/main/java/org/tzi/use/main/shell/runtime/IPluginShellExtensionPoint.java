@@ -3,9 +3,9 @@ package org.tzi.use.main.shell.runtime;
 import java.util.List;
 
 import org.tzi.use.main.Session;
-import org.tzi.use.main.runtime.IDescriptor;
-import org.tzi.use.main.runtime.IExtensionPoint;
-import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
+import org.tzi.use.runtime.spi.IDescriptor;
+import org.tzi.use.runtime.spi.IExtensionPoint;
+import org.tzi.use.main.shell.plugin.PluginShellCmdFactory.PluginShellCmdContainer;
 
 /**
  * This interface provides the Shell Command Extension Point. The implementation

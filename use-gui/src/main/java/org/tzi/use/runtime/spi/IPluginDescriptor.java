@@ -2,7 +2,7 @@ package org.tzi.use.runtime.spi;
 
 import java.net.URL;
 
-import org.tzi.use.main.runtime.IDescriptor;
+import org.tzi.use.runtime.spi.IDescriptor;
 import org.tzi.use.runtime.model.PluginModel;
 
 /**
