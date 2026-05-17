@@ -34,6 +34,7 @@ module use.core {
     exports org.tzi.use.util.input;
     exports org.tzi.use.uml.sys.statemachines;
     exports org.tzi.use.util.soil.exceptions;
+    exports org.tzi.use.parser.soil.exceptions;
     exports org.tzi.use.uml.sys.ppcHandling;
     exports org.tzi.use.uml.sys.testsuite;
     exports org.tzi.use.gen.tool;

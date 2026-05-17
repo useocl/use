@@ -42,7 +42,7 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 import java.io.*;
 import java.util.ArrayList;

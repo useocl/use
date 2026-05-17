@@ -33,7 +33,7 @@ import org.tzi.use.uml.sys.soil.MOperationCallStatement;
 import org.tzi.use.uml.sys.soil.library.LibraryOperation;
 import org.tzi.use.uml.sys.soil.library.SoilLibrary;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**

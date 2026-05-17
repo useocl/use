@@ -20,7 +20,6 @@
 package org.tzi.use.util.soil;
 
 
-import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemState;
@@ -61,8 +60,8 @@ public class SymbolTable {
 		Type type;
 		/** dirty bit */
 		boolean isDirty = false;
-		/** soil statement causing this entry to be dirty */
-		ASTStatement cause = null;
+		/** soil statement causing this entry to be dirty (opaque, typically an ASTStatement) */
+		Object cause = null;
 		
 		
 		/**
@@ -143,7 +142,7 @@ public class SymbolTable {
 	/**
 	 * copies the current state and pushes it to a stack
 	 * 
-	 * @see SymbolTable#restoreState(ASTStatement)
+	 * @see SymbolTable#restoreState(Object)
 	 */
 	public void storeState(Boolean explicit) {
 		fStates.push(new LinkedHashMap<String, Entry>(fEntries));
@@ -169,7 +168,7 @@ public class SymbolTable {
 	 * 
 	 * @param cause the soil statement to blame for a variable becoming dirty
 	 */
-	public void restoreState(ASTStatement cause) {
+	public void restoreState(Object cause) {
 		if (fStates.size() <= 1) {
 			return;
 		}
@@ -257,11 +256,11 @@ public class SymbolTable {
 	 * returns the soil statement causing the specified variable to be dirty
 	 * 
 	 * @param name the name specifying the variable
-	 * @return the soil statement causing this variable to be dirty or 
-	 *         {@code null} if there isn't a variable with the specified name, 
+	 * @return the soil statement causing this variable to be dirty or
+	 *         {@code null} if there isn't a variable with the specified name,
 	 *         or the variable is not flagged as dirty
 	 */
-	public ASTStatement getCause(String name) {
+	public Object getCause(String name) {
 		Entry entry = getEntry(name);
 		
 		if ((entry != null) && (entry.isDirty)) {

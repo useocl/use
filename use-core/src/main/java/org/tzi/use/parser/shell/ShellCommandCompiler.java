@@ -36,7 +36,7 @@ import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.soil.VariableEnvironment;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**

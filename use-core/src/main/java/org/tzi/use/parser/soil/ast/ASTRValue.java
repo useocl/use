@@ -20,7 +20,7 @@
 package org.tzi.use.parser.soil.ast;
 
 import org.tzi.use.uml.sys.soil.MRValue;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**
