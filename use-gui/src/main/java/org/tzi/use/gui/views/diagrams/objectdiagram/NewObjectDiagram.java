@@ -1065,7 +1065,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 					SwingNode swingNode = new SwingNode();
 
 					// Create the ClassInvariantView and the enclosing ViewFrame in the javaFX DesktopPane
-					ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.instance(), org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system());
+					ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.instance(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system());
 					opv.selectObject(fObject.name()); //selecting the focused Object
 
 					ViewFrame f = new ViewFrame("Object properties", opv, "ObjectProperties.gif");
@@ -1080,7 +1080,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 					swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
 					// creating the new Window with the swingNode
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
 				});
 			} else {
 				ObjectPropertiesView v = MainWindow.instance().showObjectPropertiesView();

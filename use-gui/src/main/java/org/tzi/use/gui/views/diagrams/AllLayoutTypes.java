@@ -1,8 +1,8 @@
-package org.tzi.use.gui.graphlayout;
+package org.tzi.use.gui.views.diagrams;
 
 import org.tzi.use.graph.DirectedEdge;
 import org.tzi.use.graph.DirectedGraph;
-import org.tzi.use.gui.views.diagrams.Layoutable;
+import org.tzi.use.gui.graphlayout.Layoutable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;

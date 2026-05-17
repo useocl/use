@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.graphlayout;
 
 import java.awt.geom.Point2D;
 

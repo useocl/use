@@ -86,7 +86,7 @@ public class ClassSelection {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(c);
 					swingNode.setCache(false);
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_VIEW);
 				});
 			} else {
 				MainWindow.instance().addNewViewFrame(f);
@@ -123,7 +123,7 @@ public class ClassSelection {
 					swingNode.setContent(c);
 					swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 					// creating the new Window with the swingNode
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_PATH_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_PATH_VIEW);
 				});
 			} else {
 				MainWindow.instance().addNewViewFrame(f);

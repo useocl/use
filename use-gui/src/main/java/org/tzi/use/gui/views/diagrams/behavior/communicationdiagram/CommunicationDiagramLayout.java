@@ -23,7 +23,7 @@ import java.util.Iterator;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.graphlayout.SpringLayout;
-import org.tzi.use.gui.views.diagrams.Layoutable;
+import org.tzi.use.gui.graphlayout.Layoutable;
 
 /**
  * Class for helping to layout the nodes in communication diagrams

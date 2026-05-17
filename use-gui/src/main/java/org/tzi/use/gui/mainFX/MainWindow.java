@@ -56,6 +56,7 @@ import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.gui.utilFX.StatusBar;
 import org.tzi.use.gui.views.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
+import org.tzi.use.gui.views.diagrams.IFXWindowHost;
 import org.tzi.use.gui.main.ViewFrame;
 
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
@@ -106,7 +107,7 @@ import java.util.*;
  * @author Akif Aydin
  */
 @SuppressWarnings("serial")
-public class MainWindow {
+public class MainWindow implements IFXWindowHost {
 
     @FXML
     private TextArea fLogTextArea;
@@ -184,6 +185,7 @@ public class MainWindow {
 
     public MainWindow() {
         instance = this;
+        IFXWindowHost.INSTANCE.set(this);
     }
 
     @FXML

@@ -28,7 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.graphlayout.AllLayoutTypes;
+import org.tzi.use.gui.views.diagrams.AllLayoutTypes;
 import org.tzi.use.gui.graphlayout.SpringLayout;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.PersistHelper;

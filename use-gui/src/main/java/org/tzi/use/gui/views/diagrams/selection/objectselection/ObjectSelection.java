@@ -107,7 +107,7 @@ public class ObjectSelection {
 					swingNode.setContent(opv);
 					swingNode.setCache(false);
 
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by path length",swingNode, DiagramType.SELECTED_OBJECT_PATH_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by path length",swingNode, DiagramType.SELECTED_OBJECT_PATH_VIEW);
 				});
 			} else {
 				MainWindow.instance().addNewViewFrame(f);
@@ -139,7 +139,7 @@ public class ObjectSelection {
 					swingNode.setContent(opv);
 					swingNode.setCache(false);
 
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
 				});
 			} else {
 				MainWindow.instance().addNewViewFrame(f);
@@ -175,7 +175,7 @@ public class ObjectSelection {
 					swingNode.setContent(opv);
 					swingNode.setCache(false);
 
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Selection by OCL expression",swingNode, DiagramType.SELECTED_OCL_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by OCL expression",swingNode, DiagramType.SELECTED_OCL_VIEW);
 				});
 			} else {
 				MainWindow.instance().addNewViewFrame(f);
