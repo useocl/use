@@ -21,6 +21,7 @@ module use.core {
     exports org.tzi.use.uml.mm.sorting;
     exports org.tzi.use.util.collections;
     exports org.tzi.use.analysis.coverage;
+    exports org.tzi.use.uml.analysis.coverage;
     exports org.tzi.use.uml.mm.commonbehavior.communications;
     exports org.tzi.use.uml.ocl.type;
     exports org.tzi.use.uml.sys.events;

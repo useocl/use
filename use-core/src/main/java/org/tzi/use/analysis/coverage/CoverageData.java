@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.tzi.use.uml.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.uml.mm.*;
 
 /**

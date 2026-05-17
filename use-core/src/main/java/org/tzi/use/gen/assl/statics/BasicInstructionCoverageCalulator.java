@@ -19,7 +19,7 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.analysis.coverage.BasicCoverageData;
+import org.tzi.use.uml.analysis.coverage.BasicCoverageData;
 import org.tzi.use.uml.mm.MClassifier;
 
 import java.util.List;

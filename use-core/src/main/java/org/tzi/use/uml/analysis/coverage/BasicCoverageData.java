@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.analysis.coverage;
+package org.tzi.use.uml.analysis.coverage;
 
 import java.util.Collections;
 import java.util.HashSet;

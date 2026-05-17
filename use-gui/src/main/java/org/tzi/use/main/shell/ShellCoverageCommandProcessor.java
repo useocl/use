@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.tzi.use.analysis.coverage.AttributeAccessInfo;
+import org.tzi.use.uml.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.uml.mm.*;

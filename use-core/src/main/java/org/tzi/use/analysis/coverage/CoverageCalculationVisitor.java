@@ -19,6 +19,8 @@
 
 package org.tzi.use.analysis.coverage;
 
+import org.tzi.use.uml.analysis.coverage.AbstractCoverageVisitor;
+import org.tzi.use.uml.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
 
