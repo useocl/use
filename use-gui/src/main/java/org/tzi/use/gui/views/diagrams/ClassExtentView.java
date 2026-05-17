@@ -60,7 +60,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.uml.mm.MAttribute;

@@ -25,7 +25,6 @@ import org.tzi.use.uml.mm.instance.MSystemException;
 
 import org.tzi.use.uml.mm.instance.MLinkSet;
 
-import org.tzi.use.uml.mm.instance.IObjectState;
 
 import org.tzi.use.uml.mm.instance.MLinkEnd;
 

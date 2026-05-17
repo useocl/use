@@ -6,7 +6,6 @@ import org.tzi.use.gui.views.diagrams.ModelBrowser;
 import org.tzi.use.gui.main.runtime.IModelBrowser;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.util.MMHTMLPrintVisitor;
-import org.tzi.use.gui.plugin.IPluginMModelElement;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.util.Log;
 

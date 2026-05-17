@@ -1,9 +1,7 @@
 package org.tzi.use.gui.views.diagrams;
 
-import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.runtime.spi.IExtensionPoint;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
-import org.tzi.use.gui.views.diagrams.StyleInfoProvider;
 
 import java.util.List;
 

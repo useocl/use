@@ -19,13 +19,9 @@
 
 package org.tzi.use.uml.mm.instance;
 
-import org.tzi.use.uml.mm.instance.MSystemException;
 
-import org.tzi.use.uml.mm.instance.MLinkEnd;
 
-import org.tzi.use.uml.mm.instance.MLink;
 
-import org.tzi.use.uml.mm.instance.MObject;
 
 import java.util.Arrays;
 import java.util.Comparator;

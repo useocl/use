@@ -19,15 +19,11 @@
 
 package org.tzi.use.gui.views.diagrams;
 
-import org.tzi.use.gui.views.diagrams.MainWindow;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.main.runtime.IPluginMModelExtensionPoint;
 import org.tzi.use.gui.util.ModelBrowserSorting;
-import org.tzi.use.gui.views.diagrams.HighlightChangeEvent;
-import org.tzi.use.gui.views.diagrams.HighlightChangeListener;
-import org.tzi.use.gui.views.diagrams.ModelBrowserMouseHandling;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 

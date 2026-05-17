@@ -1,6 +1,5 @@
 package org.tzi.use.uml.mm.expr.operations;
 
-import org.tzi.use.uml.mm.instance.IObjectState;
 
 import org.tzi.use.uml.mm.expr.EvalContext;
 import org.tzi.use.uml.mm.types.Type;

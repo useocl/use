@@ -1,7 +1,6 @@
 package org.tzi.use.runtime.util;
 
 import org.tzi.use.runtime.spi.IPluginDescriptor;
-import org.tzi.use.runtime.util.PluginActionDescriptor;
 import org.tzi.use.runtime.model.PluginActionModel;
 import org.tzi.use.util.Log;
 

@@ -2,7 +2,6 @@ package org.tzi.use.gui.pluginFX;
 
 import org.tzi.use.gui.mainFX.runtime.IPluginMMVisitor;
 import org.tzi.use.gui.mainFX.ModelBrowser;
-import org.tzi.use.gui.pluginFX.IPluginMModelElement;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.util.Log;

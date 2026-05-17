@@ -37,7 +37,6 @@ import org.tzi.use.uml.mm.expr.ExpressionWithValue;
 
 import org.tzi.use.uml.mm.expr.ExpVariable;
 
-import org.tzi.use.uml.mm.expr.ExpQuery;
 
 import org.tzi.use.uml.mm.expr.ExpIterate;
 

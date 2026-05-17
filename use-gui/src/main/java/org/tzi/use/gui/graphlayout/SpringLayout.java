@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.graph.DirectedGraph;
-import org.tzi.use.gui.graphlayout.Layoutable;
 
 /**
  * A spring embedder layout algorithm. See, e.g. G. Di Battista et

@@ -19,7 +19,6 @@
 
 package org.tzi.use.integration.uml.sys;
 
-import org.tzi.use.uml.mm.types.Type;
 
 import org.tzi.use.uml.mm.instance.MObject;
 

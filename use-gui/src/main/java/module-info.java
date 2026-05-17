@@ -1,14 +1,18 @@
 module use.gui {
-    requires use.core;
-    requires vtd.xml;
+    requires transitive use.core;
+    requires transitive vtd.xml;
     requires itextpdf;
     requires javafx.fxml;
-    requires javafx.web;
+    requires transitive javafx.web;
     requires org.kordamp.desktoppanefx.core;
-    requires javafx.swing;
+    requires transitive javafx.swing;
     requires annotations;
     requires static lombok;
     requires com.google.common;
+    requires transitive java.desktop;
+    requires transitive java.xml;
+    requires transitive javafx.graphics;
+    requires transitive javafx.controls;
     opens org.tzi.use.gui.main to javafx.fxml;
     exports org.tzi.use.main.gui;
     exports org.tzi.use.gui.views;
@@ -30,4 +34,13 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.behavior.shared to com.google.common;
     exports org.tzi.use.gui.views.diagrams.selection to com.google.common;
     exports org.tzi.use.gui.views.diagrams.statemachine to com.google.common;
+    exports org.tzi.use.gui.views.diagrams.elements;
+    exports org.tzi.use.gui.views.diagrams.elements.edges;
+    exports org.tzi.use.gui.main.runtime;
+    exports org.tzi.use.gui.views.diagrams.util;
+    exports org.tzi.use.gui.views.diagrams.selection.objectselection;
+    exports org.tzi.use.gui.views.diagrams.event;
+    exports org.tzi.use.runtime.model;
+    exports org.tzi.use.gui.views.diagrams.waypoints;
+    exports org.tzi.use.gui.views.diagrams.elements.positioning;
 }

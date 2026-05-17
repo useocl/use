@@ -46,7 +46,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.integration.TestSystem;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
@@ -55,7 +54,6 @@ import org.tzi.use.uml.mm.expr.ExpInvalidException;
 import org.tzi.use.uml.mm.values.IntegerValue;
 import org.tzi.use.uml.mm.values.ObjectValue;
 import org.tzi.use.uml.mm.values.Value;
-import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.uml.sys.soil.VariableEnvironment;

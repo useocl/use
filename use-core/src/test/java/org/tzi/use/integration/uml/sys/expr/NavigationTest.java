@@ -34,7 +34,6 @@ import org.tzi.use.uml.mm.values.BooleanValue;
 import org.tzi.use.uml.mm.values.IntegerValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.integration.uml.sys.ObjectCreation;
 
 /**
  * NavigationTest tests the navigation with an linkobject.

@@ -32,7 +32,7 @@ import java.util.Set;
  * @author Lars Hamann
  *
  */
-public interface MClassifier extends Type, MModelElement, MNamedElement, UseFileLocatable {
+public interface MClassifier extends Type, MModelElement, UseFileLocatable {
 	
 	/**
      * Returns the model owning this classifier.

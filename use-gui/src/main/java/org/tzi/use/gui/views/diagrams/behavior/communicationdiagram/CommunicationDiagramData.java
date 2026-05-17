@@ -26,7 +26,6 @@ import org.tzi.use.uml.mm.instance.MLink;
 
 import org.tzi.use.uml.mm.instance.MObject;
 
-import org.tzi.use.gui.main.View;
 
 import com.google.common.collect.Sets;
 import org.tzi.use.gui.views.diagrams.DiagramView;

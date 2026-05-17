@@ -3,7 +3,6 @@ package org.tzi.use.gui.main.runtime;
 import java.util.Map;
 
 import org.tzi.use.main.Session;
-import org.tzi.use.gui.main.runtime.IPluginActionProxy;
 import org.tzi.use.runtime.spi.IDescriptor;
 import org.tzi.use.runtime.spi.IExtensionPoint;
 

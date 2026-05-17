@@ -7,7 +7,6 @@ import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.uml.mm.values.UndefinedValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.util.Log;
-import org.tzi.use.uml.mm.extension.RubyHelper;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;

@@ -20,7 +20,6 @@
 package org.tzi.use.gui.views.diagrams;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.views.diagrams.PrintableView;
 import org.tzi.use.gui.main.View;
 
 import javax.swing.*;

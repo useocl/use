@@ -3,10 +3,6 @@ package org.tzi.use.runtime.spi;
 import java.net.URL;
 import java.util.Map;
 
-import org.tzi.use.runtime.spi.IExtensionPoint;
-import org.tzi.use.runtime.spi.IRuntime;
-import org.tzi.use.runtime.spi.IPluginService;
-import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
 
 /**
  * This interface provides the Plugin Runtime's behaviour. It extends the common

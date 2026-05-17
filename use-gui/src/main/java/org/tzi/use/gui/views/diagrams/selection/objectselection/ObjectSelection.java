@@ -85,7 +85,7 @@ public class ObjectSelection {
 	}
 
 	@SuppressWarnings("serial")
-	class ActionSelectedObjectPathView extends AbstractAction {
+	public class ActionSelectedObjectPathView extends AbstractAction {
 		private Set<MObject> selectedObjects;
 
 		ActionSelectedObjectPathView(String text, Set<MObject> sc) {
@@ -121,7 +121,7 @@ public class ObjectSelection {
 	}
 
 	@SuppressWarnings("serial")
-	class ActionSelectionObjectView extends AbstractAction {
+	public class ActionSelectionObjectView extends AbstractAction {
 		ActionSelectionObjectView() {
 			super("With view...");
 		}
@@ -156,7 +156,7 @@ public class ObjectSelection {
 	 * Show Selection OCL View
 	 */
 	@SuppressWarnings("serial")
-	class ActionSelectionOCLView extends AbstractAction {
+	public class ActionSelectionOCLView extends AbstractAction {
 		ActionSelectionOCLView() {
 			super("With OCL...");
 		}

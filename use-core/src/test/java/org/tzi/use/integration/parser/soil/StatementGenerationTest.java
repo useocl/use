@@ -27,7 +27,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.integration.TestSystem;
 import org.tzi.use.config.Options;
 import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;

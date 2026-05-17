@@ -1,6 +1,5 @@
 package org.tzi.use.runtime.spi;
 
-import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginServiceModel;
 
 /**

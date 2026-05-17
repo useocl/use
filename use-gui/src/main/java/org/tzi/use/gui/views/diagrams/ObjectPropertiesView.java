@@ -29,7 +29,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
-import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;

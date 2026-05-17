@@ -18,7 +18,6 @@
  */
 package org.tzi.use.uml.mm.expr;
 
-import org.tzi.use.uml.mm.instance.IObjectState;
 
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.types.TypeFactory;

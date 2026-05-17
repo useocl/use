@@ -1,15 +1,15 @@
 module use.core {
-    requires antlr.runtime;
+    requires transitive antlr.runtime;
     requires org.eclipse.jdt.annotation;
     requires java.naming;
-    requires java.prefs;
-    requires com.google.common;
+    requires transitive java.prefs;
+    requires transitive com.google.common;
     requires vtd.xml;
     requires java.scripting;
     requires org.jruby.dist;
     requires combinatoricslib;
     requires java.datatransfer;
-    requires java.desktop;
+    requires transitive java.desktop;
     exports org.tzi.use.config;
     exports org.tzi.use.parser.use;
     exports org.tzi.use.uml.mm;
@@ -48,4 +48,8 @@ module use.core {
     exports org.tzi.use.api.factory;
     exports org.tzi.use.main;
     exports org.tzi.use.parser.generator;
+    exports org.tzi.use.parser;
+    exports org.tzi.use.parser.soil.ast;
+    exports org.tzi.use.uml.sys.soil.library;
+    exports org.tzi.use.parser.use.statemachines;
 }

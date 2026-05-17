@@ -6,7 +6,6 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.soil.ast.ASTStatement;
-import org.tzi.use.parser.testsuite.ASTTestCase;
 import org.tzi.use.parser.testsuite.ASTTestCase.TestResult;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.sys.MOperationCall;

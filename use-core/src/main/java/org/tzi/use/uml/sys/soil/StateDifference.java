@@ -24,7 +24,6 @@ import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
-import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.collections.CollectionUtil;
 
 import java.util.Collection;

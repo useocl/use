@@ -1,8 +1,6 @@
 package org.tzi.use.gui.views.diagrams;
 
 import lombok.Getter;
-import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.StyleInfoBase;
 
 @Getter
 public abstract class StyleInfoProvider {

@@ -22,7 +22,6 @@ package org.tzi.use.gui.views.evalbrowser;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.TextComponentWriter;
-import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.main.ChangeEvent;
 import org.tzi.use.main.ChangeListener;
 import org.tzi.use.main.Session;

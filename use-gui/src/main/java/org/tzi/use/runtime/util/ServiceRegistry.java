@@ -3,7 +3,6 @@ package org.tzi.use.runtime.util;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginServiceModel;
 import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
-import org.tzi.use.runtime.util.PluginServiceDescriptor;
 import org.tzi.use.util.Log;
 
 /**

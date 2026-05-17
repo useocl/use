@@ -8,7 +8,6 @@ import org.tzi.use.runtime.spi.IPlugin;
 import org.tzi.use.runtime.spi.IPluginClassLoader;
 import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginModel;
-import org.tzi.use.runtime.util.PluginClassLoader;
 import org.tzi.use.util.Log;
 
 /**

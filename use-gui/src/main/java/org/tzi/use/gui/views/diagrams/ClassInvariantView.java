@@ -57,8 +57,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;

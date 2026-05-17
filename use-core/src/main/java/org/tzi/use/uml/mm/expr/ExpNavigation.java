@@ -21,7 +21,6 @@ package org.tzi.use.uml.mm.expr;
 
 import org.tzi.use.uml.mm.instance.IModelState;
 
-import org.tzi.use.uml.mm.instance.IObjectState;
 
 import java.util.LinkedList;
 import java.util.List;

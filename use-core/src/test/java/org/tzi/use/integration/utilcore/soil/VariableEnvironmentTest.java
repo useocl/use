@@ -21,14 +21,12 @@ package org.tzi.use.integration.utilcore.soil;
 
 import org.tzi.use.integration.TestSystem;
 
-import org.tzi.use.uml.mm.types.Type;
 
 
 import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.integration.TestSystem;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
