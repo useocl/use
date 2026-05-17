@@ -948,17 +948,33 @@ flowchart LR
 
 ## Current Metrics
 
-| Module               | Before | After  | Δ      |
-|----------------------|-------:|-------:|-------:|
-| `uml` slice          |      5 |      3 |  −40%  |
-| core whole           |     34 |      ? |   —    |
-| `gui` slice          |     14 |      1 |  −93%  |
-| `gui_main` sub-slice |   (>0) |  **0** |  ✅    |
-| `gui_views` sub-slice|   (>0) |  **0** |  ✅    |
-| `shell` sub-slice    |   (>0) |  **0** |  ✅    |
-| `runtime` sub-slice  |   (>0) |  **0** |  ✅    |
-| entire-project       |    275 |  **0** | **−100%** ✅ |
-| layered-arch viol.   |   (>0) |  **0** |  ✅    |
+11 of 13 ArchUnit cycle tests pass with **zero** cycles. The two
+remaining tests have small, well-isolated residuals:
+
+| ArchUnit test                                      | Cycles | Status |
+|----------------------------------------------------|-------:|:------:|
+| maven_cyclic_dependencies_entire_project           |  **0** | ✅     |
+| maven_cyclic_dependencies_gui_main                 |  **0** | ✅     |
+| maven_cyclic_dependencies_gui_views                |  **0** | ✅     |
+| maven_cyclic_dependencies_runtime                  |  **0** | ✅     |
+| maven_cyclic_dependencies_shell                    |  **0** | ✅     |
+| ant_cyclic_dependencies_graphlayout                |  **0** | ✅     |
+| ant_cyclic_dependencies_main_gui                   |  **0** | ✅     |
+| ant_cyclic_dependencies_util_gui                   |  **0** | ✅     |
+| ant_cyclic_dependencies_views                      |  **0** | ✅     |
+| ant_cyclic_dependencies_xmlparser                  |  **0** | ✅     |
+| ant_cyclic_dependencies_entire_gui                 |  **0** | ✅     |
+| maven_layered_architecture_violations              |  **0** | ✅     |
+| **maven_cyclic_dependencies_gui** (overall)        |      1 | Bug 17 |
+| **use-core uml slice** (mm/ocl/sys)                |      3 | Bug 1 B+C |
+
+### Before vs. after on the original metrics
+
+| Module               | Before | After  | Δ              |
+|----------------------|-------:|-------:|---------------:|
+| `uml` slice          |      5 |      3 | −40%           |
+| `gui` slice          |     14 |      1 | −93%           |
+| entire-project       |    275 |  **0** | **−100%** ✅   |
 
 Tests: 271 use-core + 18 use-gui still passing.
 
