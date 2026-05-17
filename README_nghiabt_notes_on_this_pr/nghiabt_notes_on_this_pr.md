@@ -1225,13 +1225,112 @@ GUI and Core share overlapping package names (`org.tzi.use.util`,
 `org.tzi.use.main`). The ArchUnit importer pulls in Core classes
 when scanning these packages, inflating the GUI-only count.
 
-Likewise the `core whole` count in the table above is "?" because
-`use-core`'s surefire-plugin (2.12.4) doesn't pick up JUnit-5 tests, so
-`MavenCyclicDependenciesCoreTest` doesn't actually run during
-`mvn test`. The `AntCyclicDependenciesCoreTest` (JUnit-4) is what's
-exercised. Updating the surefire-plugin is a separate concern; the
-entire-project measurement reflects the merged classpath state
-authoritatively.
+### Verification — what actually runs vs. what's silently skipped
+
+`mvn test` uses the default surefire-plugin (2.12.4), which picks
+up JUnit-4 tests only. **Of the 6 ArchUnit test classes, only 4
+actually execute under `mvn test`:**
+
+| Test class                              | JUnit | Runs under `mvn test`? | Reports                                                  |
+|-----------------------------------------|:-----:|:----------------------:|----------------------------------------------------------|
+| `AntCyclicDependenciesCoreTest`         |   4   | ✅ Yes                 | 0 cycles in all 9 core slices                            |
+| `MavenCyclicDependenciesCoreTest`       |   5   | ❌ Silently skipped    | (would run under modern surefire — see below)            |
+| `AntCyclicDependenciesGUITest`          |   4   | ✅ Yes                 | 0 cycles in all 6 gui slices                             |
+| `MavenCyclicDependenciesGUITest`        |   4   | ✅ Yes                 | 0 cycles in all 6 maven gui slices incl. entire-project  |
+| `AntLayeredArchitectureTest`            |   4   | ✅ Yes                 | 0 violations (core should not depend on gui)             |
+| `MavenLayeredArchitectureTest`          |   5   | ❌ Silently skipped    | (would run under modern surefire — 0 violations verified) |
+
+To exercise the silently-skipped JUnit-5 tests, force a modern
+surefire on the command line:
+
+```
+mvn -pl use-core org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test \
+    -Dtest=MavenCyclicDependenciesCoreTest
+mvn -pl use-gui  org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test \
+    -Dtest=MavenLayeredArchitectureTest
+```
+
+**None of these tests contain JUnit assertions** — they print
+cycle counts and write reports. So "tests pass" is a poor signal;
+the cycle/violation counts are the real metric.
+
+### Verified cycle counts (commit `a77e6029`)
+
+`MavenCyclicDependenciesCoreTest` distinguishes a `withoutTests`
+view (production code only) from a `withTests` view (includes
+test classes). The values below come from running it with modern
+surefire.
+
+| Slice                         | `withoutTests` | `withTests` |
+|-------------------------------|:--------------:|:-----------:|
+| `org.tzi.use.analysis`        |       0        |      0      |
+| `org.tzi.use.api`             |       0        |      0      |
+| `org.tzi.use.config`          |       0        |      0      |
+| `org.tzi.use.gen`             |       0        |      0      |
+| `org.tzi.use.graph`           |       0        |      0      |
+| `org.tzi.use.main`            |       0        |      0      |
+| `org.tzi.use.parser`          |       0        |    **22**   |
+| `org.tzi.use.uml`             |       0        |    **1**    |
+| `org.tzi.use.util`            |       0        |      0      |
+| **core module overall**       |     **0**      |   **33**    |
+
+`MavenLayeredArchitectureTest.countCoreDependenciesOnGui()` →
+**0 violations** (core packages do not depend on gui).
+
+`MavenCyclicDependenciesGUITest.count_cycles_in_entire_project()`
+→ **0 cycles** (this test excludes test classes via
+`DO_NOT_INCLUDE_TESTS`, so the entire-project count is for
+production code).
+
+### What "withTests" cycles are, and aren't
+
+The 22 + 1 + 33 in the `withTests` column are **not production
+cycles**. They arise because test classes legitimately import
+across slice boundaries — a test in `parser.root` calls into
+`parser.ocl`, a test in `mm.expr` constructs a `sys.MSystem` to
+exercise the expression. Production code has none of these
+back-edges (verified above: every `withoutTests` cell is 0).
+
+Breakdown:
+
+- **`parser` slice: 22 cycles** — pre-existing test infrastructure.
+  `parser.AllTests`, `parser.USECompilerTest`,
+  `parser.shell.ASTConstructionTest`, `parser.shell.AllTests`,
+  `parser.shell.StatementGenerationTest` create cross-sub-package
+  test edges (`parser.{root,base,ocl,shell,soil,use}`). These
+  cycles existed *before* this PR and are unrelated to the Bug-6
+  resolution (which fixed production-code parser cycles).
+
+- **`uml` slice: 1 cycle** — introduced by this PR's refactor.
+  Test files at `use-core/src/test/java/org/tzi/use/uml/mm/expr/
+  {NavigationTest, EvaluatorTest, ExpQueryTest, ExpStdOpTest,
+  ExprNavigationTest}.java` and `…/uml/mm/ModelCreationTest.java`
+  construct `new MSystem(model)` to bootstrap their fixtures.
+  Since these tests live in the `mm` slice (because their
+  production counterparts are in `mm.expr`), the `new MSystem(...)`
+  call adds a `mm → sys` edge. The natural fix is to relocate
+  these tests under `use-core/src/test/java/org/tzi/use/uml/sys/`
+  (since they need to construct an `MSystem`). An attempt is
+  staged in `git stash` (top entry on stash list) — it breaks
+  build at the test-compile step because the moved tests lost
+  same-package access to many `mm.expr` AST classes (Expression,
+  ExpInvalidException, ExpConstInteger, ExpRange, etc.) and need
+  ~20–30 explicit imports added. **Deferred** as a follow-up to
+  keep this PR's commits buildable end-to-end.
+
+- **`core module` overall: 33 cycles** — combination of the
+  above plus a few cross-package test edges that aggregate at the
+  top-level slice.
+
+### Honest summary
+
+The production codebase has **0 architectural cycles** at the
+import level, across every ArchUnit slice/layered test. The
+remaining 23 cycles are entirely test-infrastructure edges. 22
+of them predate this PR; 1 was introduced by relocating test
+files alongside their production code as part of Bug 1 Phase
+B/C and has a known remediation path that's been deferred for
+a follow-up commit so this PR's history stays buildable.
 
 ---
 
@@ -1587,6 +1686,33 @@ Both `use.core` and `use.gui` have their `exports` and `opens`
 clauses updated to reflect the new package shape. External consumers
 that read modules reflectively or read `module-info` descriptors
 will need to refresh those references. Notably:
+
+**use.core exports — added by this PR's Bug 1 B+C resolution:**
+
+```
++ exports org.tzi.use.uml.mm.types          (was uml.mm.ocl.type / uml.ocl.type)
++ exports org.tzi.use.uml.mm.values         (was uml.mm.ocl.value / uml.ocl.value)
++ exports org.tzi.use.uml.mm.expr           (was uml.mm.ocl.expr / uml.ocl.expr)
++ exports org.tzi.use.uml.mm.expr.operations (was uml.mm.ocl.expr.operations / uml.ocl.expr.operations)
++ exports org.tzi.use.uml.mm.extension      (was uml.mm.ocl.extension / uml.ocl.extension)
++ exports org.tzi.use.uml.mm.instance       (new — holds MInstance/MObject/MLink + IModelState/IObjectState)
++ exports org.tzi.use.uml.sys.expr          (new — holds ExpInstanceConstructor / ExpObjOp)
+```
+
+**use.core exports — renamed (slicer-rename revert):**
+
+```
+- exports org.tzi.use.uml.mm.sys                  → exports org.tzi.use.uml.sys
+- exports org.tzi.use.uml.mm.sys.events           → exports org.tzi.use.uml.sys.events
+- exports org.tzi.use.uml.mm.sys.events.tags      → exports org.tzi.use.uml.sys.events.tags
+- exports org.tzi.use.uml.mm.sys.soil             → exports org.tzi.use.uml.sys.soil
+- exports org.tzi.use.uml.mm.sys.soil.exceptions  → exports org.tzi.use.uml.sys.soil.exceptions
+- exports org.tzi.use.uml.mm.sys.statemachines    → exports org.tzi.use.uml.sys.statemachines
+- exports org.tzi.use.uml.mm.sys.ppcHandling      → exports org.tzi.use.uml.sys.ppcHandling
+- exports org.tzi.use.uml.mm.sys.testsuite        → exports org.tzi.use.uml.sys.testsuite
+```
+
+**Earlier PR changes (still in effect):**
 
 - `org.tzi.use.runtime` is no longer exported as a root package;
   the SPI is now exported from `runtime.spi`.
