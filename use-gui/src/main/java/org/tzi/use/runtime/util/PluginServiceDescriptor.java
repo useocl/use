@@ -69,6 +69,10 @@ public class PluginServiceDescriptor implements IPluginServiceDescriptor {
 				Log.error("InvocationTargetException [" + className + "]: ", ite);
 			} catch(NoSuchMethodException nsme) {
 				Log.error("Method not found for [" + className + "]: ", nsme);
+			} catch (LinkageError | ClassCastException e) {
+				Log.error("Plugin service [" + className
+						+ "] is incompatible with this USE version (likely compiled against an older SPI). Skipping. ["
+						+ e + "]");
 			}
 			if (this.pluginService == null) {
 				Log.error("Could not get class [" + className + "]");

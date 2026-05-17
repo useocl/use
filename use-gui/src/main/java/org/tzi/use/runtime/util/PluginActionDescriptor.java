@@ -68,6 +68,10 @@ public class PluginActionDescriptor implements IPluginActionDescriptor {
 				Log.error("InvocationTargetException [" + className + "]: ", ite);
 			} catch(NoSuchMethodException nsme) {
 				Log.error("Method not found for [" + className + "]: ", nsme);
+			} catch (LinkageError | ClassCastException e) {
+				Log.error("Plugin action [" + className
+						+ "] is incompatible with this USE version (likely compiled against an older SPI). Skipping. ["
+						+ e + "]");
 			}
 			if (this.pluginAction == null) {
 				Log.error("PAD, Could not get class [" + className + "]");

@@ -64,6 +64,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 					Log.error("InvocationTargetException [" + className + "]: ", ite);
 				} catch(NoSuchMethodException nsme) {
 					Log.error("Method not found for [" + className + "]: ", nsme);
+				} catch (LinkageError | ClassCastException e) {
+					Log.error("Plugin main class [" + className
+							+ "] is incompatible with this USE version (likely compiled against an older SPI). Skipping. ["
+							+ e + "]");
 				}
 				if (this.plugin == null) {
 					Log.error("PD, Could not get class [" + className + "]");

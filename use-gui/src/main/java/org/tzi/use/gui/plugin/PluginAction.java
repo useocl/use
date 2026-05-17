@@ -64,7 +64,13 @@ public abstract class PluginAction extends AbstractAction implements
 	}
 
 	public void actionPerformed(ActionEvent event) {
-		this.getPluginActionDelegate().performAction(this);
+		IPluginActionDelegate delegate = this.getPluginActionDelegate();
+		if (delegate == null) {
+			Log.error("Plugin action " + this.pluginActionDescriptor.getPluginActionModel().getId()
+					+ " is not available (failed to load); ignoring invocation.");
+			return;
+		}
+		delegate.performAction(this);
 	}
 
 	/**
@@ -73,8 +79,12 @@ public abstract class PluginAction extends AbstractAction implements
 	 * <p>This is used to enable or disable GUI elements.</p>
 	 */
 	public void calculateEnabled() {
-		boolean shouldBeEnabled = this.getPluginActionDelegate().shouldBeEnabled(this);
-		this.setEnabled(shouldBeEnabled);
+		IPluginActionDelegate delegate = this.getPluginActionDelegate();
+		if (delegate == null) {
+			this.setEnabled(false);
+			return;
+		}
+		this.setEnabled(delegate.shouldBeEnabled(this));
 	}
 
 	/**

@@ -106,23 +106,35 @@ public class SwingLauncher implements Launcher {
         session.setSystem(system);
 
         if (Options.doGUI) {
-            // MainWindow lives in gui.views (to break the historic gui.main ↔
-            // gui.views cycle); call its static create() reflectively so this
-            // launcher does not import a gui.views type.
-            try {
-                Class<?> mw = Class.forName("org.tzi.use.gui.views.diagrams.MainWindow");
-                if (pluginRuntime == null) {
-                    Log.debug("Starting gui without plugin runtime!");
-                    mw.getMethod("create", org.tzi.use.main.Session.class).invoke(null, session);
-                } else {
-                    Log.debug("Starting gui with plugin runtime.");
-                    mw.getMethod("create", org.tzi.use.main.Session.class,
-                                 org.tzi.use.runtime.spi.IRuntime.class)
-                      .invoke(null, session, pluginRuntime);
+            if (GraphicsEnvironment.isHeadless()) {
+                Log.error("No display available (headless JVM). Falling back to shell mode. "
+                        + "Set DISPLAY (or pass -Djava.awt.headless=false) for the GUI, or pass -nogui to silence this.");
+                Options.doGUI = false;
+            } else {
+                // MainWindow lives in gui.views (to break the historic gui.main ↔
+                // gui.views cycle); call its static create() reflectively so this
+                // launcher does not import a gui.views type.
+                try {
+                    Class<?> mw = Class.forName("org.tzi.use.gui.views.diagrams.MainWindow");
+                    if (pluginRuntime == null) {
+                        Log.debug("Starting gui without plugin runtime!");
+                        mw.getMethod("create", org.tzi.use.main.Session.class).invoke(null, session);
+                    } else {
+                        Log.debug("Starting gui with plugin runtime.");
+                        mw.getMethod("create", org.tzi.use.main.Session.class,
+                                     org.tzi.use.runtime.spi.IRuntime.class)
+                          .invoke(null, session, pluginRuntime);
+                    }
+                } catch (java.lang.reflect.InvocationTargetException e) {
+                    Throwable cause = e.getCause() != null ? e.getCause() : e;
+                    Log.error("Could not start GUI: " + cause + ". Falling back to shell mode.");
+                    cause.printStackTrace();
+                    Options.doGUI = false;
+                } catch (ReflectiveOperationException e) {
+                    Log.error("Could not start GUI: " + e + ". Falling back to shell mode.");
+                    e.printStackTrace();
+                    Options.doGUI = false;
                 }
-            } catch (ReflectiveOperationException e) {
-                Log.error("Could not start GUI: " + e.getMessage());
-                System.exit(1);
             }
         }
 
