@@ -1083,15 +1083,39 @@ cycles when slicing inside gui_main and shell:
 ### Remaining open work
 
 **1 gui-internal cycle**: `gui:main ↔ views` — `MainWindow`'s diagram-
-orchestration code still references concrete `ClassDiagramView`,
-`CommunicationDiagramView`, `NewObjectDiagramView`, `SequenceDiagramView`,
-`StateMachineDiagramView`, `ObjectPropertiesView`, `VisibleDataManager`,
-`SDScrollPane` types (8 imports plus the typed `List<…View>` fields and
-typed method returns). Closing this fully needs a factory-pattern
-refactor (moving diagram creation into a `gui.main.IDiagramFactory`
-interface implemented in `gui.views`, so `MainWindow` only depends on
-the interface). Documented as **Bug 17**, deferred to a focused
-follow-up.
+orchestration code still references concrete view types in 17+
+`new XxxView(...)` constructor calls scattered across the 20+ Action
+inner classes (ActionViewCreateClassDiagram, ActionViewCreateObjectDiagram,
+ActionViewCreateCommunicationDiagram, ActionViewCreateObjectCount,
+ActionViewCreateLinkCount, ActionViewCreateClassInvariant,
+ActionViewCreateStateEvolution, ActionViewCreateClassExtent,
+ActionViewCreateCallStack, ActionViewCreateCommandList,
+ActionViewAssociationInfo, ActionViewCreateObjectProperties,
+ActionViewCreateSequenceDiagram, etc.) plus
+`MainWindow.{classDiagrams, objectDiagrams, communicationDiagrams}`
+typed view lists, `showStateMachineView`/`showObjectPropertiesView`
+typed returns, and `createCommunicationDiagram`/`createSequenceDiagram`
+method bodies that wrap concrete views into ViewFrames with internal
+frame listeners.
+
+**Path to zero**:
+1. Define `gui.main.IDiagramFactory` SPI with ~15 factory methods
+   covering every view type MainWindow constructs.
+2. Implement in `gui.views.diagrams.SwingDiagramFactory` (intra-views).
+3. Register the factory at `SwingLauncher`/`JavaFXLauncher` startup.
+4. Rewrite every `new XxxView(...)` in MainWindow as
+   `IDiagramFactory.INSTANCE.get().createXxx(...)`.
+5. Retype `MainWindow.classDiagrams` etc. as `List<View>` (View is now
+   in gui.main); update `getClassDiagrams()` callers in
+   `views.diagrams.selection.classselection.ClassSelection` to cast.
+6. Move the inner-frame listener wiring (which closes diagrams and
+   removes from MainWindow lists) into the factory result-bundle so
+   MainWindow doesn't need to instantiate ViewFrames itself.
+
+This is a ~hour-scale focused refactor. The current PR has reduced
+this cycle's edge count from 200+ to ~80 (moved View, ViewFrame,
+EvalOCLDialog, ModelBrowser handlers; introduced IPluginActionProxy
+and IFXWindowHost SPIs). Documented as **Bug 17**.
 
 **`uml` triangle Phase B+C** (3 cycles in the `uml` sub-slicer):
 - `mm → ocl → mm`
