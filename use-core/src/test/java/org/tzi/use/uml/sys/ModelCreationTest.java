@@ -17,7 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm;
+package org.tzi.use.uml.sys;
+
+import org.tzi.use.uml.mm.MModel;
+
+import org.tzi.use.uml.mm.MClass;
+
+import org.tzi.use.uml.mm.MAssociationEnd;
+
+import org.tzi.use.uml.mm.MAssociation;
+
+
+
+
+
 
 import org.tzi.use.api.TestModelUtil;
 

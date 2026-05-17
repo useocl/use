@@ -17,7 +17,33 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm.expr;
+package org.tzi.use.uml.sys.expr;
+
+import org.tzi.use.uml.mm.expr.ExpSetLiteral;
+
+import org.tzi.use.uml.mm.expr.ExpSequenceLiteral;
+
+import org.tzi.use.uml.mm.expr.ExpBagLiteral;
+
+import org.tzi.use.uml.mm.expr.ExpConstReal;
+
+import org.tzi.use.uml.mm.expr.ExpConstBoolean;
+
+import org.tzi.use.uml.mm.expr.ExpIf;
+
+import org.tzi.use.uml.mm.expr.ExpressionWithValue;
+
+import org.tzi.use.uml.mm.expr.ExpStdOp;
+
+import org.tzi.use.uml.mm.expr.Evaluator;
+
+import org.tzi.use.uml.mm.expr.ExpRange;
+
+import org.tzi.use.uml.mm.expr.ExpConstInteger;
+
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+
+import org.tzi.use.uml.mm.expr.Expression;
 import junit.framework.TestCase;
 
 import org.tzi.use.uml.mm.ModelFactory;

@@ -36,7 +36,6 @@ public class AllTests {
         final TestSuite test = new TestSuite( "All metamodel tests" );
         test.addTestSuite( org.tzi.use.uml.mm.MAssociationClassTest.class );
         test.addTestSuite( org.tzi.use.uml.mm.MMultiplicityTest.class );
-        test.addTestSuite( org.tzi.use.uml.mm.ModelCreationTest.class );
         return test;
     }
 }

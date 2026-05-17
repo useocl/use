@@ -17,7 +17,47 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm.expr;
+package org.tzi.use.uml.sys.expr;
+
+import org.tzi.use.uml.mm.expr.VarInitializer;
+
+import org.tzi.use.uml.mm.expr.ExpConstBoolean;
+
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+
+import org.tzi.use.uml.mm.expr.ExpCollectNested;
+
+import org.tzi.use.uml.mm.expr.ExpNavigation;
+
+import org.tzi.use.uml.mm.expr.VarDeclList;
+
+import org.tzi.use.uml.mm.expr.VarDecl;
+
+import org.tzi.use.uml.mm.expr.ExpressionWithValue;
+
+import org.tzi.use.uml.mm.expr.ExpVariable;
+
+import org.tzi.use.uml.mm.expr.ExpQuery;
+
+import org.tzi.use.uml.mm.expr.ExpIterate;
+
+import org.tzi.use.uml.mm.expr.ExpReject;
+
+import org.tzi.use.uml.mm.expr.ExpSelect;
+
+import org.tzi.use.uml.mm.expr.ExpExists;
+
+import org.tzi.use.uml.mm.expr.ExpForAll;
+
+import org.tzi.use.uml.mm.expr.ExpStdOp;
+
+import org.tzi.use.uml.mm.expr.Evaluator;
+
+import org.tzi.use.uml.mm.expr.ExpConstInteger;
+
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+
+import org.tzi.use.uml.mm.expr.Expression;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

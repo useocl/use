@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm.expr;
+package org.tzi.use.uml.sys.expr;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -34,11 +34,11 @@ public class AllTests {
 
     public static Test suite() {
         final TestSuite test = new TestSuite( "All ocl expressions tests" );
-        test.addTestSuite( org.tzi.use.uml.mm.expr.EvaluatorTest.class );
-        test.addTestSuite( org.tzi.use.uml.mm.expr.ExpQueryTest.class );
-        test.addTestSuite( org.tzi.use.uml.mm.expr.ExprNavigationTest.class );
-        test.addTestSuite( org.tzi.use.uml.mm.expr.ExpStdOpTest.class );
-        test.addTestSuite( org.tzi.use.uml.mm.expr.NavigationTest.class );
+        test.addTestSuite( org.tzi.use.uml.sys.expr.EvaluatorTest.class );
+        test.addTestSuite( org.tzi.use.uml.sys.expr.ExpQueryTest.class );
+        test.addTestSuite( org.tzi.use.uml.sys.expr.ExprNavigationTest.class );
+        test.addTestSuite( org.tzi.use.uml.sys.expr.ExpStdOpTest.class );
+        test.addTestSuite( org.tzi.use.uml.sys.expr.NavigationTest.class );
         return test;
     }
 }

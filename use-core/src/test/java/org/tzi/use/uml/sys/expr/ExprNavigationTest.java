@@ -17,7 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm.expr;
+package org.tzi.use.uml.sys.expr;
+
+import org.tzi.use.uml.mm.expr.ExpNavigation;
+
+import org.tzi.use.uml.mm.expr.EvalContext;
+
+import org.tzi.use.uml.mm.expr.ExpVariable;
+
+import org.tzi.use.uml.mm.expr.Evaluator;
+
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+
+import org.tzi.use.uml.mm.expr.Expression;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

@@ -37,7 +37,9 @@ public class AllTests {
         test.addTestSuite( org.tzi.use.uml.sys.DeletionTest.class );
         test.addTestSuite( org.tzi.use.uml.sys.LinkTest.class );
         test.addTestSuite( org.tzi.use.uml.sys.MCmdDestroyObjectsTest.class );
+        test.addTestSuite( org.tzi.use.uml.sys.ModelCreationTest.class );
         test.addTest(org.tzi.use.uml.sys.soil.AllTests.suite());
+        test.addTest(org.tzi.use.uml.sys.expr.AllTests.suite());
         return test;
     }
 }
