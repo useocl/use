@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
 import org.tzi.use.uml.mm.instance.MLinkEnd;
 
 import org.tzi.use.uml.mm.instance.MInstance;
@@ -1468,7 +1470,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		Box attrBox = Box.createVerticalBox();
 		Box valueBox = Box.createVerticalBox();
 
-		MObjectState objState = obj.state(fParent.system().state());
+		MObjectState objState = (MObjectState) obj.state(fParent.system().state());
 		Map<MAttribute, Value> attributeValueMap = objState.attributeValueMap();
 
 		for (Map.Entry<MAttribute, Value> entry : attributeValueMap.entrySet()) {

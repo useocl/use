@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
 import org.tzi.use.uml.mm.instance.MObject;
 
 import org.tzi.use.gui.main.View;
@@ -114,7 +116,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         private void update() {
             // initialize table model
             if ( haveObject() ) {
-                MObjectState objState = fObject.state(fSystem.state());
+                MObjectState objState = (MObjectState) fObject.state(fSystem.state());
                 fAttributeValueMap = objState.attributeValueMap();
                                 
                 Collection<MAttribute> attributes = ModelBrowserSorting.getInstance().sortAttributes( fAttributeValueMap.keySet() );

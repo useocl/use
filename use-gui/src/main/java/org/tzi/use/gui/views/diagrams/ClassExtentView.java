@@ -476,7 +476,7 @@ public class ClassExtentView extends JPanel implements View, ActionListener {
          * Updates the row for the given object.
          */
         void updateObject(MObject obj) {
-            MObjectState objState = obj.state(fSystem.state());
+            MObjectState objState = (MObjectState) obj.state(fSystem.state());
             String[] values = new String[fAttributes.length];
             for (int i = 0; i < fAttributes.length; i++)
                 values[i] = objState.attributeValue(fAttributes[i]).toString();

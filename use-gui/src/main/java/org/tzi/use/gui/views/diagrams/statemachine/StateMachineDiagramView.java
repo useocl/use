@@ -132,7 +132,7 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	 * 
 	 */
 	private void highlightCurrentState() {
-		MObjectState currentState = monitoredInstance.state(system.state()); 
+		MObjectState currentState = (MObjectState) monitoredInstance.state(system.state()); 
 		MProtocolStateMachineInstance psmInstance = currentState.getProtocolStateMachineInstance(stateMachine);
 		
 		diagram.setActiveState(psmInstance.getCurrentState(stateMachine.getDefaultRegion()));

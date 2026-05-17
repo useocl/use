@@ -192,7 +192,7 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 	 */
 	public void updateContent() {
 		String value;
-		MObjectState objState = fObject.state(fParent.system().state());
+		MObjectState objState = (MObjectState) fObject.state(fParent.system().state());
 
 		if (objState == null)
 			return;

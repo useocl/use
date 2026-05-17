@@ -130,7 +130,7 @@ public class ObjectBrowser extends JFrame {
         private void update() {
             // initialize table model
             if (haveObject() ) {
-                MObjectState objState = fObject.state(fSystem.state());
+                MObjectState objState = (MObjectState) fObject.state(fSystem.state());
                 fAttributeValueMap = objState.attributeValueMap();
                 final int N = fAttributeValueMap.size();
                 

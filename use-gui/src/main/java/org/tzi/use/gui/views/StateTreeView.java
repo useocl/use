@@ -77,7 +77,7 @@ public class StateTreeView extends JTree implements View {
                 DefaultMutableTreeNode objNode = new DefaultMutableTreeNode(obj);
                 classNode.add(objNode);
 
-                MObjectState objState = obj.state(fSystem.state());
+                MObjectState objState = (MObjectState) obj.state(fSystem.state());
                 Map<MAttribute, Value> attributeValueMap = objState.attributeValueMap();
 
                 for (Map.Entry<MAttribute, Value> entry : attributeValueMap.entrySet()) {
