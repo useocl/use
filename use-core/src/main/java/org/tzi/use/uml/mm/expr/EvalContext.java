@@ -19,11 +19,12 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.io.PrintWriter;
 
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.values.VarBindings;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
 
 /**
@@ -33,8 +34,8 @@ import org.tzi.use.util.Log;
  */
 
 public class EvalContext {
-    private final MSystemState fPreState; // required for postconditions
-    private final MSystemState fPostState; // default state
+    private final IModelState fPreState; // required for postconditions
+    private final IModelState fPostState; // default state
     private final VarBindings fVarBindings;
     private int fNesting;   // for indentation during trace
     
@@ -46,14 +47,14 @@ public class EvalContext {
     /**
      * Creates new evaluation context. The parameter preState may be
      * <code>null</code>.
-     * @param preState the pre <code>MSystemState</code> for the evaluation. May be <code>null</code>
-     * @param postState the current <code>MSystemState</code> for the evaluation
+     * @param preState the pre <code>IModelState</code> for the evaluation. May be <code>null</code>
+     * @param postState the current <code>IModelState</code> for the evaluation
      * @param globalBindings the global <code>VarBindings</code>
      * @param evalLog <code>PrintWriter</code> to print evaluation information. May be <code>null</code>
      * @param evalLogIndent used indent for the output, e.g., "   "
      */
-    public EvalContext(MSystemState preState,
-    				   MSystemState postState,
+    public EvalContext(IModelState preState,
+    				   IModelState postState,
     				   VarBindings globalBindings,
     				   PrintWriter evalLog,
     				   String evalLogIndent) {
@@ -74,7 +75,7 @@ public class EvalContext {
      * @param globalBindings the global <code>VarBindings</code>
      * @param src the <code>EvalContext</code> to copy the settings from
      */
-	public EvalContext(MSystemState preState, MSystemState postState, VarBindings globalBindings, EvalContext src) {
+	public EvalContext(IModelState preState, IModelState postState, VarBindings globalBindings, EvalContext src) {
 		fPreState = preState;
 		fPostState = postState;
 		fVarBindings = new VarBindings(globalBindings);
@@ -119,14 +120,14 @@ public class EvalContext {
     /**
      * Returns the current system state.
      */
-    public MSystemState postState() {
+    public IModelState postState() {
         return fPostState;
     }
 
     /**
      * Returns the prestate.
      */
-    public MSystemState preState() {
+    public IModelState preState() {
         return fPreState;
     }
     

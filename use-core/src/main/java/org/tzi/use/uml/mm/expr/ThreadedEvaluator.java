@@ -19,10 +19,11 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.util.ArrayList;
 
 import org.tzi.use.uml.mm.values.Value;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.collections.Queue;
 
@@ -39,7 +40,7 @@ class ThreadedEvaluator {
     static class Controller extends Thread {
         private Queue fResultValueQueue;
         private ArrayList<Expression> fExprList;
-        MSystemState fSystemState;
+        IModelState fSystemState;
 
         private int fNumWorkers; // number of parallel worker threads
         private Thread[] fWorkers;
@@ -49,7 +50,7 @@ class ThreadedEvaluator {
         private int fNextJob;
 
         Controller(int numWorkers, Queue resultQueue, 
-                   ArrayList<Expression> exprList, MSystemState systemState) {
+                   ArrayList<Expression> exprList, IModelState systemState) {
             fResultValueQueue = resultQueue;
             fExprList = exprList;
             fSystemState = systemState;

@@ -49,7 +49,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MLink;
-import org.tzi.use.uml.sys.MLinkSet;
+import org.tzi.use.uml.mm.instance.MLinkSet;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;

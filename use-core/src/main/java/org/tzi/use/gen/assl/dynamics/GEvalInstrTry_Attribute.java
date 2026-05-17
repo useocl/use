@@ -32,7 +32,7 @@ import org.tzi.use.uml.mm.values.ObjectValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;

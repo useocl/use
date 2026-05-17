@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.sys;
+package org.tzi.use.uml.mm.instance;
 
 /**
  * Signals that an invalid condition in the system was detected.

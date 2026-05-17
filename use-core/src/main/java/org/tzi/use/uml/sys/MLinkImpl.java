@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
 import org.tzi.use.uml.mm.instance.MLinkEnd;
 
 import org.tzi.use.uml.mm.instance.MLink;
@@ -43,7 +45,7 @@ import org.tzi.use.util.StringUtil;
  * @author Mark Richters
  * @author Lars Hamann
  */
-class MLinkImpl implements MLink {
+public class MLinkImpl implements MLink {
 	/** The type of this link */
     private final MAssociation fAssociation;
 
@@ -76,7 +78,7 @@ class MLinkImpl implements MLink {
      * @exception MSystemException objects do not conform to the
      *            association ends.
      */
-    protected MLinkImpl(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
+    public MLinkImpl(MAssociation assoc, List<MObject> objects, List<List<Value>> qualifierValues) throws MSystemException {
         fAssociation = assoc;
         if (assoc.associationEnds().size() != objects.size() )
             throw new IllegalArgumentException("Number of association ends (" +

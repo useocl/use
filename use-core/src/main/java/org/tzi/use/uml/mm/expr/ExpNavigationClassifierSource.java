@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
 import org.tzi.use.uml.mm.types.Type;
@@ -28,7 +30,6 @@ import org.tzi.use.uml.mm.values.UndefinedValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.mm.instance.MObject;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Expression for navigations
@@ -73,7 +74,7 @@ public class ExpNavigationClassifierSource extends Expression {
 		Value srcValue = this.source.eval(ctx);
 		
 		if (!srcValue.isUndefined()) {
-			MSystemState state = (this.isPre() ? ctx.preState() : ctx.postState());
+			IModelState state = (this.isPre() ? ctx.preState() : ctx.postState());
 			MLink link = null;
 			
 			if (srcValue.isObject()) {

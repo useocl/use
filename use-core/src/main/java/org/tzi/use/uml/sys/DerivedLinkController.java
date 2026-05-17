@@ -18,6 +18,8 @@
  */
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.sys.soil.StateDifference;

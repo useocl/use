@@ -25,7 +25,7 @@ import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;

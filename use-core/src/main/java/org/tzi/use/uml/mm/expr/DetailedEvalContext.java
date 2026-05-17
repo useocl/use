@@ -19,12 +19,13 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.io.PrintWriter;
 import java.util.Stack;
 
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.values.VarBindings;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Extends EvalContext to construct an evaluation tree
@@ -36,8 +37,8 @@ public class DetailedEvalContext extends EvalContext {
 	private Stack<EvalNode> fNodeStack = new Stack<EvalNode>();
 	private EvalNode fRootNode;
 	
-	public DetailedEvalContext(MSystemState preState,
-			   MSystemState postState,
+	public DetailedEvalContext(IModelState preState,
+			   IModelState postState,
 			   VarBindings globalBindings,
 			   PrintWriter evalLog,
 			   String evalLogIndent) {

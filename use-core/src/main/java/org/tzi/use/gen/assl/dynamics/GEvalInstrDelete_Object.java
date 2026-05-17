@@ -36,7 +36,7 @@ import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.values.ObjectValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MObjectDestructionStatement;

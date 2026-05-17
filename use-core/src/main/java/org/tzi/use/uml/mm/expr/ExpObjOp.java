@@ -19,11 +19,16 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.sys.MSystem;
+
+import org.tzi.use.uml.sys.MOperationCall;
+
+import org.tzi.use.uml.mm.instance.MSystemException;
+
 import org.tzi.use.uml.mm.instance.MInstance;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.values.*;
-import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.util.StringUtil;
 
@@ -114,7 +119,7 @@ public final class ExpObjOp extends ExpInstanceOp {
     	
     	operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());
     	
-    	MSystem system = ctx.postState().system();
+    	MSystem system = ((org.tzi.use.uml.sys.MSystemState) ctx.postState()).system();
     	
     	try {
     		system.enterQueryOperation(ctx, operationCall, false);

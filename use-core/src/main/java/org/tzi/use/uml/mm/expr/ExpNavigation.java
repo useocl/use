@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import org.tzi.use.uml.mm.instance.IObjectState;
 
 import java.util.LinkedList;
@@ -34,7 +36,6 @@ import org.tzi.use.uml.mm.values.UndefinedValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.mm.instance.IObjectState;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -96,7 +97,7 @@ public final class ExpNavigation extends Expression {
             // get the object
             final ObjectValue objVal = (ObjectValue) val;
             final MObject obj = objVal.value();
-            final MSystemState state = isPre() ? ctx.preState() : ctx.postState();
+            final IModelState state = isPre() ? ctx.preState() : ctx.postState();
             final Type resultType = type();
             
               
@@ -130,7 +131,7 @@ public final class ExpNavigation extends Expression {
         return res;
     }
 
-    private Value[] oidsToObjectValues(MSystemState state, List<MObject> objList) {
+    private Value[] oidsToObjectValues(IModelState state, List<MObject> objList) {
         Value[] res = new ObjectValue[objList.size()];
         int i = 0;
         

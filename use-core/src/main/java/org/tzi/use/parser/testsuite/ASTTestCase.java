@@ -12,7 +12,7 @@ import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.mm.expr.EvalContext;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;

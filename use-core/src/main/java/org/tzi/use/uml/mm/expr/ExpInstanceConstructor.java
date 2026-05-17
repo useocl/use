@@ -19,13 +19,20 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.sys.MDataTypeValue;
+
+import org.tzi.use.uml.sys.MSystem;
+
+import org.tzi.use.uml.sys.MOperationCall;
+
+import org.tzi.use.uml.mm.instance.MSystemException;
+
 import org.tzi.use.uml.mm.instance.MInstance;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.values.DataTypeValueValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.values.VarBindings;
-import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.util.StringUtil;
 
@@ -94,7 +101,7 @@ public final class ExpInstanceConstructor extends ExpInstanceOp {
         operationCall.setPreferredPPCHandler(ExpressionPPCHandler.getDefaultOutputHandler());
         operationCall.setResultValue(result);
 
-        MSystem system = ctx.postState().system();
+        MSystem system = ((org.tzi.use.uml.sys.MSystemState) ctx.postState()).system();
         try {
             system.enterQueryOperation(ctx, operationCall, false);
             operationCall.setExecutionFailed(false);

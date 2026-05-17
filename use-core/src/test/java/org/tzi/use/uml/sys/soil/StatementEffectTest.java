@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.sys.soil;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
 import org.tzi.use.uml.mm.instance.MInstance;
 
 import org.tzi.use.uml.mm.instance.MLink;

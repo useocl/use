@@ -19,10 +19,11 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.util.concurrent.Callable;
 
 import org.tzi.use.uml.mm.values.Value;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * A {@link Callable} to evaluate expressions
@@ -32,13 +33,13 @@ import org.tzi.use.uml.sys.MSystemState;
  */
 public class EvaluatorCallable implements Callable<Value> {
 
-	private final MSystemState state;
+	private final IModelState state;
 	private final Expression expression;
 	
 	private String failureMessage;
 	private boolean hasFailed;
 	
-	public EvaluatorCallable(MSystemState state, Expression expr) {
+	public EvaluatorCallable(IModelState state, Expression expr) {
 		this.state = state;
 		this.expression = expr;
 	}

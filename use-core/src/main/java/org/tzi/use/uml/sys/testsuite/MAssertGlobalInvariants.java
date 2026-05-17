@@ -1,5 +1,7 @@
 package org.tzi.use.uml.sys.testsuite;
 
+import org.tzi.use.uml.sys.MSystemState;
+
 import java.io.PrintWriter;
 
 import org.tzi.use.util.SrcPos;
@@ -15,7 +17,7 @@ public class MAssertGlobalInvariants extends MAssert {
 
 	@Override
 	protected boolean doEval(EvalContext ctx) {
-		return  ctx.postState().check(new PrintWriter(new NullWriter()), 
+		return  ((MSystemState) ctx.postState()).check(new PrintWriter(new NullWriter()), 
 									  false, 
 									  false,
 									  true, null);

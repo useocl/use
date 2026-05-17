@@ -19,9 +19,10 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.values.VarBindings;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * TODO
@@ -35,7 +36,7 @@ public final class SimpleEvalContext extends EvalContext {
 	 * @param postState
 	 * @param globalBindings
 	 */
-	public SimpleEvalContext(MSystemState preState, MSystemState postState, VarBindings globalBindings) {
+	public SimpleEvalContext(IModelState preState, IModelState postState, VarBindings globalBindings) {
 		super(preState, postState, globalBindings, null, "");
 	}
 

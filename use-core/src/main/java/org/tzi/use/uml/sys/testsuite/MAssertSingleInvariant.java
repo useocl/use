@@ -1,5 +1,7 @@
 package org.tzi.use.uml.sys.testsuite;
 
+import org.tzi.use.uml.sys.MSystemState;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class MAssertSingleInvariant extends MAssert {
 		List<String> invs = new ArrayList<String>();
 		invs.add(invariant.toString());
 		
-		return  ctx.postState().check(new PrintWriter(new NullWriter()), 
+		return  ((MSystemState) ctx.postState()).check(new PrintWriter(new NullWriter()), 
 				  false, 
 				  false,
 				  false, invs);

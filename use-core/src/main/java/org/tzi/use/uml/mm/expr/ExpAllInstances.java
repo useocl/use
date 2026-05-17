@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
@@ -31,9 +33,8 @@ import org.tzi.use.uml.mm.values.ObjectValue;
 import org.tzi.use.uml.mm.values.SetValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MLink;
-import org.tzi.use.uml.sys.MLinkSet;
+import org.tzi.use.uml.mm.instance.MLinkSet;
 import org.tzi.use.uml.mm.instance.MObject;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Type.allInstances
@@ -74,7 +75,7 @@ public final class ExpAllInstances extends Expression {
      */
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        MSystemState systemState = isPre() ? ctx.preState() : ctx.postState();
+        IModelState systemState = isPre() ? ctx.preState() : ctx.postState();
 
         // the result set will contain all instances of the specified
         // class plus all instances of subclasses

@@ -17,7 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.sys;
+package org.tzi.use.uml.mm.instance;
+
+import org.tzi.use.uml.sys.MLinkImpl;
+
+import org.tzi.use.uml.mm.instance.MSystemException;
 
 import org.tzi.use.uml.mm.instance.MLinkEnd;
 
@@ -107,7 +111,7 @@ public final class MLinkSet {
     
     private Map<CacheEntry, Set<MLink>> selectCache; 
     
-    MLinkSet(MAssociation assoc) {
+    public MLinkSet(MAssociation assoc) {
         fAssociation = assoc;
         fLinks = createInternalLinkSetImpl();
         selectCache = new HashMap<CacheEntry, Set<MLink>>();
@@ -127,7 +131,7 @@ public final class MLinkSet {
 	/**
      * Copy constructor.
      */
-    MLinkSet(MLinkSet x) {
+    public MLinkSet(MLinkSet x) {
         fAssociation = x.fAssociation;
         fLinks = createInternalLinkSetImpl();
         selectCache = new HashMap<CacheEntry, Set<MLink>>();
@@ -144,7 +148,7 @@ public final class MLinkSet {
      *
      * @return An unmodifiable <code>Set</code> of the corresponding links. 
      */
-    Set<MLink> select(MAssociationEnd aend, MObject obj, List<Value> qualifierValues, boolean excludeDerived) {
+    public Set<MLink> select(MAssociationEnd aend, MObject obj, List<Value> qualifierValues, boolean excludeDerived) {
         CacheEntry e = new CacheEntry(aend, obj, qualifierValues);
         Set<MLink> res = selectCache.get(e);
         
@@ -167,7 +171,7 @@ public final class MLinkSet {
      *
      * @return An unmodifiable <code>Set</code> of the corresponding links. 
      */
-    Set<MLink> select(MAssociationEnd aend, MObject obj) {
+    public Set<MLink> select(MAssociationEnd aend, MObject obj) {
         CacheEntry e = new CacheEntry(aend, obj, null);
         Set<MLink> res = selectCache.get(e);
         
@@ -180,7 +184,7 @@ public final class MLinkSet {
      * <strong>Note:</strong> The <code>selectCache</code> is not changed. Use {@link MLinkSet#clearCache} afterwards.
      * @return Set(MLink) the set of removed links
      */
-    Set<MLink> removeAll(MAssociationEnd aend, MObject obj) {
+    public Set<MLink> removeAll(MAssociationEnd aend, MObject obj) {
         Set<MLink> res = createInternalLinkSetImpl();
         Iterator<MLink> it = fLinks.iterator();
         
@@ -248,7 +252,7 @@ public final class MLinkSet {
      *
      * @return true if the link is in this set.
      */
-    boolean contains(MLink link) {
+    public boolean contains(MLink link) {
         return fLinks.contains(link);
     }
 
@@ -257,7 +261,7 @@ public final class MLinkSet {
      *
      * @return true if the link set did not already contain the link.
      */
-    boolean add(MLink link) {	
+    public boolean add(MLink link) {	
         for (MLinkEnd end : link.linkEnds()) {
             CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);
@@ -288,7 +292,7 @@ public final class MLinkSet {
         return fLinks.add(link);
     }
 
-    void addAll(MLinkSet linkSet) {
+    public void addAll(MLinkSet linkSet) {
     	if (linkSet == null)
     		return;
     	
@@ -369,7 +373,7 @@ public final class MLinkSet {
      *
      * @return true if the link set did contain the link.
      */
-    boolean remove(MLink link) {
+    public boolean remove(MLink link) {
         for (MLinkEnd end : link.linkEnds()) {
             CacheEntry e = new CacheEntry(end.associationEnd(), end.object(), end.getQualifierValues());
             Set<MLink> links = selectCache.get(e);

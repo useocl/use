@@ -19,12 +19,13 @@
 
 package org.tzi.use.uml.mm.values;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.uml.mm.instance.MObject;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Variable bindings bind names to values. Bindings are kept on a stack and can
@@ -82,7 +83,7 @@ public class VarBindings implements Iterable<VarBindings.Entry> {
     
     private List<Entry> fBindings;
 
-    private MSystemState fVisibleState;
+    private IModelState fVisibleState;
     
     /**
      * Creates an empty VarBindings.
@@ -94,7 +95,7 @@ public class VarBindings implements Iterable<VarBindings.Entry> {
     /**
      * Creates an empty VarBindings.
      */
-    public VarBindings(MSystemState visibleState) {
+    public VarBindings(IModelState visibleState) {
         fBindings = new ArrayList<Entry>();
         fVisibleState = visibleState;
     }

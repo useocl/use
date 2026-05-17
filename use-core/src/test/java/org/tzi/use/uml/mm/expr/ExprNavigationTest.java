@@ -42,7 +42,7 @@ import org.tzi.use.uml.mm.values.SetValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.ObjectCreation;
 import org.tzi.use.uml.sys.soil.MLinkInsertionStatement;
 import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;

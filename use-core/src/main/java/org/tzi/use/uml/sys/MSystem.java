@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
 import org.tzi.use.uml.mm.instance.MInstanceState;
 
 import org.tzi.use.uml.mm.instance.MInstance;

@@ -23,7 +23,7 @@ import org.tzi.use.uml.mm.expr.Expression;
 import org.tzi.use.uml.mm.expr.ExpressionWithValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;

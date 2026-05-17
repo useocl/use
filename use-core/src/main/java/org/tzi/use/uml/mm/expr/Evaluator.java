@@ -19,12 +19,13 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.values.VarBindings;
-import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.collections.Queue;
 
@@ -66,8 +67,8 @@ public final class Evaluator {
      * Detailed information is printed to <code>evalLog</code>, which can be <code>null</code>.
      */
     public Value eval(Expression expr, 
-                      MSystemState preState,
-                      MSystemState postState,
+                      IModelState preState,
+                      IModelState postState,
                       VarBindings bindings, 
                       PrintWriter evalLog,
                       String evalLogIndent) {
@@ -90,8 +91,8 @@ public final class Evaluator {
      * is printed to evalLog.
      */
     public Value eval(Expression expr, 
-            MSystemState preState,
-            MSystemState postState,
+            IModelState preState,
+            IModelState postState,
             VarBindings bindings, 
             PrintWriter evalLog) {
 		return this.eval(expr, preState, postState, bindings, evalLog, "  ");
@@ -109,7 +110,7 @@ public final class Evaluator {
      * @return The result value.
      */
     public Value eval(Expression expr, 
-                      MSystemState postState,
+                      IModelState postState,
                       VarBindings bindings, 
                       PrintWriter evalLog)
     {
@@ -121,7 +122,7 @@ public final class Evaluator {
      * with a set of initial variable bindings.
      */
     public Value eval(Expression expr, 
-                      MSystemState postState,
+                      IModelState postState,
                       VarBindings bindings)
     {
         return eval(expr, postState, bindings, null);
@@ -133,8 +134,8 @@ public final class Evaluator {
      */
     public Value eval(
     		Expression expr,
-    		MSystemState preState,
-    		MSystemState postState,
+    		IModelState preState,
+    		IModelState postState,
     		VarBindings bindings) {
     	
     	return eval(expr, preState, postState, bindings, null);
@@ -143,7 +144,7 @@ public final class Evaluator {
     /**
      * Evaluates an expression in the specified system state context.
      */
-    public Value eval(Expression expr, MSystemState postState) {
+    public Value eval(Expression expr, IModelState postState) {
         return eval(expr, postState, new VarBindings(), null);
     }
 
@@ -187,7 +188,7 @@ public final class Evaluator {
      */
     public Queue evalList(int numThreads, 
                           ArrayList<Expression> exprList, 
-                          MSystemState systemState) {
+                          IModelState systemState) {
         if (numThreads < 1 )
             throw new IllegalArgumentException("numThreads == " + numThreads);
 

@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import org.tzi.use.uml.mm.instance.MInstanceState;
 
 import org.tzi.use.uml.mm.instance.MInstance;
@@ -27,7 +29,6 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.values.InstanceValue;
 import org.tzi.use.uml.mm.values.UndefinedValue;
 import org.tzi.use.uml.mm.values.Value;
-import org.tzi.use.uml.sys.*;
 
 /**
  * Attribute operation on objects.
@@ -71,7 +72,7 @@ public final class ExpAttrOp extends Expression {
             MInstance instance = instanceValue.value();
 
             if (fAttr.isDerived()) {
-            	MSystemState state = isPre() ? ctx.preState() : ctx.postState();
+            	IModelState state = isPre() ? ctx.preState() : ctx.postState();
                 res = state.evaluateDeriveExpression(instance, fAttr);
             } else {
                 MInstanceState objState = isPre() ? instance.state(ctx.preState()) : instance.state(ctx.postState());

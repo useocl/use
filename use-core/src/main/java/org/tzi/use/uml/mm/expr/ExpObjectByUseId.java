@@ -21,6 +21,8 @@
 
 package org.tzi.use.uml.mm.expr;
 
+import org.tzi.use.uml.mm.instance.IModelState;
+
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.types.Type.VoidHandling;
 import org.tzi.use.uml.mm.values.ObjectValue;
@@ -28,7 +30,6 @@ import org.tzi.use.uml.mm.values.StringValue;
 import org.tzi.use.uml.mm.values.UndefinedValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MObject;
-import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Type.useById(String)
@@ -78,7 +79,7 @@ public final class ExpObjectByUseId extends Expression {
     @Override
     public Value eval(EvalContext ctx) {
         ctx.enter(this);
-        MSystemState systemState = isPre() ? ctx.preState() : ctx.postState();
+        IModelState systemState = isPre() ? ctx.preState() : ctx.postState();
 
         Value idExprResult = idExpr.eval(ctx);
         if (idExprResult.isUndefined()) return UndefinedValue.instance;

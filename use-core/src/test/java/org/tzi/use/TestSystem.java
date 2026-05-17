@@ -42,7 +42,7 @@ import org.tzi.use.uml.mm.expr.VarDeclList;
 import org.tzi.use.uml.mm.types.TypeFactory;
 import org.tzi.use.uml.mm.values.IntegerValue;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;

@@ -19,6 +19,10 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
 import org.tzi.use.uml.mm.instance.IObjectState;
 
 import org.tzi.use.uml.mm.instance.MLinkEnd;
@@ -1487,7 +1491,7 @@ public final class MSystemState implements org.tzi.use.uml.mm.instance.IModelSta
         return res;
 	}
 	
-	List<MObject> evaluateDeriveExpression(MObject[] source, MAssociationEnd dst) throws MSystemException {
+	public List<MObject> evaluateDeriveExpression(MObject[] source, MAssociationEnd dst) throws MSystemException {
 		// add the object values to the context
 		EvalContext ctx = new SimpleEvalContext(MSystemState.this, MSystemState.this, new VarBindings());
 		List<MObject> result = new LinkedList<>();

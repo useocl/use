@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.StatementEvaluationResult;

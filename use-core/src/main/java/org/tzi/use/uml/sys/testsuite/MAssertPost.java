@@ -1,5 +1,7 @@
 package org.tzi.use.uml.sys.testsuite;
 
+import org.tzi.use.uml.sys.MSystemState;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import org.tzi.use.uml.mm.values.BooleanValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.values.VarBindings;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 
 public class MAssertPost extends MAssert {
 
@@ -31,7 +33,7 @@ public class MAssertPost extends MAssert {
 	
 	@Override
 	protected boolean doEval(EvalContext ctx) throws MSystemException {
-		MOperationCall opcall = ctx.postState().system().getLastOperationCall();
+		MOperationCall opcall = ((MSystemState) ctx.postState()).system().getLastOperationCall();
         if (opcall == null )
             throw new MSystemException("Call stack is empty.");
 

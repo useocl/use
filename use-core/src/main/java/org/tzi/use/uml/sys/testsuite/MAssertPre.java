@@ -1,5 +1,7 @@
 package org.tzi.use.uml.sys.testsuite;
 
+import org.tzi.use.uml.sys.MSystemState;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,7 @@ public class MAssertPre extends MAssert {
         	preconds.add(this.singleCondition);
         }
         
-		VariableEnvironment e = ctx.preState().system().getVariableEnvironment();
+		VariableEnvironment e = ((MSystemState) ctx.preState()).system().getVariableEnvironment();
 		e.pushFrame(false);
 		ObjectValue self = (ObjectValue)objectExpr.eval(ctx);
         e.assign("self", self);

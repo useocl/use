@@ -38,7 +38,7 @@ import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.util.StringUtil;
 
 /**
