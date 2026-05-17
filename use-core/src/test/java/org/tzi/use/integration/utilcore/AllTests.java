@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2012 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2004 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,29 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.parser.shell;
-
+package org.tzi.use.integration.utilcore;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-
 /**
- * All shell parser tests.
- * @author Daniel Gent
- * @author Lars Hamann
+ * Runs all test in package <code>org.tzi.use.util</code>.
+ *
+ * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
+ * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public class AllTests {
 
-	private AllTests() {}
-	
-	
-	/**
-	 * Returns a new <code>TestSuite</code> containing all shell parser tests. 
-	 * @return A new test suite.
-	 */
-	public static Test suite() {
-		final TestSuite testSuite = new TestSuite("All shell parser tests");
-		return testSuite;
-   }
+    private AllTests(){}
+
+    public static Test suite() {
+        final TestSuite test = new TestSuite( "All util tests" );
+        test.addTestSuite( AbstractBagTest.class );
+        test.addTestSuite( ReportTest.class );
+        test.addTestSuite( StringUtilTest.class );
+        test.addTestSuite( CombinationTest.class );
+        test.addTest(org.tzi.use.integration.utilcore.soil.AllTests.suite());
+        return test;
+    }
 }

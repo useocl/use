@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public final class StringType extends BasicType {
 
-    StringType() {
+    public StringType() {
         super("String");
     }
     

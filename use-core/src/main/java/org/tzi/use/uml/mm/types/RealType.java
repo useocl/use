@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public final class RealType extends BasicType {
 
-    RealType() {
+    public RealType() {
         super("Real");
     }
     

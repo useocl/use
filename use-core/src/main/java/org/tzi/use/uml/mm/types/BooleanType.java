@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public final class BooleanType extends BasicType {
 
-    BooleanType() {
+    public BooleanType() {
         super("Boolean");
     }
     

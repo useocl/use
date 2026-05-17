@@ -40,7 +40,7 @@ public class CollectionType extends TypeImpl {
 
     private final Type fElemType;
 
-    protected CollectionType(Type elemType) {
+    public CollectionType(Type elemType) {
         fElemType = elemType;
     }
 

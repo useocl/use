@@ -52,7 +52,7 @@ public final class EnumType extends MClassifierImpl {
      * (String objects). The list of literals is checked for
      * duplicates.
      */
-    protected EnumType(MModel model, String name, List<String> literals) {
+    public EnumType(MModel model, String name, List<String> literals) {
     	super(name, false);
         setModel(model);
         fLiterals = new ArrayList<String>(literals);

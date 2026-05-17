@@ -34,7 +34,6 @@ public class AllTests {
 
     public static Test suite() {
         final TestSuite test = new TestSuite( "All metamodel tests" );
-        test.addTestSuite( org.tzi.use.uml.mm.MAssociationClassTest.class );
         test.addTestSuite( org.tzi.use.uml.mm.MMultiplicityTest.class );
         return test;
     }

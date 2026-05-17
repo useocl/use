@@ -92,7 +92,7 @@ public final class TupleType extends TypeImpl {
         
     }
         
-    TupleType(Part[] parts) {
+    public TupleType(Part[] parts) {
     	for(int index = 0; index < parts.length; index++)
         {
     		fParts.put(parts[index].name(), parts[index]);

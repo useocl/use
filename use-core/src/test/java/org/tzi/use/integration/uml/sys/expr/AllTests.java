@@ -17,13 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm.types;
+package org.tzi.use.integration.uml.sys.expr;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Runs all test in package <code>org.tzi.use.uml.mm.types</code>.
+ * Runs all test in package <code>org.tzi.use.uml.mm.expr</code>.
  *
  * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
  * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
@@ -33,7 +33,12 @@ public class AllTests {
     private AllTests(){}
 
     public static Test suite() {
-        final TestSuite test = new TestSuite( "All ocl type tests" );
+        final TestSuite test = new TestSuite( "All ocl expressions tests" );
+        test.addTestSuite( org.tzi.use.integration.uml.sys.expr.EvaluatorTest.class );
+        test.addTestSuite( org.tzi.use.integration.uml.sys.expr.ExpQueryTest.class );
+        test.addTestSuite( org.tzi.use.integration.uml.sys.expr.ExprNavigationTest.class );
+        test.addTestSuite( org.tzi.use.integration.uml.sys.expr.ExpStdOpTest.class );
+        test.addTestSuite( org.tzi.use.integration.uml.sys.expr.NavigationTest.class );
         return test;
     }
 }

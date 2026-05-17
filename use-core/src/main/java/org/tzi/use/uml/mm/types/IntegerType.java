@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public final class IntegerType extends BasicType {
 
-    IntegerType() {
+    public IntegerType() {
         super("Integer");
     }
     

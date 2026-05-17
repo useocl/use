@@ -139,7 +139,7 @@ public class ShellCommandCompiler {
 	 *        to <code>errorOutput</code>.
 	 * @return
 	 */
-	protected static ASTStatement constructAST(InputStream input,
+	public static ASTStatement constructAST(InputStream input,
 			String inputName, PrintWriter errorOutput, boolean verbose) {
 		
 		ANTLRInputStream aInput;
