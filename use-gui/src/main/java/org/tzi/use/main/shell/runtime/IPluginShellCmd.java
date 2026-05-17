@@ -1,7 +1,6 @@
 package org.tzi.use.main.shell.runtime;
 
 import org.tzi.use.main.Session;
-import org.tzi.use.main.shell.Shell;
 
 /**
  * Interface for Shell Command Proxies - this interface should only be used
@@ -37,10 +36,10 @@ public interface IPluginShellCmd {
 
 	/**
 	 * Method to get the Shell Object
-	 * 
+	 *
 	 * @return The Shell object
 	 */
-	public Shell getShell();
+	public IShell getShell();
 
 	/**
 	 * Method to get the Shell Command's arguments as a plain {@code String}.

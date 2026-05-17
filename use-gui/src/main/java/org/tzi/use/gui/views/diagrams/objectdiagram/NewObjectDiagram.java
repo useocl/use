@@ -19,6 +19,16 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
+import org.tzi.use.uml.mm.instance.MLinkEnd;
+
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
 import java.awt.*;
@@ -69,13 +79,13 @@ import javax.swing.border.Border;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.util.ModelBrowserSorting;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.ObjectPropertiesView;
+import org.tzi.use.gui.views.diagrams.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
@@ -92,9 +102,9 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
-import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
+import org.tzi.use.gui.views.diagrams.HighlightChangeEvent;
+import org.tzi.use.gui.views.diagrams.HighlightChangeListener;
+import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -104,7 +114,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElementComparator;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.*;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
@@ -1065,7 +1075,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 					SwingNode swingNode = new SwingNode();
 
 					// Create the ClassInvariantView and the enclosing ViewFrame in the javaFX DesktopPane
-					ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.instance(), org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system());
+					ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.instance(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system());
 					opv.selectObject(fObject.name()); //selecting the focused Object
 
 					ViewFrame f = new ViewFrame("Object properties", opv, "ObjectProperties.gif");
@@ -1080,7 +1090,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 					swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
 					// creating the new Window with the swingNode
-					org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
+					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
 				});
 			} else {
 				ObjectPropertiesView v = MainWindow.instance().showObjectPropertiesView();
@@ -1460,7 +1470,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		Box attrBox = Box.createVerticalBox();
 		Box valueBox = Box.createVerticalBox();
 
-		MObjectState objState = obj.state(fParent.system().state());
+		MObjectState objState = (MObjectState) obj.state(fParent.system().state());
 		Map<MAttribute, Value> attributeValueMap = objState.attributeValueMap();
 
 		for (Map.Entry<MAttribute, Value> entry : attributeValueMap.entrySet()) {

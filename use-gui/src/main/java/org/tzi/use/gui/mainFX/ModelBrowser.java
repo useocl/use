@@ -11,7 +11,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.web.WebView;
 import org.tzi.use.gui.util.MMHTMLPrintVisitor;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.gui.utilFX.ModelBrowserSorting;
+import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 
 

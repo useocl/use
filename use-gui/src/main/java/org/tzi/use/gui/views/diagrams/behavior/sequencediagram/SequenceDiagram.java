@@ -19,6 +19,12 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,8 +53,8 @@ import javax.swing.*;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramType;
@@ -58,10 +64,10 @@ import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.Lifeline.ObjectBo
 import org.tzi.use.gui.views.diagrams.behavior.shared.CmdChooseWindow;
 import org.tzi.use.gui.views.diagrams.behavior.shared.MessageSelectionView;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
-import org.tzi.use.gui.views.selection.objectselection.ActionSelectionOCLView;
-import org.tzi.use.gui.views.selection.objectselection.ActionSelectionObjectView;
-import org.tzi.use.gui.views.selection.objectselection.DataHolder;
-import org.tzi.use.gui.views.selection.objectselection.ObjectSelectionHelper;
+import org.tzi.use.gui.views.diagrams.selection.objectselection.ActionSelectionOCLView;
+import org.tzi.use.gui.views.diagrams.selection.objectselection.ActionSelectionObjectView;
+import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
+import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelectionHelper;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.*;
@@ -769,13 +775,13 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
         final JMenuItem comDia = new JMenuItem("Create sync. communication dia.");
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (org.tzi.use.gui.main.MainWindow.getJavaFxCall()) {
+                if (org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall()) {
                     Platform.runLater(() -> {
                         // to create an instance of a SwingNode, which is used to hold the Swing-Components
                         SwingNode swingNode = new SwingNode();
 
                         // Create the ClassExtentView and the enclosing ViewFrame
-                        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(MainWindow.instance(), org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system(), visibleData);
+                        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(MainWindow.instance(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system(), visibleData);
                         ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
 
                         // Set up the SwingNode content
@@ -788,7 +794,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
                         swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
                         // creating the new Window with the swingNode
-                        org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Communication diagram", swingNode, DiagramType.COMMUNICATION_DIAGRAM);
+                        org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Communication diagram", swingNode, DiagramType.COMMUNICATION_DIAGRAM);
                         invalidateContent(true);
                     });
                 } else {
@@ -814,7 +820,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
      * Creates a new CmdChooseWindow object.
      */
     private void createCmdChooseWindow() {
-        Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+        Window owner = org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.views.diagrams.MainWindow.instance();
         CmdChooseWindow chooseWin = new CmdChooseWindow(owner, this);
         chooseWin.showWindow();
     }

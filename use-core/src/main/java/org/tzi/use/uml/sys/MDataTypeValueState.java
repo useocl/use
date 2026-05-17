@@ -19,8 +19,12 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MInstanceState;
+
+import org.tzi.use.uml.mm.instance.MInstance;
+
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.StringUtil;
 
@@ -103,7 +107,6 @@ public final class MDataTypeValueState implements MInstanceState {
         return Collections.unmodifiableMap(fAttrSlots);
     }
 
-    @Override
     public Set<MProtocolStateMachineInstance> getProtocolStateMachinesInstances() {
         return new HashSet<>();
     }

@@ -25,8 +25,8 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GIfThenElse;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.BooleanValue;
+import org.tzi.use.uml.mm.values.Value;
 
 /**
  * May 8th 2003 

@@ -21,8 +21,9 @@ package org.tzi.use.gui.mainFX;
 
 
 import javafx.scene.control.*;
+import org.tzi.use.gui.utilFX.ModelBrowserSorting;
 import org.tzi.use.main.Session;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.spi.IRuntime;
 
 import java.util.ArrayList;
 

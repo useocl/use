@@ -19,6 +19,12 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +33,7 @@ import java.util.Set;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 
 /**
  * A derived link controller which handles

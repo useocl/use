@@ -29,16 +29,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 
+import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
+import org.tzi.use.gen.assl.dynamics.GStatistic;
 import org.tzi.use.gen.assl.dynamics.IGChecker;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.tool.statistics.GInvariantStatistic;
-import org.tzi.use.gen.tool.statistics.GStatistic;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.values.BooleanValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.NullPrintWriter;
 

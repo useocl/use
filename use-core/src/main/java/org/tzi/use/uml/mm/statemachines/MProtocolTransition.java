@@ -20,7 +20,7 @@ package org.tzi.use.uml.mm.statemachines;
 
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.commonbehavior.communications.MCallEvent;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * A protocol transition (transition as specialized in the ProtocolStateMachines package) 

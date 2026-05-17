@@ -19,8 +19,8 @@
 
 package org.tzi.use.uml.sys.testsuite;
 
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.util.SrcPos;
+import org.tzi.use.uml.mm.instance.MSystemException;
 
 public abstract class MVariation {
 	protected SrcPos position; 

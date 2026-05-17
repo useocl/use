@@ -25,9 +25,11 @@ import java.util.Stack;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.util.SrcPos;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.VarBindings;
 
 /**
  * Symbol table for variable declarations with nested scopes.

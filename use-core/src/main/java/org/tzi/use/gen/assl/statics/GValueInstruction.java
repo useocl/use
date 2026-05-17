@@ -24,7 +24,7 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics

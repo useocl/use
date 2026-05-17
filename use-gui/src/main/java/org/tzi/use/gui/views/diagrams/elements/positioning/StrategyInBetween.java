@@ -172,7 +172,7 @@ public class StrategyInBetween extends StatefullPositionStrategy {
 		
 		for (int i = 0; i < numRelated; ++i) {
 			String id = helper.getElementStringValue("related" + i);
-			PlaceableNode n = helper.getAllNodes().get(id);
+			PlaceableNode n = (PlaceableNode) helper.getAllNodes().get(id);
 			
 			if (n == null) {
 				helper.toParent();

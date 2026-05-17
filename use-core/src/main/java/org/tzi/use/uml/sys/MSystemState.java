@@ -19,6 +19,21 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLinkImpl;
+
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
+
+import org.tzi.use.uml.mm.instance.MLinkEnd;
+
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
@@ -28,9 +43,9 @@ import org.tzi.use.config.Options;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.*;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
-import org.tzi.use.uml.ocl.value.*;
+import org.tzi.use.uml.mm.expr.*;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
+import org.tzi.use.uml.mm.values.*;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 import org.tzi.use.util.Log;
@@ -41,7 +56,7 @@ import org.tzi.use.util.collections.Bag;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.util.collections.HashBag;
 import org.tzi.use.util.collections.Queue;
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -57,7 +72,7 @@ import java.util.regex.Pattern;
  * @author Lars Hamann
  */
 
-public final class MSystemState {
+public final class MSystemState implements org.tzi.use.uml.mm.instance.IModelState {
 
 	/**
 	 * The name of the system state
@@ -673,7 +688,7 @@ public final class MSystemState {
 				if (obj.cls().conformsTo(attr.type())) {
 					// Check for all object values
 					for (MObject relObject : this.objectsOfClassAndSubClasses(cls)) {
-						MObjectState state = relObject.state(this); 
+						MObjectState state = (MObjectState) relObject.state(this);
 						if (state.attributeValue(attr).equals(obj.value())) {
 							state.setAttributeValue(attr, UndefinedValue.instance);
 							res.getModifiedStates().add(new ObjectStateModification(state, attr, obj));
@@ -1477,7 +1492,7 @@ public final class MSystemState {
         return res;
 	}
 	
-	List<MObject> evaluateDeriveExpression(MObject[] source, MAssociationEnd dst) throws MSystemException {
+	public List<MObject> evaluateDeriveExpression(MObject[] source, MAssociationEnd dst) throws MSystemException {
 		// add the object values to the context
 		EvalContext ctx = new SimpleEvalContext(MSystemState.this, MSystemState.this, new VarBindings());
 		List<MObject> result = new LinkedList<>();
@@ -2080,7 +2095,7 @@ public final class MSystemState {
 		for (MObject o : this.allObjects()) {
 			if (o.cls().getAllOwnedProtocolStateMachines().isEmpty()) continue;
 			
-			for (MProtocolStateMachineInstance psmI : o.state(this).getProtocolStateMachinesInstances()) {
+			for (MProtocolStateMachineInstance psmI : ((MObjectState) o.state(this)).getProtocolStateMachinesInstances()) {
 				error = error || !psmI.checkStateInvariant(this, out);
 				++checkedStateMachines;
 			}

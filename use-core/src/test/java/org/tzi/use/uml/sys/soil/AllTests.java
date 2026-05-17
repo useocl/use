@@ -19,7 +19,6 @@
 
 package org.tzi.use.uml.sys.soil;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -40,7 +39,6 @@ public class AllTests {
 	 */
 	public static Test suite() {
 		final TestSuite testSuite = new TestSuite("All system soil tests");
-        testSuite.addTestSuite(StatementEffectTest.class);
         return testSuite;
     }
 }

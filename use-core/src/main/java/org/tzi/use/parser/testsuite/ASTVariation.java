@@ -22,7 +22,7 @@ package org.tzi.use.parser.testsuite;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.sys.testsuite.MVariation;
 
 public abstract class ASTVariation extends AST {

@@ -20,17 +20,17 @@
 package org.tzi.use.uml.sys.soil;
 
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * Statement for an operation call to an
@@ -100,7 +100,7 @@ public class MObjectOperationCallStatement extends MOperationCallStatement {
         MObject self = EvalUtil.evaluateObjectExpression(context, fObject);
 
         MOperation operation = self.cls().operation(fOperation.name(), true);
-        MStatement operationBody = operation.getStatement();
+        MStatement operationBody = (MStatement) operation.getStatement();
 
         // evaluate arguments
         Value[] arguments = new Value[fArguments.length];

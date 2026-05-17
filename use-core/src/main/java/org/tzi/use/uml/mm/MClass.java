@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.sys.MOperationCall;
 
 /**
  * Instances of the type MClass represent classes in a model.
@@ -176,10 +175,10 @@ public interface MClass extends MClassifier {
 	public Set<MProtocolStateMachine> getOwnedProtocolStateMachines();
 
 	/**
-	 * @param operationCall
+	 * @param operation
 	 * @return
 	 */
-	public boolean hasStateMachineWhichHandles(MOperationCall operationCall);
+	public boolean hasStateMachineWhichHandles(MOperation operation);
 
 	/**
 	 * @return

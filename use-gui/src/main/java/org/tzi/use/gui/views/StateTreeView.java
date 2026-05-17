@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views;
 
+import org.tzi.use.gui.main.View;
+
 import java.util.Map;
 
 import javax.swing.JTree;
@@ -28,8 +30,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
@@ -75,7 +77,7 @@ public class StateTreeView extends JTree implements View {
                 DefaultMutableTreeNode objNode = new DefaultMutableTreeNode(obj);
                 classNode.add(objNode);
 
-                MObjectState objState = obj.state(fSystem.state());
+                MObjectState objState = (MObjectState) obj.state(fSystem.state());
                 Map<MAttribute, Value> attributeValueMap = objState.attributeValueMap();
 
                 for (Map.Entry<MAttribute, Value> entry : attributeValueMap.entrySet()) {

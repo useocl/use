@@ -21,11 +21,10 @@ package org.tzi.use.uml.mm;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 import java.util.*;
 
@@ -711,8 +710,8 @@ public class MAssociationClassImpl extends MClassifierImpl implements MAssociati
 	}
 
 	@Override
-	public boolean hasStateMachineWhichHandles(MOperationCall operationCall) {
-		return this.fClassImpl.hasStateMachineWhichHandles(operationCall);
+	public boolean hasStateMachineWhichHandles(MOperation operation) {
+		return this.fClassImpl.hasStateMachineWhichHandles(operation);
 	}
 
 	@Override

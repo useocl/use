@@ -1,7 +1,7 @@
 package org.tzi.use.gui.mainFX.runtime;
 
 import org.tzi.use.gui.mainFX.ModelBrowser;
-import org.tzi.use.main.runtime.IExtensionPoint;
+import org.tzi.use.runtime.spi.IExtensionPoint;
 
 import java.io.PrintWriter;
 

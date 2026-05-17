@@ -21,20 +21,22 @@ package org.tzi.use.parser.soil.ast;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.parser.*;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.SymbolTable;
-import org.tzi.use.util.soil.VariableSet;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.uml.sys.soil.SymbolTable;
+import org.tzi.use.uml.sys.soil.VariableSet;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -385,7 +387,7 @@ public abstract class ASTStatement extends AST {
 			}
 			
 			if (symbolTable.isDirty(name)) {
-				ASTStatement cause = symbolTable.getCause(name);
+				ASTStatement cause = (ASTStatement) symbolTable.getCause(name);
 				throw new CompilationFailedException(
 						this, 
 						"The type of variable " +

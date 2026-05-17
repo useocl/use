@@ -19,6 +19,10 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 /**
  * An linkobject is an instance of an associationclass. It usually has
  * different object states over time and is connected to several

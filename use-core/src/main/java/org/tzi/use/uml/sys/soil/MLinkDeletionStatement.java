@@ -24,13 +24,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 
 /**

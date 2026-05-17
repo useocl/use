@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.sys.events;
 
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.events.tags.EventContext;
 import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 

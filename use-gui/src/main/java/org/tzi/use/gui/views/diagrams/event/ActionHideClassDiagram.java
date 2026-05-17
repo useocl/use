@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.util.Selectable;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;

@@ -19,8 +19,8 @@
 
 package org.tzi.use.gui.viewsFX.evalbrowser;
 
-import org.tzi.use.uml.ocl.expr.EvalNode;
-import org.tzi.use.uml.ocl.value.VarBindings.Entry;
+import org.tzi.use.uml.mm.expr.EvalNode;
+import org.tzi.use.uml.mm.values.VarBindings.Entry;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
 

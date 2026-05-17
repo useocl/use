@@ -22,10 +22,10 @@ package org.tzi.use.parser.ocl;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.VarInitializer;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.VarInitializer;
+import org.tzi.use.uml.mm.types.Type;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

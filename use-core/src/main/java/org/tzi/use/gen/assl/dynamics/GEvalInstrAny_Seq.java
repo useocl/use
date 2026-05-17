@@ -30,8 +30,8 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GInstrAny_Seq;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.CollectionValue;
 
 public class GEvalInstrAny_Seq extends GEvalInstruction implements IGCaller {
     private GInstrAny_Seq fInstr;

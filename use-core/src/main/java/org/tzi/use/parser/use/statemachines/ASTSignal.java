@@ -21,7 +21,7 @@ package org.tzi.use.parser.use.statemachines;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.use.ASTAttribute;
 import org.tzi.use.parser.use.ASTClassifier;
 import org.tzi.use.parser.use.ASTInvariantClause;
@@ -29,7 +29,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MGeneralization;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,6 +19,12 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

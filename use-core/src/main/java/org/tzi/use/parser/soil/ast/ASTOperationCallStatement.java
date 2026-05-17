@@ -26,14 +26,14 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTOperationExpression;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 import org.tzi.use.uml.sys.soil.MLibraryOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MObjectOperationCallStatement;
 import org.tzi.use.uml.sys.soil.MOperationCallStatement;
 import org.tzi.use.uml.sys.soil.library.LibraryOperation;
 import org.tzi.use.uml.sys.soil.library.SoilLibrary;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**

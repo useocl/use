@@ -30,7 +30,7 @@ import org.tzi.use.uml.mm.MClassifierImpl;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.type.MessageType;
+import org.tzi.use.uml.mm.types.MessageType;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 

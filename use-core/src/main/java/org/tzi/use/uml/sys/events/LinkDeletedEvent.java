@@ -22,8 +22,8 @@ package org.tzi.use.uml.sys.events;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.events.tags.EventContext;
 import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 

@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.behavior.shared.CancelButton;
 import org.tzi.use.gui.views.diagrams.behavior.shared.OKButton;
 

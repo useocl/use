@@ -19,8 +19,8 @@
 package org.tzi.use.parser.use.statemachines;
 
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MPseudoState;
 import org.tzi.use.uml.mm.statemachines.MPseudoStateKind;
@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.mm.statemachines.MVertex;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.MInvalidModelException;
 
 /**
  * @author Lars Hamann
@@ -55,7 +55,7 @@ public class ASTProtocolStateMachine extends ASTStateMachine {
 			if (v != null) {
 				try {
 					defaultRegion.addSubvertex(v);
-				} catch (MSystemException e) {
+				} catch (MInvalidModelException e) {
 					throw new SemanticException(s.name, e);
 				}
 				
@@ -78,7 +78,7 @@ public class ASTProtocolStateMachine extends ASTStateMachine {
 			if (ct != null) {
 				try {
 					psm.getDefaultRegion().addTransition(ct);
-				} catch (MSystemException e) {
+				} catch (MInvalidModelException e) {
 					throw new SemanticException(t.source, e.getMessage());
 				}
 			}

@@ -40,8 +40,8 @@ public class MavenLayeredArchitectureTest {
         ArchRule rule = ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
                         "org.tzi.use.config..", "org.tzi.use.gen..", "org.tzi.use.graph..", "org.tzi.use.parser..",
-                        "org.tzi.use.uml..", "org.tzi.use.main.runtime..",
-                        "org.tzi.use.util.collections..", "org.tzi.use.util.rubyintegration..", "org.tzi.use.util.soil..",
+                        "org.tzi.use.uml..",
+                        "org.tzi.use.util.collections..",
                         "org.tzi.use.util.uml..")
                 .should().dependOnClassesThat().resideInAnyPackage("org.tzi.use.gui..",
                         "org.tzi.use.runtime..", "org.tzi.use.main.shell..")

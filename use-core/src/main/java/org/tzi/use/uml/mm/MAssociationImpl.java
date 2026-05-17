@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  * 
  * @author  Mark Richters
  */
-class MAssociationImpl extends MClassifierImpl implements MAssociation {
+public class MAssociationImpl extends MClassifierImpl implements MAssociation {
     
 	private List<MAssociationEnd> fAssociationEnds;
     
@@ -69,7 +69,7 @@ class MAssociationImpl extends MClassifierImpl implements MAssociation {
      * will be automatically determined by the kind of association
      * ends.
      */
-    MAssociationImpl(String name) {
+    public MAssociationImpl(String name) {
         super(name, false);
         fAssociationEnds = new ArrayList<MAssociationEnd>(2);
     }

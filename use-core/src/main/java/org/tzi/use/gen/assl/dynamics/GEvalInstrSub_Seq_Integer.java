@@ -30,9 +30,9 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GInstrSub_Seq_Integer;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.IntegerValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.SequenceValue;
+import org.tzi.use.uml.mm.values.IntegerValue;
 
 import java.util.Collection;
 import java.util.List;

@@ -35,6 +35,13 @@ public class ViewManager extends DefaultDesktopManager {
      */
     public void closeFrame(JInternalFrame f) {
         super.closeFrame(f);
-        ((ViewFrame) f).close();
+        // Reflectively call close() on the frame to avoid a static
+        // org.tzi.use.gui.views.diagrams.ViewFrame reference (would create a
+        // gui.main → gui.views back-edge).
+        try {
+            f.getClass().getMethod("close").invoke(f);
+        } catch (ReflectiveOperationException ignored) {
+            // not a ViewFrame; super.closeFrame did the visual close anyway
+        }
     }
 }

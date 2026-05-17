@@ -19,9 +19,9 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.shared;
 
-import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.events.Event;
 
 import java.util.*;

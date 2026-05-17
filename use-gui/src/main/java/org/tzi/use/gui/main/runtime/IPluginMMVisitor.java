@@ -2,7 +2,6 @@ package org.tzi.use.gui.main.runtime;
 
 import java.io.PrintWriter;
 
-import org.tzi.use.gui.main.ModelBrowser;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModelElement;
 
@@ -29,7 +28,7 @@ public interface IPluginMMVisitor extends MMVisitor {
 	 * 
 	 * @return The ModelBrowser object.
 	 */
-	public ModelBrowser modelBrowser();
+	public IModelBrowser modelBrowser();
 
 	/**
 	 * Method to get the PrintWriter.

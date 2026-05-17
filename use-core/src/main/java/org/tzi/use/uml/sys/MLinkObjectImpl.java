@@ -19,6 +19,16 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLinkImpl;
+
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+import org.tzi.use.uml.mm.instance.MLinkEnd;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.List;
 import java.util.Set;
 
@@ -27,8 +37,8 @@ import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.util.StringUtil;
 
 
@@ -88,24 +98,24 @@ public class MLinkObjectImpl implements MLinkObject {
      * @return null if object does not exist in the state
      */
     @Override
-    public MObjectState state( MSystemState systemState ) {
-        return systemState.getObjectState( this );
+    public MObjectState state( org.tzi.use.uml.mm.instance.IModelState systemState ) {
+        return ((MSystemState) systemState).getObjectState( this );
     }
 
     /**
      * Returns true if this link object exists in a specific system state.
      */
     @Override
-    public boolean exists( MSystemState systemState ) {
-        return systemState.getObjectState( this ) != null;
+    public boolean exists( org.tzi.use.uml.mm.instance.IModelState systemState ) {
+        return ((MSystemState) systemState).getObjectState( this ) != null;
     }
 
     @Override
-    public List<MObject> getNavigableObjects( MSystemState systemState,
+    public List<MObject> getNavigableObjects( org.tzi.use.uml.mm.instance.IModelState systemState,
                                      MNavigableElement src, MNavigableElement dst, List<Value> qualifierValues ) {
         // Here, delegation is not possible, because this instance is saved for link sets.
     	// Therefore, the delegation to this.delegateObject would result in empty data for navigation.
-    	return systemState.getNavigableObjects( this, src, dst, qualifierValues );
+    	return ((MSystemState) systemState).getNavigableObjects( this, src, dst, qualifierValues );
     }
 
     @Override

@@ -28,9 +28,9 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.util.List;
 
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.util.ModelBrowserSorting;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -39,9 +39,9 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.uml.ocl.value.EnumValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.values.EnumValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 
 /**
@@ -192,7 +192,7 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 	 */
 	public void updateContent() {
 		String value;
-		MObjectState objState = fObject.state(fParent.system().state());
+		MObjectState objState = (MObjectState) fObject.state(fParent.system().state());
 
 		if (objState == null)
 			return;

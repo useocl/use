@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.expr.*;
+import org.tzi.use.uml.mm.expr.*;
 
 import java.util.List;
 

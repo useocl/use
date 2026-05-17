@@ -26,13 +26,13 @@ import java.util.Set;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpBagLiteral;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpOrderedSetLiteral;
-import org.tzi.use.uml.ocl.expr.ExpSequenceLiteral;
-import org.tzi.use.uml.ocl.expr.ExpSetLiteral;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.uml.mm.expr.ExpBagLiteral;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpOrderedSetLiteral;
+import org.tzi.use.uml.mm.expr.ExpSequenceLiteral;
+import org.tzi.use.uml.mm.expr.ExpSetLiteral;
+import org.tzi.use.uml.mm.expr.Expression;
 import org.tzi.use.util.StringUtil;
 
 /**

@@ -25,18 +25,18 @@ import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpAsType;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpIsKindOf;
-import org.tzi.use.uml.ocl.expr.ExpIsTypeOf;
-import org.tzi.use.uml.ocl.expr.ExpSelectByKind;
-import org.tzi.use.uml.ocl.expr.ExpSelectByType;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.uml.mm.expr.ExpAsType;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpIsKindOf;
+import org.tzi.use.uml.mm.expr.ExpIsTypeOf;
+import org.tzi.use.uml.mm.expr.ExpSelectByKind;
+import org.tzi.use.uml.mm.expr.ExpSelectByType;
+import org.tzi.use.uml.mm.expr.ExpVariable;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.CollectionType;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser, 

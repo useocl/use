@@ -29,10 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.gen.assl.statics.GSignature;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MSystemState;
 
 

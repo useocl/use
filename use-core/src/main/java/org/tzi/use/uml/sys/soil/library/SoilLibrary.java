@@ -24,14 +24,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.IntegerValue;
-import org.tzi.use.uml.ocl.value.StringValue;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
+import org.tzi.use.uml.mm.types.TypeFactory;
+import org.tzi.use.uml.mm.values.IntegerValue;
+import org.tzi.use.uml.mm.values.StringValue;
+import org.tzi.use.uml.mm.values.UndefinedValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
 
 import com.google.common.collect.ArrayListMultimap;

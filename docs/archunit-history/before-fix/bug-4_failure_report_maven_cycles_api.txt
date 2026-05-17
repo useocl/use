@@ -1,0 +1,33 @@
+Cycle detected: Slice impl -> 
+                Slice root -> 
+                Slice impl
+  1. Dependencies of Slice impl
+    - Class <org.tzi.use.api.impl.UseSystemApiNative> extends class <org.tzi.use.api.UseSystemApi> in (UseSystemApiNative.java:0)
+    - Class <org.tzi.use.api.impl.UseSystemApiUndoable> extends class <org.tzi.use.api.UseSystemApi> in (UseSystemApiUndoable.java:0)
+    - Constructor <org.tzi.use.api.impl.UseSystemApiUndoable.<init>(org.tzi.use.api.UseModelApi)> has parameter of type <org.tzi.use.api.UseModelApi> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.createLinkEx(org.tzi.use.uml.mm.MAssociation, [Lorg.tzi.use.uml.sys.MObject;, [[Lorg.tzi.use.uml.ocl.value.Value;)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.createLinkObjectEx(org.tzi.use.uml.mm.MAssociationClass, java.lang.String, [Lorg.tzi.use.uml.sys.MObject;, [[Lorg.tzi.use.uml.ocl.value.Value;)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.createObjectEx(org.tzi.use.uml.mm.MClass, java.lang.String)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.deleteLinkEx(org.tzi.use.uml.mm.MAssociation, [Lorg.tzi.use.uml.sys.MObject;, [[Lorg.tzi.use.uml.ocl.value.Value;)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.deleteLinkEx(org.tzi.use.uml.sys.MLink)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.deleteObjectEx(org.tzi.use.uml.sys.MObject)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.redo()> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.setAttributeValueEx(org.tzi.use.uml.sys.MObject, org.tzi.use.uml.mm.MAttribute, org.tzi.use.uml.ocl.value.Value)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiNative.undo()> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiNative.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.createLinkEx(org.tzi.use.uml.mm.MAssociation, [Lorg.tzi.use.uml.sys.MObject;, [[Lorg.tzi.use.uml.ocl.value.Value;)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.createLinkObjectEx(org.tzi.use.uml.mm.MAssociationClass, java.lang.String, [Lorg.tzi.use.uml.sys.MObject;, [[Lorg.tzi.use.uml.ocl.value.Value;)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.createObjectEx(org.tzi.use.uml.mm.MClass, java.lang.String)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.deleteLinkEx(org.tzi.use.uml.mm.MAssociation, [Lorg.tzi.use.uml.sys.MObject;, [[Lorg.tzi.use.uml.ocl.value.Value;)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.deleteLinkEx(org.tzi.use.uml.sys.MLink)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.deleteObjectEx(org.tzi.use.uml.sys.MObject)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.redo()> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    - Method <org.tzi.use.api.impl.UseSystemApiUndoable.setAttributeValueEx(org.tzi.use.uml.sys.MObject, org.tzi.use.uml.mm.MAttribute, org.tzi.use.uml.ocl.value.Value)> throws type <org.tzi.use.api.UseApiException> in (UseSystemApiUndoable.java:0)
+    (22 further dependencies have been omitted...)
+  2. Dependencies of Slice root
+    - Method <org.tzi.use.api.UseSystemApi.create(org.tzi.use.main.Session)> calls constructor <org.tzi.use.api.impl.UseSystemApiUndoable.<init>(org.tzi.use.main.Session)> in (UseSystemApi.java:63)
+    - Method <org.tzi.use.api.UseSystemApi.create(org.tzi.use.uml.sys.MSystem, boolean)> calls constructor <org.tzi.use.api.impl.UseSystemApiUndoable.<init>(org.tzi.use.uml.sys.MSystem)> in (UseSystemApi.java:74)
+    - Method <org.tzi.use.api.UseSystemApi.create(org.tzi.use.uml.sys.MSystem, boolean)> calls constructor <org.tzi.use.api.impl.UseSystemApiNative.<init>(org.tzi.use.uml.sys.MSystem)> in (UseSystemApi.java:76)
+    - Method <org.tzi.use.api.UseSystemApi.create(org.tzi.use.uml.mm.MModel, boolean)> calls constructor <org.tzi.use.api.impl.UseSystemApiUndoable.<init>(org.tzi.use.uml.mm.MModel)> in (UseSystemApi.java:87)
+    - Method <org.tzi.use.api.UseSystemApi.create(org.tzi.use.uml.mm.MModel, boolean)> calls constructor <org.tzi.use.api.impl.UseSystemApiNative.<init>(org.tzi.use.uml.mm.MModel)> in (UseSystemApi.java:89)
+
+Cycle count: 1

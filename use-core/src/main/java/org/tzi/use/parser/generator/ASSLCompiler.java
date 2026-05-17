@@ -36,7 +36,7 @@ import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GProcedureCall;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.use.ASTConstraintDefinition;
 import org.tzi.use.uml.mm.GeneratorModelFactory;
 import org.tzi.use.uml.mm.MClassInvariant;

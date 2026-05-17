@@ -34,10 +34,10 @@ import org.tzi.use.gen.assl.statics.GAttributeAssignment;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 
 public class ASTGAttributeAssignment extends ASTGInstruction {
     ASTGocl fTargetObject;

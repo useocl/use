@@ -19,8 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.mm.types.Type;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ import java.util.Set;
  * @author Lars Hamann
  *
  */
-public interface MClassifier extends Type, MModelElement, MNamedElement, UseFileLocatable {
+public interface MClassifier extends Type, MModelElement, UseFileLocatable {
 	
 	/**
      * Returns the model owning this classifier.
@@ -181,5 +180,5 @@ public interface MClassifier extends Type, MModelElement, MNamedElement, UseFile
      */
     Map<String, ? extends MNavigableElement> navigableEnds();
 
-    boolean hasStateMachineWhichHandles(MOperationCall operationCall);
+    boolean hasStateMachineWhichHandles(MOperation operation);
 }

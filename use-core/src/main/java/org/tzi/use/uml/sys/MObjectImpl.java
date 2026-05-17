@@ -19,12 +19,14 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.List;
 
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
 
 
 /**
@@ -75,19 +77,19 @@ public final class MObjectImpl implements MObject {
     }
 
     @Override
-    public MObjectState state( MSystemState systemState ) {
-        return systemState.getObjectState( this );
+    public MObjectState state( org.tzi.use.uml.mm.instance.IModelState systemState ) {
+        return ((MSystemState) systemState).getObjectState( this );
     }
 
     @Override
-    public boolean exists( MSystemState systemState ) {
-        return systemState.getObjectState( this ) != null;
+    public boolean exists( org.tzi.use.uml.mm.instance.IModelState systemState ) {
+        return ((MSystemState) systemState).getObjectState( this ) != null;
     }
 
     @Override
-    public List<MObject> getNavigableObjects( MSystemState systemState, MNavigableElement src, 
+    public List<MObject> getNavigableObjects( org.tzi.use.uml.mm.instance.IModelState systemState, MNavigableElement src,
                                      MNavigableElement dst, List<Value> qualifierValues ) {
-        return systemState.getNavigableObjects( this, src, dst, qualifierValues );
+        return ((MSystemState) systemState).getNavigableObjects( this, src, dst, qualifierValues );
     }
 
     @Override
