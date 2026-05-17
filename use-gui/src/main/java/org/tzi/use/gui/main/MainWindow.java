@@ -1620,7 +1620,7 @@ public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.I
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            EvalOCLDialog dlg = new EvalOCLDialog(fSession, MainWindow.this);
+            org.tzi.use.gui.views.EvalOCLDialog dlg = new org.tzi.use.gui.views.EvalOCLDialog(fSession, MainWindow.this);
             dlg.setVisible(true);
         }
     }

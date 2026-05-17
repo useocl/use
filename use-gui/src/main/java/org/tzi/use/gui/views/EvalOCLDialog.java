@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.views;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
@@ -52,7 +52,7 @@ import java.io.StringWriter;
  * @author Mark Richters
  */
 @SuppressWarnings("serial")
-class EvalOCLDialog extends JDialog {
+public class EvalOCLDialog extends JDialog {
     private MSystem fSystem;
 
     private final JTextArea fTextIn;
@@ -75,7 +75,7 @@ class EvalOCLDialog extends JDialog {
 		}
 	};
     
-    EvalOCLDialog(final Session session, JFrame parent) {
+    public EvalOCLDialog(final Session session, JFrame parent) {
         super(parent, "Evaluate OCL expression");
     	fSystem = getSystem(session);
         session.addChangeListener(sessionChangeListener);

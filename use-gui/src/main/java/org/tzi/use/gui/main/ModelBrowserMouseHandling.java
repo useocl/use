@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams.event;
+package org.tzi.use.gui.main;
 
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
