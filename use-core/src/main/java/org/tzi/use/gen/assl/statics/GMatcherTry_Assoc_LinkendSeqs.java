@@ -32,8 +32,8 @@ import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 /**
  * @see org.tzi.use.gen.assl.statics

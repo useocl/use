@@ -7,10 +7,10 @@ import java.util.List;
 import org.tzi.use.gen.assl.statics.GInstrASSLCall;
 import org.tzi.use.gen.assl.statics.GOCLExpression;
 import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.uml.mm.ocl.expr.Evaluator;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.value.UndefinedValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.values.UndefinedValue;
+import org.tzi.use.uml.mm.values.Value;
 
 public class GEvalASSLCall extends GEvalInstruction implements IGCaller {
 

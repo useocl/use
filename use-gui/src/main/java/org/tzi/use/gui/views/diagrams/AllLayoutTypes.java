@@ -10,7 +10,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationClassImpl;
-import org.tzi.use.uml.mm.sys.MLinkObject;
+import org.tzi.use.uml.sys.MLinkObject;
 
 import java.util.*;
 

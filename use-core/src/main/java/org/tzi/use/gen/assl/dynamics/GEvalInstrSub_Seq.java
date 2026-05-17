@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.tzi.use.gen.assl.statics.GInstrSub_Seq;
-import org.tzi.use.uml.mm.ocl.value.SequenceValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.values.SequenceValue;
+import org.tzi.use.uml.mm.values.Value;
 
 /**
  * March 22th 2001 

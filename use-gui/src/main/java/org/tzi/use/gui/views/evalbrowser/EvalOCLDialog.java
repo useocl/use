@@ -29,11 +29,11 @@ import org.tzi.use.main.Session;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.mm.ocl.expr.Evaluator;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.TeeWriter;
 

@@ -24,9 +24,9 @@ import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

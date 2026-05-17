@@ -31,9 +31,9 @@ import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.api.factory.UseSystemApiFactory;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 
 /**

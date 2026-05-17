@@ -35,10 +35,10 @@ public class AllTests {
     public static Test suite() {
         final TestSuite test = new TestSuite( "All uml tests" );
         test.addTest( org.tzi.use.uml.mm.AllTests.suite() );
-        test.addTest( org.tzi.use.uml.mm.ocl.expr.AllTests.suite() );
-        test.addTest( org.tzi.use.uml.mm.ocl.type.AllTests.suite() );
-        test.addTest( org.tzi.use.uml.mm.ocl.value.AllTests.suite() );
-        test.addTest( org.tzi.use.uml.mm.sys.AllTests.suite() );
+        test.addTest( org.tzi.use.uml.mm.expr.AllTests.suite() );
+        test.addTest( org.tzi.use.uml.mm.types.AllTests.suite() );
+        test.addTest( org.tzi.use.uml.mm.values.AllTests.suite() );
+        test.addTest( org.tzi.use.uml.sys.AllTests.suite() );
         return test;
     }
 }

@@ -19,10 +19,10 @@
 
 package org.tzi.use.parser.soil.ast;
 
-import org.tzi.use.uml.mm.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.mm.sys.soil.MRValue;
-import org.tzi.use.uml.mm.sys.soil.MRValueNewLinkObject;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueNewLinkObject;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

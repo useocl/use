@@ -33,11 +33,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.tzi.use.gen.assl.statics.GProcedure;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.value.UndefinedValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.ocl.value.VarBindings;
-import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.values.UndefinedValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
 
 public class GEvalProcedure implements IGCaller {
     private GProcedure fProcedure;

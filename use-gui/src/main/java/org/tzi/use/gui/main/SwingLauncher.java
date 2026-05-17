@@ -11,8 +11,8 @@ import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.mm.ocl.extension.ExtensionManager;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.extension.ExtensionManager;
+import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.Log;
 
 import javax.swing.plaf.FontUIResource;

@@ -26,10 +26,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.mm.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

@@ -25,8 +25,8 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.mm.ocl.type.EnumType;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.types.EnumType;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

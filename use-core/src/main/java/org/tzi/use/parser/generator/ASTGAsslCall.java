@@ -11,7 +11,7 @@ import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.assl.statics.GSignature;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 
 public class ASTGAsslCall extends ASTGInstruction {
 

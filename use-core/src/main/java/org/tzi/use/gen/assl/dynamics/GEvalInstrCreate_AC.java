@@ -41,16 +41,16 @@ import org.tzi.use.gen.assl.statics.GInstrCreate_AC;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.ocl.value.ObjectValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemException;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
-import org.tzi.use.uml.mm.sys.soil.MNewLinkObjectStatement;
-import org.tzi.use.uml.mm.sys.soil.MRValue;
-import org.tzi.use.uml.mm.sys.soil.MRValueExpression;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueExpression;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     private GInstrCreate_AC fInstr;
@@ -85,7 +85,7 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.dynamics.IGCaller#feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.mm.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCaller#feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.mm.values.Value, org.tzi.use.gen.assl.dynamics.IGCollector)
 	 */
 	@Override
 	public void feedback(GConfiguration conf, Value value, IGCollector collector) throws GEvaluationException {

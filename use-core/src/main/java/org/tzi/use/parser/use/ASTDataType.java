@@ -24,7 +24,7 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.util.StringUtil;
 
 /**

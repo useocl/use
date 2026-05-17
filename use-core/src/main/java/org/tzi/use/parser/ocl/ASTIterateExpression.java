@@ -27,14 +27,14 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
-import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.mm.ocl.expr.ExpIterate;
-import org.tzi.use.uml.mm.ocl.expr.ExpVariable;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
-import org.tzi.use.uml.mm.ocl.expr.VarInitializer;
-import org.tzi.use.uml.mm.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpIterate;
+import org.tzi.use.uml.mm.expr.ExpVariable;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.expr.VarInitializer;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

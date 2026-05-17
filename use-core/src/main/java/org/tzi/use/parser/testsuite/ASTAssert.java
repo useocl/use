@@ -7,7 +7,7 @@ import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.util.SrcPos;
-import org.tzi.use.uml.mm.sys.testsuite.MAssert;
+import org.tzi.use.uml.sys.testsuite.MAssert;
 
 public abstract class ASTAssert extends AST {
 	private Token start;

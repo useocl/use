@@ -36,11 +36,11 @@ import org.tzi.use.gen.assl.dynamics.IGCollector;
 import org.tzi.use.gen.tool.statistics.GInvariantStatistic;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ocl.expr.Evaluator;
-import org.tzi.use.uml.mm.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.mm.ocl.value.BooleanValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.values.BooleanValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.util.NullPrintWriter;
 
 

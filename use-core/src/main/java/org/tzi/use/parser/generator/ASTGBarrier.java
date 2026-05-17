@@ -23,7 +23,7 @@ import org.tzi.use.gen.assl.statics.GInstrBarrier;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * AST class for the barrier statement.

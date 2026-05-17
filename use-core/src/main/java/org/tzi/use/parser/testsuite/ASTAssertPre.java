@@ -10,11 +10,11 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.sys.testsuite.MAssert;
-import org.tzi.use.uml.mm.sys.testsuite.MAssertPre;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.sys.testsuite.MAssert;
+import org.tzi.use.uml.sys.testsuite.MAssertPre;
 
 public class ASTAssertPre extends ASTAssert {
 

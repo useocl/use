@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.api.TestModelUtil;
-import org.tzi.use.uml.mm.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.mm.ocl.value.BooleanValue;
+import org.tzi.use.uml.mm.expr.ExpressionWithValue;
+import org.tzi.use.uml.mm.values.BooleanValue;
 import org.tzi.use.uml.mm.MInvalidModelException;
 
 /**

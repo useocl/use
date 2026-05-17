@@ -45,7 +45,7 @@ import javax.swing.table.AbstractTableModel;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.sys.MSystem;
 
 /**
  * View for information about associations, e.g., subsetting, redefined etc.

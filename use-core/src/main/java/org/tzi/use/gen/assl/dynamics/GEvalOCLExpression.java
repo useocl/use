@@ -30,9 +30,9 @@
 package org.tzi.use.gen.assl.dynamics;
 
 import org.tzi.use.gen.assl.statics.GOCLExpression;
-import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 
-import org.tzi.use.uml.mm.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
 
 public class GEvalOCLExpression extends GEvalInstruction {
     private GOCLExpression fInstr;

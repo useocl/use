@@ -35,7 +35,7 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.mm.ocl.type.EnumType;
+import org.tzi.use.uml.mm.types.EnumType;
 
 /**
  * This class is used to keep track of

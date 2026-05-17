@@ -23,7 +23,7 @@ import org.tzi.use.api.impl.UseSystemApiNative;
 import org.tzi.use.api.impl.UseSystemApiUndoable;
 import org.tzi.use.main.Session;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.sys.MSystem;
 
 /**
  * Factory for creating {@link UseSystemApi} instances.

@@ -21,10 +21,10 @@ package org.tzi.use.parser.soil.ast;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTSimpleType;
-import org.tzi.use.uml.mm.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.mm.sys.soil.MRValue;
-import org.tzi.use.uml.mm.sys.soil.MRValueNewObject;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueNewObject;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

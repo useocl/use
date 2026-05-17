@@ -26,7 +26,7 @@ package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.gen.assl.dynamics.GEvalLoop;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDecl;
 
 /**
  * @see org.tzi.use.gen.assl.statics

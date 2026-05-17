@@ -40,8 +40,8 @@ import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
 
 public class ASTGProcedureCall extends AST {
     private Token fName;

@@ -21,10 +21,10 @@ package org.tzi.use.uml.mm;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 import java.util.*;
 

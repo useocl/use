@@ -39,10 +39,10 @@ import org.tzi.use.gui.views.diagrams.util.MenuScroller;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNamedElementComparator;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MLinkObjectImpl;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.sys.MLinkObjectImpl;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.collections.CollectionUtil;
 
 import com.google.common.collect.Sets;

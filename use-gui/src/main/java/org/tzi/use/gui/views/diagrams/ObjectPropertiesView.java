@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.uml.mm.instance.MObject;
+
 import org.tzi.use.gui.main.View;
 
 import com.google.common.base.Predicate;
@@ -32,11 +34,11 @@ import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.*;
-import org.tzi.use.uml.mm.sys.events.tags.SystemStateChangedEvent;
-import org.tzi.use.uml.mm.sys.soil.MAttributeAssignmentStatement;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.sys.*;
+import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
+import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

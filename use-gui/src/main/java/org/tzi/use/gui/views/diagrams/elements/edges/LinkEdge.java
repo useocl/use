@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
-import org.tzi.use.uml.mm.sys.MLink;
+import org.tzi.use.uml.mm.instance.MLink;
 
 /**
  * Interface for classes that (possibly) represent

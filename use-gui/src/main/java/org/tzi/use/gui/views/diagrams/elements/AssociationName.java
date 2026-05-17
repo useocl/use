@@ -27,7 +27,7 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCor
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.sys.MLink;
+import org.tzi.use.uml.mm.instance.MLink;
 
 /**
  * Represents a association name node in a diagram. 

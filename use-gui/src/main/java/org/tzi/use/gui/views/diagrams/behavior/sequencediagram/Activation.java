@@ -20,11 +20,11 @@
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.Lifeline.ObjectBox;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MOperationCall;
-import org.tzi.use.uml.mm.sys.events.Event;
-import org.tzi.use.uml.mm.sys.events.*;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.*;
 
 import java.awt.*;
 import java.util.List;

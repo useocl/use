@@ -27,7 +27,7 @@ import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 
 /**
  * Hides the selected objects.

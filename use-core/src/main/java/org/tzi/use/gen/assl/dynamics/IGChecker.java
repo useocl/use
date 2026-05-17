@@ -29,7 +29,7 @@
 
 package org.tzi.use.gen.assl.dynamics;
 
-import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.sys.MSystemState;
 
 public interface IGChecker {
     public boolean check(MSystemState state, IGCollector collector);

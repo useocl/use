@@ -18,7 +18,7 @@
  */
 package org.tzi.use.uml.mm.statemachines;
 
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * A state models a situation during which some (usually implicit) invariant condition holds.

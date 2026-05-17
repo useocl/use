@@ -31,9 +31,9 @@ import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.Type;
 
 
 /**

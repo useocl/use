@@ -20,7 +20,7 @@
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
 import org.tzi.use.uml.mm.MNamedElement;
-import org.tzi.use.uml.mm.sys.events.Event;
+import org.tzi.use.uml.sys.events.Event;
 
 /**
  * This class represent a single message in communication diagrams

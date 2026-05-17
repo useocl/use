@@ -30,10 +30,10 @@ import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MDataType;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.sys.soil.MNewObjectStatement;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.sys.soil.MNewObjectStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 

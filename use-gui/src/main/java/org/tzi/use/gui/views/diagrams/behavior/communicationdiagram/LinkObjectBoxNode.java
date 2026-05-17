@@ -22,8 +22,8 @@ package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.sys.MLinkObject;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.sys.MLinkObject;
+import org.tzi.use.uml.mm.instance.MObject;
 
 /**
  * Association classes will be represented as LinkBoxNode

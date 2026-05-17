@@ -26,12 +26,12 @@ import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MState;
-import org.tzi.use.uml.mm.ocl.expr.ExpOclInState;
-import org.tzi.use.uml.mm.ocl.expr.ExpVariable;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.type.CollectionType;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.ExpOclInState;
+import org.tzi.use.uml.mm.expr.ExpVariable;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.CollectionType;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
 
 import java.util.Set;

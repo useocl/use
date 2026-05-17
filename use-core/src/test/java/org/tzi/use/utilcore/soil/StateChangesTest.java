@@ -31,13 +31,13 @@ import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.api.TestModelUtil;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MLinkObject;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemException;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.soil.StateDifference;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.sys.MLinkObject;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 
 /**

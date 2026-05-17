@@ -24,9 +24,9 @@ import java.util.Set;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.mm.ocl.expr.ExpIf;
-import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.ExpIf;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

@@ -21,8 +21,8 @@ package org.tzi.use.parser.ocl;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.uml.mm.ocl.expr.ExpConstUnlimitedNatural;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.ExpConstUnlimitedNatural;
+import org.tzi.use.uml.mm.expr.Expression;
 
 import java.util.Set;
 

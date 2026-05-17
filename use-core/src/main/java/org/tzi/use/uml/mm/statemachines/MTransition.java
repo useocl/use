@@ -20,7 +20,7 @@ package org.tzi.use.uml.mm.statemachines;
 
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.commonbehavior.communications.MTrigger;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * A transition is a directed relationship between a source vertex and a target vertex. 

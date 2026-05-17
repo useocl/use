@@ -25,9 +25,9 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
-import org.tzi.use.uml.mm.sys.soil.VariableSet;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
+import org.tzi.use.uml.sys.soil.VariableSet;
 
 
 /**

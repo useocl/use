@@ -31,14 +31,14 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNavigableElement;
-import org.tzi.use.uml.mm.ocl.expr.ExpCollect;
-import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.mm.ocl.expr.ExpNavigation;
-import org.tzi.use.uml.mm.ocl.expr.ExpNavigationClassifierSource;
-import org.tzi.use.uml.mm.ocl.expr.ExpStdOp;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.ExpCollect;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpNavigation;
+import org.tzi.use.uml.mm.expr.ExpNavigationClassifierSource;
+import org.tzi.use.uml.mm.expr.ExpStdOp;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.util.StringUtil;
 
 /**

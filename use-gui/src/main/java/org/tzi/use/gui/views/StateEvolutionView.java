@@ -23,9 +23,9 @@ import org.tzi.use.gui.main.View;
 
 import java.awt.Color;
 
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.events.tags.SystemStructureChangedEvent;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.events.tags.SystemStructureChangedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

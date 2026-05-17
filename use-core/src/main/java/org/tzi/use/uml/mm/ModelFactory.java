@@ -23,11 +23,11 @@ import java.util.List;
 
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignalImpl;
-import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.Type;
 
 /** 
  * A ModelFactory creates instances of the Metamodel.

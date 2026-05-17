@@ -19,6 +19,14 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import org.tzi.use.uml.mm.instance.MLinkEnd;
+
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
 import java.awt.*;
@@ -104,8 +112,8 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModelElement;
 import org.tzi.use.uml.mm.MNamedElementComparator;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.*;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.sys.*;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
 import org.w3c.dom.Element;

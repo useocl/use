@@ -41,9 +41,9 @@ import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.selection.ObjectSelectionView;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemState;
 
 /** 
  * a view of SelectionObject

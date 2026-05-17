@@ -25,7 +25,7 @@ import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 import org.tzi.use.util.StringUtil;
 
 /**

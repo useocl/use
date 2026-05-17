@@ -20,7 +20,7 @@
 package org.tzi.use.uml.analysis.coverage;
 
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.mm.ocl.expr.*;
+import org.tzi.use.uml.mm.expr.*;
 
 import java.util.Stack;
 

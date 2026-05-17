@@ -27,8 +27,8 @@ package org.tzi.use.gen.assl.statics;
 import org.tzi.use.gen.assl.dynamics.GEvalInstrCreateN_C_Integer;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.ocl.type.SequenceType;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.types.SequenceType;
+import org.tzi.use.uml.mm.types.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics

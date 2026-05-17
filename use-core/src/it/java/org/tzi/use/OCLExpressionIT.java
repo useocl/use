@@ -9,7 +9,7 @@ import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.api.factory.UseSystemApiFactory;
-import org.tzi.use.uml.mm.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 
 public class OCLExpressionIT {
 

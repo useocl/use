@@ -41,8 +41,8 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 
 import com.google.common.collect.Multimap;
 

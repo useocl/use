@@ -27,10 +27,10 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.mm.ocl.expr.ExpObjectByUseId;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpObjectByUseId;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

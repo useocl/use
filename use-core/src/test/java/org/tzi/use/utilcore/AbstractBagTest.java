@@ -26,12 +26,12 @@ import org.tzi.use.api.UseModelApi;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
-import org.tzi.use.uml.mm.ocl.value.BagValue;
-import org.tzi.use.uml.mm.ocl.value.IntegerValue;
-import org.tzi.use.uml.mm.ocl.value.ObjectValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.types.TypeFactory;
+import org.tzi.use.uml.mm.values.BagValue;
+import org.tzi.use.uml.mm.values.IntegerValue;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.sys.MSystem;
 
 
 /**

@@ -32,7 +32,7 @@ import org.tzi.use.gui.views.diagrams.selection.SelectionComparator;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.util.collections.CollectionUtil;
 
 /**

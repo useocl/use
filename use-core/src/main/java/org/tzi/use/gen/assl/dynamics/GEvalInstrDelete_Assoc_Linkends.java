@@ -38,17 +38,17 @@ import java.util.ListIterator;
 import org.tzi.use.gen.assl.statics.GInstrDelete_Assoc_Linkends;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.ocl.value.ObjectValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemException;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.StatementEvaluationResult;
-import org.tzi.use.uml.mm.sys.soil.MLinkDeletionStatement;
-import org.tzi.use.uml.mm.sys.soil.MRValue;
-import org.tzi.use.uml.mm.sys.soil.MRValueExpression;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.StatementEvaluationResult;
+import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MRValueExpression;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 public class GEvalInstrDelete_Assoc_Linkends extends GEvalInstruction
     implements IGCaller {

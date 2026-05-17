@@ -20,10 +20,10 @@
 package org.tzi.use.uml.mm;
 
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.mm.ocl.expr.ExpressionPrintVisitor;
-import org.tzi.use.uml.mm.ocl.expr.ExpressionVisitor;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.type.EnumType;
+import org.tzi.use.uml.mm.expr.ExpressionPrintVisitor;
+import org.tzi.use.uml.mm.expr.ExpressionVisitor;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.EnumType;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.uml.mm.sorting.UseFileOrderComparator;
 import org.tzi.use.uml.mm.sorting.UseModelElementFileOrderComparator;

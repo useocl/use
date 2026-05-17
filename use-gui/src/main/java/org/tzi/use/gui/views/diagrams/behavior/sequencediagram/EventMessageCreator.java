@@ -21,9 +21,9 @@
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MOperationCall;
-import org.tzi.use.uml.mm.sys.events.*;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.events.*;
 import org.tzi.use.util.StringUtil;
 
 import java.util.List;

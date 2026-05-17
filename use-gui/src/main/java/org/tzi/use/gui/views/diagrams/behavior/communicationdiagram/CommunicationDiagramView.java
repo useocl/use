@@ -30,17 +30,17 @@ import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.PrintableView;
 import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.events.AttributeAssignedEvent;
-import org.tzi.use.uml.mm.sys.events.Event;
-import org.tzi.use.uml.mm.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.mm.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.mm.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.uml.mm.sys.events.OperationEnteredEvent;
-import org.tzi.use.uml.mm.sys.events.OperationExitedEvent;
-import org.tzi.use.uml.mm.sys.events.StatementExecutedEvent;
-import org.tzi.use.uml.mm.sys.events.tags.EventContext;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.OperationExitedEvent;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.sys.events.tags.EventContext;
 
 /**
  * A Panel for displaying the communication diagrams

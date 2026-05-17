@@ -22,8 +22,8 @@ package org.tzi.use.parser.ocl;
 import java.util.Set;
 
 import org.tzi.use.parser.Context;
-import org.tzi.use.uml.mm.ocl.expr.ExpConstBoolean;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.ExpConstBoolean;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.

@@ -31,11 +31,11 @@ package org.tzi.use.gen.assl.dynamics;
 
 import java.util.Random;
 
-import org.tzi.use.uml.mm.ocl.expr.Evaluator;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.ocl.value.VarBindings;
-import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
 
 public class GConfiguration {
     private final MSystemState fSystemState;

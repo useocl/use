@@ -30,11 +30,11 @@ import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.PrintableView;
 import org.tzi.use.gui.main.View;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MObjectState;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.events.TransitionEvent;
-import org.tzi.use.uml.mm.sys.statemachines.MProtocolStateMachineInstance;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.events.TransitionEvent;
+import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 
 import com.google.common.eventbus.Subscribe;
 

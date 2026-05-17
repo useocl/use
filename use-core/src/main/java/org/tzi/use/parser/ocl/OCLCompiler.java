@@ -27,10 +27,10 @@ import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.value.VarBindings;
-import org.tzi.use.uml.mm.sys.MSystemState;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.VarBindings;
+import org.tzi.use.uml.sys.MSystemState;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

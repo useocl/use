@@ -29,8 +29,8 @@ import org.tzi.use.gui.main.View;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.mm.ocl.type.EnumType;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.types.EnumType;
+import org.tzi.use.uml.sys.MSystem;
 
 import javax.swing.*;
 import java.awt.*;

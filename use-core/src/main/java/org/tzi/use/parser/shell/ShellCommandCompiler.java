@@ -32,10 +32,10 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.Log;
-import org.tzi.use.uml.mm.sys.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

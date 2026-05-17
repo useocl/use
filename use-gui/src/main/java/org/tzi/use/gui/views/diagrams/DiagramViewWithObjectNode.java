@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
 import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 
 /**
  * @author Quang Dung Nguyen

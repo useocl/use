@@ -26,7 +26,7 @@ package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.gen.assl.dynamics.GEvalInstrSub_Seq;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 
 /**
  * @see org.tzi.use.gen.assl.statics

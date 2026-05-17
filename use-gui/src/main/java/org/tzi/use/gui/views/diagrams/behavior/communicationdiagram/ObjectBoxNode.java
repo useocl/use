@@ -23,8 +23,8 @@ import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleData;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 
 import java.util.Arrays;
 import java.util.HashSet;

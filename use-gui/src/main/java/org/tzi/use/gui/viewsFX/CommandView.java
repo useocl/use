@@ -32,11 +32,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import org.tzi.use.gui.main.View;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.events.StatementExecutedEvent;
-import org.tzi.use.uml.mm.sys.soil.MEnterOperationStatement;
-import org.tzi.use.uml.mm.sys.soil.MExitOperationStatement;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 import java.util.List;
 import java.util.Stack;

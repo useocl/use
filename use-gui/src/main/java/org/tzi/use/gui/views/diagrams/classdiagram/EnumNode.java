@@ -27,7 +27,7 @@ import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.util.Util;
-import org.tzi.use.uml.mm.ocl.type.EnumType;
+import org.tzi.use.uml.mm.types.EnumType;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

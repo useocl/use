@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 
 import java.util.List;
 import java.util.Map;

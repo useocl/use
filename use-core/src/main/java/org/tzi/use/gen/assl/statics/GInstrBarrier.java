@@ -22,7 +22,7 @@ package org.tzi.use.gen.assl.statics;
 import org.tzi.use.gen.assl.dynamics.GEvalBarrier;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.gen.assl.dynamics.GStatistic;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 
 /**
  * Static part of the barrier instruction

@@ -26,9 +26,9 @@ import java.util.Set;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
-import org.tzi.use.uml.mm.ocl.expr.ExpObjRef;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.expr.ExpObjRef;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.instance.MObject;
 
 
 /**

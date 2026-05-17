@@ -23,9 +23,9 @@ import java.io.PrintWriter;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.sys.soil.MConditionalExecutionStatement;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.sys.soil.MConditionalExecutionStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 

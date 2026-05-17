@@ -39,8 +39,8 @@ import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.w3c.dom.Element;
 
 import com.ximpleware.AutoPilot;

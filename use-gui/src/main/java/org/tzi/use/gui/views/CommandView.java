@@ -30,11 +30,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.events.StatementExecutedEvent;
-import org.tzi.use.uml.mm.sys.soil.MEnterOperationStatement;
-import org.tzi.use.uml.mm.sys.soil.MExitOperationStatement;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
+import org.tzi.use.uml.sys.soil.MExitOperationStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 
 import com.google.common.eventbus.Subscribe;
 

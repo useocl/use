@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.tzi.use.uml.mm.ocl.expr.EvalNode;
-import org.tzi.use.uml.mm.ocl.value.VarBindings.Entry;
+import org.tzi.use.uml.mm.expr.EvalNode;
+import org.tzi.use.uml.mm.values.VarBindings.Entry;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.StringUtil.IElementFormatter;
 

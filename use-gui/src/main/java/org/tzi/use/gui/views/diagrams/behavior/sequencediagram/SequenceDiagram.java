@@ -19,6 +19,12 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,15 +70,15 @@ import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
 import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelectionHelper;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.sys.*;
-import org.tzi.use.uml.mm.sys.events.AttributeAssignedEvent;
-import org.tzi.use.uml.mm.sys.events.Event;
-import org.tzi.use.uml.mm.sys.events.LinkDeletedEvent;
-import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
-import org.tzi.use.uml.mm.sys.events.ObjectCreatedEvent;
-import org.tzi.use.uml.mm.sys.events.ObjectDestroyedEvent;
-import org.tzi.use.uml.mm.sys.events.OperationEnteredEvent;
-import org.tzi.use.uml.mm.sys.events.OperationExitedEvent;
+import org.tzi.use.uml.sys.*;
+import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
+import org.tzi.use.uml.sys.events.Event;
+import org.tzi.use.uml.sys.events.LinkDeletedEvent;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
+import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.OperationExitedEvent;
 
 /**
  * A SequenceDiagram shows an UML sequence diagram of events.

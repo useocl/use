@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.sys.soil.MSequenceStatement;
-import org.tzi.use.uml.mm.sys.soil.MStatement;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.sys.soil.MSequenceStatement;
+import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.uml.mm.sys.soil.VariableSet;
+import org.tzi.use.uml.sys.soil.VariableSet;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

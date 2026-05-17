@@ -25,7 +25,7 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.ocl.type.MessageType;
+import org.tzi.use.uml.mm.types.MessageType;
 
 /**
  * Interface for the meta class <code>Signal</code>.

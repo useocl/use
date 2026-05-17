@@ -22,7 +22,7 @@ package org.tzi.use.parser.soil.ast;
 import java.io.PrintWriter;
 
 import org.tzi.use.util.SrcPos;
-import org.tzi.use.uml.mm.sys.soil.MEmptyStatement;
+import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 

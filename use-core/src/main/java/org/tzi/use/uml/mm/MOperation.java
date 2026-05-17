@@ -22,11 +22,11 @@ package org.tzi.use.uml.mm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.uml.mm.ocl.expr.ExpUndefined;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.expr.VarDeclList;
-import org.tzi.use.uml.mm.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.ExpUndefined;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.util.StringUtil;
 
 /**

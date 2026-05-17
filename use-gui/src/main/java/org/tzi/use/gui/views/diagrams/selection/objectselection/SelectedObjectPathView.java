@@ -40,9 +40,9 @@ import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.selection.ObjectSelectionView;
 import org.tzi.use.gui.views.diagrams.selection.TableModel.Row;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
 
 /** 
  * a view of SelectedObjectPath

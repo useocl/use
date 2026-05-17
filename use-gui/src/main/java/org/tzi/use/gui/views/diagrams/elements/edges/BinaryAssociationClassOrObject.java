@@ -37,8 +37,8 @@ import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
 import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MLinkEnd;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MLinkEnd;
 import org.w3c.dom.Element;
 
 /**

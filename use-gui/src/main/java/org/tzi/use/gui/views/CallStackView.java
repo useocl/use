@@ -37,10 +37,10 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.mm.sys.MOperationCall;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.events.OperationEnteredEvent;
-import org.tzi.use.uml.mm.sys.events.OperationExitedEvent;
+import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.events.OperationEnteredEvent;
+import org.tzi.use.uml.sys.events.OperationExitedEvent;
 import org.tzi.use.util.StringUtil;
 
 import com.google.common.eventbus.Subscribe;

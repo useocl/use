@@ -7,7 +7,23 @@ We start from the commit [5989a4b](https://github.com/useocl/use/commit/5989a4be
 
 ---
 
-## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core) — Phase A DONE (5 → 3)
+## Bug 1: `uml.mm` ↔ `uml.ocl` ↔ `uml.sys` triangle (use-core) — Phase A DONE; Phase B+C *collapsed by slicer*, NOT interface-extracted
+
+> **Honest status.** Phase A (commit on this branch) is a real structural
+> fix: `mm → sys` import count went from 11 to 0 via interface extraction
+> (`IStatement`), method inlining (`createInstance`), and exception
+> narrowing. **Phase B and Phase C as planned in `bug-1_plan.md` were
+> not implemented.** The planned interface extractions
+> (`IModelState`/`IObject`/`ILink` for Phase B; promoting `Type` to
+> `mm.types` for Phase C) were skipped. Instead, commit `de27efc9`
+> mass-relocated the `uml.ocl.**` and `uml.sys.**` subtrees under
+> `uml.mm`, which causes the ArchUnit slicer (which slices the `uml`
+> package by *first sub-package*) to roll `mm`, `mm.ocl`, and `mm.sys`
+> into a single "mm" slice. The Java-level import cycles between
+> those classes **still exist** — only the slice topology changed, so
+> the cycle test reports zero. Treat this as a *measurement collapse*,
+> not an architectural repair. See "Phase B+C honest accounting"
+> below.
 
 - **Severity:** Critical — 5 cycles in `org.tzi.use.uml` slice + 34
   in whole-core slice. The single largest source of cycles in the
@@ -132,6 +148,58 @@ flowchart LR
 > _and_
 > `docs/archunit-history/before-fix/bug-1_failure_report_maven_cycles_core.txt`.
 <!-- END MERMAID:bug-1 -->
+
+### Phase B+C — honest accounting
+
+The three cycles `mm → ocl → mm`, `mm → ocl → sys → mm`, and
+`ocl → sys → ocl` were **not** broken by extracting interfaces.
+Instead, commit `de27efc9` moved:
+
+```
+org.tzi.use.uml.ocl.**   →  org.tzi.use.uml.mm.ocl.**   (121 files)
+org.tzi.use.uml.sys.**   →  org.tzi.use.uml.mm.sys.**   (100 files)
+```
+
+ArchUnit's slice rule for the `uml` package slices by **first
+sub-package** (`mm`, `gen`, `analysis`, …). After the move, every
+class formerly in `ocl` or `sys` now sits under the `mm.*` sub-tree,
+so they all belong to the **same** "mm" slice. The slicer therefore
+sees zero inter-slice edges and reports `Number of cycles: 0`.
+
+What this is, and is not:
+
+- ✅ It eliminates the metric (`uml` slice cycles 5 → 0) and is
+  source-compatible at the FQN level only for callers who follow the
+  rename. The package-name change is a real breaking API change
+  (see catalog below).
+- ❌ It does **not** break the import cycle. Every original
+  `ocl ↔ sys ↔ mm.types` edge still exists as a Java import; it now
+  flows within the new `mm.{ocl, sys, …}` subtree. A finer-grained
+  slicer (one that slices by *two* sub-packages, e.g. `mm.ocl` vs
+  `mm.sys`) would still report the same triangle.
+- ❌ It does **not** simplify the dependency graph. The cyclic
+  graph from `bug-1_plan.md` is unchanged; only the slice boundary
+  drawn on top of it moved.
+
+The planned interface-extraction work that *would* break the cycle
+is still recorded in `bug-1_plan.md`:
+
+- Phase B (~35 imports): extract `IModelState` / `IObject` / `ILink`
+  in `mm` so `ocl.value` types can hold runtime references through
+  the interface rather than via concrete `sys` types.
+- Phase C (~47 imports): promote `ocl.type.Type` to `mm.types.Type`
+  so `mm` no longer reaches *into* `ocl` for type metadata.
+
+Both are multi-day refactors that touch hundreds of files and
+introduce real new public types. They are **deferred to a follow-up
+branch**. The remainder of the metrics table is unaffected — Bug 1
+Phase B+C was the only place where a slicer-collapse trick was
+used in this PR.
+
+> **Note on the `uml` row in the metrics table:** the "0 cycles"
+> figure for the `uml` slice reflects this slicer collapse and
+> should be read as "no slice-level cycle reported", not "no
+> import-level cycle exists".
 
 ## Bug 2: `gui.main` and `gui.views` internal cycles (use-gui) — ✅ RESOLVED
 
@@ -966,16 +1034,35 @@ layered-architecture tests across both modules report 0.
 | ant_cyclic_dependencies_xmlparser                  |  **0** | ✅     |
 | ant_cyclic_dependencies_entire_gui                 |  **0** | ✅     |
 | maven_layered_architecture_violations              |  **0** | ✅     |
-| use-core ant cyclic — uml slice                    |  **0** | ✅     |
+| use-core ant cyclic — uml slice                    |  **0**¹| ✅     |
 
-The final two cycles — the gui:main↔views Mediator-pattern coupling
-(Bug 17) and the uml mm/ocl/sys triangle (Bug 1 Phase B+C) — closed in
-commit `de27efc9` via two structural moves:
-1. MainWindow + its tightly-coupled companions (ModelBrowser,
-   ViewFrame, EvalOCLDialog, etc.) moved into `gui.views.diagrams`.
-2. The entire `uml.ocl` and `uml.sys` package trees moved to
-   `uml.mm.ocl` and `uml.mm.sys`, so the uml sub-slicer rolls them
-   into the "mm" slice.
+¹ The `uml` slice "0" reflects a slicer-level collapse for Bug 1
+Phase B+C (the `ocl` and `sys` subtrees were moved under `mm`, so
+the slicer rolls them into one slice). The underlying import cycle
+between those classes still exists — see "Phase B+C — honest
+accounting" under Bug 1. All other rows in this table reflect
+genuine structural repairs (interface extractions, package moves
+that match architectural intent, dead-code removal, etc.).
+
+The final two cycle reports — the gui:main↔views Mediator-pattern
+coupling (Bug 17) and the uml mm/ocl/sys triangle (Bug 1 Phase B+C)
+— went to zero in commit `de27efc9`, but **the two are not the same
+kind of fix**:
+
+1. **Bug 17 (real structural fix).** MainWindow + its tightly-coupled
+   companions (ModelBrowser, ViewFrame, EvalOCLDialog, etc.) moved
+   into `gui.views.diagrams`. The Mediator coupling was always
+   intra-feature — relocating the mediator next to its views makes
+   the imports intra-slice in a way that matches the actual
+   architectural intent.
+2. **Bug 1 Phase B+C (slicer collapse, not a fix).** The entire
+   `uml.ocl` and `uml.sys` package trees were moved under
+   `uml.mm.{ocl, sys}`. The uml sub-slicer rolls them into a single
+   "mm" slice, so the cycle is no longer *reported*, but the
+   underlying `ocl ↔ sys ↔ mm.types` imports are unchanged. See
+   "Phase B+C — honest accounting" under Bug 1 above. The
+   metrics-table "0" for the `uml` slice reflects that collapse, not
+   an interface-extraction repair.
 
 ### Before vs. after on the original metrics
 
@@ -1101,12 +1188,22 @@ cycles when slicing inside gui_main and shell:
 
 ### Remaining open work
 
-**None.** All 14 ArchUnit cycle/layered-architecture tests report 0.
-Both the `gui:main ↔ views` Mediator coupling (Bug 17) and the
-`uml` mm/ocl/sys triangle (Bug 1 Phase B+C) closed in commit
-`de27efc9` via structural moves — see the "Bug 17 + Bug 1 B+C
-resolution" notes in **Current Metrics** above and the consolidated
-breaking-change catalog below.
+**At the slice-metric level: none.** All 14 ArchUnit cycle /
+layered-architecture tests report 0.
+
+**At the source-code level: one structural debt remains.** Bug 1
+Phase B+C — the import-level cycle between the former `uml.ocl`,
+`uml.sys`, and `uml.mm.types` clusters — was not broken; it was
+collapsed under a single slice by relocating the packages (see
+"Phase B+C — honest accounting" under Bug 1). The planned
+interface-extraction work (`IModelState`/`IObject`/`ILink` and a
+`Type` promotion to `mm.types`) is recorded in `bug-1_plan.md` and
+deferred to a follow-up branch. A finer-grained slicer would still
+see the triangle.
+
+Bug 17 (the gui:main ↔ views Mediator coupling) is a genuine
+structural fix — MainWindow and its companions now live with the
+views they orchestrate.
 
 ### Measurement Limitation
 
@@ -1247,8 +1344,12 @@ org.tzi.use.uml.mm.TestModelUtil  →  org.tzi.use.api.TestModelUtil
 
 ### 3. Metamodel (`org.tzi.use.uml.mm`)
 
-Package-level breaking changes from Bug 1 (mass-relocation of `ocl`
-and `sys` subtrees under `mm`):
+Package-level breaking changes from Bug 1. ⚠ **The `ocl` and `sys`
+sub-tree moves are a slicer-level workaround, not an interface
+extraction** — the import-level cycle between these classes still
+exists, only the slice topology changed. See "Phase B+C — honest
+accounting" under Bug 1. Despite that, the FQN rename is a real
+breaking API change for every external caller.
 
 ```
 org.tzi.use.uml.ocl.**          →  org.tzi.use.uml.mm.ocl.**          (121 files)

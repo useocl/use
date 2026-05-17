@@ -4,10 +4,10 @@ import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.ocl.ASTExpression;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
-import org.tzi.use.uml.mm.sys.testsuite.MAssert;
-import org.tzi.use.uml.mm.sys.testsuite.MAssertOclExpression;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.TypeFactory;
+import org.tzi.use.uml.sys.testsuite.MAssert;
+import org.tzi.use.uml.sys.testsuite.MAssertOclExpression;
 
 public class ASTAssertOclExpression extends ASTAssert {
 	private ASTExpression expression;

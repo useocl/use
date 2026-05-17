@@ -19,10 +19,10 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.shared;
 
-import org.tzi.use.uml.mm.sys.MLink;
-import org.tzi.use.uml.mm.sys.MLinkObject;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.events.Event;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.sys.MLinkObject;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.events.Event;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

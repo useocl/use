@@ -7,8 +7,8 @@ import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.mm.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.mm.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.Expression;
 
 public class ASTExistentialInvariantClause extends ASTInvariantClause {
 

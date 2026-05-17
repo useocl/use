@@ -21,7 +21,7 @@ package org.tzi.use.gui.views.diagrams.selection.objectselection;
 
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MNamedElementComparator;
-import org.tzi.use.uml.mm.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

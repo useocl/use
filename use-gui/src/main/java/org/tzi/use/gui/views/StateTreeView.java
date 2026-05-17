@@ -30,12 +30,12 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MObjectState;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemState;
-import org.tzi.use.uml.mm.sys.events.StatementExecutedEvent;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemState;
+import org.tzi.use.uml.sys.events.StatementExecutedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

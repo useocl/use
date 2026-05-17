@@ -38,8 +38,8 @@ import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.parser.Context;
 import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
-import org.tzi.use.uml.mm.ocl.expr.VarDecl;
-import org.tzi.use.uml.mm.ocl.type.SequenceType;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.SequenceType;
 
 public class ASTGLoop extends ASTGInstruction {
 	Token fName;

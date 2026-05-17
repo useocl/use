@@ -29,15 +29,15 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MInvalidModelException;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.mm.ocl.value.IntegerValue;
-import org.tzi.use.uml.mm.ocl.value.UndefinedValue;
-import org.tzi.use.uml.mm.ocl.value.Value;
-import org.tzi.use.uml.mm.ocl.value.VarBindings;
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.MSystem;
-import org.tzi.use.uml.mm.sys.MSystemException;
-import org.tzi.use.uml.mm.sys.soil.SymbolTable;
-import org.tzi.use.uml.mm.sys.soil.VariableEnvironment;
+import org.tzi.use.uml.mm.values.IntegerValue;
+import org.tzi.use.uml.mm.values.UndefinedValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.VarBindings;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.MSystem;
+import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.soil.SymbolTable;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 
 
 /**

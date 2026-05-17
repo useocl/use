@@ -20,8 +20,8 @@
 package org.tzi.use.uml.mm;
 
 import com.google.common.collect.Iterators;
-import org.tzi.use.uml.mm.ocl.type.Type;
-import org.tzi.use.uml.mm.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 import java.util.*;
 

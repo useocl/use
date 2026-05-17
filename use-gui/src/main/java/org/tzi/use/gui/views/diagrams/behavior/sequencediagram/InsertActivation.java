@@ -21,8 +21,8 @@ package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
 import java.util.List;
 
-import org.tzi.use.uml.mm.sys.MObject;
-import org.tzi.use.uml.mm.sys.events.LinkInsertedEvent;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.sys.events.LinkInsertedEvent;
 
 /**
  * An special kind of Activation for an insert command. This is necessery

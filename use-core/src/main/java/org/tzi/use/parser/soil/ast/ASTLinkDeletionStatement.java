@@ -26,8 +26,8 @@ import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.mm.sys.soil.MLinkDeletionStatement;
-import org.tzi.use.uml.mm.sys.soil.MRValue;
+import org.tzi.use.uml.sys.soil.MLinkDeletionStatement;
+import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
