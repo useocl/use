@@ -952,8 +952,8 @@ flowchart LR
 |----------------|-------:|-------:|-------:|
 | `uml` slice    |      5 |      3 |  −40%  |
 | core whole     |     34 |      ? |   —    |
-| `gui` slice    |     14 |      5 |  −64%  |
-| entire-project |    275 |      3 |  −99%  |
+| `gui` slice    |     14 |      1 |  −93%  |
+| entire-project |    275 |  **0** | **−100%** ✅ |
 
 Tests: 271 use-core + 18 use-gui still passing.
 
@@ -963,7 +963,7 @@ is silently skipped during `mvn test`. The entire-project metric — which
 slices the merged classpath of both modules — is the authoritative
 overall measurement.)
 
-### What landed this PR (Bugs 1A, 2–10, 11, 12–14, 15, 16, 19, 20, 23)
+### What landed this PR (Bugs 1A, 2–10, 11, 12–14, 15, 16, 18, 19, 20, 23, 24, 25, 26, 27)
 
 - **Bug 19** (`uml → gen`): killed the only `MSystem → GGenerator` edge
   by moving the cache to Shell. Collapsed 9 core cycles + 33
@@ -1001,39 +1001,72 @@ overall measurement.)
   `api` (it's a test-fixture builder for the API). Collapsed the last
   uml→api back-edge.
 
-### Remaining open work (3 entire-project cycles, all in the plugin SPI)
+### Plugin SPI refactor — DONE (entire-project 3 → 0) ✅
 
-The three remaining cycles all sit in the `gui ↔ main ↔ runtime`
-plugin-system triangle:
+The plugin-system triangle (`gui ↔ main ↔ runtime`) is fully untangled:
 
-1. `gui → runtime → gui` — `MainWindow.pluginActions` is typed
-   `Map<…, PluginActionProxy>` (concrete impl in `runtime.gui.impl`).
-   `PluginActionProxy extends PluginAction (javax.swing.Action)`,
-   constructed with a `MainWindow` parameter. To break: extract an
-   `IPluginActionProxy` SPI interface that lives where runtime can
-   depend on it (or move `PluginActionProxy` to gui).
-2. `main → runtime → main` — `Shell.pluginCommands` is typed
-   `List<PluginShellCmdContainer>` (concrete impl). Same pattern:
-   needs an `IPluginShellCmdContainer` SPI.
-3. `gui → main → runtime → gui` — composite of the first two; closes
-   automatically when either back-edge is broken.
+- **Bug 26+27**: moved plugin impls out of runtime into the slices they
+  actually serve. `runtime.gui.impl` + `runtime.gui` interfaces →
+  `gui.plugin`; `runtime.guiFX.impl` + `runtime.guiFX` interface →
+  `gui.pluginFX`; `runtime.shell.impl` +
+  `runtime.shell.IPluginShellCmdProxy` → `main.shell.plugin`.
+- Plugin SPI weakened — `runtime.spi.IPluginAction.getSession()` and
+  `getParent()` return `Object` (downcast at call sites); same for
+  `IPluginShellCmdDelegate.performCommand`'s parameter.
+  `IPluginActionDelegate.shouldBeEnabled` uses reflection to invoke
+  `hasSystem()` since the typed access is intentionally gone.
+- Application contracts relocated: `main.runtime.{IRuntime,
+  IExtensionPoint, IDescriptor}` had no use-core consumers; moved into
+  `runtime.spi` (use-gui) alongside the `IPlugin*` interfaces. use-core
+  no longer exports `main.runtime`.
+- `runtime.bootstrap.MainPluginRuntime` moved to `gui.plugin` so its
+  references to extension-point impls are intra-slice. Launcher
+  `Class.forName` strings updated.
+- `gui.main.IPluginActionProxy` interface introduced (Swing
+  `Action` + `calculateEnabled`); `PluginAction` implements it,
+  `MainWindow.pluginActions` retyped against the interface — kills the
+  gui-internal `plugin ↔ main` cycle.
+- Diagram-plugin classes (`IPluginDiagramExtensionPoint`,
+  `DiagramExtensionPoint`, `StyleInfoProvider`,
+  `PluginDiagramManipulator`, `DiagramPlugin`) moved from `gui.plugin`
+  to `gui.views.diagrams` where their `DiagramView`/`PlaceableNode`
+  dependencies live.
 
-The right way to fix these is a proper plugin-SPI redesign — move all
-`runtime.*.impl` types behind interfaces declared in a neutral package
-(or in `main.runtime` if you accept main as the SPI owner). That is
-genuinely a half-day refactor; out of scope for this branch.
+### Additional GUI-internal cleanups (gui 5 → 1)
 
-### Bug 1 (uml triangle) — Phase B+C still open
+- **Bug 18 done**: `views ↔ graphlayout` cycle broken by moving
+  `AllLayoutTypes` (has `instanceof ClassNode/DiamondNode/ObjectNode`
+  checks) into `views.diagrams`, and moving the `Layoutable` interface
+  into `graphlayout` (where its consumers live).
+- **`views → mainFX` cycle broken**: introduced
+  `gui.views.diagrams.IFXWindowHost` SPI (`createNewWindow` +
+  Object-typed `getSession()`). FX `MainWindow` installs itself as
+  `INSTANCE` on construction. Rewrote 7 call sites in
+  `views.diagrams.selection.*`, `views.diagrams.behavior.*`,
+  `views.diagrams.objectdiagram.NewObjectDiagram` to dispatch through
+  the SPI rather than statically reaching `mainFX.MainWindow`.
 
-Phase A landed. The remaining 3 cycles in the `uml` slice are:
+### Remaining open work
+
+**1 gui-internal cycle**: `main ↔ views` — the deep MainWindow ↔ View
+bidirectional coupling. MainWindow stores typed `List<ClassDiagramView>`
+etc.; views take `MainWindow` ctor parameters; `ViewFrame` lives in
+`gui.main` but holds a `View` from `gui.views`; `EvalOCLDialog`,
+`ModelBrowser` similarly cross-reference. Breaking this requires either
+relocating `ViewFrame`/`ModelBrowser` into `gui.views` (invasive: many
+callers in gui.main) or retyping the lists against the `gui.views.View`
+parent interface (loses static typing at use sites). Documented as
+**Bug 17**, deferred to a focused follow-up.
+
+**`uml` triangle Phase B+C** (3 cycles in the `uml` sub-slicer):
 - `mm → ocl → mm`
 - `mm → ocl → sys → mm`
 - `ocl → sys → ocl`
 
-Phase B (break `ocl → sys`, 35 imports) and Phase C (promote `Type`
-to `mm.types`, 47 imports) are documented in
-[`bug-1_plan.md`](./bug-1_plan.md). Both are significant interface
-extractions; deferred to a focused follow-up branch.
+Phase B (break `ocl → sys`, 35 imports — needs `IModelState`/`IObject`/
+`ILink` interface extraction) and Phase C (promote `Type` to `mm.types`,
+47 imports) are documented in [`bug-1_plan.md`](./bug-1_plan.md). Both
+are significant interface extractions; deferred to a follow-up branch.
 
 ### Measurement Limitation
 
