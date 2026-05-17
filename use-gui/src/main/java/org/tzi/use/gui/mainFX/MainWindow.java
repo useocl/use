@@ -75,7 +75,7 @@ import org.tzi.use.main.gui.Main;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.gui.plugin.PluginActionProxy;
+import org.tzi.use.gui.main.IPluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -178,8 +178,8 @@ public class MainWindow {
     private static final String DEFAULT_REDO_TEXT = "Redo last undone statement";
 
 
-    private Map<Map<String, String>, PluginActionProxy> pluginActions =
-            new HashMap<Map<String, String>, PluginActionProxy>();
+    private Map<Map<String, String>, IPluginActionProxy> pluginActions =
+            new HashMap<Map<String, String>, IPluginActionProxy>();
 
 
     public MainWindow() {
@@ -306,9 +306,9 @@ public class MainWindow {
          * 3.  Iterate over all plug-in actions and materialise them
          *     as (a) toolbar buttons, (b) menu items / sub-menus.
          * ------------------------------------------------------------ */
-        for (Map.Entry<Map<String, String>, PluginActionProxy> entry : pluginActions.entrySet()) {
+        for (Map.Entry<Map<String, String>, IPluginActionProxy> entry : pluginActions.entrySet()) {
             Map<String, String> desc = entry.getKey();     // {menu, menuitem, tooltip, …}
-            PluginActionProxy act = entry.getValue();   // Glue object that fires the action
+            IPluginActionProxy act = entry.getValue();   // Glue object that fires the action
 
             /* ---- 3a  Toolbar button ------------------------------------------ */
             Button btn = new Button();                     // 30×30 like the rest
@@ -432,7 +432,7 @@ public class MainWindow {
         boolean on = fSession.hasSystem();
 
         if (Options.doPLUGIN) {
-            for (PluginActionProxy currentAction : pluginActions.values()) {
+            for (IPluginActionProxy currentAction : pluginActions.values()) {
                 currentAction.calculateEnabled();
             }
         }

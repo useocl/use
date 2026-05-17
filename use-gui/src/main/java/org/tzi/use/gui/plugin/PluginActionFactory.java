@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import org.tzi.use.gui.main.IPluginActionProxy;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IPluginActionDescriptor;
@@ -46,10 +47,10 @@ public class PluginActionFactory {
 	 *            The application's MainWindow object
 	 * @return A Map of Plugin Action Proxies
 	 */
-	public Map<Map<String, String>, PluginActionProxy> createPluginActions(Vector<IPluginActionDescriptor> actions, Session session,
+	public Map<Map<String, String>, IPluginActionProxy> createPluginActions(Vector<IPluginActionDescriptor> actions, Session session,
 			MainWindow mainWindow) {
 
-		Map<Map<String, String>, PluginActionProxy> actionsMap = new HashMap<Map<String, String>, PluginActionProxy>();
+		Map<Map<String, String>, IPluginActionProxy> actionsMap = new HashMap<Map<String, String>, IPluginActionProxy>();
 
 		for (IPluginActionDescriptor currentActionDescriptor : actions) {
 			Map<String, String> currentActionDescMap = new HashMap<String, String>();

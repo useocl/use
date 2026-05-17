@@ -1,7 +1,7 @@
-package org.tzi.use.gui.plugin;
+package org.tzi.use.gui.views.diagrams;
 
 import lombok.NonNull;
-import org.tzi.use.gui.plugin.PluginDiagramManipulator;
+import org.tzi.use.gui.views.diagrams.PluginDiagramManipulator;
 import org.tzi.use.runtime.impl.Plugin;
 
 import java.util.List;

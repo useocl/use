@@ -3,9 +3,9 @@ package org.tzi.use.gui.main.runtime;
 import java.util.Map;
 
 import org.tzi.use.main.Session;
+import org.tzi.use.gui.main.IPluginActionProxy;
 import org.tzi.use.runtime.spi.IDescriptor;
 import org.tzi.use.runtime.spi.IExtensionPoint;
-import org.tzi.use.gui.plugin.PluginActionProxy;
 
 /**
  * This interface provides the behaviour of the Plugin Action Extension Point.
@@ -31,6 +31,6 @@ public interface IPluginActionExtensionPoint extends IExtensionPoint {
 	 *            The application's MainWindow object
 	 * @return
 	 */
-	Map<Map<String, String>, PluginActionProxy> createPluginActions(Session session, IMainWindow mainWindow);
+	Map<Map<String, String>, IPluginActionProxy> createPluginActions(Session session, IMainWindow mainWindow);
 
 }

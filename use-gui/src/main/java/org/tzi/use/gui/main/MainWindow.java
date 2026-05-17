@@ -48,7 +48,6 @@ import org.tzi.use.main.Session.EvaluatedStatement;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.main.shell.Shell;
 import org.tzi.use.parser.use.USECompiler;
-import org.tzi.use.gui.plugin.PluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -158,8 +157,8 @@ public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.I
 
     private static IRuntime fPluginRuntime;
 
-    private Map<Map<String, String>, PluginActionProxy> pluginActions =
-            new HashMap<Map<String, String>, PluginActionProxy>();
+    private Map<Map<String, String>, IPluginActionProxy> pluginActions =
+            new HashMap<Map<String, String>, IPluginActionProxy>();
 
     MainWindow(Session session, IRuntime pluginRuntime) {
         super("USE");
@@ -461,11 +460,11 @@ public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.I
 
             this.pluginActions = actionExtensionPoint.createPluginActions(session, this);
 
-            Set<Map.Entry<Map<String, String>, PluginActionProxy>> pluginActionSet = this.pluginActions.entrySet();
+            Set<Map.Entry<Map<String, String>, IPluginActionProxy>> pluginActionSet = this.pluginActions.entrySet();
 
-            for (Map.Entry<Map<String, String>, PluginActionProxy> currentActionMapEntry : pluginActionSet) {
+            for (Map.Entry<Map<String, String>, IPluginActionProxy> currentActionMapEntry : pluginActionSet) {
                 Map<String, String> currentActionDescMap = currentActionMapEntry.getKey();
-                AbstractAction currentAction = currentActionMapEntry.getValue();
+                AbstractAction currentAction = (AbstractAction) currentActionMapEntry.getValue();
                 addToToolBar(this.fToolBar, currentAction, currentActionDescMap.get("tooltip"));
 
                 // Creating submenu and menu entries
@@ -865,7 +864,7 @@ public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.I
         fActionViewAssociationInfo.setEnabled(on);
 
         if (Options.doPLUGIN) {
-            for (PluginActionProxy currentAction : pluginActions.values()) {
+            for (IPluginActionProxy currentAction : pluginActions.values()) {
                 currentAction.calculateEnabled();
             }
         }

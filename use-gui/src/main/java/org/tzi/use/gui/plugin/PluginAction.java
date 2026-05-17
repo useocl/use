@@ -1,5 +1,6 @@
 package org.tzi.use.gui.plugin;
 
+import org.tzi.use.gui.main.IPluginActionProxy;
 import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.runtime.spi.IPlugin;
@@ -21,7 +22,7 @@ import java.awt.event.ActionEvent;
  * @author Roman Asendorf
  */
 public abstract class PluginAction extends AbstractAction implements
-		IPluginAction {
+		IPluginAction, IPluginActionProxy {
 
 	private final IPluginActionDescriptor pluginActionDescriptor;
 
