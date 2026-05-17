@@ -18,9 +18,6 @@
  */
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import org.tzi.use.parser.ExprContext;
-import org.tzi.use.util.SemanticException;
-import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MNamedElement;
 import org.tzi.use.uml.mm.MOperation;
@@ -65,16 +62,6 @@ public class MTrigger implements MNamedElement {
 		return event.toString();
 	}
 
-	/**
-	 * @param vars
-	 * @param exprContext
-	 * @param isPre
-	 * @throws SemanticException 
-	 */
-	public void buildEnvironment(Symtable vars, ExprContext exprContext, boolean isPre) throws SemanticException {
-		event.buildEnvironment(vars, exprContext, isPre);
-	}
-	
 	/**
 	 * @param text
 	 * @return

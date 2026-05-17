@@ -320,7 +320,9 @@ public class ASTAssociationEnd extends ASTAnnotatable {
 	    		}
 	    	}
 			
-	    	parameter.addVariablesToSymtable(vars);
+	    	for (VarDecl decl : parameter) {
+	    		vars.add(decl.name(), decl.type(), decl.getSourcePosition());
+	    	}
 	    	
 	    	Expression exp = derivedExpression.gen(ctx);
 	    	

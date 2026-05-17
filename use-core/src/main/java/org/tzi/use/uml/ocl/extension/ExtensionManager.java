@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
@@ -185,7 +184,27 @@ public class ExtensionManager {
 		return op;
 	}
 	
+	/**
+	 * Resolves an OCL type name to a {@link Type}. Configured by the embedding
+	 * application at startup so this class does not need to depend on the
+	 * parser package.
+	 */
+	@FunctionalInterface
+	public interface TypeResolver {
+		Type resolve(MModel model, String typeName, String context, PrintWriter error);
+	}
+
+	private static TypeResolver typeResolver;
+
+	public static void setTypeResolver(TypeResolver resolver) {
+		typeResolver = resolver;
+	}
+
 	protected Type getType(String typeName) {
-		return OCLCompiler.compileType(emptyModel, typeName, "Extension type", error);
+		if (typeResolver == null) {
+			throw new IllegalStateException(
+					"ExtensionManager.setTypeResolver(...) must be called before loading extensions");
+		}
+		return typeResolver.resolve(emptyModel, typeName, "Extension type", error);
 	}
 }

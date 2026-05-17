@@ -53,7 +53,7 @@ import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.testsuite.MTestSuite;
+import org.tzi.use.parser.testsuite.MTestSuite;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.Report;
 import org.tzi.use.util.StringUtil;
@@ -1515,7 +1515,10 @@ public final class Shell implements Runnable, PPCHandler, IShell {
 			try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename))){
 				handleBOM(in);
 
-				system.loadInvariants(in, str.trim(), doEcho, new PrintWriter(getOut(), true));
+				PrintWriter out = new PrintWriter(getOut(), true);
+				Collection<MClassInvariant> invs = ASSLCompiler.compileInvariants(
+						system.model(), in, str.trim(), out);
+				system.addLoadedInvariants(invs, doEcho, out);
 
 				setFileClosed();
 			} catch (FileNotFoundException e) {

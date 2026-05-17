@@ -29,6 +29,8 @@ import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MOperation;
+import org.tzi.use.uml.mm.commonbehavior.communications.MCallEvent;
+import org.tzi.use.uml.mm.commonbehavior.communications.MEvent;
 import org.tzi.use.uml.mm.commonbehavior.communications.MTrigger;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MProtocolTransition;
@@ -38,6 +40,7 @@ import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.mm.statemachines.MVertex;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.util.StringUtil;
 
 /**
@@ -197,7 +200,17 @@ public class ASTTransitionDefinition extends AST {
             vars.add("self", cf, null);
             ctx.exprContext().push("self", cf);
 
-            t.getTrigger().buildEnvironment(vars, ctx.exprContext(), isPre);
+            MEvent event = t.getTrigger().getEvent();
+            if (event instanceof MCallEvent) {
+                MCallEvent callEvent = (MCallEvent) event;
+                MOperation op = callEvent.getOperation();
+                for (VarDecl parameter : op.paramList()) {
+                    vars.add(parameter.name(), parameter.type(), null);
+                }
+                if (!isPre && op.hasResultType()) {
+                    vars.add("result", op.resultType(), null);
+                }
+            }
             
             ctx.setInsidePostCondition(!isPre);
             conditionExp = expr.gen(ctx);

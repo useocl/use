@@ -18,11 +18,7 @@
  */
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import org.tzi.use.parser.ExprContext;
-import org.tzi.use.util.SemanticException;
-import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.VarDecl;
 
 /**
  * @author Lars Hamann
@@ -50,22 +46,4 @@ public class MCallEvent extends MMessageEvent {
 		return operation.signature() ;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tzi.use.uml.mm.commonbehavior.communications.MEvent#buildEnvironment(org.tzi.use.parser.Symtable, org.tzi.use.parser.ExprContext, boolean)
-	 */
-	@Override
-	public void buildEnvironment(Symtable vars, ExprContext exprContext,
-			boolean isPre) throws SemanticException {
-		super.buildEnvironment(vars, exprContext, isPre);
-		
-		// Add parameter
-		for (VarDecl parameter : this.operation.paramList()) {
-			vars.add(parameter.name(), parameter.type(), null);
-		}
-		
-        // add special variable `result' in postconditions with result value
-        if (! isPre && operation.hasResultType() ) {
-        	vars.add("result", operation.resultType(), null);
-        }
-	}
 }

@@ -19,8 +19,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.util.SemanticException;
-import org.tzi.use.parser.Symtable;
 import org.tzi.use.util.StringUtil;
 
 import java.util.ArrayList;
@@ -156,16 +154,6 @@ public class VarDeclList implements Iterable<VarDecl> {
         }
     }
 
-	/**
-	 * @param vars
-	 * @throws SemanticException 
-	 */
-	public void addVariablesToSymtable(Symtable vars) throws SemanticException {
-		for (VarDecl var : fVarDecls) {
-			vars.add(var.name(), var.type(), var.getSourcePosition());
-		}
-	}
-	
 	@Override
 	public Iterator<VarDecl> iterator() {
 		return fVarDecls.iterator();

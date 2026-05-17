@@ -5,6 +5,7 @@ import org.tzi.use.main.Session;
 import org.tzi.use.main.gui.Launcher;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
+import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
@@ -44,6 +45,7 @@ public class SwingLauncher implements Launcher {
 
         if (!Options.disableExtensions) {
             ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + Options.FILE_SEPARATOR + "oclextensions";
+            ExtensionManager.setTypeResolver(OCLCompiler::compileType);
             ExtensionManager.getInstance().loadExtensions();
         }
 

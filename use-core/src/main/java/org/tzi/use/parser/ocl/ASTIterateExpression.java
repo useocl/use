@@ -31,6 +31,7 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.ExpIterate;
 import org.tzi.use.uml.ocl.expr.ExpVariable;
 import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.expr.VarInitializer;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
@@ -90,7 +91,9 @@ public class ASTIterateExpression extends ASTExpression {
         vars.enterScope();
         if (! declList.isEmpty() ) {
             // add element variables
-        	declList.addVariablesToSymtable(vars);
+        	for (VarDecl decl : declList) {
+        		vars.add(decl.name(), decl.type(), decl.getSourcePosition());
+        	}
         }
         vars.add(fInit.nameToken(), init.type());
         expr = fExpr.gen(ctx);

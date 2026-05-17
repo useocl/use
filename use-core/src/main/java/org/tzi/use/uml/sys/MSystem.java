@@ -21,7 +21,6 @@ package org.tzi.use.uml.sys;
 
 import com.google.common.eventbus.EventBus;
 import org.tzi.use.config.Options;
-import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
@@ -50,7 +49,6 @@ import org.tzi.use.util.UniqueNameGenerator;
 import org.tzi.use.uml.sys.soil.VariableEnvironment;
 import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -284,11 +282,13 @@ public final class MSystem {
 		fObjects.remove(obj.name());
 	}
 
-	public void loadInvariants(InputStream in, String inputName, boolean doEcho, PrintWriter out) {
-		Collection<MClassInvariant> invs = ASSLCompiler
-				.compileInvariants(fModel, in, inputName,
-						out);
-
+	/**
+	 * Adds pre-compiled class invariants to the model. The caller is
+	 * responsible for compiling them (e.g. via
+	 * {@code org.tzi.use.parser.generator.ASSLCompiler.compileInvariants}); this
+	 * class deliberately does not depend on the parser package.
+	 */
+	public void addLoadedInvariants(Collection<MClassInvariant> invs, boolean doEcho, PrintWriter out) {
 		if(invs != null){
 			for(Iterator<MClassInvariant> it = invs.iterator(); it.hasNext();){
 				MClassInvariant inv = it.next();
@@ -299,14 +299,14 @@ public final class MSystem {
 					out.println(e.getMessage());
 				}
 			}
-			
+
 			if(!invs.isEmpty()){
 				fireClassInvariantsLoadedEvent(invs);
 			}
-			
+
 			if (doEcho) {
 				out.println("Added invariants:");
-				
+
 				if (invs.isEmpty()) {
 					out.println("(none)");
 				} else {

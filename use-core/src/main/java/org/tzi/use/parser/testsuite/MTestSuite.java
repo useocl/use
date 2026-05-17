@@ -1,4 +1,4 @@
-package org.tzi.use.uml.sys.testsuite;
+package org.tzi.use.parser.testsuite;
 
 import java.io.PrintWriter;
 import java.util.List;
