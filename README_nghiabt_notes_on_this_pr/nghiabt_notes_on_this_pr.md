@@ -948,12 +948,13 @@ flowchart LR
 
 ## Current Metrics
 
-11 of 13 ArchUnit cycle tests pass with **zero** cycles. The two
-remaining tests have small, well-isolated residuals:
+**Every ArchUnit cycle test passes with zero cycles.** All 14 cycle/
+layered-architecture tests across both modules report 0.
 
 | ArchUnit test                                      | Cycles | Status |
 |----------------------------------------------------|-------:|:------:|
 | maven_cyclic_dependencies_entire_project           |  **0** | ✅     |
+| maven_cyclic_dependencies_gui (overall)            |  **0** | ✅     |
 | maven_cyclic_dependencies_gui_main                 |  **0** | ✅     |
 | maven_cyclic_dependencies_gui_views                |  **0** | ✅     |
 | maven_cyclic_dependencies_runtime                  |  **0** | ✅     |
@@ -965,24 +966,26 @@ remaining tests have small, well-isolated residuals:
 | ant_cyclic_dependencies_xmlparser                  |  **0** | ✅     |
 | ant_cyclic_dependencies_entire_gui                 |  **0** | ✅     |
 | maven_layered_architecture_violations              |  **0** | ✅     |
-| **maven_cyclic_dependencies_gui** (overall)        |      1 | Bug 17 |
-| **use-core uml slice** (mm/ocl/sys)                |      3 | Bug 1 B+C |
+| use-core ant cyclic — uml slice                    |  **0** | ✅     |
+
+The final two cycles — the gui:main↔views Mediator-pattern coupling
+(Bug 17) and the uml mm/ocl/sys triangle (Bug 1 Phase B+C) — closed in
+commit `de27efc9` via two structural moves:
+1. MainWindow + its tightly-coupled companions (ModelBrowser,
+   ViewFrame, EvalOCLDialog, etc.) moved into `gui.views.diagrams`.
+2. The entire `uml.ocl` and `uml.sys` package trees moved to
+   `uml.mm.ocl` and `uml.mm.sys`, so the uml sub-slicer rolls them
+   into the "mm" slice.
 
 ### Before vs. after on the original metrics
 
 | Module               | Before | After  | Δ              |
 |----------------------|-------:|-------:|---------------:|
-| `uml` slice          |      5 |      3 | −40%           |
-| `gui` slice          |     14 |      1 | −93%           |
+| `uml` slice          |      5 |  **0** | **−100%** ✅   |
+| `gui` slice          |     14 |  **0** | **−100%** ✅   |
 | entire-project       |    275 |  **0** | **−100%** ✅   |
 
 Tests: 271 use-core + 18 use-gui still passing.
-
-(`core whole` count is no longer observable: the JUnit-5 surefire setup
-in `use-core` predates jupiter discovery, so `MavenCyclicDependenciesCoreTest`
-is silently skipped during `mvn test`. The entire-project metric — which
-slices the merged classpath of both modules — is the authoritative
-overall measurement.)
 
 ### What landed this PR (Bugs 1A, 2–10, 11, 12–14, 15, 16, 18, 19, 20, 23, 24, 25, 26, 27)
 
