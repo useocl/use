@@ -22,7 +22,7 @@ package org.tzi.use.uml.ocl.expr;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.ocl.type.CollectionType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;

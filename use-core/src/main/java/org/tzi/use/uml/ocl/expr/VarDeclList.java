@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.util.StringUtil;
 

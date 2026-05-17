@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.parser;
+package org.tzi.use.util;
 
 import org.antlr.runtime.Token;
 

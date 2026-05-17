@@ -22,6 +22,8 @@ import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.*;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.parser.generator.GeneratorLexer;
 import org.tzi.use.parser.generator.GeneratorParser;
 import org.tzi.use.parser.ocl.ASTExpression;

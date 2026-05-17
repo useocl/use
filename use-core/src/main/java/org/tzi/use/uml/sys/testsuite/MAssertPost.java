@@ -3,7 +3,7 @@ package org.tzi.use.uml.sys.testsuite;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.ocl.expr.EvalContext;

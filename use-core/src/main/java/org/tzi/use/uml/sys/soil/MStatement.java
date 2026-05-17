@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.IStatement;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;

@@ -19,7 +19,7 @@
 
 package org.tzi.use.parser.soil.exceptions;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.parser.soil.ast.ASTStatement;
 
 

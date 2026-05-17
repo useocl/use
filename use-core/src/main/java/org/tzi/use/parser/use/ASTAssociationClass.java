@@ -21,7 +21,7 @@ package org.tzi.use.parser.use;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.use.ASTAssociation.AssociationEndConstraintsGenerator;
 import org.tzi.use.uml.mm.*;

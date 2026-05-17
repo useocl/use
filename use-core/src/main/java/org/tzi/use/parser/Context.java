@@ -20,6 +20,7 @@
 package org.tzi.use.parser;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MModel;

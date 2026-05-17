@@ -21,6 +21,8 @@ package org.tzi.use.parser.soil.ast;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.parser.*;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.ocl.ASTType;

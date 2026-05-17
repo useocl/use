@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.ocl.expr.EvalContext;
 import org.tzi.use.util.NullWriter;

@@ -1,6 +1,6 @@
 package org.tzi.use.uml.sys.testsuite;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
 

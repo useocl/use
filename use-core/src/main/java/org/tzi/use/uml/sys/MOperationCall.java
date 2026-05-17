@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.mm.statemachines.MRegion;
