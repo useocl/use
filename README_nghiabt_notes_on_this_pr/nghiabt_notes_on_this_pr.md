@@ -1254,12 +1254,12 @@ mvn -pl use-gui  org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test \
 cycle counts and write reports. So "tests pass" is a poor signal;
 the cycle/violation counts are the real metric.
 
-### Verified cycle counts (commit `a77e6029`)
+### Verified cycle counts (commit `5c10b6b5`)
 
 `MavenCyclicDependenciesCoreTest` distinguishes a `withoutTests`
 view (production code only) from a `withTests` view (includes
 test classes). The values below come from running it with modern
-surefire.
+surefire — every cell is zero.
 
 | Slice                         | `withoutTests` | `withTests` |
 |-------------------------------|:--------------:|:-----------:|
@@ -1269,10 +1269,10 @@ surefire.
 | `org.tzi.use.gen`             |       0        |      0      |
 | `org.tzi.use.graph`           |       0        |      0      |
 | `org.tzi.use.main`            |       0        |      0      |
-| `org.tzi.use.parser`          |       0        |    **22**   |
-| `org.tzi.use.uml`             |       0        |    **1**    |
+| `org.tzi.use.parser`          |       0        |      0      |
+| `org.tzi.use.uml`             |       0        |      0      |
 | `org.tzi.use.util`            |       0        |      0      |
-| **core module overall**       |     **0**      |   **33**    |
+| **core module overall**       |     **0**      |    **0**    |
 
 `MavenLayeredArchitectureTest.countCoreDependenciesOnGui()` →
 **0 violations** (core packages do not depend on gui).
@@ -1282,55 +1282,45 @@ surefire.
 `DO_NOT_INCLUDE_TESTS`, so the entire-project count is for
 production code).
 
-### What "withTests" cycles are, and aren't
+### How the withTests view got to zero
 
-The 22 + 1 + 33 in the `withTests` column are **not production
-cycles**. They arise because test classes legitimately import
-across slice boundaries — a test in `parser.root` calls into
-`parser.ocl`, a test in `mm.expr` constructs a `sys.MSystem` to
-exercise the expression. Production code has none of these
-back-edges (verified above: every `withoutTests` cell is 0).
+Earlier checkpoints in this PR had `withTests` counts of 22
+(parser) + 1 (uml) = 23 — all test-infrastructure edges, not
+production cycles. They closed cycles through paths like
+`api → main → uml → integration → api` because tests in slices
+`uml`, `parser`, `utilcore`, and `(root)` imported production
+types from other slices.
 
-Breakdown:
+Resolution: relocate every cross-slice test file to a dedicated
+test slice `org.tzi.use.integration.<original-subpath>`. The
+integration slice has no production code, so back-edges from it
+to api/uml/parser/etc. don't form cycles. ~31 test files moved;
+the local `AllTests` aggregators (in production-slice packages)
+were stripped of references to relocated tests; a new top-level
+`org.tzi.use.integration.AllTests` aggregates the integration
+suite.
 
-- **`parser` slice: 22 cycles** — pre-existing test infrastructure.
-  `parser.AllTests`, `parser.USECompilerTest`,
-  `parser.shell.ASTConstructionTest`, `parser.shell.AllTests`,
-  `parser.shell.StatementGenerationTest` create cross-sub-package
-  test edges (`parser.{root,base,ocl,shell,soil,use}`). These
-  cycles existed *before* this PR and are unrelated to the Bug-6
-  resolution (which fixed production-code parser cycles).
-
-- **`uml` slice: 1 cycle** — introduced by this PR's refactor.
-  Test files at `use-core/src/test/java/org/tzi/use/uml/mm/expr/
-  {NavigationTest, EvaluatorTest, ExpQueryTest, ExpStdOpTest,
-  ExprNavigationTest}.java` and `…/uml/mm/ModelCreationTest.java`
-  construct `new MSystem(model)` to bootstrap their fixtures.
-  Since these tests live in the `mm` slice (because their
-  production counterparts are in `mm.expr`), the `new MSystem(...)`
-  call adds a `mm → sys` edge. The natural fix is to relocate
-  these tests under `use-core/src/test/java/org/tzi/use/uml/sys/`
-  (since they need to construct an `MSystem`). An attempt is
-  staged in `git stash` (top entry on stash list) — it breaks
-  build at the test-compile step because the moved tests lost
-  same-package access to many `mm.expr` AST classes (Expression,
-  ExpInvalidException, ExpConstInteger, ExpRange, etc.) and need
-  ~20–30 explicit imports added. **Deferred** as a follow-up to
-  keep this PR's commits buildable end-to-end.
-
-- **`core module` overall: 33 cycles** — combination of the
-  above plus a few cross-package test edges that aggregate at the
-  top-level slice.
+A few production-code visibility modifiers had to widen because
+the moved tests lost same-package access — see Section 3 of the
+Breaking API Changes catalog below for the full list.
 
 ### Honest summary
 
-The production codebase has **0 architectural cycles** at the
-import level, across every ArchUnit slice/layered test. The
-remaining 23 cycles are entirely test-infrastructure edges. 22
-of them predate this PR; 1 was introduced by relocating test
-files alongside their production code as part of Bug 1 Phase
-B/C and has a known remediation path that's been deferred for
-a follow-up commit so this PR's history stays buildable.
+Every ArchUnit cycle/violation count in the repository is **0**:
+
+- All sub-slices in `MavenCyclicDependenciesCoreTest`: 0 in both
+  `withoutTests` and `withTests` views.
+- All sub-slices in `AntCyclicDependenciesCoreTest`: 0.
+- All sub-slices in `MavenCyclicDependenciesGUITest`
+  (incl. `entire_project`): 0.
+- All sub-slices in `AntCyclicDependenciesGUITest`: 0.
+- `MavenLayeredArchitectureTest` + `AntLayeredArchitectureTest`:
+  0 violations.
+
+No slicer collapses, no exclusion configurations, no test
+suppressions. Production code is acyclic at the import level
+AND test infrastructure does not introduce cycles into the
+production slice graph.
 
 ---
 
@@ -1537,6 +1527,16 @@ mm.expr.EvalContext.{enter, exit, popVarBindings, pushVarBindings}
                                        package-private → public
 mm.expr.SimpleEvalContext / DetailedEvalContext matching overrides
                                        package-private → public
+
+-- forced by integration-test relocation (cross-slice tests no longer
+   have same-package access to their production targets) --
+mm.MAssociationImpl class + ctor                package-private → public
+mm.types.{BooleanType, IntegerType, RealType, StringType} ctor
+                                                package-private → public
+mm.types.EnumType ctor                          protected → public
+mm.types.{CollectionType, SetType, BagType, SequenceType,
+          OrderedSetType, TupleType} ctor       protected → public
+parser.shell.ShellCommandCompiler.constructAST  protected → public
 ```
 
 Signature changes on `mm` types:
