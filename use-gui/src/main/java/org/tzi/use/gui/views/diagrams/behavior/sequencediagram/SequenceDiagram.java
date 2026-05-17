@@ -48,7 +48,7 @@ import javax.swing.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.ViewFrame;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramType;

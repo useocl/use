@@ -2,13 +2,13 @@ Cycle detected: Slice main ->
                 Slice views -> 
                 Slice main
   1. Dependencies of Slice main
-    - Constructor <org.tzi.use.gui.main.ViewFrame.<init>(java.lang.String, org.tzi.use.gui.views.View, java.lang.String)> has parameter of type <org.tzi.use.gui.views.View> in (ViewFrame.java:0)
     - Field <org.tzi.use.gui.main.EvalOCLDialog.fEvalBrowser> has type <org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser> in (EvalOCLDialog.java:0)
     - Field <org.tzi.use.gui.main.MainWindow.classDiagrams> has generic type <java.util.List<org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView>> with type argument depending on <org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView> in (MainWindow.java:0)
     - Field <org.tzi.use.gui.main.MainWindow.communicationDiagrams> has generic type <java.util.List<org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView>> with type argument depending on <org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView> in (MainWindow.java:0)
     - Field <org.tzi.use.gui.main.MainWindow.objectDiagrams> has generic type <java.util.List<org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView>> with type argument depending on <org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView> in (MainWindow.java:0)
     - Field <org.tzi.use.gui.main.ModelBrowser.fMouseHandler> has type <org.tzi.use.gui.views.diagrams.event.ModelBrowserMouseHandling> in (ModelBrowser.java:0)
-    - Field <org.tzi.use.gui.main.ViewFrame.fView> has type <org.tzi.use.gui.views.View> in (ViewFrame.java:0)
+    - Method <org.tzi.use.gui.main.MainWindow.addNewViewFrame(org.tzi.use.gui.views.ViewFrame)> has parameter of type <org.tzi.use.gui.views.ViewFrame> in (MainWindow.java:0)
+    - Method <org.tzi.use.gui.main.MainWindow.addNewViewFrame(org.tzi.use.gui.views.ViewFrame, boolean)> has parameter of type <org.tzi.use.gui.views.ViewFrame> in (MainWindow.java:0)
     - Method <org.tzi.use.gui.main.MainWindow.createCommunicationDiagram(org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager)> has parameter of type <org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager> in (MainWindow.java:0)
     - Method <org.tzi.use.gui.main.MainWindow.createSequenceDiagram(org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager)> has parameter of type <org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager> in (MainWindow.java:0)
     - Method <org.tzi.use.gui.main.MainWindow.getClassDiagrams()> has generic return type <java.util.List<org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView>> with type argument depending on <org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView> in (MainWindow.java:0)
@@ -19,10 +19,10 @@ Cycle detected: Slice main ->
     - Method <org.tzi.use.gui.main.MainWindow.showStateMachineView(org.tzi.use.uml.mm.statemachines.MStateMachine)> has return type <org.tzi.use.gui.views.diagrams.statemachine.StateMachineDiagramView> in (MainWindow.java:0)
     - Method <org.tzi.use.gui.main.ModelBrowser.addHighlightChangeListener(org.tzi.use.gui.views.diagrams.event.HighlightChangeListener)> has parameter of type <org.tzi.use.gui.views.diagrams.event.HighlightChangeListener> in (ModelBrowser.java:0)
     - Method <org.tzi.use.gui.main.ModelBrowser.removeHighlightChangeListener(org.tzi.use.gui.views.diagrams.event.HighlightChangeListener)> has parameter of type <org.tzi.use.gui.views.diagrams.event.HighlightChangeListener> in (ModelBrowser.java:0)
-    - Method <org.tzi.use.gui.main.ViewFrame.getView()> has return type <org.tzi.use.gui.views.View> in (ViewFrame.java:0)
-    - Method <org.tzi.use.gui.main.ViewFrame.close()> calls method <org.tzi.use.gui.views.View.detachModel()> in (ViewFrame.java:46)
-    - Method <org.tzi.use.gui.main.ViewFrame.isPrintable()> checks instanceof <org.tzi.use.gui.views.PrintableView> in (ViewFrame.java:50)
-    (49 further dependencies have been omitted...)
+    - Method <org.tzi.use.gui.main.ViewManager.closeFrame(javax.swing.JInternalFrame)> calls method <org.tzi.use.gui.views.ViewFrame.close()> in (ViewManager.java:40)
+    - Method <org.tzi.use.gui.main.EvalOCLDialog$3.actionPerformed(java.awt.event.ActionEvent)> calls method <org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser.getFrame()> in (EvalOCLDialog.java:136)
+    - Method <org.tzi.use.gui.main.EvalOCLDialog$3.actionPerformed(java.awt.event.ActionEvent)> calls method <org.tzi.use.gui.views.evalbrowser.ExprEvalBrowser.updateEvalBrowser(org.tzi.use.uml.ocl.expr.EvalNode)> in (EvalOCLDialog.java:141)
+    (105 further dependencies have been omitted...)
   2. Dependencies of Slice views
     - Class <org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram> implements interface <org.tzi.use.gui.main.ModelBrowser$SelectionChangedListener> in (ClassDiagram.java:0)
     - Constructor <org.tzi.use.gui.views.AssociationEndsInfo.<init>(org.tzi.use.gui.main.MainWindow, org.tzi.use.uml.sys.MSystem)> has parameter of type <org.tzi.use.gui.main.MainWindow> in (AssociationEndsInfo.java:0)
@@ -44,6 +44,6 @@ Cycle detected: Slice main ->
     - Constructor <org.tzi.use.gui.views.diagrams.selection.objectselection.SelectionOCLView.<init>(org.tzi.use.gui.main.MainWindow, org.tzi.use.uml.sys.MSystem, org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode)> has parameter of type <org.tzi.use.gui.main.MainWindow> in (SelectionOCLView.java:0)
     - Constructor <org.tzi.use.gui.views.diagrams.selection.objectselection.SelectionOCLView.<init>(org.tzi.use.gui.main.MainWindow, org.tzi.use.uml.sys.MSystem, org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder)> has parameter of type <org.tzi.use.gui.main.MainWindow> in (SelectionOCLView.java:0)
     - Constructor <org.tzi.use.gui.views.diagrams.selection.objectselection.SelectionObjectView.<init>(org.tzi.use.gui.main.MainWindow, org.tzi.use.uml.sys.MSystem, org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode)> has parameter of type <org.tzi.use.gui.main.MainWindow> in (SelectionObjectView.java:0)
-    (145 further dependencies have been omitted...)
+    (115 further dependencies have been omitted...)
 
 Cycle count: 1

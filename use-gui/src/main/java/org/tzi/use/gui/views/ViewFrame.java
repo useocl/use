@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.main;
+package org.tzi.use.gui.views;
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.PrintableView;
@@ -42,20 +42,20 @@ public class ViewFrame extends JInternalFrame {
         setFrameIcon(new ImageIcon(Options.getIconPath(iconFilename).toString()));
     }
 
-    void close() {
+    public void close() {
         fView.detachModel();
     }
 
-    boolean isPrintable() {
+    public boolean isPrintable() {
         return fView instanceof PrintableView;
     }
     
-    void print(PageFormat pf) {
+    public void print(PageFormat pf) {
         if (fView instanceof PrintableView )
             ((PrintableView) fView).printView(pf);
     }
     
-    void export(Graphics2D g, boolean exportAll) {
+    public void export(Graphics2D g, boolean exportAll) {
     	JComponent component = null;
     	
     	boolean exportThis = !(fView instanceof JComponent && !exportAll);
@@ -84,7 +84,7 @@ public class ViewFrame extends JInternalFrame {
     /**
      * Returns the view of this ViewFrame.
      */
-    View getView() {
+    public View getView() {
         return fView;
     }
 }

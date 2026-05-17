@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.main;
 
+import org.tzi.use.gui.views.ViewFrame;
+
 import javax.swing.DefaultDesktopManager;
 import javax.swing.JInternalFrame;
 

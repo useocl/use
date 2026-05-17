@@ -57,7 +57,7 @@ import org.tzi.use.gui.utilFX.StatusBar;
 import org.tzi.use.gui.views.*;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.IFXWindowHost;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.ViewFrame;
 
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;

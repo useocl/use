@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.ViewFrame;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;

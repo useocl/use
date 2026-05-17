@@ -73,7 +73,7 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.DiagramType;
