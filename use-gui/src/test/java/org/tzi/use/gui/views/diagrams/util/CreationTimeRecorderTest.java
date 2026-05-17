@@ -29,7 +29,7 @@ import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CreationTimeRecorder;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.MMessage;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.TestModelUtil;
+import org.tzi.use.api.TestModelUtil;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.Event;

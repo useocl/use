@@ -17,10 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.uml.mm;
+package org.tzi.use.api;
 
-import org.tzi.use.api.UseApiException;
-import org.tzi.use.api.UseModelApi;
+import org.tzi.use.uml.mm.MAggregationKind;
+import org.tzi.use.uml.mm.MModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -17,11 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.util.input.shell;
+package org.tzi.use.main.shell;
 
 import java.io.IOException;
 
-import org.tzi.use.main.shell.Shell;
 import org.tzi.use.util.input.Readline;
 
 /**

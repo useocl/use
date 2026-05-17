@@ -30,7 +30,7 @@ import org.tzi.use.api.factory.UseSystemApiFactory;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.TestModelUtil;
+import org.tzi.use.api.TestModelUtil;
 
 
 /**
