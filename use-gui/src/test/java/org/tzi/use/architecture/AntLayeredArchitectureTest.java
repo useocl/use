@@ -8,6 +8,7 @@ import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,5 +59,6 @@ public class AntLayeredArchitectureTest {
                 System.err.println("Error writing report to " + filename + ": " + e.getMessage());
             }
         }
+        assertEquals("Core packages must not depend on GUI packages", 0, violationCount);
     }
 }

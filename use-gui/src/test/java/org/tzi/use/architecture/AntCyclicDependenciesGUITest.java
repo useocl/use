@@ -10,6 +10,7 @@ import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -131,6 +132,7 @@ public class AntCyclicDependenciesGUITest {
                     String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
                     cycleDetails.add(cycleInfo);
                 });
+        assertEquals("Cyclic dependencies detected in " + packageName, 0, cycleCount.get());
         return cycleCount.get();
     }
 

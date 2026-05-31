@@ -80,6 +80,17 @@
             <version>1.4.2</version>
             <scope>test</scope>
         </dependency>
+        <!--
+            Lets the JUnit Platform (Surefire 3.x) also run the JUnit 4 tests
+            (e.g. AntCyclicDependenciesCoreTest and the existing unit tests that
+            arrive transitively via guava-testlib). Version tracks junit-jupiter.
+        -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>6.0.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -10,6 +10,7 @@ import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -123,6 +124,7 @@ public class MavenCyclicDependenciesGUITest {
 
         int cycleCount = result.getFailureReport().getDetails().size();
         writeFailureReport(result, shortName, cycleCount);
+        assertEquals("Cyclic dependencies detected in " + packageName, 0, cycleCount);
         return cycleCount;
     }
 

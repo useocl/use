@@ -30,6 +30,19 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.15.0</version>
                 </plugin>
+                <!--
+                    Pin Surefire to a modern version. Maven 3.8.x defaults to
+                    Surefire 2.12.4, whose provider only discovers JUnit 4 tests,
+                    so the JUnit 5 ArchUnit tests (MavenCyclicDependenciesCoreTest,
+                    MavenLayeredArchitectureTest) were silently skipped. 3.5.x uses
+                    the JUnit Platform; the modules add junit-vintage-engine so the
+                    existing JUnit 4 tests keep running too.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

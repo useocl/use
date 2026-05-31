@@ -9,6 +9,7 @@ import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class MavenLayeredArchitectureTest {
         int violationCount = result.getFailureReport().getDetails().size();
         System.out.println(violationCount);
         writeResultsToFile(violationCount, result);
+        assertEquals(0, violationCount, "Core packages must not depend on GUI packages");
     }
 
     private void writeResultsToFile(int violationCount, EvaluationResult result) {
