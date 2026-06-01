@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.ocl.value;
 
-import com.gargoylesoftware.base.testing.EqualsTester;
+import com.google.common.testing.EqualsTester;
 import junit.framework.TestCase;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -182,7 +182,11 @@ public class ValueTest extends TestCase {
         SetValue intSet4 = new SetValue(TypeFactory.mkInteger()) { /*subclass*/ };
         intSet4.add(IntegerValue.valueOf(1));
         
-        new EqualsTester(intSet1, intSet2, intSet3, intSet4);
+        new EqualsTester()
+                .addEqualityGroup(intSet1, intSet2)
+                .addEqualityGroup(intSet3)
+                .addEqualityGroup(intSet4)
+                .testEquals();
     }
     
     public void testSequenceEquals() {
@@ -195,7 +199,11 @@ public class ValueTest extends TestCase {
         SequenceValue intSequence4 = new SequenceValue(TypeFactory.mkInteger()) { /*subclass*/ };
         intSequence4.add(IntegerValue.valueOf(1));
         
-        new EqualsTester(intSequence1, intSequence2, intSequence3, intSequence4);
+        new EqualsTester()
+                .addEqualityGroup(intSequence1, intSequence2)
+                .addEqualityGroup(intSequence3)
+                .addEqualityGroup(intSequence4)
+                .testEquals();
     }
 
 
@@ -209,7 +217,11 @@ public class ValueTest extends TestCase {
         BagValue intBag4 = new BagValue(TypeFactory.mkInteger()) { /*subclass*/ };
         intBag4.add(IntegerValue.valueOf(1));
         
-        new EqualsTester(intBag1, intBag2, intBag3, intBag4);
+        new EqualsTester()
+                .addEqualityGroup(intBag1, intBag2)
+                .addEqualityGroup(intBag3)
+                .addEqualityGroup(intBag4)
+                .testEquals();
     }
     
     

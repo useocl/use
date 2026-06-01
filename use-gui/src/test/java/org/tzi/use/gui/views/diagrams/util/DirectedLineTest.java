@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.util;
 
-import com.gargoylesoftware.base.testing.EqualsTester;
+import com.google.common.testing.EqualsTester;
 import junit.framework.TestCase;
 
 /**
@@ -40,6 +40,10 @@ public class DirectedLineTest extends TestCase {
             (DirectedLine)DirectedLineFactory.createSolidDirectedLine(40,30,20,10);
         DashedDirectedLine sameValuesFromSubClass = 
             (DashedDirectedLine)DirectedLineFactory.createDashedDirectedLine(10,20,30,40);
-        new EqualsTester(orig, equal, differentButSameClass, sameValuesFromSubClass);
+        new EqualsTester()
+                .addEqualityGroup(orig, equal)
+                .addEqualityGroup(differentButSameClass)
+                .addEqualityGroup(sameValuesFromSubClass)
+                .testEquals();
     }
 } 
