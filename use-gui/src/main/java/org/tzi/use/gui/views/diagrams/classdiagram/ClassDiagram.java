@@ -20,6 +20,8 @@
 // $Id: ClassDiagram.java 2048 2011-02-11 15:32:33Z lhamann $
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.StyleInfoBase;
 
 import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 

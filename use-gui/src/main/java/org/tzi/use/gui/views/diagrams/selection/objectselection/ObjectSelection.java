@@ -27,7 +27,7 @@ import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.util.AlphanumComparator;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;

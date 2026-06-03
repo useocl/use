@@ -3,7 +3,7 @@ package org.tzi.use.gui.plugin;
 import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
-import org.tzi.use.gui.views.diagrams.IPluginDiagramExtensionPoint;
+import org.tzi.use.gui.views.diagrams.base.IPluginDiagramExtensionPoint;
 import org.tzi.use.gui.views.diagrams.DiagramExtensionPoint;
 import org.tzi.use.runtime.impl.PluginRuntime;
 import org.tzi.use.main.shell.plugin.ShellExtensionPoint;

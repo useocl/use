@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.base;
 
 import lombok.Getter;
 

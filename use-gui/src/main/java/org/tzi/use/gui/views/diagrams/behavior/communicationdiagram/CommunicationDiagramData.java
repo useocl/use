@@ -28,7 +28,7 @@ import org.tzi.use.uml.mm.instance.MObject;
 
 
 import com.google.common.collect.Sets;
-import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.mm.MAttribute;

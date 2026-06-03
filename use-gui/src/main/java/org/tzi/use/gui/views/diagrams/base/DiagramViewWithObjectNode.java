@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.base;
 
 import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 
@@ -25,8 +25,7 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
+import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 import org.tzi.use.uml.mm.instance.MObject;
 
 /**
@@ -72,7 +71,4 @@ public abstract class DiagramViewWithObjectNode extends DiagramView implements D
         }
     }
     
-    public ActionHideObjectDiagram getAction( String text, Set<MObject> selectedNodes ) {
-        return new ActionHideObjectDiagram( text, selectedNodes, fNodeSelection, fGraph, this );
-    }
 }

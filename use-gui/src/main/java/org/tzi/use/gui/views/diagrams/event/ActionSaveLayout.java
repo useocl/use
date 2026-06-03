@@ -29,7 +29,7 @@ import javax.swing.*;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtFileFilter;
-import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
 
 /**
  * Saves the current layout to a file.

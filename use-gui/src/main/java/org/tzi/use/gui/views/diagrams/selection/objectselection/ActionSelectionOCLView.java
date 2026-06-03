@@ -18,6 +18,7 @@
  */
 
 package org.tzi.use.gui.views.diagrams.selection.objectselection;
+import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;

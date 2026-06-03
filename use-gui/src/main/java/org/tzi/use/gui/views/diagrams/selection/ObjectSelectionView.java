@@ -22,10 +22,10 @@ import javax.swing.table.AbstractTableModel;
 
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.main.View;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
+import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.StatementExecutedEvent;
@@ -179,7 +179,9 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 			}
 		}
 		
-		this.diagram.getAction("Hide all objects", hideojects).actionPerformed(ev);
+		new org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram(
+				"Hide all objects", hideojects, this.diagram.getNodeSelection(),
+				this.diagram.getGraph(), this.diagram).actionPerformed(ev);
 	}
 	
 	public abstract void applyCropChanges(ActionEvent ev);

@@ -87,7 +87,7 @@ import org.tzi.use.gui.views.diagrams.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -1304,7 +1304,9 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			popupMenu.insert(new AbstractAction(labelCrop) {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					getAction(label, getNoneSelectedNodes(objectsToHide)).actionPerformed(e);
+					new org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram(
+							label, getNoneSelectedNodes(objectsToHide), getNodeSelection(),
+							getGraph(), NewObjectDiagram.this).actionPerformed(e);
 				}
 			}, pos++);
 

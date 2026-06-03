@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.base;
 
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.graph.DirectedEdge;

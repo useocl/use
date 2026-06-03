@@ -39,7 +39,7 @@ import javax.swing.JScrollPane;
 
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtendedJTable;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.selection.ObjectSelectionView;
 import org.tzi.use.gui.views.diagrams.selection.TableModel.Row;
 import org.tzi.use.uml.mm.instance.MLink;

@@ -1,4 +1,6 @@
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.base;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.StyleInfoProvider;
 
 import org.tzi.use.runtime.spi.IExtensionPoint;
 import org.tzi.use.runtime.spi.IPluginDescriptor;

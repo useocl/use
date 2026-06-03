@@ -20,6 +20,7 @@
 /* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
 package org.tzi.use.gui.views.diagrams.selection.objectselection;
+import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 
 import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
 
@@ -50,7 +51,7 @@ import org.tzi.use.config.Options.WarningType;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.TextComponentWriter;
 import org.tzi.use.gui.main.View;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.expr.Evaluator;
 import org.tzi.use.uml.mm.expr.Expression;

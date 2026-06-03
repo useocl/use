@@ -19,7 +19,7 @@
 
 // $Id: DiagramView.java 6552 2019-08-11 13:03:32Z  $
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.base;
 
 import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.framework.IDiagram;
@@ -42,8 +42,6 @@ import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.Rolename;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
-import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
 import org.tzi.use.runtime.spi.IRuntime;
@@ -109,8 +107,8 @@ public abstract class DiagramView extends JPanel
 
     protected volatile AllLayoutTypes<PlaceableNode> fAllLayoutTypes;
 
-    protected ActionLoadLayout fActionLoadLayout;
-    protected ActionSaveLayout fActionSaveLayout;
+    protected javax.swing.Action fActionLoadLayout;
+    protected javax.swing.Action fActionSaveLayout;
     protected Action fActionSelectAllNodes;
     protected Action fActionSelectAllEdges;
 
@@ -513,6 +511,12 @@ public abstract class DiagramView extends JPanel
      */
     public DiagramGraph getGraph() {
         return this.fGraph;
+    }
+
+    /** The node selection model of this diagram (exposed so collaborators can build
+     *  hide/selection actions without reaching into protected state). */
+    public Selection<PlaceableNode> getNodeSelection() {
+        return this.fNodeSelection;
     }
 
     /**
@@ -1714,7 +1718,7 @@ public abstract class DiagramView extends JPanel
         // Different Layouts
         JMenu layouts = new JMenu("Layouts");
         final JMenuItem hierarchicalLayout = new JMenuItem("Hierarchical layout");
-        final Window owner =  MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+        final Window owner =  SwingUtilities.getWindowAncestor(this);
 
         hierarchicalLayout.addActionListener(new ActionListener() {
             @Override

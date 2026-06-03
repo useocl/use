@@ -22,7 +22,7 @@ package org.tzi.use.gui.views.diagrams.event;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtFileFilter;
-import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
 
 import javax.swing.*;
 import java.awt.*;
