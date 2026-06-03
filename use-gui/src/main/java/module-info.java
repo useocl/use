@@ -42,6 +42,6 @@ module use.gui {
     exports org.tzi.use.gui.views.diagrams.selection.objectselection;
     exports org.tzi.use.gui.views.diagrams.event;
     exports org.tzi.use.runtime.model;
-    exports org.tzi.use.gui.views.diagrams.waypoints;
+    exports org.tzi.use.gui.views.diagrams.elements.waypoints;
     exports org.tzi.use.gui.views.diagrams.elements.positioning;
 }

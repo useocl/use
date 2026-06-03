@@ -28,7 +28,7 @@ import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached.Placement;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint;
 import org.tzi.use.uml.mm.MAssociationEnd;
 import org.tzi.use.util.StringUtil;
 

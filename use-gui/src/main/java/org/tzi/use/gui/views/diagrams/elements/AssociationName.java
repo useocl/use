@@ -25,7 +25,7 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.instance.MLink;
 

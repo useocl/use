@@ -23,7 +23,7 @@ import java.awt.geom.Point2D;
 
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.util.Util;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint;
 
 /**
  * This attach strategy calculates the way point position

@@ -44,7 +44,7 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
 import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.util.Log;
 import org.w3c.dom.Document;

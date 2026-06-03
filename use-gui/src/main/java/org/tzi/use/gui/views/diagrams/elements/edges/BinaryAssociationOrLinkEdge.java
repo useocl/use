@@ -38,10 +38,10 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCor
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint.ResetStrategy;
-import org.tzi.use.gui.views.diagrams.waypoints.QualifierWayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint.ResetStrategy;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.QualifierWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;

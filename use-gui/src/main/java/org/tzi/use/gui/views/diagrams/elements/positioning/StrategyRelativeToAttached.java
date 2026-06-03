@@ -29,7 +29,7 @@ import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.RestoreLayoutException;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.util.Util;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint;
 import org.w3c.dom.Element;
 
 /**

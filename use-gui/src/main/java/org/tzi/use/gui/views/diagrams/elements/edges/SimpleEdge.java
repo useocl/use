@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
 
 /**
  * TODO

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.tzi.use.gui.views.diagrams.waypoints;
+package org.tzi.use.gui.views.diagrams.elements.waypoints;
 
 import java.awt.Color;
 import java.awt.FontMetrics;

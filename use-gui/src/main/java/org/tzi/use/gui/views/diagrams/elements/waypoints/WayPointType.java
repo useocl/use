@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams.waypoints;
+package org.tzi.use.gui.views.diagrams.elements.waypoints;
 
 /**
  * Different types of way points.
