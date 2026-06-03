@@ -40,27 +40,27 @@ public abstract class ActionHide<NodeType> extends AbstractAction {
     /**
      * All nodes which are suppose to be hidden in a diagram.
      */
-    Set<NodeType> fNodesToHide;
+    protected Set<NodeType> fNodesToHide;
     
     /**
      * Actual selected nodes in the diagram.
      */
-    Selection<? extends Selectable> fNodeSelection;
+    protected Selection<? extends Selectable> fNodeSelection;
     
     /**
      * This graph contains all nodes and edges of a diagram.  
      */
-    DirectedGraph<PlaceableNode, EdgeBase> fGraph;
+    protected DirectedGraph<PlaceableNode, EdgeBase> fGraph;
     
-    DiagramView diagram;
+    protected DiagramView diagram;
     
-    ActionHide( String text, DiagramView diagram, Selection<? extends Selectable> nodeSelection ) {
+    protected ActionHide( String text, DiagramView diagram, Selection<? extends Selectable> nodeSelection ) {
         super( text );
         this.diagram = diagram;
         this.fNodeSelection = nodeSelection;
     }
 
-    void setNodes( Set<? extends NodeType> set ) {
+    protected void setNodes( Set<? extends NodeType> set ) {
         if ( set != null ) {
             fNodesToHide = new HashSet<NodeType>(set);
         }

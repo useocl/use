@@ -17,7 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams.event;
+package org.tzi.use.gui.views.diagrams.objectdiagram;
+import org.tzi.use.gui.views.diagrams.event.ActionHide;
 
 import java.awt.event.ActionEvent;
 import java.util.Set;

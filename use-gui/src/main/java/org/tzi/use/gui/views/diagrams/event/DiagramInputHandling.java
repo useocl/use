@@ -46,7 +46,6 @@ import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.ResizeNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 
 /**
  * Handles the mouse movements and keyboard inputs 
@@ -217,8 +216,8 @@ public class DiagramInputHandling implements MouseListener,
 		    }
 		break;
         case InputEvent.BUTTON2_DOWN_MASK:
-            if ( fDiagram instanceof NewObjectDiagram ) {
-                ((NewObjectDiagram) fDiagram).mayBeShowObjectInfo( e );
+            if ( fDiagram instanceof org.tzi.use.gui.views.diagrams.framework.IObjectDiagram ) {
+                ((org.tzi.use.gui.views.diagrams.framework.IObjectDiagram) fDiagram).mayBeShowObjectInfo( e );
             }
         break;
         default:
@@ -251,8 +250,8 @@ public class DiagramInputHandling implements MouseListener,
         	fDiagram.repaint();
         }
         
-        if ( fDiagram instanceof NewObjectDiagram ) {
-            ((NewObjectDiagram) fDiagram).mayBeDisposeObjectInfo();
+        if ( fDiagram instanceof org.tzi.use.gui.views.diagrams.framework.IObjectDiagram ) {
+            ((org.tzi.use.gui.views.diagrams.framework.IObjectDiagram) fDiagram).mayBeDisposeObjectInfo();
         }
         
         if (fIsDragging) {
@@ -409,8 +408,8 @@ public class DiagramInputHandling implements MouseListener,
      */
     @Override
 	public void drop(DropTargetDropEvent dtde) {
-        if ( fDiagram instanceof NewObjectDiagram ) {
-            ((NewObjectDiagram) fDiagram).dropObjectFromModelBrowser( dtde );
+        if ( fDiagram instanceof org.tzi.use.gui.views.diagrams.framework.IObjectDiagram ) {
+            ((org.tzi.use.gui.views.diagrams.framework.IObjectDiagram) fDiagram).dropObjectFromModelBrowser( dtde );
         }
     }
 

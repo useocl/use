@@ -67,7 +67,7 @@ import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
 import org.tzi.use.gui.views.diagrams.elements.edges.NAryAssociationClassOrObjectEdge;
-import org.tzi.use.gui.views.diagrams.event.ActionHideClassDiagram;
+import org.tzi.use.gui.views.diagrams.classdiagram.ActionHideClassDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;

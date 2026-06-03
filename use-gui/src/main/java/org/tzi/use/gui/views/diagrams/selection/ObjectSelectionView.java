@@ -179,7 +179,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 			}
 		}
 		
-		new org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram(
+		new org.tzi.use.gui.views.diagrams.objectdiagram.ActionHideObjectDiagram(
 				"Hide all objects", hideojects, this.diagram.getNodeSelection(),
 				this.diagram.getGraph(), this.diagram).actionPerformed(ev);
 	}

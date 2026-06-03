@@ -1304,7 +1304,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			popupMenu.insert(new AbstractAction(labelCrop) {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new org.tzi.use.gui.views.diagrams.event.ActionHideObjectDiagram(
+					new org.tzi.use.gui.views.diagrams.objectdiagram.ActionHideObjectDiagram(
 							label, getNoneSelectedNodes(objectsToHide), getNodeSelection(),
 							getGraph(), NewObjectDiagram.this).actionPerformed(e);
 				}

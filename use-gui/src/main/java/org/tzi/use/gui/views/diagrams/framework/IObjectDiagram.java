@@ -19,6 +19,9 @@
 
 package org.tzi.use.gui.views.diagrams.framework;
 
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.MouseEvent;
+
 import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.mm.instance.MObject;
 
@@ -38,5 +41,12 @@ public interface IObjectDiagram extends IDiagram {
 
     /** Whether the node for the given object is currently greyed-out. */
     boolean isObjectNodeGreyed(MObject obj);
+
+    /** Object-diagram-specific input handling (delegated from the generic input handler). */
+    void mayBeShowObjectInfo(MouseEvent e);
+
+    void mayBeDisposeObjectInfo();
+
+    void dropObjectFromModelBrowser(DropTargetDropEvent dtde);
 
 }
