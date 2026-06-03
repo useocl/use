@@ -18,7 +18,7 @@
  */
 
 
-package org.tzi.use.gui.views.diagrams.util;
+package org.tzi.use.gui.views.diagrams.edges;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
@@ -26,8 +26,18 @@ import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
-
+/**
+ * Standalone manual visual demo ("DrawTest") that renders sample edges via
+ * {@link DirectedEdgeFactory}. It has a {@code main} method and is not referenced
+ * by any production code.
+ * <p>
+ * It lives in the {@code edges} package (next to {@link DirectedEdgeFactory}, the
+ * only diagram type it touches) rather than in {@code diagrams.util}. Keeping it in
+ * {@code util} created the sole {@code util -> edges} import and thus an
+ * {@code edges <-> util} package cycle; {@code edges} already depends on
+ * {@code util}, so co-locating the demo with what it draws removes that back-edge
+ * without introducing any new inter-package dependency.
+ */
 @SuppressWarnings("serial")
 public class GUI extends JFrame {
 
