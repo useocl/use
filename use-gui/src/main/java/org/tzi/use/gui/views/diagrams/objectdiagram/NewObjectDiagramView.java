@@ -38,7 +38,7 @@ import org.tzi.use.gui.views.diagrams.ModelBrowser;
 import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.views.diagrams.PrintableView;
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
 import org.tzi.use.gui.main.View;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;

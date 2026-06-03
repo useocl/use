@@ -31,6 +31,7 @@ module use.gui {
     exports org.tzi.use.gui.utilFX;
     exports org.tzi.use.gui.viewsFX.evalbrowser;
     exports org.tzi.use.gui.views.diagrams;
+    exports org.tzi.use.gui.views.diagrams.framework;
     exports org.tzi.use.gui.views.diagrams.behavior.shared to com.google.common;
     exports org.tzi.use.gui.views.diagrams.selection to com.google.common;
     exports org.tzi.use.gui.views.diagrams.statemachine to com.google.common;

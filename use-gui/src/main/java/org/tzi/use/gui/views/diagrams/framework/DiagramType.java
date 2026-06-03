@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
 public enum DiagramType {
     CLASS_DIAGRAM(true, false, true),

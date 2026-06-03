@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.PrintableView;
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
 import org.tzi.use.gui.main.View;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.instance.MObject;

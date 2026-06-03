@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory.ArrowStyle;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;

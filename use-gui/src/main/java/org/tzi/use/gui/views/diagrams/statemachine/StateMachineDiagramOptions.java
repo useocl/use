@@ -21,7 +21,7 @@ package org.tzi.use.gui.views.diagrams.statemachine;
 import java.awt.Color;
 import java.nio.file.Path;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 
 /**
  * @author Lars Hamann

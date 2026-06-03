@@ -21,7 +21,7 @@ import javax.swing.table.AbstractTableModel;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
-import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.selection.objectselection.DataHolder;
 import org.tzi.use.uml.mm.instance.MObject;

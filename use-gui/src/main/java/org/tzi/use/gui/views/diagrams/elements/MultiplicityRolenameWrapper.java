@@ -22,9 +22,9 @@ package org.tzi.use.gui.views.diagrams.elements;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.PositionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.PositionChangedListener;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase.PropertyOwner;
 
 /**

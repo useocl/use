@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
+
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.View;
 

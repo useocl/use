@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;

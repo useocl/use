@@ -23,7 +23,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.ViewFrame;
-import org.tzi.use.gui.views.diagrams.DiagramType;
+import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 import org.tzi.use.uml.sys.MSystem;
 
 import javax.swing.*;

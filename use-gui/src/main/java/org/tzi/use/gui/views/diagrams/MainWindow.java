@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
+
 import com.google.common.eventbus.Subscribe;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.Document;

@@ -32,8 +32,8 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.PositionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.PositionChangedListener;
 import org.tzi.use.gui.util.Selectable;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;

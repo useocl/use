@@ -23,7 +23,7 @@ package org.tzi.use.gui.views.diagrams.classdiagram;
 
 import java.nio.file.Path;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 
 /**
  * Contains all optional settings for the class diagram.

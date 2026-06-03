@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
 import java.awt.Color;
 import java.nio.file.Path;

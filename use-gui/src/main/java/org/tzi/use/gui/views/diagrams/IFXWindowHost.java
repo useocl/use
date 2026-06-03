@@ -1,5 +1,7 @@
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.DiagramType;
+
 import javafx.embed.swing.SwingNode;
 
 /**

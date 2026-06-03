@@ -39,7 +39,7 @@ import java.util.Set;
 
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.SelectionBox;
+import org.tzi.use.gui.views.diagrams.framework.SelectionBox;
 import org.tzi.use.gui.views.diagrams.elements.CommentNode;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;

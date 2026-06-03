@@ -38,7 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.ToolTipProvider;
+import org.tzi.use.gui.views.diagrams.framework.ToolTipProvider;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.mm.statemachines.MState;

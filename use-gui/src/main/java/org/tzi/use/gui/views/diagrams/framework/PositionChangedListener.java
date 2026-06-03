@@ -17,15 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.EventListener;
 
 /**
- * Interface for listeners for diagram options changes 
+ * Listener to react on position changes
+ * of a diagram object.
+ * 
  * @author Lars Hamann
- *
  */
-public interface DiagramOptionChangedListener extends EventListener {
-	public void optionChanged(String optionname);
+public interface PositionChangedListener extends EventListener {
+	void positionChanged(Object source, Point2D newPosition, double deltaX, double deltaY);
+	
+	void boundsChanged(Object source, Rectangle2D oldBounds, Rectangle2D newBounds);
 }

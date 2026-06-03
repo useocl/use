@@ -17,29 +17,38 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
-import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
+import java.util.EventObject;
+
+import org.tzi.use.uml.mm.MModelElement;
 
 
-/** 
- * Views with print facility implement this interface.
- * 
- * @author      Mark Richters 
+/**
+ * A HighlightChangeEvent is used to notify interested listeners that 
+ * another ModelElement is selected.
  */
-public interface PrintableView {
+@SuppressWarnings("serial")
+public class HighlightChangeEvent extends EventObject {
+    private MModelElement fElement;
+    private boolean fHighlight;
     
-	void printView(PageFormat pf);
+    public HighlightChangeEvent( Object source ) {
+        super( source );
+    }
     
-    void export(Graphics2D g);
-	
-	/**
-	 * @return
-	 */
-	float getContentHeight();
-	/**
-	 * @return
-	 */
-	float getContentWidth();
+    public void setModelElement( MModelElement elem ) {
+        fElement = elem;
+    }
+    public MModelElement getModelElement() {
+        return fElement;
+    }    
+    
+    public void setHighlight( boolean highlight ) {
+        fHighlight = highlight;
+    }
+    public boolean getHighlight() {
+        return fHighlight;
+    }
 }
+

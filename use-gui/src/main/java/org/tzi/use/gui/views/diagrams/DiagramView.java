@@ -21,6 +21,10 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.SelectionBox;
+import org.tzi.use.gui.views.diagrams.framework.ToolTipProvider;
+
 import com.ximpleware.ParseException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;

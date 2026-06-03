@@ -19,6 +19,9 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.HighlightChangeEvent;
+import org.tzi.use.gui.views.diagrams.framework.HighlightChangeListener;
+
 
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;

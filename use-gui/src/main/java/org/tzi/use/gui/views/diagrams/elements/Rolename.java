@@ -23,8 +23,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached.Placement;
