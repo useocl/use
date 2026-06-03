@@ -62,7 +62,7 @@ public class ActionSelectionObjectView extends AbstractAction {
                 swingNode.setContent(opv);
                 swingNode.setCache(false);
 
-                org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
+                org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
             });
         } else {
             org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);

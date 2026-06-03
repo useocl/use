@@ -59,7 +59,7 @@ import org.tzi.use.gui.views.diagrams.AssociationEndsInfo;
 import org.tzi.use.gui.views.diagrams.ClassExtentView;
 import org.tzi.use.gui.views.diagrams.ClassInvariantView;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
-import org.tzi.use.gui.views.diagrams.IFXWindowHost;
+import org.tzi.use.gui.views.diagrams.framework.IFXWindowHost;
 import org.tzi.use.gui.views.diagrams.framework.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 

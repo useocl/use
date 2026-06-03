@@ -522,7 +522,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						SwingNode swingNode = new SwingNode();
 
 						// Create the ClassExtentView and the enclosing ViewFrame
-						SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system(), fParent.getMainWindow(), sharedVisibleManager);
+						SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().getSession()).system(), fParent.getMainWindow(), sharedVisibleManager);
 						ViewFrame f = new ViewFrame("Sequence diagram", sdv, "SequenceDiagram.gif");
 
 						// Set up the SwingNode content
@@ -535,7 +535,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
 						// creating the new Window with the swingNode
-						org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
+						org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
 					});
 				} else{
 					((org.tzi.use.gui.views.diagrams.behavior.shared.IBehaviorMainWindow) fParent.getMainWindow()).createSequenceDiagram(sharedVisibleManager);

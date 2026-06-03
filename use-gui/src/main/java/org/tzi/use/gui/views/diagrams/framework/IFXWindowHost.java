@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 

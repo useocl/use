@@ -783,7 +783,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
                         SwingNode swingNode = new SwingNode();
 
                         // Create the ClassExtentView and the enclosing ViewFrame
-                        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system(), visibleData);
+                        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().getSession()).system(), visibleData);
                         ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
 
                         // Set up the SwingNode content
@@ -796,7 +796,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
                         swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
                         // creating the new Window with the swingNode
-                        org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Communication diagram", swingNode, DiagramType.COMMUNICATION_DIAGRAM);
+                        org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().createNewWindow("Communication diagram", swingNode, DiagramType.COMMUNICATION_DIAGRAM);
                         invalidateContent(true);
                     });
                 } else {

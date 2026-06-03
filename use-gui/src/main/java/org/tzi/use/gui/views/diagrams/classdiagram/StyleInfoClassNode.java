@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.classdiagram;
 import org.tzi.use.gui.views.diagrams.base.StyleInfoBase;
 
 import lombok.Builder;
