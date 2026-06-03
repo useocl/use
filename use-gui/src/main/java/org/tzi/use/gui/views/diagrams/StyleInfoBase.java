@@ -4,7 +4,6 @@ package org.tzi.use.gui.views.diagrams;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 
 import java.awt.*;

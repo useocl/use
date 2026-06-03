@@ -50,7 +50,7 @@ import org.tzi.use.uml.sys.MObjectState;
  * @author Fabian Gutsche
  * @author Lars Hamann
  */
-public class ObjectNode extends PlaceableNode implements SortChangeListener, ObjectNodeActivity {
+public class ObjectNode extends PlaceableNode implements SortChangeListener, ObjectNodeActivity, org.tzi.use.gui.views.diagrams.framework.IObjectNode {
 
 	private final ObjDiagramOptions fOpt;
 	private final NewObjectDiagramView fParent;

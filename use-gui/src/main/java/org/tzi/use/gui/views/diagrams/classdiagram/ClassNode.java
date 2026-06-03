@@ -44,7 +44,7 @@ import com.google.common.collect.Collections2;
  * 
  * @author Fabian Gutsche
  */
-public class ClassNode extends ClassifierNode implements SortChangeListener {
+public class ClassNode extends ClassifierNode implements SortChangeListener, org.tzi.use.gui.views.diagrams.framework.IClassNode {
 		
     private List<MAttribute> fAttributes;
     private List<MOperation> fOperations;

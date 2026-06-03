@@ -1,12 +1,11 @@
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.graph.DirectedEdge;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.gui.graphlayout.Layoutable;
-import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MAssociationClassImpl;
@@ -130,7 +129,7 @@ public class AllLayoutTypes<N extends Layoutable> {
         VerticalSpacing = verticalSpacing;
         IsPutAssociationsOnRelationsEnabled = isPutAssociationsOnRelationsEnabled;
         for (N n : fGraph.getNodes()) {
-            if (!(n instanceof ObjectNode || n instanceof DiamondNode)) {
+            if (!(n instanceof org.tzi.use.gui.views.diagrams.framework.IObjectNode || n instanceof DiamondNode)) {
                 return;
             }
         }
@@ -142,7 +141,7 @@ public class AllLayoutTypes<N extends Layoutable> {
         VerticalSpacing = verticalSpacing;
         IsPutAssociationsOnRelationsEnabled = isPutAssociationsOnRelationsEnabled;
         for (N n : fGraph.getNodes()) {
-            if (!(n instanceof ObjectNode || n instanceof DiamondNode)) {
+            if (!(n instanceof org.tzi.use.gui.views.diagrams.framework.IObjectNode || n instanceof DiamondNode)) {
                 return;
             }
         }
@@ -239,11 +238,11 @@ public class AllLayoutTypes<N extends Layoutable> {
             NodesOutgoingEdgeCount.put(currentNode, fGraph.numOutgoingEdges(currentNode));
             if (currentNode instanceof DiamondNode) {
                 DiamondNodes.add(currentNode);
-            } else if (currentNode instanceof ClassNode) {
-                if (((ClassNode) currentNode).cls() instanceof MAssociationClass)
+            } else if (currentNode instanceof org.tzi.use.gui.views.diagrams.framework.IClassNode) {
+                if (((org.tzi.use.gui.views.diagrams.framework.IClassNode) currentNode).cls() instanceof MAssociationClass)
                     AssociationNodes.add(currentNode);
-            } else if (currentNode instanceof ObjectNode) {
-                if (((ObjectNode) currentNode).cls() instanceof MAssociationClass)
+            } else if (currentNode instanceof org.tzi.use.gui.views.diagrams.framework.IObjectNode) {
+                if (((org.tzi.use.gui.views.diagrams.framework.IObjectNode) currentNode).cls() instanceof MAssociationClass)
                     AssociationNodes.add(currentNode);
 
             }
@@ -635,12 +634,12 @@ public class AllLayoutTypes<N extends Layoutable> {
             int firstLevel = 0;
             int SecondLevel = 0;
 
-            if (node instanceof ClassNode) {
-                if (((ClassNode) node).cls() instanceof MAssociationClass)
-                    for (int i = 0; i < ((MAssociationClassImpl) ((ClassNode) node).getClassifier()).associationEnds().size(); i++) {
-                        String parentName = (((MAssociationClassImpl) ((ClassNode) node).getClassifier()).associationEnds().get(i).cls().name().toString());
+            if (node instanceof org.tzi.use.gui.views.diagrams.framework.IClassNode) {
+                if (((org.tzi.use.gui.views.diagrams.framework.IClassNode) node).cls() instanceof MAssociationClass)
+                    for (int i = 0; i < ((MAssociationClassImpl) ((org.tzi.use.gui.views.diagrams.framework.IClassNode) node).getClassifier()).associationEnds().size(); i++) {
+                        String parentName = (((MAssociationClassImpl) ((org.tzi.use.gui.views.diagrams.framework.IClassNode) node).getClassifier()).associationEnds().get(i).cls().name().toString());
                         for (N nodeLevel : LayerLevelNodeCount.keySet()) {
-                            if (((ClassNode) nodeLevel).name() == parentName) {
+                            if (((PlaceableNode) nodeLevel).name() == parentName) {
                                 if (i == 0) {
                                     firstLevel = LayerLevelNodeCount.get(nodeLevel).intValue();
                                     AssociationsLevelNodeCount.put(node, firstLevel);
@@ -662,11 +661,11 @@ public class AllLayoutTypes<N extends Layoutable> {
                     }
             }
 
-            if (node instanceof ObjectNode) {
-                for (int i = 0; i < ((MLinkObject) ((ObjectNode) node).object()).linkedObjects().size(); i++) {
-                    String parentName = (((MLinkObject) ((ObjectNode) node).object()).linkedObjects().get(i).name().toString());
+            if (node instanceof org.tzi.use.gui.views.diagrams.framework.IObjectNode) {
+                for (int i = 0; i < ((MLinkObject) ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) node).object()).linkedObjects().size(); i++) {
+                    String parentName = (((MLinkObject) ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) node).object()).linkedObjects().get(i).name().toString());
                     for (N nodeLevel : LayerLevelNodeCount.keySet()) {
-                        if (((ObjectNode) nodeLevel).name() == parentName) {
+                        if (((PlaceableNode) nodeLevel).name() == parentName) {
                             if (i == 0) {
                                 firstLevel = LayerLevelNodeCount.get(nodeLevel).intValue();
                                 AssociationsLevelNodeCount.put(node, firstLevel);
@@ -944,15 +943,15 @@ public class AllLayoutTypes<N extends Layoutable> {
                                     currentY = parentY;
                                 }
                                 if (IsPutAssociationsOnRelationsEnabled == true) {
-                                    if (n instanceof ClassNode)
-                                        ((ClassNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                    if (n instanceof org.tzi.use.gui.views.diagrams.framework.IClassNode)
+                                        ((PlaceableNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
                                     else
-                                        ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                        ((PlaceableNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
                                 } else {
-                                    if (n instanceof ClassNode)
-                                        ((ClassNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                    if (n instanceof org.tzi.use.gui.views.diagrams.framework.IClassNode)
+                                        ((PlaceableNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
                                     else
-                                        ((ObjectNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                        ((PlaceableNode) n).moveToPosition((currentX - (n.getWidth() / 2)) + n.getWidth(), currentY - (n.getHeight() / 2));
                                 }
                             }
                         }
@@ -1074,15 +1073,15 @@ public class AllLayoutTypes<N extends Layoutable> {
                                     currentY = parentY;
                                 }
                                 if (IsPutAssociationsOnRelationsEnabled == true) {
-                                    if (n instanceof ClassNode)
-                                        ((ClassNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                    if (n instanceof org.tzi.use.gui.views.diagrams.framework.IClassNode)
+                                        ((PlaceableNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
                                     else
-                                        ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
+                                        ((PlaceableNode) n).moveToPosition(currentX - (n.getWidth() / 2), currentY - (n.getHeight() / 2));
                                 } else {
-                                    if (n instanceof ClassNode)
-                                        ((ClassNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                    if (n instanceof org.tzi.use.gui.views.diagrams.framework.IClassNode)
+                                        ((PlaceableNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
                                     else
-                                        ((ObjectNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
+                                        ((PlaceableNode) n).moveToPosition(currentX - (n.getWidth() / 2) + n.getWidth(), currentY - (n.getHeight() / 2));
                                 }
                             }
                         }
@@ -1179,8 +1178,8 @@ public class AllLayoutTypes<N extends Layoutable> {
         Map<N, Integer> SwimlaneGrouppingRootNodeCount = new LinkedHashMap<N, Integer>();
 
         for (N n : fGraph.getNodes()) {
-            if (n instanceof ObjectNode) {
-                SwimlaneGroupping.put(n, ((ObjectNode) n).cls().name());
+            if (n instanceof org.tzi.use.gui.views.diagrams.framework.IObjectNode) {
+                SwimlaneGroupping.put(n, ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) n).cls().name());
             }
         }
 
@@ -1232,7 +1231,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                 LayerLevelNodeCount.put(rootNode, count);
                 tracedRootNodes.put(rootNode, SwimlaneGroupping.get(rootNode));
                 for (N n : SwimlaneGroupping.keySet()) {
-                    if (SwimlaneGroupping.get(n) == ((ObjectNode) rootNode).cls().name()) {
+                    if (SwimlaneGroupping.get(n) == ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) rootNode).cls().name()) {
                         LayerLevelNodeCount.put(n, count);
                         tracedRootNodes.put(n, SwimlaneGroupping.get(n));
                     }
@@ -1261,7 +1260,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                     TempLayerLevelNodeCount.put(targetNode, count);
                     tracedRootNodes.put(targetNode, SwimlaneGroupping.get(targetNode));
                     for (N nf : SwimlaneGroupping.keySet()) {
-                        if (SwimlaneGroupping.get(nf) == ((ObjectNode) targetNode).cls().name()) {
+                        if (SwimlaneGroupping.get(nf) == ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) targetNode).cls().name()) {
                             TempLayerLevelNodeCount.put(nf, count);
                             tracedRootNodes.put(nf, SwimlaneGroupping.get(nf));
                         }
@@ -1295,7 +1294,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                                     TempLayerLevelNodeCount.put(n, count);
                                     tracedRootNodes.put(n, SwimlaneGroupping.get(n));
                                     for (N nf : SwimlaneGroupping.keySet()) {
-                                        if (SwimlaneGroupping.get(nf) == ((ObjectNode) n).cls().name()) {
+                                        if (SwimlaneGroupping.get(nf) == ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) n).cls().name()) {
                                             TempLayerLevelNodeCount.put(nf, count);
                                             tracedRootNodes.put(nf, SwimlaneGroupping.get(nf));
                                         }
@@ -1309,7 +1308,7 @@ public class AllLayoutTypes<N extends Layoutable> {
                         TempLayerLevelNodeCount.put(sourceNode, count);
                         tracedRootNodes.put(sourceNode, SwimlaneGroupping.get(sourceNode));
                         for (N nf : SwimlaneGroupping.keySet()) {
-                            if (SwimlaneGroupping.get(nf) == ((ObjectNode) sourceNode).cls().name()) {
+                            if (SwimlaneGroupping.get(nf) == ((org.tzi.use.gui.views.diagrams.framework.IObjectNode) sourceNode).cls().name()) {
                                 TempLayerLevelNodeCount.put(nf, count);
                                 tracedRootNodes.put(nf, SwimlaneGroupping.get(nf));
                             }
