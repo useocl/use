@@ -104,7 +104,7 @@ import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.framework.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.framework.HighlightChangeListener;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelection;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ObjectSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;

@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams.selection.classselection;
+package org.tzi.use.gui.views.diagrams.classdiagram.selection;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -28,7 +28,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.MenuScroller;
-import org.tzi.use.gui.views.diagrams.selection.SelectionComparator;
+import org.tzi.use.gui.views.diagrams.classdiagram.selection.SelectionComparator;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MGeneralization;

@@ -1,5 +1,5 @@
 
-package org.tzi.use.gui.views.diagrams.selection;
+package org.tzi.use.gui.views.diagrams.objectdiagram.selection;
 
 import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
 

@@ -108,30 +108,27 @@ public class MavenCyclicDependenciesGUITest {
     }
 
     /**
-     * Blind-spot MEASUREMENT for the diagram-editor subtree (deliberately non-asserting).
+     * GATED cycle check for the diagram-editor subtree.
      *
-     * <p>No gated arch test roots a slice at {@code org.tzi.use.gui.views.diagrams} — the
-     * deepest GUI root any of them uses is {@code org.tzi.use.gui.views} — so the large
-     * pre-existing internal cycle web there (the {@code DiagramView} framework mutually
-     * referencing {@code elements}/{@code event}/{@code waypoints}/...) is invisible to CI.
+     * <p>No other arch test roots a slice at {@code org.tzi.use.gui.views.diagrams} (the
+     * deepest GUI root any of them uses is {@code org.tzi.use.gui.views}), so this test
+     * asserts that the first-level sub-slices of {@code gui.views.diagrams}
+     * (behavior/classdiagram/objectdiagram/statemachine, elements, event, base, framework,
+     * util, the per-type selection packages, ...) are free of cyclic dependencies.
      *
-     * <p>This records two STABLE structural metrics instead of the raw cycle count:
-     * the number of first-level sub-slices that sit in a non-trivial strongly-connected
-     * component, and the number of inter-slice dependency edges among those slices
-     * ("feedback edges"). Raw cycle count is unusable here: it is combinatorial (removing
-     * one edge can erase hundreds) AND ArchUnit caps detection at
-     * {@code cycles.maxNumberToDetect} (=600 in this project) so it merely saturates — the
-     * "~600 cycles" figure is that cap, not a true count. Cyclic-slice count and feedback
-     * edges move monotonically as real back-edges are removed: e.g. relocating the
-     * {@code edges.GUI} demo out of {@code util} took the cyclic-slice set from 11 to 9
-     * (both {@code util} and {@code edges} left it).
-     *
-     * <p>The eventual decycling goal is 0 cyclic slices. Until the framework is untangled
-     * (phases B2..B4) this stays non-asserting so it documents the debt without gating the
-     * build on it.
+     * <p>It reports two STABLE structural metrics rather than the raw cycle count: the
+     * number of first-level sub-slices in a non-trivial strongly-connected component, and
+     * the number of inter-slice dependency edges among them ("feedback edges"). Raw cycle
+     * count is unusable here — it is combinatorial AND ArchUnit caps detection at
+     * {@code cycles.maxNumberToDetect} (=600), so it merely saturates; the historical
+     * "~600 cycles" figure was that cap, not a true count. The subtree was decycled from
+     * 11 cyclic sub-slices to 0 (foundation {@code framework}/{@code base} slices, the
+     * {@code IDiagram}/{@code IMainWindowServices} interface extractions, and relocating
+     * the type-specific styling/selection/actions into their diagram slices); this gate
+     * keeps it at 0.
      */
     @Test
-    public void measure_cycles_in_gui_views_diagrams_package() {
+    public void count_cycles_in_gui_views_diagrams_package() {
         final String root = "org.tzi.use.gui.views.diagrams";
         Map<String, Set<String>> graph = buildSliceGraph(root);
         Set<String> cyclic = cyclicSlices(graph);
@@ -149,9 +146,11 @@ public class MavenCyclicDependenciesGUITest {
         }
 
         writeResult(cyclic.size(), GUI_VIEWS_DIAGRAMS_PACKAGE_RESULTS);
-        System.out.println("gui.views.diagrams decycling metric (MEASURED, not gated): "
-                + cyclic.size() + " slices in cycles " + new TreeSet<>(cyclic)
+        System.out.println("Cyclic sub-slices in org.tzi.use.gui.views.diagrams: "
+                + cyclic.size() + " " + new TreeSet<>(cyclic)
                 + "; " + feedbackEdges + " inter-slice feedback edges");
+        assertEquals("Cyclic dependencies detected among gui.views.diagrams sub-slices: "
+                + new TreeSet<>(cyclic), 0, cyclic.size());
     }
 
     /**

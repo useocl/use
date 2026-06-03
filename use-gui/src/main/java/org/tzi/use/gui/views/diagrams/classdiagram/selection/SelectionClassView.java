@@ -19,7 +19,7 @@
 
 /* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
-package org.tzi.use.gui.views.diagrams.selection.classselection;
+package org.tzi.use.gui.views.diagrams.classdiagram.selection;
 
 import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
 
@@ -42,7 +42,7 @@ import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramData;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.selection.ClassSelectionView;
+import org.tzi.use.gui.views.diagrams.classdiagram.selection.ClassSelectionView;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClassifier;
 

@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams.selection.objectselection;
+package org.tzi.use.gui.views.diagrams.objectdiagram.selection;
 import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 
 import javafx.application.Platform;
@@ -38,21 +38,22 @@ import java.awt.event.ActionEvent;
  * @author Carsten Schlobohm
  */
 @SuppressWarnings("serial")
-public class ActionSelectionObjectView extends AbstractAction {
+public class ActionSelectionOCLView extends AbstractAction {
 
     private final DataHolder dataHolder;
     private final MSystem system;
 
-    public ActionSelectionObjectView(final DataHolder dataHolder, final MSystem system) {
-        super("With view...");
+    public ActionSelectionOCLView(final DataHolder dataHolder, final MSystem system) {
+        super("With OCL...");
         this.dataHolder = dataHolder;
         this.system = system;
     }
 
     public void actionPerformed(ActionEvent e) {
-        SelectionObjectView opv = new SelectionObjectView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), system, dataHolder);
-        ViewFrame f = new ViewFrame("Select objects", opv, "ObjectProperties.gif");
+        SelectionOCLView opv = new SelectionOCLView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), system, dataHolder);
+        ViewFrame f = new ViewFrame("Selection by OCL expression", opv, "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
+
         c.setLayout(new BorderLayout());
         c.add(opv, BorderLayout.CENTER);
 
@@ -62,11 +63,11 @@ public class ActionSelectionObjectView extends AbstractAction {
                 swingNode.setContent(opv);
                 swingNode.setCache(false);
 
-                org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
+                org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by OCL expression",swingNode, DiagramType.SELECTED_OCL_VIEW);
             });
         } else {
             org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
-            f.setSize(530, 230);
+            f.setSize(370, 250);
         }
     }
 }

@@ -32,15 +32,15 @@ module use.gui {
     exports org.tzi.use.gui.viewsFX.evalbrowser;
     exports org.tzi.use.gui.views.diagrams;
     exports org.tzi.use.gui.views.diagrams.framework;
+    exports org.tzi.use.gui.views.diagrams.classdiagram.selection;
+    exports org.tzi.use.gui.views.diagrams.objectdiagram.selection;
     exports org.tzi.use.gui.views.diagrams.base;
     exports org.tzi.use.gui.views.diagrams.behavior.shared to com.google.common;
-    exports org.tzi.use.gui.views.diagrams.selection to com.google.common;
     exports org.tzi.use.gui.views.diagrams.statemachine to com.google.common;
     exports org.tzi.use.gui.views.diagrams.elements;
     exports org.tzi.use.gui.views.diagrams.elements.edges;
     exports org.tzi.use.gui.main.runtime;
     exports org.tzi.use.gui.views.diagrams.util;
-    exports org.tzi.use.gui.views.diagrams.selection.objectselection;
     exports org.tzi.use.gui.views.diagrams.event;
     exports org.tzi.use.runtime.model;
     exports org.tzi.use.gui.views.diagrams.elements.waypoints;

@@ -1,4 +1,4 @@
-package org.tzi.use.gui.views.diagrams.selection.classselection;
+package org.tzi.use.gui.views.diagrams.classdiagram.selection;
 
 import java.util.ArrayList;
 import java.util.Comparator;

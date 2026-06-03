@@ -1,11 +1,11 @@
-package org.tzi.use.gui.views.diagrams.selection.objectselection;
+package org.tzi.use.gui.views.diagrams.objectdiagram.selection;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.tzi.use.gui.views.diagrams.selection.TableModel;
+import org.tzi.use.gui.views.diagrams.framework.TableModel;
 import org.tzi.use.uml.mm.instance.MObject;
 
 /** 

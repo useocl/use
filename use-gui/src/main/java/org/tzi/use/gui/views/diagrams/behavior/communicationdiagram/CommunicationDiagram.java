@@ -60,7 +60,7 @@ import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelection;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ObjectSelection;
 import org.tzi.use.uml.mm.values.ObjectValue;
 import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.mm.instance.MLink;

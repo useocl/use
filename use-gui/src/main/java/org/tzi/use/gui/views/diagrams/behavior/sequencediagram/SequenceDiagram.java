@@ -66,10 +66,10 @@ import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.Lifeline.ObjectBo
 import org.tzi.use.gui.views.diagrams.behavior.shared.CmdChooseWindow;
 import org.tzi.use.gui.views.diagrams.behavior.shared.MessageSelectionView;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.ActionSelectionOCLView;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.ActionSelectionObjectView;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ActionSelectionOCLView;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ActionSelectionObjectView;
 import org.tzi.use.gui.views.diagrams.framework.DataHolder;
-import org.tzi.use.gui.views.diagrams.selection.objectselection.ObjectSelectionHelper;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ObjectSelectionHelper;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.*;

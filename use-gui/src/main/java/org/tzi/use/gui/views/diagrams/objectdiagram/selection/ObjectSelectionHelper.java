@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams.selection.objectselection;
+package org.tzi.use.gui.views.diagrams.objectdiagram.selection;
 import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 
 import org.tzi.use.uml.mm.MClass;

@@ -19,7 +19,7 @@
 
 /* $ProjectHeader: use 2-3-1-release.3 Wed, 02 Aug 2006 17:53:29 +0200 green $ */
 
-package org.tzi.use.gui.views.diagrams.selection.objectselection;
+package org.tzi.use.gui.views.diagrams.objectdiagram.selection;
 
 import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
 
@@ -40,8 +40,8 @@ import javax.swing.JScrollPane;
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtendedJTable;
 import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
-import org.tzi.use.gui.views.diagrams.selection.ObjectSelectionView;
-import org.tzi.use.gui.views.diagrams.selection.TableModel.Row;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ObjectSelectionView;
+import org.tzi.use.gui.views.diagrams.framework.TableModel.Row;
 import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystem;
