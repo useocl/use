@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.selection.objectselection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -105,7 +107,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 	/**
 	 * Constructor for SelectionOCLView.
 	 */
-	public SelectionOCLView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
+	public SelectionOCLView(IMainWindowServices parent, MSystem system, DiagramViewWithObjectNode diagram) {
 		super(new BorderLayout());
 		fSystem = system;
 		this.diagram = diagram;
@@ -118,7 +120,7 @@ public class SelectionOCLView extends JPanel implements View, ActionListener {
 	/**
 	 * Constructor for SelectionOCLView.
 	 */
-	public SelectionOCLView(MainWindow parent, MSystem system, DataHolder dataHolder) {
+	public SelectionOCLView(IMainWindowServices parent, MSystem system, DataHolder dataHolder) {
 		super(new BorderLayout());
 		fSystem = system;
 		this.dataHolder = dataHolder;

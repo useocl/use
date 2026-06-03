@@ -19,6 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+
 import org.tzi.use.gui.main.View;
 
 import java.awt.BorderLayout;

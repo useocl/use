@@ -539,7 +539,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
 					});
 				} else{
-					fParent.getMainWindow().createSequenceDiagram(sharedVisibleManager);
+					((org.tzi.use.gui.views.diagrams.behavior.shared.IBehaviorMainWindow) fParent.getMainWindow()).createSequenceDiagram(sharedVisibleManager);
 					invalidateContent(true);
 				}
 			}

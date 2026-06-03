@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.selection.objectselection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -65,14 +67,14 @@ public class SelectionObjectView extends ObjectSelectionView {
 	/**
 	 * Constructor for SelectionObjectView.
 	 */
-	public SelectionObjectView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
+	public SelectionObjectView(IMainWindowServices parent, MSystem system, DiagramViewWithObjectNode diagram) {
 		super(parent, system, diagram);
 		this.fSystem = system;
 		initSelectionObjectView();
 		update();
 	}
 	
-	public SelectionObjectView(MainWindow parent, MSystem system, DataHolder dataHolder) {
+	public SelectionObjectView(IMainWindowServices parent, MSystem system, DataHolder dataHolder) {
 		super(parent, system, dataHolder);
 		this.fSystem = system;
 		initSelectionObjectView();

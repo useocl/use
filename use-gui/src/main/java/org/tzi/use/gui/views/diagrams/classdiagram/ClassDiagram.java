@@ -45,7 +45,7 @@ import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ModelBrowser.SelectionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser.SelectionChangedListener;
 import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;

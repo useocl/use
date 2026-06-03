@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.framework.PrintableView;
 import org.tzi.use.gui.main.View;
@@ -55,7 +57,7 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView,
 	 * @return a new created SequenceDiagramView
 	 */
 	public static SequenceDiagramView createSequenceDiagramView(MSystem system,
-												 MainWindow mainWindow,
+												 IMainWindowServices mainWindow,
 												 VisibleDataManager manager) {
 		SequenceDiagramView sequenceDiagram = new SequenceDiagramView(system, manager);
 		sequenceDiagram.postConstruction(system, mainWindow);
@@ -89,7 +91,7 @@ public class SequenceDiagramView extends JPanel implements View, PrintableView,
 	 * initialed SequenceDiagramView
 	 */
 	private void postConstruction(final MSystem system,
-								  final MainWindow mainWindow) {
+								  final IMainWindowServices mainWindow) {
 		fSeqDia = new SequenceDiagram(system, mainWindow, this, this.visibleDataManager);
 		this.visibleDataManager.registerObserver(this);
 		add(fSeqDia, BorderLayout.CENTER);

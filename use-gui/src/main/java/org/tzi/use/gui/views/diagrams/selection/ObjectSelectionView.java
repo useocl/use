@@ -1,6 +1,8 @@
 
 package org.tzi.use.gui.views.diagrams.selection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -60,7 +62,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 
 	public MSystem fSystem;
 
-	public MainWindow fMainWindow;
+	public IMainWindowServices fMainWindow;
 
 	public JTable fTable;
 
@@ -68,7 +70,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 
 	protected DiagramViewWithObjectNode diagram;
 	
-	public ObjectSelectionView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram) {
+	public ObjectSelectionView(IMainWindowServices parent, MSystem system, DiagramViewWithObjectNode diagram) {
 		super(new BorderLayout());
 		this.fSystem = system;
 		this.fMainWindow = parent;
@@ -80,7 +82,7 @@ public abstract class ObjectSelectionView extends JPanel implements View{
 	
 	protected DataHolder dataHolder;
 	
-	public ObjectSelectionView(MainWindow parent, MSystem system, DataHolder dataHolder) {
+	public ObjectSelectionView(IMainWindowServices parent, MSystem system, DataHolder dataHolder) {
 		super(new BorderLayout());
 		this.fSystem = system;
 		this.fMainWindow = parent;

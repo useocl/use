@@ -2,7 +2,7 @@ package org.tzi.use.gui.plugin;
 
 import java.io.PrintWriter;
 
-import org.tzi.use.gui.views.diagrams.ModelBrowser;
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser;
 import org.tzi.use.gui.main.runtime.IModelBrowser;
 import org.tzi.use.gui.main.runtime.IPluginMMVisitor;
 import org.tzi.use.uml.mm.MMPrintVisitor;

@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import org.tzi.use.uml.mm.instance.MInstance;
 
 import org.tzi.use.uml.mm.instance.MLink;
@@ -177,10 +179,10 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
     private int lastYValue = 0;
 
     /**
-     * The MainWindow from which this sequence diagram is called. Needed for the
+     * The IMainWindowServices from which this sequence diagram is called. Needed for the
      * properties windows.
      */
-    private MainWindow fMainWindow;
+    private IMainWindowServices fMainWindow;
 
     private int scrollCounter;
 
@@ -267,9 +269,9 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
      * Constructs a new SequenceDiagram-Object.
      *
      * @param system contains (direct or indirect) all needed information mainW
-     * @param mainW  the MainWindow object from which the constructor is called
+     * @param mainW  the IMainWindowServices object from which the constructor is called
      */
-    public SequenceDiagram(MSystem system, MainWindow mainW, SequenceDiagramView parent, VisibleDataManager visibleData) {
+    public SequenceDiagram(MSystem system, IMainWindowServices mainW, SequenceDiagramView parent, VisibleDataManager visibleData) {
         fSystem = system;
         fParent = parent;
         fMainWindow = mainW;
@@ -798,7 +800,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
                         invalidateContent(true);
                     });
                 } else {
-                    getMainWindow().createCommunicationDiagram(visibleData);
+                    ((org.tzi.use.gui.views.diagrams.behavior.shared.IBehaviorMainWindow) getMainWindow()).createCommunicationDiagram(visibleData);
                     invalidateContent(true);
                 }
             }
@@ -846,11 +848,11 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
     }
 
     /**
-     * Returns the MainWindow from which this sequence diagram is called.
+     * Returns the IMainWindowServices from which this sequence diagram is called.
      *
-     * @return the MainWindow object
+     * @return the IMainWindowServices object
      */
-    public MainWindow getMainWindow() {
+    public IMainWindowServices getMainWindow() {
         return fMainWindow;
     }
 

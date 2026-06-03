@@ -18,6 +18,8 @@
  */
 package org.tzi.use.gui.views.diagrams.statemachine;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -51,7 +53,7 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	
 	protected MObject monitoredInstance;
 	
-	protected final MainWindow parent;
+	protected final IMainWindowServices parent;
 		
 	protected StateMachineDiagram diagram;
 	
@@ -60,7 +62,7 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	 * @param system
 	 * @param sm
 	 */
-	public StateMachineDiagramView(MainWindow mainWindow, MSystem system, MStateMachine sm) {
+	public StateMachineDiagramView(IMainWindowServices mainWindow, MSystem system, MStateMachine sm) {
 		this.system = system;
 		this.stateMachine = sm;
 		this.parent = mainWindow;

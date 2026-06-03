@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.selection.classselection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -60,11 +62,11 @@ public class SelectedClassPathView extends ClassSelectionView {
 	/**
 	 * Constructor for SelectedClassPathView.
 	 */
-	public SelectedClassPathView(MainWindow parent, ClassDiagram diagram, Set<MClass> selectedClasses) {
+	public SelectedClassPathView(IMainWindowServices parent, ClassDiagram diagram, Set<MClass> selectedClasses) {
 		this(parent, diagram, new ClassPathTableModel(selectedClasses));
 	}
     
-	protected SelectedClassPathView(MainWindow parent, ClassDiagram diagram, AbstractTableModel model) {
+	protected SelectedClassPathView(IMainWindowServices parent, ClassDiagram diagram, AbstractTableModel model) {
 		super(parent, diagram);
 		initView(model);
 	}

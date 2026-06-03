@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -34,7 +36,7 @@ import javax.swing.JScrollPane;
 
 
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ModelBrowser;
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser;
 import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
@@ -73,12 +75,12 @@ public class NewObjectDiagramView extends JPanel
   implements View, PrintableView, SortChangeListener {
 
     protected final MSystem fSystem;
-    protected final MainWindow fMainWindow;
+    protected final IMainWindowServices fMainWindow;
 
     protected NewObjectDiagram fObjectDiagram;
     public static int viewcount = 0;
     
-    public NewObjectDiagramView(MainWindow mainWindow, MSystem system) {
+    public NewObjectDiagramView(IMainWindowServices mainWindow, MSystem system) {
         fMainWindow = mainWindow;
         fSystem = system;
         
@@ -236,7 +238,7 @@ public class NewObjectDiagramView extends JPanel
 					new MLinkDeletionStatement(link));
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
-					fMainWindow, 
+				this, 
 					e.getMessage(), 
 					"Error", 
 					JOptionPane.ERROR_MESSAGE);
@@ -248,7 +250,7 @@ public class NewObjectDiagramView extends JPanel
      */
     void insertLink(MAssociation association, MObject[] objects) {
     	if (association.hasQualifiedEnds()) {
-    		QualifierInputView input = new QualifierInputView(fMainWindow, fSystem, association, objects);
+    		QualifierInputView input = new QualifierInputView((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), fSystem, association, objects);
     		input.setLocationRelativeTo(this);
     		input.setVisible(true);
     	} else {
@@ -256,7 +258,7 @@ public class NewObjectDiagramView extends JPanel
 				fSystem.execute(new MLinkInsertionStatement(association, objects, Collections.<List<Value>>emptyList()));
 			} catch (MSystemException e) {
 				JOptionPane.showMessageDialog(
-						fMainWindow, 
+				this, 
 						e.getMessage(), 
 						"Error", 
 						JOptionPane.ERROR_MESSAGE);
@@ -283,7 +285,7 @@ public class NewObjectDiagramView extends JPanel
 			fSystem.execute(sequence.simplify());
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
-					fMainWindow, 
+				this, 
 					e.getMessage(), 
 					"Error", 
 					JOptionPane.ERROR_MESSAGE);

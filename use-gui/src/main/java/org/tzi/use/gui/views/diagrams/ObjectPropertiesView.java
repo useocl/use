@@ -19,6 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+
 import org.tzi.use.uml.mm.instance.MSystemException;
 
 import org.tzi.use.uml.mm.instance.MObject;

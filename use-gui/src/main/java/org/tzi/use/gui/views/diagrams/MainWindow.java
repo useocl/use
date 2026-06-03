@@ -19,6 +19,10 @@
 
 package org.tzi.use.gui.views.diagrams;
 
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowserMouseHandling;
+
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser;
+
 import org.tzi.use.gui.views.diagrams.framework.PrintableView;
 
 import com.google.common.eventbus.Subscribe;
@@ -103,7 +107,7 @@ import java.util.List;
  * @author Stefan Schoon
  */
 @SuppressWarnings("serial")
-public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.IMainWindow {
+public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.IMainWindow , org.tzi.use.gui.views.diagrams.behavior.shared.IBehaviorMainWindow {
     private final Session fSession;
 
     private final StatusBar fStatusBar;

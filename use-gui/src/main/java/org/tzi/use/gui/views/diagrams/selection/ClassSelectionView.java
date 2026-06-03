@@ -1,5 +1,7 @@
 package org.tzi.use.gui.views.diagrams.selection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -53,7 +55,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 
 	protected MSystem fSystem;
 
-	protected MainWindow fMainWindow;
+	protected IMainWindowServices fMainWindow;
 
 	protected JTable fTable;
 
@@ -64,7 +66,7 @@ public abstract class ClassSelectionView extends JPanel implements View {
 	/**
 	 * Constructor for ClassSelectionView.
 	 */
-	public ClassSelectionView(MainWindow parent, ClassDiagram diagram) {
+	public ClassSelectionView(IMainWindowServices parent, ClassDiagram diagram) {
 		super(new BorderLayout());
 		
 		this.fSystem = diagram.getSystem();

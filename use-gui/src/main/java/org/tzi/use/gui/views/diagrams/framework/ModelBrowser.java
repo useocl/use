@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
 import org.tzi.use.gui.views.diagrams.framework.HighlightChangeEvent;
 import org.tzi.use.gui.views.diagrams.framework.HighlightChangeListener;
@@ -67,7 +67,7 @@ public class ModelBrowser extends JPanel
     private EventListenerList fListenerList;
     private ModelBrowserMouseHandling fMouseHandler;
     private Map<String, Collection<?>> modelCollections = new HashMap<String, Collection<?>>();
-    private MainWindow mainWindow;
+    private IMainWindowServices mainWindow;
     
     // implementation of interface DragSourceListener
     public void dragEnter(DragSourceDragEvent dsde) {
@@ -129,7 +129,7 @@ public class ModelBrowser extends JPanel
     /** 
      * Creates a browser with no model.
      */
-    public ModelBrowser(MainWindow mainWindow, IRuntime pluginRuntime) {
+    public ModelBrowser(IMainWindowServices mainWindow, IRuntime pluginRuntime) {
     	this(null, mainWindow, pluginRuntime);
         fListenerList = new EventListenerList();
     }
@@ -137,7 +137,7 @@ public class ModelBrowser extends JPanel
     /** 
      * Creates a model browser. The model may be null.
      */
-    public ModelBrowser(MModel model, MainWindow mainWindow,
+    public ModelBrowser(MModel model, IMainWindowServices mainWindow,
 	    IRuntime pluginRuntime) {
         fListenerList = new EventListenerList();
         // Create tree and nodes.
@@ -213,7 +213,7 @@ public class ModelBrowser extends JPanel
         add(splitPane, BorderLayout.CENTER);
     }
 
-    private void setMainWindow(MainWindow mainWindow) {
+    private void setMainWindow(IMainWindowServices mainWindow) {
 	this.mainWindow = mainWindow;
     }
 
@@ -222,7 +222,7 @@ public class ModelBrowser extends JPanel
 
     }
 
-    public MainWindow mainWindow() {
+    public IMainWindowServices mainWindow() {
 	return this.mainWindow;
     }
 

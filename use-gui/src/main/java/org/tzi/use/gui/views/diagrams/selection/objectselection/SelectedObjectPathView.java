@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.selection.objectselection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -60,7 +62,7 @@ public class SelectedObjectPathView extends ObjectSelectionView {
 	/**
 	 * Constructor for SelectedObjectPathView.
 	 */
-	public SelectedObjectPathView(MainWindow parent, MSystem system, DiagramViewWithObjectNode diagram, Set<MObject> selectedObjects) {
+	public SelectedObjectPathView(IMainWindowServices parent, MSystem system, DiagramViewWithObjectNode diagram, Set<MObject> selectedObjects) {
 		super(parent, system, diagram);
 
 		this.selectedObjects = selectedObjects;

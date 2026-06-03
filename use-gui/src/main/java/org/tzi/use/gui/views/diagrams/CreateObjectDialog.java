@@ -20,6 +20,7 @@
 package org.tzi.use.gui.views.diagrams;
 
 
+
 import org.tzi.use.gui.util.CloseOnEscapeKeyListener;
 import org.tzi.use.gui.util.GridBagHelper;
 import org.tzi.use.main.ChangeEvent;

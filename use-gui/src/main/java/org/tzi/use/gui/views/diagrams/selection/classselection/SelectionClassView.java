@@ -21,6 +21,8 @@
 
 package org.tzi.use.gui.views.diagrams.selection.classselection;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -62,7 +64,7 @@ public class SelectionClassView extends ClassSelectionView {
 	/**
 	 * Constructor for SelectionClassView.
 	 */
-	public SelectionClassView(MainWindow parent, ClassDiagram classDiagram) {
+	public SelectionClassView(IMainWindowServices parent, ClassDiagram classDiagram) {
 		super(parent, classDiagram);
 		initSelectionClassView();
 	}
