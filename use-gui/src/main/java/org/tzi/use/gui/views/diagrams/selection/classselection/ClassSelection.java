@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassNode;
@@ -73,7 +73,7 @@ public class ClassSelection {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			SelectionClassView opv = new SelectionClassView(MainWindow.instance(), diagram);
+			SelectionClassView opv = new SelectionClassView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), diagram);
 
 			ViewFrame f = new ViewFrame("Selection classes", opv, "ObjectProperties.gif");
 
@@ -81,7 +81,7 @@ public class ClassSelection {
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(c);
@@ -89,7 +89,7 @@ public class ClassSelection {
 					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_VIEW);
 				});
 			} else {
-				MainWindow.instance().addNewViewFrame(f);
+				org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
 				f.setSize(580, 230);
 			}
 		}
@@ -110,13 +110,13 @@ public class ClassSelection {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			SelectedClassPathView opv = new SelectedClassPathView(MainWindow.instance(), diagram, selectedClasses);
+			SelectedClassPathView opv = new SelectedClassPathView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), diagram, selectedClasses);
 			ViewFrame f = new ViewFrame("Selection by path length", opv, "ObjectProperties.gif");
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					// Add the Swing component to the SwingNode
@@ -126,7 +126,7 @@ public class ClassSelection {
 					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by path length", swingNode, DiagramType.SELECTED_CLASS_PATH_VIEW);
 				});
 			} else {
-				MainWindow.instance().addNewViewFrame(f);
+				org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
 				f.setSize(450, 200);
 			}
 		}
@@ -157,7 +157,7 @@ public class ClassSelection {
 	 * is displayed in any object diagram
 	 */
 	public boolean classHasDisplayedObjects(Set<MClass> classes) {
-		List<NewObjectDiagramView> objDiagrams = MainWindow.instance().getObjectDiagrams();
+		List<NewObjectDiagramView> objDiagrams = (List<NewObjectDiagramView>)(List<?>) org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().getObjectDiagrams();
 
 		for (NewObjectDiagramView diagView : objDiagrams) {
 			NewObjectDiagram diag = diagView.getDiagram();
@@ -188,7 +188,7 @@ public class ClassSelection {
 	 * is hidden in any object diagram
 	 */
 	public boolean classHasHiddenObjects(Set<MClass> classes) {
-		List<NewObjectDiagramView> diagrams = MainWindow.instance().getObjectDiagrams();
+		List<NewObjectDiagramView> diagrams = (List<NewObjectDiagramView>)(List<?>) org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().getObjectDiagrams();
 
 		for (NewObjectDiagramView diagView : diagrams) {
 			NewObjectDiagram diag = diagView.getDiagram();

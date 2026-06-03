@@ -83,9 +83,9 @@ import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ModelBrowserSorting;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
 import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.views.diagrams.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.ObjectPropertiesView;
+import org.tzi.use.gui.views.diagrams.framework.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
@@ -1083,13 +1083,13 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (MainWindow.getJavaFxCall()){
+			if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 				Platform.runLater(()->{
 					// to create an instance of a SwingNode, which is used to hold the Swing-Components
 					SwingNode swingNode = new SwingNode();
 
 					// Create the ClassInvariantView and the enclosing ViewFrame in the javaFX DesktopPane
-					ObjectPropertiesView opv = new ObjectPropertiesView(MainWindow.instance(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system());
+					ObjectPropertiesView opv = new ObjectPropertiesView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system());
 					opv.selectObject(fObject.name()); //selecting the focused Object
 
 					ViewFrame f = new ViewFrame("Object properties", opv, "ObjectProperties.gif");
@@ -1107,7 +1107,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Object properties", swingNode, DiagramType.OBJECT_PROPERTIES_VIEW);
 				});
 			} else {
-				ObjectPropertiesView v = MainWindow.instance().showObjectPropertiesView();
+				ObjectPropertiesView v = org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().showObjectPropertiesView();
 				v.selectObject(fObject.name());
 			}
 		}
@@ -1122,7 +1122,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				PlaceableNode pickedObjectNode = findNode(e.getX(), e.getY());
 				if (pickedObjectNode instanceof ObjectNode) {
 					ObjectNode obj = (ObjectNode) pickedObjectNode;
-					ObjectPropertiesView v = MainWindow.instance().showObjectPropertiesView();
+					ObjectPropertiesView v = org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().showObjectPropertiesView();
 					v.selectObject(obj.object().name());
 				}
 			}
@@ -1418,7 +1418,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 						protected MProtocolStateMachine sm;
 
 						public void actionPerformed(ActionEvent ev) {
-							MainWindow.instance().showStateMachineView(sm, obj);
+							org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().showStateMachineView(sm, obj);
 						}
 
 						public ActionListener setStateMachine(MProtocolStateMachine sm, MObject instance) {

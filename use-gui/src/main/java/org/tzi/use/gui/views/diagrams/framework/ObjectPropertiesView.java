@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.tzi.use.gui.views.diagrams;
+package org.tzi.use.gui.views.diagrams.framework;
 
 
 import org.tzi.use.uml.mm.instance.MSystemException;
@@ -61,7 +61,7 @@ import java.util.List;
 public class ObjectPropertiesView extends JPanel implements View {
     private static final String NO_OBJECTS_AVAILABLE = "(No objects available.)";
 
-    private MainWindow fMainWindow;
+    private IMainWindowServices fMainWindow;
     private MSystem fSystem;
     private MObject fObject;
 
@@ -159,7 +159,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         }
     }
 
-    public ObjectPropertiesView(MainWindow parent, MSystem system) {
+    public ObjectPropertiesView(IMainWindowServices parent, MSystem system) {
         super(new BorderLayout());
         fMainWindow = parent;
         fSystem = system;
@@ -249,7 +249,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         		
         		if (valueAsExpression == null) {
         			JOptionPane.showMessageDialog(
-        					fMainWindow, 
+					this, 
         					errorOutput, 
         					"Error", 
         					JOptionPane.ERROR_MESSAGE);
@@ -266,7 +266,7 @@ public class ObjectPropertiesView extends JPanel implements View {
         			
         		} catch (MSystemException e) {
         			JOptionPane.showMessageDialog(
-        					fMainWindow, 
+					this, 
         					e.getMessage(), 
         					"Error", 
         					JOptionPane.ERROR_MESSAGE);

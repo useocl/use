@@ -67,8 +67,8 @@ public class ActionLoadLayout extends AbstractAction {
             fileChooser.setSelectedFile(lastFile.toFile());
         }
 
-        Window owner = MainWindow.instance(); // default for swing
-        if (MainWindow.getJavaFxCall()) {
+        Window owner = SwingUtilities.getWindowAncestor(fDiagram); // default for swing
+        if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()) {
             owner = SwingUtilities.getWindowAncestor(fDiagram);
         }
 

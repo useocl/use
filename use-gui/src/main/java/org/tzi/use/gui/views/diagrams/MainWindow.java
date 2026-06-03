@@ -18,6 +18,8 @@
  */
 
 package org.tzi.use.gui.views.diagrams;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ObjectPropertiesView;
 
 import org.tzi.use.gui.views.diagrams.framework.ModelBrowserMouseHandling;
 
@@ -177,6 +179,7 @@ public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.I
             fPluginRuntime = pluginRuntime;
         }
         fInstance = this;
+        org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.set(this);
         fSession = session;
 
         // create toolbar
@@ -2328,11 +2331,11 @@ public class MainWindow extends JFrame implements org.tzi.use.gui.main.runtime.I
     }
 
     public static Boolean getJavaFxCall() {
-        return javaFxCall;
+        return org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get();
     }
 
     public static void setJavaFxCall(Boolean javaFxCall) {
-        MainWindow.javaFxCall = javaFxCall;
+        org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.set(javaFxCall);
     }
 
     private Icon getIcon(String name) {

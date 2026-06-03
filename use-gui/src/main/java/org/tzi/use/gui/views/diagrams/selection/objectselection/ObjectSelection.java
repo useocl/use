@@ -24,7 +24,7 @@ import javax.swing.JMenuItem;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 import org.tzi.use.gui.util.AlphanumComparator;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
@@ -94,14 +94,14 @@ public class ObjectSelection {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			SelectedObjectPathView opv = new SelectedObjectPathView(MainWindow.instance(), system, diagram,
+			SelectedObjectPathView opv = new SelectedObjectPathView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), system, diagram,
 					selectedObjects);
 			ViewFrame f = new ViewFrame("Selection by path length", opv, "ObjectProperties.gif");
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(opv);
@@ -110,7 +110,7 @@ public class ObjectSelection {
 					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by path length",swingNode, DiagramType.SELECTED_OBJECT_PATH_VIEW);
 				});
 			} else {
-				MainWindow.instance().addNewViewFrame(f);
+				org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
 				f.setSize(450, 200);
 			}
 		}
@@ -127,13 +127,13 @@ public class ObjectSelection {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			SelectionObjectView opv = new SelectionObjectView(MainWindow.instance(), system, diagram);
+			SelectionObjectView opv = new SelectionObjectView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), system, diagram);
 			ViewFrame f = new ViewFrame("Select objects", opv, "ObjectProperties.gif");
 			JComponent c = (JComponent) f.getContentPane();
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(opv);
@@ -142,7 +142,7 @@ public class ObjectSelection {
 					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
 				});
 			} else {
-				MainWindow.instance().addNewViewFrame(f);
+				org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
 				f.setSize(530, 230);
 			}
 		}
@@ -162,14 +162,14 @@ public class ObjectSelection {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			SelectionOCLView opv = new SelectionOCLView(MainWindow.instance(), system, diagram);
+			SelectionOCLView opv = new SelectionOCLView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), system, diagram);
 			ViewFrame f = new ViewFrame("Selection by OCL expression", opv, "ObjectProperties.gif");
 			JComponent c = (JComponent) f.getContentPane();
 
 			c.setLayout(new BorderLayout());
 			c.add(opv, BorderLayout.CENTER);
 
-			if (MainWindow.getJavaFxCall()){
+			if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 				Platform.runLater(() -> {
 					SwingNode swingNode = new SwingNode();
 					swingNode.setContent(opv);
@@ -178,7 +178,7 @@ public class ObjectSelection {
 					org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Selection by OCL expression",swingNode, DiagramType.SELECTED_OCL_VIEW);
 				});
 			} else {
-				MainWindow.instance().addNewViewFrame(f);
+				org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
 				f.setSize(370, 250);
 			}
 		}

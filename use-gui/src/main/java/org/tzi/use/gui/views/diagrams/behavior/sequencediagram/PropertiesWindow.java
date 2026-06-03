@@ -667,7 +667,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 	 * Shows the Window.
 	 */
 	public void showWindow() {
-		Window owner = MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+		Window owner = SwingUtilities.getWindowAncestor(this);
 		PropertiesWindow propW = new PropertiesWindow(owner, fSeqDiag);
 		propW.setLocation(300, 200);
 		propW.setLocationRelativeTo(getOwner());

@@ -1155,7 +1155,7 @@ public class ClassDiagram extends DiagramView
 
 						@Override
 						public void actionPerformed(ActionEvent ev) {
-							MainWindow.instance().showStateMachineView(sm);
+							org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().showStateMachineView(sm);
 						}
 
 						public ActionListener setStateMachine(MStateMachine sm) {
@@ -1285,7 +1285,7 @@ public class ClassDiagram extends DiagramView
 			public void actionPerformed(ActionEvent e) {
 				Window owner = null;
 				// setting owner for javafxCall, so that new Window is focused in front of the Application and not behind it
-				if (MainWindow.getJavaFxCall()){
+				if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 					// Schritt 1: Owner-Fenster holen aus dem Swing-Content
 					owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
 				}
@@ -1341,7 +1341,7 @@ public class ClassDiagram extends DiagramView
 					exporter.export(lastFile, getSystem(), visibleData.fClassToNodeMap.keySet(),
 							visibleData.fDataTypeToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
 				} catch (IOException e1) {
-					if (MainWindow.getJavaFxCall()){
+					if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 						// Schritt 1: Owner-Fenster holen aus dem Swing-Content
 						owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
 						JOptionPane.showMessageDialog(owner, e1.getMessage(), "Error saving the USE model",

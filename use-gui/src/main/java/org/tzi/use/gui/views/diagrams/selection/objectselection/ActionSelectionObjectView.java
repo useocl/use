@@ -23,7 +23,7 @@ import org.tzi.use.gui.views.diagrams.framework.DataHolder;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -50,13 +50,13 @@ public class ActionSelectionObjectView extends AbstractAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        SelectionObjectView opv = new SelectionObjectView(MainWindow.instance(), system, dataHolder);
+        SelectionObjectView opv = new SelectionObjectView(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), system, dataHolder);
         ViewFrame f = new ViewFrame("Select objects", opv, "ObjectProperties.gif");
         JComponent c = (JComponent) f.getContentPane();
         c.setLayout(new BorderLayout());
         c.add(opv, BorderLayout.CENTER);
 
-        if (MainWindow.getJavaFxCall()){
+        if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
             Platform.runLater(() -> {
                 SwingNode swingNode = new SwingNode();
                 swingNode.setContent(opv);
@@ -65,7 +65,7 @@ public class ActionSelectionObjectView extends AbstractAction {
                 org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().createNewWindow("Select objects",swingNode, DiagramType.SELECTED_OBJECT_VIEW);
             });
         } else {
-            MainWindow.instance().addNewViewFrame(f);
+            org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().addNewViewFrame(f);
             f.setSize(530, 230);
         }
     }

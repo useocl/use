@@ -56,7 +56,7 @@ import javax.swing.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import org.tzi.use.gui.views.diagrams.MainWindow;
-import org.tzi.use.gui.views.diagrams.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 import org.tzi.use.gui.util.PopupListener;
 import org.tzi.use.gui.util.Selection;
 import org.tzi.use.gui.views.diagrams.framework.DiagramType;
@@ -452,7 +452,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
      * Creates a new message selection view object.
      */
     private void createMessageSelectionWindow() {
-        Window owner = MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+        Window owner = SwingUtilities.getWindowAncestor(this);
         MessageSelectionView propWin = new MessageSelectionView(owner, this, false);
         propWin.showWindow();
     }
@@ -777,13 +777,13 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
         final JMenuItem comDia = new JMenuItem("Create sync. communication dia.");
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall()) {
+                if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()) {
                     Platform.runLater(() -> {
                         // to create an instance of a SwingNode, which is used to hold the Swing-Components
                         SwingNode swingNode = new SwingNode();
 
                         // Create the ClassExtentView and the enclosing ViewFrame
-                        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(MainWindow.instance(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system(), visibleData);
+                        CommunicationDiagramView cdv = CommunicationDiagramView.createCommunicationDiagramm(org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get(), ((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.IFXWindowHost.INSTANCE.get().getSession()).system(), visibleData);
                         ViewFrame f = new ViewFrame("Communication diagram", cdv, "CommunicationDiagram.gif");
 
                         // Set up the SwingNode content
@@ -813,7 +813,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
      * Creates a new PropertiesWindow object.
      */
     private void createPropertiesWindow() {
-        Window owner = MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+        Window owner = SwingUtilities.getWindowAncestor(this);
         PropertiesWindow propWin = new PropertiesWindow(owner ,this);
         propWin.showWindow();
     }
@@ -822,7 +822,7 @@ public class SequenceDiagram extends JPanel implements Printable, CmdChooseWindo
      * Creates a new CmdChooseWindow object.
      */
     private void createCmdChooseWindow() {
-        Window owner = org.tzi.use.gui.views.diagrams.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.views.diagrams.MainWindow.instance();
+        Window owner = SwingUtilities.getWindowAncestor(this);
         CmdChooseWindow chooseWin = new CmdChooseWindow(owner, this);
         chooseWin.showWindow();
     }
