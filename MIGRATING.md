@@ -293,6 +293,85 @@ PersistHelper.allNodes  : Map<String, PlaceableNode> → Map<String, Object>
 PersistHelper.setAllNodes(Map<String, PlaceableNode>) → setAllNodes(Map<String, ?>)
 ```
 
+## 6b. Diagram-editor decycling (`org.tzi.use.gui.views.diagrams`)
+
+A follow-up refactor made the `gui.views.diagrams` sub-packages free of cyclic
+dependencies (enforced by `MavenCyclicDependenciesGUITest.count_cycles_in_gui_views_diagrams_package`).
+This relocated many public/SPI types out of the overloaded `diagrams` root into a
+new foundation `framework` slice, a `base` slice (the diagram-engine bases), and
+into the diagram type that owns them. **Plugin authors/embedders that reference
+diagram types must update imports.** The mechanical part is a prefix/leaf rename;
+the one signature change is the diagram-host type.
+
+```
+-- moved to gui.views.diagrams.framework (foundation contracts/holders) --
+org.tzi.use.gui.views.diagrams.DiagramOptions                → ...diagrams.framework.DiagramOptions
+org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener  → ...diagrams.framework.DiagramOptionChangedListener
+org.tzi.use.gui.views.diagrams.PositionChangedListener       → ...diagrams.framework.PositionChangedListener
+org.tzi.use.gui.views.diagrams.ToolTipProvider               → ...diagrams.framework.ToolTipProvider
+org.tzi.use.gui.views.diagrams.DiagramType                   → ...diagrams.framework.DiagramType
+org.tzi.use.gui.views.diagrams.PrintableView                 → ...diagrams.framework.PrintableView
+org.tzi.use.gui.views.diagrams.HighlightChangeEvent          → ...diagrams.framework.HighlightChangeEvent
+org.tzi.use.gui.views.diagrams.HighlightChangeListener       → ...diagrams.framework.HighlightChangeListener
+org.tzi.use.gui.views.diagrams.ObjectNodeActivity            → ...diagrams.framework.ObjectNodeActivity
+org.tzi.use.gui.views.diagrams.SelectionBox                  → ...diagrams.framework.SelectionBox
+org.tzi.use.gui.views.diagrams.ModelBrowser                  → ...diagrams.framework.ModelBrowser
+org.tzi.use.gui.views.diagrams.ModelBrowserMouseHandling     → ...diagrams.framework.ModelBrowserMouseHandling
+org.tzi.use.gui.views.diagrams.ViewFrame                     → ...diagrams.framework.ViewFrame
+org.tzi.use.gui.views.diagrams.ObjectPropertiesView          → ...diagrams.framework.ObjectPropertiesView
+org.tzi.use.gui.views.diagrams.IFXWindowHost                 → ...diagrams.framework.IFXWindowHost
+org.tzi.use.gui.views.diagrams.TableModel                    → ...diagrams.framework.TableModel
+
+-- moved to gui.views.diagrams.base (the diagram-engine bases) --
+org.tzi.use.gui.views.diagrams.DiagramView                   → ...diagrams.base.DiagramView
+org.tzi.use.gui.views.diagrams.DiagramGraph                  → ...diagrams.base.DiagramGraph
+org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode     → ...diagrams.base.DiagramViewWithObjectNode
+org.tzi.use.gui.views.diagrams.AllLayoutTypes                → ...diagrams.base.AllLayoutTypes
+org.tzi.use.gui.views.diagrams.StyleInfoBase                 → ...diagrams.base.StyleInfoBase
+org.tzi.use.gui.views.diagrams.StyleInfoProvider             → ...diagrams.base.StyleInfoProvider
+org.tzi.use.gui.views.diagrams.IPluginDiagramExtensionPoint  → ...diagrams.base.IPluginDiagramExtensionPoint
+
+-- moved into the diagram type that owns them --
+org.tzi.use.gui.views.diagrams.StyleInfoClassNode            → ...diagrams.classdiagram.StyleInfoClassNode
+org.tzi.use.gui.views.diagrams.StyleInfoEnumNode             → ...diagrams.classdiagram.StyleInfoEnumNode
+org.tzi.use.gui.views.diagrams.StyleInfoEdge                 → ...diagrams.classdiagram.StyleInfoEdge
+org.tzi.use.gui.views.diagrams.waypoints.**                  → ...diagrams.elements.waypoints.**
+org.tzi.use.gui.views.diagrams.selection.classselection.**   → ...diagrams.classdiagram.selection.**
+org.tzi.use.gui.views.diagrams.selection.ClassSelectionView  → ...diagrams.classdiagram.selection.ClassSelectionView
+org.tzi.use.gui.views.diagrams.selection.objectselection.**  → ...diagrams.objectdiagram.selection.**
+org.tzi.use.gui.views.diagrams.selection.ObjectSelectionView → ...diagrams.objectdiagram.selection.ObjectSelectionView
+org.tzi.use.gui.views.diagrams.edges.GUI                     → ...diagrams.edges.GUI (was diagrams.util.GUI)
+
+-- new foundation interfaces in gui.views.diagrams.framework --
++ IDiagram (DiagramView implements; getOptions())
++ IObjectDiagram extends IDiagram (NewObjectDiagram implements)
++ IClassNode / IObjectNode (marker views of class/object nodes)
++ IMainWindowServices (MainWindow implements; the diagram host services)
++ IBehaviorMainWindow extends IMainWindowServices (behavior.shared)
++ DataHolder (was selection.objectselection.DataHolder)
+```
+
+**Signature change — diagram host type.** The diagram view classes and their
+host accessors now use `framework.IMainWindowServices` instead of the concrete
+`MainWindow`. A plugin that **subclasses** a USE diagram view (e.g. extends
+`classdiagram.ClassDiagramView` or `objectdiagram.NewObjectDiagramView`) must
+type its host parameter/field as `IMainWindowServices`:
+
+```
+ClassDiagramView(MainWindow, ...)        → ClassDiagramView(IMainWindowServices, ...)
+NewObjectDiagramView(MainWindow, ...)    → NewObjectDiagramView(IMainWindowServices, ...)
+DiagramView.getMainWindow() : MainWindow → : IMainWindowServices
+```
+
+`MainWindow` itself did **not** move (`org.tzi.use.gui.views.diagrams.MainWindow`),
+so static uses (`MainWindow.instance()`, `MainWindow.getJavaFxCall()`,
+`MainWindow.getPluginRuntime()`) and Swing-`Frame`/`Component` uses are unchanged.
+The host services it exposes (`logWriter()`, `statusBar()`, `getModelBrowser()`,
+`addNewViewFrame()`, `showStateMachineView()`, `getObjectDiagrams()`, …) are now
+declared on `IMainWindowServices`. The five bundled plugins (OCLComplexity,
+ObjectToClass, AssociationExtend, ModelValidator, Filmstrip) have been migrated and
+rebuilt for these moves; see `use_plugins` branch `decycle-compat`.
+
 ## 7. Module exports (`module-info.java`)
 
 `use.core` and `use.gui` updated their `exports`/`opens` clauses to the new
