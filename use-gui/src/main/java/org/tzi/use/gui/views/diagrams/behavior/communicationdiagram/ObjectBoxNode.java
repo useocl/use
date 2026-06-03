@@ -38,6 +38,12 @@ import java.util.HashSet;
  */
 public class ObjectBoxNode extends BaseNode implements ObjectNodeActivity {
 
+	/** Communication-diagram object boxes have no greyed state. */
+	@Override
+	public boolean isGreyed() {
+		return false;
+	}
+
 	private final MObject obj;
 	private final String createdStamp;
 

@@ -19,12 +19,13 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
+import org.tzi.use.gui.views.diagrams.framework.IDiagram;
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
+
 import java.awt.Graphics2D;
 
-import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.uml.mm.MAssociation;
 
 /**
@@ -59,7 +60,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
      * Use this constructor if it is an t-nary associationclass/objectlink.
      */
 	protected NAryAssociationClassOrObjectEdge(DiamondNode diamondNode,
-			PlaceableNode associationClassNode, DiagramView diagram,
+			PlaceableNode associationClassNode, IDiagram diagram,
 			MAssociation assoc, boolean isLink) {
         super( diamondNode, associationClassNode, assoc.name(), diagram.getOptions(), true );
         this.isLink = isLink;
@@ -91,8 +92,8 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
 	}
 	
 	private boolean isPartOfGreyedNode() {
-		if(fAssociationClassOrLinkObjectNode instanceof ObjectNode) {
-    		if(((ObjectNode) fAssociationClassOrLinkObjectNode).isGreyed()) {
+		if(fAssociationClassOrLinkObjectNode instanceof ObjectNodeActivity) {
+    		if(((ObjectNodeActivity) fAssociationClassOrLinkObjectNode).isGreyed()) {
     			return true;
     		}
     	}
@@ -138,7 +139,7 @@ public class NAryAssociationClassOrObjectEdge extends EdgeBase implements Associ
      */
 	public static NAryAssociationClassOrObjectEdge create(
 			DiamondNode diamondNode, PlaceableNode associationClassNode,
-			DiagramView diagram, MAssociation assoc, boolean isLink) {
+			IDiagram diagram, MAssociation assoc, boolean isLink) {
 		
 		NAryAssociationClassOrObjectEdge edge = new NAryAssociationClassOrObjectEdge(
 				diamondNode, associationClassNode, diagram, assoc, isLink);

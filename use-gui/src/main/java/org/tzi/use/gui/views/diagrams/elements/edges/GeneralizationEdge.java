@@ -19,11 +19,12 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
+import org.tzi.use.gui.views.diagrams.framework.IDiagram;
+
 import java.awt.Graphics2D;
 import java.util.Iterator;
 
 import lombok.Getter;
-import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -42,7 +43,7 @@ public final class GeneralizationEdge extends EdgeBase {
     private final MGeneralization mGeneralization;
 
     protected GeneralizationEdge(MGeneralization mGeneralization, PlaceableNode child, PlaceableNode parent,
-                                 DiagramView diagram ) {
+                                 IDiagram diagram ) {
         super( child, parent, "Inheritance", diagram.getOptions(), true);
         this.mGeneralization = mGeneralization;
     }
@@ -107,7 +108,7 @@ public final class GeneralizationEdge extends EdgeBase {
     @Override
     protected String getStoreType() { return "Generalization"; }
     
-    public static GeneralizationEdge create(MGeneralization mGeneralization, PlaceableNode child, PlaceableNode parent, DiagramView diagram ) {
+    public static GeneralizationEdge create(MGeneralization mGeneralization, PlaceableNode child, PlaceableNode parent, IDiagram diagram ) {
         return new GeneralizationEdge(mGeneralization, child, parent, diagram);
     }
 }

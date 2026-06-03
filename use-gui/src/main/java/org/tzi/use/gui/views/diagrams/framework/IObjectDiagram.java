@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2004 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,21 +19,24 @@
 
 package org.tzi.use.gui.views.diagrams.framework;
 
-import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.mm.instance.MObject;
 
 /**
- * Interface for selectable nodes, which represent objects
- * @author Quang Dung Nguyen
- *
+ * The view an object-diagram element needs of the object diagram that owns it.
+ * <p>
+ * Extends {@link IDiagram} with the two object-diagram queries that generic
+ * edge elements (e.g. association/link edges shared by class and object
+ * diagrams) need, so those elements depend on this foundation interface instead
+ * of the concrete {@code NewObjectDiagram}. {@code NewObjectDiagram} implements
+ * this interface.
  */
-public interface ObjectNodeActivity {
-    
-    public MObject object();
+public interface IObjectDiagram extends IDiagram {
 
-    public MClass cls();
+    /** Whether the object diagram currently shows the given link. */
+    boolean containsLink(MLink link);
 
-    /** Whether this object node is shown greyed-out (e.g. filtered/hidden context). */
-    public boolean isGreyed();
+    /** Whether the node for the given object is currently greyed-out. */
+    boolean isObjectNodeGreyed(MObject obj);
 
 }

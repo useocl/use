@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.elements;
 
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
+
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
@@ -34,7 +36,6 @@ import org.tzi.use.gui.views.diagrams.elements.edges.AssociationOrLinkPartEdge;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
@@ -60,7 +61,7 @@ public class DiamondNode extends PlaceableNode {
     private AssociationName fAssocName;
     private final List<String> fConnectedNodes;
     private final String fName;
-    private List<ObjectNode> linkedObjectNodes;
+    private List<? extends ObjectNodeActivity> linkedObjectNodes;
     
     private List<EdgeBase> fHalfEdges; // participating edges
     
@@ -80,7 +81,7 @@ public class DiamondNode extends PlaceableNode {
         }
     }
 
-    public DiamondNode( MLink link, DiagramOptions opt, List<ObjectNode> linkedObjectNodes ) {
+    public DiamondNode( MLink link, DiagramOptions opt, List<? extends ObjectNodeActivity> linkedObjectNodes ) {
         fAssoc = link.association();
         fLink = link;
         fName = fAssoc.name();
@@ -139,7 +140,7 @@ public class DiamondNode extends PlaceableNode {
     		return false;
     	}
     	
-    	for(ObjectNode node : linkedObjectNodes) {
+    	for(ObjectNodeActivity node : linkedObjectNodes) {
     		if(node.isGreyed()) {
     			return true;
     		}

@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2004 Mark Richters, University of Bremen
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,21 +19,17 @@
 
 package org.tzi.use.gui.views.diagrams.framework;
 
-import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.mm.instance.MObject;
-
 /**
- * Interface for selectable nodes, which represent objects
- * @author Quang Dung Nguyen
- *
+ * The minimal view a diagram element needs of the diagram that owns it.
+ * <p>
+ * Lives in the foundation {@code framework} slice so that element classes can
+ * depend on the diagram abstraction without depending on the concrete
+ * {@code DiagramView} (which lives "above" them and references the elements it
+ * renders). {@code DiagramView} implements this interface.
  */
-public interface ObjectNodeActivity {
-    
-    public MObject object();
+public interface IDiagram {
 
-    public MClass cls();
-
-    /** Whether this object node is shown greyed-out (e.g. filtered/hidden context). */
-    public boolean isGreyed();
+    /** The display options governing this diagram. */
+    DiagramOptions getOptions();
 
 }

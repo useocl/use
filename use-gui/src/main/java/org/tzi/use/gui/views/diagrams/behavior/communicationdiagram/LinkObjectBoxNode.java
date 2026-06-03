@@ -32,6 +32,13 @@ import org.tzi.use.uml.mm.instance.MObject;
  *
  */
 public class LinkObjectBoxNode extends LinkBoxNode implements ObjectNodeActivity {
+
+    /** Communication-diagram link-object boxes have no greyed state. */
+    @Override
+    public boolean isGreyed() {
+        return false;
+    }
+
     private MObject object;
 
     /**

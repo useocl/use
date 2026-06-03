@@ -132,7 +132,21 @@ import com.ximpleware.XPathParseException;
  * @author Lars Hamann
  */
 @SuppressWarnings("serial")
-public class NewObjectDiagram extends DiagramViewWithObjectNode implements HighlightChangeListener, SortChangeListener {
+public class NewObjectDiagram extends DiagramViewWithObjectNode implements HighlightChangeListener, SortChangeListener, org.tzi.use.gui.views.diagrams.framework.IObjectDiagram {
+
+	/** {@inheritDoc} Foundation-interface accessor (see {@code IObjectDiagram}) so that
+	 *  shared edge elements can query object-diagram state without depending on this class. */
+	@Override
+	public boolean containsLink(MLink link) {
+		return getVisibleData().containsLink(link);
+	}
+
+	/** {@inheritDoc} Encapsulates the visible-data node lookup that an association/link
+	 *  edge previously performed by reaching into {@code ObjectDiagramData.fObjectToNodeMap}. */
+	@Override
+	public boolean isObjectNodeGreyed(MObject obj) {
+		return getVisibleData().fObjectToNodeMap.get(obj).isGreyed();
+	}
 
 	/**
 	 * This class saves needed information about visible or hidden nodes and

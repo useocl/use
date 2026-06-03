@@ -22,6 +22,7 @@
 package org.tzi.use.gui.views.diagrams;
 
 import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.IDiagram;
 import org.tzi.use.gui.views.diagrams.framework.SelectionBox;
 import org.tzi.use.gui.views.diagrams.framework.ToolTipProvider;
 
@@ -88,7 +89,7 @@ import java.util.function.Function;
  */
 @SuppressWarnings("serial")
 public abstract class DiagramView extends JPanel
-        implements Printable {
+        implements Printable, IDiagram {
 
     /**
      * This graph contains all visible elements of a diagram
