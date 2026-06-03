@@ -1741,7 +1741,9 @@ org.tzi.use.main.runtime.IRuntime                 → org.tzi.use.runtime.spi.IR
 org.tzi.use.main.runtime.IExtensionPoint          → org.tzi.use.runtime.spi.IExtensionPoint
 org.tzi.use.main.runtime.IDescriptor              → org.tzi.use.runtime.spi.IDescriptor
 
--- impls moved out of runtime into the slices they serve --
+-- GUI/shell plugin impls moved OUT of runtime into the slices they serve --
+-- (note: the core plugin runtime stays put: Plugin/PluginRuntime under runtime.impl, --
+--  the Plugin*Model classes under runtime.model, and registries/descriptors under runtime.util) --
 org.tzi.use.runtime.gui.**          → org.tzi.use.gui.plugin.**
 org.tzi.use.runtime.gui.impl.**     → org.tzi.use.gui.plugin.**
 org.tzi.use.runtime.guiFX.**        → org.tzi.use.gui.pluginFX.**
@@ -1794,8 +1796,8 @@ IPluginShellExtensionPoint.createPluginCmds(...)  // return type
 **New SPI types introduced (consumers may implement / call):**
 
 ```
-org.tzi.use.gui.main.IMainWindow            (MainWindow implements)
-org.tzi.use.gui.main.IModelBrowser          (ModelBrowser implements)
+org.tzi.use.gui.main.runtime.IMainWindow    (MainWindow implements)
+org.tzi.use.gui.main.runtime.IModelBrowser  (ModelBrowser implements)
 org.tzi.use.gui.main.runtime.IPluginActionProxy
 org.tzi.use.main.shell.runtime.IShell       (Shell implements)
 org.tzi.use.main.shell.runtime.IPluginShellCmdContainer
