@@ -24,6 +24,8 @@ import org.tzi.use.uml.mm.instance.MSystemException;
 
 import org.tzi.use.uml.mm.instance.MInstance;
 
+import org.tzi.use.uml.mm.instance.MInstanceState;
+
 import org.tzi.use.uml.mm.instance.MLink;
 
 import org.tzi.use.uml.mm.instance.MObject;
@@ -599,7 +601,18 @@ public final class MSystem {
 			ctx = new EvalContext(null, fCurrentState, b, null, "");
 		}
 
-		MObjectState objState = (MObjectState) operationCall.getSelf().state(fCurrentState);
+		// getSelf() is statically an MInstance, whose state() returns the broad
+		// MInstanceState (impls: IObjectState/MObjectState + MDataTypeValueState).
+		// Only objects own protocol state machines, so guard the downcast and fail
+		// with a descriptive message instead of a bare ClassCastException. (Do not
+		// hoist this onto MInstance: it would re-couple uml.mm -> uml.sys.)
+		MInstanceState instState = operationCall.getSelf().state(fCurrentState);
+		if (!(instState instanceof MObjectState objState)) {
+			throw new IllegalStateException("Expected an object state for self '"
+					+ operationCall.getSelf().name() + "' but found "
+					+ instState.getClass().getSimpleName()
+					+ " (protocol state machines apply to objects, not data-type values)");
+		}
 
 		for (MProtocolStateMachineInstance psm : objState.getProtocolStateMachinesInstances()) {
 			// Operation is not covered by the state machine
@@ -685,7 +698,18 @@ public final class MSystem {
 		if (!operationCall.hasPossibleTransitions())
 			return;
 
-		MObjectState objState = (MObjectState) operationCall.getSelf().state(fCurrentState);
+		// getSelf() is statically an MInstance, whose state() returns the broad
+		// MInstanceState (impls: IObjectState/MObjectState + MDataTypeValueState).
+		// Only objects own protocol state machines, so guard the downcast and fail
+		// with a descriptive message instead of a bare ClassCastException. (Do not
+		// hoist this onto MInstance: it would re-couple uml.mm -> uml.sys.)
+		MInstanceState instState = operationCall.getSelf().state(fCurrentState);
+		if (!(instState instanceof MObjectState objState)) {
+			throw new IllegalStateException("Expected an object state for self '"
+					+ operationCall.getSelf().name() + "' but found "
+					+ instState.getClass().getSimpleName()
+					+ " (protocol state machines apply to objects, not data-type values)");
+		}
 
 		if (ctx == null) {
 			VarBindings b = fVariableEnvironment.constructVarBindings();
