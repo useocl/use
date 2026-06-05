@@ -22,7 +22,7 @@ package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 import java.awt.Color;
 
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.w3c.dom.Element;
 
 /**

@@ -6,14 +6,13 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.EvaluationResult;
-import com.tngtech.archunit.lang.FailureReport;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
-import org.junit.internal.runners.statements.Fail;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -176,6 +175,9 @@ public class MavenCyclicDependenciesCoreTest {
         int cycleCount = result.getFailureReport().getDetails().size();
         writeResultsToFile(cycleCount, result, packageName, withTests);
 
+        assertEquals(0, cycleCount,
+                "Cyclic dependencies detected in " + packageName
+                        + (withTests ? " (with tests)" : " (without tests)"));
         return cycleCount;
     }
 

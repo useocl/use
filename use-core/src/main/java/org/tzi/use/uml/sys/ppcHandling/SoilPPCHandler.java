@@ -26,9 +26,9 @@ import java.util.Deque;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MPrePostCondition;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;

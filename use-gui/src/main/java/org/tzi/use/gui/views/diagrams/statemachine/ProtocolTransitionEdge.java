@@ -18,7 +18,7 @@
  */
 package org.tzi.use.gui.views.diagrams.statemachine;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.util.Direction;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 

@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
-import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.util.collections.CollectionUtil;
 
 /**
@@ -404,14 +403,14 @@ public class MClassImpl extends MClassifierImpl implements MClass {
 	}
 
 	@Override
-	public boolean hasStateMachineWhichHandles(MOperationCall operationCall) {
+	public boolean hasStateMachineWhichHandles(MOperation operation) {
 		for (MClass general : generalizationHierachie(true)) {
 			for (MProtocolStateMachine psm : general.getOwnedProtocolStateMachines()) {
-				if (psm.handlesOperation(operationCall.getOperation()))
+				if (psm.handlesOperation(operation))
 					return true;
 			}
 		}
-				
+
 		return false;
 	}
 

@@ -7,7 +7,7 @@ model CarRental2
 --  enum CarGroupKind { compact, intermediate, luxury }
 --  enum Sex { male, female }
 
--- datatype Date "org.tzi.use.uml.ocl.ext.Date"
+-- datatype Date "org.tzi.use.uml.mm.ocl.ext.Date"
 -- operations
 --   static Date(year : Integer, month : Integer, day : Integer) : Date
 --   static now() : Date

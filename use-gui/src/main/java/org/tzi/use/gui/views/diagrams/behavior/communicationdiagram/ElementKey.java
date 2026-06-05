@@ -19,8 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 
 /**
  * Because use objects and links don't consider the

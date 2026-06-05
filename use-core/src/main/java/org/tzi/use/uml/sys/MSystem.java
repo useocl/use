@@ -19,22 +19,31 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MInstanceState;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import com.google.common.eventbus.EventBus;
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.tool.GGenerator;
-import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.mm.expr.EvalContext;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.BooleanValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.VarBindings;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.events.*;
 import org.tzi.use.uml.sys.events.ClassInvariantChangedEvent.InvariantStateChange;
@@ -48,10 +57,9 @@ import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance.Transitio
 import org.tzi.use.util.Log;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.UniqueNameGenerator;
-import org.tzi.use.util.soil.VariableEnvironment;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -84,9 +92,6 @@ public final class MSystem {
 
 	/** Last called operation (used by test suite) */
 	private MOperationCall lastOperationCall;
-
-	/** Snapshot generator */
-	private GGenerator fGenerator;
 
 	/** The variables of this system */
 	private VariableEnvironment fVariableEnvironment;
@@ -154,7 +159,6 @@ public final class MSystem {
 		fObjects = new HashMap<>();
 		fUniqueNameGenerator = new UniqueNameGenerator();
 		fCurrentState = new MSystemState(fUniqueNameGenerator.generate("state#"), this);
-		fGenerator = new GGenerator(this);
 		fVariableEnvironment = new VariableEnvironment(fCurrentState);
 		fStatementEvaluationResults = new ArrayDeque<>();
 		fCallStack = new ArrayDeque<>();
@@ -181,13 +185,6 @@ public final class MSystem {
 	 */
 	public MModel model() {
 		return fModel;
-	}
-
-	/**
-	 * Returns the system's instance generator.
-	 */
-	public GGenerator generator() {
-		return fGenerator;
 	}
 
 	public VarBindings varBindings() {
@@ -296,11 +293,13 @@ public final class MSystem {
 		fObjects.remove(obj.name());
 	}
 
-	public void loadInvariants(InputStream in, String inputName, boolean doEcho, PrintWriter out) {
-		Collection<MClassInvariant> invs = ASSLCompiler
-				.compileInvariants(fModel, in, inputName,
-						out);
-
+	/**
+	 * Adds pre-compiled class invariants to the model. The caller is
+	 * responsible for compiling them (e.g. via
+	 * {@code org.tzi.use.parser.generator.ASSLCompiler.compileInvariants}); this
+	 * class deliberately does not depend on the parser package.
+	 */
+	public void addLoadedInvariants(Collection<MClassInvariant> invs, boolean doEcho, PrintWriter out) {
 		if(invs != null){
 			for(Iterator<MClassInvariant> it = invs.iterator(); it.hasNext();){
 				MClassInvariant inv = it.next();
@@ -311,14 +310,14 @@ public final class MSystem {
 					out.println(e.getMessage());
 				}
 			}
-			
+
 			if(!invs.isEmpty()){
 				fireClassInvariantsLoadedEvent(invs);
 			}
-			
+
 			if (doEcho) {
 				out.println("Added invariants:");
-				
+
 				if (invs.isEmpty()) {
 					out.println("(none)");
 				} else {
@@ -602,7 +601,18 @@ public final class MSystem {
 			ctx = new EvalContext(null, fCurrentState, b, null, "");
 		}
 
-		MInstanceState objState = operationCall.getSelf().state(fCurrentState);
+		// getSelf() is statically an MInstance, whose state() returns the broad
+		// MInstanceState (impls: IObjectState/MObjectState + MDataTypeValueState).
+		// Only objects own protocol state machines, so guard the downcast and fail
+		// with a descriptive message instead of a bare ClassCastException. (Do not
+		// hoist this onto MInstance: it would re-couple uml.mm -> uml.sys.)
+		MInstanceState instState = operationCall.getSelf().state(fCurrentState);
+		if (!(instState instanceof MObjectState objState)) {
+			throw new IllegalStateException("Expected an object state for self '"
+					+ operationCall.getSelf().name() + "' but found "
+					+ instState.getClass().getSimpleName()
+					+ " (protocol state machines apply to objects, not data-type values)");
+		}
 
 		for (MProtocolStateMachineInstance psm : objState.getProtocolStateMachinesInstances()) {
 			// Operation is not covered by the state machine
@@ -688,7 +698,18 @@ public final class MSystem {
 		if (!operationCall.hasPossibleTransitions())
 			return;
 
-		MInstanceState objState = operationCall.getSelf().state(fCurrentState);
+		// getSelf() is statically an MInstance, whose state() returns the broad
+		// MInstanceState (impls: IObjectState/MObjectState + MDataTypeValueState).
+		// Only objects own protocol state machines, so guard the downcast and fail
+		// with a descriptive message instead of a bare ClassCastException. (Do not
+		// hoist this onto MInstance: it would re-couple uml.mm -> uml.sys.)
+		MInstanceState instState = operationCall.getSelf().state(fCurrentState);
+		if (!(instState instanceof MObjectState objState)) {
+			throw new IllegalStateException("Expected an object state for self '"
+					+ operationCall.getSelf().name() + "' but found "
+					+ instState.getClass().getSimpleName()
+					+ " (protocol state machines apply to objects, not data-type values)");
+		}
 
 		if (ctx == null) {
 			VarBindings b = fVariableEnvironment.constructVarBindings();
@@ -762,7 +783,7 @@ public final class MSystem {
 		for (MObject o : this.state().allObjects()) {
 			if (o.cls().getAllOwnedProtocolStateMachines().isEmpty()) continue;
 			
-			for (MProtocolStateMachineInstance psmI : o.state(this.state()).getProtocolStateMachinesInstances()) {
+			for (MProtocolStateMachineInstance psmI : ((MObjectState) o.state(this.state())).getProtocolStateMachinesInstances()) {
 				psmI.determineState(this.state(), out);
 				fireTransition(o, psmI.getProtocolStateMachine(), null);
 				state().updateDerivedValues();
@@ -821,7 +842,7 @@ public final class MSystem {
 		// if the post conditions of this operations require a pre state
 		// require a state copy, create it
 		if (isRunningTestSuite || operationCall.hasPostConditions() && operationCall.getOperation().postConditionsRequirePreState()
-				|| operationCall.getSelf().cls().hasStateMachineWhichHandles(operationCall)) {
+				|| operationCall.getSelf().cls().hasStateMachineWhichHandles(operationCall.getOperation())) {
 
 			operationCall.setPreState(new MSystemState(fUniqueNameGenerator.generate("state#"), fCurrentState));
 		} else {

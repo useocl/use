@@ -19,8 +19,6 @@
 
 package org.tzi.use.graph;
 
-import org.tzi.use.util.StringUtil;
-
 /**
  * A Node was referenced that is not part of the Graph.
  *
@@ -31,12 +29,12 @@ public class NodeDoesNotExistException extends RuntimeException {
 	 * To get rid of the warning...
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
     public NodeDoesNotExistException() {
         super();
     }
 
     public NodeDoesNotExistException(Object node) {
-        super("Node " + StringUtil.inQuotes(node.toString()) + "does not exist");
+        super("Node `" + node.toString() + "' does not exist");
     }
 }

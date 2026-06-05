@@ -21,15 +21,17 @@
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import org.tzi.use.graph.DirectedGraph;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ModelBrowser;
-import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser;
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
+import org.tzi.use.gui.main.View;
+import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.mm.types.EnumType;
 import org.tzi.use.uml.sys.MSystem;
 
 import javax.swing.*;
@@ -49,7 +51,7 @@ public class ClassDiagramView extends JPanel
                                  implements View,
                                             PrintableView {
 
-    protected final MainWindow fMainWindow;
+    protected final IMainWindowServices fMainWindow;
 
     private final MSystem fSystem;
 
@@ -57,7 +59,7 @@ public class ClassDiagramView extends JPanel
 
     protected IRuntime pluginRuntime;
 
-    public ClassDiagramView(MainWindow mainWindow, MSystem system, boolean loadLayout, IRuntime pluginRuntime) {
+    public ClassDiagramView(IMainWindowServices mainWindow, MSystem system, boolean loadLayout, IRuntime pluginRuntime) {
         this.pluginRuntime = pluginRuntime;
     	this.setFocusable(true);
         fMainWindow = mainWindow;

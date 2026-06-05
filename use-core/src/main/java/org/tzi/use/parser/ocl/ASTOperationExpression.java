@@ -19,18 +19,22 @@
 
 package org.tzi.use.parser.ocl;
 
+import org.tzi.use.uml.sys.expr.ExpObjOp;
+
+import org.tzi.use.uml.sys.expr.ExpInstanceConstructor;
+
 import org.antlr.runtime.Token;
 import org.tzi.use.config.Options;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.*;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.TupleType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.*;
+import org.tzi.use.uml.mm.types.CollectionType;
+import org.tzi.use.uml.mm.types.TupleType;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 

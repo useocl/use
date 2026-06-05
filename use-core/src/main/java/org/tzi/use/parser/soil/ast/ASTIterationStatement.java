@@ -24,15 +24,15 @@ import java.io.PrintWriter;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.parser.soil.SoilLexer;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.CollectionType;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 import org.tzi.use.uml.sys.soil.MEmptyStatement;
 import org.tzi.use.uml.sys.soil.MIterationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**

@@ -33,7 +33,7 @@ import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
 
 import com.google.common.collect.Multimap;
 

@@ -19,10 +19,10 @@
 
 package org.tzi.use.uml.sys.soil.library;
 
-import org.tzi.use.uml.ocl.expr.operations.OpGeneric;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.operations.OpGeneric;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.soil.SoilEvaluationContext;
 
 /**

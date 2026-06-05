@@ -29,11 +29,11 @@ import java.util.Set;
 
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.EnumType;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.EnumType;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.NullPrintWriter;
 

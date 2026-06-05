@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.objectdiagram;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -33,22 +35,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ModelBrowser;
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser;
+import org.tzi.use.gui.util.ModelBrowserSorting;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
@@ -73,12 +75,12 @@ public class NewObjectDiagramView extends JPanel
   implements View, PrintableView, SortChangeListener {
 
     protected final MSystem fSystem;
-    protected final MainWindow fMainWindow;
+    protected final IMainWindowServices fMainWindow;
 
     protected NewObjectDiagram fObjectDiagram;
     public static int viewcount = 0;
     
-    public NewObjectDiagramView(MainWindow mainWindow, MSystem system) {
+    public NewObjectDiagramView(IMainWindowServices mainWindow, MSystem system) {
         fMainWindow = mainWindow;
         fSystem = system;
         
@@ -236,7 +238,7 @@ public class NewObjectDiagramView extends JPanel
 					new MLinkDeletionStatement(link));
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
-					fMainWindow, 
+				this, 
 					e.getMessage(), 
 					"Error", 
 					JOptionPane.ERROR_MESSAGE);
@@ -248,7 +250,7 @@ public class NewObjectDiagramView extends JPanel
      */
     void insertLink(MAssociation association, MObject[] objects) {
     	if (association.hasQualifiedEnds()) {
-    		QualifierInputView input = new QualifierInputView(fMainWindow, fSystem, association, objects);
+    		QualifierInputView input = new QualifierInputView((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), fSystem, association, objects);
     		input.setLocationRelativeTo(this);
     		input.setVisible(true);
     	} else {
@@ -256,7 +258,7 @@ public class NewObjectDiagramView extends JPanel
 				fSystem.execute(new MLinkInsertionStatement(association, objects, Collections.<List<Value>>emptyList()));
 			} catch (MSystemException e) {
 				JOptionPane.showMessageDialog(
-						fMainWindow, 
+				this, 
 						e.getMessage(), 
 						"Error", 
 						JOptionPane.ERROR_MESSAGE);
@@ -283,7 +285,7 @@ public class NewObjectDiagramView extends JPanel
 			fSystem.execute(sequence.simplify());
 		} catch (MSystemException e) {
 			JOptionPane.showMessageDialog(
-					fMainWindow, 
+				this, 
 					e.getMessage(), 
 					"Error", 
 					JOptionPane.ERROR_MESSAGE);
@@ -306,7 +308,7 @@ public class NewObjectDiagramView extends JPanel
     }
 
     void createObject(String clsName) {
-        MainWindow.instance().createObject(clsName);
+        org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().createObject(clsName);
     }
 
     @Override

@@ -19,12 +19,14 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
+import org.tzi.use.gui.views.diagrams.framework.IDiagram;
+import org.tzi.use.gui.views.diagrams.framework.IObjectDiagram;
+
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
@@ -36,17 +38,16 @@ import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint.ResetStrategy;
-import org.tzi.use.gui.views.diagrams.waypoints.QualifierWayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint.ResetStrategy;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.QualifierWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAggregationKind;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkEnd;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MLinkEnd;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Supplier;
@@ -98,7 +99,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      */
     protected BinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-			DiagramView diagram, MAssociation assoc, MLink link) {
+			IDiagram diagram, MAssociation assoc, MLink link) {
 		super(source, target, assoc.name(), targetEnd, diagram, assoc, link);
 		fSourceEnd = sourceEnd;
     }
@@ -117,7 +118,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      */
 	protected BinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-			DiagramView diagram, MAssociation assoc) {
+			IDiagram diagram, MAssociation assoc) {
 		this(source, target, sourceEnd, targetEnd, diagram, assoc, null);
 	}
 	
@@ -133,7 +134,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      */
 	protected BinaryAssociationOrLinkEdge(PlaceableNode source, PlaceableNode target,
 			MLinkEnd sourceEnd, MLinkEnd targetEnd,
-			NewObjectDiagram diagram, MLink link) {
+			IObjectDiagram diagram, MLink link) {
 		this(source, target, sourceEnd.associationEnd(), targetEnd.associationEnd(), diagram, link.association(), link);
 	}
 	
@@ -482,7 +483,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      */
 	public static BinaryAssociationOrLinkEdge create(PlaceableNode source, PlaceableNode target,
 			MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
-			DiagramView diagram, MAssociation assoc) {
+			IDiagram diagram, MAssociation assoc) {
 		BinaryAssociationOrLinkEdge edge = new BinaryAssociationOrLinkEdge(source, target, sourceEnd, targetEnd, diagram, assoc);
 		return edge;
 	}
@@ -499,7 +500,7 @@ public class BinaryAssociationOrLinkEdge extends AssociationOrLinkPartEdge {
      */
 	public static BinaryAssociationOrLinkEdge create(PlaceableNode source, PlaceableNode target,
 			MLinkEnd sourceEnd, MLinkEnd targetEnd,
-			NewObjectDiagram diagram, MLink link) {
+			IObjectDiagram diagram, MLink link) {
 		BinaryAssociationOrLinkEdge edge = new BinaryAssociationOrLinkEdge(source, target, sourceEnd, targetEnd, diagram, link);
 		return edge;
 	}

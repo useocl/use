@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.tzi.use.runtime.IPlugin;
-import org.tzi.use.runtime.IPluginDescriptor;
-import org.tzi.use.runtime.IPluginRuntime;
+import org.tzi.use.runtime.spi.IPlugin;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginRuntime;
 import org.tzi.use.util.Log;
 
 /**

@@ -31,7 +31,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.StatementExecutedEvent;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;

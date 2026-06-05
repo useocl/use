@@ -18,9 +18,6 @@
  */
 package org.tzi.use.uml.mm.commonbehavior.communications;
 
-import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MNamedElement;
 
 /**
@@ -56,15 +53,4 @@ public abstract class MEvent implements MNamedElement {
 		this.name = name;
 	}
 
-	/**
-	 * @param vars
-	 * @param exprContext
-	 * @param isPre
-	 * @throws SemanticException 
-	 */
-	public void buildEnvironment(Symtable vars, ExprContext exprContext,
-			boolean isPre) throws SemanticException {
-	}
-
-	
 }

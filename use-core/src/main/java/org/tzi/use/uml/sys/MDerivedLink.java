@@ -19,11 +19,17 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLinkImpl;
+
+import org.tzi.use.uml.mm.instance.MSystemException;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.Collections;
 import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 
 /**
  * This class saves information about a derived link.

@@ -27,9 +27,9 @@ import java.nio.file.Path;
 import javax.swing.*;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.util.ExtFileFilter;
-import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
 
 /**
  * Saves the current layout to a file.
@@ -59,8 +59,8 @@ public class ActionSaveLayout extends AbstractAction {
 		ExtFileFilter filter = new ExtFileFilter(fAppendix, fTitle);
 		fChooser.setFileFilter(filter);
 		fChooser.setDialogTitle("Save layout");
-        Window owner = MainWindow.instance(); // default for swing
-        if (MainWindow.getJavaFxCall()) {
+        Window owner = SwingUtilities.getWindowAncestor(fDiagram); // default for swing
+        if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()) {
             owner = SwingUtilities.getWindowAncestor(fDiagram);
         }
         

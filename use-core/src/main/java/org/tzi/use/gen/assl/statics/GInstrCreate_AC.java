@@ -29,7 +29,7 @@ import java.util.List;
 import org.tzi.use.gen.assl.dynamics.GEvalInstrCreate_AC;
 import org.tzi.use.gen.assl.dynamics.GEvalInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.util.StringUtil;
 
 /**

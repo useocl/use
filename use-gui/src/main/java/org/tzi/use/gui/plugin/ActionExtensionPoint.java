@@ -1,0 +1,78 @@
+package org.tzi.use.gui.plugin;
+
+import java.util.Map;
+import java.util.Vector;
+
+import org.tzi.use.gui.main.runtime.IPluginActionProxy;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.main.runtime.IMainWindow;
+import org.tzi.use.gui.main.runtime.IPluginActionExtensionPoint;
+import org.tzi.use.main.Session;
+import org.tzi.use.runtime.spi.IDescriptor;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginActionDescriptor;
+import org.tzi.use.runtime.model.PluginActionModel;
+import org.tzi.use.runtime.util.ActionRegistry;
+
+/**
+ * This class provides the implementation of the Action Extension Point.The
+ * referenced interface should be located in the application elsewhere.
+ * 
+ * @author Roman Asendorf
+ */
+public class ActionExtensionPoint implements IPluginActionExtensionPoint {
+
+	private static ActionExtensionPoint instance = new ActionExtensionPoint();
+
+	/**
+	 * Method returning the Singleton instance of the ActionExtensionPoint
+	 * 
+	 * @return The ActionExtensionPoint instance
+	 */
+	public static IPluginActionExtensionPoint getInstance() {
+		return instance;
+	}
+
+	/**
+	 * Private default Constructor.
+	 */
+	private ActionExtensionPoint() {
+	}
+
+	private Vector<IPluginActionDescriptor> registeredActions;
+
+	public Map<Map<String, String>, IPluginActionProxy> createPluginActions(Session session, IMainWindow mainWindow) {
+		PluginActionFactory actionFactory = PluginActionFactory.getInstance();
+		return actionFactory.createPluginActions(getPluginActions(), session,
+				(MainWindow) mainWindow);
+	}
+
+	private Vector<IPluginActionDescriptor> getPluginActions() {
+		if (this.registeredActions == null) {
+			this.registeredActions = new Vector<IPluginActionDescriptor>();
+		}
+		return this.registeredActions;
+	}
+
+	private void registerAction(IPluginActionDescriptor pluginActionDescriptor) {
+		getPluginActions().add(pluginActionDescriptor);
+	}
+
+	public void registerActions(IDescriptor pluginDescriptor) {
+		ActionRegistry actionRegistry = ActionRegistry.getInstance();
+
+		IPluginDescriptor currentPluginDescriptor = (IPluginDescriptor) pluginDescriptor;
+
+		Vector<PluginActionModel> pluginActions = currentPluginDescriptor.getPluginModel().getActions();
+
+		for (int cntPluginActions = 0; cntPluginActions < pluginActions.size();) {
+			PluginActionModel currentPluginActionModel = pluginActions.get(cntPluginActions);
+			IPluginActionDescriptor currentPluginActionDescriptor = actionRegistry
+					.registerPluginAction(currentPluginDescriptor,
+							currentPluginActionModel);
+
+			registerAction(currentPluginActionDescriptor);
+			cntPluginActions++;
+		}
+	}
+}

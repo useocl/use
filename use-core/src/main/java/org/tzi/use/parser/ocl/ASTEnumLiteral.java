@@ -21,10 +21,10 @@ package org.tzi.use.parser.ocl;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.uml.ocl.expr.ExpConstEnum;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.util.SemanticException;
+import org.tzi.use.uml.mm.expr.ExpConstEnum;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.EnumType;
 
 import java.util.Set;
 

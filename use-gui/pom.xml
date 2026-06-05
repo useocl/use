@@ -172,6 +172,18 @@
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
+        <!--
+            Lets the JUnit Platform (Surefire 3.x) also run the JUnit 4 tests
+            (junit:junit 4.13.1 above, e.g. MavenCyclicDependenciesGUITest,
+            AntCyclicDependenciesGUITest, AntLayeredArchitectureTest).
+            Version tracks junit-jupiter (5.7.0).
+        -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -260,8 +272,30 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+<!--
+                Failsafe must track the Surefire version pinned in the parent
+                POM (3.5.2). The Maven-default 2.22.2 predates the JUnit Platform
+                provider rework and dies with NoClassDefFoundError:
+                org/junit/platform/commons/util/PreconditionViolationException
+                when running the JUnit 5 integration tests (e.g. ShellIT). 3.5.2
+                provisions the platform launcher the same way Surefire 3.5.2 does.
+            -->
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.2</version>
+                <configuration>
+                    <!--
+                        Run the integration tests on the classpath, not the
+                        module path. The shaded use-gui artifact and the vtd-xml
+                        dependency both contain the java_cup.runtime package; on
+                        the module path that is a split package and the forked
+                        JVM aborts boot-layer init with "Module use.gui contains
+                        package java_cup.runtime, module vtd.xml exports package
+                        java_cup.runtime to use.gui". The application itself
+                        launches via `java -jar` (classpath), so classpath
+                        execution of the ITs matches production.
+                    -->
+                    <useModulePath>false</useModulePath>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

@@ -20,13 +20,20 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
+
 import com.google.common.collect.Sets;
-import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.events.*;
 import org.tzi.use.util.StringUtil;

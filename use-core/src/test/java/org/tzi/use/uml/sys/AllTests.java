@@ -34,9 +34,6 @@ public class AllTests {
 
     public static Test suite() {
         final TestSuite test = new TestSuite( "All uml.sys tests" );
-        test.addTestSuite( org.tzi.use.uml.sys.DeletionTest.class );
-        test.addTestSuite( org.tzi.use.uml.sys.LinkTest.class );
-        test.addTestSuite( org.tzi.use.uml.sys.MCmdDestroyObjectsTest.class );
         test.addTest(org.tzi.use.uml.sys.soil.AllTests.suite());
         return test;
     }

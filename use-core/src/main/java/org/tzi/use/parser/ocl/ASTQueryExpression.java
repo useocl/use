@@ -24,27 +24,27 @@ import java.util.Set;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.base.ParserHelper;
-import org.tzi.use.uml.ocl.expr.ExpAny;
-import org.tzi.use.uml.ocl.expr.ExpClosure;
-import org.tzi.use.uml.ocl.expr.ExpCollect;
-import org.tzi.use.uml.ocl.expr.ExpCollectNested;
-import org.tzi.use.uml.ocl.expr.ExpExists;
-import org.tzi.use.uml.ocl.expr.ExpForAll;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpIsUnique;
-import org.tzi.use.uml.ocl.expr.ExpOne;
-import org.tzi.use.uml.ocl.expr.ExpReject;
-import org.tzi.use.uml.ocl.expr.ExpSelect;
-import org.tzi.use.uml.ocl.expr.ExpSortedBy;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.CollectionType;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.ExpAny;
+import org.tzi.use.uml.mm.expr.ExpClosure;
+import org.tzi.use.uml.mm.expr.ExpCollect;
+import org.tzi.use.uml.mm.expr.ExpCollectNested;
+import org.tzi.use.uml.mm.expr.ExpExists;
+import org.tzi.use.uml.mm.expr.ExpForAll;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpIsUnique;
+import org.tzi.use.uml.mm.expr.ExpOne;
+import org.tzi.use.uml.mm.expr.ExpReject;
+import org.tzi.use.uml.mm.expr.ExpSelect;
+import org.tzi.use.uml.mm.expr.ExpSortedBy;
+import org.tzi.use.uml.mm.expr.ExpVariable;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.CollectionType;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -113,7 +113,9 @@ public class ASTQueryExpression extends ASTExpression {
             // the argument expression
             Symtable vars = ctx.varTable();
             vars.enterScope();
-            declList.addVariablesToSymtable(vars);
+            for (VarDecl decl2 : declList) {
+                vars.add(decl2.name(), decl2.type(), decl2.getSourcePosition());
+            }
             expr = fExpr.gen(ctx);
             vars.exitScope(); 
         }

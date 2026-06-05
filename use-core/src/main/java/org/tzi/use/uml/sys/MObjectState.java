@@ -19,6 +19,9 @@
 
 package org.tzi.use.uml.sys;
 
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,8 +36,8 @@ import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.uml.ocl.value.UndefinedValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.UndefinedValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
 
 import com.google.common.base.Predicate;
@@ -46,7 +49,7 @@ import com.google.common.collect.Collections2;
  * @author Mark Richters
  * @author Lars Hamann 
  */
-public final class MObjectState implements MInstanceState {
+public final class MObjectState implements org.tzi.use.uml.mm.instance.IObjectState {
     /**
      * Slots holding a value for each attribute.
      */
@@ -83,7 +86,7 @@ public final class MObjectState implements MInstanceState {
         	this.protocolStateMachines = new HashSet<MProtocolStateMachineInstance>();
         	// Initialize possible protocol state machines
 	        for (MProtocolStateMachine psm : psms) {
-	        	this.protocolStateMachines.add(psm.createInstance(this.fObject));
+	        	this.protocolStateMachines.add(new MProtocolStateMachineInstance(psm, this.fObject));
 	        }
         }
     }

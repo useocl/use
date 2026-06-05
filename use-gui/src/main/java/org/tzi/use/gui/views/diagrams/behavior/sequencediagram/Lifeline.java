@@ -27,7 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.List;
 
-import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.util.Selectable;
 import org.tzi.use.gui.views.diagrams.statemachine.StateMachineDiagramOptions;
 import org.tzi.use.gui.views.diagrams.statemachine.StateNode;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;

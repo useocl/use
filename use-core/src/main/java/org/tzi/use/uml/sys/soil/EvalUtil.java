@@ -19,16 +19,16 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.StringValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.StringValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 import java.util.ArrayList;
 import java.util.List;

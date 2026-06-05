@@ -25,15 +25,16 @@ import java.util.Set;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ExprContext;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
-import org.tzi.use.uml.ocl.expr.ExpInvalidException;
-import org.tzi.use.uml.ocl.expr.ExpIterate;
-import org.tzi.use.uml.ocl.expr.ExpVariable;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.expr.VarInitializer;
-import org.tzi.use.uml.ocl.type.Type.VoidHandling;
+import org.tzi.use.uml.mm.expr.ExpInvalidException;
+import org.tzi.use.uml.mm.expr.ExpIterate;
+import org.tzi.use.uml.mm.expr.ExpVariable;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.expr.VarInitializer;
+import org.tzi.use.uml.mm.types.Type.VoidHandling;
 
 /**
  * Node of the abstract syntax tree constructed by the parser.
@@ -90,7 +91,9 @@ public class ASTIterateExpression extends ASTExpression {
         vars.enterScope();
         if (! declList.isEmpty() ) {
             // add element variables
-        	declList.addVariablesToSymtable(vars);
+        	for (VarDecl decl : declList) {
+        		vars.add(decl.name(), decl.type(), decl.getSourcePosition());
+        	}
         }
         vars.add(fInit.nameToken(), init.type());
         expr = fExpr.gen(ctx);

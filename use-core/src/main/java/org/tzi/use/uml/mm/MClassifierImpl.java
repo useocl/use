@@ -20,9 +20,8 @@
 package org.tzi.use.uml.mm;
 
 import com.google.common.collect.Iterators;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.uml.sys.MOperationCall;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.types.TypeFactory;
 
 import java.util.*;
 
@@ -582,7 +581,7 @@ public abstract class MClassifierImpl extends MModelElementImpl implements MClas
 	}
 
 	@Override
-	public boolean hasStateMachineWhichHandles(MOperationCall operationCall) {
+	public boolean hasStateMachineWhichHandles(MOperation operation) {
 		return false;
 	}
 }

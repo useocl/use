@@ -19,11 +19,11 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.values.BooleanValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 
 /**

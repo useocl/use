@@ -19,16 +19,16 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.ExpressionWithValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.ExpressionWithValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.DoNothingPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.OpEnterOpExitPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 import java.util.Map;
 import java.util.Map.Entry;

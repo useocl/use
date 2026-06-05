@@ -21,9 +21,9 @@ package org.tzi.use.parser.generator;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.uml.mm.MClassInvariant;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 import org.tzi.use.util.StringUtil;
 
 /**

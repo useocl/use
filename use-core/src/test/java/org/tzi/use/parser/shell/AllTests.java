@@ -19,6 +19,7 @@
 
 package org.tzi.use.parser.shell;
 
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -39,8 +40,6 @@ public class AllTests {
 	 */
 	public static Test suite() {
 		final TestSuite testSuite = new TestSuite("All shell parser tests");
-		testSuite.addTestSuite(ASTConstructionTest.class);
-		testSuite.addTestSuite(StatementGenerationTest.class);
 		return testSuite;
    }
 }

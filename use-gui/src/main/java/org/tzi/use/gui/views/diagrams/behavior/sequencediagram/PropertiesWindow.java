@@ -19,7 +19,7 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
-import org.tzi.use.gui.main.MainWindow;
+import org.tzi.use.gui.views.diagrams.MainWindow;
 import org.tzi.use.gui.views.diagrams.behavior.shared.CancelButton;
 import org.tzi.use.gui.views.diagrams.behavior.shared.OKButton;
 
@@ -667,7 +667,7 @@ public class PropertiesWindow extends JDialog implements ActionListener {
 	 * Shows the Window.
 	 */
 	public void showWindow() {
-		Window owner = MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+		Window owner = SwingUtilities.getWindowAncestor(this);
 		PropertiesWindow propW = new PropertiesWindow(owner, fSeqDiag);
 		propW.setLocation(300, 200);
 		propW.setLocationRelativeTo(getOwner());

@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * Internal statement to revert an operation call

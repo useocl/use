@@ -29,15 +29,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory;
 import org.tzi.use.gui.views.diagrams.edges.DirectedEdgeFactory.ArrowStyle;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPointType;
 import org.tzi.use.uml.mm.statemachines.MProtocolTransition;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.w3c.dom.Document;

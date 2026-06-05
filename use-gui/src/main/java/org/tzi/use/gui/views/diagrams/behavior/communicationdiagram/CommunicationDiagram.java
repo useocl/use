@@ -42,12 +42,12 @@ import javax.swing.*;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
-import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.gui.views.diagrams.framework.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramType;
-import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
-import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.framework.DiagramType;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SequenceDiagramView;
 import org.tzi.use.gui.views.diagrams.behavior.shared.CmdChooseWindow;
@@ -56,16 +56,15 @@ import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.gui.views.diagrams.elements.CommentNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
-import org.tzi.use.gui.views.diagrams.event.ActionHideCommunicationDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
-import org.tzi.use.gui.views.selection.objectselection.ObjectSelection;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.gui.views.diagrams.objectdiagram.selection.ObjectSelection;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
 import org.tzi.use.uml.sys.events.Event;
 import org.tzi.use.uml.sys.events.LinkDeletedEvent;
@@ -517,13 +516,13 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 		final JMenuItem seqDia = new JMenuItem("Create synchronized sequence diagram");
 		ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (org.tzi.use.gui.main.MainWindow.getJavaFxCall()){
+				if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 					Platform.runLater(() ->{
 						// to create an instance of a SwingNode, which is used to hold the Swing-Components
 						SwingNode swingNode = new SwingNode();
 
 						// Create the ClassExtentView and the enclosing ViewFrame
-						SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system(), fParent.getMainWindow(), sharedVisibleManager);
+						SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(((org.tzi.use.main.Session) org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().getSession()).system(), fParent.getMainWindow(), sharedVisibleManager);
 						ViewFrame f = new ViewFrame("Sequence diagram", sdv, "SequenceDiagram.gif");
 
 						// Set up the SwingNode content
@@ -536,10 +535,10 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
 
 						// creating the new Window with the swingNode
-						org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
+						org.tzi.use.gui.views.diagrams.framework.IFXWindowHost.INSTANCE.get().createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
 					});
 				} else{
-					fParent.getMainWindow().createSequenceDiagram(sharedVisibleManager);
+					((org.tzi.use.gui.views.diagrams.behavior.shared.IBehaviorMainWindow) fParent.getMainWindow()).createSequenceDiagram(sharedVisibleManager);
 					invalidateContent(true);
 				}
 			}
@@ -579,7 +578,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Creates a new PropertiesWindow object.
 	 */
 	private void createPropertiesWindow() {
-		Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+		Window owner = SwingUtilities.getWindowAncestor(this);
 		PropertiesWindow propWin = new PropertiesWindow(owner, this.getParentDiagram());
 		propWin.showWindow();
 	}
@@ -596,7 +595,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Creates a new message selection view object.
 	 */
 	private void createMessageSelectionWindow() {
-		Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+		Window owner = SwingUtilities.getWindowAncestor(this);
 		MessageSelectionView propWin = new MessageSelectionView(owner, this, true);
 		propWin.showWindow();
 	}
@@ -605,7 +604,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 	 * Creates a new CmdChooseWindow object.
 	 */
 	private void createCmdChooseWindow() {
-		Window owner = org.tzi.use.gui.main.MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : org.tzi.use.gui.main.MainWindow.instance();
+		Window owner = SwingUtilities.getWindowAncestor(this);
 		CmdChooseWindow chooseWin = new CmdChooseWindow(owner,this);
 		chooseWin.showWindow();
 	}

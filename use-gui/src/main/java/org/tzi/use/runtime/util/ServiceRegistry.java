@@ -1,9 +1,8 @@
 package org.tzi.use.runtime.util;
 
-import org.tzi.use.runtime.IPluginDescriptor;
+import org.tzi.use.runtime.spi.IPluginDescriptor;
 import org.tzi.use.runtime.model.PluginServiceModel;
-import org.tzi.use.runtime.service.IPluginServiceDescriptor;
-import org.tzi.use.runtime.service.impl.PluginServiceDescriptor;
+import org.tzi.use.runtime.spi.IPluginServiceDescriptor;
 import org.tzi.use.util.Log;
 
 /**

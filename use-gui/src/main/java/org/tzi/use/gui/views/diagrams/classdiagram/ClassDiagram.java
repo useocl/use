@@ -20,6 +20,8 @@
 // $Id: ClassDiagram.java 2048 2011-02-11 15:32:33Z lhamann $
 
 package org.tzi.use.gui.views.diagrams.classdiagram;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.StyleInfoBase;
 
 import static org.tzi.use.util.collections.CollectionUtil.exactlyOne;
 
@@ -44,11 +46,11 @@ import javax.swing.*;
 import org.tzi.use.analysis.coverage.CoverageAnalyzer;
 import org.tzi.use.analysis.coverage.CoverageData;
 import org.tzi.use.config.Options;
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.main.ModelBrowser.SelectionChangedListener;
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.framework.ModelBrowser.SelectionChangedListener;
+import org.tzi.use.gui.util.ModelBrowserSorting;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
 import org.tzi.use.gui.util.ExtFileFilter;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.Selection;
@@ -65,19 +67,19 @@ import org.tzi.use.gui.views.diagrams.elements.edges.BinaryAssociationOrLinkEdge
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
 import org.tzi.use.gui.views.diagrams.elements.edges.NAryAssociationClassOrObjectEdge;
-import org.tzi.use.gui.views.diagrams.event.ActionHideClassDiagram;
+import org.tzi.use.gui.views.diagrams.classdiagram.ActionHideClassDiagram;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
 import org.tzi.use.gui.views.diagrams.event.ActionSaveLayout;
 import org.tzi.use.gui.views.diagrams.event.DiagramInputHandling;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeEvent;
-import org.tzi.use.gui.views.diagrams.event.HighlightChangeListener;
-import org.tzi.use.gui.views.selection.classselection.ClassSelection;
+import org.tzi.use.gui.views.diagrams.framework.HighlightChangeEvent;
+import org.tzi.use.gui.views.diagrams.framework.HighlightChangeListener;
+import org.tzi.use.gui.views.diagrams.classdiagram.selection.ClassSelection;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.mm.types.EnumType;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.util.StringUtil;
 import org.w3c.dom.Element;
@@ -1153,7 +1155,7 @@ public class ClassDiagram extends DiagramView
 
 						@Override
 						public void actionPerformed(ActionEvent ev) {
-							MainWindow.instance().showStateMachineView(sm);
+							org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.INSTANCE.get().showStateMachineView(sm);
 						}
 
 						public ActionListener setStateMachine(MStateMachine sm) {
@@ -1283,7 +1285,7 @@ public class ClassDiagram extends DiagramView
 			public void actionPerformed(ActionEvent e) {
 				Window owner = null;
 				// setting owner for javafxCall, so that new Window is focused in front of the Application and not behind it
-				if (MainWindow.getJavaFxCall()){
+				if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 					// Schritt 1: Owner-Fenster holen aus dem Swing-Content
 					owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
 				}
@@ -1339,7 +1341,7 @@ public class ClassDiagram extends DiagramView
 					exporter.export(lastFile, getSystem(), visibleData.fClassToNodeMap.keySet(),
 							visibleData.fDataTypeToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
 				} catch (IOException e1) {
-					if (MainWindow.getJavaFxCall()){
+					if (org.tzi.use.gui.views.diagrams.framework.IMainWindowServices.JAVA_FX_MODE.get()){
 						// Schritt 1: Owner-Fenster holen aus dem Swing-Content
 						owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
 						JOptionPane.showMessageDialog(owner, e1.getMessage(), "Error saving the USE model",

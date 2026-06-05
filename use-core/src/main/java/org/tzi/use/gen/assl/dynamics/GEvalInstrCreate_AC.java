@@ -41,10 +41,10 @@ import org.tzi.use.gen.assl.statics.GInstrCreate_AC;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.gen.assl.statics.GValueInstruction;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.ocl.value.ObjectValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.ObjectValue;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.MNewLinkObjectStatement;
@@ -85,7 +85,7 @@ public class GEvalInstrCreate_AC extends GEvalInstruction implements IGCaller {
     }
 
 	/* (non-Javadoc)
-	 * @see org.tzi.use.gen.assl.dynamics.IGCaller#feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.ocl.value.Value, org.tzi.use.gen.assl.dynamics.IGCollector)
+	 * @see org.tzi.use.gen.assl.dynamics.IGCaller#feedback(org.tzi.use.gen.assl.dynamics.GConfiguration, org.tzi.use.uml.mm.values.Value, org.tzi.use.gen.assl.dynamics.IGCollector)
 	 */
 	@Override
 	public void feedback(GConfiguration conf, Value value, IGCollector collector) throws GEvaluationException {

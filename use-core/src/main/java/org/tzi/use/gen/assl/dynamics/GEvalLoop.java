@@ -27,8 +27,8 @@ package org.tzi.use.gen.assl.dynamics;
 import java.util.ListIterator;
 
 import org.tzi.use.gen.assl.statics.GLoop;
-import org.tzi.use.uml.ocl.value.SequenceValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.SequenceValue;
+import org.tzi.use.uml.mm.values.Value;
 
 /**
  * March 22th 2001 

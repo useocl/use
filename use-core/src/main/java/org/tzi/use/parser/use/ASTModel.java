@@ -22,12 +22,11 @@ package org.tzi.use.parser.use;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ImportContext;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.ocl.ASTEnumTypeDefinition;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.use.statemachines.ASTSignal;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.mm.types.EnumType;
 
 import java.io.IOException;
 import java.util.ArrayList;

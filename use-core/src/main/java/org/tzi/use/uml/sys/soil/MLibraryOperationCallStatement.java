@@ -19,13 +19,13 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.soil.library.LibraryOperation;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * Library operations like, e. g., ReadLine

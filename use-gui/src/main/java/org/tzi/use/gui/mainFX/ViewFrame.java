@@ -8,7 +8,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.viewsFX.PrintableView;
 
 import java.awt.Graphics2D;

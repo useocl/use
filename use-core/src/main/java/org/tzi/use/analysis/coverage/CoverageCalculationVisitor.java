@@ -19,8 +19,10 @@
 
 package org.tzi.use.analysis.coverage;
 
+import org.tzi.use.uml.analysis.coverage.AbstractCoverageVisitor;
+import org.tzi.use.uml.analysis.coverage.AttributeAccessInfo;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.ExpConstUnlimitedNatural;
+import org.tzi.use.uml.mm.expr.ExpConstUnlimitedNatural;
 
 /**
  * This coverage visitor counts for each covered element

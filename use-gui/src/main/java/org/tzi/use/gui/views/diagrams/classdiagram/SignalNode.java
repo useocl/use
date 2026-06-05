@@ -26,9 +26,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;

@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import com.ximpleware.ParseException;
-import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -43,7 +42,7 @@ public class PersistHelper {
 	
 	final PrintWriter log;
 	
-	protected Map<String, PlaceableNode> allNodes;
+	protected Map<String, Object> allNodes;
 	
 	public PersistHelper(PrintWriter log) {
 		vg = null;
@@ -265,11 +264,12 @@ public class PersistHelper {
 	/**
 	 * @param collectAllNodes
 	 */
-	public void setAllNodes(Map<String, PlaceableNode> allNodes) {
-		this.allNodes = allNodes;
+	@SuppressWarnings("unchecked")
+	public void setAllNodes(Map<String, ?> allNodes) {
+		this.allNodes = (Map<String, Object>) allNodes;
 	}
 	
-	public Map<String,PlaceableNode> getAllNodes() {
+	public Map<String, Object> getAllNodes() {
 		return this.allNodes;
 	}
 	

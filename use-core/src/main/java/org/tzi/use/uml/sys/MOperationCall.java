@@ -19,14 +19,16 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.uml.mm.instance.MInstance;
+
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.MOperation;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.values.VarBindings;
 import org.tzi.use.uml.sys.ppcHandling.*;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.uml.sys.statemachines.MProtocolStateMachineInstance;

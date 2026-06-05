@@ -19,7 +19,7 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.types.Type;
 
 
 /**

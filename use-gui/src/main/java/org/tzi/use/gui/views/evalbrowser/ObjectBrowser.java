@@ -47,10 +47,10 @@ import javax.swing.table.TableCellEditor;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkSet;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MLinkSet;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemState;
@@ -130,7 +130,7 @@ public class ObjectBrowser extends JFrame {
         private void update() {
             // initialize table model
             if (haveObject() ) {
-                MObjectState objState = fObject.state(fSystem.state());
+                MObjectState objState = (MObjectState) fObject.state(fSystem.state());
                 fAttributeValueMap = objState.attributeValueMap();
                 final int N = fAttributeValueMap.size();
                 

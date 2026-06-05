@@ -19,11 +19,12 @@
 
 package org.tzi.use.uml.sys.soil;
 
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.SrcPos;
+import org.tzi.use.uml.mm.IStatement;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * Base class for all SOIL statements. MStatement instances provides the methods
@@ -34,7 +35,7 @@ import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
  * @author Fabian Buettner
  * @author Daniel Gent
  */
-public abstract class MStatement {
+public abstract class MStatement implements IStatement {
 
 	/**
 	 * The source position of the statement (if specified).

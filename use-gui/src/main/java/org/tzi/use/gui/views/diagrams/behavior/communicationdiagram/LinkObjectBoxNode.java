@@ -19,11 +19,11 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 
 /**
  * Association classes will be represented as LinkBoxNode
@@ -32,6 +32,13 @@ import org.tzi.use.uml.sys.MObject;
  *
  */
 public class LinkObjectBoxNode extends LinkBoxNode implements ObjectNodeActivity {
+
+    /** Communication-diagram link-object boxes have no greyed state. */
+    @Override
+    public boolean isGreyed() {
+        return false;
+    }
+
     private MObject object;
 
     /**

@@ -19,26 +19,27 @@
 
 package org.tzi.use.gui.views.diagrams.elements.edges;
 
+import org.tzi.use.gui.views.diagrams.framework.IDiagram;
+import org.tzi.use.gui.views.diagrams.framework.IObjectDiagram;
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
+
 import java.awt.*;
 import java.util.Map;
 
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramView;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyIdentity;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
-import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
-import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPointType;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MLinkEnd;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MLinkEnd;
 import org.w3c.dom.Element;
 
 /**
@@ -67,7 +68,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     protected BinaryAssociationClassOrObject( PlaceableNode source, PlaceableNode target,
                      MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
                      PlaceableNode associationClassNode,
-                     DiagramView diagram, MAssociation assoc ) {
+                     IDiagram diagram, MAssociation assoc ) {
         super( source, target, sourceEnd, targetEnd, diagram, assoc );
         fAssociationClassOrObjectNode = associationClassNode;
         fAssociationClassOrObjectNode.setAssocClassOrObject();
@@ -79,7 +80,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     protected BinaryAssociationClassOrObject( PlaceableNode source, PlaceableNode target,
                      MLinkEnd sourceEnd, MLinkEnd targetEnd,
                      PlaceableNode linkObjectNode,
-                     NewObjectDiagram diagram, MLink link ) {
+                     IObjectDiagram diagram, MLink link ) {
         super( source, target, sourceEnd, targetEnd, diagram, link );
         fAssociationClassOrObjectNode = linkObjectNode;
         fAssociationClassOrObjectNode.setAssocClassOrObject();
@@ -123,8 +124,8 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
     	// begin by restoring the default color for the small line
     	associationClassEdge.setColor(getEdgeColor());
     	
-    	if(fAssociationClassOrObjectNode instanceof ObjectNode) {
-    		if(((ObjectNode) fAssociationClassOrObjectNode).isGreyed()) {
+    	if(fAssociationClassOrObjectNode instanceof ObjectNodeActivity) {
+    		if(((ObjectNodeActivity) fAssociationClassOrObjectNode).isGreyed()) {
     			associationClassEdge.setColor(fOpt.getGREYED_LINE_COLOR());
     		}
     	}
@@ -204,7 +205,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 	public static BinaryAssociationClassOrObject create( PlaceableNode source, PlaceableNode target,
                      MAssociationEnd sourceEnd, MAssociationEnd targetEnd,
                      PlaceableNode associationClassNode,
-                     DiagramView diagram, MAssociation assoc ) {
+                     IDiagram diagram, MAssociation assoc ) {
 		BinaryAssociationClassOrObject edge = new BinaryAssociationClassOrObject(source, target, sourceEnd, targetEnd, associationClassNode, diagram, assoc);
 		return edge;
     }
@@ -215,7 +216,7 @@ public class BinaryAssociationClassOrObject extends BinaryAssociationOrLinkEdge 
 	public static BinaryAssociationClassOrObject create ( PlaceableNode source, PlaceableNode target,
                      MLinkEnd sourceEnd, MLinkEnd targetEnd,
                      PlaceableNode linkObjectNode,
-                     NewObjectDiagram diagram, MLink link ) {
+                     IObjectDiagram diagram, MLink link ) {
 		BinaryAssociationClassOrObject edge = new BinaryAssociationClassOrObject(source, target, sourceEnd, targetEnd, linkObjectNode, diagram, link);
 		return edge;
     }

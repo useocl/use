@@ -19,6 +19,8 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -26,9 +28,9 @@ import java.util.List;
 
 import javax.swing.*;
 
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleDataManager;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
@@ -54,7 +56,7 @@ public class CommunicationDiagramView extends JPanel implements View,
 		PrintableView, VisibleDataManager.VisibleDataObserver {
 
 	private final MSystem system;
-	private final MainWindow mainWindow;
+	private final IMainWindowServices mainWindow;
 
 	private CommunicationDiagram comDia;
 
@@ -65,7 +67,7 @@ public class CommunicationDiagramView extends JPanel implements View,
 	 * @param mainWindow The parent view
 	 * @param system USE system which stores all information about the current state
 	 */
-	public CommunicationDiagramView(MainWindow mainWindow, MSystem system) {
+	public CommunicationDiagramView(IMainWindowServices mainWindow, MSystem system) {
 		this.mainWindow = mainWindow;
 		this.system = system;
 
@@ -88,7 +90,7 @@ public class CommunicationDiagramView extends JPanel implements View,
 	}
 
 	public static CommunicationDiagramView createCommunicationDiagramm(
-			MainWindow mainWindow,
+			IMainWindowServices mainWindow,
 			MSystem system,
 			VisibleDataManager visibleDataManager) {
 		CommunicationDiagramView view = new CommunicationDiagramView(mainWindow, system);
@@ -172,7 +174,7 @@ public class CommunicationDiagramView extends JPanel implements View,
 	/**
 	 * @return the fMainWindow
 	 */
-	public MainWindow getMainWindow() {
+	public IMainWindowServices getMainWindow() {
 		return mainWindow;
 	}
 

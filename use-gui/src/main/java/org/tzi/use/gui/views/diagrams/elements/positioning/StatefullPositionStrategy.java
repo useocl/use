@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.RestoreLayoutException;
-import org.tzi.use.gui.views.diagrams.PositionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.PositionChangedListener;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.w3c.dom.Element;
 

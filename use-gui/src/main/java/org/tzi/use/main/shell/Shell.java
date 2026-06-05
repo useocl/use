@@ -20,27 +20,32 @@
 package org.tzi.use.main.shell;
 
 import org.tzi.use.config.Options;
-import org.tzi.use.gen.tool.GGeneratorArguments;
+import org.tzi.use.gen.assl.dynamics.GGeneratorArguments;
+import org.tzi.use.gen.assl.statics.GProcedure;
+import org.tzi.use.gen.tool.GGenerator;
 import org.tzi.use.gen.tool.GNoResultException;
+import org.tzi.use.gen.tool.GProcedureCall;
+import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
-import org.tzi.use.main.runtime.IRuntime;
+import org.tzi.use.runtime.spi.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.main.shell.runtime.IShell;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.model.PluginModel;
-import org.tzi.use.runtime.shell.impl.PluginShellCmdFactory.PluginShellCmdContainer;
+import org.tzi.use.main.shell.runtime.IPluginShellCmdContainer;
 import org.tzi.use.uml.mm.*;
-import org.tzi.use.uml.ocl.expr.Evaluator;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.expr.MultiplicityViolationException;
-import org.tzi.use.uml.ocl.extension.ExtensionManager;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.expr.Evaluator;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.expr.MultiplicityViolationException;
+import org.tzi.use.uml.mm.extension.ExtensionManager;
+import org.tzi.use.uml.mm.values.Value;
 import org.tzi.use.uml.sys.MOperationCall;
 import org.tzi.use.uml.sys.MSystem;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.ppcHandling.PPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.PostConditionCheckFailedException;
@@ -48,7 +53,7 @@ import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.testsuite.MTestSuite;
+import org.tzi.use.parser.testsuite.MTestSuite;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.Report;
 import org.tzi.use.util.StringUtil;
@@ -56,7 +61,7 @@ import org.tzi.use.util.USEWriter;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.SocketReadline;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -81,7 +86,7 @@ class NoSystemException extends Exception {
  * @author Mark Richters
  */
 
-public final class Shell implements Runnable, PPCHandler {
+public final class Shell implements Runnable, PPCHandler, IShell {
 	public static final String PROMPT = "use> ";
 
 	public static final String CONTINUE_PROMPT = "> ";
@@ -118,7 +123,13 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private static Shell fShell = null;
 
-    private final List<PluginShellCmdContainer> pluginCommands;
+    private final List<IPluginShellCmdContainer> pluginCommands;
+
+    private final java.util.WeakHashMap<MSystem, GGenerator> systemGenerators = new java.util.WeakHashMap<>();
+
+    private GGenerator generator(MSystem system) {
+        return systemGenerators.computeIfAbsent(system, GGenerator::new);
+    }
 
     /**
 	 * Constructs a new shell.
@@ -458,11 +469,11 @@ public final class Shell implements Runnable, PPCHandler {
 			}
 			Options.setDebug(value);
 		} else if (Options.doPLUGIN) {
-			PluginShellCmdContainer cmd = null;
+			IPluginShellCmdContainer cmd = null;
 
 			boolean alias = false;
 			
-			for (PluginShellCmdContainer currentCmdMapEntry : pluginCommands) {
+			for (IPluginShellCmdContainer currentCmdMapEntry : pluginCommands) {
 				if (line.startsWith(currentCmdMapEntry.getCmd())) {
 					cmd = currentCmdMapEntry;
 					break;
@@ -483,10 +494,10 @@ public final class Shell implements Runnable, PPCHandler {
 					arguments = line.substring(cmd.getCmd().length());
 				}
 				try {
-					cmd.getProxy().executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
+					cmd.executeCmd(cmd.getCmd(), arguments, ShellUtil.parseArgumentList(arguments));
 				}
 				catch(Exception ex){
-					PluginModel crashedPlugin = cmd.getProxy().getDescriptor().getParent().getPluginModel();
+					PluginModel crashedPlugin = cmd.getDescriptor().getParent().getPluginModel();
 					System.err.println();
 					String nl = Options.LINE_SEPARATOR;
 					System.err.println("INTERNAL ERROR in Plugin "
@@ -526,7 +537,7 @@ public final class Shell implements Runnable, PPCHandler {
 	private void cmdShowPlugins() {
 		System.out.println("================== Plugin commands available ====================");
 
-		for (PluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
+		for (IPluginShellCmdContainer currentCmdMapEntry : this.pluginCommands) {
 			System.out.println(currentCmdMapEntry.getCmd() + " : " + currentCmdMapEntry.getHelp());
 			if(currentCmdMapEntry.getAlias() != null){
 				System.out.println("  Alias: " + currentCmdMapEntry.getAlias());
@@ -1504,7 +1515,10 @@ public final class Shell implements Runnable, PPCHandler {
 			try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename))){
 				handleBOM(in);
 
-				system.loadInvariants(in, str.trim(), doEcho, new PrintWriter(getOut(), true));
+				PrintWriter out = new PrintWriter(getOut(), true);
+				Collection<MClassInvariant> invs = ASSLCompiler.compileInvariants(
+						system.model(), in, str.trim(), out);
+				system.addLoadedInvariants(invs, doEcho, out);
 
 				setFileClosed();
 			} catch (FileNotFoundException e) {
@@ -1539,7 +1553,7 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	private void cmdGenPrintLoadedInvariants(MSystem system) {
-		system.generator().printLoadedInvariants();
+		generator(system).printLoadedInvariants();
 	}
 
 	private void cmdGenResult(String str, MSystem system) {
@@ -1547,12 +1561,12 @@ public final class Shell implements Runnable, PPCHandler {
 		try {
 			if (str.isEmpty()) {
 				PrintWriter pw = new PrintWriter(System.out);
-				system.generator().printResult(pw);
+				generator(system).printResult(pw);
 				pw.flush();
 			} else if (str.equals("inv")) {
-				system.generator().printResultStatistics();
+				generator(system).printResultStatistics();
 			} else if (str.equals("accept")) {
-				system.generator().acceptResult();
+				generator(system).acceptResult();
 			} else {
 				Log.error("Unknown command `result " + str + "'. Try help.");
 			}
@@ -1634,7 +1648,7 @@ public final class Shell implements Runnable, PPCHandler {
 			Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
 		}
 		else if (disabled == null && negated == null){
-			system.generator().printInvariantFlags(invs);
+			generator(system).printInvariantFlags(invs);
 		}
 		else {
 			system.setClassInvariantFlags(invs, (disabled == null)? null : !disabled, negated);
@@ -1655,7 +1669,34 @@ public final class Shell implements Runnable, PPCHandler {
 		args.setFilename(this.getFilenameToOpen(args.getFilename()));
 		this.setFileClosed();
 
-		system.generator().startProcedure(args.getCallString(), args);
+		String callstr = args.getCallString();
+		GProcedureCall call = null;
+		try (FileInputStream in = new FileInputStream(args.getFilename())) {
+			Log.verbose("Compiling procedures from " + args.getFilename() + ".");
+			List<GProcedure> procedures = ASSLCompiler.compileProcedures(
+					system.model(),
+					in,
+					args.getFilename(),
+					new PrintWriter(System.err));
+			if (procedures != null) {
+				Log.verbose("Compiling `" + callstr + "'.");
+				call = ASSLCompiler.compileProcedureCall(
+						system.model(),
+						system.state(),
+						procedures,
+						callstr,
+						"<input>",
+						new PrintWriter(System.err));
+			}
+		} catch (FileNotFoundException e) {
+			Log.error(e.getMessage());
+			return;
+		} catch (IOException e) {
+			Log.error(e.getMessage());
+			return;
+		}
+
+		generator(system).startProcedure(callstr, args, call);
 	}
 
 	private MSystem system() throws NoSystemException {

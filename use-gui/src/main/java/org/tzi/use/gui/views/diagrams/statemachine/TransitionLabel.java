@@ -18,7 +18,7 @@
  */
 package org.tzi.use.gui.views.diagrams.statemachine;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;

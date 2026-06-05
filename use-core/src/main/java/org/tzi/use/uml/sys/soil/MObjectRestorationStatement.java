@@ -24,15 +24,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult.ObjectStateModification;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * Statement used internally as the inverse statement of an object

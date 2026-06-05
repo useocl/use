@@ -26,7 +26,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-import org.tzi.use.gui.views.diagrams.DiagramType;
+import org.tzi.use.gui.views.diagrams.framework.DiagramType;
 import org.tzi.use.gui.views.diagrams.behavior.communicationdiagram.CommunicationDiagramView;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SequenceDiagramView;
 import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagramView;

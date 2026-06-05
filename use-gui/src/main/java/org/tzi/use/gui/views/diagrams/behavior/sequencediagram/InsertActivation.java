@@ -21,7 +21,7 @@ package org.tzi.use.gui.views.diagrams.behavior.sequencediagram;
 
 import java.util.List;
 
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.events.LinkInsertedEvent;
 
 /**

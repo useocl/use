@@ -19,13 +19,19 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLinkEnd;
+
+import org.tzi.use.uml.mm.instance.MLink;
+
+import org.tzi.use.uml.mm.instance.MObject;
+
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.Value;
 
 /**
  * A link is an instance of an fAssociation.

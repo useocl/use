@@ -19,11 +19,11 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleData;
-import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.mm.instance.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.util.StringUtil;
 
 import java.util.Arrays;

@@ -20,12 +20,13 @@
 package org.tzi.use.parser;
 
 import org.antlr.runtime.Token;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 
 import java.io.PrintWriter;

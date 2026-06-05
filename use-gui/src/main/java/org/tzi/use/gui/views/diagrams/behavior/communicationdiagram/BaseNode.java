@@ -25,8 +25,8 @@ import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptionChangedListener;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptionChangedListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.util.Util;
 

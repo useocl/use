@@ -39,9 +39,9 @@ import javax.swing.event.EventListenerList;
 
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.util.RestoreLayoutException;
-import org.tzi.use.gui.views.diagrams.Layoutable;
-import org.tzi.use.gui.views.diagrams.PositionChangedListener;
-import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.graphlayout.Layoutable;
+import org.tzi.use.gui.views.diagrams.framework.PositionChangedListener;
+import org.tzi.use.gui.util.Selectable;
 import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyDeserializer;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed;

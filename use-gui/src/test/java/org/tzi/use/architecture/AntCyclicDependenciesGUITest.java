@@ -10,6 +10,7 @@ import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,7 +26,7 @@ public class AntCyclicDependenciesGUITest {
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackages("org.tzi.use.gui");
 
-    private static final String PROJECT_ROOT = new File("").getAbsolutePath();
+    private static final String PROJECT_ROOT = new File("target/archunit-results").getAbsolutePath();
     private static final String ALL_PACKAGES_RESULTS_FILE = new File(PROJECT_ROOT, "ant_cyclic_dependencies_entire_gui_results.csv").getAbsolutePath();
     private static final String GRAPHLAYOUT_PACKAGE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_graphlayout_results.csv").getAbsolutePath();
     private static final String MAIN_PACKAGE_RESULTS = new File(PROJECT_ROOT, "ant_cyclic_dependencies_main_gui_results.csv").getAbsolutePath();
@@ -131,6 +132,7 @@ public class AntCyclicDependenciesGUITest {
                     String cycleInfo = "Cycle found: " + violatingObjects.iterator().next().toString();
                     cycleDetails.add(cycleInfo);
                 });
+        assertEquals("Cyclic dependencies detected in " + packageName, 0, cycleCount.get());
         return cycleCount.get();
     }
 

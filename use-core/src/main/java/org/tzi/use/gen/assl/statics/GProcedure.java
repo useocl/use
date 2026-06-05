@@ -24,14 +24,13 @@
 
 package org.tzi.use.gen.assl.statics;
 
-import org.tzi.use.analysis.coverage.BasicCoverageData;
-import org.tzi.use.analysis.coverage.BasicExpressionCoverageCalulator;
+import org.tzi.use.uml.analysis.coverage.BasicCoverageData;
+import org.tzi.use.uml.analysis.coverage.BasicExpressionCoverageCalulator;
 import org.tzi.use.gen.assl.dynamics.IGCollector;
-import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.uml.mm.MClassInvariant;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.types.Type;
 import org.tzi.use.util.StringUtil;
 
 import java.util.*;

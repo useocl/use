@@ -27,10 +27,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.gui.main.ModelBrowserSorting;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeEvent;
-import org.tzi.use.gui.main.ModelBrowserSorting.SortChangeListener;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.util.ModelBrowserSorting;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeEvent;
+import org.tzi.use.gui.util.ModelBrowserSorting.SortChangeListener;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.util.Util;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
@@ -44,7 +44,7 @@ import com.google.common.collect.Collections2;
  * 
  * @author Fabian Gutsche
  */
-public class ClassNode extends ClassifierNode implements SortChangeListener {
+public class ClassNode extends ClassifierNode implements SortChangeListener, org.tzi.use.gui.views.diagrams.framework.IClassNode {
 		
     private List<MAttribute> fAttributes;
     private List<MOperation> fOperations;

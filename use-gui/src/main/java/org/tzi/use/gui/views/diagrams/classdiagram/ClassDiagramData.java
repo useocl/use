@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.tzi.use.gui.views.diagrams.DiagramView.DiagramData;
+import org.tzi.use.gui.views.diagrams.base.DiagramView.DiagramData;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -35,7 +35,7 @@ import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.edges.GeneralizationEdge;
 import org.tzi.use.uml.mm.*;
 import org.tzi.use.uml.mm.commonbehavior.communications.MSignal;
-import org.tzi.use.uml.ocl.type.EnumType;
+import org.tzi.use.uml.mm.types.EnumType;
 
 /**
  * This class is used to keep track of

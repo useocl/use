@@ -19,12 +19,12 @@
 
 package org.tzi.use.gui.views.diagrams.behavior.communicationdiagram;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.behavior.shared.VisibleData;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.MLink;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MLink;
+import org.tzi.use.uml.mm.instance.MObject;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,6 +37,12 @@ import java.util.HashSet;
  * 
  */
 public class ObjectBoxNode extends BaseNode implements ObjectNodeActivity {
+
+	/** Communication-diagram object boxes have no greyed state. */
+	@Override
+	public boolean isGreyed() {
+		return false;
+	}
 
 	private final MObject obj;
 	private final String createdStamp;

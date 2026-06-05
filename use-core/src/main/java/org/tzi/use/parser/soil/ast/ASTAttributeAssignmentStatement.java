@@ -22,11 +22,11 @@ package org.tzi.use.parser.soil.ast;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.ocl.ASTExpression;
 import org.tzi.use.uml.mm.MAttribute;
-import org.tzi.use.uml.ocl.expr.Expression;
+import org.tzi.use.uml.mm.expr.Expression;
 import org.tzi.use.uml.sys.soil.MAttributeAssignmentStatement;
 import org.tzi.use.uml.sys.soil.MRValue;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 import java.io.PrintWriter;
 

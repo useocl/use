@@ -19,15 +19,15 @@
 
 package org.tzi.use.gui.views.diagrams.elements;
 
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint;
 import org.tzi.use.uml.mm.MAssociation;
-import org.tzi.use.uml.sys.MLink;
+import org.tzi.use.uml.mm.instance.MLink;
 
 /**
  * Represents a association name node in a diagram. 

@@ -33,7 +33,7 @@ import org.tzi.use.uml.mm.statemachines.MRegion;
 import org.tzi.use.uml.mm.statemachines.MState;
 import org.tzi.use.uml.mm.statemachines.MTransition;
 import org.tzi.use.uml.mm.statemachines.MVertex;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.events.ObjectCreatedEvent;
 import org.tzi.use.uml.sys.events.ObjectDestroyedEvent;
 import org.tzi.use.uml.sys.events.OperationEnteredEvent;

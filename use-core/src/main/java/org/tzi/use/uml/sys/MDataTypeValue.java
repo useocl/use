@@ -19,9 +19,13 @@
 
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MInstanceState;
+
+import org.tzi.use.uml.mm.instance.MInstance;
+
 import org.tzi.use.uml.mm.MClassifier;
-import org.tzi.use.uml.ocl.value.DataTypeValueValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.mm.values.DataTypeValueValue;
+import org.tzi.use.uml.mm.values.Value;
 
 import java.util.Map;
 
@@ -69,12 +73,12 @@ public final class MDataTypeValue implements MInstance {
     }
 
     @Override
-    public MInstanceState state(MSystemState state) {
+    public MInstanceState state(org.tzi.use.uml.mm.instance.IModelState state) {
         return new MDataTypeValueState(this);
     }
 
     @Override
-    public boolean exists(MSystemState mSystemState) {
+    public boolean exists(org.tzi.use.uml.mm.instance.IModelState mSystemState) {
         return false;
     }
 }

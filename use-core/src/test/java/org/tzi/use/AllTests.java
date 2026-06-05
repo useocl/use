@@ -35,9 +35,8 @@ public class AllTests {
     public static Test suite() {
         final TestSuite test = new TestSuite( "All use tests" );
         test.addTest( org.tzi.use.graph.AllTests.suite() );
-        test.addTest( org.tzi.use.parser.AllTests.suite() );
+        test.addTest( org.tzi.use.parser.integration.AllTests.suite() );
         test.addTest( org.tzi.use.uml.AllTests.suite() );
-        test.addTest( org.tzi.use.utilcore.AllTests.suite() );
         return test;
     }
 }

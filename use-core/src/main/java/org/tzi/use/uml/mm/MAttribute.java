@@ -19,8 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
 
 import com.google.common.base.Optional;
 

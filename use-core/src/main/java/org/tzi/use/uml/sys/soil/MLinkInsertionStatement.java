@@ -25,12 +25,12 @@ import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.uml.sys.MObject;
-import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.mm.values.Value;
+import org.tzi.use.uml.mm.instance.MObject;
+import org.tzi.use.uml.mm.instance.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.exceptions.EvaluationFailedException;
 
 /**
  * This statement inserts a new link into an association.

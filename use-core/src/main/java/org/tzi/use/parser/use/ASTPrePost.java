@@ -25,15 +25,15 @@ import java.util.List;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.parser.ocl.ASTType;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MOperation;
-import org.tzi.use.uml.ocl.expr.VarDecl;
-import org.tzi.use.uml.ocl.expr.VarDeclList;
-import org.tzi.use.uml.ocl.type.Type;
+import org.tzi.use.uml.mm.expr.VarDecl;
+import org.tzi.use.uml.mm.expr.VarDeclList;
+import org.tzi.use.uml.mm.types.Type;
 
 
 /**

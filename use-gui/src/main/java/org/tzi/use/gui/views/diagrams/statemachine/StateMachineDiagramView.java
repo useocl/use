@@ -18,6 +18,8 @@
  */
 package org.tzi.use.gui.views.diagrams.statemachine;
 
+import org.tzi.use.gui.views.diagrams.framework.IMainWindowServices;
+
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -26,11 +28,11 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.tzi.use.gui.main.MainWindow;
-import org.tzi.use.gui.views.PrintableView;
-import org.tzi.use.gui.views.View;
+import org.tzi.use.gui.views.diagrams.MainWindow;
+import org.tzi.use.gui.views.diagrams.framework.PrintableView;
+import org.tzi.use.gui.main.View;
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
-import org.tzi.use.uml.sys.MObject;
+import org.tzi.use.uml.mm.instance.MObject;
 import org.tzi.use.uml.sys.MObjectState;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.events.TransitionEvent;
@@ -51,7 +53,7 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	
 	protected MObject monitoredInstance;
 	
-	protected final MainWindow parent;
+	protected final IMainWindowServices parent;
 		
 	protected StateMachineDiagram diagram;
 	
@@ -60,7 +62,7 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	 * @param system
 	 * @param sm
 	 */
-	public StateMachineDiagramView(MainWindow mainWindow, MSystem system, MStateMachine sm) {
+	public StateMachineDiagramView(IMainWindowServices mainWindow, MSystem system, MStateMachine sm) {
 		this.system = system;
 		this.stateMachine = sm;
 		this.parent = mainWindow;
@@ -132,7 +134,7 @@ public class StateMachineDiagramView extends JPanel implements View, PrintableVi
 	 * 
 	 */
 	private void highlightCurrentState() {
-		MObjectState currentState = monitoredInstance.state(system.state()); 
+		MObjectState currentState = (MObjectState) monitoredInstance.state(system.state()); 
 		MProtocolStateMachineInstance psmInstance = currentState.getProtocolStateMachineInstance(stateMachine);
 		
 		diagram.setActiveState(psmInstance.getCurrentState(stateMachine.getDefaultRegion()));

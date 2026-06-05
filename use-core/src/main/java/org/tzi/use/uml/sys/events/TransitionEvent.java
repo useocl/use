@@ -21,7 +21,7 @@ package org.tzi.use.uml.sys.events;
 
 import org.tzi.use.uml.mm.statemachines.MStateMachine;
 import org.tzi.use.uml.mm.statemachines.MTransition;
-import org.tzi.use.uml.sys.MInstance;
+import org.tzi.use.uml.mm.instance.MInstance;
 import org.tzi.use.uml.sys.events.tags.EventContext;
 import org.tzi.use.uml.sys.events.tags.SystemStateChangedEvent;
 

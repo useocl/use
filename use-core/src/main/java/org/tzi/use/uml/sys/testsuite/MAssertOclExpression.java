@@ -1,10 +1,10 @@
 package org.tzi.use.uml.sys.testsuite;
 
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.ocl.expr.EvalContext;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.value.BooleanValue;
-import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.SrcPos;
+import org.tzi.use.uml.mm.expr.EvalContext;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.values.BooleanValue;
+import org.tzi.use.uml.mm.values.Value;
 
 public class MAssertOclExpression extends MAssert {
 	private Expression expression;

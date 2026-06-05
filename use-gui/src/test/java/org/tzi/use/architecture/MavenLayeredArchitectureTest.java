@@ -9,6 +9,7 @@ import com.tngtech.archunit.lang.EvaluationResult;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,8 +41,8 @@ public class MavenLayeredArchitectureTest {
         ArchRule rule = ArchRuleDefinition.noClasses()
                 .that().resideInAnyPackage("org.tzi.use.analysis..", "org.tzi.use.api..",
                         "org.tzi.use.config..", "org.tzi.use.gen..", "org.tzi.use.graph..", "org.tzi.use.parser..",
-                        "org.tzi.use.uml..", "org.tzi.use.main.runtime..",
-                        "org.tzi.use.util.collections..", "org.tzi.use.util.rubyintegration..", "org.tzi.use.util.soil..",
+                        "org.tzi.use.uml..",
+                        "org.tzi.use.util.collections..",
                         "org.tzi.use.util.uml..")
                 .should().dependOnClassesThat().resideInAnyPackage("org.tzi.use.gui..",
                         "org.tzi.use.runtime..", "org.tzi.use.main.shell..")
@@ -51,6 +52,7 @@ public class MavenLayeredArchitectureTest {
         int violationCount = result.getFailureReport().getDetails().size();
         System.out.println(violationCount);
         writeResultsToFile(violationCount, result);
+        assertEquals(0, violationCount, "Core packages must not depend on GUI packages");
     }
 
     private void writeResultsToFile(int violationCount, EvaluationResult result) {

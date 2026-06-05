@@ -32,19 +32,19 @@ import java.util.Set;
 
 import org.tzi.use.graph.DirectedEdgeBase;
 import org.tzi.use.gui.util.PersistHelper;
-import org.tzi.use.gui.views.diagrams.DiagramOptions;
-import org.tzi.use.gui.views.diagrams.PositionChangedListener;
-import org.tzi.use.gui.views.diagrams.Selectable;
+import org.tzi.use.gui.views.diagrams.framework.DiagramOptions;
+import org.tzi.use.gui.views.diagrams.framework.PositionChangedListener;
+import org.tzi.use.gui.util.Selectable;
 import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.positioning.PositionStrategy;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner;
 import org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner.DeltaBasis;
 import org.tzi.use.gui.views.diagrams.util.Direction;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.AttachedWayPoint.ResetStrategy;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPoint;
-import org.tzi.use.gui.views.diagrams.waypoints.WayPointType;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.AttachedWayPoint.ResetStrategy;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPoint;
+import org.tzi.use.gui.views.diagrams.elements.waypoints.WayPointType;
 import org.tzi.use.gui.xmlparser.LayoutTags;
 import org.w3c.dom.Element;
 
@@ -961,7 +961,7 @@ public abstract class EdgeBase extends DirectedEdgeBase<PlaceableNode> implement
     		try {
 		    	while(ap.evalXPath() != -1) {
 		    		String propertyId = helper.getAttributeValue("id");
-		    		PlaceableNode node = helper.getAllNodes().get(propertyId);
+		    		PlaceableNode node = (PlaceableNode) helper.getAllNodes().get(propertyId);
 		    		if (node != null) {
 		    			node.restorePlacementInfo(helper, version);
 		    			node.updatePosition();

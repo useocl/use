@@ -18,9 +18,11 @@
  */
 package org.tzi.use.uml.sys;
 
+import org.tzi.use.uml.mm.instance.MLinkSet;
+
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationEnd;
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 import java.util.Collections;
 import java.util.HashSet;

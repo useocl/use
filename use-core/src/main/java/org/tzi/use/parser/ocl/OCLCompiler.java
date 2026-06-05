@@ -24,12 +24,12 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.tzi.use.parser.Context;
 import org.tzi.use.parser.ParseErrorHandler;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.util.SemanticException;
 import org.tzi.use.parser.Symtable;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.ocl.expr.Expression;
-import org.tzi.use.uml.ocl.type.Type;
-import org.tzi.use.uml.ocl.value.VarBindings;
+import org.tzi.use.uml.mm.expr.Expression;
+import org.tzi.use.uml.mm.types.Type;
+import org.tzi.use.uml.mm.values.VarBindings;
 import org.tzi.use.uml.sys.MSystemState;
 
 import java.io.ByteArrayInputStream;

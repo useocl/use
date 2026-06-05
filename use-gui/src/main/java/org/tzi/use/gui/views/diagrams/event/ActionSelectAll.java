@@ -20,8 +20,8 @@
 package org.tzi.use.gui.views.diagrams.event;
 
 import org.tzi.use.gui.util.Selection;
-import org.tzi.use.gui.views.diagrams.DiagramView;
-import org.tzi.use.gui.views.diagrams.DiagramView.DiagramData;
+import org.tzi.use.gui.views.diagrams.base.DiagramView;
+import org.tzi.use.gui.views.diagrams.base.DiagramView.DiagramData;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 
 import javax.swing.*;
