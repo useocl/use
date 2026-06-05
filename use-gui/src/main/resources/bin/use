@@ -19,4 +19,8 @@ fi
 export LD_LIBRARY_PATH="$USE_HOME/lib:$LD_LIBRARY_PATH"
 
 # set cmd for running USE
-java $VMARGS -jar "$USE_JAR" "$@"
+# Pass -nr to suppress the "GNU readline library is not available" warning: the
+# native natGNUReadline JNI lib is not shipped, so the load always fails and USE
+# falls back to a simple readline implementation. The Windows launcher
+# (start_use.bat) already passes -nr; this keeps the bash launcher consistent.
+java $VMARGS -jar "$USE_JAR" -nr "$@"

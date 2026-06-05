@@ -328,8 +328,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+<!--
+                    Failsafe must track the Surefire version pinned in the
+                    parent POM (3.5.2). The Maven-default 2.22.2 predates the
+                    JUnit Platform provider rework and dies with
+                    NoClassDefFoundError: org/junit/platform/commons/util/
+                    PreconditionViolationException when running the JUnit 5
+                    integration tests (e.g. OCLExpressionIT). 3.5.2 provisions
+                    the platform launcher the same way Surefire 3.5.2 does.
+                -->
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.2</version>
                 <executions>
                     <execution>
                         <goals>
