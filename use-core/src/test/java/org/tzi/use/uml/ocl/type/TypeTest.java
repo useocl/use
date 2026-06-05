@@ -35,7 +35,7 @@ import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MDataType;
 import org.tzi.use.uml.ocl.type.Type.VoidHandling;
 
-import com.gargoylesoftware.base.testing.EqualsTester;
+import com.google.common.testing.EqualsTester;
 
 /**
  * Test Type classes.
@@ -233,47 +233,69 @@ public class TypeTest extends TestCase {
         // boolean 
         BooleanType bt1 = new BooleanType();
         BooleanType bt2 = new BooleanType();
-        new EqualsTester(bt1, bt2, null, null);
+        new EqualsTester()
+                .addEqualityGroup(bt1, bt2)
+                .testEquals();
         assertEquals( bt1.hashCode(), bt2.hashCode() );
-        
-        
+
+
         // integer
         IntegerType it1 = new IntegerType();
         IntegerType it2 = new IntegerType();
-        new EqualsTester(it1, it2, null, null);
+        new EqualsTester()
+                .addEqualityGroup(it1, it2)
+                .testEquals();
         assertEquals( it1.hashCode(), it2.hashCode() );
 
         // real
         RealType rt1 = new RealType();
         RealType rt2 = new RealType();
-        new EqualsTester(rt1, rt2, null, null);
+        new EqualsTester()
+                .addEqualityGroup(rt1, rt2)
+                .testEquals();
         assertEquals( rt1.hashCode(), rt2.hashCode() );
-        
-        
+
+
         SetType sett1 = new SetType(bt1);
         SetType sett2 = new SetType(bt1);
         SetType sett3 = new SetType(it1);
-        new EqualsTester(sett1, sett2, sett3, null);
-        
+        new EqualsTester()
+                .addEqualityGroup(sett1, sett2)
+                .addEqualityGroup(sett3)
+                .testEquals();
+
         BagType bagt1 = new BagType(bt1);
         BagType bagt2 = new BagType(bt1);
         BagType bagt3 = new BagType(it1);
-        new EqualsTester(bagt1, bagt2, bagt3, null);
+        new EqualsTester()
+                .addEqualityGroup(bagt1, bagt2)
+                .addEqualityGroup(bagt3)
+                .testEquals();
 
         SequenceType sequencet1 = new SequenceType(bt1);
         SequenceType sequencet2 = new SequenceType(bt1);
         SequenceType sequencet3 = new SequenceType(it1);
-        new EqualsTester(sequencet1, sequencet2, sequencet3, null);
-        
+        new EqualsTester()
+                .addEqualityGroup(sequencet1, sequencet2)
+                .addEqualityGroup(sequencet3)
+                .testEquals();
+
         CollectionType collectiont1 = new CollectionType(bt1);
         CollectionType collectiont2 = new CollectionType(bt1);
         CollectionType collectiont3 = new CollectionType(it1);
-        new EqualsTester(collectiont1, collectiont2, collectiont3, sett1);
+        new EqualsTester()
+                .addEqualityGroup(collectiont1, collectiont2)
+                .addEqualityGroup(collectiont3)
+                .addEqualityGroup(sett1)
+                .testEquals();
 
         EnumType enumt1 = new EnumType(null, "e1", new LinkedList<String>() );
         EnumType enumt2 = new EnumType(null, "e1", new LinkedList<String>() );
         EnumType enumt3 = new EnumType(null, "e2", new LinkedList<String>() );
-        new EqualsTester(enumt1, enumt2, enumt3, null);
+        new EqualsTester()
+                .addEqualityGroup(enumt1, enumt2)
+                .addEqualityGroup(enumt3)
+                .testEquals();
 
         TupleType.Part part1 = new TupleType.Part(0, "p1", sett1);
         TupleType.Part part2 = new TupleType.Part(1, "p1", sett2);
@@ -281,7 +303,10 @@ public class TypeTest extends TestCase {
         TupleType tuplet1 = new TupleType( new TupleType.Part[]{part1});
         TupleType tuplet2 = new TupleType( new TupleType.Part[]{part2});
         TupleType tuplet3 = new TupleType( new TupleType.Part[]{part3});
-        new EqualsTester(tuplet1, tuplet2, tuplet3, null);
+        new EqualsTester()
+                .addEqualityGroup(tuplet1, tuplet2)
+                .addEqualityGroup(tuplet3)
+                .testEquals();
                 
     }
 
