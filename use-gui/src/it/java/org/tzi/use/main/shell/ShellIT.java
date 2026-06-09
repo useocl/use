@@ -3,7 +3,9 @@ package org.tzi.use.main.shell;
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.io.TempDir;
 import org.tzi.use.config.Options;
 import org.tzi.use.main.gui.Main;
 import org.tzi.use.util.USEWriter;
@@ -24,6 +26,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -196,6 +200,99 @@ public class ShellIT {
     }
 
     /**
+     * Issue #32: the generated command file must always end with an
+     * {@code exit} command so USE terminates even if the {@code .in} file does
+     * not contain an explicit {@code exit}.
+     */
+    @Test
+    public void generatedCommandFileAlwaysEndsWithExit(@TempDir Path dir) throws IOException {
+        Path inFile = dir.resolve("noexit.in");
+        Files.writeString(inFile, "?1 + 1" + System.lineSeparator() + "*-> 2 : Integer" + System.lineSeparator());
+        Path cmdFile = dir.resolve("noexit.in.cmd");
+
+        createCommandFile(inFile, cmdFile);
+
+        List<String> cmdLines = readNonBlankLines(cmdFile);
+        assertEquals("exit", cmdLines.get(cmdLines.size() - 1),
+                "The generated command file must always end with an exit command.");
+    }
+
+    /**
+     * The appended {@code exit} is echoed by USE, so it must be part of the
+     * expected output for an {@code .in} file that did not terminate itself.
+     */
+    @Test
+    public void appendedExitIsAddedToExpectedOutput(@TempDir Path dir) throws IOException {
+        Path inFile = dir.resolve("noexit.in");
+        Files.writeString(inFile, "?1 + 1" + System.lineSeparator() + "*-> 2 : Integer" + System.lineSeparator());
+        Path cmdFile = dir.resolve("noexit.in.cmd");
+
+        List<String> expected = createCommandFile(inFile, cmdFile);
+
+        assertEquals("exit", expected.get(expected.size() - 1),
+                "The appended exit must be part of the expected output.");
+    }
+
+    /**
+     * Tests that load an invalid model make USE exit by itself before the
+     * command file is read. Such tests are marked with {@code #expected exit}
+     * and must not expect the (never executed) appended exit.
+     */
+    @Test
+    public void selfExitingTestsDoNotExpectTheAppendedExit(@TempDir Path dir) throws IOException {
+        Path inFile = dir.resolve("selfexit.in");
+        Files.writeString(inFile, "#expected exit" + System.lineSeparator()
+                + "?1 + 1" + System.lineSeparator() + "*-> 2 : Integer" + System.lineSeparator());
+        Path cmdFile = dir.resolve("selfexit.in.cmd");
+
+        List<String> expected = createCommandFile(inFile, cmdFile);
+
+        assertFalse(expected.contains("exit"),
+                "A test marked with '#expected exit' must not expect the appended exit.");
+    }
+
+    /**
+     * If the {@code .in} file already ends with an explicit {@code exit}, the
+     * appended exit is never executed, so {@code exit} must appear only once in
+     * the expected output.
+     */
+    @Test
+    public void exitIsNotDuplicatedWhenInFileAlreadyEndsWithExit(@TempDir Path dir) throws IOException {
+        Path inFile = dir.resolve("withexit.in");
+        Files.writeString(inFile, "?1 + 1" + System.lineSeparator() + "*-> 2 : Integer"
+                + System.lineSeparator() + "exit" + System.lineSeparator());
+        Path cmdFile = dir.resolve("withexit.in.cmd");
+
+        List<String> expected = createCommandFile(inFile, cmdFile);
+
+        assertEquals(1, expected.stream().filter("exit"::equals).count(),
+                "exit must appear exactly once in the expected output.");
+    }
+
+    /**
+     * The {@code quit} (and {@code q}) alias also terminates USE, so an .in file
+     * ending with it must not expect the (never executed) appended exit.
+     */
+    @Test
+    public void quitTerminatedTestsDoNotExpectTheAppendedExit(@TempDir Path dir) throws IOException {
+        Path inFile = dir.resolve("withquit.in");
+        Files.writeString(inFile, "?1 + 1" + System.lineSeparator() + "*-> 2 : Integer"
+                + System.lineSeparator() + "quit" + System.lineSeparator());
+        Path cmdFile = dir.resolve("withquit.in.cmd");
+
+        List<String> expected = createCommandFile(inFile, cmdFile);
+
+        assertFalse(expected.contains("exit"),
+                "A test that terminates with quit must not expect the appended exit.");
+    }
+
+    private List<String> readNonBlankLines(Path file) throws IOException {
+        return Files.readAllLines(file, StandardCharsets.UTF_8).stream()
+                .filter(line -> !line.isBlank())
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Creates a USE-command file at the position located by the path {@code cmdFile}.
      * The file contains all commands that are specified in the {@code inFile}.
      * The expected output, i.e., lines starting with a {@code *} are added to the list {@code expectedOutput}.
@@ -207,45 +304,76 @@ public class ShellIT {
     private List<String> createCommandFile(Path inFile, Path cmdFile) {
         List<String> expectedOutput = new LinkedList<>();
 
+        // Whether USE is expected to terminate by itself before the command
+        // file is read (e.g. because the test loads an invalid model). Such
+        // tests are marked with a '#expected exit' comment.
+        boolean selfExits = false;
+        // The last command written to the command file. Used to avoid adding a
+        // duplicate exit to the expected output if the .in file already ends
+        // with an explicit exit.
+        String lastCommand = null;
+
         // Build USE command file and build expected output
         try (
-                Stream<String> linesStream = Files.lines(inFile, StandardCharsets.UTF_8);
                 FileWriter cmdWriter = new FileWriter(cmdFile.toFile(), StandardCharsets.UTF_8, false)
         ) {
-
-            linesStream.forEach(inputLine -> {
+            for (String inputLine : Files.readAllLines(inFile, StandardCharsets.UTF_8)) {
 
                 // Ignore empty lines in expected, since they are also suppressed in the actual output
                 if (inputLine.isBlank())
-                    return;
+                    continue;
 
                 if ((inputLine.startsWith("*") || inputLine.startsWith("#"))
                         && inputLine.substring(1).isBlank()) {
-                    return;
+                    continue;
                 }
 
                 if (inputLine.startsWith("*")) {
                     // Input line minus prefix(*) is expected output
                     expectedOutput.add(inputLine.substring(1).trim());
-                } else if (!inputLine.startsWith("#")) { // Not a comment
-                    try {
-                        cmdWriter.write(inputLine);
-                        cmdWriter.write(System.lineSeparator());
-
-                        // Multi-line commands (backslash and dot) are ignored
-                        if (!inputLine.matches("^[\\\\.]$")) {
-                            expectedOutput.add(inputLine);
-                        }
-                    } catch (IOException e1) {
-                        fail("Could not write USE command file for test!", e1);
+                } else if (inputLine.startsWith("#")) {
+                    // Comment line. The '#expected exit' marker denotes tests in
+                    // which USE exits by itself (e.g. on an invalid model).
+                    if (inputLine.substring(1).trim().equals("expected exit")) {
+                        selfExits = true;
                     }
+                } else { // A command
+                    cmdWriter.write(inputLine);
+                    cmdWriter.write(System.lineSeparator());
+
+                    // Multi-line commands (backslash and dot) are ignored
+                    if (!inputLine.matches("^[\\\\.]$")) {
+                        expectedOutput.add(inputLine);
+                    }
+                    lastCommand = inputLine.trim();
                 }
-            });
+            }
+
+            // Issue #32: always terminate the command file with an exit so USE
+            // does not keep running when an .in file forgot to add one.
+            cmdWriter.write("exit");
+            cmdWriter.write(System.lineSeparator());
         } catch (IOException e) {
             fail("Could not write USE command file for test!", e);
         }
 
+        // The appended exit is echoed by USE and therefore part of the output,
+        // but only when it is actually executed: not when USE exits by itself
+        // before reading the command file (#expected exit), and not when the
+        // .in file already terminated with its own exit/quit (which runs first).
+        if (!selfExits && !isExitCommand(lastCommand)) {
+            expectedOutput.add("exit");
+        }
+
         return expectedOutput;
+    }
+
+    /**
+     * Whether the given command terminates USE, i.e., is one of {@code q},
+     * {@code quit} or {@code exit} (see {@code Shell.processLine}).
+     */
+    private static boolean isExitCommand(String command) {
+        return "exit".equals(command) || "quit".equals(command) || "q".equals(command);
     }
 
     /**

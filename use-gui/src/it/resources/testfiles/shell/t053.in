@@ -1,1 +1,2 @@
+#expected exit
 *t053.use:6:2: Missing return type for OCL query operation `firstSecond'.

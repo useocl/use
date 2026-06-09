@@ -3,6 +3,7 @@
 !create b : t129_import#B
 ? b
 *-> b : B
+check
 *checking structure...
 *checking invariants...
 *checked 0 invariants, 0 failures.

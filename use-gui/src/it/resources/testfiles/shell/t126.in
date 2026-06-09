@@ -3,6 +3,7 @@
 !create a : A
 !create b : B
 !insert (a, b) into C
+check
 *checking structure...
 *checking invariants...
 *checked 0 invariants, 0 failures.
