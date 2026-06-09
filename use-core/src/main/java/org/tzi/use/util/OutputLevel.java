@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2025 University of Bremen & University of Applied Sciences Hamburg
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,7 +27,6 @@ package org.tzi.use.util;
  * different output targets can render or route it accordingly (e.g. errors and
  * warnings to an error stream, warnings highlighted, ...).</p>
  *
- * @author Claude
  */
 public enum OutputLevel {
     /** Regular output that is the result the user asked for. */

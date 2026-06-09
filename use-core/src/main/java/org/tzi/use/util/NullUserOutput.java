@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2025 University of Bremen & University of Applied Sciences Hamburg
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,7 +22,6 @@ package org.tzi.use.util;
 /**
  * A {@link UserOutput} that discards all output.
  *
- * @author Claude
  */
 public final class NullUserOutput implements UserOutput {
 
