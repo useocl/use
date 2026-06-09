@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2025 University of Bremen & University of Applied Sciences Hamburg
+ * Copyright (C) 1999-2026 University of Bremen & University of Applied Sciences Hamburg
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -39,6 +39,8 @@ import org.junit.jupiter.api.Test;
  * applied and that each directory can be overridden independently with a
  * startup argument ({@code -pluginDir=} and {@code -extensionsDir=}).</p>
  *
+ * @author Cansin Yildiz
+ * @author Claude
  */
 public class OptionsDirectoryArgsTest {
 
