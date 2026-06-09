@@ -117,3 +117,8 @@ fabric.properties
 /use-assembly/target
 
 **/.DS_Store
+
+# ArchUnit generated failure reports (the directory is kept via its README,
+# the report files are regenerated on every test run)
+/docs/archunit-results/*
+!/docs/archunit-results/README
