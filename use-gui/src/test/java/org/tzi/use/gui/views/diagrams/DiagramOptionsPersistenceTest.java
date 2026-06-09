@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2004 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2025 University of Bremen & University of Applied Sciences Hamburg
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -53,7 +53,6 @@ import org.w3c.dom.Element;
  * into a {@code diagramOptions} element of a versioned {@code diagram_Layout}
  * document and read back through the same navigation.</p>
  *
- * @author Claude
  */
 public class DiagramOptionsPersistenceTest {
 
