@@ -29,16 +29,13 @@ Otherwise, a simple "mvn compile" or "mwn verify" should compile
 the whole USE package. "mvn verify" will run all tests whereas
 "mvn compile" just compiles.
 
-Interaction with USE is done via a command line interface. This will
-be much more comfortable if you have the GNU readline library
-available on your system. USE provides an interface to the readline
-library. For example, it allows bash or emacs-like editing of lines
-and keeps a history file of recent input. Since the readline library
-is platform dependent, the interface has to be compiled on your
-system. Changes to the build file may be necessary for your
-environment. If you don't have the readline library - don't worry.
-USE will fall back to a simple input mechanism if it cannot find or
-load the readline library at runtime.
+Interaction with USE is done via a command line interface. It uses the
+pure-Java JLine library to provide comfortable line editing (bash or
+emacs-like) and to keep a history file of recent input. JLine works out
+of the box on Linux, macOS and Windows, so no platform-dependent native
+library has to be built or installed. When USE is run without an
+interactive terminal (for example with piped input), it automatically
+falls back to a simple input mechanism.
 
 
 

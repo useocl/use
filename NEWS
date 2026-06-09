@@ -3,6 +3,10 @@ Please see the file `README' for a description of how to report bugs.
 
 ** Changes between version 7.1.0 and X.X.X
 * USE now supports data types
+* The interactive command line now uses the pure-Java JLine library for line
+  editing and history instead of the native GNU readline library. This removes
+  the native build step and provides command-line editing on Windows, macOS
+  and Linux out of the box.
 
 ** Changes between version 5.2.0 and 6.0.0
 * New OCL complexity plugin
