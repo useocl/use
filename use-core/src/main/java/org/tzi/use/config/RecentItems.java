@@ -54,6 +54,13 @@ public class RecentItems
     
     public void push(String item)
     {
+        // Issue #50: while USE runs in test mode (the -t argument), e.g. during
+        // integration tests, opened files must not be recorded as recent items,
+        // otherwise they would push out the user's own entries.
+        if (Options.testMode) {
+            return;
+        }
+
         m_items.remove(item);
         m_items.add(0, item);
         
