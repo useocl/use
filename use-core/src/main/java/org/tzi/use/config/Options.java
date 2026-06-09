@@ -185,6 +185,11 @@ public class Options {
 	public static Path pluginDir = null;
 
 	/**
+	 * Directory containing the OCL extension definitions.
+	 */
+	public static Path oclExtensionsDir = null;
+
+	/**
      * Preferred size of the diagram views. 
      */
     public static Dimension fDiagramDimension = new Dimension( 600, 600 );
@@ -246,6 +251,12 @@ public class Options {
 		System.out.println("  -noplugins    do not use plugins");
         System.out.println("  -h            print help");
         System.out.println("  -H=path       home of use installation");
+		System.out.println("  -pluginDir=path");
+		System.out.println("                directory to load plugins from");
+		System.out.println("                (default: <home>/lib/plugins)");
+		System.out.println("  -extensionsDir=path");
+		System.out.println("                directory to load OCL extensions from");
+		System.out.println("                (default: <home>/oclextensions)");
 		System.out.println("  -nr           suppress warnings about missing readline library");
 		System.out.println("  -q            reads spec_file, executes cmd_file, and checks constraints");
 		System.out.println("                exit code is 1 if constraints fail, otherwise 0");
@@ -319,6 +330,7 @@ public class Options {
 		checkWarningsUnrelatedTypes = WarningType.WARN;
 		doPLUGIN = true;
 		pluginDir = null;
+		oclExtensionsDir = null;
 		fDiagramDimension = new Dimension( 600, 600 );
 		props = null;
 		specFilename = null;
@@ -349,14 +361,30 @@ public class Options {
                 	Options.doGUI = false;
                 } else if (arg.equals("noplugins")) {
 					Options.doPLUGIN = false;
-                } else if (arg.startsWith("H=")) { 
+                } else if (arg.startsWith("H=")) {
                 	try {
                 		homeDir = Paths.get(arg.substring(2));
                 	} catch (InvalidPathException e) {
                 		System.err.println("Invalid path " + StringUtil.inQuotes(arg.substring(2)) + " for home directory specified.");
                 		System.exit(1);
                 	}
-                } else if (arg.equals("nr")) { 
+                } else if (arg.startsWith("pluginDir=")) {
+                	String value = arg.substring("pluginDir=".length());
+                	try {
+                		pluginDir = Paths.get(value);
+                	} catch (InvalidPathException e) {
+                		System.err.println("Invalid path " + StringUtil.inQuotes(value) + " for plugin directory specified.");
+                		System.exit(1);
+                	}
+                } else if (arg.startsWith("extensionsDir=")) {
+                	String value = arg.substring("extensionsDir=".length());
+                	try {
+                		oclExtensionsDir = Paths.get(value);
+                	} catch (InvalidPathException e) {
+                		System.err.println("Invalid path " + StringUtil.inQuotes(value) + " for OCL extensions directory specified.");
+                		System.exit(1);
+                	}
+                } else if (arg.equals("nr")) {
                     suppressWarningsAboutMissingReadlineLibrary = true;
                 } else if (arg.equals("q")) {
                     Options.quiet = true;
@@ -441,7 +469,14 @@ public class Options {
         }
         
         setLastDirectory(homeDir);
-		pluginDir = homeDir.resolve("lib").resolve("plugins");
+		// Both directories default to a location below the home directory, but
+		// can be overridden independently via -pluginDir / -extensionsDir.
+		if (pluginDir == null) {
+			pluginDir = homeDir.resolve("lib").resolve("plugins");
+		}
+		if (oclExtensionsDir == null) {
+			oclExtensionsDir = homeDir.resolve("oclextensions");
+		}
 
         if (quiet && (specFilename == null || cmdFilename == null) ) {
 			System.err
