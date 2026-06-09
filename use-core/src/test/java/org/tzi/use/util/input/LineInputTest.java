@@ -56,4 +56,15 @@ class LineInputTest {
         Readline rl = LineInput.getStreamReadline(reader, true, "");
         assertTrue(rl.doEcho());
     }
+
+    @Test
+    void getUserInputReadline_returnsNonNullNonEchoingReadline() {
+        // The interactive factory must always yield a usable, non-echoing
+        // Readline. Whether that is a JLineReadline (interactive terminal)
+        // or the StreamReadline fallback (headless/piped) depends on the
+        // environment, but the behavioural contract is the same.
+        Readline rl = LineInput.getUserInputReadline();
+        assertNotNull(rl);
+        assertFalse(rl.doEcho());
+    }
 }
