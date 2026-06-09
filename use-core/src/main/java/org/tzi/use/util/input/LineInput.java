@@ -20,47 +20,45 @@
 package org.tzi.use.util.input;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Interface for getting a suitable platform-dependent readline
- * implementation. The GNU readline library is preferably used if
- * installed.
- * 
- * @author      Mark Richters 
+ * Factory for obtaining a suitable {@link Readline} implementation.
+ *
+ * <p>For interactive use the pure-Java {@link JLineReadline} is returned,
+ * providing line editing and command history on all platforms. When no
+ * interactive terminal is available (e.g. the input is piped or USE runs in
+ * a headless environment) a plain {@link StreamReadline} reading from
+ * {@code System.in} is used instead.</p>
+ *
+ * @author      Mark Richters
  */
 public class LineInput {
 
     // utility class
     private LineInput() {}
-    
+
     /**
-     * Returns a readline implementation. If the native GNU readline
-     * library is available, return that. Otherwise, a stream readline
-     * implementation with System.in as source is returned.  
-     *
-     * @param errorMessage if not null print a message when the native
-     *                     GNU readline library is not available, otherwise
-     *                     fail silently.
+     * Returns a {@link Readline} implementation for reading interactive user
+     * input. A JLine-backed implementation is used when a terminal is
+     * available; otherwise a simple stream-based implementation reading from
+     * {@code System.in} is returned.
      */
-    public static Readline getUserInputReadline(String errorMessage) {
-        Readline rl = null;
-        try {
-            System.loadLibrary("natGNUReadline");
-            rl = new GNUReadline();
-        } catch (UnsatisfiedLinkError ex) {
-            if (errorMessage != null ) {
-                System.out.println(ex.toString());
-                System.out.println(errorMessage);
+    public static Readline getUserInputReadline() {
+        if (System.console() != null) {
+            try {
+                return new JLineReadline();
+            } catch (IOException ex) {
+                // JLine could not attach to the terminal; fall back below.
             }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            // no echo, do protocol
-            rl = new StreamReadline(reader, false);
         }
-        return rl;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        // no echo, do protocol
+        return new StreamReadline(reader, false);
     }
 
-    public static Readline getStreamReadline(BufferedReader reader, boolean doEcho, String string) {
-        return new StreamReadline(reader, doEcho, string);
+    public static Readline getStreamReadline(BufferedReader reader, boolean doEcho, String prompt) {
+        return new StreamReadline(reader, doEcho, prompt);
     }
 }

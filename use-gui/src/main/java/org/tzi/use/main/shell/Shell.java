@@ -268,18 +268,7 @@ public final class Shell implements Runnable, PPCHandler {
 			return;
 		}
 
-		String GNUReadlineNotAvailable;
-		if (Options.suppressWarningsAboutMissingReadlineLibrary) {
-			GNUReadlineNotAvailable = null;
-		} else {
-			GNUReadlineNotAvailable = "Apparently, the GNU readline library is not available on your system."
-					+ Options.LINE_SEPARATOR
-					+ "The program will continue using a simple readline implementation."
-					+ Options.LINE_SEPARATOR
-					+ "You can turn off this warning message by using the switch -nr";
-		}
-
-		fReadline = LineInput.getUserInputReadline(GNUReadlineNotAvailable);
+		fReadline = LineInput.getUserInputReadline();
 		fReadline.usingHistory();
 
 		// Read command history from previous sessions

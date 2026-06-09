@@ -29,7 +29,7 @@ import java.io.IOException;
 class Readline_test {
 
     public static void main(String[] args) {
-        Readline rl = LineInput.getUserInputReadline("readline library not found");
+        Readline rl = LineInput.getUserInputReadline();
         String line;
         try {
             do { 

@@ -8,6 +8,7 @@ module use.core {
     requires java.scripting;
     requires org.jruby.dist;
     requires combinatoricslib;
+    requires jline;
     requires java.datatransfer;
     requires java.desktop;
     exports org.tzi.use.config;

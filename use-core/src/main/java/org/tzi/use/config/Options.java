@@ -117,9 +117,7 @@ public class Options {
      * Otherwise, only the shell is available.
      */
     public static boolean doGUI = true;
-    
-    public static boolean suppressWarningsAboutMissingReadlineLibrary = false;
-    
+
     public static boolean quiet = false;
     
     private static boolean debug = false;
@@ -246,7 +244,7 @@ public class Options {
 		System.out.println("  -noplugins    do not use plugins");
         System.out.println("  -h            print help");
         System.out.println("  -H=path       home of use installation");
-		System.out.println("  -nr           suppress warnings about missing readline library");
+		System.out.println("  -nr           deprecated, ignored (kept for backward compatibility)");
 		System.out.println("  -q            reads spec_file, executes cmd_file, and checks constraints");
 		System.out.println("                exit code is 1 if constraints fail, otherwise 0");
 		System.out.println("  -qv           like -q but with verbose output of constraint check");
@@ -306,7 +304,6 @@ public class Options {
 		compileOnly = false;
 		compileAndPrint = false;
 		doGUI = true;
-		suppressWarningsAboutMissingReadlineLibrary = false;
 		quiet = false;
 		debug = false;
 		quietAndVerboseConstraintCheck = false;
@@ -356,8 +353,9 @@ public class Options {
                 		System.err.println("Invalid path " + StringUtil.inQuotes(arg.substring(2)) + " for home directory specified.");
                 		System.exit(1);
                 	}
-                } else if (arg.equals("nr")) { 
-                    suppressWarningsAboutMissingReadlineLibrary = true;
+                } else if (arg.equals("nr")) {
+                    // Deprecated: the GNU readline library is no longer used.
+                    // Accepted as a no-op for backward compatibility.
                 } else if (arg.equals("q")) {
                     Options.quiet = true;
                     Options.doGUI = false;
