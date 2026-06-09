@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2025 University of Bremen & University of Applied Sciences Hamburg
+ * Copyright (C) 1999-2026 University of Bremen & University of Applied Sciences Hamburg
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,6 +26,8 @@ import java.util.Objects;
  * A {@link UserOutput} that writes to {@link PrintStream}s. Warnings and errors
  * are written to the error stream, everything else to the normal stream.
  *
+ * @author Cansin Yildiz
+ * @author Claude
  */
 public class StreamUserOutput implements UserOutput {
 
