@@ -106,34 +106,34 @@ are launched. [^4]
 #### Graphical User Interface
 
 The window that appears after starting USE can be seen in the screen
-shot in figure [1.2](#fig:StartCars){reference-type="ref"
-reference="fig:StartCars"}. On the left is a tree view showing the
+shot in figure [1.2](#fig:StartCars). On the left is a tree view showing the
 contents (classes, associations, invariants, and pre- and
 postconditions) of the model.\
 
-![Graphical User Interface after starting USE with the Cars
-Example[]{label="fig:StartCars"}](Screenshots/GUI/StartCars.png){#fig:StartCars}
+<a name="fig:StartCars">![Graphical User Interface after starting USE with the Cars Example](Screenshots/GUI/StartCars.png)</a>
+
+*Figure 1.2: Graphical User Interface after starting USE with the Cars Example*
 
 \
-The next figure [1.3](#fig:CarsInv){reference-type="ref"
-reference="fig:CarsInv"} shows the expanded tree with all model
+The next figure [1.3](#fig:CarsInv) shows the expanded tree with all model
 elements. The invariant is selected and its definition is shown in the
 panel below the tree.\
 
-![Expanded tree with all model
-elements[]{label="fig:CarsInv"}](Screenshots/GUI/CarsInv.png){#fig:CarsInv}
+<a name="fig:CarsInv">![Expanded tree with all model elements](Screenshots/GUI/CarsInv.png)</a>
+
+*Figure 1.3: Expanded tree with all model elements*
 
 \
 The large area on the right is a workspace where you can open views
 visualizing different aspects of a system. Views can be created any time
 by choosing an entry from the view menu or directly by a toolbar button.
 There is no limit on active views. The next screenshot shown in figure
-[1.4](#fig:WorkingspaceViews){reference-type="ref"
-reference="fig:WorkingspaceViews"} displays the main window after the
+[1.4](#fig:WorkingspaceViews) displays the main window after the
 creation of four views.
 
-![Main window with four different
-views[]{label="fig:WorkingspaceViews"}](Screenshots/GUI/WorkingspaceViews.png){#fig:WorkingspaceViews}
+<a name="fig:WorkingspaceViews">![Main window with four different views](Screenshots/GUI/WorkingspaceViews.png)</a>
+
+*Figure 1.4: Main window with four different views*
 
 The two lower views list the names of classes and associations defined
 in the model and show the number of objects and links in the current
@@ -148,7 +148,7 @@ an object diagram once we have created objects and links.
 Now you can create and destroy objects of type `Car` and set
 their attributes. More complex specifications allow more commands to
 manipulate the system state. (see section
-[5.1](#ShellCommands){reference-type="ref" reference="ShellCommands"}).\
+[5.1](#ShellCommands)).\
 We create two objects `smallCar` and `bigCar` and set
 their mileage to $2000$ resp. $-1500$ kilometers. The commands are shown
 below. They can be entered step by step or by reading in a command file.
@@ -165,41 +165,42 @@ To read in the corresponding command file use the following USE command:
 
 After creating the system state the Class Invariant View shows that
 `MileageNotNegative` is violated. (see figure
-[1.5](#fig:InvFailed){reference-type="ref" reference="fig:InvFailed"})\
+[1.5](#fig:InvFailed))\
 
-![Constraint
-failed[]{label="fig:InvFailed"}](Screenshots/GUI/Views/InvFailed.png){#fig:InvFailed}
+<a name="fig:InvFailed">![Constraint failed](Screenshots/GUI/Views/InvFailed.png)</a>
+
+*Figure 1.5: Constraint failed*
 
 \
 To get more information you can double click on the failed invariant.
 This opens the Evaluation Browser showing the evaluation of the marked
-invariant. In figure [1.6](#fig:InvFailedBrowser){reference-type="ref"
-reference="fig:InvFailedBrowser"} you can see, that object
+invariant. In figure [1.6](#fig:InvFailedBrowser) you can see, that object
 `bigCar` violates the invariant because its mileage is a
 negative number.
 
-![Evaluation of the violated
-invariant[]{label="fig:InvFailedBrowser"}](Screenshots/GUI/InvFailedBrowser.png){#fig:InvFailedBrowser}
+<a name="fig:InvFailedBrowser">![Evaluation of the violated invariant](Screenshots/GUI/InvFailedBrowser.png)</a>
+
+*Figure 1.6: Evaluation of the violated invariant*
 
 #### Evaluating OCL Expressions
 
 The OCL parser and interpreter of USE allows the evaluation of arbitrary
 OCL expressions. The menu item `State|Evaluate OCL expression` opens a
 dialog where expressions can be entered and evaluated (see figure
-[1.7](#fig:EvalSetExpr){reference-type="ref"
-reference="fig:EvalSetExpr"}).\
+[1.7](#fig:EvalSetExpr)).\
 
-![Evaluating a simple select
-expression[]{label="fig:EvalSetExpr"}](Screenshots/GUI/EvalSetExpr.png){#fig:EvalSetExpr}
+<a name="fig:EvalSetExpr">![Evaluating a simple select expression](Screenshots/GUI/EvalSetExpr.png)</a>
+
+*Figure 1.7: Evaluating a simple select expression*
 
 \
-The example in figure [1.8](#fig:EvalSelectExpr){reference-type="ref"
-reference="fig:EvalSelectExpr"} shows a more complex expression with
+The example in figure [1.8](#fig:EvalSelectExpr) shows a more complex expression with
 `allInstances` and the collection operations `select`,
 `collect` and `exists`.
 
-![Evaluating a more complex
-expression[]{label="fig:EvalSelectExpr"}](Screenshots/GUI/EvalSelectExpr.png){#fig:EvalSelectExpr}
+<a name="fig:EvalSelectExpr">![Evaluating a more complex expression](Screenshots/GUI/EvalSelectExpr.png)</a>
+
+*Figure 1.8: Evaluating a more complex expression*
 
 ### Formal Background
 
@@ -214,8 +215,9 @@ in [@GogollaRichters:2000] and [@richters:phd]. Several other papers of
 our group employing USE can be found in the publications of our
 group.[^5]
 
-### Examples inspected within this documentation {#examplesDocu}
+<a name="examplesDocu"></a>
 
+### Examples inspected within this documentation
 Beside the cars example there are four examples, which are treated in
 the course of this documentation.
 
@@ -227,27 +229,28 @@ exactly one department.\
 Persons, departments and projects have names identifying them.
 Departments, which have different locations, and projects have specific
 budgets. Persons are paid for their job. They have a regular salary.
-(see figure [1.9](#fig:exampleModel){reference-type="ref"
-reference="fig:exampleModel"})
+(see figure [1.9](#fig:exampleModel))
 
-![Class diagram of the Employees, Departments and Projects
-example[]{label="fig:exampleModel"}](Pictures/cls-EDP.png){#fig:exampleModel}
+<a name="fig:exampleModel">![Class diagram of the Employees, Departments and Projects example](Pictures/cls-EDP.png)</a>
+
+*Figure 1.9: Class diagram of the Employees, Departments and Projects example*
 
 #### Persons and Companies
 
 The UML class diagram in figure
-[1.10](#fig:DiagramPersonCompany){reference-type="ref"
-reference="fig:DiagramPersonCompany"} shows an altered model
+[1.10](#fig:DiagramPersonCompany) shows an altered model
 representing persons and companies. Persons have a name, an age, and a
 salary, which can be raised with the operation `raiseSalary` by
 a specific amount. They work for at most one company, which has a name
 and a location. Companies can hire and fire persons.
 
-![Class diagram of the Person & Company
-example[]{label="fig:DiagramPersonCompany"}](Pictures/cls-Employee.png){#fig:DiagramPersonCompany}
+<a name="fig:DiagramPersonCompany">![Class diagram of the Person & Company example](Pictures/cls-Employee.png)</a>
 
-#### Graphs {#graphsExample}
+*Figure 1.10: Class diagram of the Person & Company example*
 
+<a name="graphsExample"></a>
+
+#### Graphs
 This example is modeling a graph structure. Objects of class
 `Node` represent nodes of a graph that can be connected by
 edges. Each node can be connected to an arbitrary number of source and
@@ -256,11 +259,13 @@ target nodes. The `Node` class contains an operation
 node and to insert a new edge between the source node and the new target
 node.
 
-![Class diagram of the Graph
-example[]{label="fig:GraphClassDiagram"}](Pictures/GraphClassDiagram.png){#fig:GraphClassDiagram}
+<a name="fig:GraphClassDiagram">![Class diagram of the Graph example](Pictures/GraphClassDiagram.png)</a>
 
-#### Factorial {#factorialExample}
+*Class diagram of the Graph example*
 
+<a name="factorialExample"></a>
+
+#### Factorial
 The factorial example shows how operation calls may be nested in the
 simulation. It also shows that postconditions may be specified on
 operations without side effects. An OCL expression can be given to
@@ -268,8 +273,9 @@ describe the computation of a side effect free operation. In the
 example, we use a recursive definition of the factorial function. There
 is only one class `Rec`.
 
-![Class diagram of factorial
-example[]{label="fig:FactorialClassDiagram"}](Pictures/NestedClassDiagram.png){#fig:FactorialClassDiagram}
+<a name="fig:FactorialClassDiagram">![Class diagram of factorial example](Pictures/NestedClassDiagram.png)</a>
+
+*Class diagram of factorial example*
 
 ## Specifying a UML Model with USE
 
@@ -395,8 +401,9 @@ The model `Meetings` imports the data type `Time` from the model `Time` and uses
 In order to assign values to attributes startTime and endTime of an instantiated Meeting, the constructor call
 must be qualified using the model name and a `#` as a separator.
 
-![Object properties dialog 
-with transitive attributes{label="fig:ObjectPropertiesTransitive"}](Screenshots/GUI/ObjectPropertiesTransitive.png)
+<a name="fig:ObjectPropertiesTransitive">![Object properties dialog with transitive attributes](Screenshots/GUI/ObjectPropertiesTransitive.png)</a>
+
+*Object properties dialog with transitive attributes*
    
     use> !set meeting.startTime := Time#Time(12,12,12)
 
@@ -791,11 +798,12 @@ The attribute *flatware* has a complex type.
 ### Specifications of the Examples
 
 The USE specification of the example models shown in section
-[1.4](#examplesDocu){reference-type="ref" reference="examplesDocu"} are
+[1.4](#examplesDocu) are
 presented in this section.
 
-#### Employees, Departments and Projects {#EDPspec}
+<a name="EDPspec"></a>
 
+#### Employees, Departments and Projects
 The first part of the specification shown below describes the structural
 information of the class diagram. There are classes with attributes and
 associations with different multiplicities.
@@ -898,11 +906,11 @@ OCL. Each constraint is defined as an invariant in context of a class.
 The complete specification is also available in the file Demo.use[^6] in
 the example directory of the distribution.
 
-#### Persons and Companies {#personCompanySpec}
+<a name="personCompanySpec"></a>
 
+#### Persons and Companies
 Here is the USE specification of the class diagram shown in figure
-[1.10](#fig:DiagramPersonCompany){reference-type="ref"
-reference="fig:DiagramPersonCompany"}.
+[1.10](#fig:DiagramPersonCompany).
 
     model Employee
 
@@ -959,11 +967,11 @@ is not already an employee of the company. The postcondition
 person actually has been added to the set of employees. The constraints
 for the operation `fire` work just the other way round.
 
-#### Graphs {#graphsSpec}
+<a name="graphsSpec"></a>
 
+#### Graphs
 The USE specification of the graphs example
-([1.4.3](#graphsExample){reference-type="ref"
-reference="graphsExample"}) is shown below.
+([1.4.3](#graphsExample)) is shown below.
 
     model Graph
 
@@ -992,11 +1000,11 @@ The postcondition `targetNodeIsNew` also demonstrates the
 application of the OCL operation `oclIsNew` to check for the
 creation of new objects.
 
-#### Factorial {#factorialSpec}
+<a name="factorialSpec"></a>
 
+#### Factorial
 The factorial example presented in section
-[1.4.4](#factorialExample){reference-type="ref"
-reference="factorialExample"} is specified below.
+[1.4.4](#factorialExample) is specified below.
 
     model NestedOperationCalls
 
@@ -1020,22 +1028,22 @@ factorial function.
 After specifying a UML model within a `.use` file you can open it with
 USE. The USE system will parse and type check the file automatically.
 Possible errors are listed in the log window. (see section
-[4.3.4](#logWindow){reference-type="ref" reference="logWindow"})
+[4.3.4](#logWindow))
 
 ### Creating System States
 
 The Employees, Departments and Projects example specified in section
-[2.3.1](#EDPspec){reference-type="ref" reference="EDPspec"} is used to
+[2.3.1](#EDPspec) is used to
 show how system states can be created and invariants evaluated.\
 \
 Objects can be created by selecting a class and specifying a name for
 the object. The menu command `State|Create object` opens a dialog where
 this information can be entered (shown in figure
-[3.1](#fig:CreateObject){reference-type="ref"
-reference="fig:CreateObject"}).
+[3.1](#fig:CreateObject)).
 
-![Create object
-dialog[]{label="fig:CreateObject"}](Screenshots/GUI/CreateObject.png){#fig:CreateObject}
+<a name="fig:CreateObject">![Create object dialog](Screenshots/GUI/CreateObject.png)</a>
+
+*Figure 3.1: Create object dialog*
 
 \
 Alternatively, the following command can be used at the shell to achieve
@@ -1045,20 +1053,19 @@ the same effect.
 
 And, even simpler, an object can be created via drag & drop. Just select
 a class in the model browser (see section
-[4.3.3](#low){reference-type="ref" reference="low"}) and drag it to the
+[4.3.3](#low)) and drag it to the
 object diagram.\
 \
-Figure [3.2](#fig:ViewsWithObject){reference-type="ref"
-reference="fig:ViewsWithObject"} is similar to figure
-[1.4](#fig:WorkingspaceViews){reference-type="ref"
-reference="fig:WorkingspaceViews"}, but the specification changed to the
+Figure [3.2](#fig:ViewsWithObject) is similar to figure
+[1.4](#fig:WorkingspaceViews), but the specification changed to the
 Employees, Departments and Projects example and the object `cs`
 was created. The lower left view indicates that there is now one
 `Department` object, and the object diagram shows this object
 graphically.\
 
-![Main window with views after creating a new
-object[]{label="fig:ViewsWithObject"}](Screenshots/GUI/ViewsWithObject.png){#fig:ViewsWithObject}
+<a name="fig:ViewsWithObject">![Main window with views after creating a new object](Screenshots/GUI/ViewsWithObject.png)</a>
+
+*Figure 3.2: Main window with views after creating a new object*
 
 \
 A context menu available on a right mouse click in the object diagram
@@ -1076,12 +1083,12 @@ values, we can use the `set` command:
 Attributes can also be changed with an Object Properties View. If you
 choose `View|Create|` `Object Properties` from the `View` menu and
 select the `cs` object, you get the view shown in figure
-[3.3](#fig:ObjectProperties){reference-type="ref"
-reference="fig:ObjectProperties"} where you can inspect and change
+[3.3](#fig:ObjectProperties) where you can inspect and change
 attributes of the selected object.\
 
-![Object Properties
-View[]{label="fig:ObjectProperties"}](Screenshots/GUI/ObjectProperties.png){#fig:ObjectProperties}
+<a name="fig:ObjectProperties">![Object Properties View](Screenshots/GUI/ObjectProperties.png)</a>
+
+*Figure 3.3: Object Properties View*
 
 \
 We continue by adding two `Employee` objects and setting their
@@ -1102,14 +1109,15 @@ the option `Auto-Layout` in the context menu of the object diagram.\
 The previous commands resulted in an invalid system state. This is
 discussed in detail in the next section.
 
-#### Model Inherent Constraints {#modelinherent}
+<a name="modelinherent"></a>
 
+#### Model Inherent Constraints
 The invariant view indicates some problem with the new system state. The
 message says: `Model inherent constraints violated`. Model inherent
 constraints are constraints defined implicitly by a UML model (in
 contrast to explicit OCL constraints). The details about this message
 are shown in the log panel at the bottom of the screen. (see figure
-[4.5](#fig:LogWindow){reference-type="ref" reference="fig:LogWindow"})
+[4.5](#fig:LogWindow))
 They are also available by issuing a check command at the prompt:
 
     use> check
@@ -1127,8 +1135,7 @@ They are also available by issuing a check command at the prompt:
 The problem here is that we have specified in the model that each
 employee has to be related to at least one department object. (see the
 class diagram shown in figure
-[1.9](#fig:exampleModel){reference-type="ref"
-reference="fig:exampleModel"}) In our current state, no employee has a
+[1.9](#fig:exampleModel)) In our current state, no employee has a
 link to a department. In order to fix this, we insert the missing links
 into the `WorksIn` association:
 
@@ -1141,11 +1148,11 @@ menu.\
 \
 The new state shows the links in the object diagram as red edges between
 the `Employee` objects and the `Department` object.
-(see figure [3.4](#fig:ViewsWithLinks){reference-type="ref"
-reference="fig:ViewsWithLinks"})
+(see figure [3.4](#fig:ViewsWithLinks))
 
-![Main window after creating the objects and inserting the
-links[]{label="fig:ViewsWithLinks"}](Screenshots/GUI/ViewsWithLinks.png){#fig:ViewsWithLinks}
+<a name="fig:ViewsWithLinks">![Main window after creating the objects and inserting the links](Screenshots/GUI/ViewsWithLinks.png)</a>
+
+*Figure 3.4: Main window after creating the objects and inserting the links*
 
 ### Validating Invariants
 
@@ -1170,10 +1177,11 @@ existing employees and the department.
     use> !insert (john,research) into WorksOn
 
 The resulting state is shown in figure
-[3.5](#fig:ViewsDemo){reference-type="ref" reference="fig:ViewsDemo"}.
+[3.5](#fig:ViewsDemo).
 
-![Main window after reading in the whole Demo.cmd
-file[]{label="fig:ViewsDemo"}](Screenshots/GUI/ViewsDemo.png){#fig:ViewsDemo}
+<a name="fig:ViewsDemo">![Main window after reading in the whole Demo.cmd file](Screenshots/GUI/ViewsDemo.png)</a>
+
+*Figure 3.5: Main window after reading in the whole Demo.cmd file*
 
 In this state, three of the four invariants are true but one fails. The
 failing one has the name `BudgetWithinDepartmentBudget`. This
@@ -1184,14 +1192,13 @@ The value `false` finally resulting from an evaluation of an
 invariant is not very helpful in finding the reason for an illegal
 system state. An Evaluation Browser provides a more detailed view of an
 expression by showing the results of all sub expressions. (see section
-[4.5](#evaluationBrowserSec){reference-type="ref"
-reference="evaluationBrowserSec"}) Double clicking on an invariant will
+[4.5](#evaluationBrowserSec)) Double clicking on an invariant will
 open an Evaluation Browser (see figure
-[3.6](#fig:EvalBrowserDemo){reference-type="ref"
-reference="fig:EvalBrowserDemo"}).
+[3.6](#fig:EvalBrowserDemo)).
 
-![Evaluation Browser showing the violated
-constraint[]{label="fig:EvalBrowserDemo"}](Screenshots/GUI/EvalBrowserDemo.png){#fig:EvalBrowserDemo}
+<a name="fig:EvalBrowserDemo">![Evaluation Browser showing the violated constraint](Screenshots/GUI/EvalBrowserDemo.png)</a>
+
+*Figure 3.6: Evaluation Browser showing the violated constraint*
 
 \
 The root node in the evaluation browser shows the complete expression
@@ -1218,8 +1225,7 @@ calls. The following describes how this feature works.
 #### Validating the Person & Company Model
 
 We test the pre- and postconditions of the Person & Company example
-specified in section [2.3.2](#personCompanySpec){reference-type="ref"
-reference="personCompanySpec"}. First we start the USE tool with the
+specified in section [2.3.2](#personCompanySpec). First we start the USE tool with the
 specification of the example model.
 
     use> open ../examples/Documentation/Employee/Employee.use
@@ -1235,11 +1241,11 @@ At the prompt, we enter the following commands to create two objects.
     use> !set joe.age := 23
 
 The current system state can be visualized with an object diagram view
-in USE (see figure [3.7](#fig:EmployeeObjects){reference-type="ref"
-reference="fig:EmployeeObjects"}).\
+in USE (see figure [3.7](#fig:EmployeeObjects)).\
 
-![Object diagram of the Person & Company
-example[]{label="fig:EmployeeObjects"}](Screenshots/GUI/EmployeeObjects.png){#fig:EmployeeObjects}
+<a name="fig:EmployeeObjects">![Object diagram of the Person & Company example](Screenshots/GUI/EmployeeObjects.png)</a>
+
+*Figure 3.7: Object diagram of the Person & Company example*
 
 \
 Next, we want to call the operation `hire` on the company
@@ -1248,8 +1254,7 @@ object to hire `joe` as a new employee.
 ##### Calling Operations and Checking Preconditions
 
 Operation calls are initiated with the command `openter`. Its syntax is
-presented in section [5.1.12](#openterCmd){reference-type="ref"
-reference="openterCmd"}. The following command shows the top level
+presented in section [5.1.12](#openterCmd). The following command shows the top level
 bindings of variables. These variables can be used in expressions to
 refer to existing objects.
 
@@ -1308,12 +1313,12 @@ salary of the new employee.
     use> !set p.salary := 2000
 
 The object diagram in
-[3.8](#fig:EmployeeObjectsLinks){reference-type="ref"
-reference="fig:EmployeeObjectsLinks"} shows the new system state with
+[3.8](#fig:EmployeeObjectsLinks) shows the new system state with
 the link between the `Person` and `Company` objects.
 
-![Object diagram of the Person & Company example after changing the
-state[]{label="fig:EmployeeObjectsLinks"}](Screenshots/GUI/EmployeeObjectsLinks.png){#fig:EmployeeObjectsLinks}
+<a name="fig:EmployeeObjectsLinks">![Object diagram of the Person & Company example after changing the state](Screenshots/GUI/EmployeeObjectsLinks.png)</a>
+
+*Figure 3.8: Object diagram of the Person & Company example after changing the state*
 
 ##### Exiting Operations and Checking Postconditions
 
@@ -1400,18 +1405,18 @@ result variable when the postconditions are evaluated.
 
 The USE tool can visualize a sequence of operation calls as a UML
 sequence diagram. The screenshot in figure
-[3.9](#fig:EmployeeSequence){reference-type="ref"
-reference="fig:EmployeeSequence"} shows the sequence of calls for the
+[3.9](#fig:EmployeeSequence) shows the sequence of calls for the
 example. During a validation session the diagram is automatically
 updated on each operation call.
 
-![Sequence diagram of the Person & Company
-example[]{label="fig:EmployeeSequence"}](Screenshots/GUI/EmployeeSequence.png){#fig:EmployeeSequence}
+<a name="fig:EmployeeSequence">![Sequence diagram of the Person & Company example](Screenshots/GUI/EmployeeSequence.png)</a>
+
+*Figure 3.9: Sequence diagram of the Person & Company example*
 
 #### An Example with oclIsNew
 
 The graph model specified in section
-[2.3.3](#graphsSpec){reference-type="ref" reference="graphsSpec"}
+[2.3.3](#graphsSpec)
 includes constraints calling the operation `oclIsNew`. We use
 the following command script for animating the model. The script
 simulates three operation calls. The first one is expected to succeed
@@ -1499,18 +1504,18 @@ failing postconditions provide hints about what went wrong.
     Graph.cmd>
     use>
 
-The screenshot in figure [3.10](#fig:GraphSequence){reference-type="ref"
-reference="fig:GraphSequence"} shows the sequence diagram automatically
+The screenshot in figure [3.10](#fig:GraphSequence) shows the sequence diagram automatically
 generated from the example. Dashed return arrows in red indicate that a
 postcondition failed on exit from an operation call.
 
-![Sequence diagram of the Graph
-example[]{label="fig:GraphSequence"}](Screenshots/GUI/GraphSequence.png){#fig:GraphSequence}
+<a name="fig:GraphSequence">![Sequence diagram of the Graph example](Screenshots/GUI/GraphSequence.png)</a>
+
+*Figure 3.10: Sequence diagram of the Graph example*
 
 #### Nested Operation Calls
 
 The factorial example specified in section
-[2.3.4](#factorialSpec){reference-type="ref" reference="factorialSpec"}
+[2.3.4](#factorialSpec)
 includes nested operation calls. The following commands show the
 computation of 3!.
 
@@ -1541,13 +1546,13 @@ satisfy the postcondition.
     postcondition `post1' is true
 
 The screenshot in figure
-[3.11](#fig:NestedSequence){reference-type="ref"
-reference="fig:NestedSequence"} shows the sequence diagram automatically
+[3.11](#fig:NestedSequence) shows the sequence diagram automatically
 generated from the example. Note the stacked activation frames resulting
 from the recursion.
 
-![Sequence diagram of the factorial
-example[]{label="fig:NestedSequence"}](Screenshots/GUI/NestedSequence.png){#fig:NestedSequence}
+<a name="fig:NestedSequence">![Sequence diagram of the factorial example](Screenshots/GUI/NestedSequence.png)</a>
+
+*Figure 3.11: Sequence diagram of the factorial example*
 
 ## GUI Reference
 
@@ -1558,8 +1563,9 @@ a corresponding button available at the toolbar.
 
 #### File
 
-##### Open Specification... {#openSpec}
+<a name="openSpec"></a>
 
+##### Open Specification...
 Loads an available USE specification from file
 (`filename``.use`).
 
@@ -1576,13 +1582,15 @@ Saves a detailed protocol including many GUI and shell activities.
 
 Opens a dialog with modifiable standard printer settings.
 
-##### Print Diagram... {#printDia}
+<a name="printDia"></a>
 
+##### Print Diagram...
 Opens the printer window for printing the active diagram with any
 desired settings.
 
-##### Print View... {#printView}
+<a name="printView"></a>
 
+##### Print View...
 This function is enabled for sequence diagrams only. It prints the
 visible part of the diagram. For printing the whole sequence diagram,
 the `Print Diagram...` function has to be used.
@@ -1605,8 +1613,9 @@ step. It makes no difference between GUI and shell commands.
 Shows all specified classes. After selecting a class, any number of
 objects may be created by entering an unique object name.
 
-##### Evaluate OCL expression... {#evalExpr}
+<a name="evalExpr"></a>
 
+##### Evaluate OCL expression...
 This function opens an evaluating window which consists of two parts. In
 the upper part you can enter a OCL expression. After evaluating the
 expression the lower part shows the result with its type. The `Clear`
@@ -1655,126 +1664,120 @@ Opens the About window.
 
 ### Toolbar
 
-![image](Pictures/Open.png){width="3%"} Open Specification (see section
-[4.1.1.1](#openSpec){reference-type="ref" reference="openSpec"})
+<img src="Pictures/Open.png" width="3%"> Open Specification (see section
+[4.1.1.1](#openSpec))
 
-![image](Pictures/Print.png){width="3%"} Print Diagram (see section
-[4.1.1.5](#printDia){reference-type="ref" reference="printDia"})
+<img src="Pictures/Print.png" width="3%"> Print Diagram (see section
+[4.1.1.5](#printDia))
 
-![image](Pictures/Print.png){width="3%"} Print View (see section
-[4.1.1.6](#printView){reference-type="ref" reference="printView"})
+<img src="Pictures/Print.png" width="3%"> Print View (see section
+[4.1.1.6](#printView))
 
-![image](Pictures/Undo.png){width="3%"} Undo (see section
-[4.1.2.1](#undo){reference-type="ref" reference="undo"})
+<img src="Pictures/Undo.png" width="3%"> Undo (see section
+[4.1.2.1](#undo))
 
-![image](Pictures/OCL.png){width="3%"} Evaluate OCL expression (see
-section [4.1.3.2](#evalExpr){reference-type="ref" reference="evalExpr"})
+<img src="Pictures/OCL.png" width="3%"> Evaluate OCL expression (see
+section [4.1.3.2](#evalExpr))
 
-![image](Pictures/Class.png){width="3%"} Create Class Diagram View (see
-section [4.4.2](#classdiagramview){reference-type="ref"
-reference="classdiagramview"})
+<img src="Pictures/Class.png" width="3%"> Create Class Diagram View (see
+section [4.4.2](#classdiagramview))
 
-![image](Pictures/ObjectDiagram.png){width="3%"} Create Object Diagram
-View (see section [4.4.3](#objectdiagramview){reference-type="ref"
-reference="objectdiagramview"})
+<img src="Pictures/ObjectDiagram.png" width="3%"> Create Object Diagram
+View (see section [4.4.3](#objectdiagramview))
 
-![image](Pictures/InvariantView.png){width="3%"} Create Class Invariant
-View (see section [4.4.4](#classinvariantview){reference-type="ref"
-reference="classinvariantview"})
+<img src="Pictures/InvariantView.png" width="3%"> Create Class Invariant
+View (see section [4.4.4](#classinvariantview))
 
-![image](Pictures/ObjectCountView.png){width="3%"} Create Object Count
-View (see section [4.4.5](#objectcountview){reference-type="ref"
-reference="objectcountview"})
+<img src="Pictures/ObjectCountView.png" width="3%"> Create Object Count
+View (see section [4.4.5](#objectcountview))
 
-![image](Pictures/LinkCountView.png){width="3%"} Create Link Count View
-(see section [4.4.6](#linkcountview){reference-type="ref"
-reference="linkcountview"})
+<img src="Pictures/LinkCountView.png" width="3%"> Create Link Count View
+(see section [4.4.6](#linkcountview))
 
-![image](Pictures/LineChartView.png){width="3%"} Create State Evolution
-View (see section [4.4.7](#stateevolutionview){reference-type="ref"
-reference="stateevolutionview"})
+<img src="Pictures/LineChartView.png" width="3%"> Create State Evolution
+View (see section [4.4.7](#stateevolutionview))
 
-![image](Pictures/ObjectProperties.png){width="3%"} Create Object
+<img src="Pictures/ObjectProperties.png" width="3%"> Create Object
 Properties View (see section
-[4.4.8](#objectpropertiesview){reference-type="ref"
-reference="objectpropertiesview"})
+[4.4.8](#objectpropertiesview))
 
-![image](Pictures/ClassExtendView.png){width="3%"} Create Class Extend
-View (see section [4.4.9](#classextendview){reference-type="ref"
-reference="classextendview"})
+<img src="Pictures/ClassExtendView.png" width="3%"> Create Class Extend
+View (see section [4.4.9](#classextendview))
 
-![image](Pictures/SequenceDiagram.png){width="3%"} Create Sequence
+<img src="Pictures/SequenceDiagram.png" width="3%"> Create Sequence
 Diagram View (see section
-[4.4.10](#sequencediagramview){reference-type="ref"
-reference="sequencediagramview"})
+[4.4.10](#sequencediagramview))
 
-![image](Pictures/CallStack.png){width="3%"} Create Call Stack View (see
-section [4.4.11](#callstackview){reference-type="ref"
-reference="callstackview"})
+<img src="Pictures/CallStack.png" width="3%"> Create Call Stack View (see
+section [4.4.11](#callstackview))
 
-![image](Pictures/CmdList.png){width="3%"} Create Command List View (see
-section [4.4.12](#commandlistview){reference-type="ref"
-reference="commandlistview"})
+<img src="Pictures/CmdList.png" width="3%"> Create Command List View (see
+section [4.4.12](#commandlistview))
 
 ### The Main Window
 
-![Main
-window[]{label="fig:MainWindow"}](Screenshots/GUI/Views/MainWindow.png){#fig:MainWindow}
+<a name="fig:MainWindow">![Main window](Screenshots/GUI/Views/MainWindow.png)</a>
+
+*Main window*
 
 #### Showing the diagram views
 
 The main part of the window shows the opened diagram views.
 
-#### Overview of the Specification {#specificationOverview}
+<a name="specificationOverview"></a>
 
+#### Overview of the Specification
 The top left window represents the model browser. (see figure
-[4.2](#fig:OverviewOfSpec){reference-type="ref"
-reference="fig:OverviewOfSpec"})
+[4.2](#fig:OverviewOfSpec))
 
-![Overview of the
-Specification[]{label="fig:OverviewOfSpec"}](Screenshots/GUI/Views/OverviewOfSpec.png){#fig:OverviewOfSpec}
+<a name="fig:OverviewOfSpec">![Overview of the Specification](Screenshots/GUI/Views/OverviewOfSpec.png)</a>
+
+*Figure 4.2: Overview of the Specification*
 
 It shows all defined classes, associations, invariants and pre- and
 postconditions. A right click into this part of the main window opens a
 context menu. (see figure
-[4.3](#fig:OverviewOfSpecSort){reference-type="ref"
-reference="fig:OverviewOfSpecSort"})
+[4.3](#fig:OverviewOfSpecSort))
 
-![Sorting[]{label="fig:OverviewOfSpecSort"}](Screenshots/GUI/Views/OverviewOfSpecSort.png){#fig:OverviewOfSpecSort}
+<a name="fig:OverviewOfSpecSort">![Sorting](Screenshots/GUI/Views/OverviewOfSpecSort.png)</a>
+
+*Figure 4.3: Sorting*
 
 The menu provides the possibility to sort the specification elements
 e.g. by name or `use` file order.
 
-#### Definition of the Specification elements {#low}
+<a name="low"></a>
 
+#### Definition of the Specification elements
 The window below the specification overview shows the definition of the
 selected specification element as it is defined in the .`use` file. (see
-figure [4.4](#fig:DefinitionOfSpec){reference-type="ref"
-reference="fig:DefinitionOfSpec"})
+figure [4.4](#fig:DefinitionOfSpec))
 
-![Definition of the specification
-elements[]{label="fig:DefinitionOfSpec"}](Screenshots/GUI/Views/DefinitionOfSpec.png){#fig:DefinitionOfSpec}
+<a name="fig:DefinitionOfSpec">![Definition of the specification elements](Screenshots/GUI/Views/DefinitionOfSpec.png)</a>
 
-#### Log window {#logWindow}
+*Figure 4.4: Definition of the specification elements*
 
+<a name="logWindow"></a>
+
+#### Log window
 The lower part of the main window show a log of the system activities.
-(see figure [4.5](#fig:LogWindow){reference-type="ref"
-reference="fig:LogWindow"}) It also lists possible syntax resp. type
+(see figure [4.5](#fig:LogWindow)) It also lists possible syntax resp. type
 check errors found in the loaded specification and structural errors.
 Click right to clear the log window.
 
-![Log
-window[]{label="fig:LogWindow"}](Screenshots/GUI/Views/LogWindow.png){#fig:LogWindow}
+<a name="fig:LogWindow">![Log window](Screenshots/GUI/Views/LogWindow.png)</a>
+
+*Figure 4.5: Log window*
 
 #### Status and Tips
 
 A line on the bottom of the main window shows the current USE status and
 tips with reference to the displayed diagrams. (see figure
-[4.6](#fig:StatusAndTips){reference-type="ref"
-reference="fig:StatusAndTips"})
+[4.6](#fig:StatusAndTips))
 
-![Status and
-tips[]{label="fig:StatusAndTips"}](Screenshots/GUI/Views/StatusAndTips.png){#fig:StatusAndTips}
+<a name="fig:StatusAndTips">![Status and tips](Screenshots/GUI/Views/StatusAndTips.png)</a>
+
+*Figure 4.6: Status and tips*
 
 ### Diagram Views
 
@@ -1788,14 +1791,15 @@ reduce it to the previous size. There are three symbols in the upper
 right corner. They minimize, maximize resp. reduce or close the active
 window.
 
-#### Class Diagram View {#classdiagramview}
+<a name="classdiagramview"></a>
 
+#### Class Diagram View
 This view shows the class diagram defined by the loaded specification.
-(see figure [4.7](#fig:ClassDiagramView){reference-type="ref"
-reference="fig:ClassDiagramView"})
+(see figure [4.7](#fig:ClassDiagramView))
 
-![Class Diagram View (Employees, Departments and Projects
-Example)[]{label="fig:ClassDiagramView"}](Screenshots/GUI/Views/ClassDiagramView.png){#fig:ClassDiagramView}
+<a name="fig:ClassDiagramView">![Class Diagram View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ClassDiagramView.png)</a>
+
+*Figure 4.7: Class Diagram View (Employees, Departments and Projects Example)*
 
 It displays classes, attributes, operations, associations, inheritance,
 compositions, aggregations, association classes, enumerations, role
@@ -1807,8 +1811,7 @@ their edge. You can move elements like classes, diamonds, role names,
 multiplicities etc.. If you select an element, it appears orange. To
 mark more than one element hold the shift button and select the
 elements. The selected elements can be moved together.\
-Figure [4.7](#fig:ClassDiagramView){reference-type="ref"
-reference="fig:ClassDiagramView"} shows the context menu, which is
+Figure [4.7](#fig:ClassDiagramView) shows the context menu, which is
 displayed after a right click. You can choose if associations, role
 names, multiplicities, attributes or operations should be displayed. If
 you enable the `Auto-Layout` option, the system tries to arrange the
@@ -1818,52 +1821,49 @@ diagram layout to resp. from file (`filename``.clt`).\
 If you select at least one Element, you can hide it or all other
 elements but the selected ones. The `Show` command recovers the hidden
 elements. (see figure
-[4.8](#fig:ClassDiagramViewHideCrop){reference-type="ref"
-reference="fig:ClassDiagramViewHideCrop"})
+[4.8](#fig:ClassDiagramViewHideCrop))
 
-![Class Diagram View - Context Menu with Hide, Crop, and
-Show[]{label="fig:ClassDiagramViewHideCrop"}](Screenshots/GUI/Views/ClassDiagramViewHideCrop.png){#fig:ClassDiagramViewHideCrop}
+<a name="fig:ClassDiagramViewHideCrop">![Class Diagram View - Context Menu with Hide, Crop, and Show](Screenshots/GUI/Views/ClassDiagramViewHideCrop.png)</a>
 
-#### Object Diagram View {#objectdiagramview}
+*Figure 4.8: Class Diagram View - Context Menu with Hide, Crop, and Show*
 
+<a name="objectdiagramview"></a>
+
+#### Object Diagram View
 The Object Diagram View shows the object diagram defined by the actual
 system state. (see figure
-[4.9](#fig:ObjectDiagramView){reference-type="ref"
-reference="fig:ObjectDiagramView"})
+[4.9](#fig:ObjectDiagramView))
 
-![Object Diagram View (Employees, Departments and Projects
-Example)[]{label="fig:ObjectDiagramView"}](Screenshots/GUI/Views/ObjectDiagramView.png){#fig:ObjectDiagramView}
+<a name="fig:ObjectDiagramView">![Object Diagram View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ObjectDiagramView.png)</a>
+
+*Figure 4.9: Object Diagram View (Employees, Departments and Projects Example)*
 
 It shows objects, attributes, attribute values, links, association names
 and role names. The general functions are similar to the Class Diagram
 View functions presented in section
-[4.4.2](#classdiagramview){reference-type="ref"
-reference="classdiagramview"}.\
+[4.4.2](#classdiagramview).\
 Objects are displayed with object name and its type. Double click on an
 object to open the object properties view. (see figure
-[4.4.8](#objectpropertiesview){reference-type="ref"
-reference="objectpropertiesview"}) Links are represented by a red line.
+[4.4.8](#objectpropertiesview)) Links are represented by a red line.
 Association names, role names and attributes are optional elements. To
 display them, check the corresponding box in the context menu, which is
 shown after a right click. The `Auto-Layout`, `Anti-aliasing`,
 `Load layout...` and `Save layout...` functions are explained in section
-[4.4.2](#classdiagramview){reference-type="ref"
-reference="classdiagramview"}.
+[4.4.2](#classdiagramview).
 
 ##### Creating and destroying objects without Shell commands
 
-The Model Browser (see section [4.3.3](#low){reference-type="ref"
-reference="low"}) shows all specified classes. To create an instance of
+The Model Browser (see section [4.3.3](#low)) shows all specified classes. To create an instance of
 a class just drag the class name and drop it into the object diagram
 view. This creates an object with undefined attribute values.\
 You can destroy existing objects by selecting them. The context menu
 shows a new `Delete` function, which will destroy the object and the
 participating links. (see figure
-[4.10](#fig:ObjectDiagramViewAllFunctions){reference-type="ref"
-reference="fig:ObjectDiagramViewAllFunctions"})
+[4.10](#fig:ObjectDiagramViewAllFunctions))
 
-![Object Diagram View (Employees, Departments and Projects
-Example)[]{label="fig:ObjectDiagramViewAllFunctions"}](Screenshots/GUI/Views/ObjectDiagramView.png){#fig:ObjectDiagramViewAllFunctions}
+<a name="fig:ObjectDiagramViewAllFunctions">![Object Diagram View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ObjectDiagramView.png)</a>
+
+*Figure 4.10: Object Diagram View (Employees, Departments and Projects Example)*
 
 ##### Inserting and deleting links without shell commands
 
@@ -1876,78 +1876,85 @@ Association classes are created the same way.\
 Remove a link by selecting the involved objects. The context menu shows
 a `delete` function.
 
-#### Class Invariant View {#classinvariantview}
+<a name="classinvariantview"></a>
 
+#### Class Invariant View
 Shows all invariants. (see figure
-[4.11](#fig:ClassInvariantView){reference-type="ref"
-reference="fig:ClassInvariantView"})
+[4.11](#fig:ClassInvariantView))
 
-![Class Invariant View (Employees, Departments and Projects
-Example)[]{label="fig:ClassInvariantView"}](Screenshots/GUI/Views/ClassInvariantView.png){#fig:ClassInvariantView}
+<a name="fig:ClassInvariantView">![Class Invariant View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ClassInvariantView.png)</a>
+
+*Figure 4.11: Class Invariant View (Employees, Departments and Projects Example)*
 
 If no instance of the invariant context violates the corresponding
 invariant and no model inherent constraint (see section
-[3.1.1](#modelinherent){reference-type="ref" reference="modelinherent"})
+[3.1.1](#modelinherent))
 the view shows `true`. If an objects violates a model inherent
 constraint it appears $N/A$. `false` appears otherwise. The
 bottom of the window shows the number of violated invariants in the
 actual system state. A double click opens the evaluation browser
 analyzing the current invariant with respect to the actual system state.
-(see section [4.5](#evaluationBrowserSec){reference-type="ref"
-reference="evaluationBrowserSec"})
+(see section [4.5](#evaluationBrowserSec))
 
-#### Object Count View {#objectcountview}
+<a name="objectcountview"></a>
 
+#### Object Count View
 Shows all classes on the left side and the number of their instances on
 the right side. A bar chart shows an overview of the number of
 instances.
 
-![Object Count View (Employees, Departments and Projects
-Example)[]{label="fig:ObjectCountView"}](Screenshots/GUI/Views/ObjectCountView.png){#fig:ObjectCountView}
+<a name="fig:ObjectCountView">![Object Count View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ObjectCountView.png)</a>
 
-#### Link Count View {#linkcountview}
+*Object Count View (Employees, Departments and Projects Example)*
 
+<a name="linkcountview"></a>
+
+#### Link Count View
 Shows all associations on the left side and the number of links on the
 right side. A bar chart shows an overview of the number of links.
 
-![Link Count View (Employees, Departments and Projects
-Example)[]{label="fig:LinkCountView"}](Screenshots/GUI/Views/LinkCountView.png){#fig:LinkCountView}
+<a name="fig:LinkCountView">![Link Count View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/LinkCountView.png)</a>
 
-#### State Evolution View {#stateevolutionview}
+*Link Count View (Employees, Departments and Projects Example)*
 
+<a name="stateevolutionview"></a>
+
+#### State Evolution View
 Shows a line chart. (see figure
-[4.14](#fig:StateEvolutionView){reference-type="ref"
-reference="fig:StateEvolutionView"})
+[4.14](#fig:StateEvolutionView))
 
-![State Evolution View (Employees, Departments and Projects
-Example)[]{label="fig:StateEvolutionView"}](Screenshots/GUI/Views/StateEvolutionView.png){#fig:StateEvolutionView}
+<a name="fig:StateEvolutionView">![State Evolution View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/StateEvolutionView.png)</a>
+
+*Figure 4.14: State Evolution View (Employees, Departments and Projects Example)*
 
 A blue line represents objects and a red line represents links in the
 actual system state. The y axis represents the number of objects resp.
 links. The x axis represents the number of changes the user made.
 Commands like `set` are considered as changes, too.
 
-#### Object Properties View {#objectpropertiesview}
+<a name="objectpropertiesview"></a>
 
+#### Object Properties View
 The drop down menu of this view includes all objects. (see figure
-[4.15](#fig:ObjectPropertiesView){reference-type="ref"
-reference="fig:ObjectPropertiesView"})
+[4.15](#fig:ObjectPropertiesView))
 
-![Object Properties View (Employees, Departments and Projects
-Example)[]{label="fig:ObjectPropertiesView"}](Screenshots/GUI/Views/ObjectPropertiesView.png){#fig:ObjectPropertiesView}
+<a name="fig:ObjectPropertiesView">![Object Properties View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ObjectPropertiesView.png)</a>
+
+*Figure 4.15: Object Properties View (Employees, Departments and Projects Example)*
 
 If you choose an object its attributes and their values are displayed.
 Double click on a value to change it. The `Apply` button saves the
 changes.
 
-#### Class Extend View {#classextendview}
+<a name="classextendview"></a>
 
+#### Class Extend View
 This view shows all objects of the selected class and their attribute
-values. (see figure [4.16](#fig:ClassExtendView){reference-type="ref"
-reference="fig:ClassExtendView"})
+values. (see figure [4.16](#fig:ClassExtendView))
 
-![Class Extend View (Employees, Departments and Projects
-Example)[]{label="fig:ClassExtendView"}](Screenshots/GUI/Views/ClassExtendView.png){#fig:ClassExtendView}
+<a name="fig:ClassExtendView">![Class Extend View (Employees, Departments and Projects Example)](Screenshots/GUI/Views/ClassExtendView.png)</a>
+
+*Figure 4.16: Class Extend View (Employees, Departments and Projects Example)*
 
 A right click opens a context menu. You can switch on the invariant
 results for each object and select a class. An invariant receives a
@@ -1957,64 +1964,72 @@ is not evaluated for this object. Then a question mark appears. A double
 click opens the evaluation browser with the evaluation of the selected
 invariant. It marks the sub formula for the corresponding object.
 
-#### Sequence Diagram View {#sequencediagramview}
+<a name="sequencediagramview"></a>
 
+#### Sequence Diagram View
 *Description will be available in the next document version.*
 
-![Sequence Diagram View (Graph
-Example)[]{label="fig:SequenceDiagramView"}](Screenshots/GUI/Views/SequenceDiagramView.png){#fig:SequenceDiagramView}
+<a name="fig:SequenceDiagramView">![Sequence Diagram View (Graph Example)](Screenshots/GUI/Views/SequenceDiagramView.png)</a>
 
-![Choose Commands (Graph
-Example)[]{label="fig:SeqDiagChooseCommands"}](Screenshots/GUI/Views/SeqDiagChooseCommands.png){#fig:SeqDiagChooseCommands}
+*Sequence Diagram View (Graph Example)*
 
-![Properties - Diagram (Graph
-Example)[]{label="fig:SeqDiagPropertiesDiagram"}](Screenshots/GUI/Views/SeqDiagPropertiesDiagram.png){#fig:SeqDiagPropertiesDiagram}
+<a name="fig:SeqDiagChooseCommands">![Choose Commands (Graph Example)](Screenshots/GUI/Views/SeqDiagChooseCommands.png)</a>
 
-![Properties - Lifelines (Graph
-Example)[]{label="fig:SeqDiagPropertiesLifelines"}](Screenshots/GUI/Views/SeqDiagPropertiesLifelines.png){#fig:SeqDiagPropertiesLifelines}
+*Choose Commands (Graph Example)*
 
-![Properties - Object Box (Graph
-Example)[]{label="fig:SeqDiagPropertiesObjectBox"}](Screenshots/GUI/Views/SeqDiagPropertiesObjectBox.png){#fig:SeqDiagPropertiesObjectBox}
+<a name="fig:SeqDiagPropertiesDiagram">![Properties - Diagram (Graph Example)](Screenshots/GUI/Views/SeqDiagPropertiesDiagram.png)</a>
 
-#### Call Stack View {#callstackview}
+*Properties - Diagram (Graph Example)*
 
+<a name="fig:SeqDiagPropertiesLifelines">![Properties - Lifelines (Graph Example)](Screenshots/GUI/Views/SeqDiagPropertiesLifelines.png)</a>
+
+*Properties - Lifelines (Graph Example)*
+
+<a name="fig:SeqDiagPropertiesObjectBox">![Properties - Object Box (Graph Example)](Screenshots/GUI/Views/SeqDiagPropertiesObjectBox.png)</a>
+
+*Properties - Object Box (Graph Example)*
+
+<a name="callstackview"></a>
+
+#### Call Stack View
 The Call Stack lists all operations which were called with the `openter`
 command and did not terminate yet. They terminate if you use the
 `opexit` command. A right click opens the context menu. You can choose
 if the operation signature or the concrete operation call should be
 displayed.
 
-![Call Stack View (Factorial
-Example)[]{label="fig:CallStackView"}](Screenshots/GUI/Views/CallStackView.png){#fig:CallStackView}
+<a name="fig:CallStackView">![Call Stack View (Factorial Example)](Screenshots/GUI/Views/CallStackView.png)</a>
 
-#### Command List View {#commandlistview}
+*Call Stack View (Factorial Example)*
 
+<a name="commandlistview"></a>
+
+#### Command List View
 This view lists all commands defining the actual system state. (see
-figure [4.23](#fig:CommandListView){reference-type="ref"
-reference="fig:CommandListView"})
+figure [4.23](#fig:CommandListView))
 
-![Command List View (Factorial
-Example)[]{label="fig:CommandListView"}](Screenshots/GUI/Views/CommandListView.png){#fig:CommandListView}
+<a name="fig:CommandListView">![Command List View (Factorial Example)](Screenshots/GUI/Views/CommandListView.png)</a>
+
+*Figure 4.23: Command List View (Factorial Example)*
 
 The `reset` command resets the system state and empties the command
 list.
 
-### Evaluation Browser {#evaluationBrowserSec}
+<a name="evaluationBrowserSec"></a>
 
+### Evaluation Browser
 You can open the Evaluation Browser via the Class Invariant View (see
-section [4.4.4](#classinvariantview){reference-type="ref"
-reference="classinvariantview"}), via the Class Extend View (see section
-[4.4.9](#classextendview){reference-type="ref"
-reference="classextendview"}) or the OCL Evaluation Window (see section
-[4.1.3.2](#evalExpr){reference-type="ref" reference="evalExpr"}). The
-figure [4.24](#fig:EvaluationBrowser){reference-type="ref"
-reference="fig:EvaluationBrowser"} shows the Evaluation Browser
+section [4.4.4](#classinvariantview)), via the Class Extend View (see section
+[4.4.9](#classextendview)) or the OCL Evaluation Window (see section
+[4.1.3.2](#evalExpr)). The
+figure [4.24](#fig:EvaluationBrowser) shows the Evaluation Browser
 displaying the evaluation tree for the invariant
 `MoreEmployeesThanProjects` in the Employees, Departments and
 Projects example.\
 
-![Evaluation Browser (Employees, Departments and Projects
-Example)[]{label="fig:EvaluationBrowser"}](Screenshots/GUI/EvaluationBrowser.png){#fig:EvaluationBrowser}
+<a name="fig:EvaluationBrowser">![Evaluation Browser (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowser.png)</a>
+
+*Figure 4.24: Evaluation Browser (Employees, Departments and Projects Example)*
 
 \
 A right click opens a large context menu. Its elements are explained in
@@ -2025,11 +2040,11 @@ the following subsections.
 You can select which OCL operations (`exists`,
 `forAll`, `and`, `or`, `implies`)
 should be evaluated extendedly. (see figure
-[4.25](#fig:EvaluationBrowserExtended){reference-type="ref"
-reference="fig:EvaluationBrowserExtended"}
+[4.25](#fig:EvaluationBrowserExtended)
 
-![Menu - Extended
-Evaluation[]{label="fig:EvaluationBrowserExtended"}](Screenshots/GUI/EvaluationBrowserMenuExtended.png){#fig:EvaluationBrowserExtended}
+<a name="fig:EvaluationBrowserExtended">![Menu - Extended Evaluation](Screenshots/GUI/EvaluationBrowserMenuExtended.png)</a>
+
+*Figure 4.25: Menu - Extended Evaluation*
 
 ##### exists
 
@@ -2068,13 +2083,13 @@ conclusions even if the premises are false.
 
 The `all` entry selects all options listed above.
 
-#### Variable Assignment Window {#variableAssignmentWindow}
+<a name="variableAssignmentWindow"></a>
 
+#### Variable Assignment Window
 If you switch on the Variable Assignment Window, it is displayed on the
 right side of the evaluation Tree. [^9] It shows all value assignments
 of the existing variables in the selected tree node. The example in
-figure [4.24](#fig:EvaluationBrowser){reference-type="ref"
-reference="fig:EvaluationBrowser"} shows the variable `self` of
+figure [4.24](#fig:EvaluationBrowser) shows the variable `self` of
 type `Department` and its value $\mathit{@cs}$. The
 corresponding node represents the expression
 $\mathit{@cs}.`project`->`size`=2$.
@@ -2085,8 +2100,7 @@ The Subexpression Evaluation Window is displayed on the right side of
 the evaluation tree resp. below the Variable Assignment Window. It shows
 the subexpressions of the marked tree node, which are evaluated in the
 next step. The example in figure
-[4.24](#fig:EvaluationBrowser){reference-type="ref"
-reference="fig:EvaluationBrowser"} marks a tree node with expression
+[4.24](#fig:EvaluationBrowser) marks a tree node with expression
 $\mathit{@cs}.`project`->`size`=2$. The
 navigation expression has to be evaluated next. So the window shows the
 result of this subexpression:
@@ -2095,78 +2109,73 @@ result of this subexpression:
 #### Tree Views
 
 You can choose between different tree views. They are listed in figure
-[4.26](#fig:EvaluationBrowserMenuTreeViews){reference-type="ref"
-reference="fig:EvaluationBrowserMenuTreeViews"} and explained below.
+[4.26](#fig:EvaluationBrowserMenuTreeViews) and explained below.
 
-![Menu - Tree
-Views[]{label="fig:EvaluationBrowserMenuTreeViews"}](Screenshots/GUI/EvaluationBrowserMenuTreeViews.png){#fig:EvaluationBrowserMenuTreeViews}
+<a name="fig:EvaluationBrowserMenuTreeViews">![Menu - Tree Views](Screenshots/GUI/EvaluationBrowserMenuTreeViews.png)</a>
+
+*Figure 4.26: Menu - Tree Views*
 
 ##### Late Variable Assignment
 
 In this view the tree nodes, showing the variable assignments, are the
 leafs of the tree. (see figure
-[4.27](#fig:EvaluationBrowserLateAssignment){reference-type="ref"
-reference="fig:EvaluationBrowserLateAssignment"})
+[4.27](#fig:EvaluationBrowserLateAssignment))
 
-![Evaluation Browser - Late Variable Assignment (Employees, Departments
-and Projects
-Example)[]{label="fig:EvaluationBrowserLateAssignment"}](Screenshots/GUI/EvaluationBrowserLateAssignment.png){#fig:EvaluationBrowserLateAssignment}
+<a name="fig:EvaluationBrowserLateAssignment">![Evaluation Browser - Late Variable Assignment (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserLateAssignment.png)</a>
+
+*Figure 4.27: Evaluation Browser - Late Variable Assignment (Employees, Departments and Projects Example)*
 
 ##### Early Variable Assignment
 
 This view shows the variable assignment as soon as possible in the
 evaluation tree. [^10] (see figure
-[4.28](#fig:EvaluationBrowserEarlyAssignment){reference-type="ref"
-reference="fig:EvaluationBrowserEarlyAssignment"}) Simultaneous
+[4.28](#fig:EvaluationBrowserEarlyAssignment)) Simultaneous
 assignments are shown in the same node. They are separated by commas.
 
-![Evaluation Browser - Early Variable Assignment (Employees, Departments
-and Projects
-Example)[]{label="fig:EvaluationBrowserEarlyAssignment"}](Screenshots/GUI/EvaluationBrowserEarlyAssignment.png){#fig:EvaluationBrowserEarlyAssignment}
+<a name="fig:EvaluationBrowserEarlyAssignment">![Evaluation Browser - Early Variable Assignment (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserEarlyAssignment.png)</a>
+
+*Figure 4.28: Evaluation Browser - Early Variable Assignment (Employees, Departments and Projects Example)*
 
 ##### Variable Assignment & Substitution
 
 The Variable Assignment & Substitution view is a refinement of the
 previous presented view. The variable names are substituted by their
 values. (see figure
-[4.29](#fig:EvaluationBrowserAssignmentSubstitution){reference-type="ref"
-reference="fig:EvaluationBrowserAssignmentSubstitution"})
+[4.29](#fig:EvaluationBrowserAssignmentSubstitution))
 
-![Evaluation Browser - Variable Assignment & Substitution (Employees,
-Departments and Projects
-Example)[]{label="fig:EvaluationBrowserAssignmentSubstitution"}](Screenshots/GUI/EvaluationBrowserAssignmentSubstitution.png){#fig:EvaluationBrowserAssignmentSubstitution}
+<a name="fig:EvaluationBrowserAssignmentSubstitution">![Evaluation Browser - Variable Assignment & Substitution (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserAssignmentSubstitution.png)</a>
+
+*Figure 4.29: Evaluation Browser - Variable Assignment & Substitution (Employees, Departments and Projects Example)*
 
 ##### Variable Substitution
 
 This view is similar to the Variable Assignment & Substitution view, but
 nodes with variable assignments are not displayed here. (see figure
-[4.30](#fig:EvaluationBrowserSubstitution){reference-type="ref"
-reference="fig:EvaluationBrowserSubstitution"})
+[4.30](#fig:EvaluationBrowserSubstitution))
 
-![Evaluation Browser - Variable Substitution (Employees, Departments and
-Projects
-Example)[]{label="fig:EvaluationBrowserSubstitution"}](Screenshots/GUI/EvaluationBrowserSubstitution.png){#fig:EvaluationBrowserSubstitution}
+<a name="fig:EvaluationBrowserSubstitution">![Evaluation Browser - Variable Substitution (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserSubstitution.png)</a>
+
+*Figure 4.30: Evaluation Browser - Variable Substitution (Employees, Departments and Projects Example)*
 
 ##### No Variable Assignment
 
 This view does not display tree nodes with variable assignments, and
 does not substitute variables. (see figure
-[4.31](#fig:EvaluationBrowserNoAssignment){reference-type="ref"
-reference="fig:EvaluationBrowserNoAssignment"})
+[4.31](#fig:EvaluationBrowserNoAssignment))
 
-![Evaluation Browser - No Variable Assignment (Employees, Departments
-and Projects
-Example)[]{label="fig:EvaluationBrowserNoAssignment"}](Screenshots/GUI/EvaluationBrowserNoAssignment.png){#fig:EvaluationBrowserNoAssignment}
+<a name="fig:EvaluationBrowserNoAssignment">![Evaluation Browser - No Variable Assignment (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserNoAssignment.png)</a>
+
+*Figure 4.31: Evaluation Browser - No Variable Assignment (Employees, Departments and Projects Example)*
 
 #### True-False highlighting
 
 The context menu includes settings for colored and black/white
 highlighting of tree nodes. (see figure
-[4.32](#fig:EvaluationBrowserMenuTrueFalse){reference-type="ref"
-reference="fig:EvaluationBrowserMenuTrueFalse"})
+[4.32](#fig:EvaluationBrowserMenuTrueFalse))
 
-![Menu - True False
-Highlighting[]{label="fig:EvaluationBrowserMenuTrueFalse"}](Screenshots/GUI/EvaluationBrowserMenuTrueFalse.png){#fig:EvaluationBrowserMenuTrueFalse}
+<a name="fig:EvaluationBrowserMenuTrueFalse">![Menu - True False Highlighting](Screenshots/GUI/EvaluationBrowserMenuTrueFalse.png)</a>
+
+*Figure 4.32: Menu - True False Highlighting*
 
 Enabling highlighting changes the color resp. font of the tree nodes.
 Nodes representing an expression, which evaluates to `true`,
@@ -2183,12 +2192,11 @@ Deactivates the highlighting.
 ##### Term Highlighting
 
 Highlights nodes of boolean type. (see figure
-[4.33](#fig:EvaluationBrowserTermHighlighting){reference-type="ref"
-reference="fig:EvaluationBrowserTermHighlighting"})
+[4.33](#fig:EvaluationBrowserTermHighlighting))
 
-![Evaluation Browser - Term Highlighting (Employees, Departments and
-Projects
-Example)[]{label="fig:EvaluationBrowserTermHighlighting"}](Screenshots/GUI/EvaluationBrowserTermHighlighting.png){#fig:EvaluationBrowserTermHighlighting}
+<a name="fig:EvaluationBrowserTermHighlighting">![Evaluation Browser - Term Highlighting (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserTermHighlighting.png)</a>
+
+*Figure 4.33: Evaluation Browser - Term Highlighting (Employees, Departments and Projects Example)*
 
 ##### Subtree Highlighting
 
@@ -2196,24 +2204,22 @@ Highlights nodes of boolean type and its child nodes if they have a
 different type. Child nodes, which also have a boolean type, receive a
 color depending on their truth value. The same highlighting rules are
 applied to their children. (see figure
-[4.34](#fig:EvaluationBrowserSubtreeHighlighting){reference-type="ref"
-reference="fig:EvaluationBrowserSubtreeHighlighting"})
+[4.34](#fig:EvaluationBrowserSubtreeHighlighting))
 
-![Evaluation Browser - Subtree Highlighting (Employees, Departments and
-Projects
-Example)[]{label="fig:EvaluationBrowserSubtreeHighlighting"}](Screenshots/GUI/EvaluationBrowserSubtreeHighlighting.png){#fig:EvaluationBrowserSubtreeHighlighting}
+<a name="fig:EvaluationBrowserSubtreeHighlighting">![Evaluation Browser - Subtree Highlighting (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserSubtreeHighlighting.png)</a>
+
+*Figure 4.34: Evaluation Browser - Subtree Highlighting (Employees, Departments and Projects Example)*
 
 ##### Complete Subtree Highlighting
 
 The truth values of the immediate child nodes of the root specify the
 color of their subtrees. (see figure
-[4.35](#fig:EvaluationBrowserCompleteHighlighting){reference-type="ref"
-reference="fig:EvaluationBrowserCompleteHighlighting"}) Other nodes have
+[4.35](#fig:EvaluationBrowserCompleteHighlighting)) Other nodes have
 no influence on the subtree colors.
 
-![Evaluation Browser - Complete Subtree Highlighting (Employees,
-Departments and Projects
-Example)[]{label="fig:EvaluationBrowserCompleteHighlighting"}](Screenshots/GUI/EvaluationBrowserCompleteHighlighting.png){#fig:EvaluationBrowserCompleteHighlighting}
+<a name="fig:EvaluationBrowserCompleteHighlighting">![Evaluation Browser - Complete Subtree Highlighting (Employees, Departments and Projects Example)](Screenshots/GUI/EvaluationBrowserCompleteHighlighting.png)</a>
+
+*Figure 4.35: Evaluation Browser - Complete Subtree Highlighting (Employees, Departments and Projects Example)*
 
 #### Fit Width
 
@@ -2224,7 +2230,7 @@ Evaluation Browser Window. You do not have to scroll horizontally.
 
 Restores the settings of the default configuration. The command
 `Set as default` stores these settings. (see section
-[4.5.8](#setToDefault){reference-type="ref" reference="setToDefault"})
+[4.5.8](#setToDefault))
 There is a USE configuration file `etc/use.properties` where you can
 specify properties for all users. You can also create a local `.userc`
 file in your home directory, which overwrites or extends these settings.
@@ -2252,14 +2258,15 @@ An example is shown below.
     #use.gui.view.evalbrowser.highliting=complete
     use.gui.view.evalbrowser.blackHighliting=false
 
-#### Set to default {#setToDefault}
+<a name="setToDefault"></a>
 
+#### Set to default
 This commands opens the dialog shown in figure
-[4.36](#fig:EvaluationBrowserSetAsDefault){reference-type="ref"
-reference="fig:EvaluationBrowserSetAsDefault"}.
+[4.36](#fig:EvaluationBrowserSetAsDefault).
 
-![Evaluation Browser - Set as
-Default[]{label="fig:EvaluationBrowserSetAsDefault"}](Screenshots/GUI/EvaluationBrowserSetAsDefault.png){#fig:EvaluationBrowserSetAsDefault}
+<a name="fig:EvaluationBrowserSetAsDefault">![Evaluation Browser - Set as Default](Screenshots/GUI/EvaluationBrowserSetAsDefault.png)</a>
+
+*Figure 4.36: Evaluation Browser - Set as Default*
 
 ##### For This session
 
@@ -2303,22 +2310,22 @@ following table shows the shortcuts and the corresponding commands.
 #### Context Menu
 
 You can click right on a tree node. If the node is closed, the context
-menu [4.37](#fig:EvaluationBrowserExpand){reference-type="ref"
-reference="fig:EvaluationBrowserExpand"} is displayed.
+menu [4.37](#fig:EvaluationBrowserExpand) is displayed.
 
-![Evaluation Browser -
-Expand[]{label="fig:EvaluationBrowserExpand"}](Screenshots/GUI/EvaluationBrowserExpand.png){#fig:EvaluationBrowserExpand}
+<a name="fig:EvaluationBrowserExpand">![Evaluation Browser - Expand](Screenshots/GUI/EvaluationBrowserExpand.png)</a>
+
+*Figure 4.37: Evaluation Browser - Expand*
 
 Use the `Expand` function to open the node. The `Expand all` command
 opens the complete subtree where the current node appears as root. The
 command `Copy` copies the OCL expression of the marked node to
 clipboard.\
 The context menu changes, if the selected node is opened. (see
-[4.38](#fig:EvaluationBrowserCollapse){reference-type="ref"
-reference="fig:EvaluationBrowserCollapse"})
+[4.38](#fig:EvaluationBrowserCollapse))
 
-![Evaluation Browser -
-Collapse[]{label="fig:EvaluationBrowserCollapse"}](Screenshots/GUI/EvaluationBrowserCollapse.png){#fig:EvaluationBrowserCollapse}
+<a name="fig:EvaluationBrowserCollapse">![Evaluation Browser - Collapse](Screenshots/GUI/EvaluationBrowserCollapse.png)</a>
+
+*Figure 4.38: Evaluation Browser - Collapse*
 
 The node may be closed by using the `Collapse` function. But this
 command does not close the child nodes. If you would like to close all
@@ -2327,11 +2334,11 @@ child nodes too, use the `Collapse all` function instead.
 #### Tree Display Menu
 
 The Tree Display Menu is a drop down menu shown in figure
-[4.39](#fig:EvaluationBrowserTreeDisplayAndClose){reference-type="ref"
-reference="fig:EvaluationBrowserTreeDisplayAndClose"}.
+[4.39](#fig:EvaluationBrowserTreeDisplayAndClose).
 
-![Evaluation Browser - Tree Display Menu and Close
-button[]{label="fig:EvaluationBrowserTreeDisplayAndClose"}](Screenshots/GUI/EvaluationBrowserTreeDisplayAndClose.png){#fig:EvaluationBrowserTreeDisplayAndClose}
+<a name="fig:EvaluationBrowserTreeDisplayAndClose">![Evaluation Browser - Tree Display Menu and Close button](Screenshots/GUI/EvaluationBrowserTreeDisplayAndClose.png)</a>
+
+*Figure 4.39: Evaluation Browser - Tree Display Menu and Close button*
 
 It is located on the left side of the close button. The menu entries are
 listed below.
@@ -2359,11 +2366,11 @@ up, but not the root.
 
 The title of the Evaluation Browser shows the analyzed invariant and its
 definition. (see figure
-[4.40](#fig:EvaluationBrowserTitle){reference-type="ref"
-reference="fig:EvaluationBrowserTitle"})
+[4.40](#fig:EvaluationBrowserTitle))
 
-![Evaluation Browser -
-Title[]{label="fig:EvaluationBrowserTitle"}](Screenshots/GUI/EvaluationBrowserTitle.png){#fig:EvaluationBrowserTitle}
+<a name="fig:EvaluationBrowserTitle">![Evaluation Browser - Title](Screenshots/GUI/EvaluationBrowserTitle.png)</a>
+
+*Figure 4.40: Evaluation Browser - Title*
 
 If no invariant is actually analyzed, the expression of the root node is
 shown in the title. You can hide the title by double click on it. If it
@@ -2376,16 +2383,15 @@ The Object Browser shows objects of user defined types, the valuation of
 their attributes, their associations and the objects connected via links
 of the corresponding associations. Double click on an object in the
 Variable Assignment Window to open the Object Browser. (see section
-[4.5.2](#variableAssignmentWindow){reference-type="ref"
-reference="variableAssignmentWindow"})\
+[4.5.2](#variableAssignmentWindow))\
 The figure
-[4.41](#fig:EvaluationBrowserObjectBrowser){reference-type="ref"
-reference="fig:EvaluationBrowserObjectBrowser"} shows the browser
+[4.41](#fig:EvaluationBrowserObjectBrowser) shows the browser
 listing the information about object `@research` in the Employees,
 Departments and Projects example.
 
-![Evaluation Browser - Object
-Browser[]{label="fig:EvaluationBrowserObjectBrowser"}](Screenshots/GUI/EvalBrowserObjectBrowser.png){#fig:EvaluationBrowserObjectBrowser}
+<a name="fig:EvaluationBrowserObjectBrowser">![Evaluation Browser - Object Browser](Screenshots/GUI/EvalBrowserObjectBrowser.png)</a>
+
+*Figure 4.41: Evaluation Browser - Object Browser*
 
 The first column shows its attributes, the second the corresponding
 values, the third shows its associations and the fourth shows the
@@ -2394,16 +2400,17 @@ to connected objects by choosing them in a drop down menu. Click left on
 the connected objects. This opens the menu, showing all objects
 reachable from the current object. After selecting the destination
 object, the Object Browser shows its properties. (see figure
-[4.42](#fig:EvaluationBrowserObjectBrowserDropDown){reference-type="ref"
-reference="fig:EvaluationBrowserObjectBrowserDropDown"})
+[4.42](#fig:EvaluationBrowserObjectBrowserDropDown))
 
-![Evaluation Browser - Object Browser with Dropdown
-menu[]{label="fig:EvaluationBrowserObjectBrowserDropDown"}](Screenshots/GUI/EvalBrowserObjectBrowserDropDown.png){#fig:EvaluationBrowserObjectBrowserDropDown}
+<a name="fig:EvaluationBrowserObjectBrowserDropDown">![Evaluation Browser - Object Browser with Dropdown menu](Screenshots/GUI/EvalBrowserObjectBrowserDropDown.png)</a>
+
+*Figure 4.42: Evaluation Browser - Object Browser with Dropdown menu*
 
 ## Shell Reference
 
-### Commands {#ShellCommands}
+<a name="ShellCommands"></a>
 
+### Commands
 #### Overview of the Shell commands
 
 Prints all available commands and a synopsis of their description.
@@ -2429,8 +2436,7 @@ Example:
 
 Compiles and evaluates the expression `OclExpr`. This Shell
 command is comparable to the function of the Evaluation Window in the
-GUI. (see section [4.1.3.2](#evalExpr){reference-type="ref"
-reference="evalExpr"})
+GUI. (see section [4.1.3.2](#evalExpr))
 
 #### Syntax:
 
@@ -2538,8 +2544,9 @@ Example:
 
             -> true : Boolean
 
-#### Create objects {#createObjects}
+<a name="createObjects"></a>
 
+#### Create objects
 Creates one or more objects of a given class or associationclass. The
 `newIdList` has to include at least one object name. These
 names identify the new objects of the type `class`. If
@@ -2599,8 +2606,9 @@ Example:
 
     :   `!destroy greenApple, smallSalad`
 
-#### Insert a link into an association {#insertInto}
+<a name="insertInto"></a>
 
+#### Insert a link into an association
 Inserts a link between the objects in the `idList` into the
 association `assoc`.
 
@@ -2634,7 +2642,7 @@ association `assoc`.
 Example:
 
 :   This command deletes the link inserted in section
-    [5.1.9](#insertInto){reference-type="ref" reference="insertInto"}.
+    [5.1.9](#insertInto).
 
     User input:
 
@@ -2664,8 +2672,9 @@ Example:
             !set redApple.juice := 2=2
             !set redApple.juice := true
 
-#### Enter object operation {#openterCmd}
+<a name="openterCmd"></a>
 
+#### Enter object operation
 Invokes an operation with the name `OpName` on the object
 `ObjExpr`. If the operation has $n$ parameters, the
 `ExprList` includes $n$ expressions which evaluate to the
