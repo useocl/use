@@ -3,6 +3,8 @@ Please see the file `README' for a description of how to report bugs.
 
 ** Changes between version 7.1.0 and X.X.X
 * USE now supports data types
+* [GUI] The class diagram option "Group multiplicities / role names" is now
+  saved in the layout file and is enabled by default for class diagrams (#16)
 
 ** Changes between version 5.2.0 and 6.0.0
 * New OCL complexity plugin

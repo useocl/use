@@ -1070,13 +1070,18 @@ public abstract class DiagramView extends JPanel
             version = Integer.valueOf(helper.getAttributeValue("version"));
 
         if (beforeRestorePlacementInfos(version)) {
-            helper.toFirstChild("diagramOptions");
-            this.getOptions().loadOptions(helper, version);
-            helper.toParent();
+            this.getOptions().setIsLoadingLayout(true);
+            try {
+                helper.toFirstChild("diagramOptions");
+                this.getOptions().loadOptions(helper, version);
+                helper.toParent();
 
-            helper.setAllNodes(this.collectAllNodes());
-            this.restorePlacementInfos(helper, version);
-            this.invalidateContent(false);
+                helper.setAllNodes(this.collectAllNodes());
+                this.restorePlacementInfos(helper, version);
+                this.invalidateContent(false);
+            } finally {
+                this.getOptions().setIsLoadingLayout(false);
+            }
         }
 
         this.repaint();
@@ -1095,15 +1100,20 @@ public abstract class DiagramView extends JPanel
             version = Integer.valueOf(helper.getAttributeValue("version"));
 
         if (beforeRestorePlacementInfos(version)) {
-            helper.toFirstChild("diagramOptions");
-            this.getOptions().loadOptions(helper, version);
-            helper.toParent();
+            this.getOptions().setIsLoadingLayout(true);
+            try {
+                helper.toFirstChild("diagramOptions");
+                this.getOptions().loadOptions(helper, version);
+                helper.toParent();
 
-            helper.setAllNodes(this.collectAllNodes());
-            this.restorePlacementInfos(helper, version);
-            this.invalidateContent(false);
+                helper.setAllNodes(this.collectAllNodes());
+                this.restorePlacementInfos(helper, version);
+                this.invalidateContent(false);
 
-            afterLoadLayout(layoutFile);
+                afterLoadLayout(layoutFile);
+            } finally {
+                this.getOptions().setIsLoadingLayout(false);
+            }
         }
 
         this.repaint();

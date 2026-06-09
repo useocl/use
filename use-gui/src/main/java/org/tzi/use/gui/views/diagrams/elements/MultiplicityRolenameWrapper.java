@@ -43,6 +43,8 @@ public final class MultiplicityRolenameWrapper implements
 
 	PositionChangedListener position_changed_listener = null;
 
+	private final DiagramOptions options;
+
 	private boolean do_group = false;
 
 	double offset = 0;
@@ -51,6 +53,7 @@ public final class MultiplicityRolenameWrapper implements
 			Rolename rolename_client, PropertyOwner end, DiagramOptions options) {
 		this.multiplicity_client = multiplicity_client;
 		this.rolename_client = rolename_client;
+		this.options = options;
 
 		// this.end = end;
 
@@ -64,18 +67,35 @@ public final class MultiplicityRolenameWrapper implements
 		// Let this wrapper listen to position changes of either multiplicity or
 		// role name nodes.
 		instantiatePositionChangedListener();
+
+		// Reflect the current grouping option (which may have been restored
+		// from a layout file or set to its default) right from the start.
+		do_group = options.isGroupMR();
+		if (do_group) {
+			attach_listener();
+		}
 	}
 
 	@Override
 	public void optionChanged(String optionname) {
-		if (optionname.equals("GROUPMR"))
-			do_group = !do_group;
+		if (!optionname.equals("GROUPMR")) {
+			return;
+		}
 
-		if (do_group)
+		// Mirror the actual option value instead of blindly toggling. This
+		// keeps the grouping state in sync with the option even when the value
+		// is set explicitly, e.g. while loading a persisted layout.
+		boolean group = options.isGroupMR();
+		if (group == do_group) {
+			return;
+		}
+
+		do_group = group;
+		if (do_group) {
 			attach_listener();
-		else
+		} else {
 			detach_listener();
-
+		}
 	}
 
 	protected void determine_offset() {
@@ -90,6 +110,14 @@ public final class MultiplicityRolenameWrapper implements
 			@Override
 			public void positionChanged(Object source, Point2D currentPosition,
 					double deltaX, double deltaY) {
+
+				// While a layout is being restored, the stored positions are
+				// applied directly. Grouping must not drag the partner node
+				// during restore, otherwise the persisted positions of
+				// multiplicities / role names would be overwritten.
+				if (options.isLoadingLayout()) {
+					return;
+				}
 
 				detach_listener();
 

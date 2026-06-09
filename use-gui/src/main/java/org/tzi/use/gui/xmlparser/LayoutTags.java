@@ -36,6 +36,7 @@ public class LayoutTags {
     public static final String SHOWATTRIBUTES = "showattributes";
     public static final String SHOWOPERATIONS = "showoperations";
     public static final String SHOWGRID = "showgrid";
+    public static final String GROUPMR = "groupmultiplicityrolenames";
     
     // node and edge tags
     public static final String NAME = "name";
