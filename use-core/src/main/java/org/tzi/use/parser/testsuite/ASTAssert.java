@@ -5,9 +5,9 @@ import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
-import org.tzi.use.uml.sys.testsuite.MAssert;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.util.SrcPos;
+import org.tzi.use.parser.testsuite.sys.MAssert;
 
 public abstract class ASTAssert extends AST {
 	private Token start;

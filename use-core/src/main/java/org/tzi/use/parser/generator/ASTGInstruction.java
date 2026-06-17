@@ -32,7 +32,7 @@ package org.tzi.use.parser.generator;
 import org.tzi.use.gen.assl.statics.GInstruction;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 
 public abstract class ASTGInstruction extends AST {
     public abstract GInstruction gen(Context ctx) throws SemanticException;

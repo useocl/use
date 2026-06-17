@@ -19,13 +19,12 @@
 
 package org.tzi.use.uml.sys;
 
-import org.tzi.use.analysis.coverage.CoverageCalculationVisitor;
 import org.tzi.use.uml.mm.MAttribute;
 import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.mm.MClassifier;
 import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.events.AttributeAssignedEvent;
-import org.tzi.use.util.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.StateDifference;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -89,11 +88,6 @@ public class DerivedAttributeController implements DerivedValueController {
 			for (MAttribute att : cls.attributes()) {
 				if (att.isDerived()) {
 					derivedAttributes.add(att);
-				
-					CoverageCalculationVisitor visitor = new CoverageCalculationVisitor(true);
-					att.getDeriveExpression().processWithVisitor(visitor);
-					
-					visitor.getCoverageData();
 				}
 			}
 		}

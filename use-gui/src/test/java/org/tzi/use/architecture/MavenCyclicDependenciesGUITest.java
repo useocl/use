@@ -7,8 +7,8 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.library.dependencies.SliceAssignment;
 import com.tngtech.archunit.library.dependencies.SliceIdentifier;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,7 +34,7 @@ public class MavenCyclicDependenciesGUITest {
     private static final String RUNTIME_PACKAGE_RESULTS = "maven_cyclic_dependencies_runtime_results.csv";
     private static final String SHELL_PACKAGE_RESULTS = "maven_cyclic_dependencies_shell_results.csv";
 
-    @Before
+    @BeforeEach
     public void setup() {
         // Delete the results file if it exists
         File file = new File(GUI_PACKAGE_RESULTS);

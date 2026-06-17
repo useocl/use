@@ -19,6 +19,8 @@
 
 package org.tzi.use.uml.mm;
 
+import org.tzi.use.core.test.TestModelUtil;
+
 import java.util.Collections;
 import java.util.List;
 

@@ -42,6 +42,7 @@ package org.tzi.use.parser.ocl;
 
 import java.io.PrintWriter;
 import org.tzi.use.parser.ParseErrorHandler;
+import org.tzi.use.util.SrcPos;
 }
 
 @lexer::members {

@@ -2,10 +2,10 @@ package org.tzi.use.parser.testsuite;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.uml.mm.MClass;
-import org.tzi.use.uml.sys.testsuite.MAssert;
-import org.tzi.use.uml.sys.testsuite.MAssertClassInvariants;
+import org.tzi.use.parser.testsuite.sys.MAssert;
+import org.tzi.use.parser.testsuite.sys.MAssertClassInvariants;
 
 public class ASTAssertClassInvariants extends ASTAssert {
 

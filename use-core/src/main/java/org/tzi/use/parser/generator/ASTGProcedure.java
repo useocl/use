@@ -34,7 +34,7 @@ import org.tzi.use.gen.assl.statics.GInstrTry;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.parser.AST;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 

@@ -2,11 +2,11 @@ package org.tzi.use.parser.testsuite;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.uml.mm.MPrePostCondition;
 import org.tzi.use.uml.sys.MOperationCall;
-import org.tzi.use.uml.sys.testsuite.MAssert;
-import org.tzi.use.uml.sys.testsuite.MAssertPost;
+import org.tzi.use.parser.testsuite.sys.MAssert;
+import org.tzi.use.parser.testsuite.sys.MAssertPost;
 
 public class ASTAssertPost extends ASTAssert {
 	private Token conditionName = null;

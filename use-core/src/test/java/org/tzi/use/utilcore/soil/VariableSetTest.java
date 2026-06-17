@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.util.soil.VariableSet;
+import org.tzi.use.uml.sys.soil.VariableSet;
 
 
 /**

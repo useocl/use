@@ -29,7 +29,7 @@ import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
 import org.tzi.use.uml.mm.MModel;
-import org.tzi.use.uml.mm.TestModelUtil;
+import org.tzi.use.core.test.TestModelUtil;
 
 
 /**

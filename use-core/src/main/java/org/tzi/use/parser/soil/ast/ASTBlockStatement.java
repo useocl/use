@@ -27,12 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.antlr.runtime.Token;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.parser.ocl.ASTVariableDeclaration;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.sys.soil.MBlockStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 
 /**

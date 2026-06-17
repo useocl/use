@@ -27,7 +27,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 /**
  * Statement used to create a new {@link MObject}. 

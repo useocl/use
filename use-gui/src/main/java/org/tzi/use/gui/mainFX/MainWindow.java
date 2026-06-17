@@ -74,6 +74,7 @@ import org.tzi.use.main.Session;
 import org.tzi.use.main.gui.Main;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
+import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.runtime.gui.impl.PluginActionProxy;
 import org.tzi.use.uml.mm.MClass;
@@ -1831,6 +1832,7 @@ public class MainWindow {
             fLogWriter.println(model.getStats());
             // create system
             system = new MSystem(model);
+            system.setInvariantCompiler(ASSLCompiler::compileInvariants);
             system.getEventBus().register(this);
         } else {
             system = null;

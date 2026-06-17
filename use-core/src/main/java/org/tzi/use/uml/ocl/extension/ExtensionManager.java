@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
 import org.tzi.use.uml.ocl.expr.ExpStdOp;
@@ -39,6 +38,12 @@ public class ExtensionManager {
 	 */
 	private String rubyMethodCallLibrary = null;
 	
+	/**
+	 * The type compiler used to resolve type names from extension definitions.
+	 * Must be set before calling loadExtensions().
+	 */
+	private TypeCompiler typeCompiler;
+	
 	private ExtensionManager() {}
 	
 	public static ExtensionManager getInstance() {
@@ -49,6 +54,16 @@ public class ExtensionManager {
 		return ExtensionManager.INSTANCE;
 	}
 	
+	/**
+	 * Sets the type compiler used to resolve type names.
+	 * This must be called before loadExtensions().
+	 * 
+	 * @param typeCompiler the compiler to use for resolving type names
+	 */
+	public void setTypeCompiler(TypeCompiler typeCompiler) {
+		this.typeCompiler = typeCompiler;
+	}
+	
 	public String getRubyMethodCallLibrary() {
 		return rubyMethodCallLibrary;
 	}
@@ -57,6 +72,10 @@ public class ExtensionManager {
 	 * Loads the extensions specified in EXTENSION_FOLDER
 	 */
 	public void loadExtensions() {
+		if (this.typeCompiler == null) {
+			throw new IllegalStateException("TypeCompiler has not been set. Call setTypeCompiler() before loadExtensions().");
+		}
+
 		File extensionDir = new File(EXTENSIONS_FOLDER);
 		if (!extensionDir.isDirectory()) {
 			Log.warn("Invalid extension directory '" + ExtensionManager.EXTENSIONS_FOLDER + "'");
@@ -186,6 +205,9 @@ public class ExtensionManager {
 	}
 	
 	protected Type getType(String typeName) {
-		return OCLCompiler.compileType(emptyModel, typeName, "Extension type", error);
+		if (typeCompiler == null) {
+			throw new IllegalStateException("TypeCompiler has not been set. Call setTypeCompiler() before loadExtensions().");
+		}
+		return typeCompiler.compileType(emptyModel, typeName, "Extension type", error);
 	}
 }

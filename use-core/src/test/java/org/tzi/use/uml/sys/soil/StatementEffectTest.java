@@ -39,7 +39,7 @@ import org.tzi.use.uml.ocl.value.Value;
 import org.tzi.use.uml.sys.*;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.NullPrintWriter;
-import org.tzi.use.util.soil.VariableEnvironment;
+import org.tzi.use.uml.sys.soil.VariableEnvironment;
 
 
 /**

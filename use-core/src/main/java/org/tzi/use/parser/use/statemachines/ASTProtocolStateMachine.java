@@ -19,8 +19,8 @@
 package org.tzi.use.parser.use.statemachines;
 
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
-import org.tzi.use.parser.SrcPos;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.util.SrcPos;
 import org.tzi.use.uml.mm.statemachines.MProtocolStateMachine;
 import org.tzi.use.uml.mm.statemachines.MPseudoState;
 import org.tzi.use.uml.mm.statemachines.MPseudoStateKind;

@@ -30,7 +30,7 @@ import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.uml.sys.ppcHandling.ExpressionPPCHandler;
 import org.tzi.use.uml.sys.ppcHandling.SoilPPCHandler;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 /**
  * Statement for an operation call to an

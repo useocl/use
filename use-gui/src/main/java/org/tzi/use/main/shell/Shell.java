@@ -22,10 +22,12 @@ package org.tzi.use.main.shell;
 import org.tzi.use.config.Options;
 import org.tzi.use.gen.tool.GGeneratorArguments;
 import org.tzi.use.gen.tool.GNoResultException;
+import org.tzi.use.gen.tool.GGenerator;
 import org.tzi.use.main.MonitorAspectGenerator;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.runtime.IPluginShellExtensionPoint;
+import org.tzi.use.parser.generator.ASSLCompiler;
 import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.shell.ShellCommandCompiler;
 import org.tzi.use.parser.testsuite.TestSuiteCompiler;
@@ -48,7 +50,7 @@ import org.tzi.use.uml.sys.ppcHandling.PreConditionCheckFailedException;
 import org.tzi.use.uml.sys.soil.MEnterOperationStatement;
 import org.tzi.use.uml.sys.soil.MExitOperationStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.uml.sys.testsuite.MTestSuite;
+import org.tzi.use.parser.testsuite.sys.MTestSuite;
 import org.tzi.use.util.Log;
 import org.tzi.use.util.Report;
 import org.tzi.use.util.StringUtil;
@@ -56,7 +58,7 @@ import org.tzi.use.util.USEWriter;
 import org.tzi.use.util.input.LineInput;
 import org.tzi.use.util.input.Readline;
 import org.tzi.use.util.input.SocketReadline;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -1247,6 +1249,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 			// create system
 			fSession.setSystem(new MSystem(model));
+			fSession.system().setInvariantCompiler(ASSLCompiler::compileInvariants);
 		}
 
 		setFileClosed();
@@ -1413,6 +1416,7 @@ public final class Shell implements Runnable, PPCHandler {
 
 	private void cmdReloadExtensions() {
 		ExtensionManager.getInstance().unloadExtensions();
+		ExtensionManager.getInstance().setTypeCompiler(OCLCompiler::compileType);
 		ExtensionManager.getInstance().loadExtensions();
 	}
 
@@ -1539,7 +1543,7 @@ public final class Shell implements Runnable, PPCHandler {
 	}
 
 	private void cmdGenPrintLoadedInvariants(MSystem system) {
-		system.generator().printLoadedInvariants();
+		this.generator(system).printLoadedInvariants();
 	}
 
 	private void cmdGenResult(String str, MSystem system) {
@@ -1547,12 +1551,12 @@ public final class Shell implements Runnable, PPCHandler {
 		try {
 			if (str.isEmpty()) {
 				PrintWriter pw = new PrintWriter(System.out);
-				system.generator().printResult(pw);
+				this.generator(system).printResult(pw);
 				pw.flush();
 			} else if (str.equals("inv")) {
-				system.generator().printResultStatistics();
+				this.generator(system).printResultStatistics();
 			} else if (str.equals("accept")) {
-				system.generator().acceptResult();
+				this.generator(system).acceptResult();
 			} else {
 				Log.error("Unknown command `result " + str + "'. Try help.");
 			}
@@ -1634,7 +1638,7 @@ public final class Shell implements Runnable, PPCHandler {
 			Log.error("syntax is `flags (-all|[invnames]) ((+d|-d) | (+n|-n))'");
 		}
 		else if (disabled == null && negated == null){
-			system.generator().printInvariantFlags(invs);
+			this.generator(system).printInvariantFlags(invs);
 		}
 		else {
 			system.setClassInvariantFlags(invs, (disabled == null)? null : !disabled, negated);
@@ -1655,7 +1659,19 @@ public final class Shell implements Runnable, PPCHandler {
 		args.setFilename(this.getFilenameToOpen(args.getFilename()));
 		this.setFileClosed();
 
-		system.generator().startProcedure(args.getCallString(), args);
+		this.generator(system).startProcedure(args.getCallString(), args);
+	}
+
+	private final java.util.Map<MSystem, GGenerator> systemGenerators = new java.util.WeakHashMap<>();
+
+	private GGenerator generator(MSystem system) {
+		GGenerator g = systemGenerators.get(system);
+		if (g == null) {
+			g = new GGenerator(system);
+			g.setProcedureCompiler(org.tzi.use.parser.generator.ASSLCompiler.PROCEDURE_COMPILER);
+			systemGenerators.put(system, g);
+		}
+		return g;
 	}
 
 	private MSystem system() throws NoSystemException {

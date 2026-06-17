@@ -2,7 +2,7 @@ package org.tzi.use.parser.ocl;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 
 /**

@@ -10,7 +10,7 @@ import org.tzi.use.gen.assl.statics.GOCLExpression;
 import org.tzi.use.gen.assl.statics.GProcedure;
 import org.tzi.use.gen.tool.GSignature;
 import org.tzi.use.parser.Context;
-import org.tzi.use.parser.SemanticException;
+import org.tzi.use.uml.ocl.expr.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 
 public class ASTGAsslCall extends ASTGInstruction {

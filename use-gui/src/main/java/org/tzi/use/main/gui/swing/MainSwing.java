@@ -5,6 +5,8 @@ import org.tzi.use.gui.main.MainWindow;
 import org.tzi.use.main.Session;
 import org.tzi.use.main.runtime.IRuntime;
 import org.tzi.use.main.shell.Shell;
+import org.tzi.use.parser.generator.ASSLCompiler;
+import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.uml.mm.MMPrintVisitor;
 import org.tzi.use.uml.mm.MMVisitor;
@@ -43,6 +45,7 @@ public class MainSwing {
 
         if (!Options.disableExtensions) {
             ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + Options.FILE_SEPARATOR + "oclextensions";
+            ExtensionManager.getInstance().setTypeCompiler(OCLCompiler::compileType);
             ExtensionManager.getInstance().loadExtensions();
         }
 
@@ -98,6 +101,7 @@ public class MainSwing {
             Log.verbose(model.getStats());
 
             system = new MSystem(model);
+            system.setInvariantCompiler(ASSLCompiler::compileInvariants);
         }
 
         session.setSystem(system);

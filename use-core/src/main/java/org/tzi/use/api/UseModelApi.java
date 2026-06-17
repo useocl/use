@@ -17,6 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 package org.tzi.use.api;
+import org.tzi.use.util.SrcPos;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -35,6 +36,8 @@ import org.tzi.use.uml.ocl.expr.ExpInvalidException;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.expr.VarDecl;
 import org.tzi.use.uml.ocl.expr.VarDeclList;
+import org.tzi.use.uml.ocl.expr.SemanticException;
+import org.tzi.use.uml.ocl.expr.Symtable;
 import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
@@ -42,7 +45,7 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.NullPrintWriter;
 import org.tzi.use.util.StringUtil;
-import org.tzi.use.util.soil.exceptions.CompilationFailedException;
+import org.tzi.use.parser.soil.exceptions.CompilationFailedException;
 
 import java.io.*;
 import java.util.ArrayList;

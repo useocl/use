@@ -2,8 +2,8 @@ package org.tzi.use.parser.testsuite;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
-import org.tzi.use.uml.sys.testsuite.MVariation;
-import org.tzi.use.uml.sys.testsuite.MVariationEnd;
+import org.tzi.use.parser.testsuite.sys.MVariation;
+import org.tzi.use.parser.testsuite.sys.MVariationEnd;
 
 public class ASTVariationEnd extends ASTVariation {
 		

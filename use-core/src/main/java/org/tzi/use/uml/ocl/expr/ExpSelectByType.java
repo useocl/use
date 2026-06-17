@@ -19,7 +19,6 @@
 
 package org.tzi.use.uml.ocl.expr;
 
-import org.tzi.use.parser.SemanticException;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.value.Value;
 

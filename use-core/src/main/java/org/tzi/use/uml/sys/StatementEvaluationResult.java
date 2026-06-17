@@ -25,8 +25,8 @@ import java.util.List;
 import org.tzi.use.uml.sys.events.Event;
 import org.tzi.use.uml.sys.soil.MSequenceStatement;
 import org.tzi.use.uml.sys.soil.MStatement;
-import org.tzi.use.util.soil.StateDifference;
-import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
+import org.tzi.use.uml.sys.soil.StateDifference;
+import org.tzi.use.uml.sys.soil.EvaluationFailedException;
 
 /**
  * Captures additional information about the execution of a statement, 
