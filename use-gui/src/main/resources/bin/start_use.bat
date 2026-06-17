@@ -21,9 +21,9 @@ IF NOT EXIST %USE_JAR% (
 
 REM Check if first argument is "jfx" (/I makes the comparison case-insensitive)
 IF /I "%1"=="-jfx" (
-    java %VMARGS% --module-path %JAVAFX_LIB% --add-modules javafx.controls,javafx.fxml,javafx.web,javafx.graphics,javafx.swing --add-opens javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED -jar %USE_JAR% -nr %*
+    java %VMARGS% --module-path %JAVAFX_LIB% --add-modules javafx.controls,javafx.fxml,javafx.web,javafx.graphics,javafx.swing --add-opens javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED -jar %USE_JAR% %*
 ) ELSE (
-    java %VMARGS% -jar %USE_JAR% -nr %*
+    java %VMARGS% -jar %USE_JAR% %*
 )
 
 if "%OS%"=="Windows_NT" @endlocal

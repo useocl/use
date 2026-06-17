@@ -129,6 +129,7 @@ the web.
 
 - The [ANTLR parser generator tool](http://www.antlr.org)
 - The [JUnit library](http://www.junit.org)
+- The [JLine library](https://github.com/jline/jline2) for command-line editing and history
 
 ## Reporting bugs
 
