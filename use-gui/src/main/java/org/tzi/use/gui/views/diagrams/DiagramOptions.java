@@ -38,7 +38,7 @@ public abstract class DiagramOptions {
 	/**
 	 * The current version number of the layout information
 	 */
-	public static int XML_LAYOUT_VERSION = 13;
+	public static int XML_LAYOUT_VERSION = 14;
 	
     protected boolean fDoAutoLayout = false;
     protected boolean fSaveDefaultLayout = true;
@@ -295,6 +295,7 @@ public abstract class DiagramOptions {
 		helper.appendChild(parent, LayoutTags.SHOWOPERATIONS, String.valueOf(isShowOperations()));
 		helper.appendChild(parent, LayoutTags.SHOWROLENAMES, String.valueOf(isShowRolenames()));
 		helper.appendChild(parent, LayoutTags.SHOWGRID, String.valueOf(showGrid()));
+		helper.appendChild(parent, LayoutTags.GROUPMR, String.valueOf(isGroupMR()));
 	}
 	/**
 	 * @param rootElement
@@ -309,6 +310,9 @@ public abstract class DiagramOptions {
 		setShowRolenames(helper.getElementBooleanValue(LayoutTags.SHOWROLENAMES));
 		if (version > 1) {
 			setShowGrid(helper.getElementBooleanValue(LayoutTags.SHOWGRID));
+		}
+		if (version > 13) {
+			setGroupMR(helper.getElementBooleanValue(LayoutTags.GROUPMR));
 		}
 	}
 	

@@ -53,6 +53,11 @@ public class ClassDiagramOptions extends DiagramOptions {
 	}
 	
     public ClassDiagramOptions() {
+        // In class diagrams, group multiplicities and role names by default
+        // (issue #16) so that their positions can be adjusted together. The
+        // value is persisted with the layout, so an explicit user choice
+        // overrides this default when a layout is loaded.
+        this.fGroupMR = true;
     }
     
     protected ShowCoverage fShowCoverage = ShowCoverage.DONT_SHOW;
