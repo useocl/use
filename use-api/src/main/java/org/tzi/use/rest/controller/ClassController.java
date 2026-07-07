@@ -1,0 +1,161 @@
+package org.tzi.use.rest.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.tzi.use.DTO.AttributeDTO;
+import org.tzi.use.DTO.ClassDTO;
+import org.tzi.use.DTO.OperationDTO;
+import org.tzi.use.api.UseApiException;
+import org.tzi.use.rest.services.ClassService;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+@RestController
+@RequestMapping("/api/models/{modelName}")
+@RequiredArgsConstructor
+public class ClassController {
+    private final ClassService classService;
+
+    @Operation(summary = "Get a class by name", description = "Returns one class of the model")
+    @GetMapping("/class/{className}")
+    public ResponseEntity<EntityModel<ClassDTO>> getClassByName(@PathVariable String modelName, @PathVariable String className) throws UseApiException {
+        ClassDTO classDTO = classService.getClassByName(modelName, className);
+
+        EntityModel<ClassDTO> entityModels = EntityModel.of(classDTO);
+
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getAttributes(modelName, className)).withRel("attributes"));
+        entityModels.add(linkTo(methodOn(ClassController.class).getOperations(modelName, className)).withRel("operations"));
+        entityModels.add(linkTo(methodOn(ModelController.class).getClasses(modelName)).withRel("classes"));
+
+        return ResponseEntity.ok(entityModels);
+    }
+
+    @Operation(summary = "List attributes of a class", description = "Lists every attribute of the class")
+    @GetMapping("/class/{className}/attributes")
+    public ResponseEntity<CollectionModel<EntityModel<AttributeDTO>>> getAttributes(@PathVariable String modelName, @PathVariable String className) throws UseApiException {
+        List<AttributeDTO> attributes = classService.getAttributes(modelName, className);
+        List<EntityModel<AttributeDTO>> attributeModels = new ArrayList<>();
+        for (AttributeDTO attr : attributes) {
+            EntityModel<AttributeDTO> attributeDTOEntityModel = EntityModel.of(attr);
+
+            attributeDTOEntityModel.add(linkTo(methodOn(ClassController.class).getAttributeByName(modelName, className, attr.getName())).withSelfRel());
+
+            attributeModels.add(attributeDTOEntityModel);
+        }
+
+        CollectionModel<EntityModel<AttributeDTO>> entityModels = CollectionModel.of(attributeModels);
+        entityModels.add(linkTo(methodOn(ClassController.class).getAttributes(modelName, className)).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
+
+        return ResponseEntity.ok(entityModels);
+    }
+
+    @Operation(summary = "Get an attribute by name", description = "Returns a single attribute of the class")
+    @GetMapping("/class/{className}/attribute/{attributeName}")
+    public ResponseEntity<EntityModel<AttributeDTO>> getAttributeByName(@PathVariable String modelName, @PathVariable String className, @PathVariable String attributeName) throws UseApiException {
+        AttributeDTO attribute = classService.getAttributeByName(modelName, className, attributeName);
+
+        EntityModel<AttributeDTO> entityModels = EntityModel.of(attribute);
+
+        entityModels.add(linkTo(methodOn(ClassController.class).getAttributeByName(modelName, className, attributeName)).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getAttributes(modelName, className)).withRel("attributes"));
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
+
+        return ResponseEntity.ok(entityModels);
+    }
+
+
+    @Operation(summary = "List operations of a class", description = "Lists operations defined on the class")
+    @GetMapping("/class/{className}/operations")
+    public ResponseEntity<CollectionModel<EntityModel<OperationDTO>>> getOperations(@PathVariable String modelName, @PathVariable String className) throws UseApiException {
+        List<OperationDTO> operations = classService.getOperations(modelName, className);
+        List<EntityModel<OperationDTO>> operationModels = new ArrayList<>();
+        for (OperationDTO op : operations) {
+            EntityModel<OperationDTO> operationDTOEntityModel = EntityModel.of(op);
+
+            operationDTOEntityModel.add(linkTo(methodOn(ClassController.class).getOperationByName(modelName, className, op.getOperationName())).withSelfRel());
+
+            operationModels.add(operationDTOEntityModel);
+        }
+
+        CollectionModel<EntityModel<OperationDTO>> entityModels = CollectionModel.of(operationModels);
+
+        entityModels.add(linkTo(methodOn(ClassController.class).getOperations(modelName, className)).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
+
+        return ResponseEntity.ok(entityModels);
+    }
+
+    @Operation(summary = "Get an operation by name", description = "Returns a specific operation of the class")
+    @GetMapping("/class/{className}/operation/{operationName}")
+    public ResponseEntity<EntityModel<OperationDTO>> getOperationByName(@PathVariable String modelName, @PathVariable String className, @PathVariable String operationName) throws UseApiException {
+        OperationDTO operation = classService.getOperationByName(modelName, className, operationName);
+
+        EntityModel<OperationDTO> entityModels = EntityModel.of(operation);
+
+        entityModels.add(linkTo(methodOn(ClassController.class).getOperationByName(modelName, className, operationName)).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getOperations(modelName, className)).withRel("operations"));
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
+
+
+        return ResponseEntity.ok(entityModels);
+    }
+
+
+
+    @Operation(summary = "Add an attribute to a class", description = "Creates an attribute for the class")
+    @PostMapping("/class/{className}/attribute")
+    public ResponseEntity<EntityModel<AttributeDTO>> addAttribute(@PathVariable String modelName, @PathVariable String className, @RequestBody AttributeDTO attributeDTO) throws UseApiException {
+        AttributeDTO newAttribute = classService.createAttribute(modelName, className, attributeDTO);
+        EntityModel<AttributeDTO> entityModels = EntityModel.of(newAttribute);
+
+        entityModels.add(linkTo(methodOn(ClassController.class).getAttributeByName(modelName, className, newAttribute.getName())).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
+
+
+        return new ResponseEntity<>(entityModels, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Add an operation to a class", description = "Creates an operation on the class")
+    @PostMapping("/class/{className}/operation")
+    public ResponseEntity<EntityModel<OperationDTO>> addOperation(@PathVariable String modelName, @PathVariable String className, @RequestBody OperationDTO operationDTO) throws UseApiException {
+        OperationDTO newOperation = classService.createOperation(modelName, className, operationDTO);
+
+        EntityModel<OperationDTO> entityModels = EntityModel.of(newOperation);
+
+        entityModels.add(linkTo(methodOn(ClassController.class).getOperationByName(modelName, className, newOperation.getOperationName())).withSelfRel());
+        entityModels.add(linkTo(methodOn(ClassController.class).getClassByName(modelName, className)).withRel("class"));
+
+        return new ResponseEntity<>(entityModels, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Delete an attribute from a class", description = "Deletes the attribute from the class")
+    @DeleteMapping("/class/{className}/attribute/{attributeName}")
+    public ResponseEntity<Void> deleteAttribute(@PathVariable String modelName, @PathVariable String className, @PathVariable String attributeName) {
+        classService.deleteAttribute(modelName, className, attributeName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Delete an operation from a class", description = "Deletes the operation from the class")
+    @DeleteMapping("/class/{className}/operation/{operationName}")
+    public ResponseEntity<Void> deleteOperation(@PathVariable String modelName, @PathVariable String className, @PathVariable String operationName) {
+        classService.deleteOperation(modelName, className, operationName);
+        return ResponseEntity.noContent().build();
+    }
+}

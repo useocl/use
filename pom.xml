@@ -12,6 +12,7 @@
         <module>use-assembly</module>
         <module>use-core</module>
         <module>use-gui</module>
+        <module>use-api</module>
     </modules>
 
     <properties>
