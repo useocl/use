@@ -77,12 +77,10 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 		fParent = parent;
 		fOpt = opt;
 		fIsGreyed = false;
-		fOptChaneListener = new DiagramOptionChangedListener() {
-			@Override
-			public void optionChanged(String optionname) {
-				if (optionname.equals("SHOWOPERATIONS") || optionname.equals("SHOWATTRIBUTES")
-						|| optionname.equals("SHOWSTATES"))
-					calculateBounds();
+		fOptChaneListener = optionname -> {
+			if ("SHOWOPERATIONS".equals(optionname) || "SHOWATTRIBUTES".equals(optionname)
+					|| "SHOWSTATES".equals(optionname)) {
+				calculateBounds();
 			}
 		};
 
@@ -153,13 +151,13 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 			attributesRect.width = Math.max(attributesRect.width, fm.stringWidth(fValues[i]));
 		}
 
-		attributesRect.height = fm.getHeight() * fAttributes.size() + 3;
+		attributesRect.height = ((double) fm.getHeight()) * fAttributes.size() + 3.0;
 
 		statesRect.width = 0;
 		for (int i = 0; i < fStateValues.length; ++i) {
 			statesRect.width = Math.max(statesRect.width, fm.stringWidth(fStateValues[i]));
 		}
-		statesRect.height = fm.getHeight() * fStateMachines.size() + 3;
+		statesRect.height = ((double) fm.getHeight()) * fStateMachines.size() + 3.0;
 
 		calculateBounds();
 	}
@@ -201,8 +199,8 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 			MAttribute attr = fAttributes.get(i);
 			Value val = objState.attributeValue(attr);
 
-			if (val instanceof EnumValue) {
-				value = "#" + ((EnumValue) val).value();
+			if (val instanceof EnumValue ev) {
+				value = "#" + ev.value();
 			} else {
 				value = val.toString();
 			}
@@ -229,8 +227,8 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 			return;
 		}
 
-		double x = currentBounds.getX();
-		int y = (int) currentBounds.getY();
+		double x;
+		int y;
 
 		int labelWidth = g.getFontMetrics().stringWidth(fLabel);
 
@@ -238,10 +236,8 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 		Color fillColor = fOpt.getNODE_COLOR();
 		Color lineColor = fOpt.getNODE_FRAME_COLOR();
 		// change colors if needed
-		if(isSelected() && isGreyed()) {
-			//fillColor = fOpt.getGREYED_SELECTED_FILL_COLOR();
+		if (isSelected() && isGreyed()) {
 			fillColor = fOpt.getNODE_SELECTED_COLOR();
-			//lineColor = fOpt.getGREYED_LINE_COLOR();
 			lineColor = fOpt.getGREYED_SELECTED_LINE_COLOR();
 		} else if (isSelected()) {
 			fillColor = fOpt.getNODE_SELECTED_COLOR();
@@ -255,16 +251,16 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 		g.setColor(lineColor);
 		g.draw(currentBounds);
 
-		x = (currentBounds.getCenterX() - labelWidth / 2);
+		double halfLabel = labelWidth / 2.0;
+		x = (currentBounds.getCenterX() - halfLabel);
 		y = (int) currentBounds.getY() + g.getFontMetrics().getAscent() + 2;
 
-		//g.setColor(fOpt.getColor(DiagramOptions.NODE_LABEL_COLOR));
 		g.drawString(fLabelA.getIterator(), Math.round(x), y);
 
 		if (fOpt.isShowAttributes()) {
 			// compartment divider
-			Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y + 3, currentBounds.getMaxX(),
-					y + 3);
+						Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y + 3.0, currentBounds.getMaxX(),
+									y + 3.0);
 			g.draw(lineAttrDivider);
 			x = currentBounds.getX() + 5;
 			y += 3;
@@ -276,8 +272,8 @@ public class ObjectNode extends PlaceableNode implements SortChangeListener, Obj
 
 		if (fOpt.isShowStates()) {
 			// compartment divider
-			Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y + 3, currentBounds.getMaxX(),
-					y + 3);
+						Line2D.Double lineAttrDivider = new Line2D.Double(currentBounds.getX(), y + 3.0, currentBounds.getMaxX(),
+									y + 3.0);
 			g.draw(lineAttrDivider);
 			x = currentBounds.getX() + 5;
 			y += 3;

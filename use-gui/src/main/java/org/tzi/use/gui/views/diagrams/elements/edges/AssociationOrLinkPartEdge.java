@@ -230,8 +230,8 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
 			
 			List<MObject> adjacentObjects = getLink().linkedObjects();
 			for (MObject adjacentObject : adjacentObjects) {
-				ObjectNode node = visibleData.fObjectToNodeMap.get(adjacentObject);
-				if(node.isGreyed()) {
+				ObjectNode node = visibleData.getObjectToNodeMap().get(adjacentObject);
+				if (node != null && node.isGreyed()) {
 					return true;
 				}
 			}
@@ -365,8 +365,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
 	public static AssociationOrLinkPartEdge create(PlaceableNode source,
 			PlaceableNode target, MAssociationEnd targetEnd, DiagramView diagram,
 			MAssociation assoc, MLink link) {
-		AssociationOrLinkPartEdge edge = new AssociationOrLinkPartEdge(source, target, targetEnd, diagram, assoc, link);
-		return edge;
+		return new AssociationOrLinkPartEdge(source, target, targetEnd, diagram, assoc, link);
 	}
 
 	/**
@@ -375,8 +374,7 @@ public class AssociationOrLinkPartEdge extends EdgeBase implements AssociationEd
 	public static AssociationOrLinkPartEdge create(PlaceableNode source,
 			PlaceableNode target, String name, MAssociationEnd targetEnd,
 			DiagramView diagram, MAssociation assoc, MLink link) {
-		AssociationOrLinkPartEdge edge = new AssociationOrLinkPartEdge(source, target, name, targetEnd, diagram, assoc, link);
-		return edge;
+		return new AssociationOrLinkPartEdge(source, target, name, targetEnd, diagram, assoc, link);
 	}
 
 	@Override
