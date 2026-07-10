@@ -61,7 +61,7 @@ public class JavaFXAppLauncher extends Application {
 
     private void initExtensions() {
         if (!Options.disableExtensions) {
-            ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + Options.FILE_SEPARATOR + "oclextensions";
+            ExtensionManager.EXTENSIONS_FOLDER = Options.oclExtensionsDir.toString();
             ExtensionManager.getInstance().loadExtensions();
         }
     }

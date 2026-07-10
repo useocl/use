@@ -3,6 +3,9 @@ Please see the file `README' for a description of how to report bugs.
 
 ** Changes between version 7.1.0 and X.X.X
 * USE now supports data types
+* [USE] The plugin and OCL extension directories can now be configured at
+  startup with the -pluginDir and -extensionsDir arguments, instead of being
+  fixed to <home>/lib/plugins and <home>/oclextensions (#20)
 
 ** Changes between version 5.2.0 and 6.0.0
 * New OCL complexity plugin

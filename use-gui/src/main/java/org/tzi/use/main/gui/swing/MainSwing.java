@@ -42,7 +42,7 @@ public class MainSwing {
         MSystem system = null;
 
         if (!Options.disableExtensions) {
-            ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + Options.FILE_SEPARATOR + "oclextensions";
+            ExtensionManager.EXTENSIONS_FOLDER = Options.oclExtensionsDir.toString();
             ExtensionManager.getInstance().loadExtensions();
         }
 
