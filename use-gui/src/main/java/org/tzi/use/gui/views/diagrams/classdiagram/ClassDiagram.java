@@ -842,372 +842,89 @@ public class ClassDiagram extends DiagramView
 		}
 	}
 
-	/**
-	 * Creates popup menu for class diagram.
-	 */
 	@Override
 	protected PopupMenuInfo unionOfPopUpMenu() {
-		// get the base popup menu
-		PopupMenuInfo info = super.unionOfPopUpMenu();
-		JPopupMenu popupMenu = info.popupMenu;
+		PopupMenuInfo info = new PopupMenuInfo(null);
+		PopupMenuBuilder builder = new PopupMenuBuilder();
+		buildMenu(builder, info);
+		info.popupMenu = builder.build();
+		return info;
+	}
 
-		// position for the popupMenu items
-		int pos = 0;
-
-		// Sets for the different selections
-
-		// This set identifies all associated classes of associations, to allow
-		// to crop an association
-		final Set<MClass> selectedClassesOfAssociation = new HashSet<>();
+	@Override
+	protected void buildMenu(PopupMenuBuilder builder, PopupMenuInfo info) {
+		// --- compute selection sets ---
 		final Set<MClass> selectedClasses = new HashSet<>();
 		final Set<MAssociation> selectedAssociations = new HashSet<>();
 		final Set<MClassifier> selectedClassifier = new HashSet<>();
 		final Set<MGeneralization> selectedGeneralization = new HashSet<>();
 
-		// Split-up the selection of GUI elements to the different model
-		// elements
 		for (PlaceableNode node : fNodeSelection) {
 			if (node instanceof ClassifierNode) {
-				ClassifierNode cn = (ClassifierNode) node;
-				selectedClassifier.add(cn.getClassifier());
+				selectedClassifier.add(((ClassifierNode) node).getClassifier());
 			}
-
 			if (node instanceof ClassNode) {
-				ClassNode cn = (ClassNode) node;
-				selectedClasses.add(cn.cls());
+				selectedClasses.add(((ClassNode) node).cls());
 			} else if (node instanceof AssociationName) {
 				MAssociation assoc = ((AssociationName) node).getAssociation();
-				selectedClassesOfAssociation.addAll(assoc.associatedClasses());
 				selectedAssociations.add(assoc);
 			}
 		}
-
 		for (EdgeBase edge : fEdgeSelection) {
 			if (edge instanceof AssociationOrLinkPartEdge) {
-				AssociationOrLinkPartEdge pEdge = (AssociationOrLinkPartEdge) edge;
-				selectedAssociations.add(pEdge.getAssociation());
+				selectedAssociations.add(((AssociationOrLinkPartEdge) edge).getAssociation());
 			} else if (edge instanceof NAryAssociationClassOrObjectEdge) {
-				NAryAssociationClassOrObjectEdge nEdge = (NAryAssociationClassOrObjectEdge) edge;
-				selectedAssociations.add(nEdge.getAssociation());
+				selectedAssociations.add(((NAryAssociationClassOrObjectEdge) edge).getAssociation());
 			} else if (edge instanceof GeneralizationEdge) {
-				GeneralizationEdge e = (GeneralizationEdge) edge;
-				visibleData.fGenToGeneralizationEdge.entrySet().stream().filter(entry -> entry.getValue().equals(e))
+				final GeneralizationEdge ge = (GeneralizationEdge) edge;
+				visibleData.fGenToGeneralizationEdge.entrySet().stream()
+						.filter(entry -> entry.getValue().equals(ge))
 						.forEach(entry -> selectedGeneralization.add(entry.getKey()));
 			}
-
 		}
 
-		if (hiddenData.hasNodes() || hiddenData.hasEdges()) {
-			final JMenuItem showAllClasses = new JMenuItem("Show hidden elements");
-			showAllClasses.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent ev) {
-					showAll();
-					invalidateContent(true);
-				}
-			});
+		// SEC_SELECTION: show-hidden + hide/crop + sub/superclasses
+		buildClassSelectionSection(builder, selectedClasses, selectedAssociations, selectedGeneralization);
 
-			popupMenu.insert(showAllClasses, pos++);
-			popupMenu.insert(new JSeparator(), pos++);
+		// SEC_VISIBILITY: show/hide/crop classes, assocs, gens
+		buildClassVisibilitySection(builder, selectedClasses);
 
+		// SEC_ACTIONS: PSM viewer
+		buildPsmSection(builder, selectedClassifier);
+
+		// SEC_OPTIONS: comment node + edge-prop controls + display toggles
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, getMenuItemCommentNode(info));
+
+		boolean selectionCanBeHidden = !fNodeSelection.isEmpty();
+		for (PlaceableNode node : fNodeSelection) {
+			if (!(node instanceof EdgeProperty)) { selectionCanBeHidden = false; break; }
 		}
-
-		// New menu for selected-Handling
-		// Erstelle Labels fuers Menu
-		if (!selectedAssociations.isEmpty() || !selectedClasses.isEmpty() || !selectedGeneralization.isEmpty()) {
-			String labelHide = "";
-			String labelCrop = "";
-			int size = selectedAssociations.size() + selectedClasses.size() + selectedGeneralization.size();
-			if (size > 1) {
-				// Mehr als ein Object ausgewaehlt
-				labelHide = "Hide " + size + " elements";
-				labelCrop = "Crop " + size + " elements";
-			} else if (selectedAssociations.size() == 1) {
-				labelHide = "Hide " + exactlyOne(selectedAssociations).name();
-				labelCrop = "Crop " + exactlyOne(selectedAssociations).name();
-			} else if (selectedClasses.size() == 1) {
-				labelHide = "Hide " + exactlyOne(selectedClasses).name();
-				labelCrop = "Crop " + exactlyOne(selectedClasses).name();
-			} else if (selectedGeneralization.size() == 1) {
-				labelHide = "Hide " + exactlyOne(selectedGeneralization).name().substring(4);
-				labelCrop = "Crop " + exactlyOne(selectedGeneralization).name().substring(4);
-			}
-
-			// Erstelle Actions fuer hide
-			popupMenu.insert(new AbstractAction(labelHide) {
+		if (selectionCanBeHidden) {
+			builder.add(PopupMenuBuilder.SEC_OPTIONS, new JMenuItem(new AbstractAction("Hide selected properties") {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// Hide Assocs if exisits
-					if (selectedAssociations.size() > 0) {
-						selectedAssociations.forEach(assoc -> hideAssociation(assoc));
-					}
-					if (selectedClasses.size() > 0) {
-						selectedClasses.forEach(cls -> hideClass(cls));
-					}
-					if (selectedGeneralization.size() > 0) {
-						selectedGeneralization.forEach(gen -> hideGeneralization(gen));
-					}
-
+					for (PlaceableNode n : fNodeSelection) { ((EdgeProperty) n).setVisible(false); }
 					repaint();
 				}
-			}, pos++);
-
-			// Erstelle Actions fuer crop
-            Set<MClass> classToHide = new HashSet<>(selectedClasses);
-			selectedAssociations.forEach(assoc -> {
-				classToHide.addAll(assoc.associatedClasses());
-				if (assoc instanceof MAssociationClass) {
-					classToHide.add((MAssociationClass) assoc);
-				}
-			});
-			selectedGeneralization.forEach(gen -> classToHide.add((MClass) gen.child()));
-			selectedGeneralization.forEach(gen -> classToHide.add((MClass) gen.parent()));
-
-			final String label = labelCrop;
-			popupMenu.insert(new AbstractAction(labelCrop) {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					getActionHideNodes(label, getNoneSelectedElementsByElements(classToHide)).actionPerformed(e);
-				}
-			}, pos++);
-
-			boolean showMenuSubSuperClasses = false;
-			JMenu menuSubSuperClasses = new JMenu("Sub/Superclasses");
-
-			// Wenn nur Gens selektiert, dann show super-classes
-			// Nach Ruecksprache sollen auch hidden wieder auftauchen.
-			if (!selectedClasses.isEmpty()) {
-
-				Set<MClass> filteredSelectedClasses = selectedClasses.stream().filter(cls -> !cls.parents().isEmpty())
-						.collect(Collectors.toSet());
-
-				if (filteredSelectedClasses.size() > 0) {
-
-					String labelGen = filteredSelectedClasses.size() == 1
-							? filteredSelectedClasses.iterator().next().name()
-							: filteredSelectedClasses.size() + " elements";
-
-					Set<MClass> parents = new HashSet<>();
-					filteredSelectedClasses.forEach(cls -> {
-						parents.addAll(cls.allParents());
-					});
-					boolean isSuperclassHidden = (parents.stream()
-							.filter(cls -> this.hiddenData.containsNodeForClassifer(cls)).findFirst()).isPresent();
-
-					boolean isSuperclassVisible = (parents.stream()
-							.filter(cls -> this.visibleData.containsNodeForClassifer(cls)).findFirst()).isPresent();
-
-					if (isSuperclassHidden) {
-						menuSubSuperClasses.add(new AbstractAction("Show superclasses of " + labelGen) {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								parents.forEach(cls -> showClass(cls));
-								repaint();
-							}
-						});
-					}
-
-					if (isSuperclassVisible) {
-						menuSubSuperClasses.add(new AbstractAction("Hide superclasses of " + labelGen) {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								getActionHideNodes("Hide superclasses of " + labelGen, parents).actionPerformed(e);
-							}
-						});
-					}
-
-					menuSubSuperClasses.add(new AbstractAction("Crop superclasses of " + labelGen) {
-
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							parents.forEach(cls -> showClass(cls));
-							getActionHideNodes("Crop superclasses of " + labelGen,
-									getNoneSelectedElementsByElements(parents)).actionPerformed(e);
-						}
-					});
-
-					showMenuSubSuperClasses = true;
-
-				}
-			}
-
-			// Wenn nur Gens selektiert, dann show sub-classes
-			if (!selectedClasses.isEmpty()) {
-				Set<MClass> filteredSelectedClasses = selectedClasses.stream().filter(cls -> !cls.children().isEmpty())
-						.collect(Collectors.toSet());
-
-				if (filteredSelectedClasses.size() > 0) {
-
-					String labelGen = filteredSelectedClasses.size() == 1
-							? filteredSelectedClasses.iterator().next().name()
-							: filteredSelectedClasses.size() + " elements";
-
-					Set<MClass> parents = new HashSet<>();
-					filteredSelectedClasses.forEach(cls -> {
-						parents.addAll(cls.allChildren());
-					});
-					boolean isSubclassHidden = (parents.stream()
-							.filter(cls -> this.hiddenData.containsNodeForClassifer(cls)).findFirst()).isPresent();
-
-					boolean isSubclassVisible = (parents.stream()
-							.filter(cls -> this.visibleData.containsNodeForClassifer(cls)).findFirst()).isPresent();
-
-					if (isSubclassHidden) {
-						menuSubSuperClasses.add(new AbstractAction("Show subclasses of " + labelGen) {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								parents.forEach(cls -> showClass(cls));
-								repaint();
-							}
-						});
-					}
-
-					if (isSubclassVisible) {
-
-						menuSubSuperClasses.add(new AbstractAction("Hide subclasses of " + labelGen) {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								getActionHideNodes("Hide subclasses of " + labelGen, parents).actionPerformed(e);
-							}
-						});
-					}
-					menuSubSuperClasses.add(new AbstractAction("Crop subclasses of " + labelGen) {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							parents.forEach(cls -> showClass(cls));
-							getActionHideNodes("Crop subclasses of " + labelGen,
-									getNoneSelectedElementsByElements(parents)).actionPerformed(e);
-						}
-					});
-
-					showMenuSubSuperClasses = true;
-				}
-			}
-			if (showMenuSubSuperClasses) {
-				popupMenu.insert(menuSubSuperClasses, pos++);
-			}
-			popupMenu.insert(new JSeparator(), pos++);
-
+			}));
+		}
+		if (!fEdgeSelection.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_OPTIONS, getMenuItemEdgePropertiesVivibility());
 		}
 
-		// Submenu for views which allow to configure visibility
-		final JMenu menuShowHideCrop = new JMenu("Show/hide/crop classes");
-		menuShowHideCrop.add(fSelection.getSelectedClassPathView("By path length...", selectedClasses));
-		menuShowHideCrop.add(fSelection.getSelectionClassView("With view..."));
-
-		if (hiddenData.hasNodes()) {
-			popupMenu.insert(fSelection.getSubMenuShowClass(), pos++);
-		}
-
-		if (fGraph.size() > 0) {
-			popupMenu.insert(fSelection.getSubMenuHideClass(), pos++);
-		}
-
-		popupMenu.insert(menuShowHideCrop, pos++);
-		popupMenu.insert(new JSeparator(), pos++);
-
-		// new menu for hide assoc
-		if (fGraph.size() > 0 && (!visibleData.fBinaryAssocToEdgeMap.isEmpty()
-				|| !visibleData.fAssocClassToEdgeMap.isEmpty() || !visibleData.fNaryAssocToDiamondNodeMap.isEmpty()
-				|| !visibleData.fNaryAssocToHalfEdgeMap.isEmpty())) {
-			popupMenu.insert(fSelection.getSubMenuHideAssoc(), pos++);
-		}
-		// Ende
-
-		if (!hiddenData.fBinaryAssocToEdgeMap.isEmpty() || !hiddenData.fAssocClassToEdgeMap.isEmpty()
-				|| !hiddenData.fNaryAssocToDiamondNodeMap.isEmpty() || !hiddenData.fNaryAssocToHalfEdgeMap.isEmpty()) {
-			popupMenu.insert(fSelection.getSubMenuShowAssociation(), pos++);
-		}
-		popupMenu.insert(new JSeparator(), pos++);
-
-		// New menu for handling generalizations
-		if (!visibleData.fGenToGeneralizationEdge.isEmpty()) {
-			HashSet<MGeneralization> gens = new HashSet<>(visibleData.fGenToGeneralizationEdge.keySet());
-			popupMenu.insert(fSelection.getSubMenuHideGeneralizations(gens), pos++);
-		}
-		if (!hiddenData.fGenToGeneralizationEdge.isEmpty()) {
-			HashSet<MGeneralization> gens = new HashSet<>(hiddenData.fGenToGeneralizationEdge.keySet());
-			popupMenu.insert(fSelection.getSubMenuShowGeneralizations(gens), pos++);
-		}
-		if (!visibleData.fGenToGeneralizationEdge.isEmpty() || !hiddenData.fGenToGeneralizationEdge.isEmpty()) {
-			popupMenu.insert(new JSeparator(), pos++);
-		}
-		// Ende: New menu for handling generalizations
-
-		final JMenu showProtocolStateMachine = new JMenu("Show protocol state machine...");
-		showProtocolStateMachine.setEnabled(false);
-
-		if (selectedClassifier.size() == 1) {
-			MClassifier clf = selectedClassifier.iterator().next();
-			if (clf instanceof MClass) {
-				MClass selectedClass = (MClass) clf;
-				List<MProtocolStateMachine> sortedPSMs = new LinkedList<MProtocolStateMachine>(
-						selectedClass.getOwnedProtocolStateMachines());
-				Collections.sort(sortedPSMs, new MNamedElementComparator());
-
-				for (MProtocolStateMachine psm : sortedPSMs) {
-					showProtocolStateMachine.setEnabled(true);
-					final JMenuItem showGivenPSM = new JMenuItem(psm.name());
-					showGivenPSM.addActionListener(new ActionListener() {
-						protected MStateMachine sm;
-
-						@Override
-						public void actionPerformed(ActionEvent ev) {
-							MainWindow.instance().showStateMachineView(sm);
-						}
-
-						public ActionListener setStateMachine(MStateMachine sm) {
-							this.sm = sm;
-							return this;
-						}
-					}.setStateMachine(psm));
-					showProtocolStateMachine.add(showGivenPSM);
-				}
-			}
-		}
-
-		popupMenu.insert(showProtocolStateMachine, pos++);
-		popupMenu.insert(new JSeparator(), pos++);
-
-		final JCheckBoxMenuItem cbMultiplicities = new JCheckBoxMenuItem("Show multiplicities");
-		cbMultiplicities.setState(fOpt.isShowMutliplicities());
-		cbMultiplicities.addItemListener(new ItemListener() {
+		final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names");
+		cbGroupMR.setState(fOpt.isGroupMR());
+		cbGroupMR.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent ev) {
-				fOpt.setShowMutliplicities(ev.getStateChange() == ItemEvent.SELECTED);
+				fOpt.setGroupMR(ev.getStateChange() == ItemEvent.SELECTED);
 				repaint();
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, cbGroupMR);
+		builder.addSeparator(PopupMenuBuilder.SEC_OPTIONS);
 
-		final JCheckBoxMenuItem cbUnion = new JCheckBoxMenuItem("Show union constraints");
-		cbUnion.setState(fOpt.isShowUnionConstraints());
-		cbUnion.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent ev) {
-				fOpt.setShowUnionConstraints(ev.getStateChange() == ItemEvent.SELECTED);
-				repaint();
-			}
-		});
-
-		final JCheckBoxMenuItem cbSubsets = new JCheckBoxMenuItem("Show subset constraints");
-		cbSubsets.setState(fOpt.isShowSubsetsConstraints());
-		cbSubsets.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent ev) {
-				fOpt.setShowSubsetsConstraints(ev.getStateChange() == ItemEvent.SELECTED);
-				repaint();
-			}
-		});
-
-		final JCheckBoxMenuItem cbRedefines = new JCheckBoxMenuItem("Show redefines constraints");
-		cbRedefines.setState(fOpt.isShowRedefinesConstraints());
-		cbRedefines.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent ev) {
-				fOpt.setShowRedefinesConstraints(ev.getStateChange() == ItemEvent.SELECTED);
-				repaint();
-			}
-		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowAttributesItem());
 
 		final JCheckBoxMenuItem cbOperations = new JCheckBoxMenuItem("Show operations");
 		cbOperations.setState(fOpt.isShowOperations());
@@ -1218,63 +935,84 @@ public class ClassDiagram extends DiagramView
 				repaint();
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, cbOperations);
 
-		// setting the right position for the popupMenu items
-		// from this point on.
-		pos += info.generalShowHideStart;
-		int extraShowHideLength = info.generalShowHideLength;
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowAssocNamesItem());
 
-		// put this node before separator
-		final JCheckBoxMenuItem cbGroupMR = new JCheckBoxMenuItem("Group multiplicities / role names");
-		cbGroupMR.setState(fOpt.isGroupMR());
-		cbGroupMR.addItemListener(new ItemListener() {
+		final JCheckBoxMenuItem cbMultiplicities = new JCheckBoxMenuItem("Show multiplicities");
+		cbMultiplicities.setState(fOpt.isShowMutliplicities());
+		cbMultiplicities.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent ev) {
-				fOpt.setGroupMR(ev.getStateChange() == ItemEvent.SELECTED);
+				fOpt.setShowMutliplicities(ev.getStateChange() == ItemEvent.SELECTED);
 				repaint();
 			}
 		});
-		popupMenu.insert(cbGroupMR, pos - 1);
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, cbMultiplicities);
 
-		// start general show/hide check boxes
-		pos++; // Skip 'show attributes'
-		extraShowHideLength--;
-		popupMenu.insert(cbOperations, ++pos);
-		pos++; // Skip 'show association names'
-		extraShowHideLength--;
-		popupMenu.insert(cbMultiplicities, ++pos);
-		pos++; // Skip 'show role names'
-		extraShowHideLength--;
-		popupMenu.insert(cbUnion, ++pos);
-		popupMenu.insert(cbSubsets, ++pos);
-		popupMenu.insert(cbRedefines, ++pos);
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowRoleNamesItem());
 
-		pos += extraShowHideLength + 1;
-
-		{
-			final JMenu menuCoverage = new JMenu("Show coverage");
-			// Add different coverage options
-			ButtonGroup bgCoverage = new ButtonGroup();
-			for (final ShowCoverage coverageOption : ShowCoverage.values()) {
-				JRadioButtonMenuItem optionItem = new JRadioButtonMenuItem();
-				menuCoverage.add(optionItem);
-				bgCoverage.add(optionItem);
-				optionItem.setText(coverageOption.toString());
-				optionItem.setSelected(getOptions().getShowCoverage() == coverageOption);
-				optionItem.addItemListener(new ItemListener() {
-
-					ShowCoverage selectedOption = coverageOption;
-
-					@Override
-					public void itemStateChanged(ItemEvent e) {
-						getOptions().setShowCoverage(selectedOption);
-						setCoverageColor();
-					}
-				});
+		final JCheckBoxMenuItem cbUnion = new JCheckBoxMenuItem("Show union constraints");
+		cbUnion.setState(fOpt.isShowUnionConstraints());
+		cbUnion.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent ev) {
+				fOpt.setShowUnionConstraints(ev.getStateChange() == ItemEvent.SELECTED);
+				repaint();
 			}
+		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, cbUnion);
 
-			popupMenu.insert(menuCoverage, pos++);
+		final JCheckBoxMenuItem cbSubsets = new JCheckBoxMenuItem("Show subset constraints");
+		cbSubsets.setState(fOpt.isShowSubsetsConstraints());
+		cbSubsets.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent ev) {
+				fOpt.setShowSubsetsConstraints(ev.getStateChange() == ItemEvent.SELECTED);
+				repaint();
+			}
+		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, cbSubsets);
+
+		final JCheckBoxMenuItem cbRedefines = new JCheckBoxMenuItem("Show redefines constraints");
+		cbRedefines.setState(fOpt.isShowRedefinesConstraints());
+		cbRedefines.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent ev) {
+				fOpt.setShowRedefinesConstraints(ev.getStateChange() == ItemEvent.SELECTED);
+				repaint();
+			}
+		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, cbRedefines);
+
+		// SEC_RENDERING: align + display toggles
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuAlign());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemAntiAliasing());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemShowGrid());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemGrayscale());
+
+		// SEC_LAYOUT: layout items
+		addLayoutItems(builder, info);
+
+		// SEC_EXTRAS: coverage + export
+		final JMenu menuCoverage = new JMenu("Show coverage");
+		final ButtonGroup bgCoverage = new ButtonGroup();
+		for (final ShowCoverage coverageOption : ShowCoverage.values()) {
+			JRadioButtonMenuItem optionItem = new JRadioButtonMenuItem();
+			menuCoverage.add(optionItem);
+			bgCoverage.add(optionItem);
+			optionItem.setText(coverageOption.toString());
+			optionItem.setSelected(getOptions().getShowCoverage() == coverageOption);
+			optionItem.addItemListener(new ItemListener() {
+				final ShowCoverage selectedOption = coverageOption;
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					getOptions().setShowCoverage(selectedOption);
+					setCoverageColor();
+				}
+			});
 		}
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, menuCoverage);
 
 		final JMenuItem cbExport = new JMenuItem(new AbstractAction("Export visible elements as new model...") {
 			private Path lastFile = null;
@@ -1282,14 +1020,11 @@ public class ClassDiagram extends DiagramView
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Window owner = null;
-				// setting owner for javafxCall, so that new Window is focused in front of the Application and not behind it
-				if (MainWindow.getJavaFxCall()){
-					// Schritt 1: Owner-Fenster holen aus dem Swing-Content
+				if (MainWindow.getJavaFxCall()) {
 					owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
 				}
 
 				int option = JOptionPane.YES_OPTION;
-
 				JFileChooser fChooser = new JFileChooser(Options.getLastDirectory().toFile());
 				ExtFileFilter filter = new ExtFileFilter("use", "USE model");
 				fChooser.setFileFilter(filter);
@@ -1302,64 +1037,294 @@ public class ClassDiagram extends DiagramView
 
 				do {
 					int returnVal = fChooser.showSaveDialog(owner);
-
-					if (returnVal != JFileChooser.APPROVE_OPTION)
-						return;
+					if (returnVal != JFileChooser.APPROVE_OPTION) return;
 
 					Options.setLastDirectory(fChooser.getCurrentDirectory().toPath());
 					String filename = fChooser.getSelectedFile().getName();
-
-					// if file does not have the appendix .use
 					if (!filename.endsWith(".use")) {
 						filename += ".use";
 					}
-
 					lastFile = Options.getLastDirectory().resolve(filename);
 
 					if (Files.isWritable(lastFile)) {
-						option = JOptionPane.showConfirmDialog(owner, "Overwrite existing file " + lastFile + "?",
+						option = JOptionPane.showConfirmDialog(owner,
+								"Overwrite existing file " + lastFile + "?",
 								"Please confirm", JOptionPane.YES_NO_CANCEL_OPTION);
-						if (option == JOptionPane.CANCEL_OPTION) {
-							return;
-						}
-
+						if (option == JOptionPane.CANCEL_OPTION) return;
 					}
-					// display the saving dialog, as long as the file
-					// will be overwritten or cancel is pressed.
 				} while (option != JOptionPane.YES_OPTION);
 
 				ModelExporter exporter = new ModelExporter();
-				// Binary associations
-				Set<MAssociation> sourceAssociations = new HashSet<MAssociation>(
-						visibleData.fBinaryAssocToEdgeMap.keySet());
-				// n-ary associations
+				Set<MAssociation> sourceAssociations = new HashSet<>(visibleData.fBinaryAssocToEdgeMap.keySet());
 				sourceAssociations.addAll(visibleData.fNaryAssocToDiamondNodeMap.keySet());
 
 				try {
 					exporter.export(lastFile, getSystem(), visibleData.fClassToNodeMap.keySet(),
-							visibleData.fDataTypeToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(), sourceAssociations);
+							visibleData.fDataTypeToNodeMap.keySet(), visibleData.fEnumToNodeMap.keySet(),
+							sourceAssociations);
 				} catch (IOException e1) {
-					if (MainWindow.getJavaFxCall()){
-						// Schritt 1: Owner-Fenster holen aus dem Swing-Content
+					if (MainWindow.getJavaFxCall()) {
 						owner = SwingUtilities.getWindowAncestor(ClassDiagram.this);
-						JOptionPane.showMessageDialog(owner, e1.getMessage(), "Error saving the USE model",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(owner, e1.getMessage(),
+								"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
 					} else {
-						JOptionPane.showMessageDialog(ClassDiagram.this, e1.getMessage(), "Error saving the USE model",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(ClassDiagram.this, e1.getMessage(),
+								"Error saving the USE model", JOptionPane.ERROR_MESSAGE);
 					}
 					return;
 				}
-
 				JOptionPane.showMessageDialog(owner, "Export succesfull", "Export successfull",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, cbExport);
+	}
 
-		popupMenu.insert(new JSeparator(), pos++);
-		popupMenu.insert(cbExport, pos++);
+	private void buildClassSelectionSection(PopupMenuBuilder builder,
+			Set<MClass> selectedClasses,
+			Set<MAssociation> selectedAssociations,
+			Set<MGeneralization> selectedGeneralization) {
 
-		return info;
+		boolean hasHidden = hiddenData.hasNodes() || hiddenData.hasEdges();
+		boolean hasSelection = !selectedAssociations.isEmpty() || !selectedClasses.isEmpty()
+				|| !selectedGeneralization.isEmpty();
+
+		if (hasHidden) {
+			final JMenuItem showAllClasses = new JMenuItem("Show hidden elements");
+			showAllClasses.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ev) {
+					showAll();
+					invalidateContent(true);
+				}
+			});
+			builder.add(PopupMenuBuilder.SEC_SELECTION, showAllClasses);
+			if (hasSelection) {
+				builder.addSeparator(PopupMenuBuilder.SEC_SELECTION);
+			}
+		}
+
+		if (hasSelection) {
+			String labelHide, labelCrop;
+			int size = selectedAssociations.size() + selectedClasses.size() + selectedGeneralization.size();
+			if (size > 1) {
+				labelHide = "Hide " + size + " elements";
+				labelCrop = "Crop " + size + " elements";
+			} else if (selectedAssociations.size() == 1) {
+				labelHide = "Hide " + exactlyOne(selectedAssociations).name();
+				labelCrop = "Crop " + exactlyOne(selectedAssociations).name();
+			} else if (selectedClasses.size() == 1) {
+				labelHide = "Hide " + exactlyOne(selectedClasses).name();
+				labelCrop = "Crop " + exactlyOne(selectedClasses).name();
+			} else {
+				labelHide = "Hide " + exactlyOne(selectedGeneralization).name().substring(4);
+				labelCrop = "Crop " + exactlyOne(selectedGeneralization).name().substring(4);
+			}
+
+			builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new AbstractAction(labelHide) {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					selectedAssociations.forEach(assoc -> hideAssociation(assoc));
+					selectedClasses.forEach(cls -> hideClass(cls));
+					selectedGeneralization.forEach(gen -> hideGeneralization(gen));
+					repaint();
+				}
+			}));
+
+			Set<MClass> classToHide = new HashSet<>(selectedClasses);
+			selectedAssociations.forEach(assoc -> {
+				classToHide.addAll(assoc.associatedClasses());
+				if (assoc instanceof MAssociationClass) {
+					classToHide.add((MAssociationClass) assoc);
+				}
+			});
+			selectedGeneralization.forEach(gen -> classToHide.add((MClass) gen.child()));
+			selectedGeneralization.forEach(gen -> classToHide.add((MClass) gen.parent()));
+
+			final String labelC = labelCrop;
+			builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new AbstractAction(labelCrop) {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					getActionHideNodes(labelC, getNoneSelectedElementsByElements(classToHide)).actionPerformed(e);
+				}
+			}));
+
+			boolean showMenuSubSuperClasses = false;
+			JMenu menuSubSuperClasses = new JMenu("Sub/Superclasses");
+
+			if (!selectedClasses.isEmpty()) {
+				Set<MClass> filtered = selectedClasses.stream().filter(cls -> !cls.parents().isEmpty())
+						.collect(Collectors.toSet());
+				if (!filtered.isEmpty()) {
+					String labelGen = filtered.size() == 1
+							? filtered.iterator().next().name() : filtered.size() + " elements";
+					Set<MClass> parents = new HashSet<>();
+					filtered.forEach(cls -> parents.addAll(cls.allParents()));
+					boolean isSuperHidden = parents.stream()
+							.anyMatch(cls -> hiddenData.containsNodeForClassifer(cls));
+					boolean isSuperVisible = parents.stream()
+							.anyMatch(cls -> visibleData.containsNodeForClassifer(cls));
+					if (isSuperHidden) {
+						menuSubSuperClasses.add(new AbstractAction("Show superclasses of " + labelGen) {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								parents.forEach(cls -> showClass(cls));
+								repaint();
+							}
+						});
+					}
+					if (isSuperVisible) {
+						menuSubSuperClasses.add(new AbstractAction("Hide superclasses of " + labelGen) {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								getActionHideNodes("Hide superclasses of " + labelGen, parents).actionPerformed(e);
+							}
+						});
+					}
+					menuSubSuperClasses.add(new AbstractAction("Crop superclasses of " + labelGen) {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							parents.forEach(cls -> showClass(cls));
+							getActionHideNodes("Crop superclasses of " + labelGen,
+									getNoneSelectedElementsByElements(parents)).actionPerformed(e);
+						}
+					});
+					showMenuSubSuperClasses = true;
+				}
+			}
+
+			if (!selectedClasses.isEmpty()) {
+				Set<MClass> filtered = selectedClasses.stream().filter(cls -> !cls.children().isEmpty())
+						.collect(Collectors.toSet());
+				if (!filtered.isEmpty()) {
+					String labelGen = filtered.size() == 1
+							? filtered.iterator().next().name() : filtered.size() + " elements";
+					Set<MClass> children = new HashSet<>();
+					filtered.forEach(cls -> children.addAll(cls.allChildren()));
+					boolean isSubHidden = children.stream()
+							.anyMatch(cls -> hiddenData.containsNodeForClassifer(cls));
+					boolean isSubVisible = children.stream()
+							.anyMatch(cls -> visibleData.containsNodeForClassifer(cls));
+					if (isSubHidden) {
+						menuSubSuperClasses.add(new AbstractAction("Show subclasses of " + labelGen) {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								children.forEach(cls -> showClass(cls));
+								repaint();
+							}
+						});
+					}
+					if (isSubVisible) {
+						menuSubSuperClasses.add(new AbstractAction("Hide subclasses of " + labelGen) {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								getActionHideNodes("Hide subclasses of " + labelGen, children).actionPerformed(e);
+							}
+						});
+					}
+					menuSubSuperClasses.add(new AbstractAction("Crop subclasses of " + labelGen) {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							children.forEach(cls -> showClass(cls));
+							getActionHideNodes("Crop subclasses of " + labelGen,
+									getNoneSelectedElementsByElements(children)).actionPerformed(e);
+						}
+					});
+					showMenuSubSuperClasses = true;
+				}
+			}
+
+			if (showMenuSubSuperClasses) {
+				builder.add(PopupMenuBuilder.SEC_SELECTION, menuSubSuperClasses);
+			}
+		}
+	}
+
+	private void buildClassVisibilitySection(PopupMenuBuilder builder, Set<MClass> selectedClasses) {
+		boolean hasAssocGroup = (fGraph.size() > 0
+				&& (!visibleData.fBinaryAssocToEdgeMap.isEmpty() || !visibleData.fAssocClassToEdgeMap.isEmpty()
+						|| !visibleData.fNaryAssocToDiamondNodeMap.isEmpty()
+						|| !visibleData.fNaryAssocToHalfEdgeMap.isEmpty()))
+				|| (!hiddenData.fBinaryAssocToEdgeMap.isEmpty() || !hiddenData.fAssocClassToEdgeMap.isEmpty()
+						|| !hiddenData.fNaryAssocToDiamondNodeMap.isEmpty()
+						|| !hiddenData.fNaryAssocToHalfEdgeMap.isEmpty());
+		boolean hasGenGroup = !visibleData.fGenToGeneralizationEdge.isEmpty()
+				|| !hiddenData.fGenToGeneralizationEdge.isEmpty();
+
+		// Classes subgroup
+		final JMenu menuShowHideCrop = new JMenu("Show/hide/crop classes");
+		menuShowHideCrop.add(fSelection.getSelectedClassPathView("By path length...", selectedClasses));
+		menuShowHideCrop.add(fSelection.getSelectionClassView("With view..."));
+
+		if (hiddenData.hasNodes()) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuShowClass());
+		}
+		if (fGraph.size() > 0) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuHideClass());
+		}
+		builder.add(PopupMenuBuilder.SEC_VISIBILITY, menuShowHideCrop);
+
+		if (hasAssocGroup || hasGenGroup) {
+			builder.addSeparator(PopupMenuBuilder.SEC_VISIBILITY);
+		}
+
+		// Associations subgroup
+		if (fGraph.size() > 0 && (!visibleData.fBinaryAssocToEdgeMap.isEmpty()
+				|| !visibleData.fAssocClassToEdgeMap.isEmpty() || !visibleData.fNaryAssocToDiamondNodeMap.isEmpty()
+				|| !visibleData.fNaryAssocToHalfEdgeMap.isEmpty())) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuHideAssoc());
+		}
+		if (!hiddenData.fBinaryAssocToEdgeMap.isEmpty() || !hiddenData.fAssocClassToEdgeMap.isEmpty()
+				|| !hiddenData.fNaryAssocToDiamondNodeMap.isEmpty()
+				|| !hiddenData.fNaryAssocToHalfEdgeMap.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuShowAssociation());
+		}
+
+		if (hasAssocGroup && hasGenGroup) {
+			builder.addSeparator(PopupMenuBuilder.SEC_VISIBILITY);
+		}
+
+		// Generalizations subgroup
+		if (!visibleData.fGenToGeneralizationEdge.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY,
+					fSelection.getSubMenuHideGeneralizations(new HashSet<>(visibleData.fGenToGeneralizationEdge.keySet())));
+		}
+		if (!hiddenData.fGenToGeneralizationEdge.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY,
+					fSelection.getSubMenuShowGeneralizations(new HashSet<>(hiddenData.fGenToGeneralizationEdge.keySet())));
+		}
+	}
+
+	private void buildPsmSection(PopupMenuBuilder builder, Set<MClassifier> selectedClassifier) {
+		final JMenu showProtocolStateMachine = new JMenu("Show protocol state machine...");
+		showProtocolStateMachine.setEnabled(false);
+
+		if (selectedClassifier.size() == 1) {
+			MClassifier clf = selectedClassifier.iterator().next();
+			if (clf instanceof MClass) {
+				MClass selectedClass = (MClass) clf;
+				List<MProtocolStateMachine> sortedPSMs = new LinkedList<>(
+						selectedClass.getOwnedProtocolStateMachines());
+				Collections.sort(sortedPSMs, new MNamedElementComparator());
+				for (MProtocolStateMachine psm : sortedPSMs) {
+					showProtocolStateMachine.setEnabled(true);
+					final JMenuItem showGivenPSM = new JMenuItem(psm.name());
+					showGivenPSM.addActionListener(new ActionListener() {
+						protected MStateMachine sm;
+						@Override
+						public void actionPerformed(ActionEvent ev) {
+							MainWindow.instance().showStateMachineView(sm);
+						}
+						public ActionListener setStateMachine(MStateMachine sm) {
+							this.sm = sm;
+							return this;
+						}
+					}.setStateMachine(psm));
+					showProtocolStateMachine.add(showGivenPSM);
+				}
+			}
+		}
+		builder.add(PopupMenuBuilder.SEC_ACTIONS, showProtocolStateMachine);
 	}
 
 	/**

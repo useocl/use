@@ -675,9 +675,6 @@ public abstract class DiagramView extends JPanel
 
         public JPopupMenu popupMenu = null;
 
-        public int generalShowHideStart = 0;
-        public int generalShowHideLength = 0;
-
         public Point position = new Point();
 
         public PopupMenuInfo(JPopupMenu menu) {
@@ -724,48 +721,17 @@ public abstract class DiagramView extends JPanel
         popupMenu.add(new JSeparator());
 
 
-        final JCheckBoxMenuItem cbAttrValues = new JCheckBoxMenuItem("Show attributes"); // values");
-        cbAttrValues.setState(fOpt.isShowAttributes());
-        cbAttrValues.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent ev) {
-                fOpt.setShowAttributes(ev.getStateChange() == ItemEvent.SELECTED);
-                invalidateContent(true);
-            }
-        });
-
-        final JCheckBoxMenuItem cbAssocNames = new JCheckBoxMenuItem("Show association names");
-        cbAssocNames.setState(fOpt.isShowAssocNames());
-        cbAssocNames.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent ev) {
-                fOpt.setShowAssocNames(ev.getStateChange() == ItemEvent.SELECTED);
-                invalidateContent(true);
-            }
-        });
-
-        final JCheckBoxMenuItem cbRolenames = new JCheckBoxMenuItem("Show role names");
-        cbRolenames.setState(fOpt.isShowRolenames());
-        cbRolenames.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent ev) {
-                fOpt.setShowRolenames(ev.getStateChange() == ItemEvent.SELECTED);
-                invalidateContent(true);
-            }
-        });
+        final JCheckBoxMenuItem cbAttrValues = buildShowAttributesItem();
+        final JCheckBoxMenuItem cbAssocNames = buildShowAssocNamesItem();
+        final JCheckBoxMenuItem cbRolenames  = buildShowRoleNamesItem();
 
         final JCheckBoxMenuItem cbAntiAliasing = getMenuItemAntiAliasing();
         final JCheckBoxMenuItem cbShowGrid = getMenuItemShowGrid();
         final JCheckBoxMenuItem cbGrayscale = getMenuItemGrayscale();
 
-        // This is the start of the general section to show or hide elements
-        info.generalShowHideStart = popupMenu.getComponentCount();
         popupMenu.add(cbAttrValues);
-
         popupMenu.add(cbAssocNames);
         popupMenu.add(cbRolenames);
-
-        info.generalShowHideLength = popupMenu.getComponentCount() - info.generalShowHideStart;
 
         popupMenu.addSeparator();
         popupMenu.add(getMenuAlign());
@@ -1710,74 +1676,7 @@ public abstract class DiagramView extends JPanel
             }
         };
 
-        // Different Layouts
-        JMenu layouts = new JMenu("Layouts");
-        final JMenuItem hierarchicalLayout = new JMenuItem("Hierarchical layout");
-        final Window owner =  MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
-
-        hierarchicalLayout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.Hierarchical);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
-        final JMenuItem hierarchicalUpsideDownLayout = new JMenuItem("Hierarchical Upside Down layout");
-        hierarchicalUpsideDownLayout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.HierarchicalUpsideDown);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
-        final JMenuItem horizontalLayout = new JMenuItem("Horizontal layout");
-        horizontalLayout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.Horizontal);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
-        final JMenuItem horizontalRightToLeftLayout = new JMenuItem("Horizontal Right to Left layout");
-        horizontalRightToLeftLayout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.HorizontalRightToLeft);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
-        final JMenuItem landscapeSwimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) Landscape layout");
-        landscapeSwimlaneLayout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.LandscapeSwimlane);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
-
-        final JMenuItem portraitSwimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) Portrait layout");
-        portraitSwimlaneLayout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LayoutsOptionDialog layoutsOptionDialog = new LayoutsOptionDialog(owner, LayoutType.PortraitSwimlane);
-                layoutsOptionDialog.setModal(true);
-                layoutsOptionDialog.setVisible(true);
-            }
-        });
-
-        layouts.add(hierarchicalLayout);
-        layouts.add(hierarchicalUpsideDownLayout);
-        layouts.addSeparator();
-        layouts.add(horizontalLayout);
-        layouts.add(horizontalRightToLeftLayout);
-        layouts.addSeparator();
-        layouts.add(landscapeSwimlaneLayout);
-        layouts.add(portraitSwimlaneLayout);
+        JMenu layouts = buildLayoutsMenu();
 
         popupMenu.addSeparator();
         popupMenu.add(cbAutoLayout);
@@ -1791,6 +1690,237 @@ public abstract class DiagramView extends JPanel
             popupMenu.addSeparator();
             popupMenu.add(fActionSelectAllNodes);
             popupMenu.add(fActionSelectAllEdges);
+        }
+    }
+
+    private JMenu buildLayoutsMenu() {
+        final Window owner = MainWindow.getJavaFxCall() ? SwingUtilities.getWindowAncestor(this) : MainWindow.instance();
+        JMenu layouts = new JMenu("Layouts");
+
+        final JMenuItem hierarchicalLayout = new JMenuItem("Hierarchical layout");
+        hierarchicalLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LayoutsOptionDialog(owner, LayoutType.Hierarchical).setVisible(true);
+            }
+        });
+        final JMenuItem hierarchicalUpsideDownLayout = new JMenuItem("Hierarchical Upside Down layout");
+        hierarchicalUpsideDownLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LayoutsOptionDialog(owner, LayoutType.HierarchicalUpsideDown).setVisible(true);
+            }
+        });
+        final JMenuItem horizontalLayout = new JMenuItem("Horizontal layout");
+        horizontalLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LayoutsOptionDialog(owner, LayoutType.Horizontal).setVisible(true);
+            }
+        });
+        final JMenuItem horizontalRightToLeftLayout = new JMenuItem("Horizontal Right to Left layout");
+        horizontalRightToLeftLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LayoutsOptionDialog(owner, LayoutType.HorizontalRightToLeft).setVisible(true);
+            }
+        });
+        final JMenuItem landscapeSwimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) Landscape layout");
+        landscapeSwimlaneLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LayoutsOptionDialog(owner, LayoutType.LandscapeSwimlane).setVisible(true);
+            }
+        });
+        final JMenuItem portraitSwimlaneLayout = new JMenuItem("Swimlane(Based on Filmstrip) Portrait layout");
+        portraitSwimlaneLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LayoutsOptionDialog(owner, LayoutType.PortraitSwimlane).setVisible(true);
+            }
+        });
+
+        layouts.add(hierarchicalLayout);
+        layouts.add(hierarchicalUpsideDownLayout);
+        layouts.addSeparator();
+        layouts.add(horizontalLayout);
+        layouts.add(horizontalRightToLeftLayout);
+        layouts.addSeparator();
+        layouts.add(landscapeSwimlaneLayout);
+        layouts.add(portraitSwimlaneLayout);
+        return layouts;
+    }
+
+    /**
+     * Builds the "Show attributes" toggle checkbox.
+     * Subclasses can call this in {@link #buildMenu} to include it in the options section.
+     */
+    protected JCheckBoxMenuItem buildShowAttributesItem() {
+        final JCheckBoxMenuItem cb = new JCheckBoxMenuItem("Show attributes");
+        cb.setState(fOpt.isShowAttributes());
+        cb.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent ev) {
+                fOpt.setShowAttributes(ev.getStateChange() == ItemEvent.SELECTED);
+                invalidateContent(true);
+            }
+        });
+        return cb;
+    }
+
+    /**
+     * Builds the "Show association names" toggle checkbox.
+     */
+    protected JCheckBoxMenuItem buildShowAssocNamesItem() {
+        final JCheckBoxMenuItem cb = new JCheckBoxMenuItem("Show association names");
+        cb.setState(fOpt.isShowAssocNames());
+        cb.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent ev) {
+                fOpt.setShowAssocNames(ev.getStateChange() == ItemEvent.SELECTED);
+                invalidateContent(true);
+            }
+        });
+        return cb;
+    }
+
+    /**
+     * Builds the "Show role names" toggle checkbox.
+     */
+    protected JCheckBoxMenuItem buildShowRoleNamesItem() {
+        final JCheckBoxMenuItem cb = new JCheckBoxMenuItem("Show role names");
+        cb.setState(fOpt.isShowRolenames());
+        cb.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent ev) {
+                fOpt.setShowRolenames(ev.getStateChange() == ItemEvent.SELECTED);
+                invalidateContent(true);
+            }
+        });
+        return cb;
+    }
+
+    /**
+     * Adds layout-related items to the given {@link PopupMenuBuilder} under
+     * {@link PopupMenuBuilder#SEC_LAYOUT}.
+     *
+     * <p>This is the builder-pattern equivalent of {@link #addLayoutMenuItems(JPopupMenu)}.
+     * Use this method when overriding {@link #buildMenu}.</p>
+     */
+    protected void addLayoutItems(PopupMenuBuilder builder, PopupMenuInfo info) {
+        final JCheckBoxMenuItem cbAutoLayout = new JCheckBoxMenuItem("Auto-Layout");
+        cbAutoLayout.setState(fOpt.isDoAutoLayout());
+        cbAutoLayout.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent ev) {
+                fOpt.setDoAutoLayout(ev.getStateChange() == ItemEvent.SELECTED);
+                startLayoutThread();
+            }
+        });
+
+        final Action resetLayout = new AbstractAction("Reset layout") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetLayout();
+            }
+        };
+
+        fActionSaveLayout.setEnabled(!fGraph.isEmpty());
+
+        builder.add(PopupMenuBuilder.SEC_LAYOUT, cbAutoLayout);
+        builder.add(PopupMenuBuilder.SEC_LAYOUT, buildLayoutsMenu());
+        builder.add(PopupMenuBuilder.SEC_LAYOUT, new JMenuItem(resetLayout));
+        builder.add(PopupMenuBuilder.SEC_LAYOUT, new JMenuItem(fActionLoadLayout));
+        builder.add(PopupMenuBuilder.SEC_LAYOUT, new JMenuItem(fActionSaveLayout));
+
+        if (fGraph.size() > 0) {
+            builder.addSeparator(PopupMenuBuilder.SEC_LAYOUT);
+            builder.add(PopupMenuBuilder.SEC_LAYOUT, new JMenuItem(fActionSelectAllNodes));
+            builder.add(PopupMenuBuilder.SEC_LAYOUT, new JMenuItem(fActionSelectAllEdges));
+        }
+    }
+
+    /**
+     * Populates {@code builder} with the base diagram popup menu items shared across
+     * all diagram types: comment node, edge-property controls, rendering toggles,
+     * and layout controls.
+     *
+     * <p>Subclasses override this method to build their diagram-specific menu.
+     * The typical pattern is:</p>
+     * <pre>
+     * protected void buildMenu(PopupMenuBuilder builder, PopupMenuInfo info) {
+     *     // add diagram-specific items first
+     *     builder.add(PopupMenuBuilder.SEC_SELECTION, ...);
+     *     builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowAttributesItem());
+     *     // then call super for shared rendering + layout items
+     *     super.buildMenu(builder, info);
+     * }
+     * </pre>
+     *
+     * <p>Note: the base implementation does <em>not</em> add the options checkboxes
+     * (Show attributes, Show association names, Show role names). Each subclass is
+     * responsible for adding those — in the exact order it needs — using the
+     * {@link #buildShowAttributesItem()}, {@link #buildShowAssocNamesItem()}, and
+     * {@link #buildShowRoleNamesItem()} helpers.</p>
+     */
+    protected void buildMenu(PopupMenuBuilder builder, PopupMenuInfo info) {
+        // SEC_SELECTION: comment node
+        builder.add(PopupMenuBuilder.SEC_SELECTION, getMenuItemCommentNode(info));
+
+        // SEC_SELECTION: hide-selected-properties (only when all selected nodes are EdgeProperties)
+        boolean selectionCanBeHidden = !fNodeSelection.isEmpty();
+        for (PlaceableNode node : fNodeSelection) {
+            if (!(node instanceof EdgeProperty)) {
+                selectionCanBeHidden = false;
+                break;
+            }
+        }
+        if (selectionCanBeHidden) {
+            builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new AbstractAction("Hide selected properties") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for (PlaceableNode n : fNodeSelection) {
+                        ((EdgeProperty) n).setVisible(false);
+                    }
+                    DiagramView.this.repaint();
+                }
+            }));
+        }
+
+        // SEC_SELECTION: per-edge property visibility toggle (only when edges are selected)
+        if (!fEdgeSelection.isEmpty()) {
+            builder.add(PopupMenuBuilder.SEC_SELECTION, getMenuItemEdgePropertiesVivibility());
+        }
+
+        // SEC_RENDERING: align + display toggles
+        builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuAlign());
+        builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemAntiAliasing());
+        builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemShowGrid());
+        builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemGrayscale());
+
+        // SEC_LAYOUT: auto-layout, layout algorithms, reset/load/save, select all
+        addLayoutItems(builder, info);
+
+        // SEC_LAYOUT: edit role-name text (only when a single Rolename node is selected)
+        if (fNodeSelection.size() == 1) {
+            final PlaceableNode selected = fNodeSelection.iterator().next();
+            if (selected instanceof Rolename) {
+                builder.add(PopupMenuBuilder.SEC_LAYOUT, new JMenuItem(new AbstractAction("Edit text...") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JTextArea msg = new JTextArea(selected.name());
+                        msg.setColumns(68);
+                        msg.setRows(4);
+                        msg.setLineWrap(true);
+                        msg.setWrapStyleWord(true);
+                        JScrollPane scrollPane = new JScrollPane(msg);
+                        JOptionPane.showMessageDialog(DiagramView.this, scrollPane,
+                                "Edit rolename", JOptionPane.PLAIN_MESSAGE);
+                        ((Rolename) selected).setText(msg.getText());
+                        repaint();
+                    }
+                }));
+            }
         }
     }
 }

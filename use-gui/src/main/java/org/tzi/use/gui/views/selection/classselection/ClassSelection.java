@@ -28,6 +28,7 @@ import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagram;
 import org.tzi.use.gui.views.diagrams.objectdiagram.NewObjectDiagramView;
 import org.tzi.use.gui.views.diagrams.objectdiagram.ObjectNode;
 import org.tzi.use.gui.views.diagrams.util.MenuScroller;
+import org.tzi.use.gui.views.selection.ISelectionMenuProvider;
 import org.tzi.use.gui.views.selection.SelectionComparator;
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MClass;
@@ -43,15 +44,9 @@ import org.tzi.use.util.collections.CollectionUtil;
  * @author Jie Xu
  */
 
-public class ClassSelection {
+public class ClassSelection implements ISelectionMenuProvider {
 
 	private final ClassDiagram diagram;
-
-	//Conrols for ScrollMenu
-	private final int numOfElems = 20;
-	private final int interval = 125;
-	private final int topFixedCount = 0;
-	private final int bottomFixedCount = 0;
 
 	
 	/**
@@ -256,7 +251,7 @@ public class ClassSelection {
 			subMenuSelectionAssoc.add(hideAssoc);
 
 		});
-		MenuScroller.setScrollerFor(subMenuSelectionAssoc, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuSelectionAssoc, SCROLLER_VISIBLE_ITEMS, SCROLLER_INTERVAL_MS, SCROLLER_TOP_FIXED, SCROLLER_BOTTOM_FIXED);
 		return subMenuSelectionAssoc;
 	}
 
@@ -268,7 +263,7 @@ public class ClassSelection {
 	 */
 	public JMenu getSubMenuHideClass() {
 		JMenu subMenuSelectionClassHide = new JMenu("Hide classes");
-		MenuScroller.setScrollerFor(subMenuSelectionClassHide, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuSelectionClassHide, SCROLLER_VISIBLE_ITEMS, SCROLLER_INTERVAL_MS, SCROLLER_TOP_FIXED, SCROLLER_BOTTOM_FIXED);
 		SelectionComparator sort = new SelectionComparator();
 		TreeSet<ClassNode> sortedNodes = new TreeSet<ClassNode>(sort);
 		Iterator<?> it = diagram.getGraph().iterator();
@@ -316,7 +311,7 @@ public class ClassSelection {
 	 */
 	public JMenu getSubMenuShowClass() {
 		JMenu subMenuSelectionClassShow = new JMenu("Show classes");
-		MenuScroller.setScrollerFor(subMenuSelectionClassShow, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuSelectionClassShow, SCROLLER_VISIBLE_ITEMS, SCROLLER_INTERVAL_MS, SCROLLER_TOP_FIXED, SCROLLER_BOTTOM_FIXED);
 		SelectionComparator sort = new SelectionComparator();
 
 		if (diagram.getHiddenNodes().size() > 1) {
@@ -364,7 +359,7 @@ public class ClassSelection {
 	 */
 	public JMenu getSubMenuShowAssociation() {
 		JMenu subMenuSelectionAssoc = new JMenu("Show associations");
-		MenuScroller.setScrollerFor(subMenuSelectionAssoc, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuSelectionAssoc, SCROLLER_VISIBLE_ITEMS, SCROLLER_INTERVAL_MS, SCROLLER_TOP_FIXED, SCROLLER_BOTTOM_FIXED);
 		Comparator<MAssociation> sort = new Comparator<MAssociation>() {
 			@Override
 			public int compare(MAssociation o1, MAssociation o2) {
@@ -413,7 +408,7 @@ public class ClassSelection {
 	 */
 	public JMenu getSubMenuHideGeneralizations(Set<MGeneralization> gens) {
 		JMenu subMenuHideGeneralization = new JMenu("Hide generalizations");
-		MenuScroller.setScrollerFor(subMenuHideGeneralization, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuHideGeneralization, SCROLLER_VISIBLE_ITEMS, SCROLLER_INTERVAL_MS, SCROLLER_TOP_FIXED, SCROLLER_BOTTOM_FIXED);
 		JMenuItem hideAll = new JMenuItem("Hide all generalizations");
 		hideAll.addActionListener(new ActionListener() {
 
@@ -456,7 +451,7 @@ public class ClassSelection {
 	 */
 	public JMenu getSubMenuShowGeneralizations(HashSet<MGeneralization> gens) {
 		JMenu subMenuShowGeneralization = new JMenu("Show generalizations");
-		MenuScroller.setScrollerFor(subMenuShowGeneralization, numOfElems, interval, topFixedCount, bottomFixedCount);
+		MenuScroller.setScrollerFor(subMenuShowGeneralization, SCROLLER_VISIBLE_ITEMS, SCROLLER_INTERVAL_MS, SCROLLER_TOP_FIXED, SCROLLER_BOTTOM_FIXED);
 				
 		JMenuItem showAll = new JMenuItem("Show all generalizations");
 		showAll.addActionListener(new ActionListener() {

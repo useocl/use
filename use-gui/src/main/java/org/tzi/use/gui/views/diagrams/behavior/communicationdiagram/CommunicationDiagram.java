@@ -46,6 +46,7 @@ import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.PopupMenuBuilder;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
 import org.tzi.use.gui.views.diagrams.ObjectNodeActivity;
 import org.tzi.use.gui.views.diagrams.behavior.sequencediagram.SDScrollPane;
@@ -272,16 +273,16 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 
 	@Override
 	protected PopupMenuInfo unionOfPopUpMenu() {
-		// context menu on right mouse click
-		JPopupMenu popupMenu = new JPopupMenu();
-		PopupMenuInfo popupInfo = new PopupMenuInfo(popupMenu);
+		PopupMenuInfo info = new PopupMenuInfo(null);
+		PopupMenuBuilder builder = new PopupMenuBuilder();
+		buildMenu(builder, info);
+		info.popupMenu = builder.build();
+		return info;
+	}
 
-		// position for the popupMenu items
-		int pos = 0;
-
+	@Override
+	protected void buildMenu(PopupMenuBuilder builder, PopupMenuInfo info) {
 		final Set<PlaceableNode> selectedNodesSet = new HashSet<>();
-
-		// filter selected model elements
 		for (PlaceableNode node : fNodeSelection) {
 			if (node instanceof ObjectNodeActivity) {
 				selectedNodesSet.add(node);
@@ -290,7 +291,6 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 			}
 		}
 
-		// Visible text for the menu item
 		String selectedObjectsText = null;
 		if (selectedNodesSet.size() == 1) {
 			selectedObjectsText = Iterators.getOnlyElement(selectedNodesSet.iterator()).getTextForMenu();
@@ -298,6 +298,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 			selectedObjectsText = selectedNodesSet.size() + " Nodes";
 		}
 
+		// SEC_SELECTION: neighborhood + hide/crop (conditional on selection)
 		if (selectedNodesSet.size() > 0) {
 			final JMenuItem expandInfo = new JMenuItem("Show neighborhood of selection");
 			expandInfo.addActionListener(new ActionListener() {
@@ -307,48 +308,43 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 					invalidateContent(true);
 				}
 			});
-			popupMenu.insert(expandInfo, pos++);
-			popupMenu.insert(new JSeparator(), pos++);
+			builder.add(PopupMenuBuilder.SEC_SELECTION, expandInfo);
+			builder.addSeparator(PopupMenuBuilder.SEC_SELECTION);
+
+			builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(
+					new ActionHideCommunicationDiagram("Hide " + selectedObjectsText, selectedNodesSet, fNodeSelection, fGraph, this)));
+			builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(
+					new ActionHideCommunicationDiagram("Crop " + selectedObjectsText, getNoneSelectedNodes(selectedNodesSet), fNodeSelection, fGraph, this)));
 		}
 
-		if (!selectedNodesSet.isEmpty()) {
-			popupMenu.insert(new ActionHideCommunicationDiagram("Hide " + selectedObjectsText, selectedNodesSet, fNodeSelection, fGraph, this), pos++);
-			popupMenu.insert(new ActionHideCommunicationDiagram("Crop " + selectedObjectsText, getNoneSelectedNodes(selectedNodesSet), fNodeSelection,
-					fGraph, this), pos++);
-			popupMenu.insert(new JSeparator(), pos++);
-		}
-
+		// SEC_VISIBILITY: show/hide/crop objects submenus + related objects
 		final JMenu showHideCrop = new JMenu("Show/hide/crop objects");
 		showHideCrop.add(fSelection.getSelectionWithOCLViewAction());
 		showHideCrop.add(fSelection.getSelectionObjectView());
-		popupMenu.insert(showHideCrop, pos++);
+		builder.add(PopupMenuBuilder.SEC_VISIBILITY, showHideCrop);
 
 		if (fGraph.size() > 0) {
-			popupMenu.insert(fSelection.getSubMenuHideObject(), pos++);
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuHideObject());
 		}
-
 		if (CollectionUtil.exists(fGraph.iterator(), new Predicate<PlaceableNode>() {
 			@Override
 			public boolean apply(PlaceableNode input) {
 				return input.isHidden();
 			}
 		})) {
-			popupMenu.insert(fSelection.getSubMenuShowObject(), pos++);
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuShowObject());
 		}
 
 		final JMenuItem showMissingInfo = new JMenuItem("Show related objects...");
 		showMissingInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				// open PropertiesWindow
 				createShowRelatedObjectsWindow();
 				invalidateContent(true);
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_VISIBILITY, showMissingInfo);
 
-		popupMenu.insert(showMissingInfo, pos++);
-
-		popupMenu.insert(new JSeparator(), pos++);
-
+		// SEC_ACTIONS: always-visible pinning (conditional)
 		if (!selectedNodesSet.isEmpty()) {
 			String displayedText = selectedObjectsText;
 			if (selectedNodesSet.size() == 1) {
@@ -359,7 +355,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 					displayedText = "object";
 				}
 			}
-			final JMenuItem setAVEle = new JMenuItem("Keep "+ displayedText +" always visible");
+			final JMenuItem setAVEle = new JMenuItem("Keep " + displayedText + " always visible");
 			setAVEle.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ev) {
 					Set<MLink> links = new HashSet<>();
@@ -375,8 +371,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 					invalidateContent(true);
 				}
 			});
-			popupMenu.insert(setAVEle, pos++);
-			popupMenu.insert(new JSeparator(), pos++);
+			builder.add(PopupMenuBuilder.SEC_ACTIONS, setAVEle);
 		} else {
 			if (getSharedVisibleManager().getData().existAlwaysVisibleElements()) {
 				final JMenuItem resetAVEle = new JMenuItem("Reset selection of always visible");
@@ -387,12 +382,11 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						invalidateContent(true);
 					}
 				});
-				popupMenu.insert(resetAVEle, pos++);
-				popupMenu.insert(new JSeparator(), pos++);
+				builder.add(PopupMenuBuilder.SEC_ACTIONS, resetAVEle);
 			}
 		}
 
-		// new menu item "Show all life states"
+		// SEC_OPTIONS: show all life states
 		final JCheckBoxMenuItem objectBoxStatesItem = new JCheckBoxMenuItem("Show all life states");
 		objectBoxStatesItem.setState(((CommunicationDiagramOptions) fOpt).isShowLifeStates());
 		objectBoxStatesItem.addItemListener(new ItemListener() {
@@ -401,10 +395,9 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 				invalidateContent(true);
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, objectBoxStatesItem);
 
-		popupMenu.insert(objectBoxStatesItem, pos++);
-		popupMenu.insert(new JSeparator(), pos++);
-
+		// SEC_EXTRAS: messages, commands, properties, sequence diagram
 		final JCheckBoxMenuItem messagesItem = new JCheckBoxMenuItem("Show communication messages");
 		messagesItem.setState(((CommunicationDiagramOptions) fOpt).isShowCommunicationMessages());
 		messagesItem.addItemListener(new ItemListener() {
@@ -414,8 +407,7 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 				invalidateContent(true);
 			}
 		});
-
-		popupMenu.insert(messagesItem, pos++);
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, messagesItem);
 
 		final JMenuItem navigationItem = new JMenuItem("Messages navigation");
 		navigationItem.addActionListener(new ActionListener() {
@@ -425,27 +417,24 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 				naviDialog.setVisible(true);
 			}
 		});
-
-		popupMenu.insert(navigationItem, pos++);
-		popupMenu.insert(new JSeparator(), pos++);
-
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, navigationItem);
+		builder.addSeparator(PopupMenuBuilder.SEC_EXTRAS);
 
 		final JCheckBoxMenuItem showAllCommandsItem = new JCheckBoxMenuItem("Show all Commands");
 		showAllCommandsItem.setState(sharedVisibleManager.getData().allEventTypesVisible());
 		showAllCommandsItem.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if(showAllCommandsItem.isSelected()){
+				if (showAllCommandsItem.isSelected()) {
 					getSharedVisibleManager().getData().setAllEventTypesVisible(true);
-				}else{
+				} else {
 					getSharedVisibleManager().getData().setAllEventTypesVisible(false);
 				}
 				filterGraphByEvent();
-
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, showAllCommandsItem);
 
-		popupMenu.insert(showAllCommandsItem, pos++); 
 		final JMenuItem showSomeCommandsItem = new JMenuItem("Commands to show...");
 		showSomeCommandsItem.addActionListener(new ActionListener() {
 			@Override
@@ -453,12 +442,10 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 				createCmdChooseWindow();
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, showSomeCommandsItem);
+		builder.addSeparator(PopupMenuBuilder.SEC_EXTRAS);
 
-		popupMenu.insert(showSomeCommandsItem, pos++);
-		popupMenu.insert(new JSeparator(), pos++);
-
-
-		final JCheckBoxMenuItem showAllMessagesItem  = new JCheckBoxMenuItem("Show all messages");
+		final JCheckBoxMenuItem showAllMessagesItem = new JCheckBoxMenuItem("Show all messages");
 		showAllMessagesItem.setState(showAllMessages);
 		showAllMessagesItem.addActionListener(new ActionListener() {
 			@Override
@@ -471,18 +458,15 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 				showAllMessages = true;
 			}
 		});
-		popupMenu.insert(showAllMessagesItem, pos++);
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, showAllMessagesItem);
 
-
-		// Message selection
 		final JMenuItem messageSelection = new JMenuItem("Message selection...");
-		ActionListener messageSelectionListener = new ActionListener() {
+		messageSelection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createMessageSelectionWindow();
 			}
-		};
-		messageSelection.addActionListener(messageSelectionListener);
-		popupMenu.insert(messageSelection, pos++);
+		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, messageSelection);
 
 		final JCheckBoxMenuItem resetEnumItem = new JCheckBoxMenuItem("Relative numbering");
 		resetEnumItem.setState(resetEnum);
@@ -493,63 +477,47 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 				resetEnum(resetEnumItem.getState());
 			}
 		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, resetEnumItem);
+		builder.addSeparator(PopupMenuBuilder.SEC_EXTRAS);
 
-		popupMenu.insert(resetEnumItem, pos++);
-
-		popupMenu.insert(new JSeparator(), pos++);
-
-		// new menu item "Properties..."
 		final JMenuItem cdProperties = new JMenuItem("Properties...");
-		ActionListener propA = new ActionListener() {
+		cdProperties.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// open PropertiesWindow
 				createPropertiesWindow();
-				// after closing update diagram
 				afterPropertiesClosedAction();
-
 				invalidateContent(true);
 			}
-		};
-		cdProperties.addActionListener(propA);
-		popupMenu.add(cdProperties);
+		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, cdProperties);
 
-		// sequence diagram
 		final JMenuItem seqDia = new JMenuItem("Create synchronized sequence diagram");
-		ActionListener listener = new ActionListener() {
+		seqDia.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (org.tzi.use.gui.main.MainWindow.getJavaFxCall()){
-					Platform.runLater(() ->{
-						// to create an instance of a SwingNode, which is used to hold the Swing-Components
+				if (org.tzi.use.gui.main.MainWindow.getJavaFxCall()) {
+					Platform.runLater(() -> {
 						SwingNode swingNode = new SwingNode();
-
-						// Create the ClassExtentView and the enclosing ViewFrame
-						SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system(), fParent.getMainWindow(), sharedVisibleManager);
+						SequenceDiagramView sdv = SequenceDiagramView.createSequenceDiagramView(
+								org.tzi.use.gui.mainFX.MainWindow.getInstance().getSession().system(),
+								fParent.getMainWindow(), sharedVisibleManager);
 						ViewFrame f = new ViewFrame("Sequence diagram", sdv, "SequenceDiagram.gif");
-
-						// Set up the SwingNode content
 						JComponent c = (JComponent) f.getContentPane();
 						c.setLayout(new BorderLayout());
 						c.add(new SDScrollPane(sdv), BorderLayout.CENTER);
-
-						// Add the Swing component to the SwingNode
 						swingNode.setContent(c);
-						swingNode.setCache(false); //This helps ensure the image is re‐drawn more directly, often yielding a crisper result.
-
-						// creating the new Window with the swingNode
-						org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow("Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
+						swingNode.setCache(false);
+						org.tzi.use.gui.mainFX.MainWindow.getInstance().createNewWindow(
+								"Sequence diagram", swingNode, DiagramType.SEQUENCE_DIAGRAM);
 					});
-				} else{
+				} else {
 					fParent.getMainWindow().createSequenceDiagram(sharedVisibleManager);
 					invalidateContent(true);
 				}
 			}
-		};
-		seqDia.addActionListener(listener);
-		popupMenu.add(seqDia);
+		});
+		builder.add(PopupMenuBuilder.SEC_EXTRAS, seqDia);
 
-		popupMenu.addSeparator();
-
-		popupMenu.add(getMenuItemCommentNode(popupInfo));
+		// SEC_RENDERING: comment node + (conditional delete) + align + anti-aliasing + grid
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemCommentNode(info));
 		if (fNodeSelection.size() == 1) {
 			final PlaceableNode selected = fNodeSelection.iterator().next();
 			if (selected instanceof CommentNode) {
@@ -562,17 +530,16 @@ public class CommunicationDiagram extends DiagramViewWithObjectNode implements
 						repaint();
 					}
 				});
-				popupMenu.add(deleteCommandNode);
+				builder.add(PopupMenuBuilder.SEC_RENDERING, deleteCommandNode);
 			}
 		}
-		popupMenu.addSeparator();
-		popupMenu.add(getMenuAlign());
-		popupMenu.add(getMenuItemAntiAliasing());
-		popupMenu.add(getMenuItemShowGrid());
+		builder.addSeparator(PopupMenuBuilder.SEC_RENDERING);
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuAlign());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemAntiAliasing());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemShowGrid());
 
-		addLayoutMenuItems(popupMenu);
-
-		return popupInfo;
+		// SEC_LAYOUT: layout items
+		addLayoutItems(builder, info);
 	}
 
 	/**

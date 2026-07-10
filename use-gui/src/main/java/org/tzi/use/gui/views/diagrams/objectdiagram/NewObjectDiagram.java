@@ -78,6 +78,9 @@ import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.ObjectPropertiesView;
 import org.tzi.use.gui.views.diagrams.DiagramType;
 import org.tzi.use.gui.views.diagrams.DiagramViewWithObjectNode;
+import org.tzi.use.gui.views.diagrams.PopupMenuBuilder;
+import org.tzi.use.gui.views.diagrams.classdiagram.ClassDiagram;
+import org.tzi.use.gui.views.diagrams.elements.EdgeProperty;
 import org.tzi.use.gui.views.diagrams.elements.AssociationName;
 import org.tzi.use.gui.views.diagrams.elements.DiamondNode;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
@@ -1105,21 +1108,21 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 	}
 
-	/**
-	 * Creates and shows popup menu if mouse event is the trigger for popups.
-	 */
+	@Override
 	protected PopupMenuInfo unionOfPopUpMenu() {
-		// create the popup menu
-		PopupMenuInfo popupInfo = super.unionOfPopUpMenu();
-		JPopupMenu popupMenu = popupInfo.popupMenu;
+		PopupMenuInfo info = new PopupMenuInfo(null);
+		PopupMenuBuilder builder = new PopupMenuBuilder();
+		buildMenu(builder, info);
+		info.popupMenu = builder.build();
+		return info;
+	}
 
-		// position for the popupMenu items
-		int pos = 0;
-		final Set<MObject> selectedObjectsOfAssociation = new HashSet<MObject>();
-		final Set<MLink> selectedLinks = new HashSet<MLink>();
-		final List<MObject> selectedObjects = new ArrayList<MObject>();
+	@Override
+	protected void buildMenu(PopupMenuBuilder builder, PopupMenuInfo info) {
+		final Set<MObject> selectedObjectsOfAssociation = new HashSet<>();
+		final Set<MLink> selectedLinks = new HashSet<>();
+		final List<MObject> selectedObjects = new ArrayList<>();
 
-		// Split selected nodes into model elements
 		for (PlaceableNode node : fNodeSelection) {
 			if (node instanceof ObjectNode) {
 				selectedObjects.add(((ObjectNode) node).object());
@@ -1129,7 +1132,6 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				selectedLinks.add(link);
 			}
 		}
-
 		for (EdgeBase selectedEdge : fEdgeSelection) {
 			if (selectedEdge instanceof LinkEdge) {
 				LinkEdge aEdge = (LinkEdge) selectedEdge;
@@ -1139,10 +1141,73 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 			}
 		}
 
-		// Just to be sure to delete an object only once
-		Set<MObject> selectedObjectsSet = new HashSet<MObject>(selectedObjects);
+		Set<MObject> selectedObjectsSet = new HashSet<>(selectedObjects);
 
-		// This text is reused often
+		buildObjectSelectionSection(builder, selectedObjects, selectedObjectsSet,
+				selectedLinks, selectedObjectsOfAssociation);
+		buildObjectVisibilitySection(builder, selectedObjects, selectedObjectsSet);
+		buildObjectPsmSection(builder, selectedObjects);
+
+		// SEC_OPTIONS: comment node, hide-sel-props, edge-vis, attrs, assoc names, role names, show states
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, getMenuItemCommentNode(info));
+
+		boolean selectionCanBeHidden = !fNodeSelection.isEmpty();
+		for (PlaceableNode node : fNodeSelection) {
+			if (!(node instanceof EdgeProperty)) {
+				selectionCanBeHidden = false;
+				break;
+			}
+		}
+		if (selectionCanBeHidden) {
+			builder.add(PopupMenuBuilder.SEC_OPTIONS, new JMenuItem(new AbstractAction("Hide selected properties") {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for (PlaceableNode n : fNodeSelection) {
+						((EdgeProperty) n).setVisible(false);
+					}
+					repaint();
+				}
+			}));
+		}
+		if (!fEdgeSelection.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_OPTIONS, getMenuItemEdgePropertiesVivibility());
+		}
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowAttributesItem());
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowAssocNamesItem());
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowRoleNamesItem());
+		builder.add(PopupMenuBuilder.SEC_OPTIONS, buildShowStatesItem());
+
+		// SEC_RENDERING
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuAlign());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemAntiAliasing());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemShowGrid());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemGrayscale());
+
+		// SEC_LAYOUT
+		addLayoutItems(builder, info);
+	}
+
+	private JCheckBoxMenuItem buildShowStatesItem() {
+		final JCheckBoxMenuItem showStates = new JCheckBoxMenuItem("Show states", getOptions().isShowStates());
+		showStates.addItemListener(ev -> {
+			getOptions().setShowStates(ev.getStateChange() == ItemEvent.SELECTED);
+			invalidateContent(true);
+		});
+		return showStates;
+	}
+
+	private void buildObjectSelectionSection(PopupMenuBuilder builder,
+			List<MObject> selectedObjects, Set<MObject> selectedObjectsSet,
+			Set<MLink> selectedLinks, Set<MObject> selectedObjectsOfAssociation) {
+
+		boolean hasHiddenData = !hiddenData.fObjectToNodeMap.isEmpty()
+				|| !hiddenData.fBinaryLinkToEdgeMap.isEmpty()
+				|| !hiddenData.fNaryLinkToDiamondNodeMap.isEmpty()
+				|| !hiddenData.fHalfLinkToEdgeMap.isEmpty()
+				|| !hiddenData.fLinkObjectToNodeEdge.isEmpty();
+		boolean hasSelection = !selectedLinks.isEmpty() || !selectedObjects.isEmpty()
+				|| !selectedObjectsOfAssociation.isEmpty();
+
 		String selectedObjectsText = null;
 		if (selectedObjects.size() == 1) {
 			selectedObjectsText = "'" + selectedObjects.get(0).name() + "'";
@@ -1151,95 +1216,64 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 		}
 
 		if (!selectedObjects.isEmpty()) {
-			// A single object can be edited
 			if (selectedObjects.size() == 1) {
-				popupMenu.insert(
-						new ActionShowProperties("Edit properties of " + selectedObjectsText, selectedObjects.get(0)),
-						pos++);
+				builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(
+						new ActionShowProperties("Edit properties of " + selectedObjectsText,
+								selectedObjects.get(0))));
 			}
+			builder.add(PopupMenuBuilder.SEC_SELECTION,
+					new JMenuItem(new ActionDelete("Destroy " + selectedObjectsText, selectedObjectsSet)));
+			builder.addSeparator(PopupMenuBuilder.SEC_SELECTION);
 
-			// A single object or multiple objects can be deleted.
-			popupMenu.insert(new ActionDelete("Destroy " + selectedObjectsText, selectedObjectsSet), pos++);
-			popupMenu.insert(new JSeparator(), pos++);
-		}
-
-		// Possible links between objects
-		if (!selectedObjects.isEmpty()) {
 			int m = selectedObjects.size();
 			boolean addedInsertLinkAction = false;
-
 			for (MAssociation assoc : fParent.system().model().associations()) {
-				if (assoc.isReadOnly())
-					continue;
-
+				if (assoc.isReadOnly()) continue;
 				int n = assoc.associationEnds().size();
-				// More objects then ends selected
-				if (m > n)
-					continue;
-
+				if (m > n) continue;
 				int pow = 1;
-				for (int i = 0; i < n; ++i)
-					pow *= m;
-
+				for (int i = 0; i < n; ++i) pow *= m;
 				for (int i = 0; i < pow; ++i) {
 					MObject[] l = new MObject[n];
 					MClass[] c = new MClass[n];
 					int[] digits = radixConversion(i, m, n);
-
-					if (!isCompleteObjectCombination(digits, m))
-						continue;
-
+					if (!isCompleteObjectCombination(digits, m)) continue;
 					for (int j = 0; j < n; ++j) {
 						l[j] = selectedObjects.get(digits[j]);
 						c[j] = l[j].cls();
 					}
-
-					if (!assoc.isAssignableFrom(c))
-						continue;
-
+					if (!assoc.isAssignableFrom(c)) continue;
 					Set<MLink> links = fParent.linksBetweenObjects(assoc, l);
 					if (links.isEmpty() || assoc.hasQualifiedEnds()) {
-						popupMenu.insert(new ActionInsertLink(assoc, l), pos++);
+						builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new ActionInsertLink(assoc, l)));
 						addedInsertLinkAction = true;
 					}
-
 					if (!links.isEmpty()) {
 						for (MLink link : links) {
-							popupMenu.insert(new ActionDeleteLink(link), pos++);
+							builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new ActionDeleteLink(link)));
 							addedInsertLinkAction = true;
 						}
 					}
 				}
-
 			}
-
-			if (addedInsertLinkAction)
-				popupMenu.insert(new JSeparator(), pos++);
+			if (addedInsertLinkAction) builder.addSeparator(PopupMenuBuilder.SEC_SELECTION);
 		}
 
-		if (!hiddenData.fObjectToNodeMap.isEmpty() || !hiddenData.fBinaryLinkToEdgeMap.isEmpty()
-				|| !hiddenData.fNaryLinkToDiamondNodeMap.isEmpty() || !hiddenData.fHalfLinkToEdgeMap.isEmpty()
-				|| !hiddenData.fLinkObjectToNodeEdge.isEmpty()) {
+		if (hasHiddenData) {
 			final JMenuItem showAllObjects = new JMenuItem("Show hidden elements");
-			showAllObjects.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					showAll();
-					showAllLinks();
-					invalidateContent(true);
-				}
+			showAllObjects.addActionListener(ev -> {
+				showAll();
+				showAllLinks();
+				invalidateContent(true);
 			});
-
-			popupMenu.insert(showAllObjects, pos++);
-			popupMenu.insert(new JSeparator(), pos++);
+			builder.add(PopupMenuBuilder.SEC_SELECTION, showAllObjects);
+			if (hasSelection) builder.addSeparator(PopupMenuBuilder.SEC_SELECTION);
 		}
 
-		// Hide / crop / show links
-		if (!selectedLinks.isEmpty() || !selectedObjects.isEmpty() || !selectedObjectsOfAssociation.isEmpty()) {
+		if (hasSelection) {
 			String labelHide = "";
 			String labelCrop = "";
-
 			int size = selectedLinks.size() + selectedObjects.size();
-
 			if (size > 1) {
 				labelHide = "Hide " + size + " elements";
 				labelCrop = "Crop " + size + " elements";
@@ -1251,174 +1285,144 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 				labelCrop = "Crop " + selectedObjects.listIterator().next().name();
 			}
 
-			// New Action for Hide
-			popupMenu.insert(new AbstractAction(labelHide) {
-
+			final String finalLabelHide = labelHide;
+			builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new AbstractAction(finalLabelHide) {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					if (selectedLinks.size() > 0) {
-						selectedLinks.forEach(link -> hideLink(link));
-					}
-					if (selectedObjects.size() > 0) {
-						selectedObjects.forEach(obj -> hideObject(obj));
-					}
+					if (!selectedLinks.isEmpty()) selectedLinks.forEach(link -> hideLink(link));
+					if (!selectedObjects.isEmpty()) selectedObjects.forEach(obj -> hideObject(obj));
 					repaint();
 				}
-			}, pos++);
+			}));
 
-			// new Action for crop
-            Set<MObject> objectsToHide = new HashSet<>(selectedObjects);
+			Set<MObject> objectsToHide = new HashSet<>(selectedObjects);
 			selectedLinks.forEach(link -> {
-				if (link instanceof MLinkObject) {
-					objectsToHide.add((MLinkObject) link);
-				} else {
-					objectsToHide.addAll(link.linkedObjects());
-				}
+				if (link instanceof MLinkObject) objectsToHide.add((MLinkObject) link);
+				else objectsToHide.addAll(link.linkedObjects());
 			});
-
-			final String label = labelCrop;
-			popupMenu.insert(new AbstractAction(labelCrop) {
+			final String finalLabelCrop = labelCrop;
+			builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(new AbstractAction(finalLabelCrop) {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					getAction(label, getNoneSelectedNodes(objectsToHide)).actionPerformed(e);
+					getAction(finalLabelCrop, getNoneSelectedNodes(objectsToHide)).actionPerformed(e);
 				}
-			}, pos++);
+			}));
 
-			// new Action for grey in/out
 			if (selectedObjects.size() == 1) {
 				MObject obj = selectedObjects.iterator().next();
 				if (visibleData.fObjectToNodeMap.containsKey(obj)) {
 					ObjectNode node = visibleData.fObjectToNodeMap.get(obj);
 					String labelGreyed = node.isGreyed() ? "Grey in" : "Grey out";
-
-					popupMenu.insert(new AbstractAction(labelGreyed + " " + node.name()) {
+					builder.add(PopupMenuBuilder.SEC_SELECTION, new JMenuItem(
+							new AbstractAction(labelGreyed + " " + node.name()) {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							node.setGreyed(node.isGreyed() ? false : true);
+							node.setGreyed(!node.isGreyed());
 							repaint();
 						}
-					}, pos++);
+					}));
 				}
 			} else if (selectedObjects.size() > 1) {
 				Set<ObjectNode> objToGreyIn = new HashSet<>();
-				selectedObjects.stream().filter(obj -> visibleData.fObjectToNodeMap.get(obj).isGreyed())
+				selectedObjects.stream()
+						.filter(obj -> visibleData.fObjectToNodeMap.get(obj).isGreyed())
 						.forEach(obj -> objToGreyIn.add(visibleData.fObjectToNodeMap.get(obj)));
-
 				Set<ObjectNode> objToGreyOut = new HashSet<>();
-				selectedObjects.stream().filter(obj -> !visibleData.fObjectToNodeMap.get(obj).isGreyed())
+				selectedObjects.stream()
+						.filter(obj -> !visibleData.fObjectToNodeMap.get(obj).isGreyed())
 						.forEach(obj -> objToGreyOut.add(visibleData.fObjectToNodeMap.get(obj)));
-
-				if (objToGreyIn.size() > 0) {
-					popupMenu.insert(new AbstractAction("Grey in " + objToGreyIn.size() + " elements") {
-
+				if (!objToGreyIn.isEmpty()) {
+					builder.add(PopupMenuBuilder.SEC_SELECTION,
+							new JMenuItem(new AbstractAction("Grey in " + objToGreyIn.size() + " elements") {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 							objToGreyIn.forEach(obj -> obj.setGreyed(false));
 							repaint();
 						}
-					}, pos++);
+					}));
 				}
-
-				// Action for grey out more elements
-				if (objToGreyOut.size() > 0) {
-					popupMenu.insert(new AbstractAction("Grey out " + objToGreyOut.size() + " elements") {
-
+				if (!objToGreyOut.isEmpty()) {
+					builder.add(PopupMenuBuilder.SEC_SELECTION,
+							new JMenuItem(new AbstractAction("Grey out " + objToGreyOut.size() + " elements") {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 							objToGreyOut.forEach(obj -> obj.setGreyed(true));
 							repaint();
 						}
-					}, pos++);
+					}));
 				}
 			}
-			popupMenu.insert(new JSeparator(), pos++);
 		}
+	}
+
+	private void buildObjectVisibilitySection(PopupMenuBuilder builder,
+			List<MObject> selectedObjects, Set<MObject> selectedObjectsSet) {
 
 		final JMenu showHideCrop = new JMenu("Show/hide/crop objects");
-
 		if (!selectedObjects.isEmpty()) {
 			showHideCrop.add(fSelection.getSelectedObjectPathView("By path length...", selectedObjectsSet));
 		}
-
 		showHideCrop.add(fSelection.getSelectionWithOCLViewAction());
 		showHideCrop.add(fSelection.getSelectionObjectView());
-
-		popupMenu.insert(showHideCrop, pos++);
+		builder.add(PopupMenuBuilder.SEC_VISIBILITY, showHideCrop);
 
 		if (fGraph.size() > 0 || !hiddenData.fObjectToNodeMap.isEmpty()) {
 			if (fGraph.size() > 0) {
-				popupMenu.insert(fSelection.getSubMenuHideObject(), pos++);
+				builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuHideObject());
 			}
-
 			if (!hiddenData.fObjectToNodeMap.isEmpty()) {
-				popupMenu.insert(fSelection.getSubMenuShowObject(), pos++);
+				builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuShowObject());
 			}
 		}
 
 		if (!visibleData.fBinaryLinkToEdgeMap.isEmpty() || !visibleData.fHalfLinkToEdgeMap.isEmpty()
-					|| !visibleData.fLinkObjectToNodeEdge.isEmpty()
-					|| !visibleData.fNaryLinkToDiamondNodeMap.isEmpty()) {
-			popupMenu.insert(fSelection.getSubMenuHideLinks(), pos++);
+				|| !visibleData.fLinkObjectToNodeEdge.isEmpty()
+				|| !visibleData.fNaryLinkToDiamondNodeMap.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuHideLinks(this));
 		}
-		
+
 		if (!hiddenData.fBinaryLinkToEdgeMap.isEmpty() || !hiddenData.fHalfLinkToEdgeMap.isEmpty()
-				|| !hiddenData.fLinkObjectToNodeEdge.isEmpty() || !hiddenData.fNaryLinkToDiamondNodeMap.isEmpty()) {
-			popupMenu.insert(fSelection.getSubMenuShowLinks(), pos++);
+				|| !hiddenData.fLinkObjectToNodeEdge.isEmpty()
+				|| !hiddenData.fNaryLinkToDiamondNodeMap.isEmpty()) {
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuShowLinks(this));
 		}
-		
-		popupMenu.insert(new JSeparator(), pos++);
+
 		if (!visibleData.getEdges().isEmpty() || !hiddenData.getEdges().isEmpty()) {
-			popupMenu.insert(fSelection.getSubMenuLinksByKind(), pos++);
+			builder.addSeparator(PopupMenuBuilder.SEC_VISIBILITY);
+			builder.add(PopupMenuBuilder.SEC_VISIBILITY, fSelection.getSubMenuLinksByKind(this));
+		}
+	}
 
-			popupMenu.insert(new JSeparator(), pos++);
+	private void buildObjectPsmSection(PopupMenuBuilder builder, List<MObject> selectedObjects) {
+		if (selectedObjects.isEmpty()) return;
+
+		final JMenu showProtocolStateMachine = new JMenu("Show protocol state machine...");
+		showProtocolStateMachine.setEnabled(false);
+
+		if (selectedObjects.size() == 1) {
+			final MObject obj = exactlyOne(selectedObjects);
+			List<MProtocolStateMachine> sortedPSMs = new LinkedList<>(
+					obj.cls().getAllOwnedProtocolStateMachines());
+			Collections.sort(sortedPSMs, new MNamedElementComparator());
+
+			for (MProtocolStateMachine psm : sortedPSMs) {
+				showProtocolStateMachine.setEnabled(true);
+				final JMenuItem showGivenPSM = new JMenuItem(psm.name());
+				showGivenPSM.addActionListener(new ActionListener() {
+					protected MProtocolStateMachine sm;
+					public void actionPerformed(ActionEvent ev) {
+						MainWindow.instance().showStateMachineView(sm, obj);
+					}
+					public ActionListener setStateMachine(MProtocolStateMachine sm, MObject instance) {
+						this.sm = sm;
+						return this;
+					}
+				}.setStateMachine(psm, obj));
+				showProtocolStateMachine.add(showGivenPSM);
+			}
 		}
 
-		if (!selectedObjects.isEmpty()) {
-			final JMenu showProtocolStateMachine = new JMenu("Show protocol state machine...");
-			showProtocolStateMachine.setEnabled(false);
-			popupMenu.insert(showProtocolStateMachine, pos++);
-
-			if (selectedObjects.size() == 1) {
-				final MObject obj = exactlyOne(selectedObjects);
-
-				List<MProtocolStateMachine> sortedPSMs = new LinkedList<MProtocolStateMachine>(
-						obj.cls().getAllOwnedProtocolStateMachines());
-				Collections.sort(sortedPSMs, new MNamedElementComparator());
-
-				for (MProtocolStateMachine psm : sortedPSMs) {
-					showProtocolStateMachine.setEnabled(true);
-					final JMenuItem showGivenPSM = new JMenuItem(psm.name());
-					showGivenPSM.addActionListener(new ActionListener() {
-						protected MProtocolStateMachine sm;
-
-						public void actionPerformed(ActionEvent ev) {
-							MainWindow.instance().showStateMachineView(sm, obj);
-						}
-
-						public ActionListener setStateMachine(MProtocolStateMachine sm, MObject instance) {
-							this.sm = sm;
-							return this;
-						}
-					}.setStateMachine(psm, obj));
-					showProtocolStateMachine.add(showGivenPSM);
-				}
-			}
-
-			popupMenu.insert(new JSeparator(), pos++);
-		}
-
-		final JCheckBoxMenuItem showStates = new JCheckBoxMenuItem("Show states", getOptions().isShowStates());
-		showStates.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent ev) {
-				getOptions().setShowStates(ev.getStateChange() == ItemEvent.SELECTED);
-				invalidateContent(true);
-			}
-		});
-
-		popupMenu.insert(showStates, pos + 3);
-
-		return popupInfo;
+		builder.add(PopupMenuBuilder.SEC_ACTIONS, showProtocolStateMachine);
 	}
 
 	/**

@@ -39,13 +39,13 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.tzi.use.gui.util.PersistHelper;
 import org.tzi.use.gui.views.diagrams.DiagramGraph;
 import org.tzi.use.gui.views.diagrams.DiagramOptions;
 import org.tzi.use.gui.views.diagrams.DiagramView;
+import org.tzi.use.gui.views.diagrams.PopupMenuBuilder;
 import org.tzi.use.gui.views.diagrams.elements.PlaceableNode;
 import org.tzi.use.gui.views.diagrams.elements.edges.EdgeBase;
 import org.tzi.use.gui.views.diagrams.event.ActionLoadLayout;
@@ -182,31 +182,37 @@ public class StateMachineDiagram extends DiagramView {
 
 	@Override
 	protected PopupMenuInfo unionOfPopUpMenu() {
-		// context menu on right mouse click
-        JPopupMenu popupMenu = new JPopupMenu();
-        PopupMenuInfo popupInfo = new PopupMenuInfo(popupMenu);
-        
-        if (!fNodeSelection.isEmpty()) {
-        	boolean somethingHidden = false;
-        	boolean somethingShown = false;
-        	        	
-        	for (PlaceableNode n : fNodeSelection) {
-        		if (n instanceof StateNode) {
-        			StateNode sn = (StateNode)n;
-        			if (sn.isShowInvariant()) {
-        				somethingShown = true;
-        			} else {
-        				somethingHidden = true;
-        			}
-        		}
-        	}
-        	
-        	JMenuItem showStateInv = new JMenuItem(new AbstractAction("Show state invariant") {
+		PopupMenuInfo info = new PopupMenuInfo(null);
+		PopupMenuBuilder builder = new PopupMenuBuilder();
+		buildMenu(builder, info);
+		info.popupMenu = builder.build();
+		return info;
+	}
+
+	@Override
+	protected void buildMenu(PopupMenuBuilder builder, PopupMenuInfo info) {
+		// SEC_SELECTION: state invariant toggles (conditional on node selection)
+		if (!fNodeSelection.isEmpty()) {
+			boolean somethingHidden = false;
+			boolean somethingShown = false;
+
+			for (PlaceableNode n : fNodeSelection) {
+				if (n instanceof StateNode) {
+					StateNode sn = (StateNode) n;
+					if (sn.isShowInvariant()) {
+						somethingShown = true;
+					} else {
+						somethingHidden = true;
+					}
+				}
+			}
+
+			JMenuItem showStateInv = new JMenuItem(new AbstractAction("Show state invariant") {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					for (PlaceableNode n : fNodeSelection) {
 						if (n instanceof StateNode) {
-							StateNode sn = (StateNode)n;
+							StateNode sn = (StateNode) n;
 							sn.setShowInvariant(true);
 							invalidateNode(sn);
 						}
@@ -214,14 +220,14 @@ public class StateMachineDiagram extends DiagramView {
 					repaint();
 				}
 			});
-        	showStateInv.setEnabled(somethingHidden);
-        	
-        	JMenuItem hideStateInv = new JMenuItem(new AbstractAction("Hide state invariant") {
+			showStateInv.setEnabled(somethingHidden);
+
+			JMenuItem hideStateInv = new JMenuItem(new AbstractAction("Hide state invariant") {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					for (PlaceableNode n : fNodeSelection) {
 						if (n instanceof StateNode) {
-							StateNode sn = (StateNode)n;
+							StateNode sn = (StateNode) n;
 							sn.setShowInvariant(false);
 							invalidateNode(sn);
 						}
@@ -229,84 +235,83 @@ public class StateMachineDiagram extends DiagramView {
 					repaint();
 				}
 			});
-        	hideStateInv.setEnabled(somethingShown);
-        	
-        	popupMenu.add(showStateInv);
-        	popupMenu.add(hideStateInv);
-        }
-        
-        JMenu mergeMenu = new JMenu("Merge transitions");
-               
-        final JMenuItem mergeTransitions = new JMenuItem("Merge all possible transitions");
-        mergeTransitions.addActionListener(new ActionListener() {
-            @Override
-        	public void actionPerformed(ActionEvent ev) {
+			hideStateInv.setEnabled(somethingShown);
+
+			builder.add(PopupMenuBuilder.SEC_SELECTION, showStateInv);
+			builder.add(PopupMenuBuilder.SEC_SELECTION, hideStateInv);
+		}
+
+		// SEC_ACTIONS: merge/demerge transitions
+		JMenu mergeMenu = new JMenu("Merge transitions");
+
+		final JMenuItem mergeTransitions = new JMenuItem("Merge all possible transitions");
+		mergeTransitions.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
 				mergeTransitions(transitionMappings.values());
 				invalidateContent(true);
 			}
 		});
-    
-        final JMenuItem demergeTransitions = new JMenuItem("Demerge all possible transitions");
-        demergeTransitions.addActionListener(new ActionListener() {
-        	@Override
-            public void actionPerformed(ActionEvent ev) {
+
+		final JMenuItem demergeTransitions = new JMenuItem("Demerge all possible transitions");
+		demergeTransitions.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
 				demergeTransitions(transitionMappings.values());
 				invalidateContent(true);
 			}
 		});
-        
-        mergeMenu.add(mergeTransitions);
-        mergeMenu.add(demergeTransitions);
-        mergeMenu.addSeparator();
-        
-        final JMenuItem mergeSelectedTransitions = new JMenuItem("Merge selected transitions");
-        mergeSelectedTransitions.setEnabled(fEdgeSelection.size() > 1);
-        mergeSelectedTransitions.addActionListener(new ActionListener() {
-            @Override
-        	public void actionPerformed(ActionEvent ev) {
+
+		mergeMenu.add(mergeTransitions);
+		mergeMenu.add(demergeTransitions);
+		mergeMenu.addSeparator();
+
+		final JMenuItem mergeSelectedTransitions = new JMenuItem("Merge selected transitions");
+		mergeSelectedTransitions.setEnabled(fEdgeSelection.size() > 1);
+		mergeSelectedTransitions.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
 				List<TransitionEdge> edges = new ArrayList<TransitionEdge>();
-            	for (EdgeBase e : fEdgeSelection) {
-            		if (e instanceof TransitionEdge) {
-            			edges.add((TransitionEdge)e);
-            		}
-            	}
-            	mergeTransitions(edges);
+				for (EdgeBase e : fEdgeSelection) {
+					if (e instanceof TransitionEdge) {
+						edges.add((TransitionEdge) e);
+					}
+				}
+				mergeTransitions(edges);
 				invalidateContent(true);
 			}
 		});
-    
-        final JMenuItem demergeSelectedTransitions = new JMenuItem("Demerge selected transitions");
-        demergeSelectedTransitions.setEnabled(fEdgeSelection.size() > 0);
-        demergeSelectedTransitions.addActionListener(new ActionListener() {
-        	@Override
-            public void actionPerformed(ActionEvent ev) {
-        		List<TransitionEdge> edges = new ArrayList<TransitionEdge>();
-            	for (EdgeBase e : fEdgeSelection) {
-            		if (e instanceof TransitionEdge) {
-            			edges.add((TransitionEdge)e);
-            		}
-            	}
-            	            	
+
+		final JMenuItem demergeSelectedTransitions = new JMenuItem("Demerge selected transitions");
+		demergeSelectedTransitions.setEnabled(fEdgeSelection.size() > 0);
+		demergeSelectedTransitions.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				List<TransitionEdge> edges = new ArrayList<TransitionEdge>();
+				for (EdgeBase e : fEdgeSelection) {
+					if (e instanceof TransitionEdge) {
+						edges.add((TransitionEdge) e);
+					}
+				}
 				demergeTransitions(edges);
 				invalidateContent(true);
 			}
 		});
-        
-        mergeMenu.add(mergeSelectedTransitions);
-        mergeMenu.add(demergeSelectedTransitions);
-        
-        popupMenu.add(mergeMenu);
-        
-        popupMenu.addSeparator();
-        popupMenu.add(getMenuItemCommentNode(popupInfo));
-        popupMenu.addSeparator();
-        popupMenu.add(getMenuAlign());
-        popupMenu.add(getMenuItemAntiAliasing());
-        popupMenu.add(getMenuItemShowGrid());
-        
-        addLayoutMenuItems(popupMenu);
-        
-        return popupInfo;
+
+		mergeMenu.add(mergeSelectedTransitions);
+		mergeMenu.add(demergeSelectedTransitions);
+
+		builder.add(PopupMenuBuilder.SEC_ACTIONS, mergeMenu);
+
+		// SEC_RENDERING: comment node, then align + anti-aliasing + grid
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemCommentNode(info));
+		builder.addSeparator(PopupMenuBuilder.SEC_RENDERING);
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuAlign());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemAntiAliasing());
+		builder.add(PopupMenuBuilder.SEC_RENDERING, getMenuItemShowGrid());
+
+		// SEC_LAYOUT: layout items
+		addLayoutItems(builder, info);
 	}
 
 	private void mergeTransitions(Collection<TransitionEdge> transitionsToMerge) {
