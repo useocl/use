@@ -1,1 +1,2 @@
+#expected exit
 *t073.use:55:2: Missing return type for OCL query operation `numOfArgs'.

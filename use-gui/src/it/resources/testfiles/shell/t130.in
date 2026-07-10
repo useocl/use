@@ -4,6 +4,7 @@
 !set b.b := t130_import2#C(1,1)
 ? b.b
 *-> C{x=1, y=1} : C
+check
 *checking structure...
 *checking invariants...
 *checked 0 invariants, 0 failures.

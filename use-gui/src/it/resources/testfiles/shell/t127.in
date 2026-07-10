@@ -2,6 +2,7 @@
 
 !create a : A
 !create b : B
+check
 *checking structure...
 *checking invariants...
 *checking invariant (1) `A::inv1': OK.

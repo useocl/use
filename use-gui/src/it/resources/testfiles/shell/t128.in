@@ -6,6 +6,7 @@
 !set b.b := C(1,1)
 ? a.a = b.b
 *-> true : Boolean
+check
 *checking structure...
 *checking invariants...
 *checked 0 invariants, 0 failures.
