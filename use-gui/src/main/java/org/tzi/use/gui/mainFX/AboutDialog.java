@@ -46,13 +46,13 @@ public class AboutDialog extends Stage {
                 new Label("For more information see:"),
                 new Label("http://www.db.informatik.uni-bremen.de/projects/USE/"),
                 new Label(" "), // Spacer
-                new Label("This program is free software; you can redistribute it and/or"),
-                new Label("modify it under the terms of the GNU General Public License as"),
-                new Label("published by the Free Software Foundation; either version 2 of the"),
-                new Label("License, or (at your option) any later version."),
+                new Label("This program is free software: you can redistribute it and/or modify"),
+                new Label("it under the terms of the GNU General Public License as published by"),
+                new Label("the Free Software Foundation, either version 3 of the License, or"),
+                new Label("(at your option) any later version."),
                 new Label(" "), // Spacer
-                new Label("This program is distributed in the hope that it will be useful, but"),
-                new Label("WITHOUT ANY WARRANTY; without even the implied warranty of"),
+                new Label("This program is distributed in the hope that it will be useful,"),
+                new Label("but WITHOUT ANY WARRANTY; without even the implied warranty of"),
                 new Label("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."),
                 new Label("See the GNU General Public License for more details."));
 
