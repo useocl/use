@@ -2,19 +2,18 @@
  * USE - UML based specification environment
  * Copyright (C) 1999-2004 Mark Richters, University of Bremen
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.tzi.use.gui.main;
@@ -57,13 +56,13 @@ class AboutDialog extends JDialog {
         infoBox.add(line("For more information see:"));
         infoBox.add(line("http://www.db.informatik.uni-bremen.de/projects/USE/"));
         infoBox.add(Box.createRigidArea(new Dimension(0,5)));
-        infoBox.add(line("This program is free software; you can redistribute it and/or"));
-        infoBox.add(line("modify it under the terms of the GNU General Public License as"));
-        infoBox.add(line("published by the Free Software Foundation; either version 2 of the"));
-        infoBox.add(line("License, or (at your option) any later version."));
+        infoBox.add(line("This program is free software: you can redistribute it and/or modify"));
+        infoBox.add(line("it under the terms of the GNU General Public License as published by"));
+        infoBox.add(line("the Free Software Foundation, either version 3 of the License, or"));
+        infoBox.add(line("(at your option) any later version."));
         infoBox.add(Box.createRigidArea(new Dimension(0,5)));
-        infoBox.add(line("This program is distributed in the hope that it will be useful, but"));
-        infoBox.add(line("WITHOUT ANY WARRANTY; without even the implied warranty of"));
+        infoBox.add(line("This program is distributed in the hope that it will be useful,"));
+        infoBox.add(line("but WITHOUT ANY WARRANTY; without even the implied warranty of"));
         infoBox.add(line("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."));
         infoBox.add(line("See the GNU General Public License for more details."));
         infoBox.add(Box.createRigidArea(new Dimension(0,5)));

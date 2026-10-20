@@ -122,7 +122,7 @@ developers of [ANTLR](http://www.antlr.org) for making this great tool freely av
 
 ## Copying
 
-USE is released under the GNU public license, see the file COPYING for
+USE is released under the GNU General Public License, version 3 or later, see the file COPYING for
 details. The distribution contains the following libraries from
 external parties. Source code for these libraries is available from
 the web.
