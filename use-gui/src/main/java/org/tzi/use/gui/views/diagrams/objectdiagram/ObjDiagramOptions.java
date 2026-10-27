@@ -32,6 +32,7 @@ import org.w3c.dom.Element;
 public final class ObjDiagramOptions extends DiagramOptions {
 
 	private boolean isShowStates = false;
+    private boolean showMultiplicities = false;
 
 	public ObjDiagramOptions() {
 	}
@@ -41,7 +42,9 @@ public final class ObjDiagramOptions extends DiagramOptions {
 	 */
 	public ObjDiagramOptions(ObjDiagramOptions opt) {
 		super(opt);
-	}
+        this.isShowStates = opt.isShowStates;
+        this.showMultiplicities = opt.showMultiplicities;
+    }
 
 	@Override
 	protected void registerAdditionalColors() {
@@ -58,10 +61,12 @@ public final class ObjDiagramOptions extends DiagramOptions {
 	}
 
 	public boolean isShowMutliplicities() {
-		return false;
+		return showMultiplicities;
 	}
 
 	public void setShowMutliplicities(boolean showMutliplicities) {
+		this.showMultiplicities = showMutliplicities;
+		this.onOptionChanged("SHOWMULTIPLICITIES");
 	}
 
 	/**
@@ -84,11 +89,13 @@ public final class ObjDiagramOptions extends DiagramOptions {
 	public void saveOptions(PersistHelper helper, Element parent) {
 		super.saveOptions(helper, parent);
 		helper.appendChild(parent, "ShowStates", String.valueOf(this.isShowStates));
+		helper.appendChild(parent, "ShowMultiplicities", String.valueOf(this.showMultiplicities));
 	}
 
 	@Override
 	public void loadOptions(PersistHelper helper, int version) {
 		super.loadOptions(helper, version);
 		this.isShowStates = helper.getElementBooleanValue("ShowStates");
+		this.showMultiplicities = helper.getElementBooleanValue("ShowMultiplicities");
 	}
 }
