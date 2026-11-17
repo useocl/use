@@ -38,9 +38,9 @@ import junit.framework.TestCase;
 public class CombinationTest extends TestCase {
            
 	private List<String> getList(int offSet, int numElements) {
-		List<String> result = new ArrayList<String>(numElements);
+		List<String> result = new ArrayList<>(numElements);
 		for (int index = 1; index <= numElements; ++index) {
-			result.add(new String(new char[]{(char)(index + offSet + 64)}));
+			result.add(String.valueOf((char) (index + offSet + 64)));
 		}
 		return result;
 	}
@@ -59,7 +59,7 @@ public class CombinationTest extends TestCase {
         List<String> l2 = getList(3,3);
         
         List<List<Pair<String>>> result = CollectionUtil.combinationsOne(l1, l2, UniqueList.SECOND_IS_UNIQUE);
-        MinCombinationsIterator<String> iter = new MinCombinationsIterator<String>(l1, l2, UniqueList.SECOND_IS_UNIQUE);
+        MinCombinationsIterator<String> iter = new MinCombinationsIterator<>(l1, l2, UniqueList.SECOND_IS_UNIQUE);
         
         int num = 0;
         while(iter.hasNext()) {

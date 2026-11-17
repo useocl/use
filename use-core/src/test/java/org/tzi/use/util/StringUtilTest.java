@@ -55,7 +55,7 @@ public class StringUtilTest extends TestCase {
     public void testEscapeChar() {
         assertEquals("a", StringUtil.escapeChar('a', '"'));
         assertEquals("\\344", StringUtil.escapeChar('\344', '"'));
-        assertEquals("\\u1234", StringUtil.escapeChar('\u1234', '"'));
+        assertEquals("\\u1234", StringUtil.escapeChar('ሴ', '"'));
         assertEquals("\\t", StringUtil.escapeChar('\t', '"'));
     }
 }
