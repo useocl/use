@@ -36,7 +36,7 @@ public class AllTests {
         test.addTest( org.tzi.use.graph.AllTests.suite() );
         test.addTest( org.tzi.use.parser.AllTests.suite() );
         test.addTest( org.tzi.use.uml.AllTests.suite() );
-        test.addTest( org.tzi.use.utilcore.AllTests.suite() );
+        test.addTest( org.tzi.use.util.AllTests.suite() );
         return test;
     }
 }

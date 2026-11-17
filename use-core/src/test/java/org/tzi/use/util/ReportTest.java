@@ -16,12 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.tzi.use.utilcore;
+package org.tzi.use.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import org.tzi.use.util.Report;
 
 /**
  * Test Report class.

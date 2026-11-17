@@ -18,12 +18,11 @@
 
 // $Id: AbstractBagTest.java 2409 2011-07-27 09:45:00Z lhamann $
 
-package org.tzi.use.utilcore;
+package org.tzi.use.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tzi.use.util.Pair;
 import org.tzi.use.util.collections.CollectionUtil;
 import org.tzi.use.util.collections.MinCombinationsIterator;
 import org.tzi.use.util.collections.CollectionUtil.UniqueList;

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.tzi.use.utilcore.soil;
+package org.tzi.use.util.soil;
 
 
 import junit.framework.TestCase;
@@ -35,8 +35,6 @@ import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystem;
 import org.tzi.use.uml.sys.MSystemException;
-import org.tzi.use.util.soil.SymbolTable;
-import org.tzi.use.util.soil.VariableEnvironment;
 
 
 /**

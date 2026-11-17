@@ -1,6 +1,6 @@
 /*
  * USE - UML based specification environment
- * Copyright (C) 1999-2010 Mark Richters, University of Bremen
+ * Copyright (C) 1999-2004 Mark Richters, University of Bremen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,39 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.tzi.use.utilcore.soil;
-
+package org.tzi.use.util;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-
 /**
- * Collection of all soil utility tests
- * 
- * @author Daniel Gent
+ * Runs all test in package <code>org.tzi.use.util</code>.
+ *
+ * @author <a href="mailto:hanna@tzi.de">Hanna Bauerdick</a>
+ * @author <a href="mailto:gutsche@tzi.de">Fabian Gutsche</a>
  */
 public class AllTests {
 
-	/**
-	 * no instances required
-	 */
-    private AllTests() {
-    	
-    }
-    
+    private AllTests(){}
 
-    /**
-     * builds the suite of all soil utility tests
-     * 
-     * @return the suite of all soil utility tests
-     */
     public static Test suite() {
-        final TestSuite testSuite = new TestSuite("All soil util tests");
-        testSuite.addTestSuite(VariableEnvironmentTest.class);
-        testSuite.addTestSuite(StateChangesTest.class);
-        testSuite.addTestSuite(VariableSetTest.class);
-        testSuite.addTestSuite(SymbolTableTest.class);
-        return testSuite;
+        final TestSuite test = new TestSuite( "All util tests" );
+        test.addTestSuite( AbstractBagTest.class );
+        test.addTestSuite( ReportTest.class );
+        test.addTestSuite( StringUtilTest.class );
+        test.addTestSuite( CombinationTest.class );
+        test.addTest(org.tzi.use.util.soil.AllTests.suite());
+        return test;
     }
 }
