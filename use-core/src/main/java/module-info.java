@@ -1,6 +1,6 @@
 module use.core {
     requires antlr.runtime;
-    requires org.eclipse.jdt.annotation;
+    requires static org.eclipse.jdt.annotation;
     requires java.naming;
     requires java.prefs;
     requires com.google.common;
