@@ -66,6 +66,10 @@ public class MWhileStatement extends MStatement {
             throws EvaluationFailedException {
 		
 		while (true) {
+			if (Thread.currentThread().isInterrupted()) {
+				throw new EvaluationFailedException("Execution of while statement interrupted.");
+			}
+
             Value v = EvalUtil.evaluateExpression(context, fCondition);
 			if (v.isDefined() && ((BooleanValue)v).value())
                 fBody.execute(context, result);

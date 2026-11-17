@@ -40,6 +40,7 @@ public class AllTests {
 	public static Test suite() {
 		final TestSuite testSuite = new TestSuite("All system soil tests");
         testSuite.addTestSuite(StatementEffectTest.class);
+        testSuite.addTestSuite(MWhileStatementTest.class);
         return testSuite;
     }
 }

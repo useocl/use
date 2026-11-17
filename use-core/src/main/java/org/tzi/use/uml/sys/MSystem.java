@@ -1224,9 +1224,16 @@ public final class MSystem {
 	 * Executes a statement using the current system state and stores the result
 	 * on the undo stack. If the execution fails, the effects of the statement
 	 * are reverted. Update listeners are notified and the result is stored.
-	 * 
+	 * <p>A SOIL while loop can be cancelled by interrupting the thread executing
+	 * this method, for example with
+	 * {@link java.util.concurrent.Future#cancel(boolean) Future.cancel(true)}
+	 * after a timeout. Interruption is checked between loop iterations, so it
+	 * does not abort a condition or body that is already executing. Cancellation
+	 * is reported as an {@link MSystemException}; changes are undone.</p>
+	 *
 	 * @param statement The statement to execute.
-	 * @throws MSystemException
+	 *
+	 * @throws MSystemException if the execution fails or is cancelled. The effects of the statement are reverted.
 	 */
 	public StatementEvaluationResult execute(MStatement statement) throws MSystemException {
 		return execute(statement, true, true, true);
@@ -1236,12 +1243,17 @@ public final class MSystem {
 	 * Executes a statement using the current system state and stores the result
 	 * on the undo stack. If the execution fails, the effects of the statement
 	 * are reverted.
-	 * 
+	 * <p>A SOIL while loop can be cancelled by interrupting the thread executing
+	 * this method, for example with
+	 * {@link java.util.concurrent.Future#cancel(boolean) Future.cancel(true)}
+	 * after a timeout. Interruption is checked between loop iterations, so it
+	 * does not abort a condition or body that is already executing. Cancellation
+	 * is reported as an {@link MSystemException}; changes are undone.</p>
 	 * @param statement The statement to execute.
 	 * @param notifyUpdateStateListeners If <code>true</code> the registered
 	 *            system state listeners are notified after the successful
 	 *            execution.
-	 * @throws MSystemException
+	 * @throws MSystemException if the execution fails or is cancelled. The effects of the statement are reverted.
 	 */
 	public StatementEvaluationResult execute(MStatement statement, boolean notifyUpdateStateListeners) throws MSystemException {
 
@@ -1251,6 +1263,13 @@ public final class MSystem {
 	/**
 	 * Executes a statement using the current system state. The redo stack is
 	 * cleared beforehand.
+	 * A SOIL while loop can be cancelled by interrupting the thread executing
+	 * this method, for example with
+	 * {@link java.util.concurrent.Future#cancel(boolean) Future.cancel(true)}
+	 * after a timeout. Interruption is checked between loop iterations, so it
+	 * does not abort a condition or body that is already executing. Cancellation
+	 * is reported as an {@link MSystemException}; changes are undone only if
+	 * <code>undoOnFailure</code> is true.
 	 * 
 	 * @param statement The statement to execute.
 	 * @param undoOnFailure If <code>true</code>, a failure during the execution
