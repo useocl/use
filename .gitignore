@@ -117,3 +117,6 @@ fabric.properties
 /use-assembly/target
 
 **/.DS_Store
+
+# Reports written by the ArchUnit cyclic-dependency tests in use-gui
+use-gui/*_results.csv
