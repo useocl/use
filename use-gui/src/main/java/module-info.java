@@ -7,6 +7,7 @@ module use.gui {
     requires org.kordamp.desktoppanefx.core;
     requires javafx.swing;
     requires annotations;
+    requires static org.eclipse.jdt.annotation;
     requires static lombok;
     requires com.google.common;
     opens org.tzi.use.gui.main to javafx.fxml;
