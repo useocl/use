@@ -11,6 +11,14 @@
 
     <packaging>pom</packaging>
     <artifactId>use-assembly</artifactId>
+    <name>USE Distribution</name>
+    <description>Binary distribution archive of USE. Not published to Maven Central.</description>
+
+    <properties>
+        <!-- distribution zip is not deployed (also covers the release profile) -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <skipPublishing>true</skipPublishing>
+    </properties>
 
     <dependencies>
         <dependency>
