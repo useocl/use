@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.tzi.use.utilcore.soil;
+package org.tzi.use.util.soil;
 
 import java.util.Random;
 
@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.uml.ocl.type.TypeFactory;
-import org.tzi.use.util.soil.VariableSet;
 
 
 /**

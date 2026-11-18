@@ -16,12 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.tzi.use.utilcore;
+package org.tzi.use.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
-import org.tzi.use.util.Report;
 
 /**
  * Test Report class.
@@ -36,20 +35,20 @@ public class ReportTest extends TestCase {
         r.addRuler('-');
         r.addRow();
         r.addCell("foo");
-        r.addCell(Integer.valueOf(3));
-        r.addCell(Double.valueOf(1.2));
+        r.addCell(3);
+        r.addCell(1.2);
         r.addCell(Boolean.FALSE);
 
         r.addRow();
         r.addCell("foobar");
-        r.addCell(Integer.valueOf(453453));
-        r.addCell(Double.valueOf(-1.245345345));
+        r.addCell(453453);
+        r.addCell(-1.245345345);
         r.addCell(Boolean.TRUE);
 
         r.addRow();
         r.addCell("line");
-        r.addCell(Integer.valueOf(555));
-        r.addCell(Double.valueOf(999.0));
+        r.addCell(555);
+        r.addCell(999.0);
         r.addCell(Boolean.TRUE);
         r.addRuler('=');
 
