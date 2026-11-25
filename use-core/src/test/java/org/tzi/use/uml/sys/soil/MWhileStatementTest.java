@@ -135,4 +135,86 @@ public class MWhileStatementTest extends TestCase {
 
         assertEquals(IntegerValue.valueOf(3), testSystem.getVarEnv().lookUp("loopCounter"));
     }
+
+    private MWhileStatement countingLoop(String variable, int iterations) throws Exception {
+        Expression condition = ExpStdOp.create("<", new Expression[]{
+                new ExpVariable(variable, TypeFactory.mkInteger()), new ExpConstInteger(iterations)
+        });
+        Expression nextValue = ExpStdOp.create("+", new Expression[]{
+                new ExpVariable(variable, TypeFactory.mkInteger()), new ExpConstInteger(1)
+        });
+        return new MWhileStatement(condition,
+                new MVariableAssignmentStatement(variable, new MRValueExpression(nextValue)));
+    }
+
+    public void testUndoRecordGrowsWithEveryIterationByDefault() throws Exception {
+        testSystem.getVarEnv().assign("loopCounter", IntegerValue.valueOf(0));
+
+        StatementEvaluationResult result = testSystem.getSystem().execute(countingLoop("loopCounter", 1000));
+
+        assertEquals(1000, result.getInverseStatement().getStatements().size());
+        assertEquals(1, testSystem.getSystem().numEvaluatedStatements());
+    }
+
+    public void testLoopWithUndoRecordingDisabledKeepsNoUndoRecord() throws Exception {
+        testSystem.getSystem().setUndoRecordingEnabled(false);
+        testSystem.getVarEnv().assign("loopCounter", IntegerValue.valueOf(0));
+
+        StatementEvaluationResult result = testSystem.getSystem().execute(countingLoop("loopCounter", 100000));
+
+        assertEquals(IntegerValue.valueOf(100000), testSystem.getVarEnv().lookUp("loopCounter"));
+        assertTrue("No inverse statements should be recorded", result.getInverseStatement().getStatements().isEmpty());
+        assertTrue("No events should be recorded", result.getEvents().isEmpty());
+        assertEquals("Result should not be stored for undo", 0, testSystem.getSystem().numEvaluatedStatements());
+    }
+
+    public void testDisablingUndoRecordingClearsUndoStack() throws Exception {
+        testSystem.getVarEnv().assign("loopCounter", IntegerValue.valueOf(0));
+        testSystem.getSystem().execute(countingLoop("loopCounter", 3));
+        assertEquals(1, testSystem.getSystem().numEvaluatedStatements());
+
+        testSystem.getSystem().setUndoRecordingEnabled(false);
+
+        assertFalse(testSystem.getSystem().isUndoRecordingEnabled());
+        assertEquals(0, testSystem.getSystem().numEvaluatedStatements());
+        try {
+            testSystem.getSystem().undoLastStatement();
+            fail("Expected nothing to undo");
+        } catch (MSystemException expected) {
+            // nothing to undo
+        }
+    }
+
+    public void testReenablingUndoRecordingRecordsAgain() throws Exception {
+        testSystem.getSystem().setUndoRecordingEnabled(false);
+        testSystem.getSystem().setUndoRecordingEnabled(true);
+        testSystem.getVarEnv().assign("loopCounter", IntegerValue.valueOf(0));
+
+        testSystem.getSystem().execute(countingLoop("loopCounter", 3));
+        testSystem.getSystem().undoLastStatement();
+
+        assertEquals(IntegerValue.valueOf(0), testSystem.getVarEnv().lookUp("loopCounter"));
+    }
+
+    public void testCancelledLoopIsNotRolledBackWhenUndoRecordingIsDisabled() {
+        testSystem.getSystem().setUndoRecordingEnabled(false);
+        MStatement statement = new MSequenceStatement(
+                new MVariableAssignmentStatement("keptValue", IntegerValue.valueOf(1)),
+                new MWhileStatement(new ExpConstBoolean(true), MEmptyStatement.getInstance()));
+
+        Thread.currentThread().interrupt();
+        try {
+            try {
+                testSystem.getSystem().execute(statement);
+                fail("Expected the interrupted loop to be cancelled");
+            } catch (MSystemException e) {
+                assertTrue(e.getMessage().toLowerCase().contains("interrupt"));
+            }
+        } finally {
+            Thread.interrupted();
+        }
+
+        assertEquals("Without undo information, changes before cancellation are kept",
+                IntegerValue.valueOf(1), testSystem.getVarEnv().lookUp("keptValue"));
+    }
 }

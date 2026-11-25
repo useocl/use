@@ -41,6 +41,7 @@ public class StatementEvaluationResult {
 	private MSequenceStatement fInverseStatement = new MSequenceStatement();
 	private EvaluationFailedException fException = null;
 	private List<Event> fEvents = new ArrayList<Event>();
+	private final boolean fRecordUndoInformation;
 	
 
 	/**
@@ -48,7 +49,29 @@ public class StatementEvaluationResult {
 	 * @param statement The (top-level) statement that is / has been executed
 	 */
 	public StatementEvaluationResult(MStatement statement) {
+		this(statement, true);
+	}
+
+	/**
+	 * Constructs a new <code>StatementEvaluationResult</code> for the given statement.
+	 * @param statement The (top-level) statement that is / has been executed
+	 * @param recordUndoInformation If <code>false</code>, inverse statements
+	 *            and events are discarded instead of being collected. The
+	 *            memory used by this result then no longer grows with the
+	 *            number of executed state changes, but the result cannot be
+	 *            undone.
+	 */
+	public StatementEvaluationResult(MStatement statement, boolean recordUndoInformation) {
 		fEvaluatedStatement = statement;
+		fRecordUndoInformation = recordUndoInformation;
+	}
+
+	/**
+	 * @return <code>true</code> if inverse statements and events are
+	 *         collected by this result.
+	 */
+	public boolean isRecordingUndoInformation() {
+		return fRecordUndoInformation;
 	}
 	
 
@@ -91,9 +114,11 @@ public class StatementEvaluationResult {
 
 	/**
 	 * Adds the <code>statement</code> to the list of inverse statements.
+	 * Does nothing if this result does not record undo information.
 	 * @param statement The <code>Statement</code> to append.
 	 */
 	public void prependToInverseStatement(MStatement statement) {
+		if (!fRecordUndoInformation) return;
 		fInverseStatement.prependStatement(statement);
 	}
 	
@@ -129,9 +154,10 @@ public class StatementEvaluationResult {
 	/**
 	 * Appends an event to the list of events raised for this result.
 	 * @param event The <code>Event</code> to append. <code>null</code>-values are ignored.
+	 *            Events are also ignored if this result does not record undo information.
 	 */
 	public void appendEvent(Event event) {
-		if (event == null) return;
+		if (event == null || !fRecordUndoInformation) return;
 		
 		fEvents.add(event);
 	}
