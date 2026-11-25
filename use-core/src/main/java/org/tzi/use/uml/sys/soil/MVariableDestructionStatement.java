@@ -54,7 +54,7 @@ public class MVariableDestructionStatement extends MStatement {
 		
         Value oldValue = context.getVarEnv().lookUp(fVariableName);
 		if (oldValue != null) {
-            result.getInverseStatement().prependStatement(
+            result.prependToInverseStatement(
 					new MVariableAssignmentStatement(fVariableName, oldValue));
 		}
 		

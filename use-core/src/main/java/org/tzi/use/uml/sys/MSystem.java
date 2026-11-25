@@ -96,6 +96,12 @@ public final class MSystem {
 	/** The stack of evaluation results of statements */
 	private Deque<StatementEvaluationResult> fStatementEvaluationResults;
 
+	/**
+	 * If <code>false</code>, no undo information is recorded for executed
+	 * statements. Kept across {@link #reset()}.
+	 */
+	private boolean fUndoRecordingEnabled = true;
+
 	/** The operation-call stack */
 	private Deque<MOperationCall> fCallStack;
 
@@ -166,6 +172,55 @@ public final class MSystem {
 	 */
 	public void reset() {
 		init();
+	}
+
+	/**
+	 * Enables or disables the recording of undo information for executed
+	 * statements. Recording is enabled by default.
+	 * <p>
+	 * While recording is enabled, every state change made by a statement adds
+	 * an inverse statement and possibly an event to the statement's result.
+	 * For long running SOIL loops this record grows with every iteration and
+	 * can exhaust the heap (see issue #145).
+	 * </p>
+	 * <p>
+	 * While recording is disabled
+	 * </p>
+	 * <ul>
+	 * <li>executed statements are not stored and cannot be undone or redone,</li>
+	 * <li>a failed or cancelled statement is <b>not</b> rolled back, so the
+	 * system state keeps all changes made up to the failure,</li>
+	 * <li>no events are collected (see {@link #getAllEvents()}), so views
+	 * based on them, such as sequence diagrams, show nothing for these
+	 * statements.</li>
+	 * </ul>
+	 * <p>
+	 * This is intended for embedders that do not need undo, for example a
+	 * stateless service that discards the system after a request. Disabling
+	 * recording clears the undo and redo stacks, because earlier results could
+	 * not be undone consistently afterwards.
+	 * </p>
+	 * <p>
+	 * Must not be called while a statement is being executed.
+	 * </p>
+	 *
+	 * @param enabled <code>false</code> to disable recording.
+	 */
+	public void setUndoRecordingEnabled(boolean enabled) {
+		if (fUndoRecordingEnabled && !enabled) {
+			fStatementEvaluationResults.clear();
+			fRedoStack.clear();
+		}
+		fUndoRecordingEnabled = enabled;
+	}
+
+	/**
+	 * @return <code>true</code> if undo information is recorded for executed
+	 *         statements (the default).
+	 * @see #setUndoRecordingEnabled(boolean)
+	 */
+	public boolean isUndoRecordingEnabled() {
+		return fUndoRecordingEnabled;
 	}
 
 	/**
@@ -1305,7 +1360,8 @@ public final class MSystem {
 	private StatementEvaluationResult execute(MStatement statement, SoilEvaluationContext context, boolean undoOnFailure, boolean storeResult,
 			boolean notifyUpdateStateListeners) throws MSystemException {
 
-		StatementEvaluationResult result = new StatementEvaluationResult(statement);
+		StatementEvaluationResult result = new StatementEvaluationResult(statement, fUndoRecordingEnabled);
+		storeResult = storeResult && fUndoRecordingEnabled;
 
 		fCurrentlyEvaluatedStatements.push(result);
 
