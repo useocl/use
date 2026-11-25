@@ -11,6 +11,8 @@
 
     <artifactId>use-core</artifactId>
     <packaging>jar</packaging>
+    <name>USE Core</name>
+    <description>Core of USE: model, OCL and SOIL parsers, evaluator and system state.</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -336,20 +338,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.4.1</version>
-                <configuration>
-                    <tags>
-                        <tag>
-                            <name>ocl.pre</name>
-                            <placement>m</placement>
-                            <head>Precondition:</head>
-                        </tag>
-                    </tags>
-                </configuration>
             </plugin>
         </plugins>
     </build>

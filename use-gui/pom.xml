@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>use-gui</artifactId>
+    <name>USE GUI</name>
+    <description>Graphical user interfaces (Swing and JavaFX) of USE.</description>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -188,6 +191,9 @@
     </dependencies>
 
     <properties>
+        <!-- Not published to Maven Central for now: the assembly plugin replaces the main artifact with the
+             jar-with-dependencies (about 97 MB). Publish once the fat jar is attached with a classifier. -->
+        <skipPublishing>true</skipPublishing>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.8.2</junit.version>
         <lombok.version>1.18.42</lombok.version>
